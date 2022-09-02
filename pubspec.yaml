@@ -1,0 +1,17 @@
+name: spot
+description: Chainable finders and better assertions for widget tests
+version: 0.1.0-preview.1
+
+environment:
+  sdk: '>=2.17.0 <3.0.0'
+
+dependencies:
+  collection: ^1.16.0
+  flutter:
+    sdk: flutter
+  flutter_test:
+    sdk: flutter
+  test: ^1.20.0
+
+dev_dependencies:
+  lint: ^1.0.0
