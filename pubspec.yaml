@@ -1,6 +1,7 @@
 name: spot
 description: Chainable finders and better assertions for widget tests
 version: 0.1.0-preview.1
+repository: https://github.com/passsy/spot
 
 environment:
   sdk: '>=2.17.0 <3.0.0'
