@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print, unused_element
+// ignore_for_file: unused_element
 
 import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
@@ -243,35 +243,39 @@ extension WidgetSelectorMatcher on WidgetSelector {
 
     final elements = finder.evaluate().toList();
 
+    final errorBuilder = StringBuffer();
+
     // early exit when finder finds nothing
     if (elements.isEmpty) {
       if (parents.isEmpty) {
-        print('Could not find $this in widget tree');
-        debugDumpApp();
-        fail('Could not find $this in widget tree');
+        errorBuilder.writeln('Could not find $this in widget tree');
+        _dumpWidgetTree(errorBuilder);
+        errorBuilder.writeln('Could not find $this in widget tree');
+        fail(errorBuilder.toString());
       } else {
         int i = 0;
         for (final parent in parents) {
           i++;
           final possibleParents = parent.finder.evaluate();
-          print(
+          errorBuilder.writeln(
             'Could not find $this as child of #$i ${parent.toStringBreadcrumb()}',
           );
-          print(
+          errorBuilder.writeln(
             'There are ${possibleParents.length} possible parents for '
             '$this matching #$i ${parent.toStringBreadcrumb()}. But non matched. '
             'The widget trees starting at #$i ${parent.finder.description} are:',
           );
           int index = 0;
           for (final possibleParent in possibleParents) {
-            print("Possible parent $index:");
-            print(possibleParent.toStringDeep());
+            errorBuilder.writeln("Possible parent $index:");
+            errorBuilder.writeln(possibleParent.toStringDeep());
             index++;
           }
         }
-        fail(
+        errorBuilder.writeln(
           'Could not find $this as child of ${parents.toStringBreadcrumb()}',
         );
+        fail(errorBuilder.toString());
       }
     }
 
@@ -291,52 +295,58 @@ extension WidgetSelectorMatcher on WidgetSelector {
         for (final parent in parents) {
           i++;
           final possibleParents = parent.finder.evaluate();
-          print(
+          errorBuilder.writeln(
             'Could not find $this as child of #$i ${parent.toStringBreadcrumb()}',
           );
-          print(
+          errorBuilder.writeln(
             'There are ${possibleParents.length} possible parents for '
             '$this matching #$i ${parent.toStringBreadcrumb()}. But non matched. '
             'The widget trees starting at #$i ${parent.finder.description} are:',
           );
           int index = 0;
           for (final possibleParent in possibleParents) {
-            print("Possible parent $index:");
-            print(possibleParent.toStringDeep());
+            errorBuilder.writeln("Possible parent $index:");
+            errorBuilder.writeln(possibleParent.toStringDeep());
             index++;
           }
         }
-        fail(
+
+        errorBuilder.writeln(
           'Could not find $this as child of ${parents.toStringBreadcrumb()}',
         );
+        fail(errorBuilder.toString());
       }
     }
 
     if (matches.length > 1) {
       if (parents.isEmpty) {
-        print(
+        errorBuilder.writeln(
           'Found ${matches.length} elements matching $this in widget tree, '
           'expected only one',
         );
-        debugDumpApp();
-        fail(
+        _dumpWidgetTree(errorBuilder);
+
+        errorBuilder.writeln(
           'Found ${matches.length} elements matching $this in widget tree, '
           'expected only one',
         );
+        fail(errorBuilder.toString());
       } else {
-        print(
+        errorBuilder.writeln(
           'Found ${matches.length} elements matching $this as child of ${parents.toStringBreadcrumb()}, '
           'exepcting only one',
         );
         int index = 0;
         for (final candidate in matches) {
-          print("Possible candidate $index:");
-          print(candidate.toStringDeep());
+          errorBuilder.writeln("Possible candidate $index:");
+          errorBuilder.writeln(candidate.toStringDeep());
           index++;
         }
-        fail(
+
+        errorBuilder.writeln(
           'Found more than one $this as child of ${parents.toStringBreadcrumb()}',
         );
+        fail(errorBuilder.toString());
       }
     }
 
@@ -354,23 +364,26 @@ extension WidgetSelectorMatcher on WidgetSelector {
       });
     });
 
+    final errorBuilder = StringBuffer();
     if (match == null) {
       if (parents.isEmpty) {
-        print('Could not find $this in widget tree');
-        debugDumpApp();
-        fail('Could not find $this in widget tree');
+        errorBuilder.writeln('Could not find $this in widget tree');
+        _dumpWidgetTree(errorBuilder);
+        errorBuilder.writeln('Could not find $this in widget tree');
+        fail(errorBuilder.toString());
       } else {
-        print(
+        errorBuilder.writeln(
           'Could not find $this as child of ${parents.toStringBreadcrumb()}',
         );
         int i = 0;
         for (final parent in parents) {
           i++;
-          print('Children of #$i $parent:');
-          print(parent.finder.evaluate().first.toStringDeep());
-          fail(
+          errorBuilder.writeln('Children of #$i $parent:');
+          errorBuilder.writeln(parent.finder.evaluate().first.toStringDeep());
+          errorBuilder.writeln(
             'Could not find $this as child of #$i ${parent.toStringBreadcrumb()}',
           );
+          fail(errorBuilder.toString());
         }
       }
     }
@@ -383,6 +396,15 @@ extension WidgetSelectorMatcher on WidgetSelector {
   WidgetSelector doesNotExist() {
     expect(finder, findsNothing);
     return this;
+  }
+}
+
+void _dumpWidgetTree(StringBuffer buffer) {
+  final rootElement = WidgetsBinding.instance.renderViewElement;
+  if (rootElement != null) {
+    buffer.writeln(rootElement.toStringDeep());
+  } else {
+    buffer.writeln('<no tree currently mounted>');
   }
 }
 
