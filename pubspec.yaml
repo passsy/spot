@@ -1,6 +1,6 @@
 name: spot
-description: Chainable finders and better assertions for widget tests
-version: 0.1.0-preview.1
+description: Chainable finders and better assertions for powerful widget tests.
+version: 0.1.0-preview.2
 repository: https://github.com/passsy/spot
 
 environment:
