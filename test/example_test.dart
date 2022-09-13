@@ -20,12 +20,12 @@ void main() {
       ),
     );
 
-    final homePage = spot.byType(MaterialApp).childByType(Scaffold);
+    final homePage = spot.byType<MaterialApp>().childByType(Scaffold);
     final appBar = homePage.childByType(AppBar);
 
     appBar.childByIcon(
       Icons.settings,
-      parents: [spot.byType(IconButton)],
+      parents: [spot.byType<IconButton>()],
     ).doesNotExist();
 
     // finder alternative

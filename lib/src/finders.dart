@@ -6,20 +6,112 @@ import 'package:flutter_test/flutter_test.dart';
 
 final Spot spot = Spot();
 
-class Spot with CommonSpots {
+class Spot with CommonSpots<Widget> {
   @override
   WidgetSelector? get _self => null;
 }
 
-mixin CommonSpots {
+abstract class WidgetProp {
+  bool match(Element element);
+
+  String describe(Element element);
+}
+
+/// create delegate for WidgetProp
+class WidgetPropDelegate extends WidgetProp {
+  final bool Function(Element element) _match;
+  final String Function(Element element) _describe;
+
+  WidgetPropDelegate(this._match, this._describe);
+
+  @override
+  bool match(Element element) => _match(element);
+
+  @override
+  String describe(Element element) => _describe(element);
+}
+
+final textWidget = TextWidgetAssertions();
+
+class TextWidgetAssertions {
+  WidgetProp hasText(String text) {
+    return WidgetPropDelegate(
+      (element) =>
+          element.widget is Text && (element.widget as Text).data == text,
+      (element) => 'Text widget with text "$text"',
+    );
+  }
+}
+
+Type _typeOf<T>() => T;
+
+extension TextWidgetSelector on WidgetSelector<Text> {
+  WidgetSelector<Text> hasText(String text) {
+    final elements = this.elements;
+    for (final element in elements) {
+      final textWidget = element.widget as Text;
+      if (textWidget.data != text) {
+        throw TestFailure(
+          'Expected to find text "$text" but found "${textWidget.data}" at ${toStringBreadcrumb()}',
+        );
+      }
+    }
+    return this;
+  }
+
+  WidgetSelector<Text> containsText(String text) {
+    final elements = this.elements;
+    for (final element in elements) {
+      final textWidget = element.widget as Text;
+      if (textWidget.data != text) {
+        throw TestFailure(
+          'Expected to find text "$text" but found "${textWidget.data}" at ${toStringBreadcrumb()}',
+        );
+      }
+    }
+    return this;
+  }
+
+  WidgetSelector<Text> hasMaxLines(int maxLines) {
+    final elements = this.elements;
+    for (final element in elements) {
+      final textWidget = element.widget as Text;
+      if (textWidget.data != text) {
+        throw TestFailure(
+          'Expected to find text "$text" but found "${textWidget.data}" at ${toStringBreadcrumb()}',
+        );
+      }
+    }
+    return this;
+  }
+}
+
+void Function(WidgetSelector<Text>) withText(String text) {
+  return (w) => w.hasText(text);
+}
+
+mixin CommonSpots<T extends Widget> {
   WidgetSelector? get _self;
 
-  WidgetSelector byType(
-    Type type, {
+  WidgetSelector<W> byType<W extends Widget>({
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
+    // Very, very experimental, not likely to stay
+    // List<WidgetProp> props = const [],
+    List<void Function(WidgetSelector<W>)> props = const [],
   }) {
-    return WidgetSelector._(find.byType(type), parents, children);
+    final type = _typeOf<W>();
+    return WidgetSelector<W>._(
+      find.byElementPredicate((element) {
+        if (element.widget.runtimeType != type) return false;
+        for (final prop in props) {
+          // if (!prop.match(element)) return false;
+        }
+        return true;
+      }),
+      parents,
+      children,
+    );
   }
 
   WidgetSelector childByType(
@@ -159,7 +251,7 @@ extension SpotFinder on Finder {
 /// Represents a chain of widgets in the widget tree that can be asserted
 ///
 /// Compared to normal [Finder], this gives great error messages along the chain
-class WidgetSelector with CommonSpots {
+class WidgetSelector<T extends Widget> with CommonSpots<T> {
   WidgetSelector._(
     this.standaloneFinder, [
     List<WidgetSelector>? parents,
@@ -237,11 +329,57 @@ class WidgetSelector with CommonSpots {
   WidgetSelector get _self => this;
 }
 
-extension WidgetSelectorMatcher on WidgetSelector {
-  WidgetSelector existsOnce() {
-    final parents = this.parents;
-
+extension WidgetSelectorMatcher<T extends Widget> on WidgetSelector<T> {
+  WidgetSelector forEach(
+    void Function(Widget widget, Element element) matcher,
+  ) {
     final elements = finder.evaluate().toList();
+    for (final element in elements) {
+      matcher(element.widget, element);
+    }
+    return this;
+  }
+
+  WidgetSelector<Widget> matchProps(List<WidgetProp> matchers) {
+    final elements = finder.evaluate().toList();
+    for (final element in elements) {
+      for (final matcher in matchers) {
+        final match = matcher.match(element);
+        if (!match) {
+          throw Exception(
+            'Failed to match ${matcher.describe(element)} with ${element.widget}',
+          );
+        }
+      }
+    }
+    return this;
+  }
+
+  WidgetSelector<T> whereWidget(
+    bool Function(T widget) predicate,
+  ) {
+    final elements = finder.evaluate().toList();
+    for (final element in elements) {
+      final widget = element.widget as T;
+      final matching = predicate(widget);
+    }
+    return WidgetSelector<T>._(standaloneFinder, parents, children);
+  }
+
+  List<Element> get elements => finder.evaluate().toList();
+
+  Element get element {
+    final list = finder.evaluate().toList();
+    final first = list.firstOrNull;
+    if (first == null) {
+      throw Exception('Could not find $this in widget tree');
+    }
+    return first;
+  }
+
+  WidgetSelector<T> existsOnce() {
+    final parents = this.parents;
+    final elements = this.elements;
 
     final errorBuilder = StringBuffer();
 
@@ -352,7 +490,7 @@ extension WidgetSelectorMatcher on WidgetSelector {
 
     // all fine, found 1 element
     assert(matches.length == 1);
-    return this;
+    return WidgetSelector<T>._(standaloneFinder, parents, children);
   }
 
   WidgetSelector existsAtLeastOnce() {
