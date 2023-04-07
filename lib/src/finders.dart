@@ -114,7 +114,33 @@ mixin CommonSpots<T extends Widget> {
         }
         return true;
       }),
-      parents,
+      [if (_self != null) _self!, ...parents],
+      children,
+    );
+  }
+
+  WidgetSelector<W> constrain<W extends Widget>({
+    List<WidgetSelector> parents = const [],
+    List<WidgetSelector> children = const [],
+    // Very, very experimental, not likely to stay
+    // List<WidgetProp> props = const [],
+    List<void Function(WidgetSelector<W>)> props = const [],
+  }) {
+    final type = _typeOf<W>();
+    return WidgetSelector<W>._(
+      find.byElementPredicate((element) {
+        if (element.widget.runtimeType != type) return false;
+        for (final void Function(WidgetSelector<W>) prop in props) {
+          try {
+            prop.call(spot.byElement(element));
+            continue;
+          } catch (e) {
+            return false;
+          }
+        }
+        return true;
+      }),
+      [if (_self != null) _self!, ...parents],
       children,
     );
   }
@@ -142,10 +168,7 @@ mixin CommonSpots<T extends Widget> {
   }) {
     return WidgetSelector._(
       find.byType(type),
-      [
-        if (_self != null) _self!,
-        ...parents,
-      ],
+      [if (_self != null) _self!, ...parents],
       children,
     );
   }
@@ -518,6 +541,7 @@ extension WidgetSelectorMatcher<T extends Widget> on WidgetSelector<T> {
     final Iterable<Element> elements = finder.evaluate();
 
     final match = elements.firstWhereOrNull((element) {
+      if (parents.isEmpty) return true;
       return parents.any((WidgetSelector parent) {
         return parent.finder.apply(element.parents).isNotEmpty;
       });

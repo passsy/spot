@@ -157,8 +157,41 @@ void main() {
 
     expect(t3.element, isNotNull);
     expect(t3.elements.length, 1);
+  });
 
-    // returns multiple results again
-    final multipleChildren = t3.childByType(Text);
+  testWidgets('narrow down scope', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Center(
+          child: SizedBox(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Wrap(
+                children: [
+                  SizedBox(
+                    child: GestureDetector(
+                      child: const Text('Hello', maxLines: 2),
+                    ),
+                  ),
+                  const Text('World', maxLines: 1),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final wrap = spot.byType<Wrap>().existsOnce();
+    // only find the single sizedBox below Wrap
+    wrap.byType<SizedBox>().existsOnce();
+
+    final multipleSpotter = spot.byType<Text>().existsAtLeastOnce();
+    expect(multipleSpotter.elements.length, 2);
+
+    multipleSpotter.constrain(parents: [
+      // only finds the single SizedBox in Wrap, not the SizedBox below Center
+      wrap.byType<SizedBox>(),
+    ]);
   });
 }

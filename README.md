@@ -2,7 +2,7 @@
 
 <img src="https://user-images.githubusercontent.com/1096485/188243198-7abfc785-8ecd-40cb-bb28-5561610432a4.png" height="100px">
 
-Chainable finders and better assertions for Flutter widget tests
+Fluent, chainable Widget finders and better assertions for Flutter widget tests
 
 ## Usage
 
