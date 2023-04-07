@@ -104,13 +104,34 @@ mixin CommonSpots<T extends Widget> {
     return WidgetSelector<W>._(
       find.byElementPredicate((element) {
         if (element.widget.runtimeType != type) return false;
-        for (final prop in props) {
-          // if (!prop.match(element)) return false;
+        for (final void Function(WidgetSelector<W>) prop in props) {
+          try {
+            prop.call(spot.byElement(element));
+            continue;
+          } catch (e) {
+            return false;
+          }
         }
         return true;
       }),
       parents,
       children,
+    );
+  }
+
+  WidgetSelector<W> byWidget<W extends Widget>(W widget) {
+    return WidgetSelector<W>._(
+      find.byWidget(widget),
+      [],
+      [],
+    );
+  }
+
+  WidgetSelector<W> byElement<W extends Widget>(Element element) {
+    return WidgetSelector<W>._(
+      find.byElementPredicate((e) => e == element),
+      [],
+      [],
     );
   }
 
