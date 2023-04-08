@@ -1,6 +1,5 @@
 // ignore_for_file: unused_element
 
-import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -102,18 +101,22 @@ mixin CommonSpots<T extends Widget> {
   }) {
     final type = _typeOf<W>();
     return WidgetSelector<W>._(
-      find.byElementPredicate((element) {
-        if (element.widget.runtimeType != type) return false;
-        for (final void Function(WidgetSelector<W>) prop in props) {
-          try {
-            prop.call(spot.byElement(element));
-            continue;
-          } catch (e) {
-            return false;
-          }
-        }
-        return true;
-      }),
+      ElementTreeQuery(
+        (Element e) => e.widget.runtimeType == type,
+        description: 'Widget of type $type',
+      ),
+      // find.byElementPredicate((element) {
+      //   if (element.widget.runtimeType != type) return false;
+      //   for (final void Function(WidgetSelector<W>) prop in props) {
+      //     try {
+      //       prop.call(spot.byElement(element));
+      //       continue;
+      //     } catch (e) {
+      //       return false;
+      //     }
+      //   }
+      //   return true;
+      // }),
       [if (_self != null) _self!, ...parents],
       children,
     );
@@ -128,18 +131,10 @@ mixin CommonSpots<T extends Widget> {
   }) {
     final type = _typeOf<W>();
     return WidgetSelector<W>._(
-      find.byElementPredicate((element) {
-        if (element.widget.runtimeType != type) return false;
-        for (final void Function(WidgetSelector<W>) prop in props) {
-          try {
-            prop.call(spot.byElement(element));
-            continue;
-          } catch (e) {
-            return false;
-          }
-        }
-        return true;
-      }),
+      ElementTreeQuery(
+        (Element e) => e.widget.runtimeType == type,
+        description: 'Widget of type $type',
+      ),
       [if (_self != null) _self!, ...parents],
       children,
     );
@@ -147,7 +142,10 @@ mixin CommonSpots<T extends Widget> {
 
   WidgetSelector<W> byWidget<W extends Widget>(W widget) {
     return WidgetSelector<W>._(
-      find.byWidget(widget),
+      ElementTreeQuery(
+        (Element e) => e.widget == widget,
+        description: 'Widget matches $widget',
+      ),
       [],
       [],
     );
@@ -155,7 +153,10 @@ mixin CommonSpots<T extends Widget> {
 
   WidgetSelector<W> byElement<W extends Widget>(Element element) {
     return WidgetSelector<W>._(
-      find.byElementPredicate((e) => e == element),
+      ElementTreeQuery(
+        (Element e) => e == element,
+        description: 'Element matches $element',
+      ),
       [],
       [],
     );
@@ -167,19 +168,22 @@ mixin CommonSpots<T extends Widget> {
     List<WidgetSelector> children = const [],
   }) {
     return WidgetSelector._(
-      find.byType(type),
+      ElementTreeQuery(
+        (Element e) => e.widget.runtimeType == type,
+        description: 'Widget of type $type',
+      ),
       [if (_self != null) _self!, ...parents],
       children,
     );
   }
 
   WidgetSelector childByWidgetPredicate(
-    WidgetPredicate predicate, {
+    ElementTreeQuery predicate, {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
     return WidgetSelector._(
-      find.byWidgetPredicate(predicate),
+      predicate,
       [if (_self != null) _self!, ...parents],
       children,
     );
@@ -191,7 +195,10 @@ mixin CommonSpots<T extends Widget> {
     List<WidgetSelector> children = const [],
   }) {
     return WidgetSelector._(
-      find.byElementType(type),
+      ElementTreeQuery(
+        (Element e) => e.runtimeType == type,
+        description: 'Element of type $type',
+      ),
       [
         if (_self != null) _self!,
         ...parents,
@@ -202,94 +209,113 @@ mixin CommonSpots<T extends Widget> {
 
   WidgetSelector text(
     String text, {
-    bool findRichText = false,
-    bool skipOffstage = true,
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    final finder = find.text(
-      text,
-      findRichText: findRichText,
-      skipOffstage: skipOffstage,
-    );
     return WidgetSelector._(
-      finder,
+      ElementTreeQuery(
+        (Element e) {
+          if (e.widget is Text) {
+            return (e.widget as Text).data == text;
+          }
+          if (e.widget is EditableText) {
+            return (e.widget as EditableText).controller.text == text;
+          }
+          if (e.widget is RichText) {
+            return (e.widget as RichText).text.toPlainText() == text;
+          }
+          return false;
+        },
+        description: 'Widget with exact text: "$text"',
+      ),
       [if (_self != null) _self!, ...parents],
       children,
     );
   }
 
-  /// Caution: this is a very expensive operation.
-  WidgetSelector childWidgetWithText(
-    Type widgetType,
-    String text, {
-    bool skipOffstage = true,
-    List<WidgetSelector> parents = const [],
-    List<WidgetSelector> children = const [],
-  }) {
-    final finder = find.widgetWithText(
-      widgetType,
-      text,
-      skipOffstage: skipOffstage,
-    );
-    return WidgetSelector._(
-      finder,
-      [if (_self != null) _self!, ...parents],
-      children,
-    );
-  }
+  // /// Caution: this is a very expensive operation.
+  // WidgetSelector childWidgetWithText(
+  //   Type widgetType,
+  //   String text, {
+  //   bool skipOffstage = true,
+  //   List<WidgetSelector> parents = const [],
+  //   List<WidgetSelector> children = const [],
+  // }) {
+  //   final finder = find.widgetWithText(
+  //     widgetType,
+  //     text,
+  //     skipOffstage: skipOffstage,
+  //   );
+  //   return WidgetSelector._(
+  //     finder,
+  //     [if (_self != null) _self!, ...parents],
+  //     children,
+  //   );
+  // }
 
-  WidgetSelector textContaining(
-    Pattern pattern, {
-    bool skipOffstage = true,
-    List<WidgetSelector> parents = const [],
-    List<WidgetSelector> children = const [],
-  }) {
-    final finder = find.textContaining(
-      pattern,
-      skipOffstage: skipOffstage,
-    );
-    return WidgetSelector._(
-      finder,
-      [if (_self != null) _self!, ...parents],
-      children,
-    );
-  }
-
-  WidgetSelector childByIcon(
-    IconData icon, {
-    bool skipOffstage = true,
-    List<WidgetSelector> parents = const [],
-    List<WidgetSelector> children = const [],
-  }) {
-    final finder = find.byIcon(
-      icon,
-      skipOffstage: skipOffstage,
-    );
-    return WidgetSelector._(
-      finder,
-      [if (_self != null) _self!, ...parents],
-      children,
-    );
-  }
-
-  WidgetSelector child(
-    Finder finder, {
-    List<WidgetSelector> parents = const [],
-    List<WidgetSelector> children = const [],
-  }) {
-    return WidgetSelector._(
-      finder,
-      [if (_self != null) _self!, ...parents],
-      children,
-    );
-  }
+  // WidgetSelector textContaining(
+  //   Pattern pattern, {
+  //   bool skipOffstage = true,
+  //   List<WidgetSelector> parents = const [],
+  //   List<WidgetSelector> children = const [],
+  // }) {
+  //   final finder = find.textContaining(
+  //     pattern,
+  //     skipOffstage: skipOffstage,
+  //   );
+  //   return WidgetSelector._(
+  //     finder,
+  //     [if (_self != null) _self!, ...parents],
+  //     children,
+  //   );
+  // }
+  //
+  // WidgetSelector childByIcon(
+  //   IconData icon, {
+  //   bool skipOffstage = true,
+  //   List<WidgetSelector> parents = const [],
+  //   List<WidgetSelector> children = const [],
+  // }) {
+  //   final finder = find.byIcon(
+  //     icon,
+  //     skipOffstage: skipOffstage,
+  //   );
+  //   return WidgetSelector._(
+  //     finder,
+  //     [if (_self != null) _self!, ...parents],
+  //     children,
+  //   );
+  // }
+  //
+  // WidgetSelector child(
+  //   Finder finder, {
+  //   List<WidgetSelector> parents = const [],
+  //   List<WidgetSelector> children = const [],
+  // }) {
+  //   return WidgetSelector._(
+  //     finder,
+  //     [if (_self != null) _self!, ...parents],
+  //     children,
+  //   );
+  // }
 }
 
 extension SpotFinder on Finder {
   WidgetSelector get spot {
-    return WidgetSelector._(this);
+    return WidgetSelector._(
+      ElementTreeQuery(
+        (e) => evaluate().contains(e),
+        description: 'Finder: ${description}',
+      ),
+    );
   }
+}
+
+class ElementTreeQuery {
+  final bool Function(Element) predicate;
+  final String description;
+
+  ElementTreeQuery(this.predicate, {required this.description});
 }
 
 /// Represents a chain of widgets in the widget tree that can be asserted
@@ -297,69 +323,69 @@ extension SpotFinder on Finder {
 /// Compared to normal [Finder], this gives great error messages along the chain
 class WidgetSelector<T extends Widget> with CommonSpots<T> {
   WidgetSelector._(
-    this.standaloneFinder, [
+    this.query, [
     List<WidgetSelector>? parents,
     List<WidgetSelector>? children,
   ])  : parents = parents ?? [],
         children = children ?? [];
 
-  final Finder standaloneFinder;
+  final ElementTreeQuery query;
   final List<WidgetSelector> parents;
   final List<WidgetSelector> children;
 
-  Finder get finder {
-    final ancestors = parents;
-    final descendants = children;
-    if (descendants.isEmpty && ancestors.isEmpty) {
-      return standaloneFinder;
-    }
-
-    if (descendants.isEmpty) {
-      if (ancestors.length == 1) {
-        return find.descendant(
-          of: ancestors.first.finder,
-          matching: standaloneFinder,
-        );
-      }
-      return _MultiAncestorDescendantFinder(
-        ancestors.map((e) => e.finder).toList(),
-        standaloneFinder,
-      );
-    }
-
-    if (ancestors.isEmpty) {
-      if (descendants.length == 1) {
-        return find.ancestor(
-          of: descendants.first.finder,
-          matching: standaloneFinder,
-        );
-      }
-      return _MultiDescendantsAncestorFinder(
-        descendants.map((e) => e.finder).toList(),
-        standaloneFinder,
-      );
-    }
-
-    // this always works but produces unnecessary nesting and harder to read error messages
-    return _MultiAncestorDescendantFinder(
-      ancestors.map((e) => e.finder).toList(),
-      _MultiDescendantsAncestorFinder(
-        descendants.map((e) => e.finder).toList(),
-        standaloneFinder,
-      ),
-    );
-  }
+  // Finder get finder {
+  //   final ancestors = parents;
+  //   final descendants = children;
+  //   if (descendants.isEmpty && ancestors.isEmpty) {
+  //     return standaloneFinder;
+  //   }
+  //
+  //   if (descendants.isEmpty) {
+  //     if (ancestors.length == 1) {
+  //       return find.descendant(
+  //         of: ancestors.first.finder,
+  //         matching: standaloneFinder,
+  //       );
+  //     }
+  //     return _MultiAncestorDescendantFinder(
+  //       ancestors.map((e) => e.finder).toList(),
+  //       standaloneFinder,
+  //     );
+  //   }
+  //
+  //   if (ancestors.isEmpty) {
+  //     if (descendants.length == 1) {
+  //       return find.ancestor(
+  //         of: descendants.first.finder,
+  //         matching: standaloneFinder,
+  //       );
+  //     }
+  //     return _MultiDescendantsAncestorFinder(
+  //       descendants.map((e) => e.finder).toList(),
+  //       standaloneFinder,
+  //     );
+  //   }
+  //
+  //   // this always works but produces unnecessary nesting and harder to read error messages
+  //   return _MultiAncestorDescendantFinder(
+  //     ancestors.map((e) => e.finder).toList(),
+  //     _MultiDescendantsAncestorFinder(
+  //       descendants.map((e) => e.finder).toList(),
+  //       standaloneFinder,
+  //     ),
+  //   );
+  // }
 
   @override
   String toString() {
-    return "'${standaloneFinder.description}'";
+    return "'${query.description}'";
   }
 
   String toStringBreadcrumb() {
     final parents = this.parents;
 
     if (parents.isEmpty) {
-      return standaloneFinder.description;
+      return query.description;
     }
     final parentBreadcrumbs = parents.map((e) => e.toStringBreadcrumb());
     if (parentBreadcrumbs.length == 1) {
@@ -374,51 +400,79 @@ class WidgetSelector<T extends Widget> with CommonSpots<T> {
 }
 
 extension WidgetSelectorMatcher<T extends Widget> on WidgetSelector<T> {
-  WidgetSelector forEach(
-    void Function(Widget widget, Element element) matcher,
-  ) {
-    final elements = finder.evaluate().toList();
-    for (final element in elements) {
-      matcher(element.widget, element);
-    }
-    return this;
-  }
+  // WidgetSelector forEach(
+  //   void Function(Widget widget, Element element) matcher,
+  // ) {
+  //   final elements = finder.evaluate().toList();
+  //   for (final element in elements) {
+  //     matcher(element.widget, element);
+  //   }
+  //   return this;
+  // }
+  //
+  // WidgetSelector<Widget> matchProps(List<WidgetProp> matchers) {
+  //   final elements = finder.evaluate().toList();
+  //   for (final element in elements) {
+  //     for (final matcher in matchers) {
+  //       final match = matcher.match(element);
+  //       if (!match) {
+  //         throw Exception(
+  //           'Failed to match ${matcher.describe(element)} with ${element.widget}',
+  //         );
+  //       }
+  //     }
+  //   }
+  //   return this;
+  // }
+  //
+  // WidgetSelector<T> whereWidget(
+  //   bool Function(T widget) predicate,
+  // ) {
+  //   final elements = finder.evaluate().toList();
+  //   for (final element in elements) {
+  //     final widget = element.widget as T;
+  //     final matching = predicate(widget);
+  //   }
+  //   return WidgetSelector<T>._(predicate, parents, children);
+  // }
 
-  WidgetSelector<Widget> matchProps(List<WidgetProp> matchers) {
-    final elements = finder.evaluate().toList();
-    for (final element in elements) {
-      for (final matcher in matchers) {
-        final match = matcher.match(element);
-        if (!match) {
-          throw Exception(
-            'Failed to match ${matcher.describe(element)} with ${element.widget}',
-          );
+  // TODO Make errors better.
+  // This method works great, but errors are impossible to formulate because we only get the result.
+  // Therefore, move this method in to existsOnce() and co for better error messages.
+  // Idea: Return whole search tree with all information, then use that to generate error messages.
+  List<Element> get elements {
+    if (parents.isEmpty) {
+      // global
+      final all = collectAllElementsFrom(
+        WidgetsBinding.instance.renderViewElement!,
+        skipOffstage: true,
+      ).toList();
+      final matching = all.where((e) => query.predicate(e)).toList();
+      return matching;
+    }
+
+    final List<List<Element>> parentGroups =
+        parents.map((e) => e.elements).toList();
+    final List<Element> candidates = [];
+    for (final parents in parentGroups) {
+      for (final parent in parents) {
+        final children =
+            collectAllElementsFrom(parent, skipOffstage: true).toList();
+        final matching = children.where((e) => query.predicate(e)).toList();
+        if (matching.isNotEmpty) {
+          candidates.addAll(matching);
         }
       }
     }
-    return this;
+    return candidates;
   }
-
-  WidgetSelector<T> whereWidget(
-    bool Function(T widget) predicate,
-  ) {
-    final elements = finder.evaluate().toList();
-    for (final element in elements) {
-      final widget = element.widget as T;
-      final matching = predicate(widget);
-    }
-    return WidgetSelector<T>._(standaloneFinder, parents, children);
-  }
-
-  List<Element> get elements => finder.evaluate().toList();
 
   Element get element {
-    final list = finder.evaluate().toList();
-    final first = list.firstOrNull;
-    if (first == null) {
+    final elements = this.elements;
+    if (elements.isEmpty) {
       throw Exception('Could not find $this in widget tree');
     }
-    return first;
+    return elements.first;
   }
 
   WidgetSelector<T> existsOnce() {
@@ -426,150 +480,155 @@ extension WidgetSelectorMatcher<T extends Widget> on WidgetSelector<T> {
     final elements = this.elements;
 
     final errorBuilder = StringBuffer();
-
-    // early exit when finder finds nothing
-    if (elements.isEmpty) {
-      if (parents.isEmpty) {
-        errorBuilder.writeln('Could not find $this in widget tree');
-        _dumpWidgetTree(errorBuilder);
-        errorBuilder.writeln('Could not find $this in widget tree');
-        fail(errorBuilder.toString());
-      } else {
-        int i = 0;
-        for (final parent in parents) {
-          i++;
-          final possibleParents = parent.finder.evaluate();
-          errorBuilder.writeln(
-            'Could not find $this as child of #$i ${parent.toStringBreadcrumb()}',
-          );
-          errorBuilder.writeln(
-            'There are ${possibleParents.length} possible parents for '
-            '$this matching #$i ${parent.toStringBreadcrumb()}. But non matched. '
-            'The widget trees starting at #$i ${parent.finder.description} are:',
-          );
-          int index = 0;
-          for (final possibleParent in possibleParents) {
-            errorBuilder.writeln("Possible parent $index:");
-            errorBuilder.writeln(possibleParent.toStringDeep());
-            index++;
-          }
-        }
-        errorBuilder.writeln(
-          'Could not find $this as child of ${parents.toStringBreadcrumb()}',
-        );
-        fail(errorBuilder.toString());
-      }
-    }
-
-    Iterable<Element> matches = elements;
-    if (parents.isNotEmpty) {
-      // check if elements matches parents
-      matches = elements.where((candidate) {
-        return parents.every((WidgetSelector parent) {
-          final elementParents = candidate.parents;
-          final found = parent.finder.apply(elementParents).toList();
-          return found.isNotEmpty;
-        });
-      });
-
-      if (matches.isEmpty) {
-        int i = 0;
-        for (final parent in parents) {
-          i++;
-          final possibleParents = parent.finder.evaluate();
-          errorBuilder.writeln(
-            'Could not find $this as child of #$i ${parent.toStringBreadcrumb()}',
-          );
-          errorBuilder.writeln(
-            'There are ${possibleParents.length} possible parents for '
-            '$this matching #$i ${parent.toStringBreadcrumb()}. But non matched. '
-            'The widget trees starting at #$i ${parent.finder.description} are:',
-          );
-          int index = 0;
-          for (final possibleParent in possibleParents) {
-            errorBuilder.writeln("Possible parent $index:");
-            errorBuilder.writeln(possibleParent.toStringDeep());
-            index++;
-          }
-        }
-
-        errorBuilder.writeln(
-          'Could not find $this as child of ${parents.toStringBreadcrumb()}',
-        );
-        fail(errorBuilder.toString());
-      }
-    }
-
-    if (matches.length > 1) {
-      if (parents.isEmpty) {
-        errorBuilder.writeln(
-          'Found ${matches.length} elements matching $this in widget tree, '
-          'expected only one',
-        );
-        _dumpWidgetTree(errorBuilder);
-
-        errorBuilder.writeln(
-          'Found ${matches.length} elements matching $this in widget tree, '
-          'expected only one',
-        );
-        fail(errorBuilder.toString());
-      } else {
-        errorBuilder.writeln(
-          'Found ${matches.length} elements matching $this as child of ${parents.toStringBreadcrumb()}, '
-          'exepcting only one',
-        );
-        int index = 0;
-        for (final candidate in matches) {
-          errorBuilder.writeln("Possible candidate $index:");
-          errorBuilder.writeln(candidate.toStringDeep());
-          index++;
-        }
-
-        errorBuilder.writeln(
-          'Found more than one $this as child of ${parents.toStringBreadcrumb()}',
-        );
-        fail(errorBuilder.toString());
-      }
-    }
-
-    // all fine, found 1 element
-    assert(matches.length == 1);
-    return WidgetSelector<T>._(standaloneFinder, parents, children);
+    //
+    // // early exit when finder finds nothing
+    // if (elements.isEmpty) {
+    //   if (parents.isEmpty) {
+    //     errorBuilder.writeln('Could not find $this in widget tree');
+    //     _dumpWidgetTree(errorBuilder);
+    //     errorBuilder.writeln('Could not find $this in widget tree');
+    //     fail(errorBuilder.toString());
+    //   } else {
+    //     int i = 0;
+    //     for (final parent in parents) {
+    //       i++;
+    //       final possibleParents = parent.finder.evaluate();
+    //       errorBuilder.writeln(
+    //         'Could not find $this as child of #$i ${parent.toStringBreadcrumb()}',
+    //       );
+    //       errorBuilder.writeln(
+    //         'There are ${possibleParents.length} possible parents for '
+    //         '$this matching #$i ${parent.toStringBreadcrumb()}. But non matched. '
+    //         'The widget trees starting at #$i ${parent.finder.description} are:',
+    //       );
+    //       int index = 0;
+    //       for (final possibleParent in possibleParents) {
+    //         errorBuilder.writeln("Possible parent $index:");
+    //         errorBuilder.writeln(possibleParent.toStringDeep());
+    //         index++;
+    //       }
+    //     }
+    //     errorBuilder.writeln(
+    //       'Could not find $this as child of ${parents.toStringBreadcrumb()}',
+    //     );
+    //     fail(errorBuilder.toString());
+    //   }
+    // }
+    //
+    // Iterable<Element> matches = elements;
+    // if (parents.isNotEmpty) {
+    //   // check if elements matches parents
+    //   matches = elements.where((candidate) {
+    //     return parents.every((WidgetSelector parent) {
+    //       final elementParents = candidate.parents;
+    //       final found = parent.finder.apply(elementParents).toList();
+    //       return found.isNotEmpty;
+    //     });
+    //   });
+    //
+    //   if (matches.isEmpty) {
+    //     int i = 0;
+    //     for (final parent in parents) {
+    //       i++;
+    //       final possibleParents = parent.finder.evaluate();
+    //       errorBuilder.writeln(
+    //         'Could not find $this as child of #$i ${parent.toStringBreadcrumb()}',
+    //       );
+    //       errorBuilder.writeln(
+    //         'There are ${possibleParents.length} possible parents for '
+    //         '$this matching #$i ${parent.toStringBreadcrumb()}. But non matched. '
+    //         'The widget trees starting at #$i ${parent.finder.description} are:',
+    //       );
+    //       int index = 0;
+    //       for (final possibleParent in possibleParents) {
+    //         errorBuilder.writeln("Possible parent $index:");
+    //         errorBuilder.writeln(possibleParent.toStringDeep());
+    //         index++;
+    //       }
+    //     }
+    //
+    //     errorBuilder.writeln(
+    //       'Could not find $this as child of ${parents.toStringBreadcrumb()}',
+    //     );
+    //     fail(errorBuilder.toString());
+    //   }
+    // }
+    //
+    // if (matches.length > 1) {
+    //   if (parents.isEmpty) {
+    //     errorBuilder.writeln(
+    //       'Found ${matches.length} elements matching $this in widget tree, '
+    //       'expected only one',
+    //     );
+    //     _dumpWidgetTree(errorBuilder);
+    //
+    //     errorBuilder.writeln(
+    //       'Found ${matches.length} elements matching $this in widget tree, '
+    //       'expected only one',
+    //     );
+    //     fail(errorBuilder.toString());
+    //   } else {
+    //     errorBuilder.writeln(
+    //       'Found ${matches.length} elements matching $this as child of ${parents.toStringBreadcrumb()}, '
+    //       'exepcting only one',
+    //     );
+    //     int index = 0;
+    //     for (final candidate in matches) {
+    //       errorBuilder.writeln("Possible candidate $index:");
+    //       errorBuilder.writeln(candidate.toStringDeep());
+    //       index++;
+    //     }
+    //
+    //     errorBuilder.writeln(
+    //       'Found more than one $this as child of ${parents.toStringBreadcrumb()}',
+    //     );
+    //     fail(errorBuilder.toString());
+    //   }
+    // }
+    //
+    // // all fine, found 1 element
+    // assert(matches.length == 1);
+    // return WidgetSelector<T>._(predicate, parents, children);
+    // return WidgetSelector<T>._(
+    //     ElementTreeQuery((e) => false, description: 'Exactly Element X'),
+    //     parents,
+    //     children);
+    return this;
   }
 
   WidgetSelector existsAtLeastOnce() {
-    final Iterable<Element> elements = finder.evaluate();
-
-    final match = elements.firstWhereOrNull((element) {
-      if (parents.isEmpty) return true;
-      return parents.any((WidgetSelector parent) {
-        return parent.finder.apply(element.parents).isNotEmpty;
-      });
-    });
-
-    final errorBuilder = StringBuffer();
-    if (match == null) {
-      if (parents.isEmpty) {
-        errorBuilder.writeln('Could not find $this in widget tree');
-        _dumpWidgetTree(errorBuilder);
-        errorBuilder.writeln('Could not find $this in widget tree');
-        fail(errorBuilder.toString());
-      } else {
-        errorBuilder.writeln(
-          'Could not find $this as child of ${parents.toStringBreadcrumb()}',
-        );
-        int i = 0;
-        for (final parent in parents) {
-          i++;
-          errorBuilder.writeln('Children of #$i $parent:');
-          errorBuilder.writeln(parent.finder.evaluate().first.toStringDeep());
-          errorBuilder.writeln(
-            'Could not find $this as child of #$i ${parent.toStringBreadcrumb()}',
-          );
-          fail(errorBuilder.toString());
-        }
-      }
-    }
+    // final Iterable<Element> elements = finder.evaluate();
+    //
+    // final match = elements.firstWhereOrNull((element) {
+    //   if (parents.isEmpty) return true;
+    //   return parents.any((WidgetSelector parent) {
+    //     return parent.finder.apply(element.parents).isNotEmpty;
+    //   });
+    // });
+    //
+    // final errorBuilder = StringBuffer();
+    // if (match == null) {
+    //   if (parents.isEmpty) {
+    //     errorBuilder.writeln('Could not find $this in widget tree');
+    //     _dumpWidgetTree(errorBuilder);
+    //     errorBuilder.writeln('Could not find $this in widget tree');
+    //     fail(errorBuilder.toString());
+    //   } else {
+    //     errorBuilder.writeln(
+    //       'Could not find $this as child of ${parents.toStringBreadcrumb()}',
+    //     );
+    //     int i = 0;
+    //     for (final parent in parents) {
+    //       i++;
+    //       errorBuilder.writeln('Children of #$i $parent:');
+    //       errorBuilder.writeln(parent.finder.evaluate().first.toStringDeep());
+    //       errorBuilder.writeln(
+    //         'Could not find $this as child of #$i ${parent.toStringBreadcrumb()}',
+    //       );
+    //       fail(errorBuilder.toString());
+    //     }
+    //   }
+    // }
 
     // all fine, found at least 1 element
     assert(elements.isNotEmpty);
@@ -577,7 +636,8 @@ extension WidgetSelectorMatcher<T extends Widget> on WidgetSelector<T> {
   }
 
   WidgetSelector doesNotExist() {
-    expect(finder, findsNothing);
+    // TODO
+    // expect(finder, findsNothing);
     return this;
   }
 }
