@@ -270,22 +270,26 @@ mixin CommonSpots<T extends Widget> {
   //   );
   // }
   //
-  // WidgetSelector childByIcon(
-  //   IconData icon, {
-  //   bool skipOffstage = true,
-  //   List<WidgetSelector> parents = const [],
-  //   List<WidgetSelector> children = const [],
-  // }) {
-  //   final finder = find.byIcon(
-  //     icon,
-  //     skipOffstage: skipOffstage,
-  //   );
-  //   return WidgetSelector._(
-  //     finder,
-  //     [if (_self != null) _self!, ...parents],
-  //     children,
-  //   );
-  // }
+  WidgetSelector childByIcon(
+    IconData icon, {
+    bool skipOffstage = true,
+    List<WidgetSelector> parents = const [],
+    List<WidgetSelector> children = const [],
+  }) {
+    return WidgetSelector._(
+      ElementTreeQuery(
+        (Element e) {
+          if (e.widget is Icon) {
+            return (e.widget as Icon).icon == icon;
+          }
+          return false;
+        },
+        description: 'Widget with icon: "$icon"',
+      ),
+      [if (_self != null) _self!, ...parents],
+      children,
+    );
+  }
   //
   // WidgetSelector child(
   //   Finder finder, {
