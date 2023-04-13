@@ -52,6 +52,14 @@ void main() {
         ),
       ),
     );
+    spot.byType<Text>(
+      parents: [spot.byType<Wrap>(), spot.byType<GestureDetector>()],
+      children: [spot.byType<Wrap>(), spot.byType<GestureDetector>()],
+      props: [
+        withText('Hello'),
+      ],
+    );
+
     spot.text(
       'Hello',
       parents: [spot.byType<Wrap>(), spot.byType<GestureDetector>()],

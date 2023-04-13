@@ -16,4 +16,4 @@ dependencies:
   test: ^1.20.0
 
 dev_dependencies:
-  lint: ^1.0.0
+  lint: '>=1.0.0 <3.0.0'

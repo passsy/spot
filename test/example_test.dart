@@ -20,6 +20,9 @@ void main() {
       ),
     );
 
+    final result = spot.byType<MaterialApp>().snapshot();
+    expect(result.matchingElements.length, 1);
+
     final homePage = spot.byType<MaterialApp>().childByType(Scaffold);
     final appBar = homePage.childByType(AppBar);
 
