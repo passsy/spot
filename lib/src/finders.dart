@@ -357,9 +357,11 @@ class WidgetSelector<W extends Widget> with CommonSpots<W> {
         children = children ?? [],
         props = props ?? [];
 
-  final ElementTreeQuery query;
   final List<WidgetSelector> parents;
   final List<WidgetSelector> children;
+
+  // TODO combine
+  final ElementTreeQuery query;
   final List<PropSelector<W>> props;
 
   @override
@@ -484,57 +486,58 @@ extension WidgetTreeSnapshotter<W extends Widget> on WidgetSelector<W> {
 
     final List<SpotNode> propMatches = [];
     final Map<WidgetSelector, SpotSnapshot> childSearchResults = {};
-    bool allPropsMatch = true;
-    bool allChildrenMatch = true;
+
+    final List<SpotNode<W>> matchingChildNodes = [];
+    final List<SpotNode<W>> matchingPropNodes = [];
 
     // Then check for every queryMatch if the children and props match
     for (final SpotNode<W> queryMatch in queryMatches) {
-      for (final WidgetSelector<Widget> childMatcher in children) {
-        final SpotSnapshot<Widget> snapshot =
-            childMatcher._takeScopedSnapshot(queryMatch);
-        if (snapshot.discovered.isNotEmpty) {
-          final selector = childMatcher.constrain(children: [childMatcher]);
-          childSearchResults.putIfAbsent(selector, () => snapshot);
-        } else {
-          allChildrenMatch = false;
+      if (children.isEmpty) {
+        matchingChildNodes.add(queryMatch);
+      } else {
+        for (final WidgetSelector<Widget> childMatcher in children) {
+          final SpotSnapshot<Widget> snapshot =
+              childMatcher._takeScopedSnapshot(queryMatch);
+          if (snapshot.discovered.isNotEmpty) {
+            // final selector = childMatcher.constrain(children: [childMatcher]);
+            // childSearchResults.putIfAbsent(selector, () => snapshot);
+            matchingChildNodes.add(queryMatch);
+          }
         }
       }
 
-      for (final PropSelector<W> prop in props) {
-        try {
-          final selector = queryMatch.selector;
-          prop.call(selector);
-          final selectorWithSingleProp =
-              selector.copyWith(children: [], props: [prop]);
-          propMatches.add(
-            SpotNode(
-              selector: selectorWithSingleProp,
-              parent: queryMatch.parent,
-              value: queryMatch.value,
-              candidates: queryMatch.parent!.candidates,
-            ),
-          );
-        } catch (e) {
-          allPropsMatch = false;
+      if (props.isEmpty) {
+        matchingPropNodes.add(queryMatch);
+      } else {
+        for (final PropSelector<W> prop in props) {
+          try {
+            final selector = queryMatch.selector;
+            prop.call(selector);
+            final selectorWithSingleProp =
+                selector.copyWith(children: [], props: [prop]);
+            propMatches.add(
+              SpotNode(
+                selector: selectorWithSingleProp,
+                parent: queryMatch.parent,
+                value: queryMatch.value,
+                candidates: queryMatch.parent!.candidates,
+              ),
+            );
+          } catch (e) {
+            // allPropsMatch = false;
+          }
         }
       }
     }
 
     final List<SpotNode> discovered = () {
-      if (allPropsMatch && allChildrenMatch) {
-        if (children.isEmpty && props.isEmpty) {
-          return queryMatches;
-        } else {
-          // combine child and prop filters
-          final childDiscovered = childSearchResults.values
-              .expand((snapshot) => snapshot.discovered)
-              .toList();
-          return childDiscovered
-              .where((element) => propMatches.contains(element))
-              .toList();
+      final List<SpotNode> matchesBoth = [];
+      for (final childMatch in matchingChildNodes) {
+        if (matchingPropNodes.contains(childMatch)) {
+          matchesBoth.add(childMatch);
         }
       }
-      return <SpotNode>[];
+      return matchesBoth;
     }();
 
     return SpotSnapshot(
