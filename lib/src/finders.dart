@@ -365,7 +365,7 @@ class MultiWidgetSelector<W extends Widget> extends WidgetSelector<W> {
 ///
 /// Compared to normal [Finder], this gives great error messages along the chain
 class WidgetSelector<W extends Widget> with CommonSpots<W> {
-  static final WidgetSelector root = WidgetSelector._(
+  static final WidgetSelector all = WidgetSelector._(
     query: ElementTreeQuery(
       (e) => true,
       description: 'Root',
@@ -384,12 +384,12 @@ class WidgetSelector<W extends Widget> with CommonSpots<W> {
   final List<WidgetSelector> parents;
   final List<WidgetSelector> children;
 
-  /// True when this selector should only match a single widget
-  final bool? matchesSingleWidget;
-
-  // TODO combine
+  // TODO combine?
   final ElementTreeQuery query;
   void Function(WidgetMatcher<W>)? props;
+
+  /// True when this selector should only match a single widget
+  final bool? matchesSingleWidget;
 
   @override
   String toString() {
@@ -487,7 +487,7 @@ class SpotNode<W extends Widget> {
 }
 
 class SpotSnapshot<W extends Widget> {
-  final WidgetSelector selector;
+  final WidgetSelector<W> selector;
 
   final List<SpotNode<W>> discovered;
 

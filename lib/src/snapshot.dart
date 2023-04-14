@@ -1,14 +1,15 @@
 import 'dart:collection';
 
+import 'package:collection/collection.dart';
+import 'package:dartx/dartx.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
-import 'package:dartx/dartx.dart';
 
 SpotSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
   final rootElement = WidgetsBinding.instance.renderViewElement!;
   final origin = SpotNode(
-    selector: WidgetSelector.root,
+    selector: WidgetSelector.all,
     parent: null,
     value: rootElement,
     matchesChildren: [rootElement],
@@ -355,33 +356,66 @@ extension WidgetSelectorMatcher<W extends Widget> on SpotSnapshot<W> {
       errorBuilder.writeln('Could not find $selector in widget tree');
       fail(errorBuilder.toString());
     }
-    //
-    // final List<Element> matchingParents = [];
-    // final List<Element> matchingChildren = [];
-    // final List<Element> matchingProps = [];
-    //
-    // if (parents.isNotEmpty) {
-    //   // check if elements matches parents
-    //   final found = elements
-    //       .where((candidate) {
-    //         return parents.every((WidgetSelector parent) {
-    //           final candidateParents = candidate.parents;
-    //           return parent.elements.any((e) => candidateParents.contains(e));
-    //         });
-    //       })
-    //       .toSet()
-    //       .toList();
-    //   matchingParents.addAll(found);
-    // }
-    // if (children.isNotEmpty) {
-    //   final found = elements
-    //       .where((candidate) {
-    //         return candidate.children.contains(candidate);
-    //       })
-    //       .toSet()
-    //       .toList();
-    //   matchingChildren.addAll(found);
-    // }
+
+    final List<WidgetSelector<W> Function(WidgetSelector<W>)> criteria = [];
+    criteria.add((selector) {
+      return selector.copyWith(query: selector.query);
+    });
+    if (selector.props != null) {
+      criteria.add((selector) {
+        return selector.copyWith(props: selector.props);
+      });
+    }
+    for (final parent in selector.parents) {
+      criteria.add((selector) {
+        return selector.copyWith(parents: [...selector.parents, parent]);
+      });
+    }
+    for (final child in selector.children) {
+      criteria.add((selector) {
+        return selector.copyWith(children: [...selector.children, child]);
+      });
+    }
+
+    final criteriaSubset = subset(criteria);
+
+    WidgetSelector<W> buildSelector(
+      List<WidgetSelector<W> Function(WidgetSelector<W>)> criteria,
+    ) {
+      WidgetSelector<W> s = selector.copyWith(
+        query: selector.query,
+        props: selector.props,
+        parents: [],
+        children: [],
+      );
+      for (final criteria in criteria) {
+        s = criteria(s);
+      }
+      return s;
+    }
+
+    print('criteriaSubset: $criteriaSubset');
+    if (criteriaSubset.length > 1) {
+      for (final lessSpecificCriteria in criteriaSubset) {
+        final lessSpecificSelector = buildSelector(lessSpecificCriteria);
+        final lessSpecificSnapshot = lessSpecificSelector.snapshot();
+        // error that selector could not be found, but instead spot detected lessSpecificSnapshot, which might be useful
+        if (lessSpecificSnapshot.matchingElements.isNotEmpty) {
+          errorBuilder.writeln(
+              'Could not find $selector in widget tree, but found matches when searching $lessSpecificSnapshot');
+          errorBuilder.writeln(
+              'Please check the ${lessSpecificSnapshot.matchingElements.length} '
+              'matches for ${selector.toStringBreadcrumb()} and adjust the constraints of $selector accordingly:');
+          int index = 0;
+          for (final Widget match in lessSpecificSnapshot.matches) {
+            index++;
+            errorBuilder
+                .writeln('Possible match #$index: ${match.toStringDeep()}');
+          }
+          fail(errorBuilder.toString());
+        }
+      }
+    }
     //
     // final matches = <Element>{
     //   ...matchingParents,
@@ -415,37 +449,37 @@ extension WidgetSelectorMatcher<W extends Widget> on SpotSnapshot<W> {
     //   fail(errorBuilder.toString());
     // }
     //
-    // if (matches.length > 1) {
-    //   if (parents.isEmpty) {
-    //     errorBuilder.writeln(
-    //       'Found ${matches.length} elements matching $selector in widget tree, '
-    //       'expected only one',
-    //     );
-    //     _dumpWidgetTree(errorBuilder);
-    //
-    //     errorBuilder.writeln(
-    //       'Found ${matches.length} elements matching $selector in widget tree, '
-    //       'expected only one',
-    //     );
-    //     fail(errorBuilder.toString());
-    //   } else {
-    //     errorBuilder.writeln(
-    //       'Found ${matches.length} elements matching $selector as child of ${parents.toStringBreadcrumb()}, '
-    //       'exepcting only one',
-    //     );
-    //     int index = 0;
-    //     for (final candidate in matches) {
-    //       errorBuilder.writeln("Possible candidate $index:");
-    //       errorBuilder.writeln(candidate.toStringDeep());
-    //       index++;
-    //     }
-    //
-    //     errorBuilder.writeln(
-    //       'Found more than one $selector as child of ${parents.toStringBreadcrumb()}',
-    //     );
-    //     fail(errorBuilder.toString());
-    //   }
-    // }
+    if (discovered.length > 1) {
+      if (selector.parents.isEmpty) {
+        errorBuilder.writeln(
+          'Found ${discovered.length} elements matching $selector in widget tree, '
+          'expected only one',
+        );
+        _dumpWidgetTree(errorBuilder);
+
+        errorBuilder.writeln(
+          'Found ${discovered.length} elements matching $selector in widget tree, '
+          'expected only one',
+        );
+        fail(errorBuilder.toString());
+      } else {
+        errorBuilder.writeln(
+          'Found ${discovered.length} elements matching $selector as child of ${selector.parents.toStringBreadcrumb()}, '
+          'exepcting only one',
+        );
+        int index = 0;
+        for (final candidate in discovered) {
+          errorBuilder.writeln("Possible candidate $index:");
+          errorBuilder.writeln(candidate.value.toStringDeep());
+          index++;
+        }
+
+        errorBuilder.writeln(
+          'Found more than one $selector as child of ${selector.parents.toStringBreadcrumb()}',
+        );
+        fail(errorBuilder.toString());
+      }
+    }
 
     // all fine, found 1 element
     assert(
@@ -504,6 +538,16 @@ extension WidgetSelectorMatcher<W extends Widget> on SpotSnapshot<W> {
     // expect(finder, findsNothing);
     return this;
   }
+
+  List<List<T>> subset<T>(List<T> list) {
+    final result = <List<T>>[];
+    for (var i = 0; i < list.length; i++) {
+      for (var j = i + 1; j <= list.length; j++) {
+        result.add(list.sublist(i, j));
+      }
+    }
+    return result.sortedByDescending((it) => it.length);
+  }
 }
 
 void _dumpWidgetTree(StringBuffer buffer) {
@@ -539,17 +583,18 @@ extension ElementParent on Element {
     yield* found;
   }
 }
+
 //
-// extension on List<WidgetSelector> {
-//   String toStringBreadcrumb() {
-//     if (this.isEmpty) {
-//       return '[]';
-//     }
-//     final parentBreadcrumbs = map((e) => e.toStringBreadcrumb());
-//     if (parentBreadcrumbs.length == 1) {
-//       return parentBreadcrumbs.first;
-//     } else {
-//       return '[${parentBreadcrumbs.join(' && ')}]';
-//     }
-//   }
-// }
+extension on List<WidgetSelector> {
+  String toStringBreadcrumb() {
+    if (this.isEmpty) {
+      return '[]';
+    }
+    final parentBreadcrumbs = map((e) => e.toStringBreadcrumb());
+    if (parentBreadcrumbs.length == 1) {
+      return parentBreadcrumbs.first;
+    } else {
+      return '[${parentBreadcrumbs.join(' && ')}]';
+    }
+  }
+}
