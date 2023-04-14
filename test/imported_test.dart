@@ -23,13 +23,13 @@ void main() {
         ),
       ),
     );
-    spot.byType<Padding>().childByType(SizedBox).text('Hello')().existsOnce();
+    spot.byType<Padding>().childByType(SizedBox).text('Hello').existsOnce();
     spot
         .byType<Padding>()
         .childByType(SizedBox)
-        .text('Hello')()
+        .text('Hello')
         .existsAtLeastOnce();
-    spot.byType<GestureDetector>().text('World')().doesNotExist();
+    spot.byType<GestureDetector>().text('World').doesNotExist();
   });
 
   testWidgets('narrow results by checking parents', (tester) async {
@@ -54,7 +54,7 @@ void main() {
     );
     spot.byType<Text>(
       parents: [spot.byType<Wrap>(), spot.byType<GestureDetector>()],
-    )().existsOnce();
+    ).existsOnce();
 
     // spot.text(
     //   'Hello',
@@ -111,9 +111,7 @@ void main() {
       ),
     );
 
-    spot.byType<GestureDetector>(children: [spot.text('a')])().existsOnce();
-
-    // TODO what if we want multiple results to be returned?
+    spot.byType<GestureDetector>(children: [spot.text('a')]).existsOnce();
   });
 }
 
