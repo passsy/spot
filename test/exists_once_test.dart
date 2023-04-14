@@ -64,7 +64,47 @@ void main() {
         () => spot.byType<Material>(
           parents: [spot.byType<SizedBox>()],
         ).existsOnce(),
-        throwsA(isA<TestFailure>()),
+        throwsA(
+          isA<TestFailure>().having(
+            (e) => e.message,
+            'message',
+            contains("Could not find 'Widget of type Material "
+                "with parents: ['Widget of type SizedBox']' in widget tree"),
+          ),
+        ),
+      );
+    });
+
+    testWidgets('error shows alternative item', (tester) async {
+      await tester.pumpWidget(
+        Column(
+          children: [
+            Center(child: SizedBox()),
+            SizedBox(),
+          ],
+        ),
+      );
+
+      expect(
+        () => spot.byType<Center>(
+          children: [spot.byType<SizedBox>()],
+          parents: [spot.byType<Material>()], // <-- does not exist
+        ).existsOnce(),
+        throwsA(
+          isA<TestFailure>()
+              .having(
+                (e) => e.message,
+                'message',
+                contains("but found 1 matches when searching for "
+                    "'Widget of type Center with children: ['Widget of type SizedBox']'"),
+              )
+              .having(
+                (e) => e.message,
+                'alternative',
+                contains(
+                    "Possible match #1: Center(alignment: Alignment.center)"),
+              ),
+        ),
       );
     });
   });

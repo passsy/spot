@@ -309,6 +309,64 @@ extension WidgetSelectorMatcher<W extends Widget> on SpotSnapshot<W> {
 
     // early exit when finder finds nothing
     if (matchingElements.isEmpty) {
+      final List<WidgetSelector<W> Function(WidgetSelector<W>)> criteria = [];
+      if (selector.props != null) {
+        criteria.add((selector) {
+          return selector.copyWith(props: selector.props);
+        });
+      }
+      for (final parent in selector.parents) {
+        criteria.add((selector) {
+          return selector.copyWith(parents: [...selector.parents, parent]);
+        });
+      }
+      for (final child in selector.children) {
+        criteria.add((selector) {
+          return selector.copyWith(children: [...selector.children, child]);
+        });
+      }
+
+      final List<List<WidgetSelector<W> Function(WidgetSelector<W>)>>
+          criteriaSubset = [...subset(criteria), []];
+      // remove subsets that contains the full criteria of selector
+      criteriaSubset.removeWhere((it) => it.length >= criteria.length);
+
+      WidgetSelector<W> buildSelector(
+        List<WidgetSelector<W> Function(WidgetSelector<W>)> criteria,
+      ) {
+        WidgetSelector<W> s = selector.copyWith(
+          query: selector.query,
+          props: selector.props,
+          parents: [],
+          children: [],
+        );
+        for (final criteria in criteria) {
+          s = criteria(s);
+        }
+        return s;
+      }
+
+      for (final lessSpecificCriteria in criteriaSubset) {
+        final lessSpecificSelector = buildSelector(lessSpecificCriteria);
+        final SpotSnapshot<Widget> lessSpecificSnapshot =
+            lessSpecificSelector.snapshot();
+        // error that selector could not be found, but instead spot detected lessSpecificSnapshot, which might be useful
+        if (lessSpecificSnapshot.matchingElements.isNotEmpty) {
+          errorBuilder.writeln(
+              'Could not find $selector in widget tree, but found ${lessSpecificSnapshot.matchingElements.length} matches when searching for $lessSpecificSelector');
+          errorBuilder.writeln(
+              'Please check the ${lessSpecificSnapshot.matchingElements.length} '
+              'matches for ${lessSpecificSelector.toStringBreadcrumb()} and adjust the constraints of the selector $selector accordingly:');
+          int index = 0;
+          for (final Widget match in lessSpecificSnapshot.matches) {
+            index++;
+            errorBuilder
+                .writeln('Possible match #$index: ${match.toStringDeep()}');
+          }
+          fail(errorBuilder.toString());
+        }
+      }
+
       if (selector.parents.isNotEmpty) {
         final selectorWithoutParents = selector.copyWith(parents: []);
         final selectorWithoutParentsSnapshot =
@@ -357,65 +415,6 @@ extension WidgetSelectorMatcher<W extends Widget> on SpotSnapshot<W> {
       fail(errorBuilder.toString());
     }
 
-    final List<WidgetSelector<W> Function(WidgetSelector<W>)> criteria = [];
-    criteria.add((selector) {
-      return selector.copyWith(query: selector.query);
-    });
-    if (selector.props != null) {
-      criteria.add((selector) {
-        return selector.copyWith(props: selector.props);
-      });
-    }
-    for (final parent in selector.parents) {
-      criteria.add((selector) {
-        return selector.copyWith(parents: [...selector.parents, parent]);
-      });
-    }
-    for (final child in selector.children) {
-      criteria.add((selector) {
-        return selector.copyWith(children: [...selector.children, child]);
-      });
-    }
-
-    final criteriaSubset = subset(criteria);
-
-    WidgetSelector<W> buildSelector(
-      List<WidgetSelector<W> Function(WidgetSelector<W>)> criteria,
-    ) {
-      WidgetSelector<W> s = selector.copyWith(
-        query: selector.query,
-        props: selector.props,
-        parents: [],
-        children: [],
-      );
-      for (final criteria in criteria) {
-        s = criteria(s);
-      }
-      return s;
-    }
-
-    print('criteriaSubset: $criteriaSubset');
-    if (criteriaSubset.length > 1) {
-      for (final lessSpecificCriteria in criteriaSubset) {
-        final lessSpecificSelector = buildSelector(lessSpecificCriteria);
-        final lessSpecificSnapshot = lessSpecificSelector.snapshot();
-        // error that selector could not be found, but instead spot detected lessSpecificSnapshot, which might be useful
-        if (lessSpecificSnapshot.matchingElements.isNotEmpty) {
-          errorBuilder.writeln(
-              'Could not find $selector in widget tree, but found matches when searching $lessSpecificSnapshot');
-          errorBuilder.writeln(
-              'Please check the ${lessSpecificSnapshot.matchingElements.length} '
-              'matches for ${selector.toStringBreadcrumb()} and adjust the constraints of $selector accordingly:');
-          int index = 0;
-          for (final Widget match in lessSpecificSnapshot.matches) {
-            index++;
-            errorBuilder
-                .writeln('Possible match #$index: ${match.toStringDeep()}');
-          }
-          fail(errorBuilder.toString());
-        }
-      }
-    }
     //
     // final matches = <Element>{
     //   ...matchingParents,
