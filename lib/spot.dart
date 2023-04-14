@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart' show find;
 import 'package:spot/src/finders.dart' show Spot;
 
 export 'package:spot/src/finders.dart';
+export 'package:spot/src/snapshot.dart';
 
 /// Creates a widget/element selectors that search the widget and element tree
 /// for matching elements.

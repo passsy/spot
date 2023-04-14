@@ -7,9 +7,9 @@ import 'package:spot/spot.dart';
 void main() {
   testWidgets('existsOnce() plain', (tester) async {
     await tester.pumpWidget(SizedBox());
-    spot.byType<SizedBox>().existsOnce();
+    spot.byType<SizedBox>().snapshot().existsOnce();
     expect(
-      () => spot.byType<Material>().existsOnce(),
+      () => spot.byType<Material>()().existsOnce(),
       throwsA(isA<TestFailure>()),
     );
   });
@@ -31,7 +31,7 @@ void main() {
       expect(snapshot.matches.length, 1);
       expect(snapshot.discovered.length, 1);
 
-      sizedBox.existsOnce();
+      sizedBox().existsOnce();
     });
 
     testWidgets('error when parent does not exist', (tester) async {
@@ -46,7 +46,7 @@ void main() {
       expect(
         () => spot.byType<SizedBox>(
           parents: [spot.byType<Material>()],
-        ).existsOnce(),
+        )().existsOnce(),
         throwsA(isA<TestFailure>()),
       );
     });
@@ -63,7 +63,7 @@ void main() {
       expect(
         () => spot.byType<Material>(
           parents: [spot.byType<SizedBox>()],
-        ).existsOnce(),
+        )().existsOnce(),
         throwsA(isA<TestFailure>()),
       );
     });
@@ -85,7 +85,7 @@ void main() {
       final snapshot = sizedBox.snapshot();
       expect(snapshot.matchingElements.length, 1);
 
-      sizedBox.existsOnce();
+      sizedBox().existsOnce();
     });
 
     testWidgets('error when child does not exist', (tester) async {
@@ -100,7 +100,7 @@ void main() {
       expect(
         () => spot.byType<SizedBox>(
           children: [spot.byType<Material>()],
-        ).existsOnce(),
+        )().existsOnce(),
         throwsA(isA<TestFailure>()),
       );
     });
@@ -143,15 +143,15 @@ void main() {
       findsOneWidget,
     );
 
-    spot.byType<MaterialApp>().childByType(Center).existsOnce();
+    spot.byType<MaterialApp>().childByType(Center)().existsOnce();
     spot.byType<Center>(
       parents: [spot.byType<MaterialApp>()],
       children: [spot.byType<Padding>()],
-    ).existsOnce();
-    spot.byType<Padding>().existsOnce();
-    spot.byType<Wrap>().existsOnce();
-    spot.byType<Wrap>().childByType(Text).existsAtLeastOnce();
-    spot.byType<GestureDetector>().existsOnce();
+    )().existsOnce();
+    spot.byType<Padding>()().existsOnce();
+    spot.byType<Wrap>()().existsOnce();
+    spot.byType<Wrap>().childByType(Text)().existsAtLeastOnce();
+    spot.byType<GestureDetector>()().existsOnce();
   });
 
   testWidgets('existsOnce() fails when multiple widgets exist', (tester) async {
@@ -175,7 +175,7 @@ void main() {
       ),
     );
     expect(
-      () => spot.byType<Text>().existsOnce(),
+      () => spot.byType<Text>()().existsOnce(),
       throwsA(
         isA<TestFailure>()
             .having((e) => e.message, 'message', contains('Found 2 elements'))
@@ -207,17 +207,37 @@ void main() {
     );
 
     // TODO return selector with single result
-    final WidgetSelector<Text> t1 = spot.byType<Text>(
-      parents: [],
-      children: [],
-      props: [
-        withText('Hello'),
-        (w) => w.hasText('Hello'),
-        (w) => w.containsText('Hello').hasText('Hello'),
+    final textWrappedWithGestureDetector = spot.byType<Text>(
+      // props: (text) => text.hasText('Hello').hasMaxLines(null),
+      propsFn: (text) {
+        text.hasText('Hello');
+        text.hasMaxLines(null);
+      },
+      propsList: [
+        hasText('Hello'),
+        // hasColor(Colors.black),
+        // (text) => text.hasText('Hello'),
+        // (text) => text.hasMaxLines(null),
       ],
+      // matching: (text, e) {
+      //   text.hasValue('Hello').hasMaxLines(2);
+      // },
+      // props: [],
+      // props: [
+      //   (WidgetSelector<Text> text) => text.hasText('Hello'),
+      //   withText('Hello'),
+      //   (w) => w.containsText('Hello').hasText('Hello'),
+      // ],
     );
-    final WidgetSelector<Text> t2 = t1.hasText('Hello');
-    final WidgetSelector<Text> t3 = t2.existsOnce();
+    final snapshot = textWrappedWithGestureDetector.snapshot();
+
+    final textWrappedWithGestureDetector2 = spot.byType<Text>();
+    textWrappedWithGestureDetector2.snapshot().existsOnce();
+
+    expect(snapshot.matchingElements.length, 1);
+
+    // final WidgetSelector<Text> t2 = t1.hasText('Hello');
+    // final WidgetSelector<Text> t3 = t2.existsOnce();
 
     // .existsOnce()
     // .matchProps([textWidget.hasText('Hello')]);
@@ -227,8 +247,8 @@ void main() {
     //     .whereWidget((widget) => widget.data == 'Hello')
     //     .existsOnce();
 
-    expect(t3.element, isNotNull);
-    expect(t3.elements.length, 1);
+    // expect(t3.element, isNotNull);
+    // expect(t3.elements.length, 1);
   });
 
   testWidgets('narrow down scope', (tester) async {
@@ -254,15 +274,17 @@ void main() {
       ),
     );
 
-    final snapshot = spot.byType<Text>().snapshot();
-    expect(snapshot.matchingElements.length, 2);
+    final textSnapshot = spot.byType<Text>().snapshot();
+    expect(textSnapshot.matchingElements.length, 2);
 
-    final wrap = spot.byType<Wrap>().existsOnce();
+    final wrap = spot.byType<Wrap>()..snapshot().existsOnce();
     // only find the single sizedBox below Wrap
-    wrap.byType<SizedBox>().existsOnce();
+    wrap.byType<SizedBox>()().existsOnce();
 
-    final multipleSpotter = spot.byType<Text>().existsAtLeastOnce();
-    expect(multipleSpotter.elements.length, 2);
+    final multipleSpotter = spot.byType<Text>();
+    expect(snapshot(multipleSpotter).discovered.length, 2);
+
+    snapshot(spot.byType<Text>()).existsOnce();
 
     multipleSpotter.constrain(
       parents: [

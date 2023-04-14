@@ -29,7 +29,7 @@ void main() {
     appBar.childByIcon(
       Icons.settings,
       parents: [spot.byType<IconButton>()],
-    ).doesNotExist();
+    )().doesNotExist();
 
     // finder alternative
     // expect(find.byIcon(Icons.settings), findsOneWidget);

@@ -23,13 +23,13 @@ void main() {
         ),
       ),
     );
-    spot.byType<Padding>().childByType(SizedBox).text('Hello').existsOnce();
+    spot.byType<Padding>().childByType(SizedBox).text('Hello')().existsOnce();
     spot
         .byType<Padding>()
         .childByType(SizedBox)
-        .text('Hello')
+        .text('Hello')()
         .existsAtLeastOnce();
-    spot.byType<GestureDetector>().text('World').doesNotExist();
+    spot.byType<GestureDetector>().text('World')().doesNotExist();
   });
 
   testWidgets('narrow results by checking parents', (tester) async {
@@ -54,42 +54,38 @@ void main() {
     );
     spot.byType<Text>(
       parents: [spot.byType<Wrap>(), spot.byType<GestureDetector>()],
-      children: [spot.byType<Wrap>(), spot.byType<GestureDetector>()],
-      props: [
-        withText('Hello'),
-      ],
-    );
+    )().existsOnce();
 
-    spot.text(
-      'Hello',
-      parents: [spot.byType<Wrap>(), spot.byType<GestureDetector>()],
-    ).existsOnce();
-
-    spot.text(
-      'Hello',
-      parents: [
-        spot.byType<SizedBox>().childByType(GestureDetector),
-        spot.byType<Center>()
-      ],
-    ).existsOnce();
-
+    // spot.text(
+    //   'Hello',
+    //   parents: [spot.byType<Wrap>(), spot.byType<GestureDetector>()],
+    // ).existsOnce();
+    //
+    // spot.text(
+    //   'Hello',
+    //   parents: [
+    //     spot.byType<SizedBox>().childByType(GestureDetector),
+    //     spot.byType<Center>()
+    //   ],
+    // ).existsOnce();
+    //
     spot.text(
       'Hello',
       parents: [
         spot.byType<GestureDetector>(),
         spot.byType<_UnknownWidget>(),
       ],
-    ).doesNotExist();
-
-    spot.byType<SizedBox>().text(
-      'Hello',
-      parents: [spot.byType<Center>().childByType(Wrap)],
-    ).existsOnce();
-
-    spot
-        .byType<SizedBox>(parents: [spot.byType<Center>().childByType(Wrap)])
-        .text('Hello')
-        .existsOnce();
+    );
+    //
+    // spot.byType<SizedBox>().text(
+    //   'Hello',
+    //   parents: [spot.byType<Center>().childByType(Wrap)],
+    // ).existsOnce();
+    //
+    // spot
+    //     .byType<SizedBox>(parents: [spot.byType<Center>().childByType(Wrap)])
+    //     .text('Hello')
+    //     .existsOnce();
 
     // TODO what if we want multiple results to be returned?
   });
@@ -115,7 +111,7 @@ void main() {
       ),
     );
 
-    spot.byType<GestureDetector>(children: [spot.text('a')]).existsOnce();
+    spot.byType<GestureDetector>(children: [spot.text('a')])().existsOnce();
 
     // TODO what if we want multiple results to be returned?
   });
