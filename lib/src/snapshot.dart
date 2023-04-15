@@ -1,20 +1,17 @@
 import 'dart:collection';
 
-import 'package:collection/collection.dart';
 import 'package:dartx/dartx.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 
 SpotSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
+  // ignore: deprecated_member_use
   final rootElement = WidgetsBinding.instance.renderViewElement!;
   final origin = SpotNode(
     selector: WidgetSelector.all,
     parent: null,
     value: rootElement,
-    matchesChildren: [rootElement],
-    matchesProps: [rootElement],
-    matchesParents: [rootElement],
     candidates: [rootElement],
   );
 
@@ -41,7 +38,7 @@ SpotSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
 
     final common = groups.values.reduce((value, element) {
       return value.intersectWithSelector(element, (it) => it.value).toList();
-    }) as List<SpotNode<W>>;
+    });
 
     return common;
   }).reduce((value, element) {
@@ -51,27 +48,16 @@ SpotSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
   return SpotSnapshot<W>(
     selector: selector,
     discovered: discovered,
-    candidates:
-        parentSnapshots.expand((element) => element.candidates).toList(),
-    // matchingElements: [], // TODO
-    searchResults: {
-      // for (final snapshot in hierarchies)
-      //   for (final result in snapshot.searchResults.entries)
-      //     ..._takeScopedSnapshot(result.value).searchResults,
-    },
-
-    //
-    // hierarchies.expand((SpotSnapshot<Widget> snapshot) {
-    //   return snapshot.matchHierarchies.expand((hierarchy) {
-    //     return _takeScopedSnapshot(hierarchy).matchHierarchies;
-    //   });
-    // }).toList(),
+    debugCandidates:
+        parentSnapshots.expand((element) => element.debugCandidates).toList(),
   );
 }
 
 extension IterableIntersect<E> on Iterable<E> {
   Iterable<E> intersectWithSelector(
-      Iterable<E> other, Object Function(E) select) sync* {
+    Iterable<E> other,
+    Object Function(E) select,
+  ) sync* {
     final second = HashSet.from(other.map(select));
     final output = HashSet<E>();
     for (final current in this) {
@@ -86,7 +72,9 @@ extension IterableIntersect<E> on Iterable<E> {
 }
 
 SpotSnapshot<W> _takeScopedSnapshot<W extends Widget>(
-    WidgetSelector<W> selector, SpotNode origin) {
+  WidgetSelector<W> selector,
+  SpotNode origin,
+) {
   // TODO pass in as argument?
   final candidates = [origin.value] +
       collectAllElementsFrom(origin.value, skipOffstage: true).toList();
@@ -99,8 +87,9 @@ SpotSnapshot<W> _takeScopedSnapshot<W extends Widget>(
   // );
 
   // First find all elements matching the query
-  final List<SpotNode<W>> queryMatches =
-      candidates.where((e) => selector.query.predicate(e)).map((e) {
+  final List<SpotNode<W>> queryMatches = candidates
+      .where((element) => selector.props.all((prop) => prop.predicate(element)))
+      .map((e) {
     return SpotNode<W>(
       selector: selector,
       parent: origin,
@@ -108,9 +97,6 @@ SpotSnapshot<W> _takeScopedSnapshot<W extends Widget>(
       candidates: candidates,
     );
   }).toList();
-
-  final List<SpotNode> propMatches = [];
-  final Map<WidgetSelector, SpotSnapshot> childSearchResults = {};
 
   final List<SpotNode<W>> matchingChildNodes = [];
   final List<SpotNode<W>> matchingPropNodes = [];
@@ -171,15 +157,7 @@ SpotSnapshot<W> _takeScopedSnapshot<W extends Widget>(
   return SpotSnapshot(
     selector: selector,
     discovered: discovered,
-    candidates: candidates,
-    searchResults: {
-      // selector: discovered,
-      // ...childSearchResults.map(
-      //   (key, value) {
-      //     return MapEntry(key, value.discovered);
-      //   },
-      // ),
-    },
+    debugCandidates: candidates,
   );
 
   //
@@ -300,20 +278,18 @@ extension WidgetSelectorMatcher<W extends Widget> on SpotSnapshot<W> {
   //   return elements.first;
   // }
 
-  SpotSnapshot<W> existsOnce() {
+  SingleSpotSnapshot<W> existsOnce() {
     final errorBuilder = StringBuffer();
 
     if (matchingElements.length == 1) {
-      return this;
+      return single;
     }
 
     // early exit when finder finds nothing
     if (matchingElements.isEmpty) {
       final List<WidgetSelector<W> Function(WidgetSelector<W>)> criteria = [];
-      if (selector.props != null) {
-        criteria.add((selector) {
-          return selector.copyWith(props: selector.props);
-        });
+      for (final prop in selector.props) {
+        criteria.add((selector) => selector.copyWith(props: [prop]));
       }
       for (final parent in selector.parents) {
         criteria.add((selector) {
@@ -327,7 +303,7 @@ extension WidgetSelectorMatcher<W extends Widget> on SpotSnapshot<W> {
       }
 
       final List<List<WidgetSelector<W> Function(WidgetSelector<W>)>>
-          criteriaSubset = [...subset(criteria), []];
+          criteriaSubset = [..._subset(criteria), []];
       // remove subsets that contains the full criteria of selector
       criteriaSubset.removeWhere((it) => it.length >= criteria.length);
 
@@ -335,7 +311,6 @@ extension WidgetSelectorMatcher<W extends Widget> on SpotSnapshot<W> {
         List<WidgetSelector<W> Function(WidgetSelector<W>)> criteria,
       ) {
         WidgetSelector<W> s = selector.copyWith(
-          query: selector.query,
           props: selector.props,
           parents: [],
           children: [],
@@ -353,7 +328,8 @@ extension WidgetSelectorMatcher<W extends Widget> on SpotSnapshot<W> {
         // error that selector could not be found, but instead spot detected lessSpecificSnapshot, which might be useful
         if (lessSpecificSnapshot.matchingElements.isNotEmpty) {
           errorBuilder.writeln(
-              'Could not find $selector in widget tree, but found ${lessSpecificSnapshot.matchingElements.length} matches when searching for $lessSpecificSelector');
+            'Could not find $selector in widget tree, but found ${lessSpecificSnapshot.matchingElements.length} matches when searching for $lessSpecificSelector',
+          );
           errorBuilder.writeln(
               'Please check the ${lessSpecificSnapshot.matchingElements.length} '
               'matches for ${lessSpecificSelector.toStringBreadcrumb()} and adjust the constraints of the selector $selector accordingly:');
@@ -490,7 +466,7 @@ extension WidgetSelectorMatcher<W extends Widget> on SpotSnapshot<W> {
     //     ElementTreeQuery((e) => false, description: 'Exactly Element X'),
     //     parents,
     //     children);
-    return this;
+    return single;
   }
 
   SpotSnapshot<W> existsAtLeastOnce() {
@@ -538,7 +514,7 @@ extension WidgetSelectorMatcher<W extends Widget> on SpotSnapshot<W> {
     return this;
   }
 
-  List<List<T>> subset<T>(List<T> list) {
+  List<List<T>> _subset<T>(List<T> list) {
     final result = <List<T>>[];
     for (var i = 0; i < list.length; i++) {
       for (var j = i + 1; j <= list.length; j++) {
@@ -550,6 +526,7 @@ extension WidgetSelectorMatcher<W extends Widget> on SpotSnapshot<W> {
 }
 
 void _dumpWidgetTree(StringBuffer buffer) {
+  // ignore: deprecated_member_use
   final rootElement = WidgetsBinding.instance.renderViewElement;
   if (rootElement != null) {
     buffer.writeln(rootElement.toStringDeep());
@@ -583,7 +560,6 @@ extension ElementParent on Element {
   }
 }
 
-//
 extension on List<WidgetSelector> {
   String toStringBreadcrumb() {
     if (this.isEmpty) {

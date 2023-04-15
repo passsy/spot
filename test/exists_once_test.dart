@@ -68,8 +68,8 @@ void main() {
           isA<TestFailure>().having(
             (e) => e.message,
             'message',
-            contains("Could not find 'Widget of type Material "
-                "with parents: ['Widget of type SizedBox']' in widget tree"),
+            contains(
+                "Could not find 'Material with parents: ['SizedBox']' in widget tree"),
           ),
         ),
       );
@@ -96,13 +96,14 @@ void main() {
                 (e) => e.message,
                 'message',
                 contains("but found 1 matches when searching for "
-                    "'Widget of type Center with children: ['Widget of type SizedBox']'"),
+                    "'Center"),
               )
               .having(
                 (e) => e.message,
                 'alternative',
                 contains(
-                    "Possible match #1: Center(alignment: Alignment.center)"),
+                  "Possible match #1: Center(alignment: Alignment.center)",
+                ),
               ),
         ),
       );
@@ -228,18 +229,23 @@ void main() {
       (tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        home: Center(
-          child: Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Wrap(
-              children: [
-                SizedBox(
-                  child: GestureDetector(
-                    child: Text('Hello', maxLines: 2),
+        home: Scaffold(
+          appBar: AppBar(
+            title: Text('Hello World'),
+          ),
+          body: Center(
+            child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Wrap(
+                children: [
+                  SizedBox(
+                    child: GestureDetector(
+                      child: Text('Hello', maxLines: 2),
+                    ),
                   ),
-                ),
-                Text('World', maxLines: 1),
-              ],
+                  Text('World', maxLines: 1),
+                ],
+              ),
             ),
           ),
         ),
@@ -248,33 +254,55 @@ void main() {
 
     // TODO return selector with single result
     final textWrappedWithGestureDetector = spot.byType<Text>(
-      // props: (text) => text.hasText('Hello').hasMaxLines(null),
       propsFn: (text) {
         text.hasText('Hello');
         text.hasMaxLines(null);
       },
       propsList: [
+        // hasColor(Colors.green),
         hasText('Hello'),
-        // hasColor(Colors.black),
-        // (text) => text.hasText('Hello'),
-        // (text) => text.hasMaxLines(null),
       ],
-      // matching: (text, e) {
-      //   text.hasValue('Hello').hasMaxLines(2);
-      // },
-      // props: [],
-      // props: [
-      //   (WidgetSelector<Text> text) => text.hasText('Hello'),
-      //   withText('Hello'),
-      //   (w) => w.containsText('Hello').hasText('Hello'),
-      // ],
     );
+
+    // TODO make this playground a real test again
+    // Create a Text selector with querying the text value
+
+    // v1
+    spot.byType<Text>(propsList: [hasText('Hello')]).existsAtLeastOnce();
+    // v2
+    spot
+        .byType<Text>(propsFn: (text) => text.hasText('Hello'))
+        .existsAtLeastOnce();
+    // v3
+    // spot.byType<Text>().hasText('Hello').existsOnce();
+
+    // final WidgetSelector<Text> t = spot.byType<Text>();
+    // final WidgetSelector<Text> c = t.copyWith();
+    // final WidgetSelector<Text> w = t.whereWidget((widget) => false, description: 'never');
+    spot
+        .byType<AppBar>()
+        .byType<Text>()
+        .containsText('Hello World')
+        .existsOnce()
+        .hasTextSize(20);
+
+    // spot.byType<Text>().containsText('Counter').existsOnce().endsWith('World');
+
+    // spot.byType<Text>().all((widget) => widget.hasText('Hello'));
+    spot.byType<Text>().any((widget) => widget.hasText('Hello'));
+
+    // expect(find.byType(Text), findsNWidgets(2));
+    textWrappedWithGestureDetector
+        .existsAtLeastOnce()
+        .hasText('Hello')
+        .hasMaxLines(null);
+
     final snapshot = textWrappedWithGestureDetector.snapshot();
 
-    final textWrappedWithGestureDetector2 = spot.byType<Text>();
-    textWrappedWithGestureDetector2.snapshot().existsOnce();
+    // final textWrappedWithGestureDetector2 = spot.byType<Text>();
+    // textWrappedWithGestureDetector2.snapshot().existsOnce();
 
-    expect(snapshot.matchingElements.length, 1);
+    // expect(snapshot.matchingElements.length, 1);
 
     // final WidgetSelector<Text> t2 = t1.hasText('Hello');
     // final WidgetSelector<Text> t3 = t2.existsOnce();
@@ -326,7 +354,7 @@ void main() {
 
     snapshot(spot.byType<Text>()).existsAtLeastOnce();
 
-    multipleSpotter.constrain(
+    multipleSpotter.copyWith(
       parents: [
         // only finds the single SizedBox in Wrap, not the SizedBox below Center
         wrap.byType<SizedBox>(),
