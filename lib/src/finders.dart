@@ -28,7 +28,7 @@ PropMatcher<Container> hasColor(Color color) {
 }
 
 extension TextSelector on WidgetSelector<Text> {
-  WidgetSelector<Text> hasText(String text) {
+  WidgetSelector<Text> withText(String text) {
     return whereText(
       (s) => text == s,
       description: 'with text "$text"',
@@ -61,7 +61,7 @@ extension TextSelector on WidgetSelector<Text> {
     );
   }
 
-  WidgetSelector<Text> hasMaxLines(int? maxLines) {
+  WidgetSelector<Text> withMaxLines(int? maxLines) {
     return whereWidget(
       (widget) => widget.maxLines == maxLines,
       description: 'maxLines: $maxLines',
@@ -167,13 +167,33 @@ class PropMatcher<W extends Widget> {
 mixin CommonSpots<T extends Widget> {
   WidgetSelector<T>? get _self;
 
+  WidgetSelector<W> a<W extends Widget>({
+    List<WidgetSelector> parents = const [],
+    List<WidgetSelector> children = const [],
+    List<ElementTreeQuery> props = const [],
+  }) {
+    return byType<W>(
+      parents: parents,
+      children: children,
+      props: props,
+    );
+  }
+
+  WidgetSelector<W> child<W extends Widget>({
+    List<WidgetSelector> parents = const [],
+    List<WidgetSelector> children = const [],
+    List<ElementTreeQuery> props = const [],
+  }) {
+    return byType<W>(
+      parents: parents,
+      children: children,
+      props: props,
+    );
+  }
+
   WidgetSelector<W> byType<W extends Widget>({
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
-
-    // TODO decide which one is better
-    void Function(WidgetMatcher<W>)? propsFn,
-    List<PropMatcher<W>> propsList = const [],
     List<ElementTreeQuery> props = const [],
   }) {
     final type = _typeOf<W>();

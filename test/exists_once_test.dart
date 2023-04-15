@@ -231,7 +231,7 @@ void main() {
       MaterialApp(
         home: Scaffold(
           appBar: AppBar(
-            title: Text('Hello World'),
+            title: Text('App Title', maxLines: 2),
           ),
           body: Center(
             child: Padding(
@@ -252,71 +252,18 @@ void main() {
       ),
     );
 
-    // TODO return selector with single result
-    final textWrappedWithGestureDetector = spot.byType<Text>(
-      propsFn: (text) {
-        text.hasText('Hello');
-        text.hasMaxLines(null);
-      },
-      propsList: [
-        // hasColor(Colors.green),
-        hasText('Hello'),
-      ],
-    );
-
-    // TODO make this playground a real test again
-    // Create a Text selector with querying the text value
-
-    // v1
-    spot.byType<Text>(propsList: [hasText('Hello')]).existsAtLeastOnce();
-    // v2
+    spot.a<Wrap>().a<Text>().withMaxLines(2).existsOnce().hasText('Hello');
     spot
-        .byType<Text>(propsFn: (text) => text.hasText('Hello'))
-        .existsAtLeastOnce();
-    // v3
-    // spot.byType<Text>().hasText('Hello').existsOnce();
-
-    // final WidgetSelector<Text> t = spot.byType<Text>();
-    // final WidgetSelector<Text> c = t.copyWith();
-    // final WidgetSelector<Text> w = t.whereWidget((widget) => false, description: 'never');
-    spot
-        .byType<AppBar>()
-        .byType<Text>()
-        .containsText('Hello World')
+        .a<Text>(parents: [spot.a<Wrap>()])
+        .withMaxLines(2)
         .existsOnce()
-        .hasTextSize(20);
-
-    // spot.byType<Text>().containsText('Counter').existsOnce().endsWith('World');
-
-    // spot.byType<Text>().all((widget) => widget.hasText('Hello'));
-    spot.byType<Text>().any((widget) => widget.hasText('Hello'));
-
-    // expect(find.byType(Text), findsNWidgets(2));
-    textWrappedWithGestureDetector
-        .existsAtLeastOnce()
-        .hasText('Hello')
-        .hasMaxLines(null);
-
-    final snapshot = textWrappedWithGestureDetector.snapshot();
-
-    // final textWrappedWithGestureDetector2 = spot.byType<Text>();
-    // textWrappedWithGestureDetector2.snapshot().existsOnce();
-
-    // expect(snapshot.matchingElements.length, 1);
-
-    // final WidgetSelector<Text> t2 = t1.hasText('Hello');
-    // final WidgetSelector<Text> t3 = t2.existsOnce();
-
-    // .existsOnce()
-    // .matchProps([textWidget.hasText('Hello')]);
-
-    // spot
-    //     .byType<Text>()
-    //     .whereWidget((widget) => widget.data == 'Hello')
-    //     .existsOnce();
-
-    // expect(t3.element, isNotNull);
-    // expect(t3.elements.length, 1);
+        .hasText('Hello');
+    spot
+        .byType<Wrap>()
+        .byType<Text>()
+        .withMaxLines(2)
+        .existsOnce()
+        .hasText('Hello');
   });
 
   testWidgets('narrow down scope', (tester) async {
