@@ -23,9 +23,9 @@ void main() {
         ),
       ),
     );
-    spot<Padding>().spot<SizedBox>().text('Hello').existsOnce();
-    spot<Padding>().spot<SizedBox>().text('Hello').existsAtLeastOnce();
-    spot.spot<GestureDetector>().text('World').doesNotExist();
+    spot<Padding>().spot<SizedBox>().spotText('Hello').existsOnce();
+    spot<Padding>().spot<SizedBox>().spotText('Hello').existsAtLeastOnce();
+    spot<GestureDetector>().spotText('World').doesNotExist();
   });
 
   testWidgets('narrow results by checking parents', (tester) async {
@@ -48,8 +48,8 @@ void main() {
         ),
       ),
     );
-    spot.spot<Text>(
-      parents: [spot.spot<Wrap>(), spot.spot<GestureDetector>()],
+    spot<Text>(
+      parents: [spot<Wrap>(), spot<GestureDetector>()],
     ).existsOnce();
 
     // spot.text(
@@ -65,7 +65,7 @@ void main() {
     //   ],
     // ).existsOnce();
     //
-    spot.text(
+    spotText(
       'Hello',
       parents: [
         spot<GestureDetector>(),
@@ -107,7 +107,7 @@ void main() {
       ),
     );
 
-    spot<GestureDetector>(children: [spot.text('a')]).existsOnce();
+    spot<GestureDetector>(children: [spotText('a')]).existsOnce();
   });
 }
 

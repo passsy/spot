@@ -6,155 +6,205 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/snapshot.dart' as snapshot_file show snapshot;
 
-class Spot with CommonSpots<Widget> {
+class Spot with Spotters<Widget> {
+  const Spot();
+
   @override
   WidgetSelector? get _self => null;
+}
 
-  WidgetSelector<W> call<W extends Widget>({
+mixin Spotters<T extends Widget> {
+  WidgetSelector<T>? get _self;
+
+  SingleWidgetSelector<W> spot<W extends Widget>({
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
-    List<ElementTreeQuery> props = const [],
-  }) =>
-      this.spot<W>(parents: parents, children: children, props: props);
+  }) {
+    return spotAll<W>(parents: parents, children: children).single;
+  }
+
+  /// Spots a widget of type [W] in the scope of the parent selector
+  WidgetSelector<W> spotAll<W extends Widget>({
+    List<WidgetSelector> parents = const [],
+    List<WidgetSelector> children = const [],
+  }) {
+    final type = _typeOf<W>();
+    final selector = WidgetSelector<W>._(
+      props: [
+        PredicateWithDescription(
+          (Element e) => e.widget.runtimeType == type,
+          description: '$type',
+        ),
+      ],
+      parents: [if (_self != null) _self!, ...parents],
+      children: children,
+    );
+
+    return selector;
+  }
+
+  SingleWidgetSelector<W> spotWidget<W extends Widget>(
+    W widget, {
+    List<WidgetSelector> parents = const [],
+    List<WidgetSelector> children = const [],
+  }) {
+    return spotAllWidgets<W>(
+      widget,
+      parents: [if (_self != null) _self!, ...parents],
+      children: children,
+    ).single;
+  }
+
+  WidgetSelector<W> spotAllWidgets<W extends Widget>(
+    W widget, {
+    List<WidgetSelector> parents = const [],
+    List<WidgetSelector> children = const [],
+  }) {
+    return WidgetSelector<W>._(
+      props: [
+        PredicateWithDescription(
+          (Element e) => identical(e.widget, widget),
+          description: 'Widget === $widget',
+        )
+      ],
+      parents: [if (_self != null) _self!, ...parents],
+      children: children,
+    );
+  }
+
+  SingleWidgetSelector<W> spotElement<W extends Widget>(
+    Element element, {
+    List<WidgetSelector> parents = const [],
+    List<WidgetSelector> children = const [],
+  }) {
+    return SingleWidgetSelector<W>._(
+      props: [
+        PredicateWithDescription(
+          (Element e) => identical(e, element),
+          description: 'Element === $element',
+        ),
+      ],
+      parents: [if (_self != null) _self!, ...parents],
+      children: children,
+    );
+  }
+
+  SingleWidgetSelector spotText(
+    String text, {
+    List<WidgetSelector> parents = const [],
+    List<WidgetSelector> children = const [],
+    bool findRichText = false,
+  }) {
+    return spotAllText(
+      text,
+      parents: [if (_self != null) _self!, ...parents],
+      children: children,
+      findRichText: findRichText,
+    ).single;
+  }
+
+  WidgetSelector spotAllText(
+    String text, {
+    List<WidgetSelector> parents = const [],
+    List<WidgetSelector> children = const [],
+    bool findRichText = false,
+  }) {
+    return WidgetSelector._(
+      props: [
+        PredicateWithDescription(
+          (Element e) {
+            if (e.widget is Text) {
+              return (e.widget as Text).data == text;
+            }
+            if (e.widget is EditableText) {
+              return (e.widget as EditableText).controller.text == text;
+            }
+            if (findRichText == true && e.widget is RichText) {
+              return (e.widget as RichText).text.toPlainText() == text;
+            }
+            return false;
+          },
+          description: 'Widget with exact text: "$text"',
+        ),
+      ],
+      parents: [if (_self != null) _self!, ...parents],
+      children: children,
+    );
+  }
+
+  SingleWidgetSelector spotIcon(
+    IconData icon, {
+    bool skipOffstage = true,
+    List<WidgetSelector> parents = const [],
+    List<WidgetSelector> children = const [],
+  }) {
+    return spotAllIcon(
+      icon,
+      parents: [if (_self != null) _self!, ...parents],
+      children: children,
+    ).single;
+  }
+
+  WidgetSelector spotAllIcon(
+    IconData icon, {
+    bool skipOffstage = true,
+    List<WidgetSelector> parents = const [],
+    List<WidgetSelector> children = const [],
+  }) {
+    return WidgetSelector._(
+      props: [
+        PredicateWithDescription(
+          (Element e) {
+            if (e.widget is Icon) {
+              return (e.widget as Icon).icon == icon;
+            }
+            return false;
+          },
+          description: 'Widget with icon: "$icon"',
+        ),
+      ],
+      parents: [if (_self != null) _self!, ...parents],
+      children: children,
+    );
+  }
 }
 
-Type _typeOf<T>() => T;
-
-extension TextSelector on WidgetSelector<Text> {
-  WidgetSelector<Text> withText(String text) {
-    return withProp<String>(
-      'text',
-      (s) => text == s,
-      description: 'text = "$text"',
-    );
-  }
-
-  WidgetSelector<Text> containsText(Pattern text) {
-    return whereText(
-      (s) => s?.contains(text) ?? false,
-      description: 'containing "$text"',
-    );
-  }
-
-  WidgetSelector<Text> startsWith(Pattern text) {
-    return whereText(
-      (s) => s?.startsWith(text) ?? false,
-      description: 'starting with "$text"',
-    );
-  }
-
-  WidgetSelector<Text> whereText(
-    bool Function(String? text) predicate, {
+extension SpotterQueries<T extends Widget> on Spotters<T> {
+  WidgetSelector<T> whereElement(
+    bool Function(Element element) predicate, {
     required String description,
   }) {
-    return whereWidget(
-      (widget) => predicate(widget.data),
-      description: description,
-      // errorDescription: (element) =>
-      //     'Expected to find text "$text" but found "${widget.data}" at ${selector.toStringBreadcrumb()}',
+    return _self!.copyWith(
+      props: [
+        ..._self!.props,
+        PredicateWithDescription(
+          (Element e) => predicate(e),
+          description: description,
+        )
+      ],
     );
   }
 
-  WidgetSelector<Text> withMaxLines(int? maxLines) {
-    return whereWidget(
-      (widget) => widget.maxLines == maxLines,
-      description: 'maxLines: $maxLines',
+  WidgetSelector<T> whereWidget(
+    bool Function(T widget) predicate, {
+    required String description,
+  }) {
+    return _self!.copyWith(
+      props: [
+        ..._self!.props,
+        PredicateWithDescription(
+          (Element e) {
+            if (e.widget is T) {
+              return predicate(e.widget as T);
+            }
+            return false;
+          },
+          description: description,
+        )
+      ],
     );
   }
 }
-
-extension WrapMatcher on WidgetMatcher<Wrap> {
-  WidgetMatcher<Wrap> hasDirection(Axis direction) {
-    // TODO make this work
-    // return withProp<Axis>('direction',
-    //       (axis) => axis == direction,
-    //   description: 'direction: $direction',
-    // );
-    return this;
-  }
-}
-
-extension WrapSelector on WidgetSelector<Wrap> {
-  WidgetSelector<Wrap> withDirection(Axis direction) {
-    return withProp<Axis>(
-      'direction',
-      (axis) => axis == direction,
-      description: 'direction: $direction',
-    );
-  }
-}
-
-extension TextWidgetSelector on WidgetMatcher<Text> {
-  WidgetMatcher<Text> hasText(String text) {
-    if (widget.data != text) {
-      throw TestFailure(
-        'Expected to find text "$text" but found "${widget.data}" at ${selector.toStringBreadcrumb()}',
-      );
-    }
-    return this;
-  }
-
-  WidgetMatcher<Text> endsWith(String text) {
-    if (widget.data?.endsWith(text) ?? false) {
-      throw TestFailure(
-        'Expected to find text "$text" but found "${widget.data}" at ${selector.toStringBreadcrumb()}',
-      );
-    }
-    return this;
-  }
-
-  WidgetMatcher<Text> hasTextSize(int size) {
-    // TODO
-    final richText = collectAllElementsFrom(element, skipOffstage: true)
-        .firstOrNullWhere((element) => element.widget is RichText)
-        ?.widget as RichText?;
-
-    final style = richText!.text.style;
-    if (style!.fontSize != size) {
-      throw TestFailure(
-        'Expected to find text with size "$size" but found "${style.fontSize}" at ${selector.toStringBreadcrumb()}',
-      );
-    }
-
-    // if (widget.style?.endsWith(text) ?? false) {
-    //   throw TestFailure(
-    //     'Expected to find text "$text" but found "${widget.data}" at ${selector.toStringBreadcrumb()}',
-    //   );
-    // }
-    return this;
-  }
-
-  WidgetMatcher<Text> containsText(String text) {
-    if (widget.data != text) {
-      throw TestFailure(
-        'Expected to find text "$text" but found "${widget.data}" at ${selector.toStringBreadcrumb()}',
-      );
-    }
-    return this;
-  }
-
-  WidgetMatcher<Text> hasMaxLines(int? maxLines) {
-    if (widget.maxLines != maxLines) {
-      throw TestFailure(
-        'Expected to find text with maxLines "$maxLines" but found "${widget.maxLines}" at ${selector.toStringBreadcrumb()}',
-      );
-    }
-    // final elements = this.elements;
-    // for (final element in elements) {
-    //   final textWidget = element.widget as Text;
-    //   if (textWidget.data != text) {
-    //     throw TestFailure(
-    //       'Expected to find text "$text" but found "${textWidget.data}" at ${toStringBreadcrumb()}',
-    //     );
-    //   }
-    // }
-    return this;
-  }
-}
-
-// PropMatcher<Text> withText(String text) {
-//   return (w) => w.hasText(text);
-// }
 
 class WidgetMatcher<W extends Widget> {
   W get widget => element.widget as W;
@@ -177,184 +227,35 @@ class PropMatcher<W extends Widget> {
   });
 }
 
-// typedef PropSelector<W extends Widget> = void Function(WidgetSelector<W>);
-
-mixin CommonSpots<T extends Widget> {
-  WidgetSelector<T>? get _self;
-
-  /// Spots a widget of type [W] in the scope of the parent selector
-  WidgetSelector<W> spot<W extends Widget>({
-    List<WidgetSelector> parents = const [],
-    List<WidgetSelector> children = const [],
-    List<ElementTreeQuery> props = const [],
-  }) {
-    final type = _typeOf<W>();
-    final selector = WidgetSelector<W>._(
-      props: [
-        ElementTreeQuery(
-          (Element e) => e.widget.runtimeType == type,
-          description: '$type',
-        ),
-        ...props
-      ],
-      parents: [if (_self != null) _self!, ...parents],
-      children: children,
-    );
-
-    return selector;
-  }
-
-  WidgetSelector<W> byWidget<W extends Widget>(W widget) {
-    return WidgetSelector<W>._(
-      props: [
-        ElementTreeQuery(
-          (Element e) => identical(e.widget, widget),
-          description: 'Widget === $widget',
-        )
-      ],
-    );
-  }
-
-  WidgetSelector<W> byElement<W extends Widget>(Element element) {
-    return WidgetSelector<W>._(
-      props: [
-        ElementTreeQuery(
-          (Element e) => identical(e, element),
-          description: 'Element === $element',
-        ),
-      ],
-    );
-  }
-
-  WidgetSelector<T> whereElement(
-    bool Function(Element element) predicate, {
-    required String description,
-  }) {
-    return WidgetSelector<T>._(
-      props: [
-        ElementTreeQuery(
-          (Element e) => predicate(e),
-          description: description,
-        )
-      ],
-    );
-  }
-
-  WidgetSelector<T> whereWidget(
-    bool Function(T widget) predicate, {
-    required String description,
-  }) {
-    return _self!.copyWith(
-      props: [
-        ...this._self!.props,
-        ElementTreeQuery(
-          (Element e) {
-            if (e.widget is T) {
-              return predicate(e.widget as T);
-            }
-            return false;
-          },
-          description: description,
-        )
-      ],
-    );
-  }
-
-  WidgetSelector text(
-    String text, {
-    List<WidgetSelector> parents = const [],
-    List<WidgetSelector> children = const [],
-    bool findRichText = false,
-  }) {
-    return WidgetSelector._(
-      props: [
-        ElementTreeQuery(
-          (Element e) {
-            if (e.widget is Text) {
-              return (e.widget as Text).data == text;
-            }
-            if (e.widget is EditableText) {
-              return (e.widget as EditableText).controller.text == text;
-            }
-            if (findRichText == true && e.widget is RichText) {
-              return (e.widget as RichText).text.toPlainText() == text;
-            }
-            return false;
-          },
-          description: 'Widget with exact text: "$text"',
-        ),
-      ],
-      parents: [if (_self != null) _self!, ...parents],
-      children: children,
-    );
-  }
-
-  WidgetSelector spotIcon(
-    IconData icon, {
-    bool skipOffstage = true,
-    List<WidgetSelector> parents = const [],
-    List<WidgetSelector> children = const [],
-  }) {
-    return WidgetSelector._(
-      props: [
-        ElementTreeQuery(
-          (Element e) {
-            if (e.widget is Icon) {
-              return (e.widget as Icon).icon == icon;
-            }
-            return false;
-          },
-          description: 'Widget with icon: "$icon"',
-        ),
-      ],
-      parents: [if (_self != null) _self!, ...parents],
-      children: children,
-    );
-  }
-}
-
-extension SpotFinder on Finder {
-  WidgetSelector get spot {
-    return WidgetSelector._(
-      props: [
-        ElementTreeQuery(
-          (e) => evaluate().contains(e),
-          description: 'Finder: $description',
-        ),
-      ],
-    );
-  }
-}
-
-class ElementTreeQuery {
+class PredicateWithDescription {
   final bool Function(Element) predicate;
   final String description;
 
-  ElementTreeQuery(this.predicate, {required this.description});
+  PredicateWithDescription(this.predicate, {required this.description});
 }
 
-/// A [WidgetSelector] that only ever matches a single widget
+/// A [WidgetSelector] that intends to resolve to a single widget
 class SingleWidgetSelector<W extends Widget> extends WidgetSelector<W> {
   SingleWidgetSelector._({
     required super.props,
     super.parents,
     super.children,
-  }) : super._(matchesSingleWidget: true);
+  }) : super._(expectSingle: true);
 
-  SingleSpotSnapshot<W> call() {
-    // TODO the last single should not be required
-    return single.snapshot().single;
+  SingleSpotSnapshot<W> snapshot() {
+    return snapshot_file.snapshot(this).single;
   }
 }
 
+/// A [WidgetSelector] that to 0..N widgets
 class MultiWidgetSelector<W extends Widget> extends WidgetSelector<W> {
   MultiWidgetSelector._({
     required super.props,
     super.parents,
     super.children,
-  }) : super._(matchesSingleWidget: false);
+  }) : super._(expectSingle: false);
 
-  SpotSnapshot<W> call() {
+  SpotSnapshot<W> snapshot() {
     return snapshot_file.snapshot(this);
   }
 }
@@ -362,10 +263,10 @@ class MultiWidgetSelector<W extends Widget> extends WidgetSelector<W> {
 /// Represents a chain of widgets in the widget tree that can be asserted
 ///
 /// Compared to normal [Finder], this gives great error messages along the chain
-class WidgetSelector<W extends Widget> with CommonSpots<W> {
+class WidgetSelector<W extends Widget> with Spotters<W> {
   static final WidgetSelector all = WidgetSelector._(
     props: [
-      ElementTreeQuery(
+      PredicateWithDescription(
         (e) => true,
         description: 'any Widget',
       )
@@ -376,16 +277,16 @@ class WidgetSelector<W extends Widget> with CommonSpots<W> {
     required this.props,
     List<WidgetSelector>? parents,
     List<WidgetSelector>? children,
-    this.matchesSingleWidget,
-  })  : parents = parents ?? [],
+    this.expectSingle,
+  })  : parents = parents?.toSet().toList() ?? [],
         children = children ?? [];
 
-  final List<ElementTreeQuery> props;
+  final List<PredicateWithDescription> props;
   final List<WidgetSelector> parents;
   final List<WidgetSelector> children;
 
   /// True when this selector should only match a single widget
-  final bool? matchesSingleWidget;
+  final bool? expectSingle;
 
   @override
   String toString() {
@@ -444,16 +345,16 @@ class WidgetSelector<W extends Widget> with CommonSpots<W> {
   WidgetSelector<W> get _self => this;
 
   WidgetSelector<W> copyWith({
-    List<ElementTreeQuery>? props,
+    List<PredicateWithDescription>? props,
     List<WidgetSelector>? parents,
     List<WidgetSelector>? children,
-    bool? single,
+    bool? expectSingle,
   }) {
     return WidgetSelector<W>._(
       props: props ?? this.props,
       parents: parents ?? this.parents,
       children: children ?? this.children,
-      matchesSingleWidget: single ?? this.matchesSingleWidget,
+      expectSingle: expectSingle ?? this.expectSingle,
     );
   }
 
@@ -565,6 +466,12 @@ class SpotSnapshot<W extends Widget> {
   }
 
   SingleSpotSnapshot<W> get single {
+    if (discovered.length > 2) {
+      // TODO make better error message
+      throw Exception(
+        'Found ${discovered.length} matches for $selector, expected only one',
+      );
+    }
     return SingleSpotSnapshot(
       selector: selector,
       discovered: discovered,
@@ -597,34 +504,6 @@ class SingleSpotSnapshot<W extends Widget> extends SpotSnapshot<W>
 }
 
 extension SnapshotSelector<W extends Widget> on WidgetSelector<W> {
-  SpotSnapshot<W> snapshot() {
-    return snapshot_file.snapshot(this);
-  }
-
-  MultiWidgetSelector<W> get multi {
-    return MultiWidgetSelector<W>._(
-      props: props,
-      parents: parents,
-      children: children,
-    );
-  }
-
-  SingleSpotSnapshot<W> locate() {
-    return single.call();
-  }
-
-  SpotSnapshot<W> locateMulti() {
-    return multi.call();
-  }
-
-  SpotSnapshot<W> locateAtLeastOnce() {
-    return multi.call();
-  }
-
-  SpotSnapshot<W> existsAtLeastOnce() {
-    return multi.call();
-  }
-
   SingleWidgetSelector<W> get single {
     return SingleWidgetSelector<W>._(
       props: props,
@@ -633,8 +512,51 @@ extension SnapshotSelector<W extends Widget> on WidgetSelector<W> {
     );
   }
 
+  SpotSnapshot<W> snapshot() {
+    return snapshot_file.snapshot(this);
+  }
+
+  SpotSnapshot<W> locateMulti() {
+    // TODO add error handling
+    return snapshot();
+  }
+
+  SpotSnapshot<W> locateAtLeastOnce() {
+    // TODO add error handling
+    return snapshot();
+  }
+
+  SpotSnapshot<W> existsAtLeastOnce() {
+    // TODO add error handling
+    return snapshot();
+  }
+
   SingleSpotSnapshot<W> existsOnce() {
-    return single.call().existsOnce();
+    return snapshot().existsOnce();
+  }
+}
+
+extension SingleSnapshotSelector<W extends Widget> on SingleWidgetSelector<W> {
+  MultiWidgetSelector<W> get multi {
+    return MultiWidgetSelector<W>._(
+      props: props,
+      parents: parents,
+      children: children,
+    );
+  }
+
+  SingleSpotSnapshot<W> snapshot() {
+    // TODO should not throw when multiple elements are found
+    return snapshot_file.snapshot(this).single;
+  }
+
+  SingleSpotSnapshot<W> locate() {
+    // TODO add error handling
+    return snapshot();
+  }
+
+  SingleSpotSnapshot<W> existsOnce() {
+    return snapshot().existsOnce();
   }
 
   void doesNotExist() {
@@ -697,3 +619,5 @@ extension MutliMatchers<W extends Widget> on SpotSnapshot<W> {
         'Missmatches: ${missMatches.map((e) => e.value.toStringDeep()).join(', ')}');
   }
 }
+
+Type _typeOf<T>() => T;

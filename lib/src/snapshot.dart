@@ -45,6 +45,23 @@ SpotSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
     return value.intersectWithSelector(element, (it) => it.value).toList();
   });
 
+  if (selector.expectSingle == true) {
+    if (discovered.length <= 1) {
+      return SingleSpotSnapshot<W>(
+        selector: selector,
+        discovered: discovered,
+        debugCandidates: parentSnapshots
+            .expand((element) => element.debugCandidates)
+            .toList(),
+      );
+    } else {
+      // TODO throw better error message
+      throw TestFailure(
+          'Expected to find exactly one widget matching $selector, '
+          'but found ${discovered.length} widgets.');
+    }
+  }
+
   return SpotSnapshot<W>(
     selector: selector,
     discovered: discovered,

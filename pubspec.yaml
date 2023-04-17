@@ -8,12 +8,13 @@ environment:
   sdk: '>=2.17.0 <3.0.0'
 
 dependencies:
-  collection: ^1.16.0
+  # TODO copy into spot to prevent version conflicts until 1.0.0
   checks:
     git:
       url: https://github.com/dart-lang/test.git
       path: pkgs/checks
       ref: master
+  collection: ^1.16.0
   dartx: ^1.1.0
   flutter:
     sdk: flutter

@@ -20,19 +20,11 @@ void main() {
       ),
     );
 
-    final result = spot<MaterialApp>().snapshot();
-    expect(result.matchingElements.length, 1);
-
-    final homePage = spot<MaterialApp>().spot<Scaffold>().single;
-    final appBar = homePage.spot<AppBar>().single;
+    final homePage = spot<MaterialApp>().spot<Scaffold>();
+    final appBar = homePage.spot<AppBar>();
 
     appBar
-        .spotIcon(
-          Icons.settings,
-          parents: [spot<IconButton>()],
-        )
-        .single()
-        .doesNotExist();
+        .spotIcon(Icons.settings, parents: [spot<IconButton>()]).doesNotExist();
 
     // finder alternative
     // expect(find.byIcon(Icons.settings), findsOneWidget);
