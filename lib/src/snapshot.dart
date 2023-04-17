@@ -79,13 +79,6 @@ SpotSnapshot<W> _takeScopedSnapshot<W extends Widget>(
   // TODO cache results
   final candidates = [origin.value] +
       collectAllElementsFrom(origin.value, skipOffstage: true).toList();
-  // print('candidates: ${candidates.length}, selector: $selector ${selector.hashCode}');
-  // final node = SpotNode(
-  //   selector: this,
-  //   parent: origin,
-  //   value: origin.value,
-  //   candidates: candidates,
-  // );
 
   // First find all elements matching the query
   final List<SpotNode<W>> queryMatches = candidates
@@ -100,7 +93,6 @@ SpotSnapshot<W> _takeScopedSnapshot<W extends Widget>(
   }).toList();
 
   final List<SpotNode<W>> matchingChildNodes = [];
-  final List<SpotNode<W>> matchingPropNodes = [];
 
   // Then check for every queryMatch if the children and props match
   for (final SpotNode<W> queryMatch in queryMatches) {
@@ -111,174 +103,20 @@ SpotSnapshot<W> _takeScopedSnapshot<W extends Widget>(
         final SpotSnapshot<Widget> snapshot =
             _takeScopedSnapshot(childMatcher, queryMatch);
         if (snapshot.discovered.isNotEmpty) {
-          // final selector = childMatcher.constrain(children: [childMatcher]);
-          // childSearchResults.putIfAbsent(selector, () => snapshot);
           matchingChildNodes.add(queryMatch);
         }
       }
     }
-
-    // TODO remove when commenting in lines below
-    matchingPropNodes.add(queryMatch);
-
-    // if (props.isEmpty) {
-    //   matchingPropNodes.add(queryMatch);
-    // } else {
-    //   for (final PropSelector<W> prop in props) {
-    //     try {
-    //       final selector = queryMatch.selector;
-    //       prop.call(selector);
-    //       final selectorWithSingleProp =
-    //           selector.copyWith(children: [], props: [prop]);
-    //       propMatches.add(
-    //         SpotNode(
-    //           selector: selectorWithSingleProp,
-    //           parent: queryMatch.parent,
-    //           value: queryMatch.value,
-    //           candidates: queryMatch.parent!.candidates,
-    //         ),
-    //       );
-    //     } catch (e) {
-    //       // allPropsMatch = false;
-    //     }
-    //   }
-    // }
   }
-
-  final List<SpotNode<W>> discovered = () {
-    final List<SpotNode<W>> matchesBoth = [];
-    for (final childMatch in matchingChildNodes) {
-      if (matchingPropNodes.contains(childMatch)) {
-        matchesBoth.add(childMatch);
-      }
-    }
-    return matchesBoth;
-  }();
 
   return SpotSnapshot(
     selector: selector,
-    discovered: discovered,
+    discovered: matchingChildNodes,
     debugCandidates: candidates,
   );
-
-  //
-  // // walk all children until we find all child matches
-  // final List<Element> childrenMatches = [];
-  // for (final childMatcher in children) {
-  //   final SpotSnapshot<Widget> childSnapshot = childMatcher.snapshot();
-  //   if (childSnapshot.matchingElements.isNotEmpty) {
-  //     childrenMatches.addAll(childSnapshot.matchingElements);
-  //   }
-  // }
-  // //
-  // // final childrenMatches = children.isEmpty
-  // //     ? candidates
-  // //     : candidates.where((candidate) {
-  // //         final matchingConstraints = children
-  // //             .where((constraint) => constraint.query.predicate(candidate));
-  // //         // must match all children
-  // //         return matchingConstraints.length == children.length;
-  // //       }).toList();
-  //
-  // // TODO make this work
-  // final propMatches = candidates;
-  //
-  // // final matches = queryMatches.map((e) {
-  // //   return MapEntry(
-  // //     e.value,
-  // //     SpotHierarchy(
-  // //       origin: origin,
-  // //       actual: e.key,
-  // //       matchesChildren: childrenMatches,
-  // //       candidates: candidates,
-  // //       matchesProps: propMatches,
-  // //       // no parents, all candidates match
-  // //       matchesParents: candidates,
-  // //       selector: origin.selector,
-  // //     ),
-  // //   );
-  // // }).toList();
-  //
-  // return SpotSnapshot(
-  //   selector: this,
-  //   matchingElements: [],
-  //   searchResults: {
-  //     query: [
-  //       SpotHierarchy(
-  //         origin: origin,
-  //         actual: origin.actual,
-  //         matchesChildren: childrenMatches,
-  //         candidates: candidates,
-  //         matchesProps: propMatches,
-  //         // no parents, all candidates match
-  //         matchesParents: candidates,
-  //         selector: origin.selector,
-  //       )
-  //     ],
-  //   },
-  //   // searchResults: {
-  //   //   for (final match in matches) match.key: match.value,
-  //   // },
-  // );
 }
 
 extension WidgetSelectorMatcher<W extends Widget> on SpotSnapshot<W> {
-  // WidgetSelector forEach(
-  //   void Function(Widget widget, Element element) matcher,
-  // ) {
-  //   final elements = finder.evaluate().toList();
-  //   for (final element in elements) {
-  //     matcher(element.widget, element);
-  //   }
-  //   return this;
-  // }
-  //
-  // WidgetSelector<Widget> matchProps(List<WidgetProp> matchers) {
-  //   final elements = finder.evaluate().toList();
-  //   for (final element in elements) {
-  //     for (final matcher in matchers) {
-  //       final match = matcher.match(element);
-  //       if (!match) {
-  //         throw Exception(
-  //           'Failed to match ${matcher.describe(element)} with ${element.widget}',
-  //         );
-  //       }
-  //     }
-  //   }
-  //   return this;
-  // }
-  //
-  // WidgetSelector<T> whereWidget(
-  //   bool Function(T widget) predicate,
-  // ) {
-  //   final elements = finder.evaluate().toList();
-  //   for (final element in elements) {
-  //     final widget = element.widget as T;
-  //     final matching = predicate(widget);
-  //   }
-  //   return WidgetSelector<T>._(predicate, parents, children);
-  // }
-
-  /// Returns the elements that match this selector
-  // TODO Make errors better.
-  // This method works great, but errors are impossible to formulate because we only get the result.
-  // Therefore, move this method in to existsOnce() and co for better error messages.
-  // Idea: Return whole search tree with all information, then use that to generate error messages.
-
-  // TODO move to snapshot
-  // List<Element> get elements {
-  //   final snapshot = this.snapshot();
-  //   return snapshot.matchingElements;
-  // }
-  //
-  // Element get element {
-  //   final elements = this.elements;
-  //   if (elements.isEmpty) {
-  //     throw Exception('Could not find $selector in widget tree');
-  //   }
-  //   return elements.first;
-  // }
-
   SingleSpotSnapshot<W> existsOnce() {
     final errorBuilder = StringBuffer();
 
@@ -392,39 +230,6 @@ extension WidgetSelectorMatcher<W extends Widget> on SpotSnapshot<W> {
       fail(errorBuilder.toString());
     }
 
-    //
-    // final matches = <Element>{
-    //   ...matchingParents,
-    //   ...matchingChildren,
-    //   ...matchingProps,
-    // }.toList();
-    // if (matches.isEmpty) {
-    //   int i = 0;
-    //   for (final parent in parents) {
-    //     i++;
-    //     final possibleParents = parent.elements;
-    //     errorBuilder.writeln(
-    //       'Could not find $selector as child of #$i ${parent.toStringBreadcrumb()}',
-    //     );
-    //     errorBuilder.writeln(
-    //       'There are ${possibleParents.length} possible parents for '
-    //       '$selector matching #$i ${parent.toStringBreadcrumb()}. But non matched. '
-    //       'The widget trees starting at #$i ${parent.query.description} are:',
-    //     );
-    //     int index = 0;
-    //     for (final possibleParent in possibleParents) {
-    //       errorBuilder.writeln("Possible parent $index:");
-    //       errorBuilder.writeln(possibleParent.toStringDeep());
-    //       index++;
-    //     }
-    //   }
-    //
-    //   errorBuilder.writeln(
-    //     'Could not find $selector as child of ${parents.toStringBreadcrumb()}',
-    //   );
-    //   fail(errorBuilder.toString());
-    // }
-    //
     if (discovered.length > 1) {
       if (selector.parents.isEmpty) {
         errorBuilder.writeln(
@@ -462,15 +267,11 @@ extension WidgetSelectorMatcher<W extends Widget> on SpotSnapshot<W> {
       matchingElements.length == 1,
       'Found ${matchingElements.length} elements',
     );
-    // return WidgetSelector<T>._(predicate, parents, children);
-    // return WidgetSelector<T>._(
-    //     ElementTreeQuery((e) => false, description: 'Exactly Element X'),
-    //     parents,
-    //     children);
     return single;
   }
 
   SpotSnapshot<W> existsAtLeastOnce() {
+    // TODO
     // final Iterable<Element> elements = finder.evaluate();
     //
     // final match = elements.firstWhereOrNull((element) {
