@@ -19,20 +19,6 @@ class Spot with CommonSpots<Widget> {
 
 Type _typeOf<T>() => T;
 
-PropMatcher<Text> hasText(String text) {
-  return PropMatcher<Text>(
-    (it) => it.hasText(text),
-    description: 'with text "$text"',
-  );
-}
-
-PropMatcher<Container> hasColor(Color color) {
-  return PropMatcher<Container>(
-    (it) => it.widget.color == color,
-    description: 'with color $color',
-  );
-}
-
 extension TextSelector on WidgetSelector<Text> {
   WidgetSelector<Text> withText(String text) {
     return withProp<String>(
@@ -72,6 +58,27 @@ extension TextSelector on WidgetSelector<Text> {
     return whereWidget(
       (widget) => widget.maxLines == maxLines,
       description: 'maxLines: $maxLines',
+    );
+  }
+}
+
+extension WrapMatcher on WidgetMatcher<Wrap> {
+  WidgetMatcher<Wrap> hasDirection(Axis direction) {
+    // TODO make this work
+    // return withProp<Axis>('direction',
+    //       (axis) => axis == direction,
+    //   description: 'direction: $direction',
+    // );
+    return this;
+  }
+}
+
+extension WrapSelector on WidgetSelector<Wrap> {
+  WidgetSelector<Wrap> withDirection(Axis direction) {
+    return withProp<Axis>(
+      'direction',
+      (axis) => axis == direction,
+      description: 'direction: $direction',
     );
   }
 }
@@ -217,38 +224,6 @@ mixin CommonSpots<T extends Widget> {
       ],
     );
   }
-  //
-  // WidgetSelector childByWidgetPredicate(
-  //   ElementTreeQuery predicate, {
-  //   List<WidgetSelector> parents = const [],
-  //   List<WidgetSelector> children = const [],
-  // }) {
-  //   return WidgetSelector._(
-  //     props: [predicate],
-  //     parents: [if (_self != null) _self!, ...parents],
-  //     children: children,
-  //   );
-  // }
-  //
-  // WidgetSelector childByElementType(
-  //   Type type, {
-  //   List<WidgetSelector> parents = const [],
-  //   List<WidgetSelector> children = const [],
-  // }) {
-  //   return WidgetSelector._(
-  //     props: [
-  //       ElementTreeQuery(
-  //         (Element e) => e.runtimeType == type,
-  //         description: 'Element of type $type',
-  //       )
-  //     ],
-  //     parents: [
-  //       if (_self != null) _self!,
-  //       ...parents,
-  //     ],
-  //     children: children,
-  //   );
-  // }
 
   WidgetSelector<T> whereElement(
     bool Function(Element element) predicate, {
@@ -313,44 +288,7 @@ mixin CommonSpots<T extends Widget> {
     );
   }
 
-  // /// Caution: this is a very expensive operation.
-  // WidgetSelector childWidgetWithText(
-  //   Type widgetType,
-  //   String text, {
-  //   bool skipOffstage = true,
-  //   List<WidgetSelector> parents = const [],
-  //   List<WidgetSelector> children = const [],
-  // }) {
-  //   final finder = find.widgetWithText(
-  //     widgetType,
-  //     text,
-  //     skipOffstage: skipOffstage,
-  //   );
-  //   return WidgetSelector._(
-  //     finder,
-  //     [if (_self != null) _self!, ...parents],
-  //     children,
-  //   );
-  // }
-
-  // WidgetSelector textContaining(
-  //   Pattern pattern, {
-  //   bool skipOffstage = true,
-  //   List<WidgetSelector> parents = const [],
-  //   List<WidgetSelector> children = const [],
-  // }) {
-  //   final finder = find.textContaining(
-  //     pattern,
-  //     skipOffstage: skipOffstage,
-  //   );
-  //   return WidgetSelector._(
-  //     finder,
-  //     [if (_self != null) _self!, ...parents],
-  //     children,
-  //   );
-  // }
-  //
-  WidgetSelector childByIcon(
+  WidgetSelector spotIcon(
     IconData icon, {
     bool skipOffstage = true,
     List<WidgetSelector> parents = const [],
@@ -372,18 +310,6 @@ mixin CommonSpots<T extends Widget> {
       children: children,
     );
   }
-//
-// WidgetSelector child(
-//   Finder finder, {
-//   List<WidgetSelector> parents = const [],
-//   List<WidgetSelector> children = const [],
-// }) {
-//   return WidgetSelector._(
-//     finder,
-//     [if (_self != null) _self!, ...parents],
-//     children,
-//   );
-// }
 }
 
 extension SpotFinder on Finder {
@@ -682,12 +608,23 @@ extension SnapshotSelector<W extends Widget> on WidgetSelector<W> {
     return single.call().existsOnce();
   }
 
-  WidgetSelector<W> any(void Function(WidgetMatcher<W>) matcher) {
+  void doesNotExist() {
     final snapshot = this.snapshot();
-    if (snapshot.discovered.isEmpty) {
+    if (snapshot.discovered.isNotEmpty) {
+      // TODO create a better error message
+      throw Exception(
+        'Expected no matches for $this, but found ${snapshot.discovered.length} matches',
+      );
+    }
+  }
+}
+
+extension MutliMatchers<W extends Widget> on SpotSnapshot<W> {
+  SpotSnapshot<W> any(void Function(WidgetMatcher<W>) matcher) {
+    if (discovered.isEmpty) {
       throw Exception('Expected at least one match for $this, but found none');
     }
-    final found = snapshot.discovered.any((element) {
+    final found = discovered.any((element) {
       final wm = WidgetMatcher(
         element: element.value,
         selector: element.selector,
@@ -706,12 +643,11 @@ extension SnapshotSelector<W extends Widget> on WidgetSelector<W> {
     throw TestFailure('Expected at least one match for $this, but found none.');
   }
 
-  WidgetSelector<W> all(void Function(WidgetMatcher<W>) matcher) {
-    final snapshot = this.snapshot();
-    if (snapshot.discovered.isEmpty) {
+  SpotSnapshot<W> all(void Function(WidgetMatcher<W>) matcher) {
+    if (discovered.isEmpty) {
       throw Exception('Expected at least one match for $this, but found none');
     }
-    final missMatches = snapshot.discovered.whereNot((element) {
+    final missMatches = discovered.whereNot((element) {
       final wm = WidgetMatcher(
         element: element.value,
         selector: element.selector,
@@ -728,17 +664,7 @@ extension SnapshotSelector<W extends Widget> on WidgetSelector<W> {
       return this;
     }
     throw TestFailure(
-        'Expected that all candidates match $this, but only ${snapshot.discovered.length - missMatches.length} of ${snapshot.discovered.length} did.\n'
+        'Expected that all candidates match $this, but only ${discovered.length - missMatches.length} of ${discovered.length} did.\n'
         'Missmatches: ${missMatches.map((e) => e.value.toStringDeep()).join(', ')}');
-  }
-
-  void doesNotExist() {
-    final snapshot = this.snapshot();
-    if (snapshot.discovered.isNotEmpty) {
-      // TODO create a better error message
-      throw Exception(
-        'Expected no matches for $this, but found ${snapshot.discovered.length} matches',
-      );
-    }
   }
 }

@@ -255,7 +255,21 @@ void main() {
     final appBarSpot = spot<AppBar>();
     appBarSpot.spot<Text>().existsOnce().hasText('App Title').hasMaxLines(2);
 
+    // Error message only show that it could not be found
+    spot<Wrap>().withDirection(Axis.horizontal).locate();
+
+    // Error message can show the actual value of the direction
+    spot<Wrap>()
+        .locateMulti()
+        .any((wrap) => wrap.hasDirection(Axis.horizontal));
+    spot<Wrap>().locate().hasDirection(Axis.horizontal);
+
     spot<Wrap>().spot<Text>().withMaxLines(2).existsOnce().hasText('Hello');
+
+    spot<Wrap>()
+        .spot<Text>(parents: [spot<GestureDetector>()])
+        .locate()
+        .hasText('Hello');
 
     final textSpot =
         spot<Wrap>().spot<Text>(parents: [spot<GestureDetector>()]);

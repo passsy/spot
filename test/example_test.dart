@@ -27,7 +27,7 @@ void main() {
     final appBar = homePage.spot<AppBar>().single;
 
     appBar
-        .childByIcon(
+        .spotIcon(
           Icons.settings,
           parents: [spot<IconButton>()],
         )
