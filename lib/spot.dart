@@ -1,10 +1,9 @@
 library spot;
 
-import 'package:flutter_test/flutter_test.dart' show find;
 import 'package:spot/spot.dart';
 
-export 'package:spot/src/finders.dart';
 export 'package:spot/src/snapshot.dart';
+export 'package:spot/src/spotters.dart';
 
 /// Creates a widget/element selectors that search the widget and element tree
 /// for matching elements.

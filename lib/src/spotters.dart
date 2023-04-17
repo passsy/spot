@@ -472,7 +472,8 @@ class WidgetSelector<W extends Widget> with CommonSpots<W> {
         }
         if (prop.value is! T) {
           throw ArgumentError(
-              'Expected prop "$propName" to be of type "$T", but was "${prop.value.runtimeType}"');
+            'Expected prop "$propName" to be of type "$T", but was "${prop.value.runtimeType}"',
+          );
         }
         final subject = it<T>();
         predicate(subject);
