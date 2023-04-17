@@ -1,3 +1,5 @@
+import 'package:checks/checks.dart';
+import 'package:checks/context.dart';
 import 'package:dartx/dartx.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -452,6 +454,33 @@ class WidgetSelector<W extends Widget> with CommonSpots<W> {
       parents: parents ?? this.parents,
       children: children ?? this.children,
       matchesSingleWidget: single ?? this.matchesSingleWidget,
+    );
+  }
+
+  WidgetSelector<W> withProp2<T>(
+    String propName,
+    void Function(Subject<T>) predicate,
+  ) {
+    return whereElement(
+      (element) {
+        final diagnosticsNode = element.toDiagnosticsNode();
+        final prop = diagnosticsNode
+            .getProperties()
+            .firstOrNullWhere((e) => e.name == propName);
+        if (prop == null) {
+          return false;
+        }
+        if (prop.value is! T) {
+          throw ArgumentError(
+              'Expected prop "$propName" to be of type "$T", but was "${prop.value.runtimeType}"');
+        }
+        final subject = it<T>();
+        predicate(subject);
+        final failure = softCheck(prop.value as T, subject);
+        // TODO save failure somewhere to show in error message
+        return failure == null;
+      },
+      description: 'Widget with prop "$propName"',
     );
   }
 

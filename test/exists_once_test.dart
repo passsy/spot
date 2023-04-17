@@ -1,5 +1,6 @@
 // ignore_for_file: unnecessary_const, prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:checks/checks.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
@@ -252,11 +253,18 @@ void main() {
         ),
       ),
     );
-    final appBarSpot = spot<AppBar>();
-    appBarSpot.spot<Text>().existsOnce().hasText('App Title').hasMaxLines(2);
+    final appBar = spot<AppBar>();
+    appBar.spot<Text>().existsOnce().hasText('App Title').hasMaxLines(2);
 
     // Error message only show that it could not be found
-    spot<Wrap>().withDirection(Axis.horizontal).locate();
+    spot<Wrap>().withProp2<Axis>(
+      'direction',
+      (Subject<Axis> it) {
+        it.equals(Axis.horizontal);
+      },
+    )
+        // .withDirection(Axis.horizontal)
+        .locate();
 
     // Error message can show the actual value of the direction
     spot<Wrap>()
