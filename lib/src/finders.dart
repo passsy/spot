@@ -1,5 +1,4 @@
 // ignore_for_file: unused_element
-
 import 'package:dartx/dartx.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -9,6 +8,13 @@ import 'package:spot/src/snapshot.dart' as snapshot_file show snapshot;
 class Spot with CommonSpots<Widget> {
   @override
   WidgetSelector? get _self => null;
+
+  WidgetSelector<W> call<W extends Widget>({
+    List<WidgetSelector> parents = const [],
+    List<WidgetSelector> children = const [],
+    List<ElementTreeQuery> props = const [],
+  }) =>
+      this.spot<W>(parents: parents, children: children, props: props);
 }
 
 Type _typeOf<T>() => T;
@@ -29,9 +35,10 @@ PropMatcher<Container> hasColor(Color color) {
 
 extension TextSelector on WidgetSelector<Text> {
   WidgetSelector<Text> withText(String text) {
-    return whereText(
+    return withProp<String>(
+      'text',
       (s) => text == s,
-      description: 'with text "$text"',
+      description: 'text = "$text"',
     );
   }
 
@@ -167,31 +174,8 @@ class PropMatcher<W extends Widget> {
 mixin CommonSpots<T extends Widget> {
   WidgetSelector<T>? get _self;
 
-  WidgetSelector<W> a<W extends Widget>({
-    List<WidgetSelector> parents = const [],
-    List<WidgetSelector> children = const [],
-    List<ElementTreeQuery> props = const [],
-  }) {
-    return byType<W>(
-      parents: parents,
-      children: children,
-      props: props,
-    );
-  }
-
-  WidgetSelector<W> child<W extends Widget>({
-    List<WidgetSelector> parents = const [],
-    List<WidgetSelector> children = const [],
-    List<ElementTreeQuery> props = const [],
-  }) {
-    return byType<W>(
-      parents: parents,
-      children: children,
-      props: props,
-    );
-  }
-
-  WidgetSelector<W> byType<W extends Widget>({
+  /// Spots a widget of type [W] in the scope of the parent selector
+  WidgetSelector<W> spot<W extends Widget>({
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
     List<ElementTreeQuery> props = const [],
@@ -216,8 +200,8 @@ mixin CommonSpots<T extends Widget> {
     return WidgetSelector<W>._(
       props: [
         ElementTreeQuery(
-          (Element e) => e.widget == widget,
-          description: 'Widget matches $widget',
+          (Element e) => identical(e.widget, widget),
+          description: 'Widget === $widget',
         )
       ],
     );
@@ -227,61 +211,44 @@ mixin CommonSpots<T extends Widget> {
     return WidgetSelector<W>._(
       props: [
         ElementTreeQuery(
-          (Element e) => e == element,
-          description: 'Element matches $element',
+          (Element e) => identical(e, element),
+          description: 'Element === $element',
         ),
       ],
     );
   }
-
-  WidgetSelector childByType(
-    Type type, {
-    List<WidgetSelector> parents = const [],
-    List<WidgetSelector> children = const [],
-  }) {
-    return WidgetSelector._(
-      props: [
-        ElementTreeQuery(
-          (Element e) => e.widget.runtimeType == type,
-          description: 'Widget of type $type',
-        )
-      ],
-      parents: [if (_self != null) _self!, ...parents],
-      children: children,
-    );
-  }
-
-  WidgetSelector childByWidgetPredicate(
-    ElementTreeQuery predicate, {
-    List<WidgetSelector> parents = const [],
-    List<WidgetSelector> children = const [],
-  }) {
-    return WidgetSelector._(
-      props: [predicate],
-      parents: [if (_self != null) _self!, ...parents],
-      children: children,
-    );
-  }
-
-  WidgetSelector childByElementType(
-    Type type, {
-    List<WidgetSelector> parents = const [],
-    List<WidgetSelector> children = const [],
-  }) {
-    return WidgetSelector._(
-      props: [
-        ElementTreeQuery(
-          (Element e) => e.runtimeType == type,
-          description: 'Element of type $type',
-        )
-      ],
-      parents: [
-        if (_self != null) _self!,
-        ...parents,
-      ],
-      children: children,
-    );
-  }
+  //
+  // WidgetSelector childByWidgetPredicate(
+  //   ElementTreeQuery predicate, {
+  //   List<WidgetSelector> parents = const [],
+  //   List<WidgetSelector> children = const [],
+  // }) {
+  //   return WidgetSelector._(
+  //     props: [predicate],
+  //     parents: [if (_self != null) _self!, ...parents],
+  //     children: children,
+  //   );
+  // }
+  //
+  // WidgetSelector childByElementType(
+  //   Type type, {
+  //   List<WidgetSelector> parents = const [],
+  //   List<WidgetSelector> children = const [],
+  // }) {
+  //   return WidgetSelector._(
+  //     props: [
+  //       ElementTreeQuery(
+  //         (Element e) => e.runtimeType == type,
+  //         description: 'Element of type $type',
+  //       )
+  //     ],
+  //     parents: [
+  //       if (_self != null) _self!,
+  //       ...parents,
+  //     ],
+  //     children: children,
+  //   );
+  // }
 
   WidgetSelector<T> whereElement(
     bool Function(Element element) predicate, {
@@ -526,7 +493,7 @@ class WidgetSelector<W extends Widget> with CommonSpots<W> {
     }
 
     final constraints = [props, children].where((e) => e != null);
-    return "${constraints.join(' ')}";
+    return constraints.join(' ');
   }
 
   String toStringBreadcrumb() {
@@ -560,6 +527,31 @@ class WidgetSelector<W extends Widget> with CommonSpots<W> {
       parents: parents ?? this.parents,
       children: children ?? this.children,
       matchesSingleWidget: single ?? this.matchesSingleWidget,
+    );
+  }
+
+  WidgetSelector<W> withProp<T>(
+    String propName,
+    bool Function(T) predicate, {
+    required String description,
+  }) {
+    return whereElement(
+      (element) {
+        final diagnosticsNode = element.toDiagnosticsNode();
+        final prop = diagnosticsNode
+            .getProperties()
+            .firstOrNullWhere((e) => e.name == propName);
+        if (prop == null) {
+          return false;
+        }
+        // TODO error message?
+        if (prop.value is T) {
+          return predicate(prop.value as T);
+        }
+        throw UnimplementedError('Check that prop matches X');
+        // return predicate(w);
+      },
+      description: 'Widget with prop "$propName"',
     );
   }
 }
@@ -635,7 +627,10 @@ class SingleSpotSnapshot<W extends Widget> extends SpotSnapshot<W>
   });
 
   @override
-  Element get element => discovered.single.value;
+  Element get element {
+    // TODO make a better error message here when no element or multiple elements are found
+    return discovered.single.value;
+  }
 
   @override
   W get widget => element.widget as W;
@@ -659,8 +654,20 @@ extension SnapshotSelector<W extends Widget> on WidgetSelector<W> {
     );
   }
 
-  MultiWidgetSelector<W> existsAtLeastOnce() {
-    return multi;
+  SingleSpotSnapshot<W> locate() {
+    return single.call();
+  }
+
+  SpotSnapshot<W> locateMulti() {
+    return multi.call();
+  }
+
+  SpotSnapshot<W> locateAtLeastOnce() {
+    return multi.call();
+  }
+
+  SpotSnapshot<W> existsAtLeastOnce() {
+    return multi.call();
   }
 
   SingleWidgetSelector<W> get single {
@@ -735,88 +742,3 @@ extension SnapshotSelector<W extends Widget> on WidgetSelector<W> {
     }
   }
 }
-
-//
-// class _MultiAncestorDescendantFinder extends Finder {
-//   _MultiAncestorDescendantFinder(
-//     this.ancestors,
-//     this.finder, {
-//     super.skipOffstage,
-//   });
-//
-//   final List<Finder> ancestors;
-//   final Finder finder;
-//
-//   @override
-//   String get description {
-//     return '${finder.description} that has ancestors with [${ancestors.map((e) => e.description).join(' && ')}]';
-//   }
-//
-//   @override
-//   Iterable<Element> apply(Iterable<Element> candidates) {
-//     final evaluate = finder.evaluate().toSet();
-//     return candidates.where((Element element) => evaluate.contains(element));
-//   }
-//
-//   @override
-//   Iterable<Element> get allCandidates sync* {
-//     if (ancestors.isEmpty) {
-//       yield* super.allCandidates;
-//       return;
-//     }
-//     final List<Set<Element>> ancestorElements = ancestors.map((ancestor) {
-//       return ancestor.evaluate().expand((element) {
-//         return collectAllElementsFrom(element, skipOffstage: skipOffstage);
-//       }).toSet();
-//     }).toList();
-//
-//     // find elements that are in all iterables
-//     final firstList = ancestorElements.removeAt(0);
-//     for (final element in firstList) {
-//       bool allMatch = true;
-//       for (final ancestorElements in ancestorElements) {
-//         if (!ancestorElements.contains(element)) {
-//           allMatch = false;
-//           break;
-//         }
-//       }
-//       if (allMatch) {
-//         // element in all ancestors
-//         yield element;
-//       }
-//     }
-//   }
-// }
-//
-// class _MultiDescendantsAncestorFinder extends Finder {
-//   _MultiDescendantsAncestorFinder(this.descendants, this.finder)
-//       : super(skipOffstage: false);
-//
-//   final Finder finder;
-//   final List<Finder> descendants;
-//
-//   @override
-//   String get description {
-//     return '${finder.description} which is an ancestor of  [${descendants.map((e) => e.description).join(' && ')}]';
-//   }
-//
-//   @override
-//   Iterable<Element> apply(Iterable<Element> candidates) {
-//     final allPossible = finder.evaluate().toSet();
-//     return candidates.where((Element element) => allPossible.contains(element));
-//   }
-//
-//   @override
-//   Iterable<Element> get allCandidates {
-//     if (descendants.isEmpty) {
-//       return super.allCandidates;
-//     }
-//     final Iterable<Element> possibleParents = descendants.expand((ancestor) {
-//       return ancestor.evaluate().expand((element) {
-//         return element.parents.toList();
-//       });
-//     });
-//
-//     return possibleParents;
-//   }
-// }

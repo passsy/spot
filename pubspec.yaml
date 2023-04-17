@@ -9,6 +9,11 @@ environment:
 
 dependencies:
   collection: ^1.16.0
+#  checks:
+#    git:
+#      url: https://github.com/dart-lang/test.git
+#      path: pkgs/checks
+#      ref: master
   dartx: ^1.1.0
   flutter:
     sdk: flutter

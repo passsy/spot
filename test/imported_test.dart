@@ -23,13 +23,9 @@ void main() {
         ),
       ),
     );
-    spot.byType<Padding>().childByType(SizedBox).text('Hello').existsOnce();
-    spot
-        .byType<Padding>()
-        .childByType(SizedBox)
-        .text('Hello')
-        .existsAtLeastOnce();
-    spot.byType<GestureDetector>().text('World').doesNotExist();
+    spot<Padding>().spot<SizedBox>().text('Hello').existsOnce();
+    spot<Padding>().spot<SizedBox>().text('Hello').existsAtLeastOnce();
+    spot.spot<GestureDetector>().text('World').doesNotExist();
   });
 
   testWidgets('narrow results by checking parents', (tester) async {
@@ -52,38 +48,38 @@ void main() {
         ),
       ),
     );
-    spot.byType<Text>(
-      parents: [spot.byType<Wrap>(), spot.byType<GestureDetector>()],
+    spot.spot<Text>(
+      parents: [spot.spot<Wrap>(), spot.spot<GestureDetector>()],
     ).existsOnce();
 
     // spot.text(
     //   'Hello',
-    //   parents: [spot.byType<Wrap>(), spot.byType<GestureDetector>()],
+    //   parents: [spot.spotDescendant<Wrap>(), spot.spotDescendant<GestureDetector>()],
     // ).existsOnce();
     //
     // spot.text(
     //   'Hello',
     //   parents: [
-    //     spot.byType<SizedBox>().childByType(GestureDetector),
-    //     spot.byType<Center>()
+    //     spot.spotDescendant<SizedBox>().childspotDescendant(GestureDetector),
+    //     spot.spotDescendant<Center>()
     //   ],
     // ).existsOnce();
     //
     spot.text(
       'Hello',
       parents: [
-        spot.byType<GestureDetector>(),
-        spot.byType<_UnknownWidget>(),
+        spot<GestureDetector>(),
+        spot<_UnknownWidget>(),
       ],
     );
     //
-    // spot.byType<SizedBox>().text(
+    // spot.spotDescendant<SizedBox>().text(
     //   'Hello',
-    //   parents: [spot.byType<Center>().childByType(Wrap)],
+    //   parents: [spot.spotDescendant<Center>().childspotDescendant(Wrap)],
     // ).existsOnce();
     //
     // spot
-    //     .byType<SizedBox>(parents: [spot.byType<Center>().childByType(Wrap)])
+    //     .spotDescendant<SizedBox>(parents: [spot.spotDescendant<Center>().childspotDescendant(Wrap)])
     //     .text('Hello')
     //     .existsOnce();
 
@@ -111,7 +107,7 @@ void main() {
       ),
     );
 
-    spot.byType<GestureDetector>(children: [spot.text('a')]).existsOnce();
+    spot<GestureDetector>(children: [spot.text('a')]).existsOnce();
   });
 }
 

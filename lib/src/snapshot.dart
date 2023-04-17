@@ -76,9 +76,10 @@ SpotSnapshot<W> _takeScopedSnapshot<W extends Widget>(
   SpotNode origin,
 ) {
   // TODO pass in as argument?
+  // TODO cache results
   final candidates = [origin.value] +
       collectAllElementsFrom(origin.value, skipOffstage: true).toList();
-
+  // print('candidates: ${candidates.length}, selector: $selector ${selector.hashCode}');
   // final node = SpotNode(
   //   selector: this,
   //   parent: origin,

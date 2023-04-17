@@ -20,16 +20,16 @@ void main() {
       ),
     );
 
-    final result = spot.byType<MaterialApp>().snapshot();
+    final result = spot<MaterialApp>().snapshot();
     expect(result.matchingElements.length, 1);
 
-    final homePage = spot.byType<MaterialApp>().childByType(Scaffold).single;
-    final appBar = homePage.childByType(AppBar).single;
+    final homePage = spot<MaterialApp>().spot<Scaffold>().single;
+    final appBar = homePage.spot<AppBar>().single;
 
     appBar
         .childByIcon(
           Icons.settings,
-          parents: [spot.byType<IconButton>()],
+          parents: [spot<IconButton>()],
         )
         .single()
         .doesNotExist();

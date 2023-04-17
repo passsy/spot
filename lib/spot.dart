@@ -1,7 +1,7 @@
 library spot;
 
 import 'package:flutter_test/flutter_test.dart' show find;
-import 'package:spot/src/finders.dart' show Spot;
+import 'package:spot/spot.dart';
 
 export 'package:spot/src/finders.dart';
 export 'package:spot/src/snapshot.dart';
