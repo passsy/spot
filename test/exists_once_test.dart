@@ -269,6 +269,8 @@ void main() {
         // .withDirection(Axis.horizontal)
         .locateMulti();
 
+    spot<Wrap>().withDirection(Axis.horizontal).existsAtLeastOnce();
+
     // Error message can show the actual value of the direction
     spotAll<Wrap>()
         .locateMulti()

@@ -1,3 +1,4 @@
+import 'package:checks/checks.dart';
 import 'package:dartx/dartx.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -13,10 +14,12 @@ extension TextSelector on WidgetSelector<Text> {
   }
 
   WidgetSelector<Text> containsText(Pattern text) {
-    return whereText(
-      (s) => s?.contains(text) ?? false,
-      description: 'containing "$text"',
-    );
+    return withProp2<String>(
+        'text', (Subject<String> it) => it..contains(text));
+  }
+
+  WidgetSelector<Text> text(void Function(Subject<String>) matcher) {
+    return withProp2<String>('text', matcher);
   }
 
   WidgetSelector<Text> startsWith(Pattern text) {
