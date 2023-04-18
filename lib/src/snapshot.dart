@@ -55,10 +55,14 @@ SpotSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
             .toList(),
       );
     } else {
-      // TODO throw better error message
       throw TestFailure(
-          'Expected to find exactly one widget matching $selector, '
-          'but found ${discovered.length} widgets.');
+        'Found ${discovered.length} elements matching $selector in widget tree, '
+        'expected only one\n'
+        // ignore: deprecated_member_use
+        '${WidgetsBinding.instance.renderViewElement?.toStringDeep() ?? '<no tree currently mounted>'}'
+        'Found ${discovered.length} elements matching $selector in widget tree, '
+        'expected only one',
+      );
     }
   }
 

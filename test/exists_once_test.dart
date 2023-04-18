@@ -229,6 +229,16 @@ void main() {
             .having((e) => e.message, 'candidate2', contains('Text("Hello"')),
       ),
     );
+    expect(
+      () => spot<Text>(parents: [spot<Wrap>()]).existsOnce(),
+      throwsA(
+        isA<TestFailure>()
+            .having((e) => e.message, 'parents', contains("parents: ['Wrap']"))
+            .having((e) => e.message, 'message', contains('Found 2 elements'))
+            .having((e) => e.message, 'candidate1', contains('Text("World"'))
+            .having((e) => e.message, 'candidate2', contains('Text("Hello"')),
+      ),
+    );
   });
   testWidgets('existsOnce() finds the correct widget differentiating by props',
       (tester) async {
