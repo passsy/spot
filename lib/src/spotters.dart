@@ -189,6 +189,24 @@ mixin Spotters<T extends Widget> {
       children: children,
     );
   }
+
+  SingleWidgetSelector<T> get first {
+    // TODO not yet implemented
+    throw UnimplementedError();
+    // TODO create API like ElementFilterWithDescription that allows filtering
+    //  the list of candidates, rather than each candidate individually
+
+    // return SingleWidgetSelector<T>._(
+    //   props: [
+    //     ElementFilterWithDescription(
+    //       (Iterable<Element> e) => e.first,
+    //       description: 'First Widget',
+    //     ),
+    //   ],
+    //   parents: [if (self != null) self!],
+    //   children: [],
+    // );
+  }
 }
 
 extension SpotterQueries<T extends Widget> on Spotters<T> {
