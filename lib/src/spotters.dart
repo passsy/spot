@@ -77,7 +77,7 @@ mixin Spotters<T extends Widget> {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    return SingleWidgetSelector<W>._(
+    return SingleWidgetSelector<W>(
       props: [
         PredicateWithDescription(
           (Element e) => identical(e, element),
@@ -168,6 +168,24 @@ mixin Spotters<T extends Widget> {
     );
   }
 
+  SingleWidgetSelector<W> spotKey<W extends Widget>(
+    Key key, {
+    List<WidgetSelector> parents = const [],
+    List<WidgetSelector> children = const [],
+  }) {
+    return SingleWidgetSelector(
+      props: [
+        PredicateWithDescription(
+          (Element e) {
+            if (e.widget is W) {
+              return (e.widget as W).key == key;
+            }
+            return false;
+          },
+          description: 'Widget with key: "$key"',
+        ),
+      ],
+      parents: [if (self != null) self!, ...parents],
       children: children,
     );
   }
@@ -240,7 +258,7 @@ class PredicateWithDescription {
 
 /// A [WidgetSelector] that intends to resolve to a single widget
 class SingleWidgetSelector<W extends Widget> extends WidgetSelector<W> {
-  SingleWidgetSelector._({
+  SingleWidgetSelector({
     required super.props,
     super.parents,
     super.children,
@@ -512,7 +530,7 @@ class SingleSpotSnapshot<W extends Widget> extends SpotSnapshot<W>
 
 extension SnapshotSelector<W extends Widget> on WidgetSelector<W> {
   SingleWidgetSelector<W> get single {
-    return SingleWidgetSelector<W>._(
+    return SingleWidgetSelector<W>(
       props: props,
       parents: parents,
       children: children,

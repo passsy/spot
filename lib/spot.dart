@@ -94,7 +94,7 @@ WidgetSelector<Text> spotAllText(
   );
 }
 
-SingleWidgetSelector spotIcon(
+SingleWidgetSelector<Icon> spotIcon(
   IconData icon, {
   bool skipOffstage = true,
   List<WidgetSelector> parents = const [],
@@ -107,7 +107,7 @@ SingleWidgetSelector spotIcon(
   );
 }
 
-WidgetSelector spotAllIcon(
+WidgetSelector<Icon> spotAllIcon(
   IconData icon, {
   bool skipOffstage = true,
   List<WidgetSelector> parents = const [],
