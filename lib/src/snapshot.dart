@@ -179,8 +179,12 @@ extension WidgetSelectorMatcher<W extends Widget> on SpotSnapshot<W> {
 
       for (final lessSpecificCriteria in criteriaSubset) {
         final lessSpecificSelector = buildSelector(lessSpecificCriteria);
-        final SpotSnapshot<Widget> lessSpecificSnapshot =
-            lessSpecificSelector.snapshot();
+        late final SpotSnapshot<W> lessSpecificSnapshot;
+        try {
+          lessSpecificSnapshot = lessSpecificSelector.snapshot();
+        } catch (e) {
+          continue;
+        }
         // error that selector could not be found, but instead spot detected lessSpecificSnapshot, which might be useful
         if (lessSpecificSnapshot.matchingElements.isNotEmpty) {
           errorBuilder.writeln(
