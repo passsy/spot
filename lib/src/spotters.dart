@@ -89,7 +89,7 @@ mixin Spotters<T extends Widget> {
     );
   }
 
-  SingleWidgetSelector spotText(
+  SingleWidgetSelector<Text> spotText(
     String text, {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
@@ -103,7 +103,7 @@ mixin Spotters<T extends Widget> {
     ).single;
   }
 
-  WidgetSelector spotAllText(
+  WidgetSelector<Text> spotAllText(
     String text, {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],

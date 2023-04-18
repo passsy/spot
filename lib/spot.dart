@@ -66,7 +66,7 @@ SingleWidgetSelector<W> spotElement<W extends Widget>(
   return _global.spotElement<W>(element);
 }
 
-SingleWidgetSelector spotText(
+SingleWidgetSelector<Text> spotText(
   String text, {
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
@@ -80,7 +80,7 @@ SingleWidgetSelector spotText(
   );
 }
 
-WidgetSelector spotAllText(
+WidgetSelector<Text> spotAllText(
   String text, {
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
