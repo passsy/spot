@@ -10,11 +10,11 @@ class Spot with Spotters<Widget> {
   const Spot();
 
   @override
-  WidgetSelector? get _self => null;
+  WidgetSelector? get self => null;
 }
 
 mixin Spotters<T extends Widget> {
-  WidgetSelector<T>? get _self;
+  WidgetSelector<T>? get self;
 
   SingleWidgetSelector<W> spot<W extends Widget>({
     List<WidgetSelector> parents = const [],
@@ -29,14 +29,14 @@ mixin Spotters<T extends Widget> {
     List<WidgetSelector> children = const [],
   }) {
     final type = _typeOf<W>();
-    final selector = WidgetSelector<W>._(
+    final selector = WidgetSelector<W>(
       props: [
         PredicateWithDescription(
           (Element e) => e.widget.runtimeType == type,
           description: '$type',
         ),
       ],
-      parents: [if (_self != null) _self!, ...parents],
+      parents: [if (self != null) self!, ...parents],
       children: children,
     );
 
@@ -50,7 +50,7 @@ mixin Spotters<T extends Widget> {
   }) {
     return spotAllWidgets<W>(
       widget,
-      parents: [if (_self != null) _self!, ...parents],
+      parents: [if (self != null) self!, ...parents],
       children: children,
     ).single;
   }
@@ -60,14 +60,14 @@ mixin Spotters<T extends Widget> {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    return WidgetSelector<W>._(
+    return WidgetSelector<W>(
       props: [
         PredicateWithDescription(
           (Element e) => identical(e.widget, widget),
           description: 'Widget === $widget',
         )
       ],
-      parents: [if (_self != null) _self!, ...parents],
+      parents: [if (self != null) self!, ...parents],
       children: children,
     );
   }
@@ -84,7 +84,7 @@ mixin Spotters<T extends Widget> {
           description: 'Element === $element',
         ),
       ],
-      parents: [if (_self != null) _self!, ...parents],
+      parents: [if (self != null) self!, ...parents],
       children: children,
     );
   }
@@ -97,7 +97,7 @@ mixin Spotters<T extends Widget> {
   }) {
     return spotAllText(
       text,
-      parents: [if (_self != null) _self!, ...parents],
+      parents: [if (self != null) self!, ...parents],
       children: children,
       findRichText: findRichText,
     ).single;
@@ -109,7 +109,7 @@ mixin Spotters<T extends Widget> {
     List<WidgetSelector> children = const [],
     bool findRichText = false,
   }) {
-    return WidgetSelector._(
+    return WidgetSelector(
       props: [
         PredicateWithDescription(
           (Element e) {
@@ -127,12 +127,12 @@ mixin Spotters<T extends Widget> {
           description: 'Widget with exact text: "$text"',
         ),
       ],
-      parents: [if (_self != null) _self!, ...parents],
+      parents: [if (self != null) self!, ...parents],
       children: children,
     );
   }
 
-  SingleWidgetSelector spotIcon(
+  SingleWidgetSelector<Icon> spotIcon(
     IconData icon, {
     bool skipOffstage = true,
     List<WidgetSelector> parents = const [],
@@ -140,18 +140,18 @@ mixin Spotters<T extends Widget> {
   }) {
     return spotAllIcon(
       icon,
-      parents: [if (_self != null) _self!, ...parents],
+      parents: [if (self != null) self!, ...parents],
       children: children,
     ).single;
   }
 
-  WidgetSelector spotAllIcon(
+  WidgetSelector<Icon> spotAllIcon(
     IconData icon, {
     bool skipOffstage = true,
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    return WidgetSelector._(
+    return WidgetSelector(
       props: [
         PredicateWithDescription(
           (Element e) {
@@ -163,7 +163,11 @@ mixin Spotters<T extends Widget> {
           description: 'Widget with icon: "$icon"',
         ),
       ],
-      parents: [if (_self != null) _self!, ...parents],
+      parents: [if (self != null) self!, ...parents],
+      children: children,
+    );
+  }
+
       children: children,
     );
   }
@@ -174,9 +178,9 @@ extension SpotterQueries<T extends Widget> on Spotters<T> {
     bool Function(Element element) predicate, {
     required String description,
   }) {
-    return _self!.copyWith(
+    return self!.copyWith(
       props: [
-        ..._self!.props,
+        ...self!.props,
         PredicateWithDescription(
           (Element e) => predicate(e),
           description: description,
@@ -189,9 +193,9 @@ extension SpotterQueries<T extends Widget> on Spotters<T> {
     bool Function(T widget) predicate, {
     required String description,
   }) {
-    return _self!.copyWith(
+    return self!.copyWith(
       props: [
-        ..._self!.props,
+        ...self!.props,
         PredicateWithDescription(
           (Element e) {
             if (e.widget is T) {
@@ -240,7 +244,7 @@ class SingleWidgetSelector<W extends Widget> extends WidgetSelector<W> {
     required super.props,
     super.parents,
     super.children,
-  }) : super._(expectSingle: true);
+  }) : super(expectSingle: true);
 
   SingleSpotSnapshot<W> snapshot() {
     return snapshot_file.snapshot(this).single;
@@ -253,7 +257,7 @@ class MultiWidgetSelector<W extends Widget> extends WidgetSelector<W> {
     required super.props,
     super.parents,
     super.children,
-  }) : super._(expectSingle: false);
+  }) : super(expectSingle: false);
 
   SpotSnapshot<W> snapshot() {
     return snapshot_file.snapshot(this);
@@ -264,7 +268,7 @@ class MultiWidgetSelector<W extends Widget> extends WidgetSelector<W> {
 ///
 /// Compared to normal [Finder], this gives great error messages along the chain
 class WidgetSelector<W extends Widget> with Spotters<W> {
-  static final WidgetSelector all = WidgetSelector._(
+  static final WidgetSelector all = WidgetSelector(
     props: [
       PredicateWithDescription(
         (e) => true,
@@ -273,7 +277,7 @@ class WidgetSelector<W extends Widget> with Spotters<W> {
     ],
   );
 
-  WidgetSelector._({
+  WidgetSelector({
     required this.props,
     List<WidgetSelector>? parents,
     List<WidgetSelector>? children,
@@ -281,8 +285,11 @@ class WidgetSelector<W extends Widget> with Spotters<W> {
   })  : parents = parents?.toSet().toList() ?? [],
         children = children ?? [];
 
+  // TODO make those immutable
   final List<PredicateWithDescription> props;
+  // TODO make those immutable
   final List<WidgetSelector> parents;
+  // TODO make those immutable
   final List<WidgetSelector> children;
 
   /// True when this selector should only match a single widget
@@ -342,7 +349,7 @@ class WidgetSelector<W extends Widget> with Spotters<W> {
   }
 
   @override
-  WidgetSelector<W> get _self => this;
+  WidgetSelector<W> get self => this;
 
   WidgetSelector<W> copyWith({
     List<PredicateWithDescription>? props,
@@ -350,7 +357,7 @@ class WidgetSelector<W extends Widget> with Spotters<W> {
     List<WidgetSelector>? children,
     bool? expectSingle,
   }) {
-    return WidgetSelector<W>._(
+    return WidgetSelector<W>(
       props: props ?? this.props,
       parents: parents ?? this.parents,
       children: children ?? this.children,
