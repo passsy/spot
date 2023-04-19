@@ -37,7 +37,7 @@ class FinderFromWidgetSelector extends Finder {
 
   @override
   Iterable<Element> apply(Iterable<Element> candidates) {
-    final found = selector.snapshot().discovered.map((it) => it.value);
+    final found = selector.snapshot().discovered.map((it) => it.element);
     return candidates.where((element) => found.contains(element));
   }
 

@@ -1,4 +1,3 @@
-import 'package:checks/checks.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
@@ -35,16 +34,16 @@ void main() {
         spot<MaterialApp>().spot<Scaffold>();
     final appBar = scaffold.spot<AppBar>();
 
-    final container = scaffold.spot<Container>();
+    final container = scaffold.spot<Container>()..existsOnce();
 
     final icon = appBar.spotIcon(
       Icons.home,
       parents: [spot<IconButton>(), container],
-    ).existsOnce();
+    )..existsOnce();
 
     appBar.spot<IconButton>(
       children: [spotIcon(Icons.settings)],
-    ).existsOnce();
+    ).doesNotExist();
 
     appBar
         .spotIcon(Icons.settings, parents: [spot<IconButton>()]).doesNotExist();

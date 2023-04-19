@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:collection/collection.dart';
 import 'package:dartx/dartx.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -10,9 +11,9 @@ SpotSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
   final rootElement = WidgetsBinding.instance.renderViewElement!;
   final origin = SpotNode(
     selector: WidgetSelector.all,
-    parent: null,
-    value: rootElement,
-    candidates: [rootElement],
+    parents: [],
+    element: rootElement,
+    debugCandidates: [rootElement],
   );
 
   if (selector.parents.isEmpty) {
@@ -23,27 +24,53 @@ SpotSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
   final Iterable<SpotSnapshot<Widget>> parentSnapshots =
       selector.parents.map((selector) => selector.snapshot());
 
-  // Take a sn from parentSnapshots that exist in all snapshots
-  final List<SpotNode<W>> discovered =
-      parentSnapshots.map((SpotSnapshot<Widget> snapshot) {
+  // Take a snapshot from parentSnapshots that exist in all snapshots
+  final List<List<SpotSnapshot<W>>> discoveryByParent =
+      parentSnapshots.map((SpotSnapshot<Widget> parentSnapshot) {
     final selectorWithoutParents = selector.copyWith(parents: []);
 
-    if (snapshot.discovered.isEmpty) {
-      return <SpotNode<W>>[];
+    if (parentSnapshot.discovered.isEmpty) {
+      return <SpotSnapshot<W>>[];
     }
 
-    final groups = snapshot.discovered.associateWith((parent) {
-      return _takeScopedSnapshot(selectorWithoutParents, parent).discovered;
+    final Map<SpotNode<Widget>, SpotSnapshot<W>> groups =
+        parentSnapshot.discovered.associateWith((parent) {
+      return _takeScopedSnapshot(selectorWithoutParents, parent);
     });
 
-    final common = groups.values.reduce((value, element) {
-      return value.intersectWithSelector(element, (it) => it.value).toList();
-    });
+    return groups.values.toList();
+  }).toList();
 
-    return common;
-  }).reduce((value, element) {
-    return value.intersectWithSelector(element, (it) => it.value).toList();
-  });
+  final List<SpotNode<W>> allDiscoveredNodes =
+      discoveryByParent.flattened.map((it) => it.discovered).flattened.toList();
+  final distinctElements =
+      allDiscoveredNodes.map((e) => e.element).toSet().toList();
+
+  // find nodes that exist in all parents
+  final elementsInAllParents = distinctElements.where((element) {
+    return discoveryByParent.all((discovered) {
+      return discovered.any((snapshot) {
+        return snapshot.discovered.map((e) => e.element).contains(element);
+      });
+    });
+  }).toList();
+
+  final parentNodes =
+      parentSnapshots.map((e) => e.discovered).flattened.toList();
+  final candidates = discoveryByParent.flattened
+      .map((e) => e.debugCandidates)
+      .flattened
+      .toSet()
+      .toList();
+
+  final discovered = elementsInAllParents.map((element) {
+    return SpotNode(
+      selector: selector,
+      element: element,
+      parents: parentNodes,
+      debugCandidates: candidates,
+    );
+  }).toList();
 
   if (selector.expectSingle == true) {
     if (discovered.length <= 1) {
@@ -98,8 +125,8 @@ SpotSnapshot<W> _takeScopedSnapshot<W extends Widget>(
 ) {
   // TODO pass in as argument?
   // TODO cache results
-  final candidates = [origin.value] +
-      collectAllElementsFrom(origin.value, skipOffstage: true).toList();
+  final candidates = [origin.element] +
+      collectAllElementsFrom(origin.element, skipOffstage: true).toList();
 
   // First find all elements matching the query
   final List<SpotNode<W>> queryMatches = candidates
@@ -107,9 +134,9 @@ SpotSnapshot<W> _takeScopedSnapshot<W extends Widget>(
       .map((e) {
     return SpotNode<W>(
       selector: selector,
-      parent: origin,
-      value: e,
-      candidates: candidates,
+      parents: [origin],
+      element: e,
+      debugCandidates: candidates,
     );
   }).toList();
 
@@ -192,7 +219,7 @@ extension WidgetSelectorMatcher<W extends Widget> on SpotSnapshot<W> {
         // error that selector could not be found, but instead spot detected lessSpecificSnapshot, which might be useful
         if (lessSpecificSnapshot.matchingElements.isNotEmpty) {
           errorBuilder.writeln(
-            'Could not find $selector in widget tree, but found ${lessSpecificSnapshot.matchingElements.length} matches when searching for $lessSpecificSelector',
+            'Could not find ${selector.toStringBreadcrumb()} in widget tree, but found ${lessSpecificSnapshot.matchingElements.length} matches when searching for $lessSpecificSelector',
           );
           errorBuilder.writeln(
               'Please check the ${lessSpecificSnapshot.matchingElements.length} '
@@ -276,7 +303,7 @@ extension WidgetSelectorMatcher<W extends Widget> on SpotSnapshot<W> {
         int index = 0;
         for (final candidate in discovered) {
           errorBuilder.writeln("Possible candidate $index:");
-          errorBuilder.writeln(candidate.value.toStringDeep());
+          errorBuilder.writeln(candidate.element.toStringDeep());
           index++;
         }
 

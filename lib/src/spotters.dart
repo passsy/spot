@@ -457,29 +457,29 @@ class WidgetSelector<W extends Widget> with Spotters<W> {
 
 /// An [Element] in the widget tree that was found with a [WidgetSelector] query
 class SpotNode<W extends Widget> {
-  /// The parent node from where the node has been found
-  final SpotNode? parent;
+  /// The parent nodes from where the node has been found
+  final List<SpotNode> parents;
 
-  /// The selector that has been used to find [value]
+  /// The selector that has been used to find [element]
   final WidgetSelector<W> selector;
 
   /// The element that has been found
-  final Element value;
+  final Element element;
 
   /// All candidates that have been checked with [selector]
-  final List<Element> candidates;
+  final List<Element> debugCandidates;
 
   const SpotNode({
-    required this.parent,
     required this.selector,
-    required this.value,
-    required this.candidates,
+    required this.element,
+    required this.debugCandidates,
+    this.parents = const [],
   });
 
   @override
   String toString() {
     // ignore: no_runtimetype_tostring
-    return '$runtimeType{value: ${value.widget.toStringShallow()}, parent: ${parent?.value.toStringShort()}}';
+    return '$runtimeType{value: ${element.widget.toStringShallow()}, parents: ${parents.map((it) => it.element.toStringShort()).join(', ')}}';
   }
 }
 
@@ -493,9 +493,10 @@ class SpotSnapshot<W extends Widget> {
 
   final List<SpotNode<W>> discovered;
 
-  List<W> get matches => discovered.map((e) => e.value.widget as W).toList();
+  List<W> get matches => discovered.map((e) => e.element.widget as W).toList();
 
-  List<Element> get matchingElements => discovered.map((e) => e.value).toList();
+  List<Element> get matchingElements =>
+      discovered.map((e) => e.element).toList();
 
   SpotSnapshot({
     required this.selector,
@@ -534,7 +535,7 @@ class SingleSpotSnapshot<W extends Widget> extends SpotSnapshot<W>
   @override
   Element get element {
     // TODO make a better error message here when no element or multiple elements are found
-    return discovered.single.value;
+    return discovered.single.element;
   }
 
   @override
@@ -620,7 +621,7 @@ extension MutliMatchers<W extends Widget> on SpotSnapshot<W> {
     }
     final found = discovered.any((element) {
       final wm = WidgetMatcher(
-        element: element.value,
+        element: element.element,
         selector: element.selector,
       );
       try {
@@ -643,7 +644,7 @@ extension MutliMatchers<W extends Widget> on SpotSnapshot<W> {
     }
     final missMatches = discovered.whereNot((element) {
       final wm = WidgetMatcher(
-        element: element.value,
+        element: element.element,
         selector: element.selector,
       );
       try {
@@ -659,7 +660,7 @@ extension MutliMatchers<W extends Widget> on SpotSnapshot<W> {
     }
     throw TestFailure(
         'Expected that all candidates match $this, but only ${discovered.length - missMatches.length} of ${discovered.length} did.\n'
-        'Missmatches: ${missMatches.map((e) => e.value.toStringDeep()).join(', ')}');
+        'Missmatches: ${missMatches.map((e) => e.element.toStringDeep()).join(', ')}');
   }
 }
 
