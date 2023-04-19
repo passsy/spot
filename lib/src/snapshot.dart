@@ -166,17 +166,17 @@ SpotSnapshot<W> _takeScopedSnapshot<W extends Widget>(
 }
 
 extension WidgetSelectorMatcher<W extends Widget> on SpotSnapshot<W> {
-  void doesNotExist() => _exists(null, 0);
+  void doesNotExist() => _exists(max: 0);
 
-  SingleSpotSnapshot<W> existsOnce() => _exists(1, 1).single;
+  SingleSpotSnapshot<W> existsOnce() => _exists(min: 1, max: 1).single;
 
-  SpotSnapshot<W> existsAtLeastOnce() => _exists(1, null);
+  SpotSnapshot<W> existsAtLeastOnce() => _exists(min: 1);
 
-  SpotSnapshot<W> existsExactlyNTimes(int n) => _exists(n, n);
+  SpotSnapshot<W> existsExactlyNTimes(int n) => _exists(min: n, max: n);
 
-  SpotSnapshot<W> existsAtLeastNTimes(int n) => _exists(n, null);
+  SpotSnapshot<W> existsAtLeastNTimes(int n) => _exists(min: n);
 
-  SpotSnapshot<W> _exists(int? min, int? max) {
+  SpotSnapshot<W> _exists({int? min, int? max}) {
     assert(min != null || max != null);
     assert(min == null || min > 0);
     assert(max == null || max >= 0);
