@@ -72,6 +72,7 @@ SpotSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
     );
   }).toList();
 
+  // TODO can this whole if-else-block be deleted? existsOnce already checks the length and throws if it is not 1
   if (selector.expectSingle == true) {
     if (discovered.length <= 1) {
       return SingleSpotSnapshot<W>(
@@ -165,207 +166,77 @@ SpotSnapshot<W> _takeScopedSnapshot<W extends Widget>(
 }
 
 extension WidgetSelectorMatcher<W extends Widget> on SpotSnapshot<W> {
-  SingleSpotSnapshot<W> existsOnce() {
-    final errorBuilder = StringBuffer();
+  void doesNotExist() => _exists(null, 0);
 
-    if (matchingElements.length == 1) {
-      return single;
+  SingleSpotSnapshot<W> existsOnce() => _exists(1, 1).single;
+
+  SpotSnapshot<W> existsAtLeastOnce() => _exists(1, null);
+
+  SpotSnapshot<W> existsExactlyNTimes(int n) => _exists(n, n);
+
+  SpotSnapshot<W> existsAtLeastNTimes(int n) => _exists(n, null);
+
+  SpotSnapshot<W> _exists(int? min, int? max) {
+    assert(min != null || max != null);
+    assert(min == null || min > 0);
+    assert(max == null || max >= 0);
+    assert(min == null || max == null || min <= max);
+
+    final count = discovered.length;
+
+    if (min != null) {
+      if (count < min) {
+        // try finding similar selectors (less specific)
+        // if one is found, fail with a more specific error message
+        _tryMatchingLessSpecificCriteria();
+        _tryMatchingWithoutParents();
+        _tryMatchingWithoutChildren();
+        // else fail with default message
+        _failWithDefaultError();
+      }
     }
 
-    // early exit when finder finds nothing
-    if (matchingElements.isEmpty) {
-      final List<WidgetSelector<W> Function(WidgetSelector<W>)> criteria = [];
-      for (final prop in selector.props) {
-        criteria.add((selector) => selector.copyWith(props: [prop]));
-      }
-      for (final parent in selector.parents) {
-        criteria.add((selector) {
-          return selector.copyWith(parents: [...selector.parents, parent]);
-        });
-      }
-      for (final child in selector.children) {
-        criteria.add((selector) {
-          return selector.copyWith(children: [...selector.children, child]);
-        });
-      }
-
-      final List<List<WidgetSelector<W> Function(WidgetSelector<W>)>>
-          criteriaSubset = [..._subset(criteria), []];
-      // remove subsets that contains the full criteria of selector
-      criteriaSubset.removeWhere((it) => it.length >= criteria.length);
-
-      WidgetSelector<W> buildSelector(
-        List<WidgetSelector<W> Function(WidgetSelector<W>)> criteria,
-      ) {
-        WidgetSelector<W> s = selector.copyWith(
-          props: selector.props,
-          parents: [],
-          children: [],
-        );
-        for (final criteria in criteria) {
-          s = criteria(s);
-        }
-        return s;
-      }
-
-      for (final lessSpecificCriteria in criteriaSubset) {
-        final lessSpecificSelector = buildSelector(lessSpecificCriteria);
-        late final SpotSnapshot<W> lessSpecificSnapshot;
-        try {
-          lessSpecificSnapshot = lessSpecificSelector.snapshot();
-        } catch (e) {
-          continue;
-        }
-        // error that selector could not be found, but instead spot detected lessSpecificSnapshot, which might be useful
-        if (lessSpecificSnapshot.matchingElements.isNotEmpty) {
-          errorBuilder.writeln(
-            'Could not find ${selector.toStringBreadcrumb()} in widget tree, but found ${lessSpecificSnapshot.matchingElements.length} matches when searching for $lessSpecificSelector',
-          );
-          errorBuilder.writeln(
-              'Please check the ${lessSpecificSnapshot.matchingElements.length} '
-              'matches for ${lessSpecificSelector.toStringBreadcrumb()} and adjust the constraints of the selector $selector accordingly:');
-          int index = 0;
-          for (final Widget match in lessSpecificSnapshot.matches) {
-            index++;
-            errorBuilder
-                .writeln('Possible match #$index: ${match.toStringDeep()}');
-          }
-          fail(errorBuilder.toString());
-        }
-      }
-
-      if (selector.parents.isNotEmpty) {
-        final selectorWithoutParents = selector.copyWith(parents: []);
-        final selectorWithoutParentsSnapshot =
-            selectorWithoutParents.snapshot();
-        if (selectorWithoutParentsSnapshot.matchingElements.isNotEmpty) {
-          errorBuilder.writeln('Could not find $selector in widget tree, '
-              'but found matches when searching (without parents) $selectorWithoutParentsSnapshot');
-
-          errorBuilder.writeln(
-              'Please check the ${selectorWithoutParentsSnapshot.matchingElements.length} '
-              'matches for ${selector.toStringBreadcrumb()} and adjust the parent constraints of $selector accordingly:');
-          int index = 0;
-          for (final Widget match in selectorWithoutParentsSnapshot.matches) {
-            index++;
-            errorBuilder
-                .writeln('Possible match #$index: ${match.toStringDeep()}');
-          }
-          fail(errorBuilder.toString());
-        }
-      }
-
-      if (selector.children.isNotEmpty) {
-        final selectorWithoutChildren = selector.copyWith(children: []);
-        final selectorWithoutChildrenSnapshot =
-            selectorWithoutChildren.snapshot();
-        if (selectorWithoutChildrenSnapshot.matchingElements.isNotEmpty) {
-          errorBuilder.writeln('Could not find $selector in widget tree, '
-              'but found matches when searching (without children) $selectorWithoutChildrenSnapshot');
-          errorBuilder.writeln(
-              'Please check the ${selectorWithoutChildrenSnapshot.matchingElements.length} '
-              'matches for ${selector.toStringBreadcrumb()} and adjust the child constraints of $selector accordingly:');
-          int index = 0;
-          for (final Widget match in selectorWithoutChildrenSnapshot.matches) {
-            index++;
-            errorBuilder
-                .writeln('Possible match #$index: ${match.toStringDeep()}');
-          }
-          fail(errorBuilder.toString());
-        }
-      }
-
-      // default when no matches are found and no better error message could be created
-      errorBuilder.writeln('Could not find $selector in widget tree');
-      _dumpWidgetTree(errorBuilder);
-      errorBuilder.writeln('Could not find $selector in widget tree');
-      fail(errorBuilder.toString());
-    }
-
-    if (discovered.length > 1) {
-      if (selector.parents.isEmpty) {
+    if (max != null) {
+      if (count > max) {
+        final errorBuilder = StringBuffer();
         errorBuilder.writeln(
           'Found ${discovered.length} elements matching $selector in widget tree, '
           'expected only one',
         );
-        _dumpWidgetTree(errorBuilder);
 
-        errorBuilder.writeln(
-          'Found ${discovered.length} elements matching $selector in widget tree, '
-          'expected only one',
-        );
-        fail(errorBuilder.toString());
-      } else {
-        errorBuilder.writeln(
-          'Found ${discovered.length} elements matching $selector as child of ${selector.parents.toStringBreadcrumb()}, '
-          'exepcting only one',
-        );
-        int index = 0;
-        for (final candidate in discovered) {
+        discovered.forEachIndexed((index, candidate) {
           errorBuilder.writeln("Possible candidate $index:");
           errorBuilder.writeln(candidate.element.toStringDeep());
-          index++;
-        }
+        });
 
         errorBuilder.writeln(
-          'Found more than one $selector as child of ${selector.parents.toStringBreadcrumb()}',
+          'Found ${discovered.length} elements matching $selector in widget tree, '
+          'expected only one',
         );
+
         fail(errorBuilder.toString());
       }
     }
 
-    // all fine, found 1 element
-    assert(
-      matchingElements.length == 1,
-      'Found ${matchingElements.length} elements',
-    );
-    return single;
-  }
-
-  SpotSnapshot<W> existsAtLeastOnce() {
-    // TODO
-    // final Iterable<Element> elements = finder.evaluate();
-    //
-    // final match = elements.firstWhereOrNull((element) {
-    //   if (parents.isEmpty) return true;
-    //   return parents.any((WidgetSelector parent) {
-    //     return parent.finder.apply(element.parents).isNotEmpty;
-    //   });
-    // });
-    //
-    // final errorBuilder = StringBuffer();
-    // if (match == null) {
-    //   if (parents.isEmpty) {
-    //     errorBuilder.writeln('Could not find $selector in widget tree');
-    //     _dumpWidgetTree(errorBuilder);
-    //     errorBuilder.writeln('Could not find $selector in widget tree');
-    //     fail(errorBuilder.toString());
-    //   } else {
-    //     errorBuilder.writeln(
-    //       'Could not find $selector as child of ${parents.toStringBreadcrumb()}',
-    //     );
-    //     int i = 0;
-    //     for (final parent in parents) {
-    //       i++;
-    //       errorBuilder.writeln('Children of #$i $parent:');
-    //       errorBuilder.writeln(parent.finder.evaluate().first.toStringDeep());
-    //       errorBuilder.writeln(
-    //         'Could not find $selector as child of #$i ${parent.toStringBreadcrumb()}',
-    //       );
-    //       fail(errorBuilder.toString());
-    //     }
-    //   }
-    // }
-
-    // all fine, found at least 1 element
-    // assert(elements.isNotEmpty);
     return this;
   }
 
-  SpotSnapshot<W> doesNotExist() {
-    // TODO
-    // expect(finder, findsNothing);
-    return this;
+  List<List<WidgetSelector<W> Function(WidgetSelector<W>)>>
+      get _criteriaSubset {
+    final List<WidgetSelector<W> Function(WidgetSelector<W>)> criteria = [
+      for (final prop in selector.props) (s) => s.copyWith(props: [prop]),
+      for (final parent in selector.parents)
+        (s) => s.copyWith(parents: [...s.parents, parent]),
+      for (final child in selector.children)
+        (s) => s.copyWith(children: [...s.children, child]),
+    ];
+
+    final List<List<WidgetSelector<W> Function(WidgetSelector<W>)>>
+        criteriaSubset = [..._subset(criteria), []];
+    // remove subsets that contains the full criteria of selector
+    criteriaSubset.removeWhere((it) => it.length >= criteria.length);
+
+    return criteriaSubset;
   }
 
   List<List<T>> _subset<T>(List<T> list) {
@@ -376,6 +247,110 @@ extension WidgetSelectorMatcher<W extends Widget> on SpotSnapshot<W> {
       }
     }
     return result.sortedByDescending((it) => it.length);
+  }
+
+  WidgetSelector<W> _buildSelector(
+    List<WidgetSelector<W> Function(WidgetSelector<W>)> criteria,
+  ) {
+    WidgetSelector<W> s = selector.copyWith(
+      props: selector.props,
+      parents: [],
+      children: [],
+    );
+    for (final criteria in criteria) {
+      s = criteria(s);
+    }
+    return s;
+  }
+
+  /// Throws when an element is found that matches less specific criteria
+  void _tryMatchingLessSpecificCriteria() {
+    final errorBuilder = StringBuffer();
+    for (final lessSpecificCriteria in _criteriaSubset) {
+      final lessSpecificSelector = _buildSelector(lessSpecificCriteria);
+      late final SpotSnapshot<W> lessSpecificSnapshot;
+      try {
+        lessSpecificSnapshot = lessSpecificSelector.snapshot();
+      } catch (e) {
+        continue;
+      }
+      // error that selector could not be found, but instead spot detected lessSpecificSnapshot, which might be useful
+      if (lessSpecificSnapshot.matchingElements.isNotEmpty) {
+        errorBuilder.writeln(
+          'Could not find ${selector.toStringBreadcrumb()} in widget tree, but found ${lessSpecificSnapshot.matchingElements.length} matches when searching for $lessSpecificSelector',
+        );
+        errorBuilder.writeln(
+            'Please check the ${lessSpecificSnapshot.matchingElements.length} '
+            'matches for ${lessSpecificSelector.toStringBreadcrumb()} and adjust the constraints of the selector $selector accordingly:');
+        int index = 0;
+        for (final Widget match in lessSpecificSnapshot.matches) {
+          index++;
+          errorBuilder
+              .writeln('Possible match #$index: ${match.toStringDeep()}');
+        }
+        fail(errorBuilder.toString());
+      }
+    }
+  }
+
+  /// Throws when an element is found that matches the selector ignoring the children property
+  void _tryMatchingWithoutChildren() {
+    final errorBuilder = StringBuffer();
+
+    if (selector.children.isNotEmpty) {
+      final selectorWithoutChildren = selector.copyWith(children: []);
+      final selectorWithoutChildrenSnapshot =
+          selectorWithoutChildren.snapshot();
+      if (selectorWithoutChildrenSnapshot.matchingElements.isNotEmpty) {
+        errorBuilder.writeln('Could not find $selector in widget tree, '
+            'but found matches when searching (without children) $selectorWithoutChildrenSnapshot');
+        errorBuilder.writeln(
+            'Please check the ${selectorWithoutChildrenSnapshot.matchingElements.length} '
+            'matches for ${selector.toStringBreadcrumb()} and adjust the child constraints of $selector accordingly:');
+
+        selectorWithoutChildrenSnapshot.matches.forEachIndexed((index, match) {
+          errorBuilder
+              .writeln('Possible match #$index: ${match.toStringDeep()}');
+        });
+
+        fail(errorBuilder.toString());
+      }
+    }
+  }
+
+  /// Throws when an element is found that matches the selector ignoring the parents property
+  void _tryMatchingWithoutParents() {
+    final errorBuilder = StringBuffer();
+
+    if (selector.parents.isNotEmpty) {
+      final selectorWithoutParents = selector.copyWith(parents: []);
+      final selectorWithoutParentsSnapshot = selectorWithoutParents.snapshot();
+      if (selectorWithoutParentsSnapshot.matchingElements.isNotEmpty) {
+        errorBuilder.writeln('Could not find $selector in widget tree, '
+            'but found matches when searching (without parents) $selectorWithoutParentsSnapshot');
+
+        errorBuilder.writeln(
+            'Please check the ${selectorWithoutParentsSnapshot.matchingElements.length} '
+            'matches for ${selector.toStringBreadcrumb()} and adjust the parent constraints of $selector accordingly:');
+
+        selectorWithoutParentsSnapshot.matches.forEachIndexed((index, match) {
+          errorBuilder
+              .writeln('Possible match #$index: ${match.toStringDeep()}');
+        });
+
+        fail(errorBuilder.toString());
+      }
+    }
+  }
+
+  /// Default error when no matches are found and no better error message
+  /// could be created by matching less specific selectors
+  Never _failWithDefaultError() {
+    final errorBuilder = StringBuffer();
+    errorBuilder.writeln('Could not find $selector in widget tree');
+    _dumpWidgetTree(errorBuilder);
+    errorBuilder.writeln('Could not find $selector in widget tree');
+    fail(errorBuilder.toString());
   }
 }
 
@@ -411,19 +386,5 @@ extension ElementParent on Element {
     final List<Element> found = [];
     visitChildren(found.add);
     yield* found;
-  }
-}
-
-extension on List<WidgetSelector> {
-  String toStringBreadcrumb() {
-    if (this.isEmpty) {
-      return '[]';
-    }
-    final parentBreadcrumbs = map((e) => e.toStringBreadcrumb());
-    if (parentBreadcrumbs.length == 1) {
-      return parentBreadcrumbs.first;
-    } else {
-      return '[${parentBreadcrumbs.join(' && ')}]';
-    }
   }
 }

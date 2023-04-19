@@ -323,8 +323,10 @@ class WidgetSelector<W extends Widget> with Spotters<W> {
 
   // TODO make those immutable
   final List<PredicateWithDescription> props;
+
   // TODO make those immutable
   final List<WidgetSelector> parents;
+
   // TODO make those immutable
   final List<WidgetSelector> children;
 
@@ -510,12 +512,26 @@ class SpotSnapshot<W extends Widget> {
   }
 
   SingleSpotSnapshot<W> get single {
-    if (discovered.length > 2) {
-      // TODO make better error message
-      throw Exception(
-        'Found ${discovered.length} matches for $selector, expected only one',
+    if (discovered.length > 1) {
+      final errorBuilder = StringBuffer();
+      errorBuilder.writeln(
+        'Found ${discovered.length} elements matching $selector in widget tree, '
+        'expected only one',
       );
+
+      discovered.forEachIndexed((candidate, index) {
+        errorBuilder.writeln("Possible candidate $index:");
+        errorBuilder.writeln(candidate.element.toStringDeep());
+      });
+
+      errorBuilder.writeln(
+        'Found ${discovered.length} elements matching $selector in widget tree, '
+        'expected only one',
+      );
+
+      fail(errorBuilder.toString());
     }
+
     return SingleSpotSnapshot(
       selector: selector,
       discovered: discovered,
@@ -571,12 +587,23 @@ extension SnapshotSelector<W extends Widget> on WidgetSelector<W> {
   }
 
   SpotSnapshot<W> existsAtLeastOnce() {
-    // TODO add error handling
-    return snapshot();
+    return snapshot().existsAtLeastOnce();
+  }
+
+  void doesNotExist() {
+    snapshot().doesNotExist();
   }
 
   SingleSpotSnapshot<W> existsOnce() {
     return snapshot().existsOnce();
+  }
+
+  SpotSnapshot<W> existsExactlyNTimes(int n) {
+    return snapshot().existsExactlyNTimes(n);
+  }
+
+  SpotSnapshot<W> existsAtLeastNTimes(int n) {
+    return snapshot().existsAtLeastNTimes(n);
   }
 }
 
@@ -597,20 +624,6 @@ extension SingleSnapshotSelector<W extends Widget> on SingleWidgetSelector<W> {
   SingleSpotSnapshot<W> locate() {
     // TODO add error handling
     return snapshot();
-  }
-
-  SingleSpotSnapshot<W> existsOnce() {
-    return snapshot().existsOnce();
-  }
-
-  void doesNotExist() {
-    final snapshot = this.snapshot();
-    if (snapshot.discovered.isNotEmpty) {
-      // TODO create a better error message
-      throw Exception(
-        'Expected no matches for $this, but found ${snapshot.discovered.length} matches',
-      );
-    }
   }
 }
 
