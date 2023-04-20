@@ -166,7 +166,7 @@ SpotSnapshot<W> _takeScopedSnapshot<W extends Widget>(
 }
 
 extension WidgetSelectorMatcher<W extends Widget> on SpotSnapshot<W> {
-  SpotSnapshot<W> doesNotExist() => _exists(max: 0);
+  void doesNotExist() => _exists(max: 0);
 
   SingleSpotSnapshot<W> existsOnce() => _exists(min: 1, max: 1).single;
 
