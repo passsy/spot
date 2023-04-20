@@ -14,9 +14,10 @@ void main() {
     spotSingleWidget(_anyWidget).spotSingleWidget(_anyWidget);
     spotWidgets(_anyWidget).spotWidgets(_anyWidget);
     spotElement(_anyElement).spotSingleElement(_anyElement);
-    // TODO add spotKey
+    spotKey(_key).spotKey(_key);
   });
 }
 
 final _anyElement = LeafRenderObjectElement(ErrorWidget('ex'));
 const _anyWidget = Center();
+const _key = ValueKey('key');
