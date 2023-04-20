@@ -220,4 +220,78 @@ void main() {
       expect(() => spotter.existsAtLeastNTimes(2), throwsTestFailure);
     });
   });
+
+  group('better error messages', () {
+    testWidgets('not enough widgets with all criteria found', (tester) async {
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: Column(
+            children: [
+              Text('a'),
+              SizedBox(child: Text('b')),
+              Row(
+                children: [Text('c')],
+              ),
+            ],
+          ),
+        ),
+      );
+      expect(
+        () => spotAll<Text>(parents: [spot<Row>()]).existsAtLeastNTimes(2),
+        throwsTestFailureWith(
+          message: allOf(
+            contains(
+                "Could not find at least 2 matches for Row > Text in widget "
+                "tree, but found 3 matches when searching for 'Text'"),
+            contains(
+                "Please check the 3 matches for Text and adjust the constraints "
+                "of the selector 'Text with parents: ['Row']' accordingly"),
+            contains('Possible match #1: Text("a")'),
+            contains('Possible match #2: Text("b")'),
+            contains('Possible match #3: Text("c")'),
+          ),
+        ),
+      );
+    });
+
+    testWidgets('too many widgets with all criteria found', (tester) async {
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: Column(
+            children: [
+              Text('aa'),
+              Text('ab'),
+              SizedBox(child: Text('ac')),
+              Row(
+                children: [Text('ad')],
+              ),
+            ],
+          ),
+        ),
+      );
+
+      expect(
+        () => spotAll<Text>()
+            .whereText(
+              (text) => text?.startsWith('a') ?? false,
+              description: 'should start with "a"',
+            )
+            .existsExactlyNTimes(3),
+        throwsTestFailureWith(
+          message: allOf(
+            contains(
+              "Found 4 elements matching 'Text should start with \"a\"' in widget tree, "
+              'expected at most 3',
+            ),
+            contains('Text("aa")'),
+            contains('Text("ab")'),
+            contains('Text("ac")'),
+            contains('Text("ad")'),
+          ),
+        ),
+      );
+    });
+  });
 }
