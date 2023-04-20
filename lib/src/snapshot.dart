@@ -85,28 +85,6 @@ SpotSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
       debugCandidates: candidates,
     );
   }).toList();
-  //
-  // // TODO can this whole if-else-block be deleted? existsOnce already checks the length and throws if it is not 1
-  // if (selector.expectSingle == true) {
-  //   if (discovered.length <= 1) {
-  //     return SingleSpotSnapshot<W>(
-  //       selector: selector,
-  //       discovered: discovered,
-  //       debugCandidates: parentSnapshots
-  //           .expand((element) => element.debugCandidates)
-  //           .toList(),
-  //     );
-  //   } else {
-  //     throw TestFailure(
-  //       'Found ${discovered.length} elements matching $selector in widget tree, '
-  //       'expected only one\n'
-  //       // ignore: deprecated_member_use
-  //       '${WidgetsBinding.instance.renderViewElement?.toStringDeep() ?? '<no tree currently mounted>'}'
-  //       'Found ${discovered.length} elements matching $selector in widget tree, '
-  //       'expected only one',
-  //     );
-  //   }
-  // }
 
   return SpotSnapshot<W>(
     selector: selector,
