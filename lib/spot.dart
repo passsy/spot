@@ -4,8 +4,8 @@ import 'package:flutter/widgets.dart';
 import 'package:spot/spot.dart';
 
 export 'package:spot/src/finder_interop.dart';
+export 'package:spot/src/selectors.dart';
 export 'package:spot/src/snapshot.dart';
-export 'package:spot/src/spotters.dart';
 
 export 'package:spot/src/widgets/text.dart';
 export 'package:spot/src/widgets/wrap.dart';
