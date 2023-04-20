@@ -4,17 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 
+import 'util/assert_error.dart';
+
 final throwsTestFailure = throwsA(isA<TestFailure>());
-
-Matcher throwsTestFailureWith({dynamic message}) {
-  var matcher = isA<TestFailure>();
-
-  if (message != null) {
-    matcher = matcher.having((e) => e.message, 'message', message);
-  }
-
-  return throwsA(matcher);
-}
 
 void main() {
   group('plain', () {
@@ -120,9 +112,8 @@ void main() {
 
       final spotter = spotSingle<Material>(parents: [spot<SizedBox>()]);
 
-      final throwsFailureWithMessage = throwsTestFailureWith(
-        message: contains(
-            "Could not find 'Material with parents: ['SizedBox']' in widget tree"),
+      final throwsFailureWithMessage = throwsSpotErrorContaining(
+        ["Could not find 'Material with parents: ['SizedBox']' in widget tree"],
       );
 
       expect(spotter.snapshot().matchingElements.length, 0);
@@ -153,15 +144,10 @@ void main() {
 
       expect(spotter.snapshot().matchingElements.length, 0);
 
-      final throwsFailureWithMessage = throwsTestFailureWith(
-        message: allOf(
-          contains("but found 1 matches when searching for "
-              "'Center"),
-          contains(
-            "Possible match #1: Center(alignment: Alignment.center)",
-          ),
-        ),
-      );
+      final throwsFailureWithMessage = throwsSpotErrorContaining([
+        "but found 1 matches when searching for 'Center",
+        "Possible match #1: Center(alignment: Alignment.center)",
+      ]);
 
       expect(() => spotter.doesNotExist(), returnsNormally);
       expect(() => spotter.existsOnce(), throwsFailureWithMessage);
@@ -239,19 +225,13 @@ void main() {
       );
       expect(
         () => spot<Text>(parents: [spotSingle<Row>()]).existsAtLeastNTimes(2),
-        throwsTestFailureWith(
-          message: allOf(
-            contains(
-                "Could not find at least 2 matches for Row > Text in widget "
-                "tree, but found 3 matches when searching for 'Text'"),
-            contains(
-                "Please check the 3 matches for Text and adjust the constraints "
-                "of the selector 'Text with parents: ['Row']' accordingly"),
-            contains('Possible match #1: Text("a")'),
-            contains('Possible match #2: Text("b")'),
-            contains('Possible match #3: Text("c")'),
-          ),
-        ),
+        throwsSpotErrorContaining([
+          "Could not find at least 2 matches for Row > Text in widget tree, but found 3 matches when searching for 'Text'",
+          "Please check the 3 matches for Text and adjust the constraints of the selector 'Text with parents: ['Row']' accordingly",
+          'Possible match #1: Text("a")',
+          'Possible match #2: Text("b")',
+          'Possible match #3: Text("c")',
+        ]),
       );
     });
 
@@ -273,25 +253,19 @@ void main() {
       );
 
       expect(
-        () => spot<Text>()
-            .whereText(
-              (text) => text?.startsWith('a') ?? false,
-              description: 'should start with "a"',
-            )
-            .existsExactlyNTimes(3),
-        throwsTestFailureWith(
-          message: allOf(
-            contains(
-              "Found 4 elements matching 'Text should start with \"a\"' in widget tree, "
-              'expected at most 3',
-            ),
-            contains('Text("aa")'),
-            contains('Text("ab")'),
-            contains('Text("ac")'),
-            contains('Text("ad")'),
-          ),
-        ),
-      );
+          () => spot<Text>()
+              .whereText(
+                (text) => text?.startsWith('a') ?? false,
+                description: 'should start with "a"',
+              )
+              .existsExactlyNTimes(3),
+          throwsSpotErrorContaining([
+            "Found 4 elements matching 'Text should start with \"a\"' in widget tree, expected at most 3",
+            'Text("aa")',
+            'Text("ab")',
+            'Text("ac")',
+            'Text("ad")',
+          ]));
     });
   });
 }

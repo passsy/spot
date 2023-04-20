@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 
+import 'util/assert_error.dart';
+
 void main() {
   testWidgets('existsOnce() finds widgets that only exist once in tree',
       (tester) async {
@@ -79,22 +81,20 @@ void main() {
     );
     expect(
       () => spotSingle<Text>().existsOnce(),
-      throwsA(
-        isA<TestFailure>()
-            .having((e) => e.message, 'message', contains('Found 2 elements'))
-            .having((e) => e.message, 'candidate1', contains('Text("World"'))
-            .having((e) => e.message, 'candidate2', contains('Text("Hello"')),
-      ),
+      throwsSpotErrorContaining([
+        'Found 2 elements',
+        'Text("World"',
+        'Text("Hello"',
+      ]),
     );
     expect(
       () => spotSingle<Text>(parents: [spotSingle<Wrap>()]).existsOnce(),
-      throwsA(
-        isA<TestFailure>()
-            .having((e) => e.message, 'parents', contains("parents: ['Wrap']"))
-            .having((e) => e.message, 'message', contains('Found 2 elements'))
-            .having((e) => e.message, 'candidate1', contains('Text("World"'))
-            .having((e) => e.message, 'candidate2', contains('Text("Hello"')),
-      ),
+      throwsSpotErrorContaining([
+        "parents: ['Wrap']",
+        'Found 2 elements',
+        'Text("World"',
+        'Text("Hello"',
+      ]),
     );
   });
   testWidgets('existsOnce() finds the correct widget differentiating by props',

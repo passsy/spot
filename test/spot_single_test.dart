@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 
+import 'util/assert_error.dart';
+
 void main() {
   group('Catch early when spotSingle matches multiple widgets', () {
     testWidgets('case 1', (tester) async {
@@ -33,15 +35,9 @@ void main() {
 
       expect(
         () => spotSingle<Text>(parents: [spotSingle<Container>()]).existsOnce(),
-        throwsA(
-          isA<TestFailure>().having(
-            (it) => it.message,
-            'message',
-            contains(
-              "Found 3 elements matching 'Container' in widget tree, expected only one",
-            ),
-          ),
-        ),
+        throwsSpotErrorContaining([
+          "Found 3 elements matching 'Container' in widget tree, expected only one",
+        ]),
       );
     });
 
@@ -68,14 +64,9 @@ void main() {
 
       expect(
         () => appBar.spotSingle<Text>().existsOnce(),
-        throwsA(
-          isA<TestFailure>().having(
-            (it) => it.message,
-            'message',
-            contains(
-                "Found 2 elements matching 'AppBar' in widget tree, expected only one"),
-          ),
-        ),
+        throwsSpotErrorContaining([
+          "Found 2 elements matching 'AppBar' in widget tree, expected only one",
+        ]),
       );
     });
   });
