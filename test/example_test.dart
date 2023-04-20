@@ -31,22 +31,22 @@ void main() {
       ),
     );
     final WidgetSelector<Scaffold> scaffold =
-        spot<MaterialApp>().spot<Scaffold>();
-    final appBar = scaffold.spot<AppBar>();
+        spotSingle<MaterialApp>().spotSingle<Scaffold>();
+    final appBar = scaffold.spotSingle<AppBar>();
 
-    final container = scaffold.spot<Container>()..existsOnce();
+    final container = scaffold.spotSingle<Container>()..existsOnce();
 
-    final icon = appBar.spotIcon(
+    final icon = appBar.spotSingleIcon(
       Icons.home,
       parents: [spot<IconButton>(), container],
     )..existsOnce();
 
-    appBar.spot<IconButton>(
-      children: [spotIcon(Icons.settings)],
+    appBar.spotSingle<IconButton>(
+      children: [spotSingleIcon(Icons.settings)],
     ).doesNotExist();
 
-    appBar
-        .spotIcon(Icons.settings, parents: [spot<IconButton>()]).doesNotExist();
+    appBar.spotSingleIcon(Icons.settings,
+        parents: [spot<IconButton>()]).doesNotExist();
 
     // finder alternative
     // expect(find.byIcon(Icons.settings), findsOneWidget);

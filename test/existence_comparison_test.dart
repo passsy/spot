@@ -21,7 +21,7 @@ void main() {
     testWidgets('no match', (tester) async {
       await tester.pumpWidget(Placeholder());
 
-      final spotter = spot<SizedBox>();
+      final spotter = spotSingle<SizedBox>();
 
       expect(() => spotter.doesNotExist(), returnsNormally);
       expect(() => spotter.existsOnce(), throwsTestFailure);
@@ -35,7 +35,7 @@ void main() {
     testWidgets('1 match', (tester) async {
       await tester.pumpWidget(SizedBox());
 
-      final spotter = spot<SizedBox>();
+      final spotter = spotSingle<SizedBox>();
 
       expect(() => spotter.doesNotExist(), throwsTestFailure);
       expect(() => spotter.existsOnce(), returnsNormally);
@@ -72,7 +72,7 @@ void main() {
         ),
       );
 
-      final spotter = spot<SizedBox>(parents: [spot<Center>()]);
+      final spotter = spotSingle<SizedBox>(parents: [spotSingle<Center>()]);
 
       expect(spotter.snapshot().matchingElements.length, 1);
 
@@ -95,7 +95,7 @@ void main() {
         ),
       );
 
-      final spotter = spot<SizedBox>(parents: [spot<Material>()]);
+      final spotter = spotSingle<SizedBox>(parents: [spotSingle<Material>()]);
 
       expect(spotter.snapshot().matchingElements.length, 0);
 
@@ -118,7 +118,7 @@ void main() {
         ),
       );
 
-      final spotter = spot<Material>(parents: [spot<SizedBox>()]);
+      final spotter = spotSingle<Material>(parents: [spot<SizedBox>()]);
 
       final throwsFailureWithMessage = throwsTestFailureWith(
         message: contains(
@@ -146,9 +146,9 @@ void main() {
         ),
       );
 
-      final spotter = spot<Center>(
-        children: [spot<SizedBox>()],
-        parents: [spot<Material>()], // <-- does not exist
+      final spotter = spotSingle<Center>(
+        children: [spotSingle<SizedBox>()],
+        parents: [spotSingle<Material>()], // <-- does not exist
       );
 
       expect(spotter.snapshot().matchingElements.length, 0);
@@ -184,7 +184,7 @@ void main() {
         ),
       );
 
-      final spotter = spot<SizedBox>(children: [spot<Center>()]);
+      final spotter = spotSingle<SizedBox>(children: [spotSingle<Center>()]);
 
       expect(spotter.snapshot().matchingElements.length, 1);
 
@@ -207,7 +207,7 @@ void main() {
         ),
       );
 
-      final spotter = spot<SizedBox>(children: [spot<Material>()]);
+      final spotter = spotSingle<SizedBox>(children: [spotSingle<Material>()]);
 
       expect(spotter.snapshot().matchingElements.length, 0);
 
@@ -238,7 +238,7 @@ void main() {
         ),
       );
       expect(
-        () => spotAll<Text>(parents: [spot<Row>()]).existsAtLeastNTimes(2),
+        () => spot<Text>(parents: [spotSingle<Row>()]).existsAtLeastNTimes(2),
         throwsTestFailureWith(
           message: allOf(
             contains(
@@ -273,7 +273,7 @@ void main() {
       );
 
       expect(
-        () => spotAll<Text>()
+        () => spot<Text>()
             .whereText(
               (text) => text?.startsWith('a') ?? false,
               description: 'should start with "a"',

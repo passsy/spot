@@ -43,18 +43,18 @@ void main() {
       findsOneWidget,
     );
 
-    spot<MaterialApp>().spot<Center>().existsOnce();
-    spot<Center>(
-      parents: [spot<MaterialApp>()],
-      children: [spot<Padding>()],
+    spotSingle<MaterialApp>().spotSingle<Center>().existsOnce();
+    spotSingle<Center>(
+      parents: [spotSingle<MaterialApp>()],
+      children: [spotSingle<Padding>()],
     ).existsOnce();
-    spot<Padding>().existsOnce();
-    spot<Wrap>().existsOnce();
+    spotSingle<Padding>().existsOnce();
+    spotSingle<Wrap>().existsOnce();
     // spot<Wrap>().spot<Text>().existsAtLeastOnce();
-    spot<Wrap>().spotAll<Text>().existsAtLeastOnce();
+    spotSingle<Wrap>().spot<Text>().existsAtLeastOnce();
     // spot<Wrap>().spot<Text>().locateAtLeastOnce();
-    spot<Wrap>().spotAll<Text>().locateAtLeastOnce();
-    spot<GestureDetector>().existsOnce();
+    spotSingle<Wrap>().spot<Text>().locateAtLeastOnce();
+    spotSingle<GestureDetector>().existsOnce();
   });
 
   testWidgets('existsOnce() fails when multiple widgets exist', (tester) async {
@@ -78,7 +78,7 @@ void main() {
       ),
     );
     expect(
-      () => spot<Text>().existsOnce(),
+      () => spotSingle<Text>().existsOnce(),
       throwsA(
         isA<TestFailure>()
             .having((e) => e.message, 'message', contains('Found 2 elements'))
@@ -87,7 +87,7 @@ void main() {
       ),
     );
     expect(
-      () => spot<Text>(parents: [spot<Wrap>()]).existsOnce(),
+      () => spotSingle<Text>(parents: [spotSingle<Wrap>()]).existsOnce(),
       throwsA(
         isA<TestFailure>()
             .having((e) => e.message, 'parents', contains("parents: ['Wrap']"))
@@ -123,11 +123,11 @@ void main() {
         ),
       ),
     );
-    final appBar = spot<AppBar>();
-    appBar.spot<Text>().existsOnce().hasText('App Title').hasMaxLines(2);
+    final appBar = spotSingle<AppBar>();
+    appBar.spotSingle<Text>().existsOnce().hasText('App Title').hasMaxLines(2);
 
     // Error message only show that it could not be found
-    spot<Wrap>().withProp2<Axis>(
+    spotSingle<Wrap>().withProp2<Axis>(
       'direction',
       (Subject<Axis> it) {
         it.equals(Axis.horizontal);
@@ -136,34 +136,38 @@ void main() {
         // .withDirection(Axis.horizontal)
         .locateMulti();
 
-    spot<Wrap>().withDirection(Axis.horizontal).existsAtLeastOnce();
+    spotSingle<Wrap>().withDirection(Axis.horizontal).existsAtLeastOnce();
 
     // Error message can show the actual value of the direction
-    spotAll<Wrap>()
+    spot<Wrap>()
         .locateMulti()
         .any((wrap) => wrap.hasDirection(Axis.horizontal));
-    spot<Wrap>().locate().hasDirection(Axis.horizontal);
+    spotSingle<Wrap>().locate().hasDirection(Axis.horizontal);
 
     final WidgetSelector<Text> selector =
-        spot<Wrap>().spot<Text>().withMaxLines(2);
+        spotSingle<Wrap>().spotSingle<Text>().withMaxLines(2);
     selector.existsOnce().hasText('Hello');
 
-    spot<Wrap>()
-        .spot<Text>(parents: [spot<GestureDetector>()])
+    spotSingle<Wrap>()
+        .spotSingle<Text>(parents: [spotSingle<GestureDetector>()])
         .locate()
         .hasText('Hello');
 
-    final textSpot =
-        spot<Wrap>().spot<Text>(parents: [spot<GestureDetector>()]);
+    final textSpot = spotSingle<Wrap>()
+        .spotSingle<Text>(parents: [spotSingle<GestureDetector>()]);
     textSpot.locate().hasText('Hello');
 
-    spot<Text>(parents: [spot<Wrap>()])
+    spotSingle<Text>(parents: [spotSingle<Wrap>()])
         .withMaxLines(2)
         .existsOnce()
         .hasText('Hello');
     selector.existsOnce().hasText('Hello');
 
-    spot<Wrap>().spot<Text>().withMaxLines(1).existsOnce().hasText('World');
+    spotSingle<Wrap>()
+        .spotSingle<Text>()
+        .withMaxLines(1)
+        .existsOnce()
+        .hasText('World');
   });
 
   testWidgets('narrow down scope', (tester) async {
@@ -189,12 +193,12 @@ void main() {
       ),
     );
 
-    final textSnapshot = spotAll<Text>().snapshot();
+    final textSnapshot = spot<Text>().snapshot();
     expect(textSnapshot.matchingElements.length, 2);
 
-    final wrap = spot<Wrap>()..snapshot().existsOnce();
+    final wrap = spotSingle<Wrap>()..snapshot().existsOnce();
     // only find the single sizedBox below Wrap
-    wrap.spot<SizedBox>().existsOnce();
+    wrap.spotSingle<SizedBox>().existsOnce();
 
     final multipleSpotter = spot<Text>();
     expect(snapshot(multipleSpotter).discovered.length, 2);
@@ -204,7 +208,7 @@ void main() {
     multipleSpotter.copyWith(
       parents: [
         // only finds the single SizedBox in Wrap, not the SizedBox below Center
-        wrap.spot<SizedBox>(),
+        wrap.spotSingle<SizedBox>(),
       ],
     );
   });

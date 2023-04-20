@@ -16,15 +16,15 @@ class Spot with Spotters<Widget> {
 mixin Spotters<T extends Widget> {
   WidgetSelector<T>? get self;
 
-  SingleWidgetSelector<W> spot<W extends Widget>({
+  SingleWidgetSelector<W> spotSingle<W extends Widget>({
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    return spotAll<W>(parents: parents, children: children).single;
+    return spot<W>(parents: parents, children: children).single;
   }
 
   /// Spots a widget of type [W] in the scope of the parent selector
-  WidgetSelector<W> spotAll<W extends Widget>({
+  WidgetSelector<W> spot<W extends Widget>({
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
@@ -43,19 +43,19 @@ mixin Spotters<T extends Widget> {
     return selector;
   }
 
-  SingleWidgetSelector<W> spotWidget<W extends Widget>(
+  SingleWidgetSelector<W> spotSingleWidget<W extends Widget>(
     W widget, {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    return spotAllWidgets<W>(
+    return spotWidgets<W>(
       widget,
       parents: [if (self != null) self!, ...parents],
       children: children,
     ).single;
   }
 
-  WidgetSelector<W> spotAllWidgets<W extends Widget>(
+  WidgetSelector<W> spotWidgets<W extends Widget>(
     W widget, {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
@@ -72,7 +72,7 @@ mixin Spotters<T extends Widget> {
     );
   }
 
-  SingleWidgetSelector<W> spotElement<W extends Widget>(
+  SingleWidgetSelector<W> spotSingleElement<W extends Widget>(
     Element element, {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
@@ -89,13 +89,13 @@ mixin Spotters<T extends Widget> {
     );
   }
 
-  SingleWidgetSelector<Text> spotText(
+  SingleWidgetSelector<Text> spotSingleText(
     String text, {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
     bool findRichText = false,
   }) {
-    return spotAllText(
+    return spotTexts(
       text,
       parents: [if (self != null) self!, ...parents],
       children: children,
@@ -103,7 +103,7 @@ mixin Spotters<T extends Widget> {
     ).single;
   }
 
-  WidgetSelector<Text> spotAllText(
+  WidgetSelector<Text> spotTexts(
     String text, {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
@@ -132,20 +132,20 @@ mixin Spotters<T extends Widget> {
     );
   }
 
-  SingleWidgetSelector<Icon> spotIcon(
+  SingleWidgetSelector<Icon> spotSingleIcon(
     IconData icon, {
     bool skipOffstage = true,
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    return spotAllIcon(
+    return spotIcons(
       icon,
       parents: [if (self != null) self!, ...parents],
       children: children,
     ).single;
   }
 
-  WidgetSelector<Icon> spotAllIcon(
+  WidgetSelector<Icon> spotIcons(
     IconData icon, {
     bool skipOffstage = true,
     List<WidgetSelector> parents = const [],

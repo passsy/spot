@@ -14,7 +14,17 @@ const Spot _global = Spot();
 
 WidgetSelector<Widget> get allWidgets => WidgetSelector.all;
 
-SingleWidgetSelector<W> spot<W extends Widget>({
+SingleWidgetSelector<W> spotSingle<W extends Widget>({
+  List<WidgetSelector> parents = const [],
+  List<WidgetSelector> children = const [],
+}) {
+  return _global.spotSingle<W>(
+    parents: parents,
+    children: children,
+  );
+}
+
+WidgetSelector<W> spot<W extends Widget>({
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {
@@ -24,34 +34,24 @@ SingleWidgetSelector<W> spot<W extends Widget>({
   );
 }
 
-WidgetSelector<W> spotAll<W extends Widget>({
-  List<WidgetSelector> parents = const [],
-  List<WidgetSelector> children = const [],
-}) {
-  return _global.spotAll<W>(
-    parents: parents,
-    children: children,
-  );
-}
-
-SingleWidgetSelector<W> spotWidget<W extends Widget>(
+SingleWidgetSelector<W> spotSingleWidget<W extends Widget>(
   W widget, {
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {
-  return _global.spotWidget<W>(
+  return _global.spotSingleWidget<W>(
     widget,
     parents: parents,
     children: children,
   );
 }
 
-WidgetSelector<W> spotAllWidgets<W extends Widget>(
+WidgetSelector<W> spotWidgets<W extends Widget>(
   W widget, {
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {
-  return _global.spotAllWidgets<W>(
+  return _global.spotWidgets<W>(
     widget,
     parents: parents,
     children: children,
@@ -63,16 +63,16 @@ SingleWidgetSelector<W> spotElement<W extends Widget>(
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {
-  return _global.spotElement<W>(element);
+  return _global.spotSingleElement<W>(element);
 }
 
-SingleWidgetSelector<Text> spotText(
+SingleWidgetSelector<Text> spotSingleText(
   String text, {
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
   bool findRichText = false,
 }) {
-  return _global.spotText(
+  return _global.spotSingleText(
     text,
     parents: parents,
     children: children,
@@ -80,13 +80,13 @@ SingleWidgetSelector<Text> spotText(
   );
 }
 
-WidgetSelector<Text> spotAllText(
+WidgetSelector<Text> spotTexts(
   String text, {
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
   bool findRichText = false,
 }) {
-  return _global.spotAllText(
+  return _global.spotTexts(
     text,
     parents: parents,
     children: children,
@@ -94,26 +94,26 @@ WidgetSelector<Text> spotAllText(
   );
 }
 
-SingleWidgetSelector<Icon> spotIcon(
+SingleWidgetSelector<Icon> spotSingleIcon(
   IconData icon, {
   bool skipOffstage = true,
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {
-  return _global.spotIcon(
+  return _global.spotSingleIcon(
     icon,
     parents: parents,
     children: children,
   );
 }
 
-WidgetSelector<Icon> spotAllIcon(
+WidgetSelector<Icon> spotIcons(
   IconData icon, {
   bool skipOffstage = true,
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {
-  return _global.spotAllIcon(
+  return _global.spotIcons(
     icon,
     parents: parents,
     children: children,

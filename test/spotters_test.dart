@@ -5,15 +5,16 @@ import 'package:spot/spot.dart';
 void main() {
   test('top level spotters match chained spotters', () {
     spot<Center>().spot<Center>();
+    spotSingle<Center>().spotSingle<Center>();
     spot<Center>().spot<Center>();
-    spotAll<Center>().spotAll<Center>();
-    spotText('hello').spotText('hello');
-    spotAllText('hello').spotAllText('hello');
-    spotIcon(Icons.add).spotIcon(Icons.add);
-    spotAllIcon(Icons.add).spotAllIcon(Icons.add);
-    spotWidget(_anyWidget).spotWidget(_anyWidget);
-    spotAllWidgets(_anyWidget).spotAllWidgets(_anyWidget);
-    spotElement(_anyElement).spotElement(_anyElement);
+    spotSingleText('hello').spotSingleText('hello');
+    spotTexts('hello').spotTexts('hello');
+    spotSingleIcon(Icons.add).spotSingleIcon(Icons.add);
+    spotIcons(Icons.add).spotIcons(Icons.add);
+    spotSingleWidget(_anyWidget).spotSingleWidget(_anyWidget);
+    spotWidgets(_anyWidget).spotWidgets(_anyWidget);
+    spotElement(_anyElement).spotSingleElement(_anyElement);
+    // TODO add spotKey
   });
 }
 

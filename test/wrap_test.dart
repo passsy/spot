@@ -8,8 +8,9 @@ void main() {
   testWidgets('description', (widgetTester) async {
     await widgetTester.pumpWidget(MaterialApp(home: Wrap()));
 
-    final verticalWrapSpot = spot<Wrap>().withDirection(Axis.vertical);
-    final horizontalWrapSpot = spot<Wrap>().withDirection(Axis.horizontal);
+    final verticalWrapSpot = spotSingle<Wrap>().withDirection(Axis.vertical);
+    final horizontalWrapSpot =
+        spotSingle<Wrap>().withDirection(Axis.horizontal);
     horizontalWrapSpot.existsOnce().hasDirection(Axis.horizontal);
     verticalWrapSpot.doesNotExist();
   });
