@@ -7,24 +7,49 @@ import 'package:spot/spot.dart';
 import '../util/assert_error.dart';
 
 void main() {
-  testWidgets('spotKey', (tester) async {
-    await tester.pumpWidget(
-      Center(
-        child: SizedBox(
-          key: const ValueKey('key'),
+  group('top-level', () {
+    testWidgets('spotKey', (tester) async {
+      await tester.pumpWidget(
+        Center(
+          child: SizedBox(
+            key: const ValueKey('key'),
+          ),
         ),
-      ),
-    );
-    spotKey(const ValueKey('key')).existsOnce();
+      );
+      spotKey(const ValueKey('key')).existsOnce();
+    });
+
+    testWidgets('spotKey errors', (tester) async {
+      await tester.pumpWidget(Center());
+      expect(
+        () => spotKey(const ValueKey('key')).existsOnce(),
+        throwsSpotErrorContaining([
+          "Could not find 'Widget with key: \"[<'key'>]\"' in widget tree",
+        ]),
+      );
+    });
   });
 
-  testWidgets('spotKey errors', (tester) async {
-    await tester.pumpWidget(Center());
-    expect(
-      () => spotKey(const ValueKey('key')).existsOnce(),
-      throwsSpotErrorContaining([
-        "Could not find 'Widget with key: \"[<'key'>]\"' in widget tree",
-      ]),
-    );
+  group('extension', () {
+    testWidgets('spotKey', (tester) async {
+      await tester.pumpWidget(
+        Center(
+          child: SizedBox(
+            key: const ValueKey('key'),
+          ),
+        ),
+      );
+      spot<Center>().spotKey(const ValueKey('key')).existsOnce();
+    });
+
+    testWidgets('spotKey errors', (tester) async {
+      await tester.pumpWidget(Center(child: SizedBox()));
+      expect(
+        () => spot<Center>().spotKey(const ValueKey('key')).existsOnce(),
+        throwsSpotErrorContaining([
+          "Could not find 'Widget with key: \"[<'key'>]\" with parents: ['Center']' in widget tree",
+        ]),
+      );
+    });
   });
 }
