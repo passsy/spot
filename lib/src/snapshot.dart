@@ -86,6 +86,21 @@ SpotSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
     );
   }).toList();
 
+  if (selector.expectSingle == true) {
+    if (discovered.length > 1) {
+      // TODO actually test this. I added it because I think it was an oversight.
+      //  But it might be unreachable and caught somewhere else.
+      throw TestFailure(
+        'Found ${discovered.length} elements matching $selector in widget tree, '
+        'expected only one\n'
+        // TODO find common ancestor of distinctElements and print that
+        '${distinctElements.length == 1 ? distinctElements.first.toStringDeep() : rootElement.toStringDeep()} '
+        'Found ${discovered.length} elements matching $selector in widget tree, '
+        'expected only one',
+      );
+    }
+  }
+
   return SpotSnapshot<W>(
     selector: selector,
     discovered: discovered,
