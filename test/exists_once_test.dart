@@ -136,13 +136,16 @@ void main() {
         // .withDirection(Axis.horizontal)
         .locateMulti();
 
-    spotSingle<Wrap>().withDirection(Axis.horizontal).existsAtLeastOnce();
+    spotSingle<Wrap>()
+        .withDirection((it) => it.equals(Axis.horizontal))
+        .existsAtLeastOnce();
 
     // Error message can show the actual value of the direction
-    spot<Wrap>()
-        .locateMulti()
-        .any((wrap) => wrap.hasDirection(Axis.horizontal));
-    spotSingle<Wrap>().locate().hasDirection(Axis.horizontal);
+    spot<Wrap>().locateMulti().any(
+        (wrap) => wrap.hasDirection((axis) => axis.equals(Axis.horizontal)));
+    spotSingle<Wrap>()
+        .locate()
+        .hasDirection((axis) => axis.equals(Axis.horizontal));
 
     final WidgetSelector<Text> selector =
         spotSingle<Wrap>().spotSingle<Text>().withMaxLines(2);

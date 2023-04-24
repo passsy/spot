@@ -257,6 +257,48 @@ class WidgetMatcher<W extends Widget> {
   }) : assert(element.widget is W);
 }
 
+extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
+  WidgetMatcher<W> hasProp<T>(
+    String propName,
+    void Function(Subject<T>) predicate,
+  ) {
+    final diagnosticsNode = element.toDiagnosticsNode();
+    final DiagnosticsNode? prop = diagnosticsNode
+        .getProperties()
+        .firstOrNullWhere((e) => e.name == propName);
+
+    final actual = prop?.value as T?;
+
+    final ConditionSubject<T?> conditionSubject = it<T?>();
+    final Subject<T> subject = conditionSubject.context.nest<T>(
+      () => [selector.toStringBreadcrumb(), 'with property $propName'],
+      (widget) {
+        if (prop == null) {
+          return Extracted.rejection(which: ['Has no prop "$propName"']);
+        }
+        if (prop.value is! T) {
+          return Extracted.rejection(
+            which: [
+              'Has no prop "$propName" of type "$T", the type is "${prop.value.runtimeType}"'
+            ],
+          );
+        }
+        return Extracted.value(actual as T);
+      },
+    );
+    predicate(subject);
+    final failure = softCheck(actual, conditionSubject);
+    if (failure != null) {
+      final errorMessage =
+          describe(conditionSubject).map((it) => it.trim()).toList().join(' ');
+      throw TestFailure(
+        'Failed to match widget: $errorMessage, actual: ${literal(actual).joinToString()}',
+      );
+    }
+    return this;
+  }
+}
+
 class PropMatcher<W extends Widget> {
   final void Function(WidgetMatcher<W>) matcher;
   final String description;
@@ -409,22 +451,30 @@ class WidgetSelector<W extends Widget> with Spotters<W> {
   ) {
     return whereElement(
       (element) {
-        final diagnosticsNode = element.toDiagnosticsNode();
-        final prop = diagnosticsNode
-            .getProperties()
-            .firstOrNullWhere((e) => e.name == propName);
-        if (prop == null) {
-          return false;
-        }
-        if (prop.value is! T) {
-          throw ArgumentError(
-            'Expected prop "$propName" to be of type "$T", but was "${prop.value.runtimeType}"',
-          );
-        }
-        final subject = it<T>();
+        final ConditionSubject<Element> conditionSubject = it<Element>();
+        final Subject<T> subject = conditionSubject.context.nest<T>(
+          () => [this.toStringBreadcrumb(), 'with prop: $propName'],
+          (widget) {
+            final diagnosticsNode = element.toDiagnosticsNode();
+            final prop = diagnosticsNode
+                .getProperties()
+                .firstOrNullWhere((e) => e.name == propName);
+            if (prop == null) {
+              return Extracted.rejection(which: ['Has no prop "$propName"']);
+            }
+            if (prop.value is! T) {
+              return Extracted.rejection(
+                which: [
+                  'Has no prop "$propName" of type "$T", the type is "${prop.value.runtimeType}"'
+                ],
+              );
+            }
+
+            return Extracted.value(prop.value as T);
+          },
+        );
         predicate(subject);
-        final failure = softCheck(prop.value as T, subject);
-        // TODO save failure somewhere to show in error message
+        final failure = softCheck(element, conditionSubject);
         return failure == null;
       },
       description: 'Widget with prop "$propName"',
@@ -571,6 +621,10 @@ class SingleSpotSnapshot<W extends Widget> implements WidgetMatcher<W> {
     // TODO make a better error message here when no element or multiple elements are found
     return discovered!.element;
   }
+
+  W? get discoveredWidget => element.widget as W?;
+
+  Element? get discoveredElements => element;
 
   @override
   W get widget => discovered!.element.widget as W;
