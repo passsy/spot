@@ -36,11 +36,11 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
     return hasProp<UndoHistoryController>('undoController', (it) => it.equals(value));
   }
 
-  WidgetMatcher<TextField> hasEnabledWhere(MatchProp<bool> match) {
+  WidgetMatcher<TextField> isEnabledWhere(MatchProp<bool> match) {
     return hasProp<bool>('enabled', match);
   }
   
-  WidgetMatcher<TextField> hasEnabled(bool value) {
+  WidgetMatcher<TextField> isEnabled(bool value) {
     return hasProp<bool>('enabled', (it) => it.equals(value));
   }
 
@@ -258,6 +258,14 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   
   WidgetMatcher<TextField> hasScrollPadding(EdgeInsetsGeometry value) {
     return hasProp<EdgeInsetsGeometry>('scrollPadding', (it) => it.equals(value));
+  }
+
+  WidgetMatcher<TextField> hasSelectionEnabledWhere(MatchProp<bool> match) {
+    return hasProp<bool>('selectionEnabled', match);
+  }
+  
+  WidgetMatcher<TextField> hasSelectionEnabled(bool value) {
+    return hasProp<bool>('selectionEnabled', (it) => it.equals(value));
   }
 
   WidgetMatcher<TextField> hasSelectionControlsWhere(MatchProp<TextSelectionControls> match) {
@@ -573,6 +581,14 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   
   WidgetSelector<TextField> withScrollPadding(EdgeInsetsGeometry value) {
     return withProp<EdgeInsetsGeometry>('scrollPadding', (it) => it.equals(value));
+  }
+
+  WidgetSelector<TextField> withSelectionEnabledMatching(MatchProp<bool> match) {
+    return withProp<bool>('selectionEnabled', match);
+  }
+  
+  WidgetSelector<TextField> withSelectionEnabled(bool value) {
+    return withProp<bool>('selectionEnabled', (it) => it.equals(value));
   }
 
   WidgetSelector<TextField> withSelectionControlsMatching(MatchProp<TextSelectionControls> match) {

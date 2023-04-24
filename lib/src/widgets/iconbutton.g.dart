@@ -11,6 +11,14 @@ import 'package:spot/spot.dart';
 /// ```
 extension IconButtonMatcher on WidgetMatcher<IconButton> {
 
+  WidgetMatcher<IconButton> hasIconWhere(MatchProp<Widget> match) {
+    return hasProp<Widget>('icon', match);
+  }
+  
+  WidgetMatcher<IconButton> hasIcon(Widget value) {
+    return hasProp<Widget>('icon', (it) => it.equals(value));
+  }
+
   WidgetMatcher<IconButton> hasTooltipWhere(MatchProp<String> match) {
     return hasProp<String>('tooltip', match);
   }
@@ -86,6 +94,14 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
 }
 
 extension IconButtonSelector on WidgetSelector<IconButton> {
+  WidgetSelector<IconButton> withIconMatching(MatchProp<Widget> match) {
+    return withProp<Widget>('icon', match);
+  }
+  
+  WidgetSelector<IconButton> withIcon(Widget value) {
+    return withProp<Widget>('icon', (it) => it.equals(value));
+  }
+
   WidgetSelector<IconButton> withTooltipMatching(MatchProp<String> match) {
     return withProp<String>('tooltip', match);
   }

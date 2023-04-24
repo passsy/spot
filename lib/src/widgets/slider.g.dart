@@ -83,6 +83,22 @@ extension SliderMatcher on WidgetMatcher<Slider> {
     return hasProp<IconData>('secondaryActiveColor', (it) => it.equals(value));
   }
 
+  WidgetMatcher<Slider> hasFocusNodeWhere(MatchProp<FocusNode> match) {
+    return hasProp<FocusNode>('focusNode', match);
+  }
+  
+  WidgetMatcher<Slider> hasFocusNode(FocusNode value) {
+    return hasProp<FocusNode>('focusNode', (it) => it.equals(value));
+  }
+
+  WidgetMatcher<Slider> hasAutofocusWhere(MatchProp<bool> match) {
+    return hasProp<bool>('autofocus', match);
+  }
+  
+  WidgetMatcher<Slider> hasAutofocus(bool value) {
+    return hasProp<bool>('autofocus', (it) => it.equals(value));
+  }
+
 }
 
 extension SliderSelector on WidgetSelector<Slider> {
@@ -156,6 +172,22 @@ extension SliderSelector on WidgetSelector<Slider> {
   
   WidgetSelector<Slider> withSecondaryActiveColor(IconData value) {
     return withProp<IconData>('secondaryActiveColor', (it) => it.equals(value));
+  }
+
+  WidgetSelector<Slider> withFocusNodeMatching(MatchProp<FocusNode> match) {
+    return withProp<FocusNode>('focusNode', match);
+  }
+  
+  WidgetSelector<Slider> withFocusNode(FocusNode value) {
+    return withProp<FocusNode>('focusNode', (it) => it.equals(value));
+  }
+
+  WidgetSelector<Slider> withAutofocusMatching(MatchProp<bool> match) {
+    return withProp<bool>('autofocus', match);
+  }
+  
+  WidgetSelector<Slider> withAutofocus(bool value) {
+    return withProp<bool>('autofocus', (it) => it.equals(value));
   }
 
 }

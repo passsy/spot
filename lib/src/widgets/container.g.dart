@@ -67,6 +67,14 @@ extension ContainerMatcher on WidgetMatcher<Container> {
     return hasProp<EdgeInsetsGeometry>('margin', (it) => it.equals(value));
   }
 
+  WidgetMatcher<Container> hasTransformWhere(MatchProp<Matrix4> match) {
+    return hasProp<Matrix4>('transform', match);
+  }
+  
+  WidgetMatcher<Container> hasTransform(Matrix4 value) {
+    return hasProp<Matrix4>('transform', (it) => it.equals(value));
+  }
+
 }
 
 extension ContainerSelector on WidgetSelector<Container> {
@@ -124,6 +132,14 @@ extension ContainerSelector on WidgetSelector<Container> {
   
   WidgetSelector<Container> withMargin(EdgeInsetsGeometry value) {
     return withProp<EdgeInsetsGeometry>('margin', (it) => it.equals(value));
+  }
+
+  WidgetSelector<Container> withTransformMatching(MatchProp<Matrix4> match) {
+    return withProp<Matrix4>('transform', match);
+  }
+  
+  WidgetSelector<Container> withTransform(Matrix4 value) {
+    return withProp<Matrix4>('transform', (it) => it.equals(value));
   }
 
 }

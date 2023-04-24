@@ -11,6 +11,14 @@ import 'package:spot/spot.dart';
 /// ```
 extension ElevatedButtonMatcher on WidgetMatcher<ElevatedButton> {
 
+  WidgetMatcher<ElevatedButton> isEnabledWhere(MatchProp<bool> match) {
+    return hasProp<bool>('enabled', match);
+  }
+  
+  WidgetMatcher<ElevatedButton> isEnabled(bool value) {
+    return hasProp<bool>('enabled', (it) => it.equals(value));
+  }
+
   WidgetMatcher<ElevatedButton> hasStyleWhere(MatchProp<ButtonStyle> match) {
     return hasProp<ButtonStyle>('style', match);
   }
@@ -30,6 +38,14 @@ extension ElevatedButtonMatcher on WidgetMatcher<ElevatedButton> {
 }
 
 extension ElevatedButtonSelector on WidgetSelector<ElevatedButton> {
+  WidgetSelector<ElevatedButton> withEnabledMatching(MatchProp<bool> match) {
+    return withProp<bool>('enabled', match);
+  }
+  
+  WidgetSelector<ElevatedButton> withEnabled(bool value) {
+    return withProp<bool>('enabled', (it) => it.equals(value));
+  }
+
   WidgetSelector<ElevatedButton> withStyleMatching(MatchProp<ButtonStyle> match) {
     return withProp<ButtonStyle>('style', match);
   }

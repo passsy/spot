@@ -107,6 +107,14 @@ extension ImageMatcher on WidgetMatcher<Image> {
     return hasProp<Rect>('centerSlice', (it) => it.equals(value));
   }
 
+  WidgetMatcher<Image> hasMatchTextDirectionWhere(MatchProp<bool> match) {
+    return hasProp<bool>('matchTextDirection', match);
+  }
+  
+  WidgetMatcher<Image> hasMatchTextDirection(bool value) {
+    return hasProp<bool>('matchTextDirection', (it) => it.equals(value));
+  }
+
   WidgetMatcher<Image> hasSemanticLabelWhere(MatchProp<String> match) {
     return hasProp<String>('semanticLabel', match);
   }
@@ -228,6 +236,14 @@ extension ImageSelector on WidgetSelector<Image> {
   
   WidgetSelector<Image> withCenterSlice(Rect value) {
     return withProp<Rect>('centerSlice', (it) => it.equals(value));
+  }
+
+  WidgetSelector<Image> withMatchTextDirectionMatching(MatchProp<bool> match) {
+    return withProp<bool>('matchTextDirection', match);
+  }
+  
+  WidgetSelector<Image> withMatchTextDirection(bool value) {
+    return withProp<bool>('matchTextDirection', (it) => it.equals(value));
   }
 
   WidgetSelector<Image> withSemanticLabelMatching(MatchProp<String> match) {

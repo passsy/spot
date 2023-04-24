@@ -123,6 +123,14 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
     return hasProp<FocusNode>('focusNode', (it) => it.equals(value));
   }
 
+  WidgetMatcher<FloatingActionButton> hasIsExtendedWhere(MatchProp<bool> match) {
+    return hasProp<bool>('isExtended', match);
+  }
+  
+  WidgetMatcher<FloatingActionButton> hasIsExtended(bool value) {
+    return hasProp<bool>('isExtended', (it) => it.equals(value));
+  }
+
   WidgetMatcher<FloatingActionButton> hasMaterialTapTargetSizeWhere(MatchProp<MaterialTapTargetSize> match) {
     return hasProp<MaterialTapTargetSize>('materialTapTargetSize', match);
   }
@@ -244,6 +252,14 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   
   WidgetSelector<FloatingActionButton> withFocusNode(FocusNode value) {
     return withProp<FocusNode>('focusNode', (it) => it.equals(value));
+  }
+
+  WidgetSelector<FloatingActionButton> withIsExtendedMatching(MatchProp<bool> match) {
+    return withProp<bool>('isExtended', match);
+  }
+  
+  WidgetSelector<FloatingActionButton> withIsExtended(bool value) {
+    return withProp<bool>('isExtended', (it) => it.equals(value));
   }
 
   WidgetSelector<FloatingActionButton> withMaterialTapTargetSizeMatching(MatchProp<MaterialTapTargetSize> match) {

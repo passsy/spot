@@ -11,6 +11,14 @@ import 'package:spot/spot.dart';
 /// ```
 extension OutlinedButtonMatcher on WidgetMatcher<OutlinedButton> {
 
+  WidgetMatcher<OutlinedButton> isEnabledWhere(MatchProp<bool> match) {
+    return hasProp<bool>('enabled', match);
+  }
+  
+  WidgetMatcher<OutlinedButton> isEnabled(bool value) {
+    return hasProp<bool>('enabled', (it) => it.equals(value));
+  }
+
   WidgetMatcher<OutlinedButton> hasStyleWhere(MatchProp<ButtonStyle> match) {
     return hasProp<ButtonStyle>('style', match);
   }
@@ -30,6 +38,14 @@ extension OutlinedButtonMatcher on WidgetMatcher<OutlinedButton> {
 }
 
 extension OutlinedButtonSelector on WidgetSelector<OutlinedButton> {
+  WidgetSelector<OutlinedButton> withEnabledMatching(MatchProp<bool> match) {
+    return withProp<bool>('enabled', match);
+  }
+  
+  WidgetSelector<OutlinedButton> withEnabled(bool value) {
+    return withProp<bool>('enabled', (it) => it.equals(value));
+  }
+
   WidgetSelector<OutlinedButton> withStyleMatching(MatchProp<ButtonStyle> match) {
     return withProp<ButtonStyle>('style', match);
   }

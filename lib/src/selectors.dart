@@ -796,14 +796,27 @@ extension ${widgetType}Matcher on WidgetMatcher<$widgetType> {
     );
 
     for (final DiagnosticsNode prop in props) {
-      if (prop.level == DiagnosticLevel.hidden) {
-        continue;
-      }
+      String matcherVerb = 'has';
 
       final propName = prop.name!;
       final humanPropName = propNameOverrides[propName] ?? propName;
       String propType = prop.getType();
-
+      if (prop is ObjectFlagProperty && propType == 'Widget') {
+        // matchers on widgets are not supported, use .spot() to check the tree further down
+        continue;
+      }
+      if (prop is FlagProperty && propName == 'dirty') {
+        // dirty flags are irrelevant for assertions (and always false)
+        continue;
+      }
+      if (propType.contains('=>')) {
+        // ignore lambda properties
+        continue;
+      }
+      if (prop.name == 'depth' || prop.name == 'key') {
+        // ignore default properties that are covered by general Wiget selectors
+        continue;
+      }
       if (prop.name == 'dependencies' && propType == 'List<DiagnosticsNode>') {
         // Widget dependencies are only indirect properties
         continue;
@@ -816,7 +829,6 @@ extension ${widgetType}Matcher on WidgetMatcher<$widgetType> {
       }
 
       if (prop.name == 'state' && propType.contains('State<StatefulWidget>')) {
-        final propRuntimeType = prop.runtimeType;
         final propValueRuntimeType = prop.value.runtimeType.toString();
         if (propValueRuntimeType.startsWith('_')) {
           // this is not useful without type
@@ -825,18 +837,17 @@ extension ${widgetType}Matcher on WidgetMatcher<$widgetType> {
         propType = propValueRuntimeType;
         continue;
       }
-      if (propType == 'Widget') {
-        // matchers on widgets are not supported, use .spot() to check the tree further down
-        continue;
+      if (humanPropName == 'enabled') {
+        matcherVerb = 'is';
       }
 
       addedMethods = true;
       matcherSb.writeln('''
-  WidgetMatcher<$widgetType> has${humanPropName.capitalize()}Where(MatchProp<$propType> match) {
+  WidgetMatcher<$widgetType> $matcherVerb${humanPropName.capitalize()}Where(MatchProp<$propType> match) {
     return hasProp<$propType>('$propName', match);
   }
   
-  WidgetMatcher<$widgetType> has${humanPropName.capitalize()}($propType value) {
+  WidgetMatcher<$widgetType> $matcherVerb${humanPropName.capitalize()}($propType value) {
     return hasProp<$propType>('$propName', (it) => it.equals(value));
   }
 ''');

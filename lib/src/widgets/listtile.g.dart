@@ -11,6 +11,38 @@ import 'package:spot/spot.dart';
 /// ```
 extension ListTileMatcher on WidgetMatcher<ListTile> {
 
+  WidgetMatcher<ListTile> hasLeadingWhere(MatchProp<Widget> match) {
+    return hasProp<Widget>('leading', match);
+  }
+  
+  WidgetMatcher<ListTile> hasLeading(Widget value) {
+    return hasProp<Widget>('leading', (it) => it.equals(value));
+  }
+
+  WidgetMatcher<ListTile> hasTitleWhere(MatchProp<Widget> match) {
+    return hasProp<Widget>('title', match);
+  }
+  
+  WidgetMatcher<ListTile> hasTitle(Widget value) {
+    return hasProp<Widget>('title', (it) => it.equals(value));
+  }
+
+  WidgetMatcher<ListTile> hasSubtitleWhere(MatchProp<Widget> match) {
+    return hasProp<Widget>('subtitle', match);
+  }
+  
+  WidgetMatcher<ListTile> hasSubtitle(Widget value) {
+    return hasProp<Widget>('subtitle', (it) => it.equals(value));
+  }
+
+  WidgetMatcher<ListTile> hasTrailingWhere(MatchProp<Widget> match) {
+    return hasProp<Widget>('trailing', match);
+  }
+  
+  WidgetMatcher<ListTile> hasTrailing(Widget value) {
+    return hasProp<Widget>('trailing', (it) => it.equals(value));
+  }
+
   WidgetMatcher<ListTile> hasIsThreeLineWhere(MatchProp<bool> match) {
     return hasProp<bool>('isThreeLine', match);
   }
@@ -107,11 +139,11 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
     return hasProp<EdgeInsetsGeometry>('contentPadding', (it) => it.equals(value));
   }
 
-  WidgetMatcher<ListTile> hasEnabledWhere(MatchProp<bool> match) {
+  WidgetMatcher<ListTile> isEnabledWhere(MatchProp<bool> match) {
     return hasProp<bool>('enabled', match);
   }
   
-  WidgetMatcher<ListTile> hasEnabled(bool value) {
+  WidgetMatcher<ListTile> isEnabled(bool value) {
     return hasProp<bool>('enabled', (it) => it.equals(value));
   }
 
@@ -238,6 +270,38 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
 }
 
 extension ListTileSelector on WidgetSelector<ListTile> {
+  WidgetSelector<ListTile> withLeadingMatching(MatchProp<Widget> match) {
+    return withProp<Widget>('leading', match);
+  }
+  
+  WidgetSelector<ListTile> withLeading(Widget value) {
+    return withProp<Widget>('leading', (it) => it.equals(value));
+  }
+
+  WidgetSelector<ListTile> withTitleMatching(MatchProp<Widget> match) {
+    return withProp<Widget>('title', match);
+  }
+  
+  WidgetSelector<ListTile> withTitle(Widget value) {
+    return withProp<Widget>('title', (it) => it.equals(value));
+  }
+
+  WidgetSelector<ListTile> withSubtitleMatching(MatchProp<Widget> match) {
+    return withProp<Widget>('subtitle', match);
+  }
+  
+  WidgetSelector<ListTile> withSubtitle(Widget value) {
+    return withProp<Widget>('subtitle', (it) => it.equals(value));
+  }
+
+  WidgetSelector<ListTile> withTrailingMatching(MatchProp<Widget> match) {
+    return withProp<Widget>('trailing', match);
+  }
+  
+  WidgetSelector<ListTile> withTrailing(Widget value) {
+    return withProp<Widget>('trailing', (it) => it.equals(value));
+  }
+
   WidgetSelector<ListTile> withIsThreeLineMatching(MatchProp<bool> match) {
     return withProp<bool>('isThreeLine', match);
   }
