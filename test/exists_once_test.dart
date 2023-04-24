@@ -127,7 +127,7 @@ void main() {
     appBar.spotSingle<Text>().existsOnce().hasText('App Title').hasMaxLines(2);
 
     // Error message only show that it could not be found
-    spotSingle<Wrap>().withProp2<Axis>(
+    spotSingle<Wrap>().withDirection(Axis.horizontal).withProp<Axis>(
       'direction',
       (Subject<Axis> it) {
         it.equals(Axis.horizontal);
@@ -136,16 +136,13 @@ void main() {
         // .withDirection(Axis.horizontal)
         .locateMulti();
 
-    spotSingle<Wrap>()
-        .withDirection((it) => it.equals(Axis.horizontal))
-        .existsAtLeastOnce();
+    spotSingle<Wrap>().withDirection(Axis.horizontal).existsAtLeastOnce();
 
     // Error message can show the actual value of the direction
-    spot<Wrap>().locateMulti().any(
-        (wrap) => wrap.hasDirection((axis) => axis.equals(Axis.horizontal)));
-    spotSingle<Wrap>()
-        .locate()
-        .hasDirection((axis) => axis.equals(Axis.horizontal));
+    spot<Wrap>()
+        .locateMulti()
+        .any((wrap) => wrap.hasDirection(Axis.horizontal));
+    spotSingle<Wrap>().locate().hasDirection(Axis.horizontal);
 
     final WidgetSelector<Text> selector =
         spotSingle<Wrap>().spotSingle<Text>().withMaxLines(2);

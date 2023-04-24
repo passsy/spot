@@ -1,6 +1,7 @@
 import 'package:checks/checks.dart';
 import 'package:checks/context.dart';
 import 'package:dartx/dartx.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
@@ -246,6 +247,8 @@ extension SpotterQueries<T extends Widget> on Spotters<T> {
   }
 }
 
+typedef MatchProp<T> = void Function(Subject<T>);
+
 class WidgetMatcher<W extends Widget> {
   W get widget => element.widget as W;
   final Element element;
@@ -260,7 +263,7 @@ class WidgetMatcher<W extends Widget> {
 extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
   WidgetMatcher<W> hasProp<T>(
     String propName,
-    void Function(Subject<T>) predicate,
+    MatchProp<T> match,
   ) {
     final diagnosticsNode = element.toDiagnosticsNode();
     final DiagnosticsNode? prop = diagnosticsNode
@@ -286,7 +289,8 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
         return Extracted.value(actual as T);
       },
     );
-    predicate(subject);
+    match(subject);
+    final propsReevaluated = element.toDiagnosticsNode().getProperties();
     final failure = softCheck(actual, conditionSubject);
     if (failure != null) {
       final errorMessage =
@@ -445,9 +449,9 @@ class WidgetSelector<W extends Widget> with Spotters<W> {
     );
   }
 
-  WidgetSelector<W> withProp2<T>(
+  WidgetSelector<W> withProp<T>(
     String propName,
-    void Function(Subject<T>) predicate,
+    MatchProp<T> match,
   ) {
     final ConditionSubject<Element> conditionSubject = it<Element>();
     final Subject<T> subject = conditionSubject.context.nest<T>(
@@ -471,7 +475,7 @@ class WidgetSelector<W extends Widget> with Spotters<W> {
         return Extracted.value(prop.value as T);
       },
     );
-    predicate(subject);
+    match(subject);
     final name =
         describe(conditionSubject).map((it) => it.trim()).toList().join(' ');
 
@@ -481,31 +485,6 @@ class WidgetSelector<W extends Widget> with Spotters<W> {
         return failure == null;
       },
       description: name,
-    );
-  }
-
-  WidgetSelector<W> withProp<T>(
-    String propName,
-    bool Function(T) predicate, {
-    required String description,
-  }) {
-    return whereElement(
-      (element) {
-        final diagnosticsNode = element.toDiagnosticsNode();
-        final prop = diagnosticsNode
-            .getProperties()
-            .firstOrNullWhere((e) => e.name == propName);
-        if (prop == null) {
-          return false;
-        }
-        // TODO error message?
-        if (prop.value is T) {
-          return predicate(prop.value as T);
-        }
-        throw UnimplementedError('Check that prop matches X');
-        // return predicate(w);
-      },
-      description: 'Widget with prop "$propName"',
     );
   }
 }
@@ -758,3 +737,131 @@ extension MutliMatchers<W extends Widget> on SpotSnapshot<W> {
 }
 
 Type _typeOf<T>() => T;
+
+extension CreateMatchers<W extends Widget> on WidgetSelector<W> {
+  void printMatchers({
+    Map<String, String> propNameOverrides = const {},
+  }) {
+    final value = createMatcherString(
+      propNameOverrides: propNameOverrides,
+    );
+
+    // ignore: avoid_print
+    print(value);
+  }
+
+  String createMatcherString({
+    Map<String, String> propNameOverrides = const {},
+  }) {
+    final snapshot = snapshot_file.snapshot(this);
+    final anyElement = snapshot.discoveredElements.first;
+    final props = anyElement.toDiagnosticsNode().getProperties();
+    final widgetType = _typeOf<W>().toString().capitalize();
+
+    final matcherSb = StringBuffer();
+    matcherSb.writeln('''
+extension ${widgetType}Matcher on WidgetMatcher<$widgetType> {
+''');
+
+    final selectorSb = StringBuffer();
+    selectorSb.writeln(
+      'extension ${widgetType}Selector on WidgetSelector<$widgetType> {',
+    );
+
+    for (final prop in props) {
+      if (prop.level == DiagnosticLevel.hidden) {
+        continue;
+      }
+
+      final propName = prop.name!;
+      final humanPropName = propNameOverrides[propName] ?? propName;
+      final propType = prop.getType();
+
+      if (prop.name == 'dependencies' && propType == 'List<DiagnosticsNode>') {
+        // Widget dependencies are only indirect properties
+        continue;
+      }
+
+      matcherSb.writeln('''
+  WidgetMatcher<$widgetType> has${humanPropName.capitalize()}Where(MatchProp<$propType> match) {
+    return hasProp<$propType>('$propName}', match);
+  }
+  
+  WidgetMatcher<$widgetType> has${humanPropName.capitalize()}($propType value) {
+    return hasProp<$propType>('$propName', (it) => it.equals(value));
+  }
+''');
+
+      selectorSb.writeln('''
+  WidgetSelector<$widgetType> with${humanPropName.capitalize()}Matching(MatchProp<$propType> match) {
+    return withProp<$propType>('$propName', match);
+  }
+  
+  WidgetSelector<$widgetType> with${humanPropName.capitalize()}($propType value) {
+    return withProp<$propType>('$propName', (it) => it.equals(value));
+  }
+''');
+    }
+
+    matcherSb.writeln('}');
+    selectorSb.writeln('}');
+
+    final overridesParam = propNameOverrides.isEmpty
+        ? ''
+        : 'propNameOverrides: ${propNameOverrides.mapEntries((it) => MapEntry("'${it.key}'", "'${it.value}'"))}';
+
+    return '''
+// ignore_for_file: require_trailing_commas
+
+import 'package:checks/checks.dart';
+import 'package:flutter/widgets.dart';
+import 'package:spot/spot.dart';
+
+/// Matchers for [$widgetType] auto-generated by spot
+///
+/// ```dart
+/// spot<$widgetType>().printMatchers($overridesParam);
+/// ```
+$matcherSb
+$selectorSb    
+    ''';
+  }
+}
+
+extension ReadType on DiagnosticsNode {
+  String getType() {
+    if (this is StringProperty) {
+      return 'String';
+    }
+
+    if (this is FlagProperty) {
+      return 'bool';
+    }
+
+    if (this is DoubleProperty) {
+      return 'double';
+    }
+
+    if (this is IntProperty) {
+      return 'int';
+    }
+
+    // "EnumProperty<TextAlign>"
+    final Type runtimeType = this.runtimeType;
+    // "TextAlign"
+    final String? genericType = () {
+      try {
+        final regex = RegExp('<(.*)>');
+        return regex.firstMatch(runtimeType.toString())?.group(1);
+      } catch (_) {
+        return null;
+      }
+    }();
+
+    if (genericType != null) {
+      return genericType;
+    }
+
+    return 'dynamic';
+  }
+}

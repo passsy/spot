@@ -7,8 +7,7 @@ import 'package:spot/spot.dart';
 
 void main() {
   testWidgets('filter', (widgetTester) async {
-    final verticalWrapSpot =
-        spotSingle<Wrap>().withDirection((it) => it.equals(Axis.vertical));
+    final verticalWrapSpot = spotSingle<Wrap>().withDirection(Axis.vertical);
 
     expect(
       verticalWrapSpot.toString(),
@@ -18,8 +17,8 @@ void main() {
       ]),
     );
 
-    final horizontalWrapSpot =
-        spotSingle<Wrap>().withDirection((it) => it.equals(Axis.horizontal));
+    final horizontalWrapSpot = spotSingle<Wrap>()
+        .withDirectionMatching((it) => it.equals(Axis.horizontal));
 
     expect(
       horizontalWrapSpot.toString(),

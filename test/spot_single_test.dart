@@ -27,7 +27,9 @@ void main() {
 
       expect(
         find.descendant(
-            of: find.byType(Container), matching: find.byType(Text)),
+          of: find.byType(Container),
+          matching: find.byType(Text),
+        ),
         findsOneWidget,
       );
 

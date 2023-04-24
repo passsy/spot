@@ -1,5 +1,6 @@
 // ignore_for_file: unnecessary_const, prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:checks/checks.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
@@ -253,19 +254,17 @@ void main() {
       );
 
       expect(
-          () => spot<Text>()
-              .whereText(
-                (text) => text?.startsWith('a') ?? false,
-                description: 'should start with "a"',
-              )
-              .existsExactlyNTimes(3),
-          throwsSpotErrorContaining([
-            "Found 4 elements matching 'Text should start with \"a\"' in widget tree, expected at most 3",
-            'Text("aa")',
-            'Text("ab")',
-            'Text("ac")',
-            'Text("ad")',
-          ]));
+        () => spot<Text>()
+            .withTextMatching((text) => text.startsWith('a'))
+            .existsExactlyNTimes(3),
+        throwsSpotErrorContaining([
+          "Found 4 elements matching 'Text with prop \"data\" that: starts with 'a'' in widget tree, expected at most 3",
+          'Text("aa")',
+          'Text("ab")',
+          'Text("ac")',
+          'Text("ad")',
+        ]),
+      );
     });
   });
 }
