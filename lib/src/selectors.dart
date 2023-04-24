@@ -416,7 +416,7 @@ class WidgetSelector<W extends Widget> with Spotters<W> {
 
     if (parents.isEmpty) {
       final props = this.props.isNotEmpty
-          ? this.props.map((e) => e.description).join(' && ')
+          ? this.props.map((e) => e.description).join(' ')
           : null;
       return props ?? 'any widget';
     }
@@ -449,35 +449,38 @@ class WidgetSelector<W extends Widget> with Spotters<W> {
     String propName,
     void Function(Subject<T>) predicate,
   ) {
+    final ConditionSubject<Element> conditionSubject = it<Element>();
+    final Subject<T> subject = conditionSubject.context.nest<T>(
+      () => ['with prop "$propName"'],
+      (Element element) {
+        final diagnosticsNode = element.toDiagnosticsNode();
+        final prop = diagnosticsNode
+            .getProperties()
+            .firstOrNullWhere((e) => e.name == propName);
+        if (prop == null) {
+          return Extracted.rejection(which: ['Has no prop "$propName"']);
+        }
+        if (prop.value is! T) {
+          return Extracted.rejection(
+            which: [
+              'Has no prop "$propName" of type "$T", the type is "${prop.value.runtimeType}"'
+            ],
+          );
+        }
+
+        return Extracted.value(prop.value as T);
+      },
+    );
+    predicate(subject);
+    final name =
+        describe(conditionSubject).map((it) => it.trim()).toList().join(' ');
+
     return whereElement(
       (element) {
-        final ConditionSubject<Element> conditionSubject = it<Element>();
-        final Subject<T> subject = conditionSubject.context.nest<T>(
-          () => [this.toStringBreadcrumb(), 'with prop: $propName'],
-          (widget) {
-            final diagnosticsNode = element.toDiagnosticsNode();
-            final prop = diagnosticsNode
-                .getProperties()
-                .firstOrNullWhere((e) => e.name == propName);
-            if (prop == null) {
-              return Extracted.rejection(which: ['Has no prop "$propName"']);
-            }
-            if (prop.value is! T) {
-              return Extracted.rejection(
-                which: [
-                  'Has no prop "$propName" of type "$T", the type is "${prop.value.runtimeType}"'
-                ],
-              );
-            }
-
-            return Extracted.value(prop.value as T);
-          },
-        );
-        predicate(subject);
         final failure = softCheck(element, conditionSubject);
         return failure == null;
       },
-      description: 'Widget with prop "$propName"',
+      description: name,
     );
   }
 
