@@ -194,7 +194,7 @@ void main() {
     );
 
     final textSnapshot = spot<Text>().snapshot();
-    expect(textSnapshot.matchingElements.length, 2);
+    expect(textSnapshot.discoveredElements.length, 2);
 
     final wrap = spotSingle<Wrap>()..snapshot().existsOnce();
     // only find the single sizedBox below Wrap

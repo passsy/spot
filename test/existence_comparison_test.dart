@@ -66,7 +66,7 @@ void main() {
 
       final spotter = spotSingle<SizedBox>(parents: [spotSingle<Center>()]);
 
-      expect(spotter.snapshot().matchingElements.length, 1);
+      expect(spotter.snapshot().discovered, isNotNull);
 
       expect(() => spotter.doesNotExist(), throwsTestFailure);
       expect(() => spotter.existsOnce(), returnsNormally);
@@ -89,7 +89,7 @@ void main() {
 
       final spotter = spotSingle<SizedBox>(parents: [spotSingle<Material>()]);
 
-      expect(spotter.snapshot().matchingElements.length, 0);
+      expect(spotter.snapshot().discovered, isNull);
 
       expect(() => spotter.doesNotExist(), returnsNormally);
       expect(() => spotter.existsOnce(), throwsTestFailure);
@@ -116,7 +116,7 @@ void main() {
         ["Could not find 'Material with parents: ['SizedBox']' in widget tree"],
       );
 
-      expect(spotter.snapshot().matchingElements.length, 0);
+      expect(spotter.snapshot().discovered, isNull);
 
       expect(() => spotter.doesNotExist(), returnsNormally);
       expect(() => spotter.existsOnce(), throwsFailureWithMessage);
@@ -142,7 +142,7 @@ void main() {
         parents: [spotSingle<Material>()], // <-- does not exist
       );
 
-      expect(spotter.snapshot().matchingElements.length, 0);
+      expect(spotter.snapshot().discovered, isNull);
 
       final throwsFailureWithMessage = throwsSpotErrorContaining([
         "but found 1 matches when searching for 'Center",
@@ -172,7 +172,7 @@ void main() {
 
       final spotter = spotSingle<SizedBox>(children: [spotSingle<Center>()]);
 
-      expect(spotter.snapshot().matchingElements.length, 1);
+      expect(spotter.snapshot().discovered, isNotNull);
 
       expect(() => spotter.doesNotExist(), throwsTestFailure);
       expect(() => spotter.existsOnce(), returnsNormally);
@@ -195,7 +195,7 @@ void main() {
 
       final spotter = spotSingle<SizedBox>(children: [spotSingle<Material>()]);
 
-      expect(spotter.snapshot().matchingElements.length, 0);
+      expect(spotter.snapshot().discovered, isNull);
 
       expect(() => spotter.doesNotExist(), returnsNormally);
       expect(() => spotter.existsOnce(), throwsTestFailure);

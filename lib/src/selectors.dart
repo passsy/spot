@@ -485,6 +485,7 @@ class SpotNode<W extends Widget> {
   }
 }
 
+/// A collection of [discovered] elements that match [selector]
 class SpotSnapshot<W extends Widget> {
   final WidgetSelector<W> selector;
 
@@ -495,9 +496,10 @@ class SpotSnapshot<W extends Widget> {
 
   final List<SpotNode<W>> discovered;
 
-  List<W> get matches => discovered.map((e) => e.element.widget as W).toList();
+  List<W> get discoveredWidgets =>
+      discovered.map((e) => e.element.widget as W).toList();
 
-  List<Element> get matchingElements =>
+  List<Element> get discoveredElements =>
       discovered.map((e) => e.element).toList();
 
   SpotSnapshot({
@@ -508,7 +510,7 @@ class SpotSnapshot<W extends Widget> {
 
   @override
   String toString() {
-    return 'SpotSnapshot of $selector (${matchingElements.length} matches)}';
+    return 'SpotSnapshot of $selector (${discoveredElements.length} matches)}';
   }
 
   SingleSpotSnapshot<W> get single {
@@ -532,35 +534,46 @@ class SpotSnapshot<W extends Widget> {
       fail(errorBuilder.toString());
     }
 
+    assert(discovered.length <= 1);
     return SingleSpotSnapshot(
       selector: selector,
-      discovered: discovered,
+      discovered: discovered.firstOrNull,
       debugCandidates: debugCandidates,
     );
   }
 }
 
-class SingleSpotSnapshot<W extends Widget> extends SpotSnapshot<W>
-    implements WidgetMatcher<W> {
+/// A snapshot of a single [discovered] element that matches [selector]
+class SingleSpotSnapshot<W extends Widget> implements WidgetMatcher<W> {
   SingleSpotSnapshot({
-    required super.selector,
-    required super.discovered,
-    required super.debugCandidates,
+    required this.selector,
+    required this.discovered,
+    required this.debugCandidates,
   });
+
+  @override
+  final WidgetSelector<W> selector;
+
+  /// All widgets that were checked by [selector]
+  ///
+  /// Only ever use this for debugging purposes, the number of candidates can vary
+  final List<Element> debugCandidates;
+
+  final SpotNode<W>? discovered;
+
+  @override
+  String toString() {
+    return 'SingleSpotSnapshot of $selector (${discovered == null ? 'no' : '1'} match)}';
+  }
 
   @override
   Element get element {
     // TODO make a better error message here when no element or multiple elements are found
-    return discovered.single.element;
+    return discovered!.element;
   }
 
   @override
-  W get widget => element.widget as W;
-
-  @override
-  String toString() {
-    return 'SingleSpotSnapshot of $selector (${matchingElements.isEmpty ? 'no' : 'one'} match)}';
-  }
+  W get widget => discovered!.element.widget as W;
 }
 
 extension SnapshotSelector<W extends Widget> on WidgetSelector<W> {
@@ -624,6 +637,16 @@ extension SingleSnapshotSelector<W extends Widget> on SingleWidgetSelector<W> {
   SingleSpotSnapshot<W> locate() {
     // TODO add error handling
     return snapshot();
+  }
+}
+
+extension AssertionMatcher<W extends Widget> on SpotSnapshot<W> {
+  SingleSpotSnapshot<W> single() {
+    return SingleSpotSnapshot(
+      selector: selector,
+      discovered: discovered.firstOrNull,
+      debugCandidates: debugCandidates,
+    );
   }
 }
 

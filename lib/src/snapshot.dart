@@ -34,15 +34,15 @@ SpotSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
     return snapshot;
   }
 
-  // convert parents to SpotHierarchy
+  // convert parents to SpotSnapshot
   final Iterable<SpotSnapshot<Widget>> parentSnapshots =
       selector.parents.map((selector) => selector.snapshot());
+
+  final selectorWithoutParents = selector.copyWith(parents: []);
 
   // Take a snapshot from parentSnapshots that exist in all snapshots
   final List<List<SpotSnapshot<W>>> discoveryByParent =
       parentSnapshots.map((SpotSnapshot<Widget> parentSnapshot) {
-    final selectorWithoutParents = selector.copyWith(parents: []);
-
     if (parentSnapshot.discovered.isEmpty) {
       return <SpotSnapshot<W>>[];
     }
@@ -172,6 +172,36 @@ SpotSnapshot<W> _takeScopedSnapshot<W extends Widget>(
   );
 }
 
+extension SingleWidgetSelectorMatcher<W extends Widget>
+    on SingleSpotSnapshot<W> {
+  SingleSpotSnapshot<W> existsOnce() {
+    if (discovered == null) {
+      // try finding similar selectors (less specific)
+      // if one is found, fail with a more specific error message
+      _tryMatchingLessSpecificCriteria(selector, min: 1);
+
+      // else fail with default message
+      final errorBuilder = StringBuffer();
+      errorBuilder.writeln('Could not find $selector in widget tree');
+      _dumpWidgetTree(errorBuilder);
+      errorBuilder.writeln('Could not find $selector in widget tree');
+      fail(errorBuilder.toString());
+    }
+
+    return this;
+  }
+
+  void doesNotExist() {
+    if (discovered != null) {
+      final errorBuilder = StringBuffer();
+      errorBuilder.writeln('Found $selector in widget tree, expected none');
+      errorBuilder.writeln(discovered!.element.toStringDeep());
+      errorBuilder.writeln('Found $selector in widget tree, expected none');
+      fail(errorBuilder.toString());
+    }
+  }
+}
+
 extension WidgetSelectorMatcher<W extends Widget> on SpotSnapshot<W> {
   void doesNotExist() => _exists(max: 0);
 
@@ -195,7 +225,7 @@ extension WidgetSelectorMatcher<W extends Widget> on SpotSnapshot<W> {
       if (count < min) {
         // try finding similar selectors (less specific)
         // if one is found, fail with a more specific error message
-        _tryMatchingLessSpecificCriteria(min: min);
+        _tryMatchingLessSpecificCriteria(selector, min: min);
 
         // else fail with default message
         final errorBuilder = StringBuffer();
@@ -230,66 +260,40 @@ extension WidgetSelectorMatcher<W extends Widget> on SpotSnapshot<W> {
 
     return this;
   }
+}
 
-  List<List<WidgetSelector<W> Function(WidgetSelector<W>)>>
-      get _criteriaSubsets {
-    final List<WidgetSelector<W> Function(WidgetSelector<W>)> criteria = [
-      for (final prop in selector.props) (s) => s.copyWith(props: [prop]),
-      for (final parent in selector.parents)
-        (s) => s.copyWith(parents: [...s.parents, parent]),
-      for (final child in selector.children)
-        (s) => s.copyWith(children: [...s.children, child]),
-    ];
-
-    return getAllSubsets(criteria);
-  }
-
-  WidgetSelector<W> _buildSelector(
-    List<WidgetSelector<W> Function(WidgetSelector<W>)> criteria,
-  ) {
-    WidgetSelector<W> s = selector.copyWith(
-      props: selector.props,
-      parents: [],
-      children: [],
-    );
-    for (final criteria in criteria) {
-      s = criteria(s);
+/// Throws when an elements are found which match less specific criteria
+///
+/// Uses all permutations of the criteria (props/parents/children)
+void _tryMatchingLessSpecificCriteria<W extends Widget>(
+  WidgetSelector<W> selector, {
+  int? min,
+}) {
+  final errorBuilder = StringBuffer();
+  for (final lessSpecificSelector in selector._lessSpecificSelectors()) {
+    late final SpotSnapshot<W> lessSpecificSnapshot;
+    try {
+      lessSpecificSnapshot = lessSpecificSelector.snapshot();
+    } catch (e) {
+      continue;
     }
-    return s;
-  }
-
-  /// Throws when an elements are found which match less specific criteria
-  ///
-  /// Uses all permutations of the criteria (props/parents/children)
-  void _tryMatchingLessSpecificCriteria({int? min}) {
-    final errorBuilder = StringBuffer();
-    for (final lessSpecificCriteria in _criteriaSubsets) {
-      final lessSpecificSelector = _buildSelector(lessSpecificCriteria);
-      late final SpotSnapshot<W> lessSpecificSnapshot;
-      try {
-        lessSpecificSnapshot = lessSpecificSelector.snapshot();
-      } catch (e) {
-        continue;
+    // error that selector could not be found, but instead spot detected lessSpecificSnapshot, which might be useful
+    if (lessSpecificSnapshot.discoveredElements.isNotEmpty) {
+      errorBuilder.writeln(
+        'Could not find ${min != null ? 'at least $min ' : ''}matches for '
+        '${selector.toStringBreadcrumb()} in widget tree, but found '
+        '${lessSpecificSnapshot.discoveredElements.length} matches '
+        'when searching for $lessSpecificSelector',
+      );
+      errorBuilder.writeln(
+          'Please check the ${lessSpecificSnapshot.discoveredElements.length} '
+          'matches for ${lessSpecificSelector.toStringBreadcrumb()} and adjust the constraints of the selector $selector accordingly:');
+      int index = 0;
+      for (final Widget match in lessSpecificSnapshot.discoveredWidgets) {
+        index++;
+        errorBuilder.writeln('Possible match #$index: ${match.toStringDeep()}');
       }
-      // error that selector could not be found, but instead spot detected lessSpecificSnapshot, which might be useful
-      if (lessSpecificSnapshot.matchingElements.isNotEmpty) {
-        errorBuilder.writeln(
-          'Could not find ${min != null ? 'at least $min ' : ''}matches for '
-          '${selector.toStringBreadcrumb()} in widget tree, but found '
-          '${lessSpecificSnapshot.matchingElements.length} matches '
-          'when searching for $lessSpecificSelector',
-        );
-        errorBuilder.writeln(
-            'Please check the ${lessSpecificSnapshot.matchingElements.length} '
-            'matches for ${lessSpecificSelector.toStringBreadcrumb()} and adjust the constraints of the selector $selector accordingly:');
-        int index = 0;
-        for (final Widget match in lessSpecificSnapshot.matches) {
-          index++;
-          errorBuilder
-              .writeln('Possible match #$index: ${match.toStringDeep()}');
-        }
-        fail(errorBuilder.toString());
-      }
+      fail(errorBuilder.toString());
     }
   }
 }
@@ -326,6 +330,44 @@ extension ElementParent on Element {
     final List<Element> found = [];
     visitChildren(found.add);
     yield* found;
+  }
+}
+
+extension _LessSpecificSelectors<W extends Widget> on WidgetSelector<W> {
+  /// Returns all less specific selectors, removing one criteria at a time until
+  /// the selector is empty.
+  ///
+  /// The selectors are sorted by specificity, so the first selector filters the most
+  ///
+  /// For example, if the selector matches for type Center and parent SizedBox it will return
+  /// - selector which only matches for type Center
+  /// - selector which only matches for parent SizedBox
+  Iterable<WidgetSelector<W>> _lessSpecificSelectors() sync* {
+    final List<WidgetSelector<W> Function(WidgetSelector<W>)> criteria = [
+      for (final prop in props) (s) => s.copyWith(props: [prop]),
+      for (final parent in parents)
+        (s) => s.copyWith(parents: [...s.parents, parent]),
+      for (final child in children)
+        (s) => s.copyWith(children: [...s.children, child]),
+    ];
+
+    for (final subset in getAllSubsets(criteria)) {
+      yield _buildSelector(subset);
+    }
+  }
+
+  WidgetSelector<W> _buildSelector(
+    List<WidgetSelector<W> Function(WidgetSelector<W>)> criteria,
+  ) {
+    WidgetSelector<W> s = copyWith(
+      props: props,
+      parents: [],
+      children: [],
+    );
+    for (final criteria in criteria) {
+      s = criteria(s);
+    }
+    return s;
   }
 }
 
