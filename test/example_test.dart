@@ -44,10 +44,10 @@ void main() {
 
     final container = scaffold.spotSingle<Container>()..existsOnce();
 
-    final icon = appBar.spotSingleIcon(
+    appBar.spotSingleIcon(
       Icons.home,
       parents: [spot<IconButton>(), container],
-    )..existsOnce();
+    ).existsOnce();
 
     appBar.spotSingle<IconButton>(
       children: [spotSingleIcon(Icons.settings)],

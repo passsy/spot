@@ -7,8 +7,32 @@ export 'package:spot/src/finder_interop.dart';
 export 'package:spot/src/selectors.dart';
 export 'package:spot/src/snapshot.dart';
 
-export 'package:spot/src/widgets/text.dart';
-export 'package:spot/src/widgets/wrap.dart';
+export 'package:spot/src/widgets/align.g.dart';
+export 'package:spot/src/widgets/circularprogressindicator.g.dart';
+export 'package:spot/src/widgets/column.g.dart';
+export 'package:spot/src/widgets/constrainedbox.g.dart';
+export 'package:spot/src/widgets/container.g.dart';
+export 'package:spot/src/widgets/elevatedbutton.g.dart';
+export 'package:spot/src/widgets/floatingactionbutton.g.dart';
+export 'package:spot/src/widgets/gridview.g.dart';
+export 'package:spot/src/widgets/icon.g.dart';
+export 'package:spot/src/widgets/iconbutton.g.dart';
+export 'package:spot/src/widgets/image.g.dart';
+export 'package:spot/src/widgets/linearprogressindicator.g.dart';
+export 'package:spot/src/widgets/listtile.g.dart';
+export 'package:spot/src/widgets/opacity.g.dart';
+export 'package:spot/src/widgets/outlinedbutton.g.dart';
+export 'package:spot/src/widgets/row.g.dart';
+export 'package:spot/src/widgets/safearea.g.dart';
+export 'package:spot/src/widgets/semantics.g.dart';
+export 'package:spot/src/widgets/sizedbox.g.dart';
+export 'package:spot/src/widgets/slider.g.dart';
+export 'package:spot/src/widgets/switch.g.dart';
+export 'package:spot/src/widgets/text.g.dart';
+export 'package:spot/src/widgets/textbutton.g.dart';
+export 'package:spot/src/widgets/textfield.g.dart';
+export 'package:spot/src/widgets/tooltip.g.dart';
+export 'package:spot/src/widgets/wrap.g.dart';
 
 const Spot _global = Spot();
 
