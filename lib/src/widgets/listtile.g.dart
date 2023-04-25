@@ -10,7 +10,6 @@ import 'package:spot/spot.dart';
 /// spot<ListTile>().printMatchers();
 /// ```
 extension ListTileMatcher on WidgetMatcher<ListTile> {
-
   WidgetMatcher<ListTile> hasLeadingWhere(MatchProp<Widget> match) {
     return hasProp<Widget>('leading', match);
   }
@@ -43,20 +42,20 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
     return hasProp<Widget>('trailing', (it) => it.equals(value));
   }
 
-  WidgetMatcher<ListTile> hasIsThreeLineWhere(MatchProp<bool> match) {
-    return hasProp<bool>('isThreeLine', match);
+  WidgetMatcher<ListTile> hasIsThreeLineWhere(MatchProp<bool?> match) {
+    return hasProp<bool?>('isThreeLine', match);
   }
   
-  WidgetMatcher<ListTile> hasIsThreeLine(bool value) {
-    return hasProp<bool>('isThreeLine', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasIsThreeLine(bool? value) {
+    return hasProp<bool?>('isThreeLine', (it) => it.equals(value));
   }
 
-  WidgetMatcher<ListTile> hasDenseWhere(MatchProp<bool> match) {
-    return hasProp<bool>('dense', match);
+  WidgetMatcher<ListTile> hasDenseWhere(MatchProp<bool?> match) {
+    return hasProp<bool?>('dense', match);
   }
   
-  WidgetMatcher<ListTile> hasDense(bool value) {
-    return hasProp<bool>('dense', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasDense(bool? value) {
+    return hasProp<bool?>('dense', (it) => it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasVisualDensityWhere(MatchProp<VisualDensity> match) {
@@ -83,28 +82,28 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
     return hasProp<ListTileStyle>('style', (it) => it.equals(value));
   }
 
-  WidgetMatcher<ListTile> hasSelectedColorWhere(MatchProp<IconData> match) {
-    return hasProp<IconData>('selectedColor', match);
+  WidgetMatcher<ListTile> hasSelectedColorWhere(MatchProp<IconData?> match) {
+    return hasProp<IconData?>('selectedColor', match);
   }
   
-  WidgetMatcher<ListTile> hasSelectedColor(IconData value) {
-    return hasProp<IconData>('selectedColor', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasSelectedColor(IconData? value) {
+    return hasProp<IconData?>('selectedColor', (it) => it.equals(value));
   }
 
-  WidgetMatcher<ListTile> hasIconColorWhere(MatchProp<IconData> match) {
-    return hasProp<IconData>('iconColor', match);
+  WidgetMatcher<ListTile> hasIconColorWhere(MatchProp<IconData?> match) {
+    return hasProp<IconData?>('iconColor', match);
   }
   
-  WidgetMatcher<ListTile> hasIconColor(IconData value) {
-    return hasProp<IconData>('iconColor', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasIconColor(IconData? value) {
+    return hasProp<IconData?>('iconColor', (it) => it.equals(value));
   }
 
-  WidgetMatcher<ListTile> hasTextColorWhere(MatchProp<IconData> match) {
-    return hasProp<IconData>('textColor', match);
+  WidgetMatcher<ListTile> hasTextColorWhere(MatchProp<IconData?> match) {
+    return hasProp<IconData?>('textColor', match);
   }
   
-  WidgetMatcher<ListTile> hasTextColor(IconData value) {
-    return hasProp<IconData>('textColor', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasTextColor(IconData? value) {
+    return hasProp<IconData?>('textColor', (it) => it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasTitleTextStyleWhere(MatchProp<TextStyle> match) {
@@ -139,12 +138,12 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
     return hasProp<EdgeInsetsGeometry>('contentPadding', (it) => it.equals(value));
   }
 
-  WidgetMatcher<ListTile> isEnabledWhere(MatchProp<bool> match) {
-    return hasProp<bool>('enabled', match);
+  WidgetMatcher<ListTile> isEnabledWhere(MatchProp<bool?> match) {
+    return hasProp<bool?>('enabled', match);
   }
   
-  WidgetMatcher<ListTile> isEnabled(bool value) {
-    return hasProp<bool>('enabled', (it) => it.equals(value));
+  WidgetMatcher<ListTile> isEnabled(bool? value) {
+    return hasProp<bool?>('enabled', (it) => it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasOnTapWhere(MatchProp<Function> match) {
@@ -171,28 +170,28 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
     return hasProp<MouseCursor>('mouseCursor', (it) => it.equals(value));
   }
 
-  WidgetMatcher<ListTile> hasSelectedWhere(MatchProp<bool> match) {
-    return hasProp<bool>('selected', match);
+  WidgetMatcher<ListTile> hasSelectedWhere(MatchProp<bool?> match) {
+    return hasProp<bool?>('selected', match);
   }
   
-  WidgetMatcher<ListTile> hasSelected(bool value) {
-    return hasProp<bool>('selected', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasSelected(bool? value) {
+    return hasProp<bool?>('selected', (it) => it.equals(value));
   }
 
-  WidgetMatcher<ListTile> hasFocusColorWhere(MatchProp<IconData> match) {
-    return hasProp<IconData>('focusColor', match);
+  WidgetMatcher<ListTile> hasFocusColorWhere(MatchProp<IconData?> match) {
+    return hasProp<IconData?>('focusColor', match);
   }
   
-  WidgetMatcher<ListTile> hasFocusColor(IconData value) {
-    return hasProp<IconData>('focusColor', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasFocusColor(IconData? value) {
+    return hasProp<IconData?>('focusColor', (it) => it.equals(value));
   }
 
-  WidgetMatcher<ListTile> hasHoverColorWhere(MatchProp<IconData> match) {
-    return hasProp<IconData>('hoverColor', match);
+  WidgetMatcher<ListTile> hasHoverColorWhere(MatchProp<IconData?> match) {
+    return hasProp<IconData?>('hoverColor', match);
   }
   
-  WidgetMatcher<ListTile> hasHoverColor(IconData value) {
-    return hasProp<IconData>('hoverColor', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasHoverColor(IconData? value) {
+    return hasProp<IconData?>('hoverColor', (it) => it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasFocusNodeWhere(MatchProp<FocusNode> match) {
@@ -203,60 +202,60 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
     return hasProp<FocusNode>('focusNode', (it) => it.equals(value));
   }
 
-  WidgetMatcher<ListTile> hasAutofocusWhere(MatchProp<bool> match) {
-    return hasProp<bool>('autofocus', match);
+  WidgetMatcher<ListTile> hasAutofocusWhere(MatchProp<bool?> match) {
+    return hasProp<bool?>('autofocus', match);
   }
   
-  WidgetMatcher<ListTile> hasAutofocus(bool value) {
-    return hasProp<bool>('autofocus', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasAutofocus(bool? value) {
+    return hasProp<bool?>('autofocus', (it) => it.equals(value));
   }
 
-  WidgetMatcher<ListTile> hasTileColorWhere(MatchProp<IconData> match) {
-    return hasProp<IconData>('tileColor', match);
+  WidgetMatcher<ListTile> hasTileColorWhere(MatchProp<IconData?> match) {
+    return hasProp<IconData?>('tileColor', match);
   }
   
-  WidgetMatcher<ListTile> hasTileColor(IconData value) {
-    return hasProp<IconData>('tileColor', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasTileColor(IconData? value) {
+    return hasProp<IconData?>('tileColor', (it) => it.equals(value));
   }
 
-  WidgetMatcher<ListTile> hasSelectedTileColorWhere(MatchProp<IconData> match) {
-    return hasProp<IconData>('selectedTileColor', match);
+  WidgetMatcher<ListTile> hasSelectedTileColorWhere(MatchProp<IconData?> match) {
+    return hasProp<IconData?>('selectedTileColor', match);
   }
   
-  WidgetMatcher<ListTile> hasSelectedTileColor(IconData value) {
-    return hasProp<IconData>('selectedTileColor', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasSelectedTileColor(IconData? value) {
+    return hasProp<IconData?>('selectedTileColor', (it) => it.equals(value));
   }
 
-  WidgetMatcher<ListTile> hasEnableFeedbackWhere(MatchProp<bool> match) {
-    return hasProp<bool>('enableFeedback', match);
+  WidgetMatcher<ListTile> hasEnableFeedbackWhere(MatchProp<bool?> match) {
+    return hasProp<bool?>('enableFeedback', match);
   }
   
-  WidgetMatcher<ListTile> hasEnableFeedback(bool value) {
-    return hasProp<bool>('enableFeedback', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasEnableFeedback(bool? value) {
+    return hasProp<bool?>('enableFeedback', (it) => it.equals(value));
   }
 
-  WidgetMatcher<ListTile> hasHorizontalTitleGapWhere(MatchProp<double> match) {
-    return hasProp<double>('horizontalTitleGap', match);
+  WidgetMatcher<ListTile> hasHorizontalTitleGapWhere(MatchProp<double?> match) {
+    return hasProp<double?>('horizontalTitleGap', match);
   }
   
-  WidgetMatcher<ListTile> hasHorizontalTitleGap(double value) {
-    return hasProp<double>('horizontalTitleGap', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasHorizontalTitleGap(double? value) {
+    return hasProp<double?>('horizontalTitleGap', (it) => it.equals(value));
   }
 
-  WidgetMatcher<ListTile> hasMinVerticalPaddingWhere(MatchProp<double> match) {
-    return hasProp<double>('minVerticalPadding', match);
+  WidgetMatcher<ListTile> hasMinVerticalPaddingWhere(MatchProp<double?> match) {
+    return hasProp<double?>('minVerticalPadding', match);
   }
   
-  WidgetMatcher<ListTile> hasMinVerticalPadding(double value) {
-    return hasProp<double>('minVerticalPadding', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasMinVerticalPadding(double? value) {
+    return hasProp<double?>('minVerticalPadding', (it) => it.equals(value));
   }
 
-  WidgetMatcher<ListTile> hasMinLeadingWidthWhere(MatchProp<double> match) {
-    return hasProp<double>('minLeadingWidth', match);
+  WidgetMatcher<ListTile> hasMinLeadingWidthWhere(MatchProp<double?> match) {
+    return hasProp<double?>('minLeadingWidth', match);
   }
   
-  WidgetMatcher<ListTile> hasMinLeadingWidth(double value) {
-    return hasProp<double>('minLeadingWidth', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasMinLeadingWidth(double? value) {
+    return hasProp<double?>('minLeadingWidth', (it) => it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasTitleAlignmentWhere(MatchProp<ListTileTitleAlignment> match) {
@@ -302,20 +301,20 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<Widget>('trailing', (it) => it.equals(value));
   }
 
-  WidgetSelector<ListTile> withIsThreeLineMatching(MatchProp<bool> match) {
-    return withProp<bool>('isThreeLine', match);
+  WidgetSelector<ListTile> withIsThreeLineMatching(MatchProp<bool?> match) {
+    return withProp<bool?>('isThreeLine', match);
   }
   
-  WidgetSelector<ListTile> withIsThreeLine(bool value) {
-    return withProp<bool>('isThreeLine', (it) => it.equals(value));
+  WidgetSelector<ListTile> withIsThreeLine(bool? value) {
+    return withProp<bool?>('isThreeLine', (it) => it.equals(value));
   }
 
-  WidgetSelector<ListTile> withDenseMatching(MatchProp<bool> match) {
-    return withProp<bool>('dense', match);
+  WidgetSelector<ListTile> withDenseMatching(MatchProp<bool?> match) {
+    return withProp<bool?>('dense', match);
   }
   
-  WidgetSelector<ListTile> withDense(bool value) {
-    return withProp<bool>('dense', (it) => it.equals(value));
+  WidgetSelector<ListTile> withDense(bool? value) {
+    return withProp<bool?>('dense', (it) => it.equals(value));
   }
 
   WidgetSelector<ListTile> withVisualDensityMatching(MatchProp<VisualDensity> match) {
@@ -342,28 +341,28 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<ListTileStyle>('style', (it) => it.equals(value));
   }
 
-  WidgetSelector<ListTile> withSelectedColorMatching(MatchProp<IconData> match) {
-    return withProp<IconData>('selectedColor', match);
+  WidgetSelector<ListTile> withSelectedColorMatching(MatchProp<IconData?> match) {
+    return withProp<IconData?>('selectedColor', match);
   }
   
-  WidgetSelector<ListTile> withSelectedColor(IconData value) {
-    return withProp<IconData>('selectedColor', (it) => it.equals(value));
+  WidgetSelector<ListTile> withSelectedColor(IconData? value) {
+    return withProp<IconData?>('selectedColor', (it) => it.equals(value));
   }
 
-  WidgetSelector<ListTile> withIconColorMatching(MatchProp<IconData> match) {
-    return withProp<IconData>('iconColor', match);
+  WidgetSelector<ListTile> withIconColorMatching(MatchProp<IconData?> match) {
+    return withProp<IconData?>('iconColor', match);
   }
   
-  WidgetSelector<ListTile> withIconColor(IconData value) {
-    return withProp<IconData>('iconColor', (it) => it.equals(value));
+  WidgetSelector<ListTile> withIconColor(IconData? value) {
+    return withProp<IconData?>('iconColor', (it) => it.equals(value));
   }
 
-  WidgetSelector<ListTile> withTextColorMatching(MatchProp<IconData> match) {
-    return withProp<IconData>('textColor', match);
+  WidgetSelector<ListTile> withTextColorMatching(MatchProp<IconData?> match) {
+    return withProp<IconData?>('textColor', match);
   }
   
-  WidgetSelector<ListTile> withTextColor(IconData value) {
-    return withProp<IconData>('textColor', (it) => it.equals(value));
+  WidgetSelector<ListTile> withTextColor(IconData? value) {
+    return withProp<IconData?>('textColor', (it) => it.equals(value));
   }
 
   WidgetSelector<ListTile> withTitleTextStyleMatching(MatchProp<TextStyle> match) {
@@ -398,12 +397,12 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<EdgeInsetsGeometry>('contentPadding', (it) => it.equals(value));
   }
 
-  WidgetSelector<ListTile> withEnabledMatching(MatchProp<bool> match) {
-    return withProp<bool>('enabled', match);
+  WidgetSelector<ListTile> withEnabledMatching(MatchProp<bool?> match) {
+    return withProp<bool?>('enabled', match);
   }
   
-  WidgetSelector<ListTile> withEnabled(bool value) {
-    return withProp<bool>('enabled', (it) => it.equals(value));
+  WidgetSelector<ListTile> withEnabled(bool? value) {
+    return withProp<bool?>('enabled', (it) => it.equals(value));
   }
 
   WidgetSelector<ListTile> withOnTapMatching(MatchProp<Function> match) {
@@ -430,28 +429,28 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<MouseCursor>('mouseCursor', (it) => it.equals(value));
   }
 
-  WidgetSelector<ListTile> withSelectedMatching(MatchProp<bool> match) {
-    return withProp<bool>('selected', match);
+  WidgetSelector<ListTile> withSelectedMatching(MatchProp<bool?> match) {
+    return withProp<bool?>('selected', match);
   }
   
-  WidgetSelector<ListTile> withSelected(bool value) {
-    return withProp<bool>('selected', (it) => it.equals(value));
+  WidgetSelector<ListTile> withSelected(bool? value) {
+    return withProp<bool?>('selected', (it) => it.equals(value));
   }
 
-  WidgetSelector<ListTile> withFocusColorMatching(MatchProp<IconData> match) {
-    return withProp<IconData>('focusColor', match);
+  WidgetSelector<ListTile> withFocusColorMatching(MatchProp<IconData?> match) {
+    return withProp<IconData?>('focusColor', match);
   }
   
-  WidgetSelector<ListTile> withFocusColor(IconData value) {
-    return withProp<IconData>('focusColor', (it) => it.equals(value));
+  WidgetSelector<ListTile> withFocusColor(IconData? value) {
+    return withProp<IconData?>('focusColor', (it) => it.equals(value));
   }
 
-  WidgetSelector<ListTile> withHoverColorMatching(MatchProp<IconData> match) {
-    return withProp<IconData>('hoverColor', match);
+  WidgetSelector<ListTile> withHoverColorMatching(MatchProp<IconData?> match) {
+    return withProp<IconData?>('hoverColor', match);
   }
   
-  WidgetSelector<ListTile> withHoverColor(IconData value) {
-    return withProp<IconData>('hoverColor', (it) => it.equals(value));
+  WidgetSelector<ListTile> withHoverColor(IconData? value) {
+    return withProp<IconData?>('hoverColor', (it) => it.equals(value));
   }
 
   WidgetSelector<ListTile> withFocusNodeMatching(MatchProp<FocusNode> match) {
@@ -462,60 +461,60 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<FocusNode>('focusNode', (it) => it.equals(value));
   }
 
-  WidgetSelector<ListTile> withAutofocusMatching(MatchProp<bool> match) {
-    return withProp<bool>('autofocus', match);
+  WidgetSelector<ListTile> withAutofocusMatching(MatchProp<bool?> match) {
+    return withProp<bool?>('autofocus', match);
   }
   
-  WidgetSelector<ListTile> withAutofocus(bool value) {
-    return withProp<bool>('autofocus', (it) => it.equals(value));
+  WidgetSelector<ListTile> withAutofocus(bool? value) {
+    return withProp<bool?>('autofocus', (it) => it.equals(value));
   }
 
-  WidgetSelector<ListTile> withTileColorMatching(MatchProp<IconData> match) {
-    return withProp<IconData>('tileColor', match);
+  WidgetSelector<ListTile> withTileColorMatching(MatchProp<IconData?> match) {
+    return withProp<IconData?>('tileColor', match);
   }
   
-  WidgetSelector<ListTile> withTileColor(IconData value) {
-    return withProp<IconData>('tileColor', (it) => it.equals(value));
+  WidgetSelector<ListTile> withTileColor(IconData? value) {
+    return withProp<IconData?>('tileColor', (it) => it.equals(value));
   }
 
-  WidgetSelector<ListTile> withSelectedTileColorMatching(MatchProp<IconData> match) {
-    return withProp<IconData>('selectedTileColor', match);
+  WidgetSelector<ListTile> withSelectedTileColorMatching(MatchProp<IconData?> match) {
+    return withProp<IconData?>('selectedTileColor', match);
   }
   
-  WidgetSelector<ListTile> withSelectedTileColor(IconData value) {
-    return withProp<IconData>('selectedTileColor', (it) => it.equals(value));
+  WidgetSelector<ListTile> withSelectedTileColor(IconData? value) {
+    return withProp<IconData?>('selectedTileColor', (it) => it.equals(value));
   }
 
-  WidgetSelector<ListTile> withEnableFeedbackMatching(MatchProp<bool> match) {
-    return withProp<bool>('enableFeedback', match);
+  WidgetSelector<ListTile> withEnableFeedbackMatching(MatchProp<bool?> match) {
+    return withProp<bool?>('enableFeedback', match);
   }
   
-  WidgetSelector<ListTile> withEnableFeedback(bool value) {
-    return withProp<bool>('enableFeedback', (it) => it.equals(value));
+  WidgetSelector<ListTile> withEnableFeedback(bool? value) {
+    return withProp<bool?>('enableFeedback', (it) => it.equals(value));
   }
 
-  WidgetSelector<ListTile> withHorizontalTitleGapMatching(MatchProp<double> match) {
-    return withProp<double>('horizontalTitleGap', match);
+  WidgetSelector<ListTile> withHorizontalTitleGapMatching(MatchProp<double?> match) {
+    return withProp<double?>('horizontalTitleGap', match);
   }
   
-  WidgetSelector<ListTile> withHorizontalTitleGap(double value) {
-    return withProp<double>('horizontalTitleGap', (it) => it.equals(value));
+  WidgetSelector<ListTile> withHorizontalTitleGap(double? value) {
+    return withProp<double?>('horizontalTitleGap', (it) => it.equals(value));
   }
 
-  WidgetSelector<ListTile> withMinVerticalPaddingMatching(MatchProp<double> match) {
-    return withProp<double>('minVerticalPadding', match);
+  WidgetSelector<ListTile> withMinVerticalPaddingMatching(MatchProp<double?> match) {
+    return withProp<double?>('minVerticalPadding', match);
   }
   
-  WidgetSelector<ListTile> withMinVerticalPadding(double value) {
-    return withProp<double>('minVerticalPadding', (it) => it.equals(value));
+  WidgetSelector<ListTile> withMinVerticalPadding(double? value) {
+    return withProp<double?>('minVerticalPadding', (it) => it.equals(value));
   }
 
-  WidgetSelector<ListTile> withMinLeadingWidthMatching(MatchProp<double> match) {
-    return withProp<double>('minLeadingWidth', match);
+  WidgetSelector<ListTile> withMinLeadingWidthMatching(MatchProp<double?> match) {
+    return withProp<double?>('minLeadingWidth', match);
   }
   
-  WidgetSelector<ListTile> withMinLeadingWidth(double value) {
-    return withProp<double>('minLeadingWidth', (it) => it.equals(value));
+  WidgetSelector<ListTile> withMinLeadingWidth(double? value) {
+    return withProp<double?>('minLeadingWidth', (it) => it.equals(value));
   }
 
   WidgetSelector<ListTile> withTitleAlignmentMatching(MatchProp<ListTileTitleAlignment> match) {

@@ -11,7 +11,6 @@ import 'package:spot/spot.dart';
 /// spot<Wrap>().printMatchers();
 /// ```
 extension WrapMatcher on WidgetMatcher<Wrap> {
-
   WidgetMatcher<Wrap> hasDirectionWhere(MatchProp<Axis> match) {
     return hasProp<Axis>('direction', match);
   }
@@ -28,12 +27,12 @@ extension WrapMatcher on WidgetMatcher<Wrap> {
     return hasProp<WrapAlignment>('alignment', (it) => it.equals(value));
   }
 
-  WidgetMatcher<Wrap> hasSpacingWhere(MatchProp<double> match) {
-    return hasProp<double>('spacing', match);
+  WidgetMatcher<Wrap> hasSpacingWhere(MatchProp<double?> match) {
+    return hasProp<double?>('spacing', match);
   }
   
-  WidgetMatcher<Wrap> hasSpacing(double value) {
-    return hasProp<double>('spacing', (it) => it.equals(value));
+  WidgetMatcher<Wrap> hasSpacing(double? value) {
+    return hasProp<double?>('spacing', (it) => it.equals(value));
   }
 
   WidgetMatcher<Wrap> hasRunAlignmentWhere(MatchProp<WrapAlignment> match) {
@@ -44,12 +43,12 @@ extension WrapMatcher on WidgetMatcher<Wrap> {
     return hasProp<WrapAlignment>('runAlignment', (it) => it.equals(value));
   }
 
-  WidgetMatcher<Wrap> hasRunSpacingWhere(MatchProp<double> match) {
-    return hasProp<double>('runSpacing', match);
+  WidgetMatcher<Wrap> hasRunSpacingWhere(MatchProp<double?> match) {
+    return hasProp<double?>('runSpacing', match);
   }
   
-  WidgetMatcher<Wrap> hasRunSpacing(double value) {
-    return hasProp<double>('runSpacing', (it) => it.equals(value));
+  WidgetMatcher<Wrap> hasRunSpacing(double? value) {
+    return hasProp<double?>('runSpacing', (it) => it.equals(value));
   }
 
   WidgetMatcher<Wrap> hasCrossAxisAlignmentWhere(MatchProp<WrapCrossAlignment> match) {
@@ -103,12 +102,12 @@ extension WrapSelector on WidgetSelector<Wrap> {
     return withProp<WrapAlignment>('alignment', (it) => it.equals(value));
   }
 
-  WidgetSelector<Wrap> withSpacingMatching(MatchProp<double> match) {
-    return withProp<double>('spacing', match);
+  WidgetSelector<Wrap> withSpacingMatching(MatchProp<double?> match) {
+    return withProp<double?>('spacing', match);
   }
   
-  WidgetSelector<Wrap> withSpacing(double value) {
-    return withProp<double>('spacing', (it) => it.equals(value));
+  WidgetSelector<Wrap> withSpacing(double? value) {
+    return withProp<double?>('spacing', (it) => it.equals(value));
   }
 
   WidgetSelector<Wrap> withRunAlignmentMatching(MatchProp<WrapAlignment> match) {
@@ -119,12 +118,12 @@ extension WrapSelector on WidgetSelector<Wrap> {
     return withProp<WrapAlignment>('runAlignment', (it) => it.equals(value));
   }
 
-  WidgetSelector<Wrap> withRunSpacingMatching(MatchProp<double> match) {
-    return withProp<double>('runSpacing', match);
+  WidgetSelector<Wrap> withRunSpacingMatching(MatchProp<double?> match) {
+    return withProp<double?>('runSpacing', match);
   }
   
-  WidgetSelector<Wrap> withRunSpacing(double value) {
-    return withProp<double>('runSpacing', (it) => it.equals(value));
+  WidgetSelector<Wrap> withRunSpacing(double? value) {
+    return withProp<double?>('runSpacing', (it) => it.equals(value));
   }
 
   WidgetSelector<Wrap> withCrossAxisAlignmentMatching(MatchProp<WrapCrossAlignment> match) {

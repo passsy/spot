@@ -11,7 +11,6 @@ import 'package:spot/spot.dart';
 /// spot<TextField>().printMatchers();
 /// ```
 extension TextFieldMatcher on WidgetMatcher<TextField> {
-
   WidgetMatcher<TextField> hasControllerWhere(MatchProp<TextEditingController> match) {
     return hasProp<TextEditingController>('controller', match);
   }
@@ -124,20 +123,20 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
     return hasProp<bool>('enableSuggestions', (it) => it.equals(value));
   }
 
-  WidgetMatcher<TextField> hasMaxLinesWhere(MatchProp<int> match) {
-    return hasProp<int>('maxLines', match);
+  WidgetMatcher<TextField> hasMaxLinesWhere(MatchProp<int?> match) {
+    return hasProp<int?>('maxLines', match);
   }
   
-  WidgetMatcher<TextField> hasMaxLines(int value) {
-    return hasProp<int>('maxLines', (it) => it.equals(value));
+  WidgetMatcher<TextField> hasMaxLines(int? value) {
+    return hasProp<int?>('maxLines', (it) => it.equals(value));
   }
 
-  WidgetMatcher<TextField> hasMinLinesWhere(MatchProp<int> match) {
-    return hasProp<int>('minLines', match);
+  WidgetMatcher<TextField> hasMinLinesWhere(MatchProp<int?> match) {
+    return hasProp<int?>('minLines', match);
   }
   
-  WidgetMatcher<TextField> hasMinLines(int value) {
-    return hasProp<int>('minLines', (it) => it.equals(value));
+  WidgetMatcher<TextField> hasMinLines(int? value) {
+    return hasProp<int?>('minLines', (it) => it.equals(value));
   }
 
   WidgetMatcher<TextField> hasExpandsWhere(MatchProp<bool> match) {
@@ -148,12 +147,12 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
     return hasProp<bool>('expands', (it) => it.equals(value));
   }
 
-  WidgetMatcher<TextField> hasMaxLengthWhere(MatchProp<int> match) {
-    return hasProp<int>('maxLength', match);
+  WidgetMatcher<TextField> hasMaxLengthWhere(MatchProp<int?> match) {
+    return hasProp<int?>('maxLength', match);
   }
   
-  WidgetMatcher<TextField> hasMaxLength(int value) {
-    return hasProp<int>('maxLength', (it) => it.equals(value));
+  WidgetMatcher<TextField> hasMaxLength(int? value) {
+    return hasProp<int?>('maxLength', (it) => it.equals(value));
   }
 
   WidgetMatcher<TextField> hasMaxLengthEnforcementWhere(MatchProp<MaxLengthEnforcement> match) {
@@ -204,20 +203,20 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
     return hasProp<TextDirection>('textDirection', (it) => it.equals(value));
   }
 
-  WidgetMatcher<TextField> hasCursorWidthWhere(MatchProp<double> match) {
-    return hasProp<double>('cursorWidth', match);
+  WidgetMatcher<TextField> hasCursorWidthWhere(MatchProp<double?> match) {
+    return hasProp<double?>('cursorWidth', match);
   }
   
-  WidgetMatcher<TextField> hasCursorWidth(double value) {
-    return hasProp<double>('cursorWidth', (it) => it.equals(value));
+  WidgetMatcher<TextField> hasCursorWidth(double? value) {
+    return hasProp<double?>('cursorWidth', (it) => it.equals(value));
   }
 
-  WidgetMatcher<TextField> hasCursorHeightWhere(MatchProp<double> match) {
-    return hasProp<double>('cursorHeight', match);
+  WidgetMatcher<TextField> hasCursorHeightWhere(MatchProp<double?> match) {
+    return hasProp<double?>('cursorHeight', match);
   }
   
-  WidgetMatcher<TextField> hasCursorHeight(double value) {
-    return hasProp<double>('cursorHeight', (it) => it.equals(value));
+  WidgetMatcher<TextField> hasCursorHeight(double? value) {
+    return hasProp<double?>('cursorHeight', (it) => it.equals(value));
   }
 
   WidgetMatcher<TextField> hasCursorRadiusWhere(MatchProp<Radius> match) {
@@ -236,12 +235,12 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
     return hasProp<bool>('cursorOpacityAnimates', (it) => it.equals(value));
   }
 
-  WidgetMatcher<TextField> hasCursorColorWhere(MatchProp<IconData> match) {
-    return hasProp<IconData>('cursorColor', match);
+  WidgetMatcher<TextField> hasCursorColorWhere(MatchProp<IconData?> match) {
+    return hasProp<IconData?>('cursorColor', match);
   }
   
-  WidgetMatcher<TextField> hasCursorColor(IconData value) {
-    return hasProp<IconData>('cursorColor', (it) => it.equals(value));
+  WidgetMatcher<TextField> hasCursorColor(IconData? value) {
+    return hasProp<IconData?>('cursorColor', (it) => it.equals(value));
   }
 
   WidgetMatcher<TextField> hasKeyboardAppearanceWhere(MatchProp<Brightness> match) {
@@ -260,12 +259,12 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
     return hasProp<EdgeInsetsGeometry>('scrollPadding', (it) => it.equals(value));
   }
 
-  WidgetMatcher<TextField> hasSelectionEnabledWhere(MatchProp<bool> match) {
-    return hasProp<bool>('selectionEnabled', match);
+  WidgetMatcher<TextField> hasSelectionEnabledWhere(MatchProp<bool?> match) {
+    return hasProp<bool?>('selectionEnabled', match);
   }
   
-  WidgetMatcher<TextField> hasSelectionEnabled(bool value) {
-    return hasProp<bool>('selectionEnabled', (it) => it.equals(value));
+  WidgetMatcher<TextField> hasSelectionEnabled(bool? value) {
+    return hasProp<bool?>('selectionEnabled', (it) => it.equals(value));
   }
 
   WidgetMatcher<TextField> hasSelectionControlsWhere(MatchProp<TextSelectionControls> match) {
@@ -447,20 +446,20 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<bool>('enableSuggestions', (it) => it.equals(value));
   }
 
-  WidgetSelector<TextField> withMaxLinesMatching(MatchProp<int> match) {
-    return withProp<int>('maxLines', match);
+  WidgetSelector<TextField> withMaxLinesMatching(MatchProp<int?> match) {
+    return withProp<int?>('maxLines', match);
   }
   
-  WidgetSelector<TextField> withMaxLines(int value) {
-    return withProp<int>('maxLines', (it) => it.equals(value));
+  WidgetSelector<TextField> withMaxLines(int? value) {
+    return withProp<int?>('maxLines', (it) => it.equals(value));
   }
 
-  WidgetSelector<TextField> withMinLinesMatching(MatchProp<int> match) {
-    return withProp<int>('minLines', match);
+  WidgetSelector<TextField> withMinLinesMatching(MatchProp<int?> match) {
+    return withProp<int?>('minLines', match);
   }
   
-  WidgetSelector<TextField> withMinLines(int value) {
-    return withProp<int>('minLines', (it) => it.equals(value));
+  WidgetSelector<TextField> withMinLines(int? value) {
+    return withProp<int?>('minLines', (it) => it.equals(value));
   }
 
   WidgetSelector<TextField> withExpandsMatching(MatchProp<bool> match) {
@@ -471,12 +470,12 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<bool>('expands', (it) => it.equals(value));
   }
 
-  WidgetSelector<TextField> withMaxLengthMatching(MatchProp<int> match) {
-    return withProp<int>('maxLength', match);
+  WidgetSelector<TextField> withMaxLengthMatching(MatchProp<int?> match) {
+    return withProp<int?>('maxLength', match);
   }
   
-  WidgetSelector<TextField> withMaxLength(int value) {
-    return withProp<int>('maxLength', (it) => it.equals(value));
+  WidgetSelector<TextField> withMaxLength(int? value) {
+    return withProp<int?>('maxLength', (it) => it.equals(value));
   }
 
   WidgetSelector<TextField> withMaxLengthEnforcementMatching(MatchProp<MaxLengthEnforcement> match) {
@@ -527,20 +526,20 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<TextDirection>('textDirection', (it) => it.equals(value));
   }
 
-  WidgetSelector<TextField> withCursorWidthMatching(MatchProp<double> match) {
-    return withProp<double>('cursorWidth', match);
+  WidgetSelector<TextField> withCursorWidthMatching(MatchProp<double?> match) {
+    return withProp<double?>('cursorWidth', match);
   }
   
-  WidgetSelector<TextField> withCursorWidth(double value) {
-    return withProp<double>('cursorWidth', (it) => it.equals(value));
+  WidgetSelector<TextField> withCursorWidth(double? value) {
+    return withProp<double?>('cursorWidth', (it) => it.equals(value));
   }
 
-  WidgetSelector<TextField> withCursorHeightMatching(MatchProp<double> match) {
-    return withProp<double>('cursorHeight', match);
+  WidgetSelector<TextField> withCursorHeightMatching(MatchProp<double?> match) {
+    return withProp<double?>('cursorHeight', match);
   }
   
-  WidgetSelector<TextField> withCursorHeight(double value) {
-    return withProp<double>('cursorHeight', (it) => it.equals(value));
+  WidgetSelector<TextField> withCursorHeight(double? value) {
+    return withProp<double?>('cursorHeight', (it) => it.equals(value));
   }
 
   WidgetSelector<TextField> withCursorRadiusMatching(MatchProp<Radius> match) {
@@ -559,12 +558,12 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<bool>('cursorOpacityAnimates', (it) => it.equals(value));
   }
 
-  WidgetSelector<TextField> withCursorColorMatching(MatchProp<IconData> match) {
-    return withProp<IconData>('cursorColor', match);
+  WidgetSelector<TextField> withCursorColorMatching(MatchProp<IconData?> match) {
+    return withProp<IconData?>('cursorColor', match);
   }
   
-  WidgetSelector<TextField> withCursorColor(IconData value) {
-    return withProp<IconData>('cursorColor', (it) => it.equals(value));
+  WidgetSelector<TextField> withCursorColor(IconData? value) {
+    return withProp<IconData?>('cursorColor', (it) => it.equals(value));
   }
 
   WidgetSelector<TextField> withKeyboardAppearanceMatching(MatchProp<Brightness> match) {
@@ -583,12 +582,12 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<EdgeInsetsGeometry>('scrollPadding', (it) => it.equals(value));
   }
 
-  WidgetSelector<TextField> withSelectionEnabledMatching(MatchProp<bool> match) {
-    return withProp<bool>('selectionEnabled', match);
+  WidgetSelector<TextField> withSelectionEnabledMatching(MatchProp<bool?> match) {
+    return withProp<bool?>('selectionEnabled', match);
   }
   
-  WidgetSelector<TextField> withSelectionEnabled(bool value) {
-    return withProp<bool>('selectionEnabled', (it) => it.equals(value));
+  WidgetSelector<TextField> withSelectionEnabled(bool? value) {
+    return withProp<bool?>('selectionEnabled', (it) => it.equals(value));
   }
 
   WidgetSelector<TextField> withSelectionControlsMatching(MatchProp<TextSelectionControls> match) {

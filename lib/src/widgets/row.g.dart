@@ -11,7 +11,6 @@ import 'package:spot/spot.dart';
 /// spot<Row>().printMatchers();
 /// ```
 extension RowMatcher on WidgetMatcher<Row> {
-
   WidgetMatcher<Row> hasDirectionWhere(MatchProp<Axis> match) {
     return hasProp<Axis>('direction', match);
   }

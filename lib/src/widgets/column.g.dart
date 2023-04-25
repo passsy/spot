@@ -11,7 +11,6 @@ import 'package:spot/spot.dart';
 /// spot<Column>().printMatchers();
 /// ```
 extension ColumnMatcher on WidgetMatcher<Column> {
-
   WidgetMatcher<Column> hasDirectionWhere(MatchProp<Axis> match) {
     return hasProp<Axis>('direction', match);
   }

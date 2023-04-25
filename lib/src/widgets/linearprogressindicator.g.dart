@@ -10,24 +10,23 @@ import 'package:spot/spot.dart';
 /// spot<LinearProgressIndicator>().printMatchers();
 /// ```
 extension LinearProgressIndicatorMatcher on WidgetMatcher<LinearProgressIndicator> {
-
-  WidgetMatcher<LinearProgressIndicator> hasValueWhere(MatchProp<double> match) {
-    return hasProp<double>('value', match);
+  WidgetMatcher<LinearProgressIndicator> hasValueWhere(MatchProp<double?> match) {
+    return hasProp<double?>('value', match);
   }
   
-  WidgetMatcher<LinearProgressIndicator> hasValue(double value) {
-    return hasProp<double>('value', (it) => it.equals(value));
+  WidgetMatcher<LinearProgressIndicator> hasValue(double? value) {
+    return hasProp<double?>('value', (it) => it.equals(value));
   }
 
 }
 
 extension LinearProgressIndicatorSelector on WidgetSelector<LinearProgressIndicator> {
-  WidgetSelector<LinearProgressIndicator> withValueMatching(MatchProp<double> match) {
-    return withProp<double>('value', match);
+  WidgetSelector<LinearProgressIndicator> withValueMatching(MatchProp<double?> match) {
+    return withProp<double?>('value', match);
   }
   
-  WidgetSelector<LinearProgressIndicator> withValue(double value) {
-    return withProp<double>('value', (it) => it.equals(value));
+  WidgetSelector<LinearProgressIndicator> withValue(double? value) {
+    return withProp<double?>('value', (it) => it.equals(value));
   }
 
 }

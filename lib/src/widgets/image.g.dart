@@ -10,7 +10,6 @@ import 'package:spot/spot.dart';
 /// spot<Image>().printMatchers(propNameOverrides: (MapEntry('this.excludeFromSemantics': 'excludeFromSemantics')));
 /// ```
 extension ImageMatcher on WidgetMatcher<Image> {
-
   WidgetMatcher<Image> hasImageWhere(MatchProp<ImageProvider<Object>> match) {
     return hasProp<ImageProvider<Object>>('image', match);
   }
@@ -35,28 +34,28 @@ extension ImageMatcher on WidgetMatcher<Image> {
     return hasProp<Function>('loadingBuilder', (it) => it.equals(value));
   }
 
-  WidgetMatcher<Image> hasWidthWhere(MatchProp<double> match) {
-    return hasProp<double>('width', match);
+  WidgetMatcher<Image> hasWidthWhere(MatchProp<double?> match) {
+    return hasProp<double?>('width', match);
   }
   
-  WidgetMatcher<Image> hasWidth(double value) {
-    return hasProp<double>('width', (it) => it.equals(value));
+  WidgetMatcher<Image> hasWidth(double? value) {
+    return hasProp<double?>('width', (it) => it.equals(value));
   }
 
-  WidgetMatcher<Image> hasHeightWhere(MatchProp<double> match) {
-    return hasProp<double>('height', match);
+  WidgetMatcher<Image> hasHeightWhere(MatchProp<double?> match) {
+    return hasProp<double?>('height', match);
   }
   
-  WidgetMatcher<Image> hasHeight(double value) {
-    return hasProp<double>('height', (it) => it.equals(value));
+  WidgetMatcher<Image> hasHeight(double? value) {
+    return hasProp<double?>('height', (it) => it.equals(value));
   }
 
-  WidgetMatcher<Image> hasColorWhere(MatchProp<IconData> match) {
-    return hasProp<IconData>('color', match);
+  WidgetMatcher<Image> hasColorWhere(MatchProp<IconData?> match) {
+    return hasProp<IconData?>('color', match);
   }
   
-  WidgetMatcher<Image> hasColor(IconData value) {
-    return hasProp<IconData>('color', (it) => it.equals(value));
+  WidgetMatcher<Image> hasColor(IconData? value) {
+    return hasProp<IconData?>('color', (it) => it.equals(value));
   }
 
   WidgetMatcher<Image> hasOpacityWhere(MatchProp<Animation<double>?> match) {
@@ -107,12 +106,12 @@ extension ImageMatcher on WidgetMatcher<Image> {
     return hasProp<Rect>('centerSlice', (it) => it.equals(value));
   }
 
-  WidgetMatcher<Image> hasMatchTextDirectionWhere(MatchProp<bool> match) {
-    return hasProp<bool>('matchTextDirection', match);
+  WidgetMatcher<Image> hasMatchTextDirectionWhere(MatchProp<bool?> match) {
+    return hasProp<bool?>('matchTextDirection', match);
   }
   
-  WidgetMatcher<Image> hasMatchTextDirection(bool value) {
-    return hasProp<bool>('matchTextDirection', (it) => it.equals(value));
+  WidgetMatcher<Image> hasMatchTextDirection(bool? value) {
+    return hasProp<bool?>('matchTextDirection', (it) => it.equals(value));
   }
 
   WidgetMatcher<Image> hasSemanticLabelWhere(MatchProp<String> match) {
@@ -166,28 +165,28 @@ extension ImageSelector on WidgetSelector<Image> {
     return withProp<Function>('loadingBuilder', (it) => it.equals(value));
   }
 
-  WidgetSelector<Image> withWidthMatching(MatchProp<double> match) {
-    return withProp<double>('width', match);
+  WidgetSelector<Image> withWidthMatching(MatchProp<double?> match) {
+    return withProp<double?>('width', match);
   }
   
-  WidgetSelector<Image> withWidth(double value) {
-    return withProp<double>('width', (it) => it.equals(value));
+  WidgetSelector<Image> withWidth(double? value) {
+    return withProp<double?>('width', (it) => it.equals(value));
   }
 
-  WidgetSelector<Image> withHeightMatching(MatchProp<double> match) {
-    return withProp<double>('height', match);
+  WidgetSelector<Image> withHeightMatching(MatchProp<double?> match) {
+    return withProp<double?>('height', match);
   }
   
-  WidgetSelector<Image> withHeight(double value) {
-    return withProp<double>('height', (it) => it.equals(value));
+  WidgetSelector<Image> withHeight(double? value) {
+    return withProp<double?>('height', (it) => it.equals(value));
   }
 
-  WidgetSelector<Image> withColorMatching(MatchProp<IconData> match) {
-    return withProp<IconData>('color', match);
+  WidgetSelector<Image> withColorMatching(MatchProp<IconData?> match) {
+    return withProp<IconData?>('color', match);
   }
   
-  WidgetSelector<Image> withColor(IconData value) {
-    return withProp<IconData>('color', (it) => it.equals(value));
+  WidgetSelector<Image> withColor(IconData? value) {
+    return withProp<IconData?>('color', (it) => it.equals(value));
   }
 
   WidgetSelector<Image> withOpacityMatching(MatchProp<Animation<double>?> match) {
@@ -238,12 +237,12 @@ extension ImageSelector on WidgetSelector<Image> {
     return withProp<Rect>('centerSlice', (it) => it.equals(value));
   }
 
-  WidgetSelector<Image> withMatchTextDirectionMatching(MatchProp<bool> match) {
-    return withProp<bool>('matchTextDirection', match);
+  WidgetSelector<Image> withMatchTextDirectionMatching(MatchProp<bool?> match) {
+    return withProp<bool?>('matchTextDirection', match);
   }
   
-  WidgetSelector<Image> withMatchTextDirection(bool value) {
-    return withProp<bool>('matchTextDirection', (it) => it.equals(value));
+  WidgetSelector<Image> withMatchTextDirection(bool? value) {
+    return withProp<bool?>('matchTextDirection', (it) => it.equals(value));
   }
 
   WidgetSelector<Image> withSemanticLabelMatching(MatchProp<String> match) {

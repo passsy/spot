@@ -11,7 +11,6 @@ import 'package:spot/spot.dart';
 /// spot<ConstrainedBox>().printMatchers();
 /// ```
 extension ConstrainedBoxMatcher on WidgetMatcher<ConstrainedBox> {
-
   WidgetMatcher<ConstrainedBox> hasConstraintsWhere(MatchProp<BoxConstraints> match) {
     return hasProp<BoxConstraints>('constraints', match);
   }

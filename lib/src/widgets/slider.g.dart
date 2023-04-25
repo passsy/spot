@@ -10,45 +10,44 @@ import 'package:spot/spot.dart';
 /// spot<Slider>().printMatchers();
 /// ```
 extension SliderMatcher on WidgetMatcher<Slider> {
-
-  WidgetMatcher<Slider> hasValueWhere(MatchProp<double> match) {
-    return hasProp<double>('value', match);
+  WidgetMatcher<Slider> hasValueWhere(MatchProp<double?> match) {
+    return hasProp<double?>('value', match);
   }
   
-  WidgetMatcher<Slider> hasValue(double value) {
-    return hasProp<double>('value', (it) => it.equals(value));
+  WidgetMatcher<Slider> hasValue(double? value) {
+    return hasProp<double?>('value', (it) => it.equals(value));
   }
 
-  WidgetMatcher<Slider> hasSecondaryTrackValueWhere(MatchProp<double> match) {
-    return hasProp<double>('secondaryTrackValue', match);
+  WidgetMatcher<Slider> hasSecondaryTrackValueWhere(MatchProp<double?> match) {
+    return hasProp<double?>('secondaryTrackValue', match);
   }
   
-  WidgetMatcher<Slider> hasSecondaryTrackValue(double value) {
-    return hasProp<double>('secondaryTrackValue', (it) => it.equals(value));
+  WidgetMatcher<Slider> hasSecondaryTrackValue(double? value) {
+    return hasProp<double?>('secondaryTrackValue', (it) => it.equals(value));
   }
 
-  WidgetMatcher<Slider> hasMinWhere(MatchProp<double> match) {
-    return hasProp<double>('min', match);
+  WidgetMatcher<Slider> hasMinWhere(MatchProp<double?> match) {
+    return hasProp<double?>('min', match);
   }
   
-  WidgetMatcher<Slider> hasMin(double value) {
-    return hasProp<double>('min', (it) => it.equals(value));
+  WidgetMatcher<Slider> hasMin(double? value) {
+    return hasProp<double?>('min', (it) => it.equals(value));
   }
 
-  WidgetMatcher<Slider> hasMaxWhere(MatchProp<double> match) {
-    return hasProp<double>('max', match);
+  WidgetMatcher<Slider> hasMaxWhere(MatchProp<double?> match) {
+    return hasProp<double?>('max', match);
   }
   
-  WidgetMatcher<Slider> hasMax(double value) {
-    return hasProp<double>('max', (it) => it.equals(value));
+  WidgetMatcher<Slider> hasMax(double? value) {
+    return hasProp<double?>('max', (it) => it.equals(value));
   }
 
-  WidgetMatcher<Slider> hasDivisionsWhere(MatchProp<int> match) {
-    return hasProp<int>('divisions', match);
+  WidgetMatcher<Slider> hasDivisionsWhere(MatchProp<int?> match) {
+    return hasProp<int?>('divisions', match);
   }
   
-  WidgetMatcher<Slider> hasDivisions(int value) {
-    return hasProp<int>('divisions', (it) => it.equals(value));
+  WidgetMatcher<Slider> hasDivisions(int? value) {
+    return hasProp<int?>('divisions', (it) => it.equals(value));
   }
 
   WidgetMatcher<Slider> hasLabelWhere(MatchProp<String> match) {
@@ -59,28 +58,28 @@ extension SliderMatcher on WidgetMatcher<Slider> {
     return hasProp<String>('label', (it) => it.equals(value));
   }
 
-  WidgetMatcher<Slider> hasActiveColorWhere(MatchProp<IconData> match) {
-    return hasProp<IconData>('activeColor', match);
+  WidgetMatcher<Slider> hasActiveColorWhere(MatchProp<IconData?> match) {
+    return hasProp<IconData?>('activeColor', match);
   }
   
-  WidgetMatcher<Slider> hasActiveColor(IconData value) {
-    return hasProp<IconData>('activeColor', (it) => it.equals(value));
+  WidgetMatcher<Slider> hasActiveColor(IconData? value) {
+    return hasProp<IconData?>('activeColor', (it) => it.equals(value));
   }
 
-  WidgetMatcher<Slider> hasInactiveColorWhere(MatchProp<IconData> match) {
-    return hasProp<IconData>('inactiveColor', match);
+  WidgetMatcher<Slider> hasInactiveColorWhere(MatchProp<IconData?> match) {
+    return hasProp<IconData?>('inactiveColor', match);
   }
   
-  WidgetMatcher<Slider> hasInactiveColor(IconData value) {
-    return hasProp<IconData>('inactiveColor', (it) => it.equals(value));
+  WidgetMatcher<Slider> hasInactiveColor(IconData? value) {
+    return hasProp<IconData?>('inactiveColor', (it) => it.equals(value));
   }
 
-  WidgetMatcher<Slider> hasSecondaryActiveColorWhere(MatchProp<IconData> match) {
-    return hasProp<IconData>('secondaryActiveColor', match);
+  WidgetMatcher<Slider> hasSecondaryActiveColorWhere(MatchProp<IconData?> match) {
+    return hasProp<IconData?>('secondaryActiveColor', match);
   }
   
-  WidgetMatcher<Slider> hasSecondaryActiveColor(IconData value) {
-    return hasProp<IconData>('secondaryActiveColor', (it) => it.equals(value));
+  WidgetMatcher<Slider> hasSecondaryActiveColor(IconData? value) {
+    return hasProp<IconData?>('secondaryActiveColor', (it) => it.equals(value));
   }
 
   WidgetMatcher<Slider> hasFocusNodeWhere(MatchProp<FocusNode> match) {
@@ -91,55 +90,55 @@ extension SliderMatcher on WidgetMatcher<Slider> {
     return hasProp<FocusNode>('focusNode', (it) => it.equals(value));
   }
 
-  WidgetMatcher<Slider> hasAutofocusWhere(MatchProp<bool> match) {
-    return hasProp<bool>('autofocus', match);
+  WidgetMatcher<Slider> hasAutofocusWhere(MatchProp<bool?> match) {
+    return hasProp<bool?>('autofocus', match);
   }
   
-  WidgetMatcher<Slider> hasAutofocus(bool value) {
-    return hasProp<bool>('autofocus', (it) => it.equals(value));
+  WidgetMatcher<Slider> hasAutofocus(bool? value) {
+    return hasProp<bool?>('autofocus', (it) => it.equals(value));
   }
 
 }
 
 extension SliderSelector on WidgetSelector<Slider> {
-  WidgetSelector<Slider> withValueMatching(MatchProp<double> match) {
-    return withProp<double>('value', match);
+  WidgetSelector<Slider> withValueMatching(MatchProp<double?> match) {
+    return withProp<double?>('value', match);
   }
   
-  WidgetSelector<Slider> withValue(double value) {
-    return withProp<double>('value', (it) => it.equals(value));
+  WidgetSelector<Slider> withValue(double? value) {
+    return withProp<double?>('value', (it) => it.equals(value));
   }
 
-  WidgetSelector<Slider> withSecondaryTrackValueMatching(MatchProp<double> match) {
-    return withProp<double>('secondaryTrackValue', match);
+  WidgetSelector<Slider> withSecondaryTrackValueMatching(MatchProp<double?> match) {
+    return withProp<double?>('secondaryTrackValue', match);
   }
   
-  WidgetSelector<Slider> withSecondaryTrackValue(double value) {
-    return withProp<double>('secondaryTrackValue', (it) => it.equals(value));
+  WidgetSelector<Slider> withSecondaryTrackValue(double? value) {
+    return withProp<double?>('secondaryTrackValue', (it) => it.equals(value));
   }
 
-  WidgetSelector<Slider> withMinMatching(MatchProp<double> match) {
-    return withProp<double>('min', match);
+  WidgetSelector<Slider> withMinMatching(MatchProp<double?> match) {
+    return withProp<double?>('min', match);
   }
   
-  WidgetSelector<Slider> withMin(double value) {
-    return withProp<double>('min', (it) => it.equals(value));
+  WidgetSelector<Slider> withMin(double? value) {
+    return withProp<double?>('min', (it) => it.equals(value));
   }
 
-  WidgetSelector<Slider> withMaxMatching(MatchProp<double> match) {
-    return withProp<double>('max', match);
+  WidgetSelector<Slider> withMaxMatching(MatchProp<double?> match) {
+    return withProp<double?>('max', match);
   }
   
-  WidgetSelector<Slider> withMax(double value) {
-    return withProp<double>('max', (it) => it.equals(value));
+  WidgetSelector<Slider> withMax(double? value) {
+    return withProp<double?>('max', (it) => it.equals(value));
   }
 
-  WidgetSelector<Slider> withDivisionsMatching(MatchProp<int> match) {
-    return withProp<int>('divisions', match);
+  WidgetSelector<Slider> withDivisionsMatching(MatchProp<int?> match) {
+    return withProp<int?>('divisions', match);
   }
   
-  WidgetSelector<Slider> withDivisions(int value) {
-    return withProp<int>('divisions', (it) => it.equals(value));
+  WidgetSelector<Slider> withDivisions(int? value) {
+    return withProp<int?>('divisions', (it) => it.equals(value));
   }
 
   WidgetSelector<Slider> withLabelMatching(MatchProp<String> match) {
@@ -150,28 +149,28 @@ extension SliderSelector on WidgetSelector<Slider> {
     return withProp<String>('label', (it) => it.equals(value));
   }
 
-  WidgetSelector<Slider> withActiveColorMatching(MatchProp<IconData> match) {
-    return withProp<IconData>('activeColor', match);
+  WidgetSelector<Slider> withActiveColorMatching(MatchProp<IconData?> match) {
+    return withProp<IconData?>('activeColor', match);
   }
   
-  WidgetSelector<Slider> withActiveColor(IconData value) {
-    return withProp<IconData>('activeColor', (it) => it.equals(value));
+  WidgetSelector<Slider> withActiveColor(IconData? value) {
+    return withProp<IconData?>('activeColor', (it) => it.equals(value));
   }
 
-  WidgetSelector<Slider> withInactiveColorMatching(MatchProp<IconData> match) {
-    return withProp<IconData>('inactiveColor', match);
+  WidgetSelector<Slider> withInactiveColorMatching(MatchProp<IconData?> match) {
+    return withProp<IconData?>('inactiveColor', match);
   }
   
-  WidgetSelector<Slider> withInactiveColor(IconData value) {
-    return withProp<IconData>('inactiveColor', (it) => it.equals(value));
+  WidgetSelector<Slider> withInactiveColor(IconData? value) {
+    return withProp<IconData?>('inactiveColor', (it) => it.equals(value));
   }
 
-  WidgetSelector<Slider> withSecondaryActiveColorMatching(MatchProp<IconData> match) {
-    return withProp<IconData>('secondaryActiveColor', match);
+  WidgetSelector<Slider> withSecondaryActiveColorMatching(MatchProp<IconData?> match) {
+    return withProp<IconData?>('secondaryActiveColor', match);
   }
   
-  WidgetSelector<Slider> withSecondaryActiveColor(IconData value) {
-    return withProp<IconData>('secondaryActiveColor', (it) => it.equals(value));
+  WidgetSelector<Slider> withSecondaryActiveColor(IconData? value) {
+    return withProp<IconData?>('secondaryActiveColor', (it) => it.equals(value));
   }
 
   WidgetSelector<Slider> withFocusNodeMatching(MatchProp<FocusNode> match) {
@@ -182,12 +181,12 @@ extension SliderSelector on WidgetSelector<Slider> {
     return withProp<FocusNode>('focusNode', (it) => it.equals(value));
   }
 
-  WidgetSelector<Slider> withAutofocusMatching(MatchProp<bool> match) {
-    return withProp<bool>('autofocus', match);
+  WidgetSelector<Slider> withAutofocusMatching(MatchProp<bool?> match) {
+    return withProp<bool?>('autofocus', match);
   }
   
-  WidgetSelector<Slider> withAutofocus(bool value) {
-    return withProp<bool>('autofocus', (it) => it.equals(value));
+  WidgetSelector<Slider> withAutofocus(bool? value) {
+    return withProp<bool?>('autofocus', (it) => it.equals(value));
   }
 
 }

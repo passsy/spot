@@ -10,7 +10,6 @@ import 'package:spot/spot.dart';
 /// spot<Tooltip>().printMatchers(propNameOverrides: (MapEntry('vertical offset': 'verticalOffset'), MapEntry('wait duration': 'waitDuration'), MapEntry('show duration': 'showDuration')));
 /// ```
 extension TooltipMatcher on WidgetMatcher<Tooltip> {
-
   WidgetMatcher<Tooltip> hasMessageWhere(MatchProp<String> match) {
     return hasProp<String>('message', match);
   }
@@ -27,12 +26,12 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
     return hasProp<String>('richMessage', (it) => it.equals(value));
   }
 
-  WidgetMatcher<Tooltip> hasHeightWhere(MatchProp<double> match) {
-    return hasProp<double>('height', match);
+  WidgetMatcher<Tooltip> hasHeightWhere(MatchProp<double?> match) {
+    return hasProp<double?>('height', match);
   }
   
-  WidgetMatcher<Tooltip> hasHeight(double value) {
-    return hasProp<double>('height', (it) => it.equals(value));
+  WidgetMatcher<Tooltip> hasHeight(double? value) {
+    return hasProp<double?>('height', (it) => it.equals(value));
   }
 
   WidgetMatcher<Tooltip> hasPaddingWhere(MatchProp<EdgeInsetsGeometry> match) {
@@ -51,28 +50,28 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
     return hasProp<EdgeInsetsGeometry>('margin', (it) => it.equals(value));
   }
 
-  WidgetMatcher<Tooltip> hasVerticalOffsetWhere(MatchProp<double> match) {
-    return hasProp<double>('vertical offset', match);
+  WidgetMatcher<Tooltip> hasVerticalOffsetWhere(MatchProp<double?> match) {
+    return hasProp<double?>('vertical offset', match);
   }
   
-  WidgetMatcher<Tooltip> hasVerticalOffset(double value) {
-    return hasProp<double>('vertical offset', (it) => it.equals(value));
+  WidgetMatcher<Tooltip> hasVerticalOffset(double? value) {
+    return hasProp<double?>('vertical offset', (it) => it.equals(value));
   }
 
-  WidgetMatcher<Tooltip> hasPositionWhere(MatchProp<bool> match) {
-    return hasProp<bool>('position', match);
+  WidgetMatcher<Tooltip> hasPositionWhere(MatchProp<bool?> match) {
+    return hasProp<bool?>('position', match);
   }
   
-  WidgetMatcher<Tooltip> hasPosition(bool value) {
-    return hasProp<bool>('position', (it) => it.equals(value));
+  WidgetMatcher<Tooltip> hasPosition(bool? value) {
+    return hasProp<bool?>('position', (it) => it.equals(value));
   }
 
-  WidgetMatcher<Tooltip> hasSemanticsWhere(MatchProp<bool> match) {
-    return hasProp<bool>('semantics', match);
+  WidgetMatcher<Tooltip> hasSemanticsWhere(MatchProp<bool?> match) {
+    return hasProp<bool?>('semantics', match);
   }
   
-  WidgetMatcher<Tooltip> hasSemantics(bool value) {
-    return hasProp<bool>('semantics', (it) => it.equals(value));
+  WidgetMatcher<Tooltip> hasSemantics(bool? value) {
+    return hasProp<bool?>('semantics', (it) => it.equals(value));
   }
 
   WidgetMatcher<Tooltip> hasWaitDurationWhere(MatchProp<Duration> match) {
@@ -99,12 +98,12 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
     return hasProp<TooltipTriggerMode>('triggerMode', (it) => it.equals(value));
   }
 
-  WidgetMatcher<Tooltip> hasEnableFeedbackWhere(MatchProp<bool> match) {
-    return hasProp<bool>('enableFeedback', match);
+  WidgetMatcher<Tooltip> hasEnableFeedbackWhere(MatchProp<bool?> match) {
+    return hasProp<bool?>('enableFeedback', match);
   }
   
-  WidgetMatcher<Tooltip> hasEnableFeedback(bool value) {
-    return hasProp<bool>('enableFeedback', (it) => it.equals(value));
+  WidgetMatcher<Tooltip> hasEnableFeedback(bool? value) {
+    return hasProp<bool?>('enableFeedback', (it) => it.equals(value));
   }
 
   WidgetMatcher<Tooltip> hasTextAlignWhere(MatchProp<TextAlign> match) {
@@ -134,12 +133,12 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
     return withProp<String>('richMessage', (it) => it.equals(value));
   }
 
-  WidgetSelector<Tooltip> withHeightMatching(MatchProp<double> match) {
-    return withProp<double>('height', match);
+  WidgetSelector<Tooltip> withHeightMatching(MatchProp<double?> match) {
+    return withProp<double?>('height', match);
   }
   
-  WidgetSelector<Tooltip> withHeight(double value) {
-    return withProp<double>('height', (it) => it.equals(value));
+  WidgetSelector<Tooltip> withHeight(double? value) {
+    return withProp<double?>('height', (it) => it.equals(value));
   }
 
   WidgetSelector<Tooltip> withPaddingMatching(MatchProp<EdgeInsetsGeometry> match) {
@@ -158,28 +157,28 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
     return withProp<EdgeInsetsGeometry>('margin', (it) => it.equals(value));
   }
 
-  WidgetSelector<Tooltip> withVerticalOffsetMatching(MatchProp<double> match) {
-    return withProp<double>('vertical offset', match);
+  WidgetSelector<Tooltip> withVerticalOffsetMatching(MatchProp<double?> match) {
+    return withProp<double?>('vertical offset', match);
   }
   
-  WidgetSelector<Tooltip> withVerticalOffset(double value) {
-    return withProp<double>('vertical offset', (it) => it.equals(value));
+  WidgetSelector<Tooltip> withVerticalOffset(double? value) {
+    return withProp<double?>('vertical offset', (it) => it.equals(value));
   }
 
-  WidgetSelector<Tooltip> withPositionMatching(MatchProp<bool> match) {
-    return withProp<bool>('position', match);
+  WidgetSelector<Tooltip> withPositionMatching(MatchProp<bool?> match) {
+    return withProp<bool?>('position', match);
   }
   
-  WidgetSelector<Tooltip> withPosition(bool value) {
-    return withProp<bool>('position', (it) => it.equals(value));
+  WidgetSelector<Tooltip> withPosition(bool? value) {
+    return withProp<bool?>('position', (it) => it.equals(value));
   }
 
-  WidgetSelector<Tooltip> withSemanticsMatching(MatchProp<bool> match) {
-    return withProp<bool>('semantics', match);
+  WidgetSelector<Tooltip> withSemanticsMatching(MatchProp<bool?> match) {
+    return withProp<bool?>('semantics', match);
   }
   
-  WidgetSelector<Tooltip> withSemantics(bool value) {
-    return withProp<bool>('semantics', (it) => it.equals(value));
+  WidgetSelector<Tooltip> withSemantics(bool? value) {
+    return withProp<bool?>('semantics', (it) => it.equals(value));
   }
 
   WidgetSelector<Tooltip> withWaitDurationMatching(MatchProp<Duration> match) {
@@ -206,12 +205,12 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
     return withProp<TooltipTriggerMode>('triggerMode', (it) => it.equals(value));
   }
 
-  WidgetSelector<Tooltip> withEnableFeedbackMatching(MatchProp<bool> match) {
-    return withProp<bool>('enableFeedback', match);
+  WidgetSelector<Tooltip> withEnableFeedbackMatching(MatchProp<bool?> match) {
+    return withProp<bool?>('enableFeedback', match);
   }
   
-  WidgetSelector<Tooltip> withEnableFeedback(bool value) {
-    return withProp<bool>('enableFeedback', (it) => it.equals(value));
+  WidgetSelector<Tooltip> withEnableFeedback(bool? value) {
+    return withProp<bool?>('enableFeedback', (it) => it.equals(value));
   }
 
   WidgetSelector<Tooltip> withTextAlignMatching(MatchProp<TextAlign> match) {

@@ -10,7 +10,6 @@ import 'package:spot/spot.dart';
 /// spot<Container>().printMatchers();
 /// ```
 extension ContainerMatcher on WidgetMatcher<Container> {
-
   WidgetMatcher<Container> hasAlignmentWhere(MatchProp<AlignmentGeometry> match) {
     return hasProp<AlignmentGeometry>('alignment', match);
   }

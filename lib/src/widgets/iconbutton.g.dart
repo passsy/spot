@@ -10,7 +10,6 @@ import 'package:spot/spot.dart';
 /// spot<IconButton>().printMatchers();
 /// ```
 extension IconButtonMatcher on WidgetMatcher<IconButton> {
-
   WidgetMatcher<IconButton> hasIconWhere(MatchProp<Widget> match) {
     return hasProp<Widget>('icon', match);
   }
@@ -27,52 +26,52 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
     return hasProp<String>('tooltip', (it) => it.equals(value));
   }
 
-  WidgetMatcher<IconButton> hasColorWhere(MatchProp<IconData> match) {
-    return hasProp<IconData>('color', match);
+  WidgetMatcher<IconButton> hasColorWhere(MatchProp<IconData?> match) {
+    return hasProp<IconData?>('color', match);
   }
   
-  WidgetMatcher<IconButton> hasColor(IconData value) {
-    return hasProp<IconData>('color', (it) => it.equals(value));
+  WidgetMatcher<IconButton> hasColor(IconData? value) {
+    return hasProp<IconData?>('color', (it) => it.equals(value));
   }
 
-  WidgetMatcher<IconButton> hasDisabledColorWhere(MatchProp<IconData> match) {
-    return hasProp<IconData>('disabledColor', match);
+  WidgetMatcher<IconButton> hasDisabledColorWhere(MatchProp<IconData?> match) {
+    return hasProp<IconData?>('disabledColor', match);
   }
   
-  WidgetMatcher<IconButton> hasDisabledColor(IconData value) {
-    return hasProp<IconData>('disabledColor', (it) => it.equals(value));
+  WidgetMatcher<IconButton> hasDisabledColor(IconData? value) {
+    return hasProp<IconData?>('disabledColor', (it) => it.equals(value));
   }
 
-  WidgetMatcher<IconButton> hasFocusColorWhere(MatchProp<IconData> match) {
-    return hasProp<IconData>('focusColor', match);
+  WidgetMatcher<IconButton> hasFocusColorWhere(MatchProp<IconData?> match) {
+    return hasProp<IconData?>('focusColor', match);
   }
   
-  WidgetMatcher<IconButton> hasFocusColor(IconData value) {
-    return hasProp<IconData>('focusColor', (it) => it.equals(value));
+  WidgetMatcher<IconButton> hasFocusColor(IconData? value) {
+    return hasProp<IconData?>('focusColor', (it) => it.equals(value));
   }
 
-  WidgetMatcher<IconButton> hasHoverColorWhere(MatchProp<IconData> match) {
-    return hasProp<IconData>('hoverColor', match);
+  WidgetMatcher<IconButton> hasHoverColorWhere(MatchProp<IconData?> match) {
+    return hasProp<IconData?>('hoverColor', match);
   }
   
-  WidgetMatcher<IconButton> hasHoverColor(IconData value) {
-    return hasProp<IconData>('hoverColor', (it) => it.equals(value));
+  WidgetMatcher<IconButton> hasHoverColor(IconData? value) {
+    return hasProp<IconData?>('hoverColor', (it) => it.equals(value));
   }
 
-  WidgetMatcher<IconButton> hasHighlightColorWhere(MatchProp<IconData> match) {
-    return hasProp<IconData>('highlightColor', match);
+  WidgetMatcher<IconButton> hasHighlightColorWhere(MatchProp<IconData?> match) {
+    return hasProp<IconData?>('highlightColor', match);
   }
   
-  WidgetMatcher<IconButton> hasHighlightColor(IconData value) {
-    return hasProp<IconData>('highlightColor', (it) => it.equals(value));
+  WidgetMatcher<IconButton> hasHighlightColor(IconData? value) {
+    return hasProp<IconData?>('highlightColor', (it) => it.equals(value));
   }
 
-  WidgetMatcher<IconButton> hasSplashColorWhere(MatchProp<IconData> match) {
-    return hasProp<IconData>('splashColor', match);
+  WidgetMatcher<IconButton> hasSplashColorWhere(MatchProp<IconData?> match) {
+    return hasProp<IconData?>('splashColor', match);
   }
   
-  WidgetMatcher<IconButton> hasSplashColor(IconData value) {
-    return hasProp<IconData>('splashColor', (it) => it.equals(value));
+  WidgetMatcher<IconButton> hasSplashColor(IconData? value) {
+    return hasProp<IconData?>('splashColor', (it) => it.equals(value));
   }
 
   WidgetMatcher<IconButton> hasPaddingWhere(MatchProp<EdgeInsetsGeometry> match) {
@@ -110,52 +109,52 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
     return withProp<String>('tooltip', (it) => it.equals(value));
   }
 
-  WidgetSelector<IconButton> withColorMatching(MatchProp<IconData> match) {
-    return withProp<IconData>('color', match);
+  WidgetSelector<IconButton> withColorMatching(MatchProp<IconData?> match) {
+    return withProp<IconData?>('color', match);
   }
   
-  WidgetSelector<IconButton> withColor(IconData value) {
-    return withProp<IconData>('color', (it) => it.equals(value));
+  WidgetSelector<IconButton> withColor(IconData? value) {
+    return withProp<IconData?>('color', (it) => it.equals(value));
   }
 
-  WidgetSelector<IconButton> withDisabledColorMatching(MatchProp<IconData> match) {
-    return withProp<IconData>('disabledColor', match);
+  WidgetSelector<IconButton> withDisabledColorMatching(MatchProp<IconData?> match) {
+    return withProp<IconData?>('disabledColor', match);
   }
   
-  WidgetSelector<IconButton> withDisabledColor(IconData value) {
-    return withProp<IconData>('disabledColor', (it) => it.equals(value));
+  WidgetSelector<IconButton> withDisabledColor(IconData? value) {
+    return withProp<IconData?>('disabledColor', (it) => it.equals(value));
   }
 
-  WidgetSelector<IconButton> withFocusColorMatching(MatchProp<IconData> match) {
-    return withProp<IconData>('focusColor', match);
+  WidgetSelector<IconButton> withFocusColorMatching(MatchProp<IconData?> match) {
+    return withProp<IconData?>('focusColor', match);
   }
   
-  WidgetSelector<IconButton> withFocusColor(IconData value) {
-    return withProp<IconData>('focusColor', (it) => it.equals(value));
+  WidgetSelector<IconButton> withFocusColor(IconData? value) {
+    return withProp<IconData?>('focusColor', (it) => it.equals(value));
   }
 
-  WidgetSelector<IconButton> withHoverColorMatching(MatchProp<IconData> match) {
-    return withProp<IconData>('hoverColor', match);
+  WidgetSelector<IconButton> withHoverColorMatching(MatchProp<IconData?> match) {
+    return withProp<IconData?>('hoverColor', match);
   }
   
-  WidgetSelector<IconButton> withHoverColor(IconData value) {
-    return withProp<IconData>('hoverColor', (it) => it.equals(value));
+  WidgetSelector<IconButton> withHoverColor(IconData? value) {
+    return withProp<IconData?>('hoverColor', (it) => it.equals(value));
   }
 
-  WidgetSelector<IconButton> withHighlightColorMatching(MatchProp<IconData> match) {
-    return withProp<IconData>('highlightColor', match);
+  WidgetSelector<IconButton> withHighlightColorMatching(MatchProp<IconData?> match) {
+    return withProp<IconData?>('highlightColor', match);
   }
   
-  WidgetSelector<IconButton> withHighlightColor(IconData value) {
-    return withProp<IconData>('highlightColor', (it) => it.equals(value));
+  WidgetSelector<IconButton> withHighlightColor(IconData? value) {
+    return withProp<IconData?>('highlightColor', (it) => it.equals(value));
   }
 
-  WidgetSelector<IconButton> withSplashColorMatching(MatchProp<IconData> match) {
-    return withProp<IconData>('splashColor', match);
+  WidgetSelector<IconButton> withSplashColorMatching(MatchProp<IconData?> match) {
+    return withProp<IconData?>('splashColor', match);
   }
   
-  WidgetSelector<IconButton> withSplashColor(IconData value) {
-    return withProp<IconData>('splashColor', (it) => it.equals(value));
+  WidgetSelector<IconButton> withSplashColor(IconData? value) {
+    return withProp<IconData?>('splashColor', (it) => it.equals(value));
   }
 
   WidgetSelector<IconButton> withPaddingMatching(MatchProp<EdgeInsetsGeometry> match) {

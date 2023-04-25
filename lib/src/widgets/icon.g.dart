@@ -10,61 +10,60 @@ import 'package:spot/spot.dart';
 /// spot<Icon>().printMatchers();
 /// ```
 extension IconMatcher on WidgetMatcher<Icon> {
-
-  WidgetMatcher<Icon> hasIconWhere(MatchProp<IconData> match) {
-    return hasProp<IconData>('icon', match);
+  WidgetMatcher<Icon> hasIconWhere(MatchProp<IconData?> match) {
+    return hasProp<IconData?>('icon', match);
   }
   
-  WidgetMatcher<Icon> hasIcon(IconData value) {
-    return hasProp<IconData>('icon', (it) => it.equals(value));
+  WidgetMatcher<Icon> hasIcon(IconData? value) {
+    return hasProp<IconData?>('icon', (it) => it.equals(value));
   }
 
-  WidgetMatcher<Icon> hasSizeWhere(MatchProp<double> match) {
-    return hasProp<double>('size', match);
+  WidgetMatcher<Icon> hasSizeWhere(MatchProp<double?> match) {
+    return hasProp<double?>('size', match);
   }
   
-  WidgetMatcher<Icon> hasSize(double value) {
-    return hasProp<double>('size', (it) => it.equals(value));
+  WidgetMatcher<Icon> hasSize(double? value) {
+    return hasProp<double?>('size', (it) => it.equals(value));
   }
 
-  WidgetMatcher<Icon> hasFillWhere(MatchProp<double> match) {
-    return hasProp<double>('fill', match);
+  WidgetMatcher<Icon> hasFillWhere(MatchProp<double?> match) {
+    return hasProp<double?>('fill', match);
   }
   
-  WidgetMatcher<Icon> hasFill(double value) {
-    return hasProp<double>('fill', (it) => it.equals(value));
+  WidgetMatcher<Icon> hasFill(double? value) {
+    return hasProp<double?>('fill', (it) => it.equals(value));
   }
 
-  WidgetMatcher<Icon> hasWeightWhere(MatchProp<double> match) {
-    return hasProp<double>('weight', match);
+  WidgetMatcher<Icon> hasWeightWhere(MatchProp<double?> match) {
+    return hasProp<double?>('weight', match);
   }
   
-  WidgetMatcher<Icon> hasWeight(double value) {
-    return hasProp<double>('weight', (it) => it.equals(value));
+  WidgetMatcher<Icon> hasWeight(double? value) {
+    return hasProp<double?>('weight', (it) => it.equals(value));
   }
 
-  WidgetMatcher<Icon> hasGradeWhere(MatchProp<double> match) {
-    return hasProp<double>('grade', match);
+  WidgetMatcher<Icon> hasGradeWhere(MatchProp<double?> match) {
+    return hasProp<double?>('grade', match);
   }
   
-  WidgetMatcher<Icon> hasGrade(double value) {
-    return hasProp<double>('grade', (it) => it.equals(value));
+  WidgetMatcher<Icon> hasGrade(double? value) {
+    return hasProp<double?>('grade', (it) => it.equals(value));
   }
 
-  WidgetMatcher<Icon> hasOpticalSizeWhere(MatchProp<double> match) {
-    return hasProp<double>('opticalSize', match);
+  WidgetMatcher<Icon> hasOpticalSizeWhere(MatchProp<double?> match) {
+    return hasProp<double?>('opticalSize', match);
   }
   
-  WidgetMatcher<Icon> hasOpticalSize(double value) {
-    return hasProp<double>('opticalSize', (it) => it.equals(value));
+  WidgetMatcher<Icon> hasOpticalSize(double? value) {
+    return hasProp<double?>('opticalSize', (it) => it.equals(value));
   }
 
-  WidgetMatcher<Icon> hasColorWhere(MatchProp<IconData> match) {
-    return hasProp<IconData>('color', match);
+  WidgetMatcher<Icon> hasColorWhere(MatchProp<IconData?> match) {
+    return hasProp<IconData?>('color', match);
   }
   
-  WidgetMatcher<Icon> hasColor(IconData value) {
-    return hasProp<IconData>('color', (it) => it.equals(value));
+  WidgetMatcher<Icon> hasColor(IconData? value) {
+    return hasProp<IconData?>('color', (it) => it.equals(value));
   }
 
   WidgetMatcher<Icon> hasShadowsWhere(MatchProp<Shadow> match) {
@@ -94,60 +93,60 @@ extension IconMatcher on WidgetMatcher<Icon> {
 }
 
 extension IconSelector on WidgetSelector<Icon> {
-  WidgetSelector<Icon> withIconMatching(MatchProp<IconData> match) {
-    return withProp<IconData>('icon', match);
+  WidgetSelector<Icon> withIconMatching(MatchProp<IconData?> match) {
+    return withProp<IconData?>('icon', match);
   }
   
-  WidgetSelector<Icon> withIcon(IconData value) {
-    return withProp<IconData>('icon', (it) => it.equals(value));
+  WidgetSelector<Icon> withIcon(IconData? value) {
+    return withProp<IconData?>('icon', (it) => it.equals(value));
   }
 
-  WidgetSelector<Icon> withSizeMatching(MatchProp<double> match) {
-    return withProp<double>('size', match);
+  WidgetSelector<Icon> withSizeMatching(MatchProp<double?> match) {
+    return withProp<double?>('size', match);
   }
   
-  WidgetSelector<Icon> withSize(double value) {
-    return withProp<double>('size', (it) => it.equals(value));
+  WidgetSelector<Icon> withSize(double? value) {
+    return withProp<double?>('size', (it) => it.equals(value));
   }
 
-  WidgetSelector<Icon> withFillMatching(MatchProp<double> match) {
-    return withProp<double>('fill', match);
+  WidgetSelector<Icon> withFillMatching(MatchProp<double?> match) {
+    return withProp<double?>('fill', match);
   }
   
-  WidgetSelector<Icon> withFill(double value) {
-    return withProp<double>('fill', (it) => it.equals(value));
+  WidgetSelector<Icon> withFill(double? value) {
+    return withProp<double?>('fill', (it) => it.equals(value));
   }
 
-  WidgetSelector<Icon> withWeightMatching(MatchProp<double> match) {
-    return withProp<double>('weight', match);
+  WidgetSelector<Icon> withWeightMatching(MatchProp<double?> match) {
+    return withProp<double?>('weight', match);
   }
   
-  WidgetSelector<Icon> withWeight(double value) {
-    return withProp<double>('weight', (it) => it.equals(value));
+  WidgetSelector<Icon> withWeight(double? value) {
+    return withProp<double?>('weight', (it) => it.equals(value));
   }
 
-  WidgetSelector<Icon> withGradeMatching(MatchProp<double> match) {
-    return withProp<double>('grade', match);
+  WidgetSelector<Icon> withGradeMatching(MatchProp<double?> match) {
+    return withProp<double?>('grade', match);
   }
   
-  WidgetSelector<Icon> withGrade(double value) {
-    return withProp<double>('grade', (it) => it.equals(value));
+  WidgetSelector<Icon> withGrade(double? value) {
+    return withProp<double?>('grade', (it) => it.equals(value));
   }
 
-  WidgetSelector<Icon> withOpticalSizeMatching(MatchProp<double> match) {
-    return withProp<double>('opticalSize', match);
+  WidgetSelector<Icon> withOpticalSizeMatching(MatchProp<double?> match) {
+    return withProp<double?>('opticalSize', match);
   }
   
-  WidgetSelector<Icon> withOpticalSize(double value) {
-    return withProp<double>('opticalSize', (it) => it.equals(value));
+  WidgetSelector<Icon> withOpticalSize(double? value) {
+    return withProp<double?>('opticalSize', (it) => it.equals(value));
   }
 
-  WidgetSelector<Icon> withColorMatching(MatchProp<IconData> match) {
-    return withProp<IconData>('color', match);
+  WidgetSelector<Icon> withColorMatching(MatchProp<IconData?> match) {
+    return withProp<IconData?>('color', match);
   }
   
-  WidgetSelector<Icon> withColor(IconData value) {
-    return withProp<IconData>('color', (it) => it.equals(value));
+  WidgetSelector<Icon> withColor(IconData? value) {
+    return withProp<IconData?>('color', (it) => it.equals(value));
   }
 
   WidgetSelector<Icon> withShadowsMatching(MatchProp<Shadow> match) {
