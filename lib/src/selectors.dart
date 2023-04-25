@@ -344,20 +344,18 @@ class WidgetSelector<W extends Widget> with Spotters<W> {
   );
 
   WidgetSelector({
-    required this.props,
+    required List<PredicateWithDescription> props,
     List<WidgetSelector>? parents,
     List<WidgetSelector>? children,
     this.expectSingle,
-  })  : parents = parents?.toSet().toList() ?? [],
-        children = children ?? [];
+  })  : props = List.unmodifiable(props),
+        parents = List.unmodifiable(parents?.toSet().toList() ?? []),
+        children = List.unmodifiable(children ?? []);
 
-  // TODO make those immutable
   final List<PredicateWithDescription> props;
 
-  // TODO make those immutable
   final List<WidgetSelector> parents;
 
-  // TODO make those immutable
   final List<WidgetSelector> children;
 
   /// True when this selector should only match a single widget
