@@ -203,22 +203,32 @@ mixin Spotters<T extends Widget> {
   }
 
   SingleWidgetSelector<T> first() {
-    return FirstWidgetSelector<T>(parent: self!);
+    return FirstWidgetSelector<T>(
+      props: self!.props,
+      parents: self!.parents,
+      children: self!.children,
+    );
   }
 
-  // SingleWidgetSelector<T> last() {
-  //   return FirstWidgetSelector<T>(parent: self!);
-  // }
+  SingleWidgetSelector<T> last() {
+    return LastWidgetSelector<T>(
+      props: self!.props,
+      parents: self!.parents,
+      children: self!.children,
+    );
+  }
 }
 
 class FirstWidgetSelector<W extends Widget> extends SingleWidgetSelector<W> {
   FirstWidgetSelector({
-    required WidgetSelector parent,
-  }) : super(props: [], parents: [parent], children: []);
+    required super.props,
+    required super.parents,
+    required super.children,
+  });
 
   @override
   ElementFilter<W> createElementFilter() {
-    return FirstElement<W>();
+    return FirstElement<W>(super.createElementFilter());
   }
 
   @override
@@ -233,9 +243,55 @@ class FirstWidgetSelector<W extends Widget> extends SingleWidgetSelector<W> {
 }
 
 class FirstElement<W extends Widget> extends ElementFilter<W> {
+  final ElementFilter<W> parent;
+
+  FirstElement(this.parent);
+
   @override
   Iterable<SpotNode<W>> filter(Iterable<SpotNode<Widget>> candidates) {
-    return [candidates.first.cast<W>()];
+    final first = parent.filter(candidates).firstOrNull;
+    if (first == null) {
+      return [];
+    }
+    return [first.cast<W>()];
+  }
+}
+
+class LastWidgetSelector<W extends Widget> extends SingleWidgetSelector<W> {
+  LastWidgetSelector({
+    required super.props,
+    required super.parents,
+    required super.children,
+  });
+
+  @override
+  ElementFilter<W> createElementFilter() {
+    return LastElement<W>(super.createElementFilter());
+  }
+
+  @override
+  String toString() {
+    return 'last Widget ${super.toString()}';
+  }
+
+  @override
+  String toStringWithoutParents() {
+    return ':last';
+  }
+}
+
+class LastElement<W extends Widget> extends ElementFilter<W> {
+  final ElementFilter<W> parent;
+
+  LastElement(this.parent);
+
+  @override
+  Iterable<SpotNode<W>> filter(Iterable<SpotNode<Widget>> candidates) {
+    final last = parent.filter(candidates).lastOrNull;
+    if (last == null) {
+      return [];
+    }
+    return [last.cast<W>()];
   }
 }
 
