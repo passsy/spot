@@ -109,24 +109,6 @@ SpotSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
   );
 }
 
-extension IterableIntersect<E> on Iterable<E> {
-  Iterable<E> intersectWithSelector(
-    Iterable<E> other,
-    Object Function(E) select,
-  ) sync* {
-    final second = HashSet.from(other.map(select));
-    final output = HashSet<E>();
-    for (final current in this) {
-      final mapped = select(current);
-      if (second.contains(mapped)) {
-        if (output.add(current)) {
-          yield current;
-        }
-      }
-    }
-  }
-}
-
 SpotSnapshot<W> _takeScopedSnapshot<W extends Widget>(
   WidgetSelector<W> selector,
   SpotNode origin,
