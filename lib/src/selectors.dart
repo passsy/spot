@@ -195,8 +195,8 @@ mixin Spotters<T extends Widget> {
   }
 }
 
-extension SpotterQueries<T extends Widget> on Spotters<T> {
-  WidgetSelector<T> whereElement(
+extension SpotterQueries<W extends Widget> on Spotters<W> {
+  WidgetSelector<W> whereElement(
     bool Function(Element element) predicate, {
     required String description,
   }) {
@@ -211,8 +211,8 @@ extension SpotterQueries<T extends Widget> on Spotters<T> {
     );
   }
 
-  WidgetSelector<T> whereWidget(
-    bool Function(T widget) predicate, {
+  WidgetSelector<W> whereWidget(
+    bool Function(W widget) predicate, {
     required String description,
   }) {
     return self!.copyWith(
@@ -220,8 +220,8 @@ extension SpotterQueries<T extends Widget> on Spotters<T> {
         ...self!.props,
         PredicateWithDescription(
           (Element e) {
-            if (e.widget is T) {
-              return predicate(e.widget as T);
+            if (e.widget is W) {
+              return predicate(e.widget as W);
             }
             return false;
           },
