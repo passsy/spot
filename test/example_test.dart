@@ -46,7 +46,7 @@ void main() {
         spotSingle<MaterialApp>().spotSingle<Scaffold>();
     final appBar = scaffold.spotSingle<AppBar>();
 
-    spot<RobinHood>().writeMatchersToFile(path: 'test/robinhood.dart');
+    // spot<RobinHood>().writeMatchersToFile(path: 'test/robinhood.dart');
     // appBar
     //     .spot<Text>()
     //     .existsOnce()

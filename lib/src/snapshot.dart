@@ -15,14 +15,13 @@ SpotSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
   );
 
   if (selector.parents.isEmpty) {
-    final snapshot = _takeScopedSnapshot(selector, origin);
+    final snapshot = takeScopedSnapshot(selector, origin);
 
     if (selector.expectSingle == true) {
       if (snapshot.discovered.length > 1) {
         throw TestFailure(
           'Found ${snapshot.discovered.length} elements matching $selector in widget tree, '
           'expected only one\n'
-          // ignore: deprecated_member_use
           '${_findCommonAncestor(snapshot.discoveredElements).toStringDeep()}'
           'Found ${snapshot.discovered.length} elements matching $selector in widget tree, '
           'expected only one',
@@ -47,7 +46,7 @@ SpotSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
 
     final Map<SpotNode<Widget>, SpotSnapshot<W>> groups =
         parentSnapshot.discovered.associateWith((parent) {
-      return _takeScopedSnapshot(selectorWithoutParents, parent);
+      return takeScopedSnapshot(selectorWithoutParents, parent);
     });
 
     return groups.values.toList();
@@ -106,48 +105,28 @@ SpotSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
   );
 }
 
-SpotSnapshot<W> _takeScopedSnapshot<W extends Widget>(
+SpotSnapshot<W> takeScopedSnapshot<W extends Widget>(
   WidgetSelector<W> selector,
   SpotNode origin,
 ) {
-  // TODO pass in as argument?
-  // TODO cache results
-  final candidates = [origin.element] +
+  final List<Element> allElementCandidates = [origin.element] +
       collectAllElementsFrom(origin.element, skipOffstage: true).toList();
-
-  // First find all elements matching the query
-  final List<SpotNode<W>> queryMatches = candidates
-      .where((element) => selector.props.all((prop) => prop.predicate(element)))
-      .map((e) {
-    return SpotNode<W>(
+  final List<SpotNode> candidates = allElementCandidates.map((e) {
+    return SpotNode(
       selector: selector,
       parents: [origin],
       element: e,
-      debugCandidates: candidates,
+      debugCandidates: allElementCandidates,
     );
   }).toList();
 
-  final List<SpotNode<W>> matchingChildNodes = [];
+  final List<SpotNode<W>> discovered =
+      selector.createElementFilter().filter(candidates).toList();
 
-  // Then check for every queryMatch if the children and props match
-  for (final SpotNode<W> queryMatch in queryMatches) {
-    if (selector.children.isEmpty) {
-      matchingChildNodes.add(queryMatch);
-    } else {
-      for (final WidgetSelector<Widget> childMatcher in selector.children) {
-        final SpotSnapshot<Widget> snapshot =
-            _takeScopedSnapshot(childMatcher, queryMatch);
-        if (snapshot.discovered.isNotEmpty) {
-          matchingChildNodes.add(queryMatch);
-        }
-      }
-    }
-  }
-
-  return SpotSnapshot(
+  return SpotSnapshot<W>(
     selector: selector,
-    discovered: matchingChildNodes,
-    debugCandidates: candidates,
+    discovered: discovered,
+    debugCandidates: candidates.map((e) => e.element).toList(),
   );
 }
 

@@ -193,6 +193,14 @@ mixin Spotters<T extends Widget> {
       children: children,
     );
   }
+
+  SingleWidgetSelector<T> get first {
+    return SingleWidgetSelector<T>(
+      props: [],
+      parents: [self!],
+      children: [],
+    );
+  }
 }
 
 extension SpotterQueries<W extends Widget> on Spotters<W> {
@@ -330,6 +338,132 @@ class MultiWidgetSelector<W extends Widget> extends WidgetSelector<W> {
   }
 }
 
+abstract class ElementFilter<W extends Widget> {
+  /// Filters all candidates, retuning only a subset that matches
+  Iterable<SpotNode<W>> filter(Iterable<SpotNode<Widget>> candidates);
+}
+
+abstract class CandidateGenerator<W extends Widget> {
+  Iterable<SpotNode<W>> generateCandidates();
+}
+
+class WidgetSelectorElementFilter<W extends Widget>
+    implements ElementFilter<W> {
+  final WidgetSelector<W> selector;
+
+  WidgetSelectorElementFilter(this.selector);
+
+  @override
+  Iterable<SpotNode<W>> filter(Iterable<SpotNode<Widget>> candidates) {
+    final List<SpotNode<Widget>> queryMatches = candidates
+        .where(
+          (node) => selector.props.all(
+            (prop) {
+              return prop.predicate(node.element);
+            },
+          ),
+        )
+        .toList();
+
+    final List<SpotNode<W>> matchingChildNodes = [];
+    // Then check for every queryMatch if the children and props match
+    for (final SpotNode<Widget> candidate in queryMatches) {
+      if (selector.children.isEmpty) {
+        matchingChildNodes.add(candidate.cast<W>());
+      } else {
+        for (final WidgetSelector<Widget> childMatcher in selector.children) {
+          final SpotSnapshot<Widget> snapshot =
+              takeScopedSnapshot(childMatcher, candidate);
+          if (snapshot.discovered.isNotEmpty) {
+            matchingChildNodes.add(candidate.cast<W>());
+          }
+        }
+      }
+    }
+    return matchingChildNodes;
+  }
+}
+
+class CandidateGeneratorFromParents<W extends Widget>
+    implements CandidateGenerator<W> {
+  final WidgetSelector<W> selector;
+
+  CandidateGeneratorFromParents(this.selector);
+
+  @override
+  Iterable<SpotNode<W>> generateCandidates() {
+    if (selector.parents.isEmpty) {
+      // ignore: deprecated_member_use
+      final rootElement = WidgetsBinding.instance.renderViewElement!;
+      final origin = SpotNode(
+        selector: WidgetSelector.all,
+        parents: [],
+        element: rootElement,
+        debugCandidates: [rootElement],
+      );
+      final snapshot = takeScopedSnapshot(selector, origin);
+      return snapshot.discovered;
+    }
+
+    final Iterable<SpotSnapshot<Widget>> parentSnapshots =
+        selector.parents.map((selector) => selector.snapshot());
+
+    final selectorWithoutParents = selector.copyWith(parents: []);
+
+    // Take a snapshot from parentSnapshots that exist in all snapshots
+    final List<List<SpotSnapshot<W>>> discoveryByParent =
+        parentSnapshots.map((SpotSnapshot<Widget> parentSnapshot) {
+      if (parentSnapshot.discovered.isEmpty) {
+        return <SpotSnapshot<W>>[];
+      }
+
+      final Map<SpotNode<Widget>, SpotSnapshot<W>> groups =
+          parentSnapshot.discovered.associateWith((parent) {
+        return takeScopedSnapshot(selectorWithoutParents, parent);
+      });
+
+      return groups.values.toList();
+    }).toList();
+
+    final List<SpotNode<W>> allDiscoveredNodes = discoveryByParent
+        .flatten()
+        .map((it) => it.discovered)
+        .flatten()
+        .toList();
+    final distinctElements =
+        allDiscoveredNodes.map((e) => e.element).toSet().toList();
+
+    // find nodes that exist in all parents
+    final elementsInAllParents = distinctElements.where((element) {
+      return discoveryByParent.all((discovered) {
+        return discovered.any((snapshot) {
+          return snapshot.discovered.map((e) => e.element).contains(element);
+        });
+      });
+    }).toList();
+
+    final parentNodes =
+        parentSnapshots.map((e) => e.discovered).flatten().toList();
+    final candidates = discoveryByParent
+        .flatten()
+        .map((e) => e.debugCandidates)
+        .flatten()
+        .toSet()
+        .toList();
+
+    final discovered = elementsInAllParents.map((element) {
+      return SpotNode(
+        selector: selector,
+        element: element,
+        parents: parentNodes,
+        debugCandidates: candidates,
+      );
+    }).toList();
+
+    return discovered;
+  }
+}
+
 /// Represents a chain of widgets in the widget tree that can be asserted
 ///
 /// Compared to normal [Finder], this gives great error messages along the chain
@@ -360,6 +494,14 @@ class WidgetSelector<W extends Widget> with Spotters<W> {
 
   /// True when this selector should only match a single widget
   final bool? expectSingle;
+
+  ElementFilter<W> createElementFilter() {
+    return WidgetSelectorElementFilter(this);
+  }
+
+  CandidateGenerator<W> createCandidateGenerator() {
+    return CandidateGeneratorFromParents(this);
+  }
 
   @override
   String toString() {
@@ -491,6 +633,14 @@ class SpotNode<W extends Widget> {
     required this.debugCandidates,
     this.parents = const [],
   });
+
+  SpotNode<T> cast<T extends Widget>() {
+    return SpotNode<T>(
+      selector: selector as WidgetSelector<T>,
+      element: element,
+      debugCandidates: debugCandidates,
+    );
+  }
 
   @override
   String toString() {
