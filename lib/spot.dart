@@ -35,6 +35,8 @@ export 'package:spot/src/widgets/textfield.g.dart';
 export 'package:spot/src/widgets/tooltip.g.dart';
 export 'package:spot/src/widgets/wrap.g.dart';
 
+export 'package:spot/src/effective_text.dart';
+
 const Spot _global = Spot();
 
 WidgetSelector<Widget> get allWidgets => WidgetSelector.all;

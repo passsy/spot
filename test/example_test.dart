@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_unnecessary_containers
+// ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -11,7 +11,11 @@ void main() {
         home: Container(
           child: Scaffold(
             appBar: AppBar(
-              title: const Text('Test'),
+              title: DefaultTextStyle(
+                style: TextStyle(),
+                maxLines: 2,
+                child: Text('Test'),
+              ),
               actions: [
                 Wrap(
                   children: [
@@ -39,8 +43,7 @@ void main() {
     final WidgetSelector<Scaffold> scaffold =
         spotSingle<MaterialApp>().spotSingle<Scaffold>();
     final appBar = scaffold.spotSingle<AppBar>();
-    // spot<Wrap>().printMatchers();
-    // spot<Text>().printMatchers(propNameOverrides: {'data': 'text'});
+    appBar.spot<Text>().existsOnce().hasMaxLines(null).hasEffectiveMaxLines(2);
 
     final container = scaffold.spotSingle<Container>()..existsOnce();
 

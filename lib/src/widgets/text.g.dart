@@ -10,11 +10,10 @@ import 'package:spot/spot.dart';
 /// spot<Text>().printMatchers(propNameOverrides: (MapEntry('data': 'text')));
 /// ```
 extension TextMatcher on WidgetMatcher<Text> {
-
   WidgetMatcher<Text> hasTextWhere(MatchProp<String> match) {
     return hasProp<String>('data', match);
   }
-  
+
   WidgetMatcher<Text> hasText(String value) {
     return hasProp<String>('data', (it) => it.equals(value));
   }
@@ -22,7 +21,7 @@ extension TextMatcher on WidgetMatcher<Text> {
   WidgetMatcher<Text> hasTextAlignWhere(MatchProp<TextAlign> match) {
     return hasProp<TextAlign>('textAlign', match);
   }
-  
+
   WidgetMatcher<Text> hasTextAlign(TextAlign value) {
     return hasProp<TextAlign>('textAlign', (it) => it.equals(value));
   }
@@ -30,7 +29,7 @@ extension TextMatcher on WidgetMatcher<Text> {
   WidgetMatcher<Text> hasTextDirectionWhere(MatchProp<TextDirection> match) {
     return hasProp<TextDirection>('textDirection', match);
   }
-  
+
   WidgetMatcher<Text> hasTextDirection(TextDirection value) {
     return hasProp<TextDirection>('textDirection', (it) => it.equals(value));
   }
@@ -38,7 +37,7 @@ extension TextMatcher on WidgetMatcher<Text> {
   WidgetMatcher<Text> hasLocaleWhere(MatchProp<Locale> match) {
     return hasProp<Locale>('locale', match);
   }
-  
+
   WidgetMatcher<Text> hasLocale(Locale value) {
     return hasProp<Locale>('locale', (it) => it.equals(value));
   }
@@ -46,7 +45,7 @@ extension TextMatcher on WidgetMatcher<Text> {
   WidgetMatcher<Text> hasSoftWrapWhere(MatchProp<bool> match) {
     return hasProp<bool>('softWrap', match);
   }
-  
+
   WidgetMatcher<Text> hasSoftWrap(bool value) {
     return hasProp<bool>('softWrap', (it) => it.equals(value));
   }
@@ -54,7 +53,7 @@ extension TextMatcher on WidgetMatcher<Text> {
   WidgetMatcher<Text> hasOverflowWhere(MatchProp<TextOverflow> match) {
     return hasProp<TextOverflow>('overflow', match);
   }
-  
+
   WidgetMatcher<Text> hasOverflow(TextOverflow value) {
     return hasProp<TextOverflow>('overflow', (it) => it.equals(value));
   }
@@ -62,7 +61,7 @@ extension TextMatcher on WidgetMatcher<Text> {
   WidgetMatcher<Text> hasTextScaleFactorWhere(MatchProp<double> match) {
     return hasProp<double>('textScaleFactor', match);
   }
-  
+
   WidgetMatcher<Text> hasTextScaleFactor(double value) {
     return hasProp<double>('textScaleFactor', (it) => it.equals(value));
   }
@@ -70,34 +69,35 @@ extension TextMatcher on WidgetMatcher<Text> {
   WidgetMatcher<Text> hasMaxLinesWhere(MatchProp<int> match) {
     return hasProp<int>('maxLines', match);
   }
-  
-  WidgetMatcher<Text> hasMaxLines(int value) {
-    return hasProp<int>('maxLines', (it) => it.equals(value));
+
+  WidgetMatcher<Text> hasMaxLines(int? value) {
+    return hasProp<int?>('maxLines', (it) => it.equals(value));
   }
 
   WidgetMatcher<Text> hasTextWidthBasisWhere(MatchProp<TextWidthBasis> match) {
     return hasProp<TextWidthBasis>('textWidthBasis', match);
   }
-  
+
   WidgetMatcher<Text> hasTextWidthBasis(TextWidthBasis value) {
     return hasProp<TextWidthBasis>('textWidthBasis', (it) => it.equals(value));
   }
 
-  WidgetMatcher<Text> hasTextHeightBehaviorWhere(MatchProp<TextHeightBehavior> match) {
+  WidgetMatcher<Text> hasTextHeightBehaviorWhere(
+      MatchProp<TextHeightBehavior> match) {
     return hasProp<TextHeightBehavior>('textHeightBehavior', match);
   }
-  
-  WidgetMatcher<Text> hasTextHeightBehavior(TextHeightBehavior value) {
-    return hasProp<TextHeightBehavior>('textHeightBehavior', (it) => it.equals(value));
-  }
 
+  WidgetMatcher<Text> hasTextHeightBehavior(TextHeightBehavior value) {
+    return hasProp<TextHeightBehavior>(
+        'textHeightBehavior', (it) => it.equals(value));
+  }
 }
 
 extension TextSelector on WidgetSelector<Text> {
   WidgetSelector<Text> withTextMatching(MatchProp<String> match) {
     return withProp<String>('data', match);
   }
-  
+
   WidgetSelector<Text> withText(String value) {
     return withProp<String>('data', (it) => it.equals(value));
   }
@@ -105,15 +105,16 @@ extension TextSelector on WidgetSelector<Text> {
   WidgetSelector<Text> withTextAlignMatching(MatchProp<TextAlign> match) {
     return withProp<TextAlign>('textAlign', match);
   }
-  
+
   WidgetSelector<Text> withTextAlign(TextAlign value) {
     return withProp<TextAlign>('textAlign', (it) => it.equals(value));
   }
 
-  WidgetSelector<Text> withTextDirectionMatching(MatchProp<TextDirection> match) {
+  WidgetSelector<Text> withTextDirectionMatching(
+      MatchProp<TextDirection> match) {
     return withProp<TextDirection>('textDirection', match);
   }
-  
+
   WidgetSelector<Text> withTextDirection(TextDirection value) {
     return withProp<TextDirection>('textDirection', (it) => it.equals(value));
   }
@@ -121,7 +122,7 @@ extension TextSelector on WidgetSelector<Text> {
   WidgetSelector<Text> withLocaleMatching(MatchProp<Locale> match) {
     return withProp<Locale>('locale', match);
   }
-  
+
   WidgetSelector<Text> withLocale(Locale value) {
     return withProp<Locale>('locale', (it) => it.equals(value));
   }
@@ -129,7 +130,7 @@ extension TextSelector on WidgetSelector<Text> {
   WidgetSelector<Text> withSoftWrapMatching(MatchProp<bool> match) {
     return withProp<bool>('softWrap', match);
   }
-  
+
   WidgetSelector<Text> withSoftWrap(bool value) {
     return withProp<bool>('softWrap', (it) => it.equals(value));
   }
@@ -137,7 +138,7 @@ extension TextSelector on WidgetSelector<Text> {
   WidgetSelector<Text> withOverflowMatching(MatchProp<TextOverflow> match) {
     return withProp<TextOverflow>('overflow', match);
   }
-  
+
   WidgetSelector<Text> withOverflow(TextOverflow value) {
     return withProp<TextOverflow>('overflow', (it) => it.equals(value));
   }
@@ -145,7 +146,7 @@ extension TextSelector on WidgetSelector<Text> {
   WidgetSelector<Text> withTextScaleFactorMatching(MatchProp<double> match) {
     return withProp<double>('textScaleFactor', match);
   }
-  
+
   WidgetSelector<Text> withTextScaleFactor(double value) {
     return withProp<double>('textScaleFactor', (it) => it.equals(value));
   }
@@ -153,27 +154,27 @@ extension TextSelector on WidgetSelector<Text> {
   WidgetSelector<Text> withMaxLinesMatching(MatchProp<int> match) {
     return withProp<int>('maxLines', match);
   }
-  
+
   WidgetSelector<Text> withMaxLines(int value) {
     return withProp<int>('maxLines', (it) => it.equals(value));
   }
 
-  WidgetSelector<Text> withTextWidthBasisMatching(MatchProp<TextWidthBasis> match) {
+  WidgetSelector<Text> withTextWidthBasisMatching(
+      MatchProp<TextWidthBasis> match) {
     return withProp<TextWidthBasis>('textWidthBasis', match);
   }
-  
+
   WidgetSelector<Text> withTextWidthBasis(TextWidthBasis value) {
     return withProp<TextWidthBasis>('textWidthBasis', (it) => it.equals(value));
   }
 
-  WidgetSelector<Text> withTextHeightBehaviorMatching(MatchProp<TextHeightBehavior> match) {
+  WidgetSelector<Text> withTextHeightBehaviorMatching(
+      MatchProp<TextHeightBehavior> match) {
     return withProp<TextHeightBehavior>('textHeightBehavior', match);
   }
-  
-  WidgetSelector<Text> withTextHeightBehavior(TextHeightBehavior value) {
-    return withProp<TextHeightBehavior>('textHeightBehavior', (it) => it.equals(value));
-  }
 
+  WidgetSelector<Text> withTextHeightBehavior(TextHeightBehavior value) {
+    return withProp<TextHeightBehavior>(
+        'textHeightBehavior', (it) => it.equals(value));
+  }
 }
-    
-    
