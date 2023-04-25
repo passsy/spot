@@ -80,20 +80,28 @@ void main() {
     );
     expect(
       () => spotSingle<Text>().existsOnce(),
-      throwsSpotErrorContaining([
-        'Found 2 elements',
-        'Text("World"',
-        'Text("Hello"',
-      ]),
+      throwsSpotErrorContaining(
+        [
+          'Found 2 elements',
+          'expected only one\nWrap(',
+          'Text("World"',
+          'Text("Hello"',
+        ],
+        not: ['root'],
+      ),
     );
     expect(
       () => spotSingle<Text>(parents: [spotSingle<Wrap>()]).existsOnce(),
-      throwsSpotErrorContaining([
-        "parents: ['Wrap']",
-        'Found 2 elements',
-        'Text("World"',
-        'Text("Hello"',
-      ]),
+      throwsSpotErrorContaining(
+        [
+          "parents: ['Wrap']",
+          'Found 2 elements',
+          'expected only one\nWrap(',
+          'Text("World"',
+          'Text("Hello"',
+        ],
+        not: ['root'],
+      ),
     );
   });
   testWidgets('existsOnce() finds the correct widget differentiating by props',

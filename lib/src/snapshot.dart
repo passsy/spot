@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:collection/collection.dart';
 import 'package:dartx/dartx.dart';
 import 'package:flutter/widgets.dart';
@@ -25,7 +23,7 @@ SpotSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
           'Found ${snapshot.discovered.length} elements matching $selector in widget tree, '
           'expected only one\n'
           // ignore: deprecated_member_use
-          '${WidgetsBinding.instance.renderViewElement?.toStringDeep() ?? '<no tree currently mounted>'}'
+          '${_findCommonAncestor(snapshot.discoveredElements).toStringDeep()}'
           'Found ${snapshot.discovered.length} elements matching $selector in widget tree, '
           'expected only one',
         );
@@ -93,8 +91,7 @@ SpotSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
       throw TestFailure(
         'Found ${discovered.length} elements matching $selector in widget tree, '
         'expected only one\n'
-        // TODO find common ancestor of distinctElements and print that
-        '${distinctElements.length == 1 ? distinctElements.first.toStringDeep() : rootElement.toStringDeep()} '
+        '${_findCommonAncestor(distinctElements).toStringDeep()} '
         'Found ${discovered.length} elements matching $selector in widget tree, '
         'expected only one',
       );
@@ -366,3 +363,11 @@ List<List<T>> getAllSubsets<T>(List<T> list) {
   result.remove(result.firstWhere((it) => it.length == list.length));
   return result.sortedByDescending((element) => element.length).toList();
 }
+
+Element _findCommonAncestor(List<Element> elements) =>
+    IterableSortedBy(elements)
+        .sortedBy((element) => element.depth)
+        .first
+        .parent ??
+// ignore: deprecated_member_use
+    WidgetsBinding.instance.renderViewElement!;
