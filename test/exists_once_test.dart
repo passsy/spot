@@ -54,8 +54,7 @@ void main() {
     spotSingle<Wrap>().existsOnce();
     // spot<Wrap>().spot<Text>().existsAtLeastOnce();
     spotSingle<Wrap>().spot<Text>().existsAtLeastOnce();
-    // spot<Wrap>().spot<Text>().locateAtLeastOnce();
-    spotSingle<Wrap>().spot<Text>().locateAtLeastOnce();
+    spotSingle<Wrap>().spot<Text>().existsAtLeastOnce();
     spotSingle<GestureDetector>().existsOnce();
   });
 
@@ -134,15 +133,15 @@ void main() {
       },
     )
         // .withDirection(Axis.horizontal)
-        .locateMulti();
+        .existsAtLeastOnce();
 
     spotSingle<Wrap>().withDirection(Axis.horizontal).existsAtLeastOnce();
 
     // Error message can show the actual value of the direction
     spot<Wrap>()
-        .locateMulti()
+        .existsAtLeastOnce()
         .any((wrap) => wrap.hasDirection(Axis.horizontal));
-    spotSingle<Wrap>().locate().hasDirection(Axis.horizontal);
+    spotSingle<Wrap>().existsOnce().hasDirection(Axis.horizontal);
 
     final WidgetSelector<Text> selector =
         spotSingle<Wrap>().spotSingle<Text>().withMaxLines(2);
@@ -150,12 +149,12 @@ void main() {
 
     spotSingle<Wrap>()
         .spotSingle<Text>(parents: [spotSingle<GestureDetector>()])
-        .locate()
+        .existsOnce()
         .hasText('Hello');
 
     final textSpot = spotSingle<Wrap>()
         .spotSingle<Text>(parents: [spotSingle<GestureDetector>()]);
-    textSpot.locate().hasText('Hello');
+    textSpot.existsOnce().hasText('Hello');
 
     spotSingle<Text>(parents: [spotSingle<Wrap>()])
         .withMaxLines(2)

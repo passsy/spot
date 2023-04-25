@@ -193,24 +193,6 @@ mixin Spotters<T extends Widget> {
       children: children,
     );
   }
-
-  SingleWidgetSelector<T> get first {
-    // TODO not yet implemented
-    throw UnimplementedError();
-    // TODO create API like ElementFilterWithDescription that allows filtering
-    //  the list of candidates, rather than each candidate individually
-
-    // return SingleWidgetSelector<T>._(
-    //   props: [
-    //     ElementFilterWithDescription(
-    //       (Iterable<Element> e) => e.first,
-    //       description: 'First Widget',
-    //     ),
-    //   ],
-    //   parents: [if (self != null) self!],
-    //   children: [],
-    // );
-  }
 }
 
 extension SpotterQueries<T extends Widget> on Spotters<T> {
@@ -602,7 +584,6 @@ class SingleSpotSnapshot<W extends Widget> implements WidgetMatcher<W> {
 
   @override
   Element get element {
-    // TODO make a better error message here when no element or multiple elements are found
     return discovered!.element;
   }
 
@@ -625,16 +606,6 @@ extension SnapshotSelector<W extends Widget> on WidgetSelector<W> {
 
   SpotSnapshot<W> snapshot() {
     return snapshot_file.snapshot(this);
-  }
-
-  SpotSnapshot<W> locateMulti() {
-    // TODO add error handling
-    return snapshot();
-  }
-
-  SpotSnapshot<W> locateAtLeastOnce() {
-    // TODO add error handling
-    return snapshot();
   }
 
   SpotSnapshot<W> existsAtLeastOnce() {
@@ -668,13 +639,7 @@ extension SingleSnapshotSelector<W extends Widget> on SingleWidgetSelector<W> {
   }
 
   SingleSpotSnapshot<W> snapshot() {
-    // TODO should not throw when multiple elements are found
     return snapshot_file.snapshot(this).single;
-  }
-
-  SingleSpotSnapshot<W> locate() {
-    // TODO add error handling
-    return snapshot();
   }
 }
 

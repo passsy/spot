@@ -88,8 +88,6 @@ void main() {
     //     .spotDescendant<SizedBox>(parents: [spot.spotDescendant<Center>().childspotDescendant(Wrap)])
     //     .text('Hello')
     //     .existsOnce();
-
-    // TODO what if we want multiple results to be returned?
   });
 
   testWidgets('narrow results by checking children', (tester) async {
