@@ -15,8 +15,8 @@ void main() {
               title: DefaultTextStyle(
                 style: TextStyle(),
                 maxLines: 2,
-                // child: Text('Pepe'),
-                child: RobinHood(power: Power.rich),
+                child: Text('Pepe'),
+                // child: RobinHood(power: Power.rich),
               ),
               actions: [
                 Wrap(
@@ -42,6 +42,9 @@ void main() {
         ),
       ),
     );
+
+    spot<Text>().first().existsOnce().hasText('Pepe');
+
     final WidgetSelector<Scaffold> scaffold =
         spotSingle<MaterialApp>().spotSingle<Scaffold>();
     final appBar = scaffold.spotSingle<AppBar>();

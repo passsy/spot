@@ -194,12 +194,48 @@ mixin Spotters<T extends Widget> {
     );
   }
 
-  SingleWidgetSelector<T> get first {
-    return SingleWidgetSelector<T>(
-      props: [],
-      parents: [self!],
-      children: [],
+  WidgetSelector<W> cast<W extends Widget>() {
+    return WidgetSelector<W>(
+      props: self!.props,
+      parents: self!.parents,
+      children: self!.children,
     );
+  }
+
+  SingleWidgetSelector<T> first() {
+    return FirstWidgetSelector<T>(parent: self!);
+  }
+
+  // SingleWidgetSelector<T> last() {
+  //   return FirstWidgetSelector<T>(parent: self!);
+  // }
+}
+
+class FirstWidgetSelector<W extends Widget> extends SingleWidgetSelector<W> {
+  FirstWidgetSelector({
+    required WidgetSelector parent,
+  }) : super(props: [], parents: [parent], children: []);
+
+  @override
+  ElementFilter<W> createElementFilter() {
+    return FirstElement<W>();
+  }
+
+  @override
+  String toString() {
+    return 'first Widget ${super.toString()}';
+  }
+
+  @override
+  String toStringWithoutParents() {
+    return ':first';
+  }
+}
+
+class FirstElement<W extends Widget> extends ElementFilter<W> {
+  @override
+  Iterable<SpotNode<W>> filter(Iterable<SpotNode<Widget>> candidates) {
+    return [candidates.first.cast<W>()];
   }
 }
 
@@ -392,19 +428,6 @@ class CandidateGeneratorFromParents<W extends Widget>
 
   @override
   Iterable<SpotNode<W>> generateCandidates() {
-    if (selector.parents.isEmpty) {
-      // ignore: deprecated_member_use
-      final rootElement = WidgetsBinding.instance.renderViewElement!;
-      final origin = SpotNode(
-        selector: WidgetSelector.all,
-        parents: [],
-        element: rootElement,
-        debugCandidates: [rootElement],
-      );
-      final snapshot = takeScopedSnapshot(selector, origin);
-      return snapshot.discovered;
-    }
-
     final Iterable<SpotSnapshot<Widget>> parentSnapshots =
         selector.parents.map((selector) => selector.snapshot());
 
@@ -847,7 +870,7 @@ extension MutliMatchers<W extends Widget> on SpotSnapshot<W> {
     }
     throw TestFailure(
         'Expected that all candidates match $this, but only ${discovered.length - missMatches.length} of ${discovered.length} did.\n'
-        'Missmatches: ${missMatches.map((e) => e.element.toStringDeep()).join(', ')}');
+        'Mismatches: ${missMatches.map((e) => e.element.toStringDeep()).join(', ')}');
   }
 }
 
