@@ -1019,7 +1019,8 @@ extension CreateMatchers<W extends Widget> on WidgetSelector<W> {
 
     final matcherSb = StringBuffer();
     matcherSb.writeln(
-        'extension ${widgetType}Matcher on WidgetMatcher<$widgetType> {');
+      'extension ${widgetType}Matcher on WidgetMatcher<$widgetType> {',
+    );
 
     final selectorSb = StringBuffer();
     selectorSb.writeln(
@@ -1167,7 +1168,7 @@ extension ReadType on DiagnosticsNode {
       }();
 
       if (genericType != null) {
-        return '$genericType';
+        return genericType;
       }
     }
 
@@ -1183,7 +1184,7 @@ extension ReadType on DiagnosticsNode {
       }();
 
       if (genericType != null) {
-        return '$genericType';
+        return genericType;
       }
     }
 

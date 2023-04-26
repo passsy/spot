@@ -127,10 +127,12 @@ void main() {
     imports: "import 'package:flutter/material.dart';",
   );
   _generateWidget<BottomNavigationBar>(
-    builder: () => BottomNavigationBar(items: [
-      BottomNavigationBarItem(icon: Icon(Icons.add), label: ''),
-      BottomNavigationBarItem(icon: Icon(Icons.add), label: ''),
-    ]),
+    builder: () => BottomNavigationBar(
+      items: [
+        BottomNavigationBarItem(icon: Icon(Icons.add), label: ''),
+        BottomNavigationBarItem(icon: Icon(Icons.add), label: ''),
+      ],
+    ),
     imports: "import 'package:flutter/material.dart';",
   );
   _generateWidget<Drawer>(
@@ -175,9 +177,12 @@ void main() {
     },
   );
   _generateWidget<DataTable>(
-    builder: () => DataTable(columns: [
-      DataColumn(label: _child),
-    ], rows: []),
+    builder: () => DataTable(
+      columns: [
+        DataColumn(label: _child),
+      ],
+      rows: [],
+    ),
     imports: "import 'package:flutter/material.dart';",
   );
   _generateWidget<GridView>(

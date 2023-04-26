@@ -4,6 +4,7 @@ include: package:lint/analysis_options_package.yaml
 # You might want to exclude auto-generated files from dart analysis
 analyzer:
   exclude:
+    - 'lib/src/widgets/**.g.dart'
   #- '**.freezed.dart'
 
 # You can customize the lint rules set to your own liking. A list of all rules

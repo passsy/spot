@@ -4,10 +4,10 @@ import 'package:flutter/widgets.dart';
 import 'package:spot/spot.dart';
 
 export 'package:spot/src/default_selectors.dart';
+export 'package:spot/src/effective_text.dart';
 export 'package:spot/src/finder_interop.dart';
 export 'package:spot/src/selectors.dart';
 export 'package:spot/src/snapshot.dart';
-
 export 'package:spot/src/widgets/align.g.dart';
 export 'package:spot/src/widgets/circularprogressindicator.g.dart';
 export 'package:spot/src/widgets/column.g.dart';
@@ -34,8 +34,6 @@ export 'package:spot/src/widgets/textbutton.g.dart';
 export 'package:spot/src/widgets/textfield.g.dart';
 export 'package:spot/src/widgets/tooltip.g.dart';
 export 'package:spot/src/widgets/wrap.g.dart';
-
-export 'package:spot/src/effective_text.dart';
 
 const Spot _global = Spot();
 
