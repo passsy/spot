@@ -3,6 +3,8 @@ library spot;
 import 'package:flutter/widgets.dart';
 import 'package:spot/spot.dart';
 
+export 'package:spot/src/checks/checks.dart';
+
 export 'package:spot/src/default_selectors.dart';
 export 'package:spot/src/effective_text.dart';
 export 'package:spot/src/finder_interop.dart';

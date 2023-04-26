@@ -1,4 +1,3 @@
-import 'package:checks/checks.dart';
 import 'package:flutter/widgets.dart';
 import 'package:spot/spot.dart';
 

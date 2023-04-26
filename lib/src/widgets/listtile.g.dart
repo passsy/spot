@@ -1,6 +1,5 @@
 // ignore_for_file: require_trailing_commas
 
-import 'package:checks/checks.dart';
 import 'package:flutter/material.dart';
 import 'package:spot/spot.dart';
 

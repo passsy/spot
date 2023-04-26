@@ -1,13 +1,12 @@
 import 'dart:io';
 
-import 'package:checks/checks.dart';
-import 'package:checks/context.dart';
 import 'package:dartx/dartx.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
+import 'package:spot/src/checks/context.dart';
 import 'package:spot/src/snapshot.dart' as snapshot_file show snapshot;
 
 class Spot with Spotters<Widget> {
@@ -1111,7 +1110,6 @@ extension CreateMatchers<W extends Widget> on WidgetSelector<W> {
     return '''
 // ignore_for_file: require_trailing_commas
 
-import 'package:checks/checks.dart';
 ${imports ?? "import 'package:flutter/widgets.dart';"}
 import 'package:spot/spot.dart';
 
