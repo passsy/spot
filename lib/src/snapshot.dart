@@ -17,7 +17,7 @@ SpotSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
   if (selector.parents.isEmpty) {
     final snapshot = takeScopedSnapshot(selector, origin);
 
-    if (selector.expectSingle == true) {
+    if (selector.expectedQuantity == ExpectedQuantity.single) {
       if (snapshot.discovered.length > 1) {
         throw TestFailure(
           'Found ${snapshot.discovered.length} elements matching $selector in widget tree, '
@@ -44,7 +44,7 @@ SpotSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
       .map((node) => node.cast<W>())
       .toList();
 
-  if (selector.expectSingle == true) {
+  if (selector.expectedQuantity == ExpectedQuantity.single) {
     if (discovered.length > 1) {
       throw TestFailure(
         'Found ${discovered.length} elements matching $selector in widget tree, '

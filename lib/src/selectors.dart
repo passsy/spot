@@ -28,11 +28,11 @@ mixin Spotters<T extends Widget> {
   }
 
   /// Spots a widget of type [W] in the scope of the parent selector
-  WidgetSelector<W> spot<W extends Widget>({
+  MultiWidgetSelector<W> spot<W extends Widget>({
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    final selector = WidgetSelector<W>(
+    final selector = MultiWidgetSelector<W>(
       props: [],
       parents: [if (self != null) self!, ...parents],
       children: children,
@@ -53,12 +53,12 @@ mixin Spotters<T extends Widget> {
     ).single;
   }
 
-  WidgetSelector<W> spotWidgets<W extends Widget>(
+  MultiWidgetSelector<W> spotWidgets<W extends Widget>(
     W widget, {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    return WidgetSelector<W>(
+    return MultiWidgetSelector<W>(
       props: [
         PredicateWithDescription(
           (Element e) => identical(e.widget, widget),
@@ -101,13 +101,13 @@ mixin Spotters<T extends Widget> {
     ).single;
   }
 
-  WidgetSelector<Text> spotTexts(
+  MultiWidgetSelector<Text> spotTexts(
     String text, {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
     bool findRichText = false,
   }) {
-    return WidgetSelector(
+    return MultiWidgetSelector(
       props: [
         PredicateWithDescription(
           (Element e) {
@@ -143,13 +143,13 @@ mixin Spotters<T extends Widget> {
     ).single;
   }
 
-  WidgetSelector<Icon> spotIcons(
+  MultiWidgetSelector<Icon> spotIcons(
     IconData icon, {
     bool skipOffstage = true,
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    return WidgetSelector(
+    return MultiWidgetSelector(
       props: [
         PredicateWithDescription(
           (Element e) {
@@ -193,6 +193,7 @@ mixin Spotters<T extends Widget> {
       props: self!.props,
       parents: self!.parents,
       children: self!.children,
+      expectedQuantity: self!.expectedQuantity,
     );
   }
 
@@ -400,7 +401,7 @@ class SingleWidgetSelector<W extends Widget> extends WidgetSelector<W> {
     required super.props,
     super.parents,
     super.children,
-  }) : super(expectSingle: true);
+  }) : super(expectedQuantity: ExpectedQuantity.single);
 
   SingleSpotSnapshot<W> snapshot() {
     return snapshot_file.snapshot(this).single;
@@ -409,11 +410,11 @@ class SingleWidgetSelector<W extends Widget> extends WidgetSelector<W> {
 
 /// A [WidgetSelector] that to 0..N widgets
 class MultiWidgetSelector<W extends Widget> extends WidgetSelector<W> {
-  MultiWidgetSelector._({
+  MultiWidgetSelector({
     required super.props,
     super.parents,
     super.children,
-  }) : super(expectSingle: false);
+  }) : super(expectedQuantity: ExpectedQuantity.multi);
 
   SpotSnapshot<W> snapshot() {
     return snapshot_file.snapshot(this);
@@ -566,11 +567,19 @@ class CandidateGeneratorFromParents<W extends Widget>
   }
 }
 
+enum ExpectedQuantity {
+  /// A selector that matches a single widget
+  single,
+
+  /// A selector that matches multiple widgets
+  multi,
+}
+
 /// Represents a chain of widgets in the widget tree that can be asserted
 ///
 /// Compared to normal [Finder], this gives great error messages along the chain
 class WidgetSelector<W extends Widget> with Spotters<W> {
-  static final WidgetSelector all = WidgetSelector(
+  static final WidgetSelector all = MultiWidgetSelector(
     props: [
       PredicateWithDescription(
         (e) => true,
@@ -583,7 +592,7 @@ class WidgetSelector<W extends Widget> with Spotters<W> {
     required List<PredicateWithDescription> props,
     List<WidgetSelector>? parents,
     List<WidgetSelector>? children,
-    this.expectSingle,
+    required this.expectedQuantity,
   })  : props = List.unmodifiable(props),
         parents = List.unmodifiable(parents?.toSet().toList() ?? []),
         children = List.unmodifiable(children ?? []);
@@ -594,6 +603,14 @@ class WidgetSelector<W extends Widget> with Spotters<W> {
 
   final List<WidgetSelector> children;
 
+  /// Whether this selector expects to find a single or multiple widgets
+  final ExpectedQuantity expectedQuantity;
+
+  /// Returns a list of [ElementFilter] that is used to filter the widget tree
+  /// (or subtrees of [parents]) for widgets that match this selectors criteria
+  ///
+  /// This method is intended to be overridden by subclasses to add additional
+  /// filters that are not covered by this base implementation.
   List<ElementFilter> createElementFilters() {
     return [
       if (W != Widget) WidgetTypeFilter<W>(),
@@ -601,9 +618,6 @@ class WidgetSelector<W extends Widget> with Spotters<W> {
       if (children.isNotEmpty) ChildFilter(children),
     ];
   }
-
-  /// True when this selector should only match a single widget
-  final bool? expectSingle;
 
   CandidateGenerator<W> createCandidateGenerator() {
     return CandidateGeneratorFromParents(this);
@@ -664,13 +678,13 @@ class WidgetSelector<W extends Widget> with Spotters<W> {
     List<PredicateWithDescription>? props,
     List<WidgetSelector>? parents,
     List<WidgetSelector>? children,
-    bool? expectSingle,
+    ExpectedQuantity? selectorType,
   }) {
     return WidgetSelector<W>(
       props: props ?? this.props,
       parents: parents ?? this.parents,
       children: children ?? this.children,
-      expectSingle: expectSingle ?? this.expectSingle,
+      expectedQuantity: selectorType ?? this.expectedQuantity,
     );
   }
 
@@ -880,7 +894,7 @@ extension SnapshotSelector<W extends Widget> on WidgetSelector<W> {
 
 extension SingleSnapshotSelector<W extends Widget> on SingleWidgetSelector<W> {
   MultiWidgetSelector<W> get multi {
-    return MultiWidgetSelector<W>._(
+    return MultiWidgetSelector<W>(
       props: props,
       parents: parents,
       children: children,

@@ -17,7 +17,7 @@ extension SpotToFinder<W extends Widget> on WidgetSelector<W> {
   Finder get finder => FinderFromWidgetSelector(this);
 
   WidgetSelector<W> spotFinder(Finder finder) {
-    return WidgetSelector<W>(
+    return MultiWidgetSelector<W>(
       props: [
         PredicateWithDescription(
           (element) {
