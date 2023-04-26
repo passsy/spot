@@ -36,10 +36,13 @@ SpotSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
   final distinctCandidateElements =
       candidates.map((e) => e.element).toSet().toList();
 
-  final discovered =
-      selector.filters.fold<Iterable<SpotNode<W>>>(candidates, (list, filter) {
-    return filter.filter(selector, list);
-  }).toList();
+  final filters = selector.createElementFilters();
+  final discovered = filters
+      .fold<Iterable<SpotNode<Widget>>>(candidates, (list, filter) {
+        return filter.filter(list);
+      })
+      .map((node) => node.cast<W>())
+      .toList();
 
   if (selector.expectSingle == true) {
     if (discovered.length > 1) {
@@ -76,9 +79,11 @@ SpotSnapshot<W> takeScopedSnapshot<W extends Widget>(
     );
   }).toList();
 
-  final discovered = selector.filters
-      .fold<Iterable<SpotNode>>(candidates, (list, filter) {
-        return filter.filter(selector, list);
+  final List<ElementFilter> filters = selector.createElementFilters();
+  final List<SpotNode<W>> discovered = filters
+      .fold<Iterable<SpotNode>>(candidates, (list, ElementFilter filter) {
+        final Iterable<SpotNode<Widget>> result = filter.filter(list);
+        return result;
       })
       .map((node) => node.cast<W>())
       .toList();

@@ -32,14 +32,8 @@ mixin Spotters<T extends Widget> {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    final type = _typeOf<W>();
     final selector = WidgetSelector<W>(
-      props: [
-        PredicateWithDescription(
-          (Element e) => e.widget.runtimeType == type,
-          description: '$type',
-        ),
-      ],
+      props: [],
       parents: [if (self != null) self!, ...parents],
       children: children,
     );
@@ -224,7 +218,12 @@ class FirstWidgetSelector<W extends Widget> extends SingleWidgetSelector<W> {
     required super.props,
     required super.parents,
     required super.children,
-  }) : super(filters: [FirstElement()]);
+  });
+
+  @override
+  List<ElementFilter> createElementFilters() {
+    return [...super.createElementFilters(), FirstElement()];
+  }
 
   @override
   String toString() {
@@ -237,17 +236,16 @@ class FirstWidgetSelector<W extends Widget> extends SingleWidgetSelector<W> {
   }
 }
 
-class FirstElement<W extends Widget> extends ElementFilter<W> {
+class FirstElement extends ElementFilter {
   FirstElement();
 
   @override
-  Iterable<SpotNode<W>> filter(
-      WidgetSelector<W> selector, Iterable<SpotNode<Widget>> candidates) {
+  Iterable<SpotNode<Widget>> filter(Iterable<SpotNode<Widget>> candidates) {
     final first = candidates.firstOrNull;
     if (first == null) {
       return [];
     }
-    return [first.cast<W>()];
+    return [first];
   }
 }
 
@@ -256,7 +254,12 @@ class LastWidgetSelector<W extends Widget> extends SingleWidgetSelector<W> {
     required super.props,
     required super.parents,
     required super.children,
-  }) : super(filters: [LastElement<W>()]);
+  });
+
+  @override
+  List<ElementFilter> createElementFilters() {
+    return [...super.createElementFilters(), LastElement()];
+  }
 
   @override
   String toString() {
@@ -269,17 +272,16 @@ class LastWidgetSelector<W extends Widget> extends SingleWidgetSelector<W> {
   }
 }
 
-class LastElement<W extends Widget> extends ElementFilter<W> {
+class LastElement extends ElementFilter {
   LastElement();
 
   @override
-  Iterable<SpotNode<W>> filter(
-      WidgetSelector<W> selector, Iterable<SpotNode<Widget>> candidates) {
+  Iterable<SpotNode<Widget>> filter(Iterable<SpotNode<Widget>> candidates) {
     final last = candidates.lastOrNull;
     if (last == null) {
       return [];
     }
-    return [last.cast<W>()];
+    return [last];
   }
 }
 
@@ -398,7 +400,6 @@ class SingleWidgetSelector<W extends Widget> extends WidgetSelector<W> {
     required super.props,
     super.parents,
     super.children,
-    super.filters,
   }) : super(expectSingle: true);
 
   SingleSpotSnapshot<W> snapshot() {
@@ -419,10 +420,9 @@ class MultiWidgetSelector<W extends Widget> extends WidgetSelector<W> {
   }
 }
 
-abstract class ElementFilter<W extends Widget> {
+abstract class ElementFilter {
   /// Filters all candidates, retuning only a subset that matches
-  Iterable<SpotNode<W>> filter(
-      WidgetSelector<W> selector, Iterable<SpotNode<Widget>> candidates);
+  Iterable<SpotNode<Widget>> filter(Iterable<SpotNode<Widget>> candidates);
 
   // TODO add description
 }
@@ -431,42 +431,71 @@ abstract class CandidateGenerator<W extends Widget> {
   Iterable<SpotNode<W>> generateCandidates();
 }
 
-class PropElementFilter<W extends Widget> implements ElementFilter<W> {
-  PropElementFilter();
+class WidgetTypeFilter<W extends Widget> implements ElementFilter {
+  WidgetTypeFilter();
 
   @override
-  Iterable<SpotNode<W>> filter(
-      WidgetSelector<W> selector, Iterable<SpotNode<Widget>> candidates) {
+  Iterable<SpotNode<Widget>> filter(Iterable<SpotNode<Widget>> candidates) {
+    final type = _typeOf<W>();
     return candidates
-        .where(
-          (node) => selector.props.all((prop) => prop.predicate(node.element)),
-        )
+        .where((node) => node.element.widget.runtimeType == type)
         .map((node) => node.cast<W>())
         .toList();
   }
-}
-
-class ChildElementFilter<W extends Widget> implements ElementFilter<W> {
-  ChildElementFilter();
 
   @override
-  Iterable<SpotNode<W>> filter(
-      WidgetSelector<W> selector, Iterable<SpotNode<Widget>> candidates) {
-    if (selector.children.isEmpty) {
-      return candidates as Iterable<SpotNode<W>>;
-    }
+  String toString() {
+    return 'WidgetTypeFilter of $W';
+  }
+}
 
-    final List<SpotNode<W>> matchingChildNodes = [];
+class PropFilter implements ElementFilter {
+  final List<PredicateWithDescription> props;
+  PropFilter(this.props);
+
+  @override
+  Iterable<SpotNode<Widget>> filter(Iterable<SpotNode<Widget>> candidates) {
+    return candidates
+        .where((node) => props.all((prop) => prop.predicate(node.element)))
+        .toList();
+  }
+
+  @override
+  String toString() {
+    final props = this.props.isNotEmpty
+        ? this.props.map((e) => e.description).join(' ')
+        : null;
+
+    return 'PropFilter of $props';
+  }
+}
+
+class ChildFilter implements ElementFilter {
+  final List<WidgetSelector> children;
+  ChildFilter(this.children);
+
+  @override
+  Iterable<SpotNode<Widget>> filter(Iterable<SpotNode<Widget>> candidates) {
+    final List<SpotNode<Widget>> matchingChildNodes = [];
     // Then check for every queryMatch if the children and props match
     for (final SpotNode<Widget> candidate in candidates) {
-      for (final WidgetSelector<Widget> childSelector in selector.children) {
+      for (final WidgetSelector<Widget> childSelector in children) {
         final snapshot = takeScopedSnapshot(childSelector, candidate);
         if (snapshot.discovered.isNotEmpty) {
-          matchingChildNodes.add(candidate.cast<W>());
+          matchingChildNodes.add(candidate);
         }
       }
     }
     return matchingChildNodes;
+  }
+
+  @override
+  String toString() {
+    final children = this.children.isNotEmpty
+        ? 'with children: [${this.children.map((e) => e.toStringBreadcrumb()).join(', ')}]'
+        : null;
+
+    return 'PropFilter of $children';
   }
 }
 
@@ -554,16 +583,10 @@ class WidgetSelector<W extends Widget> with Spotters<W> {
     required List<PredicateWithDescription> props,
     List<WidgetSelector>? parents,
     List<WidgetSelector>? children,
-    List<ElementFilter<W>>? filters,
     this.expectSingle,
   })  : props = List.unmodifiable(props),
         parents = List.unmodifiable(parents?.toSet().toList() ?? []),
-        children = List.unmodifiable(children ?? []),
-        filters = List.unmodifiable([
-          PropElementFilter<W>(),
-          ChildElementFilter<W>(),
-          ...filters ?? []
-        ]);
+        children = List.unmodifiable(children ?? []);
 
   final List<PredicateWithDescription> props;
 
@@ -571,7 +594,13 @@ class WidgetSelector<W extends Widget> with Spotters<W> {
 
   final List<WidgetSelector> children;
 
-  final List<ElementFilter<W>> filters;
+  List<ElementFilter> createElementFilters() {
+    return [
+      if (W != Widget) WidgetTypeFilter<W>(),
+      if (props.isNotEmpty) PropFilter(props),
+      if (children.isNotEmpty) ChildFilter(children),
+    ];
+  }
 
   /// True when this selector should only match a single widget
   final bool? expectSingle;
@@ -592,11 +621,10 @@ class WidgetSelector<W extends Widget> with Spotters<W> {
         ? this.props.map((e) => e.description).join(' ')
         : null;
 
-    if (this.children.isEmpty && this.parents.isEmpty) {
-      return "'$props'";
-    }
+    final widgetType = W != Widget ? '$W' : null;
 
-    final constraints = [props, children, parents].where((e) => e != null);
+    final constraints =
+        [widgetType, props, children, parents].where((e) => e != null);
     return "'${constraints.join(' ')}'";
   }
 
@@ -608,11 +636,9 @@ class WidgetSelector<W extends Widget> with Spotters<W> {
         ? this.props.map((e) => e.description).join(' ')
         : null;
 
-    if (this.children.isEmpty && this.parents.isEmpty) {
-      return "'$props'";
-    }
+    final widgetType = W != Widget ? '$W' : null;
 
-    final constraints = [props, children].where((e) => e != null);
+    final constraints = [widgetType, props, children].where((e) => e != null);
     return constraints.join(' ');
   }
 
@@ -620,11 +646,9 @@ class WidgetSelector<W extends Widget> with Spotters<W> {
     final parents = this.parents;
 
     if (parents.isEmpty) {
-      final props = this.props.isNotEmpty
-          ? this.props.map((e) => e.description).join(' ')
-          : null;
-      return props ?? 'any widget';
+      return toStringWithoutParents();
     }
+
     final parentBreadcrumbs = parents.map((e) => e.toStringBreadcrumb());
     if (parentBreadcrumbs.length == 1) {
       return '${parentBreadcrumbs.first} > ${toStringWithoutParents()}';
@@ -640,14 +664,12 @@ class WidgetSelector<W extends Widget> with Spotters<W> {
     List<PredicateWithDescription>? props,
     List<WidgetSelector>? parents,
     List<WidgetSelector>? children,
-    List<ElementFilter<W>>? filters,
     bool? expectSingle,
   }) {
     return WidgetSelector<W>(
       props: props ?? this.props,
       parents: parents ?? this.parents,
       children: children ?? this.children,
-      filters: filters ?? this.filters,
       expectSingle: expectSingle ?? this.expectSingle,
     );
   }

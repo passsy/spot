@@ -4,22 +4,19 @@ Matcher throwsSpotErrorContaining(
   List<String> errorMessageParts, {
   List<String> not = const [],
 }) {
-  TypeMatcher<TestFailure> testFailureWithErrorsContaining = isA<TestFailure>();
+  final List<TypeMatcher<TestFailure>> failures = [];
   for (final part in errorMessageParts) {
-    testFailureWithErrorsContaining = testFailureWithErrorsContaining.having(
-      (it) => it.message,
-      'message',
-      contains(part),
+    failures.add(
+      isA<TestFailure>().having((it) => it.message, 'message', contains(part)),
     );
   }
 
   for (final part in not) {
-    testFailureWithErrorsContaining = testFailureWithErrorsContaining.having(
-      (it) => it.message,
-      'message',
-      isNot(contains(part)),
+    failures.add(
+      isA<TestFailure>()
+          .having((it) => it.message, 'message', isNot(contains(part))),
     );
   }
 
-  return throwsA(testFailureWithErrorsContaining);
+  return throwsA(allOf(failures));
 }
