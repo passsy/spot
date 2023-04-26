@@ -411,7 +411,7 @@ class SingleWidgetSelector<W extends Widget> extends WidgetSelector<W> {
 /// A [WidgetSelector] that to 0..N widgets
 class MultiWidgetSelector<W extends Widget> extends WidgetSelector<W> {
   MultiWidgetSelector({
-    required super.props,
+    super.props,
     super.parents,
     super.children,
   }) : super(expectedQuantity: ExpectedQuantity.multi);
@@ -589,11 +589,11 @@ class WidgetSelector<W extends Widget> with Spotters<W> {
   );
 
   WidgetSelector({
-    required List<PredicateWithDescription> props,
+    List<PredicateWithDescription>? props,
     List<WidgetSelector>? parents,
     List<WidgetSelector>? children,
     required this.expectedQuantity,
-  })  : props = List.unmodifiable(props),
+  })  : props = List.unmodifiable(props ?? []),
         parents = List.unmodifiable(parents?.toSet().toList() ?? []),
         children = List.unmodifiable(children ?? []);
 

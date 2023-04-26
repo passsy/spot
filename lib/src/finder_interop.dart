@@ -1,3 +1,4 @@
+import 'package:dartx/dartx.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
@@ -14,25 +15,39 @@ extension FinderToSpot on Finder {
 }
 
 extension SpotToFinder<W extends Widget> on WidgetSelector<W> {
-  Finder get finder => FinderFromWidgetSelector(this);
+  Finder get finder => _FinderFromWidgetSelector(this);
 
-  WidgetSelector<W> spotFinder(Finder finder) {
-    return MultiWidgetSelector<W>(
-      props: [
-        PredicateWithDescription(
-          (element) {
-            // TODO This executes the finder on each element, there should be a better way
-            return finder.apply([element]).isNotEmpty;
-          },
-          description: 'Spot from Finder $finder',
-        ),
-      ],
-      parents: [self],
-    );
+  WidgetSelector<T> spotFinder<T extends Widget>(Finder finder) {
+    return _FinderSelector<T>(finder, this);
   }
 }
 
-class FinderFromWidgetSelector extends Finder {
+class _FinderSelector<W extends Widget> extends MultiWidgetSelector<W> {
+  final Finder finder;
+
+  _FinderSelector(
+    this.finder,
+    WidgetSelector parent,
+  ) : super(parents: [parent]);
+
+  @override
+  List<ElementFilter> createElementFilters() {
+    return [...super.createElementFilters(), _FinderFilter(finder)];
+  }
+}
+
+class _FinderFilter extends ElementFilter {
+  final Finder finder;
+
+  _FinderFilter(this.finder);
+
+  @override
+  Iterable<SpotNode<Widget>> filter(Iterable<SpotNode<Widget>> candidates) {
+    return candidates.filter((it) => finder.apply([it.element]).isNotEmpty);
+  }
+}
+
+class _FinderFromWidgetSelector extends Finder {
   final WidgetSelector selector;
 
   @override
@@ -44,5 +59,5 @@ class FinderFromWidgetSelector extends Finder {
   @override
   String get description => 'Finder from $selector';
 
-  FinderFromWidgetSelector(this.selector);
+  _FinderFromWidgetSelector(this.selector);
 }
