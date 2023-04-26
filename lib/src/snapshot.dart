@@ -33,18 +33,20 @@ SpotSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
 
   final List<SpotNode<W>> candidates =
       selector.createCandidateGenerator().generateCandidates().toList();
+  final distinctCandidateElements =
+      candidates.map((e) => e.element).toSet().toList();
 
-  final distinctElements = candidates.map((e) => e.element).toSet().toList();
-
-  final List<SpotNode<W>> discovered =
-      selector.createElementFilter().filter(candidates).toList();
+  final discovered =
+      selector.filters.fold<Iterable<SpotNode<W>>>(candidates, (list, filter) {
+    return filter.filter(selector, list);
+  }).toList();
 
   if (selector.expectSingle == true) {
     if (discovered.length > 1) {
       throw TestFailure(
         'Found ${discovered.length} elements matching $selector in widget tree, '
         'expected only one\n'
-        '${_findCommonAncestor(distinctElements).toStringDeep()} '
+        '${_findCommonAncestor(distinctCandidateElements).toStringDeep()} '
         'Found ${discovered.length} elements matching $selector in widget tree, '
         'expected only one',
       );
@@ -74,8 +76,12 @@ SpotSnapshot<W> takeScopedSnapshot<W extends Widget>(
     );
   }).toList();
 
-  final List<SpotNode<W>> discovered =
-      selector.createElementFilter().filter(candidates).toList();
+  final discovered = selector.filters
+      .fold<Iterable<SpotNode>>(candidates, (list, filter) {
+        return filter.filter(selector, list);
+      })
+      .map((node) => node.cast<W>())
+      .toList();
 
   return SpotSnapshot<W>(
     selector: selector,
