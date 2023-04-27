@@ -30,12 +30,18 @@ void main() {
           .hasProp<String>('data', (it) => it.equals('a'));
     });
 
-    testWidgets('readable error message', (tester) async {
-      await tester.pumpWidget(Placeholder());
+    testWidgets('readable error messages', (tester) async {
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: Text('foo'),
+        ),
+      );
 
       expect(
         () => find
-            .ancestor(of: find.byType(MaterialApp), matching: find.text('nope'))
+            .ancestor(
+                of: find.byType(Directionality), matching: find.text('nope'))
             .spot()
             .existsOnce(),
         throwsA(
@@ -44,7 +50,7 @@ void main() {
             'message',
             contains(
               'Could not find widget with text "nope" '
-              'which is an ancestor of type "MaterialApp" in widget tree',
+              'which is an ancestor of type "Directionality" in widget tree',
             ),
           ),
         ),
@@ -88,6 +94,29 @@ void main() {
           .spotFinder<Text>(find.text('a'))
           .existsOnce()
           .hasText('a');
+    });
+
+    testWidgets('readable error messages', (tester) async {
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: Text('foo'),
+        ),
+      );
+
+      expect(
+        () => spot<Directionality>().spotFinder(find.text('nope')).existsOnce(),
+        throwsA(
+          isA<TestFailure>().having(
+            (e) => e.message,
+            'message',
+            contains(
+              'Could not find widget with text "nope" '
+              "'with parents: ['Directionality']' in widget tree",
+            ),
+          ),
+        ),
+      );
     });
   });
 }
