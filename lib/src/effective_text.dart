@@ -12,22 +12,25 @@ import 'package:spot/src/checks/context.dart';
 /// spot<Text>().printMatchers(propNameOverrides: (MapEntry('data': 'text')));
 /// ```
 extension EffectiveTextMatcher on WidgetMatcher<Text> {
-  WidgetMatcher<Text> hasEffectiveMaxLinesWhere(MatchProp<int> match) {
-    return hasProp<int>('maxLines', match);
+  WidgetMatcher<Text> hasEffectiveMaxLinesWhere(MatchProp<int?> match) {
+    return _hasEffectiveMaxLinesWhere(match);
   }
 
   WidgetMatcher<Text> hasEffectiveMaxLines(int? value) {
+    return _hasEffectiveMaxLinesWhere((it) => it.equals(value));
+  }
+
+  WidgetMatcher<Text> _hasEffectiveMaxLinesWhere(MatchProp<int?> match) {
     final richTextElement =
         element.children.firstWhere((e) => e.widget is RichText);
     final richText = richTextElement.widget as RichText;
     final actual = richText.maxLines;
-
     final ConditionSubject<int?> conditionSubject = it<int?>();
     final Subject<int?> subject = conditionSubject.context.nest<int?>(
       () => ['with prop "maxLines"'],
       (value) => Extracted.value(actual),
     );
-    subject.equals(value);
+    match(subject);
     final failure = softCheck(actual, conditionSubject);
     if (failure != null) {
       final errorMessage =
@@ -41,11 +44,15 @@ extension EffectiveTextMatcher on WidgetMatcher<Text> {
 }
 
 extension EffectiveTextSelector on WidgetSelector<Text> {
-  WidgetSelector<Text> withEffectiveMaxLinesMatching(MatchProp<int> match) {
-    return withProp<int>('maxLines', match);
+  WidgetSelector<Text> withEffectiveMaxLinesMatching(MatchProp<int?> match) {
+    return _withEffectiveMaxLinesMatching(match);
   }
 
-  WidgetSelector<Text> withEffectiveMaxLines(int value) {
+  WidgetSelector<Text> withEffectiveMaxLines(int? value) {
+    return _withEffectiveMaxLinesMatching((it) => it.equals(value));
+  }
+
+  WidgetSelector<Text> _withEffectiveMaxLinesMatching(MatchProp<int?> match) {
     final ConditionSubject<Element> conditionSubject = it<Element>();
     final Subject<int?> subject = conditionSubject.context.nest<int?>(
       () => ['with prop "maxLines"'],
@@ -56,7 +63,7 @@ extension EffectiveTextSelector on WidgetSelector<Text> {
         return Extracted.value(richText.maxLines);
       },
     );
-    subject.equals(value);
+    match(subject);
     final name =
         describe(conditionSubject).map((it) => it.trim()).toList().join(' ');
 

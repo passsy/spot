@@ -6,23 +6,43 @@ void main() {
   testWidgets('(effective) max lines matcher/selector', (widgetTester) async {
     await widgetTester.pumpWidget(
       const MaterialApp(
-        home: DefaultTextStyle(
-          style: TextStyle(),
-          maxLines: 2,
-          child: Text('x'),
+        home: Column(
+          children: [
+            Text(''),
+            DefaultTextStyle(
+              style: TextStyle(),
+              maxLines: 2,
+              child: Text(''),
+            ),
+          ],
         ),
       ),
     );
 
+    // directly passed max lines
+    spot<Text>()
+        .withMaxLines(null)
+        .existsExactlyNTimes(2)
+        .all((m) => m.hasMaxLines(null));
+    spot<Text>()
+        .withMaxLinesMatching((it) => it.isNull())
+        .existsExactlyNTimes(2)
+        .all((m) => m.hasMaxLinesWhere((it) => it.isNull()));
+
+    // effective max lines
     spot<Text>().withEffectiveMaxLines(2).existsOnce().hasEffectiveMaxLines(2);
     spot<Text>()
         .withEffectiveMaxLinesMatching((it) => it.isNotNull().isGreaterThan(1))
         .existsOnce()
         .hasEffectiveMaxLinesWhere((it) => it.isNotNull().isGreaterThan(1));
-    spot<Text>().withMaxLines(null).existsOnce().hasMaxLines(null);
+
     spot<Text>()
-        .withMaxLinesMatching((it) => it.isNull())
+        .withEffectiveMaxLines(null)
         .existsOnce()
-        .hasMaxLinesWhere((it) => it.isNull());
+        .hasEffectiveMaxLines(null);
+    spot<Text>()
+        .withEffectiveMaxLinesMatching((it) => it.isNull())
+        .existsOnce()
+        .hasEffectiveMaxLinesWhere((it) => it.isNull());
   });
 }
