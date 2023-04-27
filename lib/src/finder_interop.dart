@@ -29,6 +29,11 @@ class _FinderSelector<W extends Widget> extends MultiWidgetSelector<W> {
   List<ElementFilter> createElementFilters() {
     return [...super.createElementFilters(), _FinderFilter(finder)];
   }
+
+  @override
+  String toString() {
+    return 'widget with ${finder.description}';
+  }
 }
 
 class _FinderFilter extends ElementFilter {

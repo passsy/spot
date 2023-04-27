@@ -29,6 +29,27 @@ void main() {
           .existsOnce()
           .hasProp<String>('data', (it) => it.equals('a'));
     });
+
+    testWidgets('readable error message', (tester) async {
+      await tester.pumpWidget(Placeholder());
+
+      expect(
+        () => find
+            .ancestor(of: find.byType(MaterialApp), matching: find.text('nope'))
+            .spot()
+            .existsOnce(),
+        throwsA(
+          isA<TestFailure>().having(
+            (e) => e.message,
+            'message',
+            contains(
+              'Could not find widget with text "nope" '
+              'which is an ancestor of type "MaterialApp" in widget tree',
+            ),
+          ),
+        ),
+      );
+    });
   });
 
   group('spot to finder', () {
