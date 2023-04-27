@@ -275,7 +275,14 @@ extension _LessSpecificSelectors<W extends Widget> on WidgetSelector<W> {
     ];
 
     for (final subset in getAllSubsets(criteria)) {
-      yield _buildSelector(subset);
+      final selector = _buildSelector(subset);
+      // do not yield selectors which match any widgets
+      if (selector.children.isNotEmpty ||
+          selector.parents.isNotEmpty ||
+          selector.props.isNotEmpty ||
+          selector.type != Widget) {
+        yield selector;
+      }
     }
   }
 
