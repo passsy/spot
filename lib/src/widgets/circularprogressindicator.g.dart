@@ -9,23 +9,23 @@ import 'package:spot/spot.dart';
 /// spot<CircularProgressIndicator>().printMatchers();
 /// ```
 extension CircularProgressIndicatorMatcher on WidgetMatcher<CircularProgressIndicator> {
-  WidgetMatcher<CircularProgressIndicator> hasValueWhere(MatchProp<double?> match) {
-    return hasProp<double?>('value', match);
+  WidgetMatcher<CircularProgressIndicator> hasValueWhere(MatchProp<double> match) {
+    return hasProp<double>('value', match);
   }
   
-  WidgetMatcher<CircularProgressIndicator> hasValue(double? value) {
-    return hasProp<double?>('value', (it) => it.equals(value));
+  WidgetMatcher<CircularProgressIndicator> hasValue(double value) {
+    return hasProp<double>('value', (it) => it.equals(value));
   }
 
 }
 
 extension CircularProgressIndicatorSelector on WidgetSelector<CircularProgressIndicator> {
-  WidgetSelector<CircularProgressIndicator> withValueMatching(MatchProp<double?> match) {
-    return withProp<double?>('value', match);
+  WidgetSelector<CircularProgressIndicator> withValueMatching(MatchProp<double> match) {
+    return withProp<double>('value', match);
   }
   
-  WidgetSelector<CircularProgressIndicator> withValue(double? value) {
-    return withProp<double?>('value', (it) => it.equals(value));
+  WidgetSelector<CircularProgressIndicator> withValue(double value) {
+    return withProp<double>('value', (it) => it.equals(value));
   }
 
 }

@@ -60,12 +60,12 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
     return hasProp<String>('label', (it) => it.equals(value));
   }
 
-  WidgetMatcher<Semantics> hasAttributedLabelWhere(MatchProp<String?> match) {
-    return hasProp<String?>('attributedLabel', match);
+  WidgetMatcher<Semantics> hasAttributedLabelWhere(MatchProp<String> match) {
+    return hasProp<String>('attributedLabel', match);
   }
   
-  WidgetMatcher<Semantics> hasAttributedLabel(String? value) {
-    return hasProp<String?>('attributedLabel', (it) => it.equals(value));
+  WidgetMatcher<Semantics> hasAttributedLabel(String value) {
+    return hasProp<String>('attributedLabel', (it) => it.equals(value));
   }
 
   WidgetMatcher<Semantics> hasValueWhere(MatchProp<String> match) {
@@ -76,12 +76,12 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
     return hasProp<String>('value', (it) => it.equals(value));
   }
 
-  WidgetMatcher<Semantics> hasAttributedValueWhere(MatchProp<String?> match) {
-    return hasProp<String?>('attributedValue', match);
+  WidgetMatcher<Semantics> hasAttributedValueWhere(MatchProp<String> match) {
+    return hasProp<String>('attributedValue', match);
   }
   
-  WidgetMatcher<Semantics> hasAttributedValue(String? value) {
-    return hasProp<String?>('attributedValue', (it) => it.equals(value));
+  WidgetMatcher<Semantics> hasAttributedValue(String value) {
+    return hasProp<String>('attributedValue', (it) => it.equals(value));
   }
 
   WidgetMatcher<Semantics> hasIncreasedValueWhere(MatchProp<String> match) {
@@ -92,12 +92,12 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
     return hasProp<String>('increasedValue', (it) => it.equals(value));
   }
 
-  WidgetMatcher<Semantics> hasAttributedIncreasedValueWhere(MatchProp<String?> match) {
-    return hasProp<String?>('attributedIncreasedValue', match);
+  WidgetMatcher<Semantics> hasAttributedIncreasedValueWhere(MatchProp<String> match) {
+    return hasProp<String>('attributedIncreasedValue', match);
   }
   
-  WidgetMatcher<Semantics> hasAttributedIncreasedValue(String? value) {
-    return hasProp<String?>('attributedIncreasedValue', (it) => it.equals(value));
+  WidgetMatcher<Semantics> hasAttributedIncreasedValue(String value) {
+    return hasProp<String>('attributedIncreasedValue', (it) => it.equals(value));
   }
 
   WidgetMatcher<Semantics> hasDecreasedValueWhere(MatchProp<String> match) {
@@ -108,12 +108,12 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
     return hasProp<String>('decreasedValue', (it) => it.equals(value));
   }
 
-  WidgetMatcher<Semantics> hasAttributedDecreasedValueWhere(MatchProp<String?> match) {
-    return hasProp<String?>('attributedDecreasedValue', match);
+  WidgetMatcher<Semantics> hasAttributedDecreasedValueWhere(MatchProp<String> match) {
+    return hasProp<String>('attributedDecreasedValue', match);
   }
   
-  WidgetMatcher<Semantics> hasAttributedDecreasedValue(String? value) {
-    return hasProp<String?>('attributedDecreasedValue', (it) => it.equals(value));
+  WidgetMatcher<Semantics> hasAttributedDecreasedValue(String value) {
+    return hasProp<String>('attributedDecreasedValue', (it) => it.equals(value));
   }
 
   WidgetMatcher<Semantics> hasHintWhere(MatchProp<String> match) {
@@ -124,12 +124,12 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
     return hasProp<String>('hint', (it) => it.equals(value));
   }
 
-  WidgetMatcher<Semantics> hasAttributedHintWhere(MatchProp<String?> match) {
-    return hasProp<String?>('attributedHint', match);
+  WidgetMatcher<Semantics> hasAttributedHintWhere(MatchProp<String> match) {
+    return hasProp<String>('attributedHint', match);
   }
   
-  WidgetMatcher<Semantics> hasAttributedHint(String? value) {
-    return hasProp<String?>('attributedHint', (it) => it.equals(value));
+  WidgetMatcher<Semantics> hasAttributedHint(String value) {
+    return hasProp<String>('attributedHint', (it) => it.equals(value));
   }
 
   WidgetMatcher<Semantics> hasTooltipWhere(MatchProp<String> match) {
@@ -223,12 +223,12 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
     return withProp<String>('label', (it) => it.equals(value));
   }
 
-  WidgetSelector<Semantics> withAttributedLabelMatching(MatchProp<String?> match) {
-    return withProp<String?>('attributedLabel', match);
+  WidgetSelector<Semantics> withAttributedLabelMatching(MatchProp<String> match) {
+    return withProp<String>('attributedLabel', match);
   }
   
-  WidgetSelector<Semantics> withAttributedLabel(String? value) {
-    return withProp<String?>('attributedLabel', (it) => it.equals(value));
+  WidgetSelector<Semantics> withAttributedLabel(String value) {
+    return withProp<String>('attributedLabel', (it) => it.equals(value));
   }
 
   WidgetSelector<Semantics> withValueMatching(MatchProp<String> match) {
@@ -239,12 +239,12 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
     return withProp<String>('value', (it) => it.equals(value));
   }
 
-  WidgetSelector<Semantics> withAttributedValueMatching(MatchProp<String?> match) {
-    return withProp<String?>('attributedValue', match);
+  WidgetSelector<Semantics> withAttributedValueMatching(MatchProp<String> match) {
+    return withProp<String>('attributedValue', match);
   }
   
-  WidgetSelector<Semantics> withAttributedValue(String? value) {
-    return withProp<String?>('attributedValue', (it) => it.equals(value));
+  WidgetSelector<Semantics> withAttributedValue(String value) {
+    return withProp<String>('attributedValue', (it) => it.equals(value));
   }
 
   WidgetSelector<Semantics> withIncreasedValueMatching(MatchProp<String> match) {
@@ -255,12 +255,12 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
     return withProp<String>('increasedValue', (it) => it.equals(value));
   }
 
-  WidgetSelector<Semantics> withAttributedIncreasedValueMatching(MatchProp<String?> match) {
-    return withProp<String?>('attributedIncreasedValue', match);
+  WidgetSelector<Semantics> withAttributedIncreasedValueMatching(MatchProp<String> match) {
+    return withProp<String>('attributedIncreasedValue', match);
   }
   
-  WidgetSelector<Semantics> withAttributedIncreasedValue(String? value) {
-    return withProp<String?>('attributedIncreasedValue', (it) => it.equals(value));
+  WidgetSelector<Semantics> withAttributedIncreasedValue(String value) {
+    return withProp<String>('attributedIncreasedValue', (it) => it.equals(value));
   }
 
   WidgetSelector<Semantics> withDecreasedValueMatching(MatchProp<String> match) {
@@ -271,12 +271,12 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
     return withProp<String>('decreasedValue', (it) => it.equals(value));
   }
 
-  WidgetSelector<Semantics> withAttributedDecreasedValueMatching(MatchProp<String?> match) {
-    return withProp<String?>('attributedDecreasedValue', match);
+  WidgetSelector<Semantics> withAttributedDecreasedValueMatching(MatchProp<String> match) {
+    return withProp<String>('attributedDecreasedValue', match);
   }
   
-  WidgetSelector<Semantics> withAttributedDecreasedValue(String? value) {
-    return withProp<String?>('attributedDecreasedValue', (it) => it.equals(value));
+  WidgetSelector<Semantics> withAttributedDecreasedValue(String value) {
+    return withProp<String>('attributedDecreasedValue', (it) => it.equals(value));
   }
 
   WidgetSelector<Semantics> withHintMatching(MatchProp<String> match) {
@@ -287,12 +287,12 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
     return withProp<String>('hint', (it) => it.equals(value));
   }
 
-  WidgetSelector<Semantics> withAttributedHintMatching(MatchProp<String?> match) {
-    return withProp<String?>('attributedHint', match);
+  WidgetSelector<Semantics> withAttributedHintMatching(MatchProp<String> match) {
+    return withProp<String>('attributedHint', match);
   }
   
-  WidgetSelector<Semantics> withAttributedHint(String? value) {
-    return withProp<String?>('attributedHint', (it) => it.equals(value));
+  WidgetSelector<Semantics> withAttributedHint(String value) {
+    return withProp<String>('attributedHint', (it) => it.equals(value));
   }
 
   WidgetSelector<Semantics> withTooltipMatching(MatchProp<String> match) {

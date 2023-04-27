@@ -9,12 +9,12 @@ import 'package:spot/spot.dart';
 /// spot<TextButton>().printMatchers();
 /// ```
 extension TextButtonMatcher on WidgetMatcher<TextButton> {
-  WidgetMatcher<TextButton> isEnabledWhere(MatchProp<bool?> match) {
-    return hasProp<bool?>('enabled', match);
+  WidgetMatcher<TextButton> isEnabledWhere(MatchProp<bool> match) {
+    return hasProp<bool>('enabled', match);
   }
   
-  WidgetMatcher<TextButton> isEnabled(bool? value) {
-    return hasProp<bool?>('enabled', (it) => it.equals(value));
+  WidgetMatcher<TextButton> isEnabled(bool value) {
+    return hasProp<bool>('enabled', (it) => it.equals(value));
   }
 
   WidgetMatcher<TextButton> hasStyleWhere(MatchProp<ButtonStyle> match) {
@@ -36,12 +36,12 @@ extension TextButtonMatcher on WidgetMatcher<TextButton> {
 }
 
 extension TextButtonSelector on WidgetSelector<TextButton> {
-  WidgetSelector<TextButton> withEnabledMatching(MatchProp<bool?> match) {
-    return withProp<bool?>('enabled', match);
+  WidgetSelector<TextButton> withEnabledMatching(MatchProp<bool> match) {
+    return withProp<bool>('enabled', match);
   }
   
-  WidgetSelector<TextButton> withEnabled(bool? value) {
-    return withProp<bool?>('enabled', (it) => it.equals(value));
+  WidgetSelector<TextButton> withEnabled(bool value) {
+    return withProp<bool>('enabled', (it) => it.equals(value));
   }
 
   WidgetSelector<TextButton> withStyleMatching(MatchProp<ButtonStyle> match) {

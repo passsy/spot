@@ -4,18 +4,31 @@
 
 Fluent, chainable Widget finders and better assertions for Flutter widget tests
 
+⛓️ Chainable widget selectors
+💙 Prints helpful error messages
+
 ## Usage
 
 ```dart
-// Spotters
-final homePage = spot.byType(MaterialApp).childByType(Scaffold);
-final appBar = homePage.childByType(AppBar);
+// Create widget selectors for elements in the widget tree
+final scaffold = spot<MaterialApp>().spot<Scaffold>();
+final appBar = scaffold.spot<AppBar>();
 
-// Assertions
-appBar.childByIcon(
-  Icons.settings,
-  parents: [spot.byType(IconButton)],
-).existsOnce();
+// Assert for values of widgets
+appBar.spot<Text>().existsOnce().hasText('Pepe');
+
+// Find widgets based on child widgets
+appBar
+    .spot<IconButton>(children: [spotSingleIcon(Icons.home)])
+    .existsOnce()
+    .hasTooltip('home');
+
+// Find widgets based on parent widgets
+spot<Icon>(parents: [appBar, spot<IconButton>()])
+    .existsExactlyNTimes(2)
+    .all((icon) {
+icon.hasColorWhere((color) => color.equals(Colors.black));
+});
 ```
 
 ### Better errors
@@ -31,9 +44,12 @@ expect(find.byIcon(Icons.settings), findsOneWidget);
 ```
 
 The error message above is not really helpful, because the actual error is not that there's no icon, but the `Icons.home` instead of `Icons.settings`. 
-Spot prints a big but helpful error message, containing the icon that is shown instead (`IconData(U+0E318)`).
+
+**spot** prints the widget tree from the last node found node (`spot<AppBar>`). This shows that there is an `Icon`, but the wrong one (`IconData(U+0E318)`). That's much more helpful!
 
 ```
+spot<AppBar>().spotSingleIcon(Icons.settings).existsOnce();
+
 Could not find 'icon "IconData(U+0E57F)"' as child of #2 type "IconButton"
 There are 1 possible parents for 'icon "IconData(U+0E57F)"' matching #2 type "IconButton". But non matched. The widget trees starting at #2 type "IconButton" are:
 Possible parent 0:

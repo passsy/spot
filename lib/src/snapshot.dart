@@ -3,26 +3,21 @@ import 'package:dartx/dartx.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
+import 'package:spot/src/tree_snapshot.dart';
 
-SpotSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
-  // ignore: deprecated_member_use
-  final rootElement = WidgetsBinding.instance.renderViewElement!;
-  final origin = SpotNode(
-    selector: WidgetSelector.all,
-    parents: [],
-    element: rootElement,
-    debugCandidates: [rootElement],
-  );
+MultiWidgetSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
+  final treeSnapshot = snapshotWidgetTree();
 
   if (selector.parents.isEmpty) {
-    final snapshot = takeScopedSnapshot(selector, origin);
+    final MultiWidgetSnapshot<W> snapshot =
+        findWithinScope(treeSnapshot, selector);
 
     if (selector.expectedQuantity == ExpectedQuantity.single) {
       if (snapshot.discovered.length > 1) {
         throw TestFailure(
           'Found ${snapshot.discovered.length} elements matching $selector in widget tree, '
           'expected only one\n'
-          '${_findCommonAncestor(snapshot.discoveredElements).toStringDeep()}'
+          '${_findCommonAncestor(snapshot.discovered.map((e) => e.element)).toStringDeep()}'
           'Found ${snapshot.discovered.length} elements matching $selector in widget tree, '
           'expected only one',
         );
@@ -31,14 +26,14 @@ SpotSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
     return snapshot;
   }
 
-  final List<SpotNode<W>> candidates =
+  final List<WidgetTreeNode<W>> candidates =
       selector.createCandidateGenerator().generateCandidates().toList();
   final distinctCandidateElements =
       candidates.map((e) => e.element).toSet().toList();
 
   final filters = selector.createElementFilters();
   final discovered = filters
-      .fold<Iterable<SpotNode<Widget>>>(candidates, (list, filter) {
+      .fold<Iterable<WidgetTreeNode<Widget>>>(candidates, (list, filter) {
         return filter.filter(list);
       })
       .map((node) => node.cast<W>())
@@ -56,48 +51,129 @@ SpotSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
     }
   }
 
-  return SpotSnapshot<W>(
+  return MultiWidgetSnapshot<W>(
     selector: selector,
     discovered: discovered,
-    debugCandidates:
-        candidates.expand((element) => element.debugCandidates).toList(),
+    scope: treeSnapshot,
+    debugCandidates: candidates.map((element) => element.element).toList(),
   );
 }
 
-SpotSnapshot<W> takeScopedSnapshot<W extends Widget>(
-  WidgetSelector<W> selector,
-  SpotNode origin,
-) {
-  final List<Element> allElementCandidates = [origin.element] +
-      collectAllElementsFrom(origin.element, skipOffstage: true).toList();
-  final List<SpotNode> candidates = allElementCandidates.map((e) {
-    return SpotNode(
-      selector: selector,
-      parents: [origin],
-      element: e,
-      debugCandidates: allElementCandidates,
-    );
-  }).toList();
+class CandidateGeneratorFromParents<W extends Widget>
+    implements CandidateGenerator<W> {
+  final WidgetSelector<W> selector;
 
+  CandidateGeneratorFromParents(this.selector);
+
+  @override
+  Iterable<WidgetTreeNode<W>> generateCandidates() {
+    final tree = snapshotWidgetTree();
+    final List<MultiWidgetSnapshot<Widget>> parentSnapshots =
+        selector.parents.map((selector) {
+      final MultiWidgetSnapshot<Widget> widgetSnapshot = snapshot(selector);
+
+      if (selector.expectedQuantity == ExpectedQuantity.single) {
+        if (widgetSnapshot.discovered.length > 1) {
+          throw TestFailure(
+            'Found ${widgetSnapshot.discovered.length} elements matching $selector in widget tree, '
+            'expected only one\n'
+            '${_findCommonAncestor(widgetSnapshot.discovered.map((e) => e.element)).toStringDeep()}'
+            'Found ${widgetSnapshot.discovered.length} elements matching $selector in widget tree, '
+            'expected only one',
+          );
+        }
+      }
+
+      return widgetSnapshot;
+    }).toList();
+
+    final selectorWithoutParents = selector.copyWith(parents: []);
+
+    // Take a snapshot from each parent and get the snapshots of all nodes that match
+    final List<Map<WidgetTreeNode<Widget>, List<MultiWidgetSnapshot<W>>>>
+        discoveryByParent =
+        parentSnapshots.map((MultiWidgetSnapshot<Widget> parentSnapshot) {
+      final Map<WidgetTreeNode<Widget>, List<MultiWidgetSnapshot<W>>> groups =
+          {};
+      if (parentSnapshot.discovered.isEmpty) {
+        return groups;
+      }
+
+      for (final WidgetTreeNode<Widget> node in parentSnapshot.discovered) {
+        final MultiWidgetSnapshot<W> group =
+            findWithinScope(tree.scope(node), selectorWithoutParents);
+        final list = groups[node];
+        if (list == null) {
+          groups[node] = [group];
+        } else {
+          list.add(group);
+        }
+      }
+
+      return groups;
+    }).toList();
+
+    final List<MultiWidgetSnapshot<W>> discoveredSnapshots =
+        discoveryByParent.map((it) => it.values).flatten().flatten().toList();
+
+    final List<WidgetTreeNode<W>> allDiscoveredNodes =
+        discoveredSnapshots.map((it) => it.discovered).flatten().toList();
+
+    final List<Element> distinctElements =
+        allDiscoveredNodes.map((e) => e.element).toSet().toList();
+
+    // find nodes that exist in all parents
+    final List<Element> elementsInAllParents =
+        distinctElements.where((element) {
+      return discoveryByParent.all(
+          (Map<WidgetTreeNode<Widget>, List<MultiWidgetSnapshot<W>>>
+              discovered) {
+        return discovered.values.any((List<MultiWidgetSnapshot<W>> list) {
+          return list.any((node) {
+            return node.discovered.map((e) => e.element).contains(element);
+          });
+        });
+      });
+    }).toList();
+
+    final List<WidgetTreeNode<Widget>> allNodes = tree.allNodes;
+    return elementsInAllParents
+        .map((e) => allNodes.firstWhere((node) => node.element == e).cast<W>())
+        .toList();
+  }
+}
+
+/// Finds elements inside scope, completely ignores parents
+MultiWidgetSnapshot<W> findWithinScope<W extends Widget>(
+  ScopedWidgetTreeSnapshot scope,
+  WidgetSelector<W> selector,
+) {
+  if (selector.parents.isNotEmpty) {
+    throw "Don't use findWithinScope with a selector that has parents. "
+        "Either remove the mor use snapshot() instead";
+  }
+  final candidates = scope.allNodes;
   final List<ElementFilter> filters = selector.createElementFilters();
-  final List<SpotNode<W>> discovered = filters
-      .fold<Iterable<SpotNode>>(candidates, (list, ElementFilter filter) {
-        final Iterable<SpotNode<Widget>> result = filter.filter(list);
+
+  final List<WidgetTreeNode<W>> discovered = filters
+      .fold<Iterable<WidgetTreeNode>>(candidates, (list, ElementFilter filter) {
+        final Iterable<WidgetTreeNode> result = filter.filter(list);
         return result;
       })
       .map((node) => node.cast<W>())
       .toList();
 
-  return SpotSnapshot<W>(
+  return MultiWidgetSnapshot<W>(
     selector: selector,
     discovered: discovered,
-    debugCandidates: candidates.map((e) => e.element).toList(),
+    scope: scope,
+    debugCandidates: candidates.map((it) => it.element).toList(),
   );
 }
 
 extension SingleWidgetSelectorMatcher<W extends Widget>
-    on SingleSpotSnapshot<W> {
-  SingleSpotSnapshot<W> existsOnce() {
+    on SingleWidgetSnapshot<W> {
+  SingleWidgetSnapshot<W> existsOnce() {
     if (discovered == null) {
       // try finding similar selectors (less specific)
       // if one is found, fail with a more specific error message
@@ -125,18 +201,18 @@ extension SingleWidgetSelectorMatcher<W extends Widget>
   }
 }
 
-extension WidgetSelectorMatcher<W extends Widget> on SpotSnapshot<W> {
+extension WidgetSelectorMatcher<W extends Widget> on MultiWidgetSnapshot<W> {
   void doesNotExist() => _exists(max: 0);
 
-  SingleSpotSnapshot<W> existsOnce() => _exists(min: 1, max: 1).single;
+  SingleWidgetSnapshot<W> existsOnce() => _exists(min: 1, max: 1).single;
 
-  SpotSnapshot<W> existsAtLeastOnce() => _exists(min: 1);
+  MultiWidgetSnapshot<W> existsAtLeastOnce() => _exists(min: 1);
 
-  SpotSnapshot<W> existsExactlyNTimes(int n) => _exists(min: n, max: n);
+  MultiWidgetSnapshot<W> existsExactlyNTimes(int n) => _exists(min: n, max: n);
 
-  SpotSnapshot<W> existsAtLeastNTimes(int n) => _exists(min: n);
+  MultiWidgetSnapshot<W> existsAtLeastNTimes(int n) => _exists(min: n);
 
-  SpotSnapshot<W> _exists({int? min, int? max}) {
+  MultiWidgetSnapshot<W> _exists({int? min, int? max}) {
     assert(min != null || max != null);
     assert(min == null || min > 0);
     assert(max == null || max >= 0);
@@ -153,6 +229,7 @@ extension WidgetSelectorMatcher<W extends Widget> on SpotSnapshot<W> {
         // else fail with default message
         final errorBuilder = StringBuffer();
         errorBuilder.writeln('Could not find $selector in widget tree');
+
         _dumpWidgetTree(errorBuilder);
         errorBuilder.writeln('Could not find $selector in widget tree');
         fail(errorBuilder.toString());
@@ -194,7 +271,7 @@ void _tryMatchingLessSpecificCriteria<W extends Widget>(
 }) {
   final errorBuilder = StringBuffer();
   for (final lessSpecificSelector in selector._lessSpecificSelectors()) {
-    late final SpotSnapshot<W> lessSpecificSnapshot;
+    late final MultiWidgetSnapshot<W> lessSpecificSnapshot;
     try {
       lessSpecificSnapshot = lessSpecificSelector.snapshot();
     } catch (e) {
@@ -308,7 +385,7 @@ List<List<T>> getAllSubsets<T>(List<T> list) {
   return result.sortedByDescending((element) => element.length).toList();
 }
 
-Element _findCommonAncestor(List<Element> elements) =>
+Element _findCommonAncestor(Iterable<Element> elements) =>
     IterableSortedBy(elements)
         .sortedBy((element) => element.depth)
         .first

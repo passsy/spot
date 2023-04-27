@@ -17,12 +17,12 @@ extension GridViewMatcher on WidgetMatcher<GridView> {
     return hasProp<Axis>('scrollDirection', (it) => it.equals(value));
   }
 
-  WidgetMatcher<GridView> hasReverseWhere(MatchProp<bool?> match) {
-    return hasProp<bool?>('reverse', match);
+  WidgetMatcher<GridView> hasReverseWhere(MatchProp<bool> match) {
+    return hasProp<bool>('reverse', match);
   }
   
-  WidgetMatcher<GridView> hasReverse(bool? value) {
-    return hasProp<bool?>('reverse', (it) => it.equals(value));
+  WidgetMatcher<GridView> hasReverse(bool value) {
+    return hasProp<bool>('reverse', (it) => it.equals(value));
   }
 
   WidgetMatcher<GridView> hasControllerWhere(MatchProp<ScrollController> match) {
@@ -33,12 +33,12 @@ extension GridViewMatcher on WidgetMatcher<GridView> {
     return hasProp<ScrollController>('controller', (it) => it.equals(value));
   }
 
-  WidgetMatcher<GridView> hasPrimaryWhere(MatchProp<bool?> match) {
-    return hasProp<bool?>('primary', match);
+  WidgetMatcher<GridView> hasPrimaryWhere(MatchProp<bool> match) {
+    return hasProp<bool>('primary', match);
   }
   
-  WidgetMatcher<GridView> hasPrimary(bool? value) {
-    return hasProp<bool?>('primary', (it) => it.equals(value));
+  WidgetMatcher<GridView> hasPrimary(bool value) {
+    return hasProp<bool>('primary', (it) => it.equals(value));
   }
 
   WidgetMatcher<GridView> hasPhysicsWhere(MatchProp<ScrollPhysics> match) {
@@ -49,12 +49,12 @@ extension GridViewMatcher on WidgetMatcher<GridView> {
     return hasProp<ScrollPhysics>('physics', (it) => it.equals(value));
   }
 
-  WidgetMatcher<GridView> hasShrinkWrapWhere(MatchProp<bool?> match) {
-    return hasProp<bool?>('shrinkWrap', match);
+  WidgetMatcher<GridView> hasShrinkWrapWhere(MatchProp<bool> match) {
+    return hasProp<bool>('shrinkWrap', match);
   }
   
-  WidgetMatcher<GridView> hasShrinkWrap(bool? value) {
-    return hasProp<bool?>('shrinkWrap', (it) => it.equals(value));
+  WidgetMatcher<GridView> hasShrinkWrap(bool value) {
+    return hasProp<bool>('shrinkWrap', (it) => it.equals(value));
   }
 
   WidgetMatcher<GridView> hasPaddingWhere(MatchProp<EdgeInsetsGeometry> match) {
@@ -76,12 +76,12 @@ extension GridViewSelector on WidgetSelector<GridView> {
     return withProp<Axis>('scrollDirection', (it) => it.equals(value));
   }
 
-  WidgetSelector<GridView> withReverseMatching(MatchProp<bool?> match) {
-    return withProp<bool?>('reverse', match);
+  WidgetSelector<GridView> withReverseMatching(MatchProp<bool> match) {
+    return withProp<bool>('reverse', match);
   }
   
-  WidgetSelector<GridView> withReverse(bool? value) {
-    return withProp<bool?>('reverse', (it) => it.equals(value));
+  WidgetSelector<GridView> withReverse(bool value) {
+    return withProp<bool>('reverse', (it) => it.equals(value));
   }
 
   WidgetSelector<GridView> withControllerMatching(MatchProp<ScrollController> match) {
@@ -92,12 +92,12 @@ extension GridViewSelector on WidgetSelector<GridView> {
     return withProp<ScrollController>('controller', (it) => it.equals(value));
   }
 
-  WidgetSelector<GridView> withPrimaryMatching(MatchProp<bool?> match) {
-    return withProp<bool?>('primary', match);
+  WidgetSelector<GridView> withPrimaryMatching(MatchProp<bool> match) {
+    return withProp<bool>('primary', match);
   }
   
-  WidgetSelector<GridView> withPrimary(bool? value) {
-    return withProp<bool?>('primary', (it) => it.equals(value));
+  WidgetSelector<GridView> withPrimary(bool value) {
+    return withProp<bool>('primary', (it) => it.equals(value));
   }
 
   WidgetSelector<GridView> withPhysicsMatching(MatchProp<ScrollPhysics> match) {
@@ -108,12 +108,12 @@ extension GridViewSelector on WidgetSelector<GridView> {
     return withProp<ScrollPhysics>('physics', (it) => it.equals(value));
   }
 
-  WidgetSelector<GridView> withShrinkWrapMatching(MatchProp<bool?> match) {
-    return withProp<bool?>('shrinkWrap', match);
+  WidgetSelector<GridView> withShrinkWrapMatching(MatchProp<bool> match) {
+    return withProp<bool>('shrinkWrap', match);
   }
   
-  WidgetSelector<GridView> withShrinkWrap(bool? value) {
-    return withProp<bool?>('shrinkWrap', (it) => it.equals(value));
+  WidgetSelector<GridView> withShrinkWrap(bool value) {
+    return withProp<bool>('shrinkWrap', (it) => it.equals(value));
   }
 
   WidgetSelector<GridView> withPaddingMatching(MatchProp<EdgeInsetsGeometry> match) {

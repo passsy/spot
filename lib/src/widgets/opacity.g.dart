@@ -10,20 +10,20 @@ import 'package:spot/spot.dart';
 /// spot<Opacity>().printMatchers();
 /// ```
 extension OpacityMatcher on WidgetMatcher<Opacity> {
-  WidgetMatcher<Opacity> hasOpacityWhere(MatchProp<double?> match) {
-    return hasProp<double?>('opacity', match);
+  WidgetMatcher<Opacity> hasOpacityWhere(MatchProp<double> match) {
+    return hasProp<double>('opacity', match);
   }
   
-  WidgetMatcher<Opacity> hasOpacity(double? value) {
-    return hasProp<double?>('opacity', (it) => it.equals(value));
+  WidgetMatcher<Opacity> hasOpacity(double value) {
+    return hasProp<double>('opacity', (it) => it.equals(value));
   }
 
-  WidgetMatcher<Opacity> hasAlwaysIncludeSemanticsWhere(MatchProp<bool?> match) {
-    return hasProp<bool?>('alwaysIncludeSemantics', match);
+  WidgetMatcher<Opacity> hasAlwaysIncludeSemanticsWhere(MatchProp<bool> match) {
+    return hasProp<bool>('alwaysIncludeSemantics', match);
   }
   
-  WidgetMatcher<Opacity> hasAlwaysIncludeSemantics(bool? value) {
-    return hasProp<bool?>('alwaysIncludeSemantics', (it) => it.equals(value));
+  WidgetMatcher<Opacity> hasAlwaysIncludeSemantics(bool value) {
+    return hasProp<bool>('alwaysIncludeSemantics', (it) => it.equals(value));
   }
 
   WidgetMatcher<Opacity> hasRenderObjectWhere(MatchProp<RenderOpacity> match) {
@@ -37,20 +37,20 @@ extension OpacityMatcher on WidgetMatcher<Opacity> {
 }
 
 extension OpacitySelector on WidgetSelector<Opacity> {
-  WidgetSelector<Opacity> withOpacityMatching(MatchProp<double?> match) {
-    return withProp<double?>('opacity', match);
+  WidgetSelector<Opacity> withOpacityMatching(MatchProp<double> match) {
+    return withProp<double>('opacity', match);
   }
   
-  WidgetSelector<Opacity> withOpacity(double? value) {
-    return withProp<double?>('opacity', (it) => it.equals(value));
+  WidgetSelector<Opacity> withOpacity(double value) {
+    return withProp<double>('opacity', (it) => it.equals(value));
   }
 
-  WidgetSelector<Opacity> withAlwaysIncludeSemanticsMatching(MatchProp<bool?> match) {
-    return withProp<bool?>('alwaysIncludeSemantics', match);
+  WidgetSelector<Opacity> withAlwaysIncludeSemanticsMatching(MatchProp<bool> match) {
+    return withProp<bool>('alwaysIncludeSemantics', match);
   }
   
-  WidgetSelector<Opacity> withAlwaysIncludeSemantics(bool? value) {
-    return withProp<bool?>('alwaysIncludeSemantics', (it) => it.equals(value));
+  WidgetSelector<Opacity> withAlwaysIncludeSemantics(bool value) {
+    return withProp<bool>('alwaysIncludeSemantics', (it) => it.equals(value));
   }
 
   WidgetSelector<Opacity> withRenderObjectMatching(MatchProp<RenderOpacity> match) {

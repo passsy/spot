@@ -17,44 +17,44 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
     return hasProp<String>('tooltip', (it) => it.equals(value));
   }
 
-  WidgetMatcher<FloatingActionButton> hasForegroundColorWhere(MatchProp<IconData?> match) {
-    return hasProp<IconData?>('foregroundColor', match);
+  WidgetMatcher<FloatingActionButton> hasForegroundColorWhere(MatchProp<Color> match) {
+    return hasProp<Color>('foregroundColor', match);
   }
   
-  WidgetMatcher<FloatingActionButton> hasForegroundColor(IconData? value) {
-    return hasProp<IconData?>('foregroundColor', (it) => it.equals(value));
+  WidgetMatcher<FloatingActionButton> hasForegroundColor(Color value) {
+    return hasProp<Color>('foregroundColor', (it) => it.equals(value));
   }
 
-  WidgetMatcher<FloatingActionButton> hasBackgroundColorWhere(MatchProp<IconData?> match) {
-    return hasProp<IconData?>('backgroundColor', match);
+  WidgetMatcher<FloatingActionButton> hasBackgroundColorWhere(MatchProp<Color> match) {
+    return hasProp<Color>('backgroundColor', match);
   }
   
-  WidgetMatcher<FloatingActionButton> hasBackgroundColor(IconData? value) {
-    return hasProp<IconData?>('backgroundColor', (it) => it.equals(value));
+  WidgetMatcher<FloatingActionButton> hasBackgroundColor(Color value) {
+    return hasProp<Color>('backgroundColor', (it) => it.equals(value));
   }
 
-  WidgetMatcher<FloatingActionButton> hasFocusColorWhere(MatchProp<IconData?> match) {
-    return hasProp<IconData?>('focusColor', match);
+  WidgetMatcher<FloatingActionButton> hasFocusColorWhere(MatchProp<Color> match) {
+    return hasProp<Color>('focusColor', match);
   }
   
-  WidgetMatcher<FloatingActionButton> hasFocusColor(IconData? value) {
-    return hasProp<IconData?>('focusColor', (it) => it.equals(value));
+  WidgetMatcher<FloatingActionButton> hasFocusColor(Color value) {
+    return hasProp<Color>('focusColor', (it) => it.equals(value));
   }
 
-  WidgetMatcher<FloatingActionButton> hasHoverColorWhere(MatchProp<IconData?> match) {
-    return hasProp<IconData?>('hoverColor', match);
+  WidgetMatcher<FloatingActionButton> hasHoverColorWhere(MatchProp<Color> match) {
+    return hasProp<Color>('hoverColor', match);
   }
   
-  WidgetMatcher<FloatingActionButton> hasHoverColor(IconData? value) {
-    return hasProp<IconData?>('hoverColor', (it) => it.equals(value));
+  WidgetMatcher<FloatingActionButton> hasHoverColor(Color value) {
+    return hasProp<Color>('hoverColor', (it) => it.equals(value));
   }
 
-  WidgetMatcher<FloatingActionButton> hasSplashColorWhere(MatchProp<IconData?> match) {
-    return hasProp<IconData?>('splashColor', match);
+  WidgetMatcher<FloatingActionButton> hasSplashColorWhere(MatchProp<Color> match) {
+    return hasProp<Color>('splashColor', match);
   }
   
-  WidgetMatcher<FloatingActionButton> hasSplashColor(IconData? value) {
-    return hasProp<IconData?>('splashColor', (it) => it.equals(value));
+  WidgetMatcher<FloatingActionButton> hasSplashColor(Color value) {
+    return hasProp<Color>('splashColor', (it) => it.equals(value));
   }
 
   WidgetMatcher<FloatingActionButton> hasHeroTagWhere(MatchProp<Object> match) {
@@ -65,44 +65,44 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
     return hasProp<Object>('heroTag', (it) => it.equals(value));
   }
 
-  WidgetMatcher<FloatingActionButton> hasElevationWhere(MatchProp<double?> match) {
-    return hasProp<double?>('elevation', match);
+  WidgetMatcher<FloatingActionButton> hasElevationWhere(MatchProp<double> match) {
+    return hasProp<double>('elevation', match);
   }
   
-  WidgetMatcher<FloatingActionButton> hasElevation(double? value) {
-    return hasProp<double?>('elevation', (it) => it.equals(value));
+  WidgetMatcher<FloatingActionButton> hasElevation(double value) {
+    return hasProp<double>('elevation', (it) => it.equals(value));
   }
 
-  WidgetMatcher<FloatingActionButton> hasFocusElevationWhere(MatchProp<double?> match) {
-    return hasProp<double?>('focusElevation', match);
+  WidgetMatcher<FloatingActionButton> hasFocusElevationWhere(MatchProp<double> match) {
+    return hasProp<double>('focusElevation', match);
   }
   
-  WidgetMatcher<FloatingActionButton> hasFocusElevation(double? value) {
-    return hasProp<double?>('focusElevation', (it) => it.equals(value));
+  WidgetMatcher<FloatingActionButton> hasFocusElevation(double value) {
+    return hasProp<double>('focusElevation', (it) => it.equals(value));
   }
 
-  WidgetMatcher<FloatingActionButton> hasHoverElevationWhere(MatchProp<double?> match) {
-    return hasProp<double?>('hoverElevation', match);
+  WidgetMatcher<FloatingActionButton> hasHoverElevationWhere(MatchProp<double> match) {
+    return hasProp<double>('hoverElevation', match);
   }
   
-  WidgetMatcher<FloatingActionButton> hasHoverElevation(double? value) {
-    return hasProp<double?>('hoverElevation', (it) => it.equals(value));
+  WidgetMatcher<FloatingActionButton> hasHoverElevation(double value) {
+    return hasProp<double>('hoverElevation', (it) => it.equals(value));
   }
 
-  WidgetMatcher<FloatingActionButton> hasHighlightElevationWhere(MatchProp<double?> match) {
-    return hasProp<double?>('highlightElevation', match);
+  WidgetMatcher<FloatingActionButton> hasHighlightElevationWhere(MatchProp<double> match) {
+    return hasProp<double>('highlightElevation', match);
   }
   
-  WidgetMatcher<FloatingActionButton> hasHighlightElevation(double? value) {
-    return hasProp<double?>('highlightElevation', (it) => it.equals(value));
+  WidgetMatcher<FloatingActionButton> hasHighlightElevation(double value) {
+    return hasProp<double>('highlightElevation', (it) => it.equals(value));
   }
 
-  WidgetMatcher<FloatingActionButton> hasDisabledElevationWhere(MatchProp<double?> match) {
-    return hasProp<double?>('disabledElevation', match);
+  WidgetMatcher<FloatingActionButton> hasDisabledElevationWhere(MatchProp<double> match) {
+    return hasProp<double>('disabledElevation', match);
   }
   
-  WidgetMatcher<FloatingActionButton> hasDisabledElevation(double? value) {
-    return hasProp<double?>('disabledElevation', (it) => it.equals(value));
+  WidgetMatcher<FloatingActionButton> hasDisabledElevation(double value) {
+    return hasProp<double>('disabledElevation', (it) => it.equals(value));
   }
 
   WidgetMatcher<FloatingActionButton> hasShapeWhere(MatchProp<ShapeBorder> match) {
@@ -121,12 +121,12 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
     return hasProp<FocusNode>('focusNode', (it) => it.equals(value));
   }
 
-  WidgetMatcher<FloatingActionButton> hasIsExtendedWhere(MatchProp<bool?> match) {
-    return hasProp<bool?>('isExtended', match);
+  WidgetMatcher<FloatingActionButton> hasIsExtendedWhere(MatchProp<bool> match) {
+    return hasProp<bool>('isExtended', match);
   }
   
-  WidgetMatcher<FloatingActionButton> hasIsExtended(bool? value) {
-    return hasProp<bool?>('isExtended', (it) => it.equals(value));
+  WidgetMatcher<FloatingActionButton> hasIsExtended(bool value) {
+    return hasProp<bool>('isExtended', (it) => it.equals(value));
   }
 
   WidgetMatcher<FloatingActionButton> hasMaterialTapTargetSizeWhere(MatchProp<MaterialTapTargetSize> match) {
@@ -148,44 +148,44 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
     return withProp<String>('tooltip', (it) => it.equals(value));
   }
 
-  WidgetSelector<FloatingActionButton> withForegroundColorMatching(MatchProp<IconData?> match) {
-    return withProp<IconData?>('foregroundColor', match);
+  WidgetSelector<FloatingActionButton> withForegroundColorMatching(MatchProp<Color> match) {
+    return withProp<Color>('foregroundColor', match);
   }
   
-  WidgetSelector<FloatingActionButton> withForegroundColor(IconData? value) {
-    return withProp<IconData?>('foregroundColor', (it) => it.equals(value));
+  WidgetSelector<FloatingActionButton> withForegroundColor(Color value) {
+    return withProp<Color>('foregroundColor', (it) => it.equals(value));
   }
 
-  WidgetSelector<FloatingActionButton> withBackgroundColorMatching(MatchProp<IconData?> match) {
-    return withProp<IconData?>('backgroundColor', match);
+  WidgetSelector<FloatingActionButton> withBackgroundColorMatching(MatchProp<Color> match) {
+    return withProp<Color>('backgroundColor', match);
   }
   
-  WidgetSelector<FloatingActionButton> withBackgroundColor(IconData? value) {
-    return withProp<IconData?>('backgroundColor', (it) => it.equals(value));
+  WidgetSelector<FloatingActionButton> withBackgroundColor(Color value) {
+    return withProp<Color>('backgroundColor', (it) => it.equals(value));
   }
 
-  WidgetSelector<FloatingActionButton> withFocusColorMatching(MatchProp<IconData?> match) {
-    return withProp<IconData?>('focusColor', match);
+  WidgetSelector<FloatingActionButton> withFocusColorMatching(MatchProp<Color> match) {
+    return withProp<Color>('focusColor', match);
   }
   
-  WidgetSelector<FloatingActionButton> withFocusColor(IconData? value) {
-    return withProp<IconData?>('focusColor', (it) => it.equals(value));
+  WidgetSelector<FloatingActionButton> withFocusColor(Color value) {
+    return withProp<Color>('focusColor', (it) => it.equals(value));
   }
 
-  WidgetSelector<FloatingActionButton> withHoverColorMatching(MatchProp<IconData?> match) {
-    return withProp<IconData?>('hoverColor', match);
+  WidgetSelector<FloatingActionButton> withHoverColorMatching(MatchProp<Color> match) {
+    return withProp<Color>('hoverColor', match);
   }
   
-  WidgetSelector<FloatingActionButton> withHoverColor(IconData? value) {
-    return withProp<IconData?>('hoverColor', (it) => it.equals(value));
+  WidgetSelector<FloatingActionButton> withHoverColor(Color value) {
+    return withProp<Color>('hoverColor', (it) => it.equals(value));
   }
 
-  WidgetSelector<FloatingActionButton> withSplashColorMatching(MatchProp<IconData?> match) {
-    return withProp<IconData?>('splashColor', match);
+  WidgetSelector<FloatingActionButton> withSplashColorMatching(MatchProp<Color> match) {
+    return withProp<Color>('splashColor', match);
   }
   
-  WidgetSelector<FloatingActionButton> withSplashColor(IconData? value) {
-    return withProp<IconData?>('splashColor', (it) => it.equals(value));
+  WidgetSelector<FloatingActionButton> withSplashColor(Color value) {
+    return withProp<Color>('splashColor', (it) => it.equals(value));
   }
 
   WidgetSelector<FloatingActionButton> withHeroTagMatching(MatchProp<Object> match) {
@@ -196,44 +196,44 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
     return withProp<Object>('heroTag', (it) => it.equals(value));
   }
 
-  WidgetSelector<FloatingActionButton> withElevationMatching(MatchProp<double?> match) {
-    return withProp<double?>('elevation', match);
+  WidgetSelector<FloatingActionButton> withElevationMatching(MatchProp<double> match) {
+    return withProp<double>('elevation', match);
   }
   
-  WidgetSelector<FloatingActionButton> withElevation(double? value) {
-    return withProp<double?>('elevation', (it) => it.equals(value));
+  WidgetSelector<FloatingActionButton> withElevation(double value) {
+    return withProp<double>('elevation', (it) => it.equals(value));
   }
 
-  WidgetSelector<FloatingActionButton> withFocusElevationMatching(MatchProp<double?> match) {
-    return withProp<double?>('focusElevation', match);
+  WidgetSelector<FloatingActionButton> withFocusElevationMatching(MatchProp<double> match) {
+    return withProp<double>('focusElevation', match);
   }
   
-  WidgetSelector<FloatingActionButton> withFocusElevation(double? value) {
-    return withProp<double?>('focusElevation', (it) => it.equals(value));
+  WidgetSelector<FloatingActionButton> withFocusElevation(double value) {
+    return withProp<double>('focusElevation', (it) => it.equals(value));
   }
 
-  WidgetSelector<FloatingActionButton> withHoverElevationMatching(MatchProp<double?> match) {
-    return withProp<double?>('hoverElevation', match);
+  WidgetSelector<FloatingActionButton> withHoverElevationMatching(MatchProp<double> match) {
+    return withProp<double>('hoverElevation', match);
   }
   
-  WidgetSelector<FloatingActionButton> withHoverElevation(double? value) {
-    return withProp<double?>('hoverElevation', (it) => it.equals(value));
+  WidgetSelector<FloatingActionButton> withHoverElevation(double value) {
+    return withProp<double>('hoverElevation', (it) => it.equals(value));
   }
 
-  WidgetSelector<FloatingActionButton> withHighlightElevationMatching(MatchProp<double?> match) {
-    return withProp<double?>('highlightElevation', match);
+  WidgetSelector<FloatingActionButton> withHighlightElevationMatching(MatchProp<double> match) {
+    return withProp<double>('highlightElevation', match);
   }
   
-  WidgetSelector<FloatingActionButton> withHighlightElevation(double? value) {
-    return withProp<double?>('highlightElevation', (it) => it.equals(value));
+  WidgetSelector<FloatingActionButton> withHighlightElevation(double value) {
+    return withProp<double>('highlightElevation', (it) => it.equals(value));
   }
 
-  WidgetSelector<FloatingActionButton> withDisabledElevationMatching(MatchProp<double?> match) {
-    return withProp<double?>('disabledElevation', match);
+  WidgetSelector<FloatingActionButton> withDisabledElevationMatching(MatchProp<double> match) {
+    return withProp<double>('disabledElevation', match);
   }
   
-  WidgetSelector<FloatingActionButton> withDisabledElevation(double? value) {
-    return withProp<double?>('disabledElevation', (it) => it.equals(value));
+  WidgetSelector<FloatingActionButton> withDisabledElevation(double value) {
+    return withProp<double>('disabledElevation', (it) => it.equals(value));
   }
 
   WidgetSelector<FloatingActionButton> withShapeMatching(MatchProp<ShapeBorder> match) {
@@ -252,12 +252,12 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
     return withProp<FocusNode>('focusNode', (it) => it.equals(value));
   }
 
-  WidgetSelector<FloatingActionButton> withIsExtendedMatching(MatchProp<bool?> match) {
-    return withProp<bool?>('isExtended', match);
+  WidgetSelector<FloatingActionButton> withIsExtendedMatching(MatchProp<bool> match) {
+    return withProp<bool>('isExtended', match);
   }
   
-  WidgetSelector<FloatingActionButton> withIsExtended(bool? value) {
-    return withProp<bool?>('isExtended', (it) => it.equals(value));
+  WidgetSelector<FloatingActionButton> withIsExtended(bool value) {
+    return withProp<bool>('isExtended', (it) => it.equals(value));
   }
 
   WidgetSelector<FloatingActionButton> withMaterialTapTargetSizeMatching(MatchProp<MaterialTapTargetSize> match) {

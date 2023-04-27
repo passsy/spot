@@ -2,6 +2,7 @@ import 'package:dartx/dartx.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
+import 'package:spot/src/tree_snapshot.dart';
 
 extension FinderToSpot on Finder {
   MultiWidgetSelector<W> spot<W extends Widget>() {
@@ -37,7 +38,7 @@ class _FinderFilter extends ElementFilter {
   _FinderFilter(this.finder);
 
   @override
-  Iterable<SpotNode<Widget>> filter(Iterable<SpotNode<Widget>> candidates) {
+  Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
     return candidates.filter((it) => finder.apply([it.element]).isNotEmpty);
   }
 }

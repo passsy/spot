@@ -7,7 +7,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/checks/context.dart';
+import 'package:spot/src/checks/src/checks.dart';
 import 'package:spot/src/snapshot.dart' as snapshot_file show snapshot;
+import 'package:spot/src/tree_snapshot.dart';
 
 class Spot with Spotters<Widget> {
   const Spot();
@@ -240,7 +242,7 @@ class FirstElement extends ElementFilter {
   FirstElement();
 
   @override
-  Iterable<SpotNode<Widget>> filter(Iterable<SpotNode<Widget>> candidates) {
+  Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
     final first = candidates.firstOrNull;
     if (first == null) {
       return [];
@@ -276,7 +278,7 @@ class LastElement extends ElementFilter {
   LastElement();
 
   @override
-  Iterable<SpotNode<Widget>> filter(Iterable<SpotNode<Widget>> candidates) {
+  Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
     final last = candidates.lastOrNull;
     if (last == null) {
       return [];
@@ -367,8 +369,21 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
     match(subject);
     final failure = softCheck(actual, conditionSubject);
     if (failure != null) {
-      final errorMessage =
-          describe(conditionSubject).map((it) => it.trim()).toList().join(' ');
+      final errorParts =
+          describe(conditionSubject).map((it) => it.trim()).toList();
+      // workaround allowing to use
+      // hasPropertyXWhere((subject)=> subject.equals(X));
+      // instead of
+      // hasPropertyXWhere((subject)=> subject.isNotNull().equals(X));
+      //
+      // when Subject is Subject<T> but the value can actually be null (should be Subject<T?>).
+      final errorMessage = errorParts.join(' ');
+      if (errorParts.last == 'is null' &&
+          failure.rejection.actual.firstOrNull == '<null>') {
+        // property is null and isNull() was called
+        // not error because null == null
+        return this;
+      }
       throw TestFailure(
         'Failed to match widget: $errorMessage, actual: ${literal(actual).joinToString()}',
       );
@@ -402,7 +417,7 @@ class SingleWidgetSelector<W extends Widget> extends WidgetSelector<W> {
     super.children,
   }) : super(expectedQuantity: ExpectedQuantity.single);
 
-  SingleSpotSnapshot<W> snapshot() {
+  SingleWidgetSnapshot<W> snapshot() {
     return snapshot_file.snapshot(this).single;
   }
 }
@@ -415,30 +430,30 @@ class MultiWidgetSelector<W extends Widget> extends WidgetSelector<W> {
     super.children,
   }) : super(expectedQuantity: ExpectedQuantity.multi);
 
-  SpotSnapshot<W> snapshot() {
+  MultiWidgetSnapshot<W> snapshot() {
     return snapshot_file.snapshot(this);
   }
 }
 
 abstract class ElementFilter {
   /// Filters all candidates, retuning only a subset that matches
-  Iterable<SpotNode<Widget>> filter(Iterable<SpotNode<Widget>> candidates);
+  Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates);
 
   // TODO add description
 }
 
 abstract class CandidateGenerator<W extends Widget> {
-  Iterable<SpotNode<W>> generateCandidates();
+  Iterable<WidgetTreeNode<W>> generateCandidates();
 }
 
 class WidgetTypeFilter<W extends Widget> implements ElementFilter {
   WidgetTypeFilter();
 
   @override
-  Iterable<SpotNode<Widget>> filter(Iterable<SpotNode<Widget>> candidates) {
+  Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
     final type = _typeOf<W>();
     return candidates
-        .where((node) => node.element.widget.runtimeType == type)
+        .where((WidgetTreeNode node) => node.element.widget.runtimeType == type)
         .map((node) => node.cast<W>())
         .toList();
   }
@@ -454,7 +469,7 @@ class PropFilter implements ElementFilter {
   PropFilter(this.props);
 
   @override
-  Iterable<SpotNode<Widget>> filter(Iterable<SpotNode<Widget>> candidates) {
+  Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
     return candidates
         .where((node) => props.all((prop) => prop.predicate(node.element)))
         .toList();
@@ -475,12 +490,15 @@ class ChildFilter implements ElementFilter {
   ChildFilter(this.children);
 
   @override
-  Iterable<SpotNode<Widget>> filter(Iterable<SpotNode<Widget>> candidates) {
-    final List<SpotNode<Widget>> matchingChildNodes = [];
+  Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
+    final tree = snapshotWidgetTree();
+    final List<WidgetTreeNode> matchingChildNodes = [];
     // Then check for every queryMatch if the children and props match
-    for (final SpotNode<Widget> candidate in candidates) {
+    for (final WidgetTreeNode candidate in candidates) {
+      // TODO it must check all child selectors before adding to the list
       for (final WidgetSelector<Widget> childSelector in children) {
-        final snapshot = takeScopedSnapshot(childSelector, candidate);
+        final MultiWidgetSnapshot snapshot =
+            findWithinScope(tree.scope(candidate), childSelector);
         if (snapshot.discovered.isNotEmpty) {
           matchingChildNodes.add(candidate);
         }
@@ -496,73 +514,6 @@ class ChildFilter implements ElementFilter {
         : null;
 
     return 'PropFilter of $children';
-  }
-}
-
-class CandidateGeneratorFromParents<W extends Widget>
-    implements CandidateGenerator<W> {
-  final WidgetSelector<W> selector;
-
-  CandidateGeneratorFromParents(this.selector);
-
-  @override
-  Iterable<SpotNode<W>> generateCandidates() {
-    final Iterable<SpotSnapshot<Widget>> parentSnapshots =
-        selector.parents.map((selector) => selector.snapshot());
-
-    final selectorWithoutParents = selector.copyWith(parents: []);
-
-    // Take a snapshot from parentSnapshots that exist in all snapshots
-    final List<List<SpotSnapshot<W>>> discoveryByParent =
-        parentSnapshots.map((SpotSnapshot<Widget> parentSnapshot) {
-      if (parentSnapshot.discovered.isEmpty) {
-        return <SpotSnapshot<W>>[];
-      }
-
-      final Map<SpotNode<Widget>, SpotSnapshot<W>> groups =
-          parentSnapshot.discovered.associateWith((parent) {
-        return takeScopedSnapshot(selectorWithoutParents, parent);
-      });
-
-      return groups.values.toList();
-    }).toList();
-
-    final List<SpotNode<W>> allDiscoveredNodes = discoveryByParent
-        .flatten()
-        .map((it) => it.discovered)
-        .flatten()
-        .toList();
-    final distinctElements =
-        allDiscoveredNodes.map((e) => e.element).toSet().toList();
-
-    // find nodes that exist in all parents
-    final elementsInAllParents = distinctElements.where((element) {
-      return discoveryByParent.all((discovered) {
-        return discovered.any((snapshot) {
-          return snapshot.discovered.map((e) => e.element).contains(element);
-        });
-      });
-    }).toList();
-
-    final parentNodes =
-        parentSnapshots.map((e) => e.discovered).flatten().toList();
-    final candidates = discoveryByParent
-        .flatten()
-        .map((e) => e.debugCandidates)
-        .flatten()
-        .toSet()
-        .toList();
-
-    final discovered = elementsInAllParents.map((element) {
-      return SpotNode(
-        selector: selector,
-        element: element,
-        parents: parentNodes,
-        debugCandidates: candidates,
-      );
-    }).toList();
-
-    return discovered;
   }
 }
 
@@ -727,52 +678,21 @@ class WidgetSelector<W extends Widget> with Spotters<W> {
   }
 }
 
-/// An [Element] in the widget tree that was found with a [WidgetSelector] query
-class SpotNode<W extends Widget> {
-  /// The parent nodes from where the node has been found
-  final List<SpotNode> parents;
-
-  /// The selector that has been used to find [element]
-  final WidgetSelector<W> selector;
-
-  /// The element that has been found
-  final Element element;
-
-  /// All candidates that have been checked with [selector]
-  final List<Element> debugCandidates;
-
-  const SpotNode({
-    required this.selector,
-    required this.element,
-    required this.debugCandidates,
-    this.parents = const [],
-  });
-
-  SpotNode<T> cast<T extends Widget>() {
-    return SpotNode<T>(
-      selector: selector as WidgetSelector<T>,
-      element: element,
-      debugCandidates: debugCandidates,
-    );
-  }
-
-  @override
-  String toString() {
-    // ignore: no_runtimetype_tostring
-    return '$runtimeType{value: ${element.widget.toStringShallow()}, parents: ${parents.map((it) => it.element.toStringShort()).join(', ')}}';
-  }
-}
-
 /// A collection of [discovered] elements that match [selector]
-class SpotSnapshot<W extends Widget> {
+class MultiWidgetSnapshot<W extends Widget> {
   final WidgetSelector<W> selector;
+
+  final ScopedWidgetTreeSnapshot scope;
 
   /// All widgets that were checked by [selector]
   ///
   /// Only ever use this for debugging purposes, the number of candidates can vary
   final List<Element> debugCandidates;
 
-  final List<SpotNode<W>> discovered;
+  final List<WidgetTreeNode<W>> discovered;
+
+  /// The parent nodes from where the node has been found
+  // final List<MultiWidgetSnapshot> parents;
 
   List<W> get discoveredWidgets =>
       discovered.map((e) => e.element.widget as W).toList();
@@ -780,10 +700,11 @@ class SpotSnapshot<W extends Widget> {
   List<Element> get discoveredElements =>
       discovered.map((e) => e.element).toList();
 
-  SpotSnapshot({
+  MultiWidgetSnapshot({
     required this.selector,
     required this.discovered,
     required this.debugCandidates,
+    required this.scope,
   });
 
   @override
@@ -791,7 +712,7 @@ class SpotSnapshot<W extends Widget> {
     return 'SpotSnapshot of $selector (${discoveredElements.length} matches)}';
   }
 
-  SingleSpotSnapshot<W> get single {
+  SingleWidgetSnapshot<W> get single {
     if (discovered.length > 1) {
       final errorBuilder = StringBuffer();
       errorBuilder.writeln(
@@ -813,7 +734,7 @@ class SpotSnapshot<W extends Widget> {
     }
 
     assert(discovered.length <= 1);
-    return SingleSpotSnapshot(
+    return SingleWidgetSnapshot(
       selector: selector,
       discovered: discovered.firstOrNull,
       debugCandidates: debugCandidates,
@@ -822,8 +743,8 @@ class SpotSnapshot<W extends Widget> {
 }
 
 /// A snapshot of a single [discovered] element that matches [selector]
-class SingleSpotSnapshot<W extends Widget> implements WidgetMatcher<W> {
-  SingleSpotSnapshot({
+class SingleWidgetSnapshot<W extends Widget> implements WidgetMatcher<W> {
+  SingleWidgetSnapshot({
     required this.selector,
     required this.discovered,
     required this.debugCandidates,
@@ -837,7 +758,7 @@ class SingleSpotSnapshot<W extends Widget> implements WidgetMatcher<W> {
   /// Only ever use this for debugging purposes, the number of candidates can vary
   final List<Element> debugCandidates;
 
-  final SpotNode<W>? discovered;
+  final WidgetTreeNode<W>? discovered;
 
   @override
   String toString() {
@@ -866,11 +787,11 @@ extension SnapshotSelector<W extends Widget> on WidgetSelector<W> {
     );
   }
 
-  SpotSnapshot<W> snapshot() {
+  MultiWidgetSnapshot<W> snapshot() {
     return snapshot_file.snapshot(this);
   }
 
-  SpotSnapshot<W> existsAtLeastOnce() {
+  MultiWidgetSnapshot<W> existsAtLeastOnce() {
     return snapshot().existsAtLeastOnce();
   }
 
@@ -878,15 +799,15 @@ extension SnapshotSelector<W extends Widget> on WidgetSelector<W> {
     snapshot().doesNotExist();
   }
 
-  SingleSpotSnapshot<W> existsOnce() {
+  SingleWidgetSnapshot<W> existsOnce() {
     return snapshot().existsOnce();
   }
 
-  SpotSnapshot<W> existsExactlyNTimes(int n) {
+  MultiWidgetSnapshot<W> existsExactlyNTimes(int n) {
     return snapshot().existsExactlyNTimes(n);
   }
 
-  SpotSnapshot<W> existsAtLeastNTimes(int n) {
+  MultiWidgetSnapshot<W> existsAtLeastNTimes(int n) {
     return snapshot().existsAtLeastNTimes(n);
   }
 }
@@ -900,14 +821,14 @@ extension SingleSnapshotSelector<W extends Widget> on SingleWidgetSelector<W> {
     );
   }
 
-  SingleSpotSnapshot<W> snapshot() {
+  SingleWidgetSnapshot<W> snapshot() {
     return snapshot_file.snapshot(this).single;
   }
 }
 
-extension AssertionMatcher<W extends Widget> on SpotSnapshot<W> {
-  SingleSpotSnapshot<W> single() {
-    return SingleSpotSnapshot(
+extension AssertionMatcher<W extends Widget> on MultiWidgetSnapshot<W> {
+  SingleWidgetSnapshot<W> single() {
+    return SingleWidgetSnapshot(
       selector: selector,
       discovered: discovered.firstOrNull,
       debugCandidates: debugCandidates,
@@ -915,15 +836,15 @@ extension AssertionMatcher<W extends Widget> on SpotSnapshot<W> {
   }
 }
 
-extension MutliMatchers<W extends Widget> on SpotSnapshot<W> {
-  SpotSnapshot<W> any(void Function(WidgetMatcher<W>) matcher) {
+extension MutliMatchers<W extends Widget> on MultiWidgetSnapshot<W> {
+  MultiWidgetSnapshot<W> any(void Function(WidgetMatcher<W>) matcher) {
     if (discovered.isEmpty) {
       throw Exception('Expected at least one match for $this, but found none');
     }
     final found = discovered.any((element) {
       final wm = WidgetMatcher(
         element: element.element,
-        selector: element.selector,
+        selector: selector,
       );
       try {
         matcher(wm);
@@ -939,14 +860,14 @@ extension MutliMatchers<W extends Widget> on SpotSnapshot<W> {
     throw TestFailure('Expected at least one match for $this, but found none.');
   }
 
-  SpotSnapshot<W> all(void Function(WidgetMatcher<W>) matcher) {
+  MultiWidgetSnapshot<W> all(void Function(WidgetMatcher<W>) matcher) {
     if (discovered.isEmpty) {
       throw Exception('Expected at least one match for $this, but found none');
     }
     final missMatches = discovered.whereNot((element) {
       final wm = WidgetMatcher(
         element: element.element,
-        selector: element.selector,
+        selector: selector,
       );
       try {
         matcher(wm);
@@ -1131,25 +1052,25 @@ extension ReadType on DiagnosticsNode {
     }
 
     if (this is FlagProperty) {
-      return 'bool?';
+      return 'bool';
     }
 
     if (this is DoubleProperty) {
-      return 'double?';
+      return 'double';
     }
 
     if (this is IntProperty) {
-      return 'int?';
+      return 'int';
     }
     if (this is IconDataProperty) {
-      return 'IconData?';
+      return 'IconData';
     }
     if (this is ColorProperty) {
-      return 'IconData?';
+      return 'Color';
     }
 
     if (this is AttributedStringProperty) {
-      return 'String?';
+      return 'String';
     }
 
     if (this is EnumProperty) {
