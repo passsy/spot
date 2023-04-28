@@ -939,7 +939,8 @@ extension MutliMatchers<W extends Widget> on MultiWidgetSnapshot<W> {
       return this;
     }
     throw TestFailure(
-        "Expected that at least one candidate fulfills matcher '$matcherDescription', but none did.");
+      "Expected that at least one candidate fulfills matcher '$matcherDescription', but none did.",
+    );
   }
 
   MultiWidgetSnapshot<W> all(void Function(WidgetMatcher<W>) matcher) {

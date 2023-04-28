@@ -16,5 +16,8 @@ linter:
     # Util classes are awesome!
     avoid_classes_with_only_static_members: false
 
+    # Add once we can depend on checks from pub
+    sort_pub_dependencies: false
+
     # Documentation is key
     #public_member_api_docs: true

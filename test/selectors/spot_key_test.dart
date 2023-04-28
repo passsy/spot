@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -88,7 +88,7 @@ void main() {
       const key2 = ValueKey(2);
 
       await tester.pumpWidget(
-        const MaterialApp(
+        MaterialApp(
           home: Column(
             children: [
               Row(
@@ -118,7 +118,7 @@ void main() {
         const key2 = ValueKey(2);
 
         await tester.pumpWidget(
-          const MaterialApp(
+          MaterialApp(
             home: Column(
               children: [
                 Row(
