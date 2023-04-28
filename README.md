@@ -1,21 +1,36 @@
-## Spot
+# Spot
+
+[![pub](https://img.shields.io/pub/v/spot?include_prereleases)](https://pub.dev/packages/spot)
 
 <img src="https://user-images.githubusercontent.com/1096485/188243198-7abfc785-8ecd-40cb-bb28-5561610432a4.png" height="100px">
 
-Chainable finders and better assertions for Flutter widget tests
+Fluent, chainable Widget finders and better assertions for Flutter widget tests
+
+⛓️ Chainable widget selectors
+💙 Prints helpful error messages
 
 ## Usage
 
 ```dart
-// Spotters
-final homePage = spot.byType(MaterialApp).childByType(Scaffold);
-final appBar = homePage.childByType(AppBar);
+// Create widget selectors for elements in the widget tree
+final scaffold = spot<MaterialApp>().spot<Scaffold>();
+final appBar = scaffold.spot<AppBar>();
 
-// Assertions
-appBar.childByIcon(
-  Icons.settings,
-  parents: [spot.byType(IconButton)],
-).existsOnce();
+// Assert for values of widgets
+appBar.spot<Text>().existsOnce().hasText('Pepe');
+
+// Find widgets based on child widgets
+appBar
+    .spot<IconButton>(children: [spotSingleIcon(Icons.home)])
+    .existsOnce()
+    .hasTooltip('home');
+
+// Find widgets based on parent widgets
+spot<Icon>(parents: [appBar, spot<IconButton>()])
+    .existsExactlyNTimes(2)
+    .all((icon) {
+icon.hasColorWhere((color) => color.equals(Colors.black));
+});
 ```
 
 ### Better errors
@@ -31,9 +46,15 @@ expect(find.byIcon(Icons.settings), findsOneWidget);
 ```
 
 The error message above is not really helpful, because the actual error is not that there's no icon, but the `Icons.home` instead of `Icons.settings`. 
-Spot prints a big but helpful error message, containing the icon that is shown instead (`IconData(U+0E318)`).
+
+spot prints the entire widget tree and shows that there is an `Icon`, but the wrong one (`IconData(U+0E318)`). 
+That's much more helpful!
+
+In the future, spot will only print the widget tree from the last node found node (`spot<AppBar>`).
 
 ```
+spot<AppBar>().spotSingleIcon(Icons.settings).existsOnce();
+
 Could not find 'icon "IconData(U+0E57F)"' as child of #2 type "IconButton"
 There are 1 possible parents for 'icon "IconData(U+0E57F)"' matching #2 type "IconButton". But non matched. The widget trees starting at #2 type "IconButton" are:
 Possible parent 0:
@@ -70,14 +91,29 @@ Could not find 'icon "IconData(U+0E57F)"' as child of [type "MaterialApp" > 'typ
 'type "AppBar"' && type "IconButton"]
 ```
 
-## Goals
+## Roadmap
 
-- Make chainable widget finders that are able to produce better error messages when their assertions fail
-- `find.ancestor()` and `find.descendant()` are slow, `spot` aims to be faster by walking a subset of the widget tree
+- [x] Make chainable `WidgetSelector`s
+- [x] Print full widget tree when assertions fail
+- [x] Allow defining `WidgetSelector` with children
+- [x] Allow defining `WidgetSelector` with parents
+- [x] Interop with `Finder` API
+- [x] Match properties of widgets (via `DiagnosticsNode`)
+- [x] Allow matching of nested properties (with checks API)
+- [x] Generate code for custom properties for Flutter widgets
+- [x] Allow generating code for properties of 3rd party widgets
+- [ ] Print only widget tree of the parent scope when test fails
+- [ ] Create screenshot when test fails
+- [ ] Create interactive HTML page with all widgets and matchers when test fails
 
 ## Project state
 
-The API is experimental and subject to change.
+The public `spot<X>()` API at this point is well-thought-out and stable.
+You can absolutely use it today in your tests.
+
+If you build on top of the `WidgetSelector` API, you might see some class renaming. But those should be trivial to and are not used by most people.
+
+The error messages will see some major improvements in the future but the current ones are already more helpful than the ones from the `finder` API.
 
 ## License
 

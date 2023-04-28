@@ -1,6 +1,6 @@
 name: spot
 description: Chainable finders and better assertions for powerful widget tests.
-version: 0.1.0-preview.2
+version: 0.2.0
 repository: https://github.com/passsy/spot
 issue_tracker: https://github.com/passsy/spot/issues
 
@@ -9,6 +9,7 @@ environment:
 
 dependencies:
   collection: ^1.16.0
+  dartx: ^1.1.0
   flutter:
     sdk: flutter
   flutter_test:
@@ -16,4 +17,4 @@ dependencies:
   test: ^1.20.0
 
 dev_dependencies:
-  lint: ^1.0.0
+  lint: '>=1.0.0 <3.0.0'
