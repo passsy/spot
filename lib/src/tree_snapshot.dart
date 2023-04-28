@@ -4,6 +4,7 @@ import 'package:spot/spot.dart';
 
 /// Creates a snapshot of the currently pumped widget via [WidgetTester.pumpWidget].
 WidgetTreeSnapshot snapshotWidgetTree() {
+  // ignore: deprecated_member_use
   final rootElement = WidgetsBinding.instance.renderViewElement!;
 
   WidgetTreeNode build(Element element, {WidgetTreeNode? parent}) {
@@ -29,7 +30,7 @@ WidgetTreeSnapshot snapshotWidgetTree() {
 
 /// A node in [WidgetTreeSnapshot] holding a single [element] and knows about
 /// parent and children.
-class WidgetTreeNode<W extends Widget> {
+class WidgetTreeNode {
   /// The actual element in the element tree holding the widget of type [W]
   final Element element;
 
@@ -51,15 +52,6 @@ class WidgetTreeNode<W extends Widget> {
   @override
   String toString() {
     return 'snapshot: ${element.widget.toStringShallow()}';
-  }
-
-  // TODO remove? We should not change the nodes or we can't find it via tree again
-  @Deprecated('does it work without type?')
-  WidgetTreeNode<T> cast<T extends Widget>() {
-    return WidgetTreeNode<T>(
-      element: element,
-      parent: parent,
-    ).._children = children;
   }
 }
 

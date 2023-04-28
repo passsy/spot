@@ -26,18 +26,16 @@ MultiWidgetSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
     return snapshot;
   }
 
-  final List<WidgetTreeNode<W>> candidates =
+  final List<WidgetTreeNode> candidates =
       selector.createCandidateGenerator().generateCandidates().toList();
   final distinctCandidateElements =
       candidates.map((e) => e.element).toSet().toList();
 
   final filters = selector.createElementFilters();
-  final discovered = filters
-      .fold<Iterable<WidgetTreeNode<Widget>>>(candidates, (list, filter) {
-        return filter.filter(list);
-      })
-      .map((node) => node.cast<W>())
-      .toList();
+  final discovered =
+      filters.fold<Iterable<WidgetTreeNode>>(candidates, (list, filter) {
+    return filter.filter(list);
+  }).toList();
 
   if (selector.expectedQuantity == ExpectedQuantity.single) {
     if (discovered.length > 1) {
@@ -66,7 +64,7 @@ class CandidateGeneratorFromParents<W extends Widget>
   CandidateGeneratorFromParents(this.selector);
 
   @override
-  Iterable<WidgetTreeNode<W>> generateCandidates() {
+  Iterable<WidgetTreeNode> generateCandidates() {
     final tree = snapshotWidgetTree();
     final List<MultiWidgetSnapshot<Widget>> parentSnapshots =
         selector.parents.map((selector) {
@@ -90,16 +88,15 @@ class CandidateGeneratorFromParents<W extends Widget>
     final selectorWithoutParents = selector.copyWith(parents: []);
 
     // Take a snapshot from each parent and get the snapshots of all nodes that match
-    final List<Map<WidgetTreeNode<Widget>, List<MultiWidgetSnapshot<W>>>>
+    final List<Map<WidgetTreeNode, List<MultiWidgetSnapshot<W>>>>
         discoveryByParent =
         parentSnapshots.map((MultiWidgetSnapshot<Widget> parentSnapshot) {
-      final Map<WidgetTreeNode<Widget>, List<MultiWidgetSnapshot<W>>> groups =
-          {};
+      final Map<WidgetTreeNode, List<MultiWidgetSnapshot<W>>> groups = {};
       if (parentSnapshot.discovered.isEmpty) {
         return groups;
       }
 
-      for (final WidgetTreeNode<Widget> node in parentSnapshot.discovered) {
+      for (final WidgetTreeNode node in parentSnapshot.discovered) {
         final MultiWidgetSnapshot<W> group =
             findWithinScope(tree.scope(node), selectorWithoutParents);
         final list = groups[node];
@@ -116,7 +113,7 @@ class CandidateGeneratorFromParents<W extends Widget>
     final List<MultiWidgetSnapshot<W>> discoveredSnapshots =
         discoveryByParent.map((it) => it.values).flatten().flatten().toList();
 
-    final List<WidgetTreeNode<W>> allDiscoveredNodes =
+    final List<WidgetTreeNode> allDiscoveredNodes =
         discoveredSnapshots.map((it) => it.discovered).flatten().toList();
 
     final List<Element> distinctElements =
@@ -126,7 +123,7 @@ class CandidateGeneratorFromParents<W extends Widget>
     final List<Element> elementsInAllParents =
         distinctElements.where((element) {
       return discoveryByParent.all((
-        Map<WidgetTreeNode<Widget>, List<MultiWidgetSnapshot<W>>> discovered,
+        Map<WidgetTreeNode, List<MultiWidgetSnapshot<W>>> discovered,
       ) {
         return discovered.values.any((List<MultiWidgetSnapshot<W>> list) {
           return list.any((node) {
@@ -136,9 +133,9 @@ class CandidateGeneratorFromParents<W extends Widget>
       });
     }).toList();
 
-    final List<WidgetTreeNode<Widget>> allNodes = tree.allNodes;
+    final List<WidgetTreeNode> allNodes = tree.allNodes;
     return elementsInAllParents
-        .map((e) => allNodes.firstWhere((node) => node.element == e).cast<W>())
+        .map((e) => allNodes.firstWhere((node) => node.element == e))
         .toList();
   }
 }
@@ -155,13 +152,11 @@ MultiWidgetSnapshot<W> findWithinScope<W extends Widget>(
   final candidates = scope.allNodes;
   final List<ElementFilter> filters = selector.createElementFilters();
 
-  final List<WidgetTreeNode<W>> discovered = filters
+  final List<WidgetTreeNode> discovered = filters
       .fold<Iterable<WidgetTreeNode>>(candidates, (list, ElementFilter filter) {
-        final Iterable<WidgetTreeNode> result = filter.filter(list);
-        return result;
-      })
-      .map((node) => node.cast<W>())
-      .toList();
+    final Iterable<WidgetTreeNode> result = filter.filter(list);
+    return result;
+  }).toList();
 
   return MultiWidgetSnapshot<W>(
     selector: selector,

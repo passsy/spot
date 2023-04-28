@@ -260,7 +260,7 @@ void main() {
             .withTextMatching((text) => text.startsWith('a'))
             .existsExactlyNTimes(3),
         throwsSpotErrorContaining([
-          "Found 4 elements matching 'Text with prop \"data\" that: starts with 'a'' in widget tree, expected at most 3",
+          "Found 4 elements matching 'Text with prop \"data\" starts with 'a'' in widget tree, expected at most 3",
           'Text("aa")',
           'Text("ab")',
           'Text("ac")',

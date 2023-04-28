@@ -455,7 +455,7 @@ abstract class ElementFilter {
 }
 
 abstract class CandidateGenerator<W extends Widget> {
-  Iterable<WidgetTreeNode<W>> generateCandidates();
+  Iterable<WidgetTreeNode> generateCandidates();
 }
 
 class WidgetTypeFilter<W extends Widget> implements ElementFilter {
@@ -466,7 +466,6 @@ class WidgetTypeFilter<W extends Widget> implements ElementFilter {
     final type = _typeOf<W>();
     return candidates
         .where((WidgetTreeNode node) => node.element.widget.runtimeType == type)
-        .map((node) => node.cast<W>())
         .toList();
   }
 
@@ -733,7 +732,7 @@ class MultiWidgetSnapshot<W extends Widget> {
   /// Only ever use this for debugging purposes, the number of candidates can vary
   final List<Element> debugCandidates;
 
-  final List<WidgetTreeNode<W>> discovered;
+  final List<WidgetTreeNode> discovered;
 
   /// The parent nodes from where the node has been found
   // final List<MultiWidgetSnapshot> parents;
@@ -802,7 +801,7 @@ class SingleWidgetSnapshot<W extends Widget> implements WidgetMatcher<W> {
   /// Only ever use this for debugging purposes, the number of candidates can vary
   final List<Element> debugCandidates;
 
-  final WidgetTreeNode<W>? discovered;
+  final WidgetTreeNode? discovered;
 
   @override
   String toString() {
