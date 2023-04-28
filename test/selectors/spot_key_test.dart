@@ -144,7 +144,6 @@ void main() {
             'Text-[<1>]("a"',
             'Text-[<1>]("x"',
           ]),
-          skip: 'fix _findCommonAncestor()',
         );
       },
     );

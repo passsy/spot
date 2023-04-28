@@ -387,10 +387,25 @@ List<List<T>> getAllSubsets<T>(List<T> list) {
   return result.sortedByDescending((element) => element.length).toList();
 }
 
-Element _findCommonAncestor(Iterable<Element> elements) =>
-    IterableSortedBy(elements)
-        .sortedBy((element) => element.depth)
-        .first
-        .parent ??
-// ignore: deprecated_member_use
-    WidgetsBinding.instance.renderViewElement!;
+Element _findCommonAncestor(Iterable<Element> elements) {
+  // ignore: deprecated_member_use
+  final rootElement = WidgetsBinding.instance.renderViewElement!;
+  if (elements.isEmpty) {
+    return rootElement;
+  } else if (elements.length == 1) {
+    return elements.first.parent ?? rootElement;
+  }
+
+  // get element with smallest depth to reach common ancestor faster
+  final highestElement =
+      IterableSortedBy(elements).sortedBy((element) => element.depth).first;
+  // save all other parents
+  final allOtherParents =
+      elements.exceptElement(highestElement).map((e) => e.parents);
+
+  final commonAncestor = highestElement.parents.firstWhereOrNull(
+    (parent) => allOtherParents.every((parents) => parents.contains(parent)),
+  );
+
+  return commonAncestor ?? rootElement;
+}
