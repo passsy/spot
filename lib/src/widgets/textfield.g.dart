@@ -32,16 +32,6 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
     return hasProp<FocusNode>('focusNode', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that undoController of [TextField] matches the condition in [match]    
-  WidgetMatcher<TextField> hasUndoControllerWhere(MatchProp<UndoHistoryController> match) {
-    return hasProp<UndoHistoryController>('undoController', match);
-  }
-  
-  /// Expects that undoController of [TextField] equals (==) [value]
-  WidgetMatcher<TextField> hasUndoController(UndoHistoryController? value) {
-    return hasProp<UndoHistoryController>('undoController', (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
   /// Expects that enabled of [TextField] matches the condition in [match]    
   WidgetMatcher<TextField> isEnabledWhere(MatchProp<bool> match) {
     return hasProp<bool>('enabled', match);
@@ -282,16 +272,6 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
     return hasProp<Radius>('cursorRadius', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that cursorOpacityAnimates of [TextField] matches the condition in [match]    
-  WidgetMatcher<TextField> hasCursorOpacityAnimatesWhere(MatchProp<bool> match) {
-    return hasProp<bool>('cursorOpacityAnimates', match);
-  }
-  
-  /// Expects that cursorOpacityAnimates of [TextField] equals (==) [value]
-  WidgetMatcher<TextField> hasCursorOpacityAnimates(bool? value) {
-    return hasProp<bool>('cursorOpacityAnimates', (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
   /// Expects that cursorColor of [TextField] matches the condition in [match]    
   WidgetMatcher<TextField> hasCursorColorWhere(MatchProp<Color> match) {
     return hasProp<Color>('cursorColor', match);
@@ -402,16 +382,6 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
     return hasProp<SpellCheckConfiguration>('spellCheckConfiguration', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that contentCommitMimeTypes of [TextField] matches the condition in [match]    
-  WidgetMatcher<TextField> hasContentCommitMimeTypesWhere(MatchProp<List<String>> match) {
-    return hasProp<List<String>>('contentCommitMimeTypes', match);
-  }
-  
-  /// Expects that contentCommitMimeTypes of [TextField] equals (==) [value]
-  WidgetMatcher<TextField> hasContentCommitMimeTypes(List<String>? value) {
-    return hasProp<List<String>>('contentCommitMimeTypes', (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
 }
 
 /// Allows filtering [TextField] by the properties provided via [Diagnosticable.debugFillProperties]
@@ -435,16 +405,6 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where focusNode equals (==) [value]
   WidgetSelector<TextField> withFocusNode(FocusNode? value) {
     return withProp<FocusNode>('focusNode', (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
-  /// Creates a [WidgetSelector] that finds all [TextField] where undoController matches the condition   
-  WidgetSelector<TextField> whereUndoController(MatchProp<UndoHistoryController> match) {
-    return withProp<UndoHistoryController>('undoController', match);
-  }
-  
-  /// Creates a [WidgetSelector] that finds all [TextField] where undoController equals (==) [value]
-  WidgetSelector<TextField> withUndoController(UndoHistoryController? value) {
-    return withProp<UndoHistoryController>('undoController', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where enabled matches the condition   
@@ -687,16 +647,6 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<Radius>('cursorRadius', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [TextField] where cursorOpacityAnimates matches the condition   
-  WidgetSelector<TextField> whereCursorOpacityAnimates(MatchProp<bool> match) {
-    return withProp<bool>('cursorOpacityAnimates', match);
-  }
-  
-  /// Creates a [WidgetSelector] that finds all [TextField] where cursorOpacityAnimates equals (==) [value]
-  WidgetSelector<TextField> withCursorOpacityAnimates(bool? value) {
-    return withProp<bool>('cursorOpacityAnimates', (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
   /// Creates a [WidgetSelector] that finds all [TextField] where cursorColor matches the condition   
   WidgetSelector<TextField> whereCursorColor(MatchProp<Color> match) {
     return withProp<Color>('cursorColor', match);
@@ -805,16 +755,6 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where spellCheckConfiguration equals (==) [value]
   WidgetSelector<TextField> withSpellCheckConfiguration(SpellCheckConfiguration? value) {
     return withProp<SpellCheckConfiguration>('spellCheckConfiguration', (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
-  /// Creates a [WidgetSelector] that finds all [TextField] where contentCommitMimeTypes matches the condition   
-  WidgetSelector<TextField> whereContentCommitMimeTypes(MatchProp<List<String>> match) {
-    return withProp<List<String>>('contentCommitMimeTypes', match);
-  }
-  
-  /// Creates a [WidgetSelector] that finds all [TextField] where contentCommitMimeTypes equals (==) [value]
-  WidgetSelector<TextField> withContentCommitMimeTypes(List<String>? value) {
-    return withProp<List<String>>('contentCommitMimeTypes', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
 }

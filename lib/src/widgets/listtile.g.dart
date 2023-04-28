@@ -131,36 +131,6 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
     return hasProp<Color>('textColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that titleTextStyle of [ListTile] matches the condition in [match]    
-  WidgetMatcher<ListTile> hasTitleTextStyleWhere(MatchProp<TextStyle> match) {
-    return hasProp<TextStyle>('titleTextStyle', match);
-  }
-  
-  /// Expects that titleTextStyle of [ListTile] equals (==) [value]
-  WidgetMatcher<ListTile> hasTitleTextStyle(TextStyle? value) {
-    return hasProp<TextStyle>('titleTextStyle', (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
-  /// Expects that subtitleTextStyle of [ListTile] matches the condition in [match]    
-  WidgetMatcher<ListTile> hasSubtitleTextStyleWhere(MatchProp<TextStyle> match) {
-    return hasProp<TextStyle>('subtitleTextStyle', match);
-  }
-  
-  /// Expects that subtitleTextStyle of [ListTile] equals (==) [value]
-  WidgetMatcher<ListTile> hasSubtitleTextStyle(TextStyle? value) {
-    return hasProp<TextStyle>('subtitleTextStyle', (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
-  /// Expects that leadingAndTrailingTextStyle of [ListTile] matches the condition in [match]    
-  WidgetMatcher<ListTile> hasLeadingAndTrailingTextStyleWhere(MatchProp<TextStyle> match) {
-    return hasProp<TextStyle>('leadingAndTrailingTextStyle', match);
-  }
-  
-  /// Expects that leadingAndTrailingTextStyle of [ListTile] equals (==) [value]
-  WidgetMatcher<ListTile> hasLeadingAndTrailingTextStyle(TextStyle? value) {
-    return hasProp<TextStyle>('leadingAndTrailingTextStyle', (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
   /// Expects that contentPadding of [ListTile] matches the condition in [match]    
   WidgetMatcher<ListTile> hasContentPaddingWhere(MatchProp<EdgeInsetsGeometry> match) {
     return hasProp<EdgeInsetsGeometry>('contentPadding', match);
@@ -321,16 +291,6 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
     return hasProp<double>('minLeadingWidth', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that titleAlignment of [ListTile] matches the condition in [match]    
-  WidgetMatcher<ListTile> hasTitleAlignmentWhere(MatchProp<ListTileTitleAlignment> match) {
-    return hasProp<ListTileTitleAlignment>('titleAlignment', match);
-  }
-  
-  /// Expects that titleAlignment of [ListTile] equals (==) [value]
-  WidgetMatcher<ListTile> hasTitleAlignment(ListTileTitleAlignment? value) {
-    return hasProp<ListTileTitleAlignment>('titleAlignment', (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
 }
 
 /// Allows filtering [ListTile] by the properties provided via [Diagnosticable.debugFillProperties]
@@ -454,36 +414,6 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where textColor equals (==) [value]
   WidgetSelector<ListTile> withTextColor(Color? value) {
     return withProp<Color>('textColor', (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
-  /// Creates a [WidgetSelector] that finds all [ListTile] where titleTextStyle matches the condition   
-  WidgetSelector<ListTile> whereTitleTextStyle(MatchProp<TextStyle> match) {
-    return withProp<TextStyle>('titleTextStyle', match);
-  }
-  
-  /// Creates a [WidgetSelector] that finds all [ListTile] where titleTextStyle equals (==) [value]
-  WidgetSelector<ListTile> withTitleTextStyle(TextStyle? value) {
-    return withProp<TextStyle>('titleTextStyle', (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
-  /// Creates a [WidgetSelector] that finds all [ListTile] where subtitleTextStyle matches the condition   
-  WidgetSelector<ListTile> whereSubtitleTextStyle(MatchProp<TextStyle> match) {
-    return withProp<TextStyle>('subtitleTextStyle', match);
-  }
-  
-  /// Creates a [WidgetSelector] that finds all [ListTile] where subtitleTextStyle equals (==) [value]
-  WidgetSelector<ListTile> withSubtitleTextStyle(TextStyle? value) {
-    return withProp<TextStyle>('subtitleTextStyle', (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
-  /// Creates a [WidgetSelector] that finds all [ListTile] where leadingAndTrailingTextStyle matches the condition   
-  WidgetSelector<ListTile> whereLeadingAndTrailingTextStyle(MatchProp<TextStyle> match) {
-    return withProp<TextStyle>('leadingAndTrailingTextStyle', match);
-  }
-  
-  /// Creates a [WidgetSelector] that finds all [ListTile] where leadingAndTrailingTextStyle equals (==) [value]
-  WidgetSelector<ListTile> withLeadingAndTrailingTextStyle(TextStyle? value) {
-    return withProp<TextStyle>('leadingAndTrailingTextStyle', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where contentPadding matches the condition   
@@ -644,16 +574,6 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where minLeadingWidth equals (==) [value]
   WidgetSelector<ListTile> withMinLeadingWidth(double? value) {
     return withProp<double>('minLeadingWidth', (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
-  /// Creates a [WidgetSelector] that finds all [ListTile] where titleAlignment matches the condition   
-  WidgetSelector<ListTile> whereTitleAlignment(MatchProp<ListTileTitleAlignment> match) {
-    return withProp<ListTileTitleAlignment>('titleAlignment', match);
-  }
-  
-  /// Creates a [WidgetSelector] that finds all [ListTile] where titleAlignment equals (==) [value]
-  WidgetSelector<ListTile> withTitleAlignment(ListTileTitleAlignment? value) {
-    return withProp<ListTileTitleAlignment>('titleAlignment', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
 }
