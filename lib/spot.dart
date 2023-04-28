@@ -3,7 +3,14 @@ library spot;
 import 'package:flutter/widgets.dart';
 import 'package:spot/src/selectors.dart';
 
-export 'package:spot/src/checks/checks.dart' hide it;
+export 'package:spot/src/checks/checks.dart'
+    hide
+        // it() is an odd API, spot sticks to normal lambdas
+        it,
+        // async checks are not useful for spot
+        FutureChecks,
+        StreamChecks,
+        WithQueueExtension;
 
 export 'package:spot/src/default_selectors.dart';
 export 'package:spot/src/effective_text.dart';
