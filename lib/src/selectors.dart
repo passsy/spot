@@ -165,12 +165,24 @@ mixin Spotters<T extends Widget> {
     );
   }
 
-  SingleWidgetSelector<W> spotKey<W extends Widget>(
+  SingleWidgetSelector<W> spotSingleKey<W extends Widget>(
     Key key, {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    return SingleWidgetSelector(
+    return spotKeys<W>(
+      key,
+      parents: [if (self != null) self!, ...parents],
+      children: children,
+    ).single;
+  }
+
+  MultiWidgetSelector<W> spotKeys<W extends Widget>(
+    Key key, {
+    List<WidgetSelector> parents = const [],
+    List<WidgetSelector> children = const [],
+  }) {
+    return MultiWidgetSelector(
       props: [
         PredicateWithDescription(
           (Element e) {

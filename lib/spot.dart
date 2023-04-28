@@ -147,12 +147,24 @@ WidgetSelector<Icon> spotIcons(
   );
 }
 
-SingleWidgetSelector<W> spotKey<W extends Widget>(
+SingleWidgetSelector<W> spotSingleKey<W extends Widget>(
   Key key, {
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {
-  return _global.spotKey<W>(
+  return _global.spotSingleKey<W>(
+    key,
+    parents: parents,
+    children: children,
+  );
+}
+
+MultiWidgetSelector<W> spotKeys<W extends Widget>(
+  Key key, {
+  List<WidgetSelector> parents = const [],
+  List<WidgetSelector> children = const [],
+}) {
+  return _global.spotKeys<W>(
     key,
     parents: parents,
     children: children,

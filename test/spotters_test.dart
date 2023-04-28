@@ -14,7 +14,7 @@ void main() {
     spotSingleWidget(_anyWidget).spotSingleWidget(_anyWidget);
     spotWidgets(_anyWidget).spotWidgets(_anyWidget);
     spotElement(_anyElement).spotElement(_anyElement);
-    spotKey(_key).spotKey(_key);
+    spotSingleKey(_key).spotSingleKey(_key);
   });
 }
 
