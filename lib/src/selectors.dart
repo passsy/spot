@@ -418,12 +418,22 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
         // not error because null == null
         return this;
       }
-      throw TestFailure(
+      throw PropertyCheckFailure(
         'Failed to match widget: $errorMessage, actual: ${literal(actual).joinToString()}',
+        matcherDescription: errorParts.skip(1).join(' ').removePrefix('with '),
       );
     }
     return this;
   }
+}
+
+class PropertyCheckFailure extends TestFailure {
+  PropertyCheckFailure(
+    super.message, {
+    required this.matcherDescription,
+  });
+
+  final String matcherDescription;
 }
 
 class PropMatcher<W extends Widget> {
@@ -908,6 +918,8 @@ extension MutliMatchers<W extends Widget> on MultiWidgetSnapshot<W> {
     if (discovered.isEmpty) {
       throw Exception('Expected at least one match for $this, but found none');
     }
+
+    late String matcherDescription;
     final found = discovered.any((element) {
       final wm = WidgetMatcher(
         element: element.element,
@@ -917,6 +929,8 @@ extension MutliMatchers<W extends Widget> on MultiWidgetSnapshot<W> {
         matcher(wm);
         return true;
       } catch (e) {
+        matcherDescription =
+            e is PropertyCheckFailure ? e.matcherDescription : e.toString();
         return false;
       }
     });
@@ -924,13 +938,16 @@ extension MutliMatchers<W extends Widget> on MultiWidgetSnapshot<W> {
     if (found) {
       return this;
     }
-    throw TestFailure('Expected at least one match for $this, but found none.');
+    throw TestFailure(
+        "Expected that at least one candidate fulfills matcher '$matcherDescription', but none did.");
   }
 
   MultiWidgetSnapshot<W> all(void Function(WidgetMatcher<W>) matcher) {
     if (discovered.isEmpty) {
       throw Exception('Expected at least one match for $this, but found none');
     }
+
+    late String matcherDescription;
     final missMatches = discovered.whereNot((element) {
       final wm = WidgetMatcher(
         element: element.element,
@@ -940,6 +957,8 @@ extension MutliMatchers<W extends Widget> on MultiWidgetSnapshot<W> {
         matcher(wm);
         return true;
       } catch (e) {
+        matcherDescription =
+            e is PropertyCheckFailure ? e.matcherDescription : e.toString();
         return false;
       }
     }).toList();
@@ -948,7 +967,7 @@ extension MutliMatchers<W extends Widget> on MultiWidgetSnapshot<W> {
       return this;
     }
     throw TestFailure(
-        'Expected that all candidates match $this, but only ${discovered.length - missMatches.length} of ${discovered.length} did.\n'
+        "Expected that all candidates fulfill matcher '$matcherDescription', but only ${discovered.length - missMatches.length} of ${discovered.length} did.\n"
         'Mismatches: ${missMatches.map((e) => e.element.toStringDeep()).join(', ')}');
   }
 }
