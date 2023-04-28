@@ -9,134 +9,170 @@ import 'package:spot/spot.dart';
 /// ```dart
 /// spot<Row>().printMatchers();
 /// ```
+/// Matchers for the properties of [Row] provided via [Diagnosticable.debugFillProperties]
 extension RowMatcher on WidgetMatcher<Row> {
+
+  /// Expects that direction of [Row] matches the condition in [match]    
   WidgetMatcher<Row> hasDirectionWhere(MatchProp<Axis> match) {
     return hasProp<Axis>('direction', match);
   }
   
+  /// Expects that direction of [Row] equals (==) [value]
   WidgetMatcher<Row> hasDirection(Axis? value) {
     return hasProp<Axis>('direction', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Expects that mainAxisAlignment of [Row] matches the condition in [match]    
   WidgetMatcher<Row> hasMainAxisAlignmentWhere(MatchProp<MainAxisAlignment> match) {
     return hasProp<MainAxisAlignment>('mainAxisAlignment', match);
   }
   
+  /// Expects that mainAxisAlignment of [Row] equals (==) [value]
   WidgetMatcher<Row> hasMainAxisAlignment(MainAxisAlignment? value) {
     return hasProp<MainAxisAlignment>('mainAxisAlignment', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Expects that mainAxisSize of [Row] matches the condition in [match]    
   WidgetMatcher<Row> hasMainAxisSizeWhere(MatchProp<MainAxisSize> match) {
     return hasProp<MainAxisSize>('mainAxisSize', match);
   }
   
+  /// Expects that mainAxisSize of [Row] equals (==) [value]
   WidgetMatcher<Row> hasMainAxisSize(MainAxisSize? value) {
     return hasProp<MainAxisSize>('mainAxisSize', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Expects that crossAxisAlignment of [Row] matches the condition in [match]    
   WidgetMatcher<Row> hasCrossAxisAlignmentWhere(MatchProp<CrossAxisAlignment> match) {
     return hasProp<CrossAxisAlignment>('crossAxisAlignment', match);
   }
   
+  /// Expects that crossAxisAlignment of [Row] equals (==) [value]
   WidgetMatcher<Row> hasCrossAxisAlignment(CrossAxisAlignment? value) {
     return hasProp<CrossAxisAlignment>('crossAxisAlignment', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Expects that textDirection of [Row] matches the condition in [match]    
   WidgetMatcher<Row> hasTextDirectionWhere(MatchProp<TextDirection> match) {
     return hasProp<TextDirection>('textDirection', match);
   }
   
+  /// Expects that textDirection of [Row] equals (==) [value]
   WidgetMatcher<Row> hasTextDirection(TextDirection? value) {
     return hasProp<TextDirection>('textDirection', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Expects that verticalDirection of [Row] matches the condition in [match]    
   WidgetMatcher<Row> hasVerticalDirectionWhere(MatchProp<VerticalDirection> match) {
     return hasProp<VerticalDirection>('verticalDirection', match);
   }
   
+  /// Expects that verticalDirection of [Row] equals (==) [value]
   WidgetMatcher<Row> hasVerticalDirection(VerticalDirection? value) {
     return hasProp<VerticalDirection>('verticalDirection', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Expects that textBaseline of [Row] matches the condition in [match]    
   WidgetMatcher<Row> hasTextBaselineWhere(MatchProp<TextBaseline> match) {
     return hasProp<TextBaseline>('textBaseline', match);
   }
   
+  /// Expects that textBaseline of [Row] equals (==) [value]
   WidgetMatcher<Row> hasTextBaseline(TextBaseline? value) {
     return hasProp<TextBaseline>('textBaseline', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Expects that renderObject of [Row] matches the condition in [match]    
   WidgetMatcher<Row> hasRenderObjectWhere(MatchProp<RenderFlex> match) {
     return hasProp<RenderFlex>('renderObject', match);
   }
   
+  /// Expects that renderObject of [Row] equals (==) [value]
   WidgetMatcher<Row> hasRenderObject(RenderFlex? value) {
     return hasProp<RenderFlex>('renderObject', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
 }
 
+/// Allows filtering [Row] by the properties provided via [Diagnosticable.debugFillProperties]
 extension RowSelector on WidgetSelector<Row> {
+
+  /// Creates a [WidgetSelector] that finds all [Row] where direction matches the condition   
   WidgetSelector<Row> whereDirection(MatchProp<Axis> match) {
     return withProp<Axis>('direction', match);
   }
   
+  /// Creates a [WidgetSelector] that finds all [Row] where direction equals (==) [value]
   WidgetSelector<Row> withDirection(Axis? value) {
     return withProp<Axis>('direction', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Creates a [WidgetSelector] that finds all [Row] where mainAxisAlignment matches the condition   
   WidgetSelector<Row> whereMainAxisAlignment(MatchProp<MainAxisAlignment> match) {
     return withProp<MainAxisAlignment>('mainAxisAlignment', match);
   }
   
+  /// Creates a [WidgetSelector] that finds all [Row] where mainAxisAlignment equals (==) [value]
   WidgetSelector<Row> withMainAxisAlignment(MainAxisAlignment? value) {
     return withProp<MainAxisAlignment>('mainAxisAlignment', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Creates a [WidgetSelector] that finds all [Row] where mainAxisSize matches the condition   
   WidgetSelector<Row> whereMainAxisSize(MatchProp<MainAxisSize> match) {
     return withProp<MainAxisSize>('mainAxisSize', match);
   }
   
+  /// Creates a [WidgetSelector] that finds all [Row] where mainAxisSize equals (==) [value]
   WidgetSelector<Row> withMainAxisSize(MainAxisSize? value) {
     return withProp<MainAxisSize>('mainAxisSize', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Creates a [WidgetSelector] that finds all [Row] where crossAxisAlignment matches the condition   
   WidgetSelector<Row> whereCrossAxisAlignment(MatchProp<CrossAxisAlignment> match) {
     return withProp<CrossAxisAlignment>('crossAxisAlignment', match);
   }
   
+  /// Creates a [WidgetSelector] that finds all [Row] where crossAxisAlignment equals (==) [value]
   WidgetSelector<Row> withCrossAxisAlignment(CrossAxisAlignment? value) {
     return withProp<CrossAxisAlignment>('crossAxisAlignment', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Creates a [WidgetSelector] that finds all [Row] where textDirection matches the condition   
   WidgetSelector<Row> whereTextDirection(MatchProp<TextDirection> match) {
     return withProp<TextDirection>('textDirection', match);
   }
   
+  /// Creates a [WidgetSelector] that finds all [Row] where textDirection equals (==) [value]
   WidgetSelector<Row> withTextDirection(TextDirection? value) {
     return withProp<TextDirection>('textDirection', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Creates a [WidgetSelector] that finds all [Row] where verticalDirection matches the condition   
   WidgetSelector<Row> whereVerticalDirection(MatchProp<VerticalDirection> match) {
     return withProp<VerticalDirection>('verticalDirection', match);
   }
   
+  /// Creates a [WidgetSelector] that finds all [Row] where verticalDirection equals (==) [value]
   WidgetSelector<Row> withVerticalDirection(VerticalDirection? value) {
     return withProp<VerticalDirection>('verticalDirection', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Creates a [WidgetSelector] that finds all [Row] where textBaseline matches the condition   
   WidgetSelector<Row> whereTextBaseline(MatchProp<TextBaseline> match) {
     return withProp<TextBaseline>('textBaseline', match);
   }
   
+  /// Creates a [WidgetSelector] that finds all [Row] where textBaseline equals (==) [value]
   WidgetSelector<Row> withTextBaseline(TextBaseline? value) {
     return withProp<TextBaseline>('textBaseline', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Creates a [WidgetSelector] that finds all [Row] where renderObject matches the condition   
   WidgetSelector<Row> whereRenderObject(MatchProp<RenderFlex> match) {
     return withProp<RenderFlex>('renderObject', match);
   }
   
+  /// Creates a [WidgetSelector] that finds all [Row] where renderObject equals (==) [value]
   WidgetSelector<Row> withRenderObject(RenderFlex? value) {
     return withProp<RenderFlex>('renderObject', (it) => value == null ? it.isNull() : it.equals(value));
   }

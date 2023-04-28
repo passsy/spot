@@ -9,150 +9,190 @@ import 'package:spot/spot.dart';
 /// ```dart
 /// spot<Wrap>().printMatchers();
 /// ```
+/// Matchers for the properties of [Wrap] provided via [Diagnosticable.debugFillProperties]
 extension WrapMatcher on WidgetMatcher<Wrap> {
+
+  /// Expects that direction of [Wrap] matches the condition in [match]    
   WidgetMatcher<Wrap> hasDirectionWhere(MatchProp<Axis> match) {
     return hasProp<Axis>('direction', match);
   }
   
+  /// Expects that direction of [Wrap] equals (==) [value]
   WidgetMatcher<Wrap> hasDirection(Axis? value) {
     return hasProp<Axis>('direction', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Expects that alignment of [Wrap] matches the condition in [match]    
   WidgetMatcher<Wrap> hasAlignmentWhere(MatchProp<WrapAlignment> match) {
     return hasProp<WrapAlignment>('alignment', match);
   }
   
+  /// Expects that alignment of [Wrap] equals (==) [value]
   WidgetMatcher<Wrap> hasAlignment(WrapAlignment? value) {
     return hasProp<WrapAlignment>('alignment', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Expects that spacing of [Wrap] matches the condition in [match]    
   WidgetMatcher<Wrap> hasSpacingWhere(MatchProp<double> match) {
     return hasProp<double>('spacing', match);
   }
   
+  /// Expects that spacing of [Wrap] equals (==) [value]
   WidgetMatcher<Wrap> hasSpacing(double? value) {
     return hasProp<double>('spacing', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Expects that runAlignment of [Wrap] matches the condition in [match]    
   WidgetMatcher<Wrap> hasRunAlignmentWhere(MatchProp<WrapAlignment> match) {
     return hasProp<WrapAlignment>('runAlignment', match);
   }
   
+  /// Expects that runAlignment of [Wrap] equals (==) [value]
   WidgetMatcher<Wrap> hasRunAlignment(WrapAlignment? value) {
     return hasProp<WrapAlignment>('runAlignment', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Expects that runSpacing of [Wrap] matches the condition in [match]    
   WidgetMatcher<Wrap> hasRunSpacingWhere(MatchProp<double> match) {
     return hasProp<double>('runSpacing', match);
   }
   
+  /// Expects that runSpacing of [Wrap] equals (==) [value]
   WidgetMatcher<Wrap> hasRunSpacing(double? value) {
     return hasProp<double>('runSpacing', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Expects that crossAxisAlignment of [Wrap] matches the condition in [match]    
   WidgetMatcher<Wrap> hasCrossAxisAlignmentWhere(MatchProp<WrapCrossAlignment> match) {
     return hasProp<WrapCrossAlignment>('crossAxisAlignment', match);
   }
   
+  /// Expects that crossAxisAlignment of [Wrap] equals (==) [value]
   WidgetMatcher<Wrap> hasCrossAxisAlignment(WrapCrossAlignment? value) {
     return hasProp<WrapCrossAlignment>('crossAxisAlignment', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Expects that textDirection of [Wrap] matches the condition in [match]    
   WidgetMatcher<Wrap> hasTextDirectionWhere(MatchProp<TextDirection> match) {
     return hasProp<TextDirection>('textDirection', match);
   }
   
+  /// Expects that textDirection of [Wrap] equals (==) [value]
   WidgetMatcher<Wrap> hasTextDirection(TextDirection? value) {
     return hasProp<TextDirection>('textDirection', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Expects that verticalDirection of [Wrap] matches the condition in [match]    
   WidgetMatcher<Wrap> hasVerticalDirectionWhere(MatchProp<VerticalDirection> match) {
     return hasProp<VerticalDirection>('verticalDirection', match);
   }
   
+  /// Expects that verticalDirection of [Wrap] equals (==) [value]
   WidgetMatcher<Wrap> hasVerticalDirection(VerticalDirection? value) {
     return hasProp<VerticalDirection>('verticalDirection', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Expects that renderObject of [Wrap] matches the condition in [match]    
   WidgetMatcher<Wrap> hasRenderObjectWhere(MatchProp<RenderWrap> match) {
     return hasProp<RenderWrap>('renderObject', match);
   }
   
+  /// Expects that renderObject of [Wrap] equals (==) [value]
   WidgetMatcher<Wrap> hasRenderObject(RenderWrap? value) {
     return hasProp<RenderWrap>('renderObject', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
 }
 
+/// Allows filtering [Wrap] by the properties provided via [Diagnosticable.debugFillProperties]
 extension WrapSelector on WidgetSelector<Wrap> {
+
+  /// Creates a [WidgetSelector] that finds all [Wrap] where direction matches the condition   
   WidgetSelector<Wrap> whereDirection(MatchProp<Axis> match) {
     return withProp<Axis>('direction', match);
   }
   
+  /// Creates a [WidgetSelector] that finds all [Wrap] where direction equals (==) [value]
   WidgetSelector<Wrap> withDirection(Axis? value) {
     return withProp<Axis>('direction', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Creates a [WidgetSelector] that finds all [Wrap] where alignment matches the condition   
   WidgetSelector<Wrap> whereAlignment(MatchProp<WrapAlignment> match) {
     return withProp<WrapAlignment>('alignment', match);
   }
   
+  /// Creates a [WidgetSelector] that finds all [Wrap] where alignment equals (==) [value]
   WidgetSelector<Wrap> withAlignment(WrapAlignment? value) {
     return withProp<WrapAlignment>('alignment', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Creates a [WidgetSelector] that finds all [Wrap] where spacing matches the condition   
   WidgetSelector<Wrap> whereSpacing(MatchProp<double> match) {
     return withProp<double>('spacing', match);
   }
   
+  /// Creates a [WidgetSelector] that finds all [Wrap] where spacing equals (==) [value]
   WidgetSelector<Wrap> withSpacing(double? value) {
     return withProp<double>('spacing', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Creates a [WidgetSelector] that finds all [Wrap] where runAlignment matches the condition   
   WidgetSelector<Wrap> whereRunAlignment(MatchProp<WrapAlignment> match) {
     return withProp<WrapAlignment>('runAlignment', match);
   }
   
+  /// Creates a [WidgetSelector] that finds all [Wrap] where runAlignment equals (==) [value]
   WidgetSelector<Wrap> withRunAlignment(WrapAlignment? value) {
     return withProp<WrapAlignment>('runAlignment', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Creates a [WidgetSelector] that finds all [Wrap] where runSpacing matches the condition   
   WidgetSelector<Wrap> whereRunSpacing(MatchProp<double> match) {
     return withProp<double>('runSpacing', match);
   }
   
+  /// Creates a [WidgetSelector] that finds all [Wrap] where runSpacing equals (==) [value]
   WidgetSelector<Wrap> withRunSpacing(double? value) {
     return withProp<double>('runSpacing', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Creates a [WidgetSelector] that finds all [Wrap] where crossAxisAlignment matches the condition   
   WidgetSelector<Wrap> whereCrossAxisAlignment(MatchProp<WrapCrossAlignment> match) {
     return withProp<WrapCrossAlignment>('crossAxisAlignment', match);
   }
   
+  /// Creates a [WidgetSelector] that finds all [Wrap] where crossAxisAlignment equals (==) [value]
   WidgetSelector<Wrap> withCrossAxisAlignment(WrapCrossAlignment? value) {
     return withProp<WrapCrossAlignment>('crossAxisAlignment', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Creates a [WidgetSelector] that finds all [Wrap] where textDirection matches the condition   
   WidgetSelector<Wrap> whereTextDirection(MatchProp<TextDirection> match) {
     return withProp<TextDirection>('textDirection', match);
   }
   
+  /// Creates a [WidgetSelector] that finds all [Wrap] where textDirection equals (==) [value]
   WidgetSelector<Wrap> withTextDirection(TextDirection? value) {
     return withProp<TextDirection>('textDirection', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Creates a [WidgetSelector] that finds all [Wrap] where verticalDirection matches the condition   
   WidgetSelector<Wrap> whereVerticalDirection(MatchProp<VerticalDirection> match) {
     return withProp<VerticalDirection>('verticalDirection', match);
   }
   
+  /// Creates a [WidgetSelector] that finds all [Wrap] where verticalDirection equals (==) [value]
   WidgetSelector<Wrap> withVerticalDirection(VerticalDirection? value) {
     return withProp<VerticalDirection>('verticalDirection', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Creates a [WidgetSelector] that finds all [Wrap] where renderObject matches the condition   
   WidgetSelector<Wrap> whereRenderObject(MatchProp<RenderWrap> match) {
     return withProp<RenderWrap>('renderObject', match);
   }
   
+  /// Creates a [WidgetSelector] that finds all [Wrap] where renderObject equals (==) [value]
   WidgetSelector<Wrap> withRenderObject(RenderWrap? value) {
     return withProp<RenderWrap>('renderObject', (it) => value == null ? it.isNull() : it.equals(value));
   }

@@ -9,70 +9,90 @@ import 'package:spot/spot.dart';
 /// ```dart
 /// spot<Align>().printMatchers();
 /// ```
+/// Matchers for the properties of [Align] provided via [Diagnosticable.debugFillProperties]
 extension AlignMatcher on WidgetMatcher<Align> {
+
+  /// Expects that alignment of [Align] matches the condition in [match]    
   WidgetMatcher<Align> hasAlignmentWhere(MatchProp<AlignmentGeometry> match) {
     return hasProp<AlignmentGeometry>('alignment', match);
   }
   
+  /// Expects that alignment of [Align] equals (==) [value]
   WidgetMatcher<Align> hasAlignment(AlignmentGeometry? value) {
     return hasProp<AlignmentGeometry>('alignment', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Expects that widthFactor of [Align] matches the condition in [match]    
   WidgetMatcher<Align> hasWidthFactorWhere(MatchProp<double> match) {
     return hasProp<double>('widthFactor', match);
   }
   
+  /// Expects that widthFactor of [Align] equals (==) [value]
   WidgetMatcher<Align> hasWidthFactor(double? value) {
     return hasProp<double>('widthFactor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Expects that heightFactor of [Align] matches the condition in [match]    
   WidgetMatcher<Align> hasHeightFactorWhere(MatchProp<double> match) {
     return hasProp<double>('heightFactor', match);
   }
   
+  /// Expects that heightFactor of [Align] equals (==) [value]
   WidgetMatcher<Align> hasHeightFactor(double? value) {
     return hasProp<double>('heightFactor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Expects that renderObject of [Align] matches the condition in [match]    
   WidgetMatcher<Align> hasRenderObjectWhere(MatchProp<RenderPositionedBox> match) {
     return hasProp<RenderPositionedBox>('renderObject', match);
   }
   
+  /// Expects that renderObject of [Align] equals (==) [value]
   WidgetMatcher<Align> hasRenderObject(RenderPositionedBox? value) {
     return hasProp<RenderPositionedBox>('renderObject', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
 }
 
+/// Allows filtering [Align] by the properties provided via [Diagnosticable.debugFillProperties]
 extension AlignSelector on WidgetSelector<Align> {
+
+  /// Creates a [WidgetSelector] that finds all [Align] where alignment matches the condition   
   WidgetSelector<Align> whereAlignment(MatchProp<AlignmentGeometry> match) {
     return withProp<AlignmentGeometry>('alignment', match);
   }
   
+  /// Creates a [WidgetSelector] that finds all [Align] where alignment equals (==) [value]
   WidgetSelector<Align> withAlignment(AlignmentGeometry? value) {
     return withProp<AlignmentGeometry>('alignment', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Creates a [WidgetSelector] that finds all [Align] where widthFactor matches the condition   
   WidgetSelector<Align> whereWidthFactor(MatchProp<double> match) {
     return withProp<double>('widthFactor', match);
   }
   
+  /// Creates a [WidgetSelector] that finds all [Align] where widthFactor equals (==) [value]
   WidgetSelector<Align> withWidthFactor(double? value) {
     return withProp<double>('widthFactor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Creates a [WidgetSelector] that finds all [Align] where heightFactor matches the condition   
   WidgetSelector<Align> whereHeightFactor(MatchProp<double> match) {
     return withProp<double>('heightFactor', match);
   }
   
+  /// Creates a [WidgetSelector] that finds all [Align] where heightFactor equals (==) [value]
   WidgetSelector<Align> withHeightFactor(double? value) {
     return withProp<double>('heightFactor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Creates a [WidgetSelector] that finds all [Align] where renderObject matches the condition   
   WidgetSelector<Align> whereRenderObject(MatchProp<RenderPositionedBox> match) {
     return withProp<RenderPositionedBox>('renderObject', match);
   }
   
+  /// Creates a [WidgetSelector] that finds all [Align] where renderObject equals (==) [value]
   WidgetSelector<Align> withRenderObject(RenderPositionedBox? value) {
     return withProp<RenderPositionedBox>('renderObject', (it) => value == null ? it.isNull() : it.equals(value));
   }

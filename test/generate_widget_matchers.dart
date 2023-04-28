@@ -13,7 +13,13 @@ void main() {
       'data': 'text',
     },
   );
-  _generateWidget<Container>(builder: () => Container());
+  _generateWidget<Container>(
+    builder: () => Container(),
+    propNameOverrides: {
+      'fg': 'foreground',
+      'bg': 'background',
+    },
+  );
   _generateWidget<Row>(builder: () => Row());
   _generateWidget<Wrap>(
     builder: () => Wrap(),

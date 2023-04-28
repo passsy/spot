@@ -9,54 +9,70 @@ import 'package:spot/spot.dart';
 /// ```dart
 /// spot<SizedBox>().printMatchers();
 /// ```
+/// Matchers for the properties of [SizedBox] provided via [Diagnosticable.debugFillProperties]
 extension SizedBoxMatcher on WidgetMatcher<SizedBox> {
+
+  /// Expects that width of [SizedBox] matches the condition in [match]    
   WidgetMatcher<SizedBox> hasWidthWhere(MatchProp<double> match) {
     return hasProp<double>('width', match);
   }
   
+  /// Expects that width of [SizedBox] equals (==) [value]
   WidgetMatcher<SizedBox> hasWidth(double? value) {
     return hasProp<double>('width', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Expects that height of [SizedBox] matches the condition in [match]    
   WidgetMatcher<SizedBox> hasHeightWhere(MatchProp<double> match) {
     return hasProp<double>('height', match);
   }
   
+  /// Expects that height of [SizedBox] equals (==) [value]
   WidgetMatcher<SizedBox> hasHeight(double? value) {
     return hasProp<double>('height', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Expects that renderObject of [SizedBox] matches the condition in [match]    
   WidgetMatcher<SizedBox> hasRenderObjectWhere(MatchProp<RenderConstrainedBox> match) {
     return hasProp<RenderConstrainedBox>('renderObject', match);
   }
   
+  /// Expects that renderObject of [SizedBox] equals (==) [value]
   WidgetMatcher<SizedBox> hasRenderObject(RenderConstrainedBox? value) {
     return hasProp<RenderConstrainedBox>('renderObject', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
 }
 
+/// Allows filtering [SizedBox] by the properties provided via [Diagnosticable.debugFillProperties]
 extension SizedBoxSelector on WidgetSelector<SizedBox> {
+
+  /// Creates a [WidgetSelector] that finds all [SizedBox] where width matches the condition   
   WidgetSelector<SizedBox> whereWidth(MatchProp<double> match) {
     return withProp<double>('width', match);
   }
   
+  /// Creates a [WidgetSelector] that finds all [SizedBox] where width equals (==) [value]
   WidgetSelector<SizedBox> withWidth(double? value) {
     return withProp<double>('width', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Creates a [WidgetSelector] that finds all [SizedBox] where height matches the condition   
   WidgetSelector<SizedBox> whereHeight(MatchProp<double> match) {
     return withProp<double>('height', match);
   }
   
+  /// Creates a [WidgetSelector] that finds all [SizedBox] where height equals (==) [value]
   WidgetSelector<SizedBox> withHeight(double? value) {
     return withProp<double>('height', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Creates a [WidgetSelector] that finds all [SizedBox] where renderObject matches the condition   
   WidgetSelector<SizedBox> whereRenderObject(MatchProp<RenderConstrainedBox> match) {
     return withProp<RenderConstrainedBox>('renderObject', match);
   }
   
+  /// Creates a [WidgetSelector] that finds all [SizedBox] where renderObject equals (==) [value]
   WidgetSelector<SizedBox> withRenderObject(RenderConstrainedBox? value) {
     return withProp<RenderConstrainedBox>('renderObject', (it) => value == null ? it.isNull() : it.equals(value));
   }

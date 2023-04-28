@@ -1005,13 +1005,17 @@ extension CreateMatchers<W extends Widget> on WidgetSelector<W> {
     bool addedMethods = false;
 
     final matcherSb = StringBuffer();
-    matcherSb.writeln(
-      'extension ${widgetType}Matcher on WidgetMatcher<$widgetType> {',
-    );
+    matcherSb.writeln('''
+/// Matchers for the properties of [$widgetType] provided via [Diagnosticable.debugFillProperties]
+extension ${widgetType}Matcher on WidgetMatcher<$widgetType> {
+''');
 
     final selectorSb = StringBuffer();
     selectorSb.writeln(
-      'extension ${widgetType}Selector on WidgetSelector<$widgetType> {',
+      '''
+/// Allows filtering [$widgetType] by the properties provided via [Diagnosticable.debugFillProperties]
+extension ${widgetType}Selector on WidgetSelector<$widgetType> {
+''',
     );
 
     for (final DiagnosticsNode prop in props) {
@@ -1064,20 +1068,24 @@ extension CreateMatchers<W extends Widget> on WidgetSelector<W> {
 
       addedMethods = true;
       matcherSb.writeln('''
+  /// Expects that $humanPropName of [$widgetType] matches the condition in [match]    
   WidgetMatcher<$widgetType> $matcherVerb${humanPropName.capitalize()}Where(MatchProp<$propType> match) {
     return hasProp<$propType>('$propName', match);
   }
   
+  /// Expects that $humanPropName of [$widgetType] equals (==) [value]
   WidgetMatcher<$widgetType> $matcherVerb${humanPropName.capitalize()}($propTypeNullable value) {
     return hasProp<$propType>('$propName', (it) => value == null ? it.isNull() : it.equals(value));
   }
 ''');
 
       selectorSb.writeln('''
+  /// Creates a [WidgetSelector] that finds all [$widgetType] where $humanPropName matches the condition   
   WidgetSelector<$widgetType> where${humanPropName.capitalize()}(MatchProp<$propType> match) {
     return withProp<$propType>('$propName', match);
   }
   
+  /// Creates a [WidgetSelector] that finds all [$widgetType] where $humanPropName equals (==) [value]
   WidgetSelector<$widgetType> with${humanPropName.capitalize()}($propTypeNullable value) {
     return withProp<$propType>('$propName', (it) => value == null ? it.isNull() : it.equals(value));
   }
