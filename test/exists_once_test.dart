@@ -51,7 +51,6 @@ void main() {
     ).existsOnce();
     spotSingle<Padding>().existsOnce();
     spotSingle<Wrap>().existsOnce();
-    // spot<Wrap>().spot<Text>().existsAtLeastOnce();
     spotSingle<Wrap>().spot<Text>().existsAtLeastOnce();
     spotSingle<Wrap>().spot<Text>().existsAtLeastOnce();
     spotSingle<GestureDetector>().existsOnce();
@@ -139,7 +138,6 @@ void main() {
         it.equals(Axis.horizontal);
       },
     )
-        // .withDirection(Axis.horizontal)
         .existsAtLeastOnce();
 
     spotSingle<Wrap>().withDirection(Axis.horizontal).existsAtLeastOnce();

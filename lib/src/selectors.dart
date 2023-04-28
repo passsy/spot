@@ -71,7 +71,7 @@ mixin Spotters<T extends Widget> {
     );
   }
 
-  SingleWidgetSelector<W> spotSingleElement<W extends Widget>(
+  SingleWidgetSelector<W> spotElement<W extends Widget>(
     Element element, {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
@@ -167,12 +167,24 @@ mixin Spotters<T extends Widget> {
     );
   }
 
-  SingleWidgetSelector<W> spotKey<W extends Widget>(
+  SingleWidgetSelector<W> spotSingleKey<W extends Widget>(
     Key key, {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    return SingleWidgetSelector(
+    return spotKeys<W>(
+      key,
+      parents: [if (self != null) self!, ...parents],
+      children: children,
+    ).single;
+  }
+
+  MultiWidgetSelector<W> spotKeys<W extends Widget>(
+    Key key, {
+    List<WidgetSelector> parents = const [],
+    List<WidgetSelector> children = const [],
+  }) {
+    return MultiWidgetSelector(
       props: [
         PredicateWithDescription(
           (Element e) {
@@ -538,6 +550,8 @@ class WidgetSelector<W extends Widget> with Spotters<W> {
     ],
   );
 
+  Type get type => W;
+
   WidgetSelector({
     List<PredicateWithDescription>? props,
     List<WidgetSelector>? parents,
@@ -589,6 +603,9 @@ class WidgetSelector<W extends Widget> with Spotters<W> {
 
     final constraints =
         [widgetType, props, children, parents].where((e) => e != null);
+    if (constraints.isEmpty) {
+      return '';
+    }
     return "'${constraints.join(' ')}'";
   }
 

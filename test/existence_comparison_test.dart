@@ -225,13 +225,16 @@ void main() {
       );
       expect(
         () => spot<Text>(parents: [spotSingle<Row>()]).existsAtLeastNTimes(2),
-        throwsSpotErrorContaining([
-          "Could not find at least 2 matches for Row > Text in widget tree, but found 3 matches when searching for 'Text'",
-          "Please check the 3 matches for Text and adjust the constraints of the selector 'Text with parents: ['Row']' accordingly",
-          'Possible match #1: Text("a")',
-          'Possible match #2: Text("b")',
-          'Possible match #3: Text("c")',
-        ]),
+        throwsSpotErrorContaining(
+          [
+            "Could not find at least 2 matches for Row > Text in widget tree, but found 3 matches when searching for 'Text'",
+            "Please check the 3 matches for Text and adjust the constraints of the selector 'Text with parents: ['Row']' accordingly",
+            'Possible match #1: Text("a")',
+            'Possible match #2: Text("b")',
+            'Possible match #3: Text("c")',
+          ],
+          not: ['#4'],
+        ),
       );
     });
 

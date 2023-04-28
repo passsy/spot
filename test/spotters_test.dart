@@ -13,8 +13,8 @@ void main() {
     spotIcons(Icons.add).spotIcons(Icons.add);
     spotSingleWidget(_anyWidget).spotSingleWidget(_anyWidget);
     spotWidgets(_anyWidget).spotWidgets(_anyWidget);
-    spotElement(_anyElement).spotSingleElement(_anyElement);
-    spotKey(_key).spotKey(_key);
+    spotElement(_anyElement).spotElement(_anyElement);
+    spotSingleKey(_key).spotSingleKey(_key);
   });
 }
 

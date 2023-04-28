@@ -6,7 +6,7 @@ import 'package:spot/src/tree_snapshot.dart';
 
 extension FinderToSpot on Finder {
   MultiWidgetSelector<W> spot<W extends Widget>() {
-    return _FinderSelector<W>(this, allWidgets);
+    return _FinderSelector<W>(this);
   }
 }
 
@@ -14,7 +14,7 @@ extension SpotToFinder<W extends Widget> on WidgetSelector<W> {
   Finder get finder => _FinderFromWidgetSelector(this);
 
   WidgetSelector<T> spotFinder<T extends Widget>(Finder finder) {
-    return _FinderSelector<T>(finder, this);
+    return _FinderSelector<T>(finder, parent: this);
   }
 }
 
@@ -22,13 +22,27 @@ class _FinderSelector<W extends Widget> extends MultiWidgetSelector<W> {
   final Finder finder;
 
   _FinderSelector(
-    this.finder,
-    WidgetSelector parent,
-  ) : super(parents: [parent]);
+    this.finder, {
+    WidgetSelector? parent,
+  }) : super(parents: parent != null ? [parent] : []);
 
   @override
   List<ElementFilter> createElementFilters() {
     return [...super.createElementFilters(), _FinderFilter(finder)];
+  }
+
+  @override
+  String toString() {
+    final overridden = super.toString();
+    return 'widget with ${finder.description}'
+        '${overridden.isNotEmpty ? ' $overridden' : ''}';
+  }
+
+  @override
+  String toStringWithoutParents() {
+    final overridden = super.toStringWithoutParents();
+    return 'widget with ${finder.description}'
+        '${overridden.isNotEmpty ? ' $overridden' : ''}';
   }
 }
 
