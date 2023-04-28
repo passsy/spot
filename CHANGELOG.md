@@ -1,3 +1,8 @@
+## 0.2.1
+
+- Fix `WidgetSelector` with parents that have parents #4
+- Require all children selector to match, not just one #4
+
 ## 0.2.0
 
 - Reworked spot API #3
