@@ -536,7 +536,7 @@ class ChildFilter implements ElementFilter {
 
   @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
-    final tree = widgetTreeSnapshot();
+    final tree = currentWidgetTreeSnapshot();
     final List<WidgetTreeNode> matchingChildNodes = [];
     // Then check for every queryMatch if the children and props match
     for (final WidgetTreeNode candidate in candidates) {

@@ -6,11 +6,18 @@ import 'package:spot/src/element_extensions.dart';
 WidgetTreeSnapshot? _cachedTree;
 
 /// Creates a snapshot of the currently pumped widget via [WidgetTester.pumpWidget].
-WidgetTreeSnapshot widgetTreeSnapshot() {
+WidgetTreeSnapshot currentWidgetTreeSnapshot() {
   if (_cachedTree != null && _cachedTree!.isFromThisFrame) {
     return _cachedTree!;
   }
 
+  return _cachedTree = createWidgetTreeSnapshot();
+}
+
+/// Creates a new snapshot of the widget tree. Might be useful for testing and
+/// can be called repeatedly within the same frame
+@visibleForTesting
+WidgetTreeSnapshot createWidgetTreeSnapshot() {
   // ignore: deprecated_member_use
   final rootElement = WidgetsBinding.instance.renderViewElement!;
 
@@ -28,7 +35,7 @@ WidgetTreeSnapshot widgetTreeSnapshot() {
 
   final origin = build(rootElement);
 
-  return _cachedTree = WidgetTreeSnapshot(
+  return WidgetTreeSnapshot(
     origin: origin,
     timestamp: DateTime.now(),
   );
