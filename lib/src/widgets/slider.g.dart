@@ -21,16 +21,6 @@ extension SliderMatcher on WidgetMatcher<Slider> {
     return hasProp<double>('value', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that secondaryTrackValue of [Slider] matches the condition in [match]    
-  WidgetMatcher<Slider> hasSecondaryTrackValueWhere(MatchProp<double> match) {
-    return hasProp<double>('secondaryTrackValue', match);
-  }
-  
-  /// Expects that secondaryTrackValue of [Slider] equals (==) [value]
-  WidgetMatcher<Slider> hasSecondaryTrackValue(double? value) {
-    return hasProp<double>('secondaryTrackValue', (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
   /// Expects that min of [Slider] matches the condition in [match]    
   WidgetMatcher<Slider> hasMinWhere(MatchProp<double> match) {
     return hasProp<double>('min', match);
@@ -91,16 +81,6 @@ extension SliderMatcher on WidgetMatcher<Slider> {
     return hasProp<Color>('inactiveColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that secondaryActiveColor of [Slider] matches the condition in [match]    
-  WidgetMatcher<Slider> hasSecondaryActiveColorWhere(MatchProp<Color> match) {
-    return hasProp<Color>('secondaryActiveColor', match);
-  }
-  
-  /// Expects that secondaryActiveColor of [Slider] equals (==) [value]
-  WidgetMatcher<Slider> hasSecondaryActiveColor(Color? value) {
-    return hasProp<Color>('secondaryActiveColor', (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
   /// Expects that focusNode of [Slider] matches the condition in [match]    
   WidgetMatcher<Slider> hasFocusNodeWhere(MatchProp<FocusNode> match) {
     return hasProp<FocusNode>('focusNode', match);
@@ -134,16 +114,6 @@ extension SliderSelector on WidgetSelector<Slider> {
   /// Creates a [WidgetSelector] that finds all [Slider] where value equals (==) [value]
   WidgetSelector<Slider> withValue(double? value) {
     return withProp<double>('value', (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
-  /// Creates a [WidgetSelector] that finds all [Slider] where secondaryTrackValue matches the condition   
-  WidgetSelector<Slider> whereSecondaryTrackValue(MatchProp<double> match) {
-    return withProp<double>('secondaryTrackValue', match);
-  }
-  
-  /// Creates a [WidgetSelector] that finds all [Slider] where secondaryTrackValue equals (==) [value]
-  WidgetSelector<Slider> withSecondaryTrackValue(double? value) {
-    return withProp<double>('secondaryTrackValue', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Slider] where min matches the condition   
@@ -204,16 +174,6 @@ extension SliderSelector on WidgetSelector<Slider> {
   /// Creates a [WidgetSelector] that finds all [Slider] where inactiveColor equals (==) [value]
   WidgetSelector<Slider> withInactiveColor(Color? value) {
     return withProp<Color>('inactiveColor', (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
-  /// Creates a [WidgetSelector] that finds all [Slider] where secondaryActiveColor matches the condition   
-  WidgetSelector<Slider> whereSecondaryActiveColor(MatchProp<Color> match) {
-    return withProp<Color>('secondaryActiveColor', match);
-  }
-  
-  /// Creates a [WidgetSelector] that finds all [Slider] where secondaryActiveColor equals (==) [value]
-  WidgetSelector<Slider> withSecondaryActiveColor(Color? value) {
-    return withProp<Color>('secondaryActiveColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Slider] where focusNode matches the condition   

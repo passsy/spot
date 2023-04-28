@@ -44,16 +44,6 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
     return hasProp<bool>('checked', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that mixed of [Semantics] matches the condition in [match]    
-  WidgetMatcher<Semantics> hasMixedWhere(MatchProp<bool> match) {
-    return hasProp<bool>('mixed', match);
-  }
-  
-  /// Expects that mixed of [Semantics] equals (==) [value]
-  WidgetMatcher<Semantics> hasMixed(bool? value) {
-    return hasProp<bool>('mixed', (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
   /// Expects that selected of [Semantics] matches the condition in [match]    
   WidgetMatcher<Semantics> hasSelectedWhere(MatchProp<bool> match) {
     return hasProp<bool>('selected', match);
@@ -247,16 +237,6 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where checked equals (==) [value]
   WidgetSelector<Semantics> withChecked(bool? value) {
     return withProp<bool>('checked', (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
-  /// Creates a [WidgetSelector] that finds all [Semantics] where mixed matches the condition   
-  WidgetSelector<Semantics> whereMixed(MatchProp<bool> match) {
-    return withProp<bool>('mixed', match);
-  }
-  
-  /// Creates a [WidgetSelector] that finds all [Semantics] where mixed equals (==) [value]
-  WidgetSelector<Semantics> withMixed(bool? value) {
-    return withProp<bool>('mixed', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where selected matches the condition   

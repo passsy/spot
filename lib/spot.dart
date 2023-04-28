@@ -46,7 +46,6 @@ export 'package:spot/src/widgets/icon.g.dart';
 export 'package:spot/src/widgets/iconbutton.g.dart';
 export 'package:spot/src/widgets/image.g.dart';
 export 'package:spot/src/widgets/linearprogressindicator.g.dart';
-export 'package:spot/src/widgets/listtile.g.dart';
 export 'package:spot/src/widgets/opacity.g.dart';
 export 'package:spot/src/widgets/outlinedbutton.g.dart';
 export 'package:spot/src/widgets/row.g.dart';
