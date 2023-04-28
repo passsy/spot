@@ -678,13 +678,13 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
     List<PredicateWithDescription>? props,
     List<WidgetSelector>? parents,
     List<WidgetSelector>? children,
-    ExpectedQuantity? selectorType,
+    ExpectedQuantity? expectedQuantity,
   }) {
     return WidgetSelector<W>(
       props: props ?? this.props,
       parents: parents ?? this.parents,
       children: children ?? this.children,
-      expectedQuantity: selectorType ?? this.expectedQuantity,
+      expectedQuantity: expectedQuantity ?? this.expectedQuantity,
     );
   }
 
