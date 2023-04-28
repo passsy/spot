@@ -25,7 +25,7 @@ void main() {
         .existsExactlyNTimes(2)
         .all((m) => m.hasMaxLines(null));
     spot<Text>()
-        .withMaxLinesMatching((it) => it.isNull())
+        .whereMaxLines((it) => it.isNull())
         .existsExactlyNTimes(2)
         .all((m) => m.hasMaxLinesWhere((it) => it.isNull()));
 

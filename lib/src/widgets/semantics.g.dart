@@ -175,7 +175,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
 }
 
 extension SemanticsSelector on WidgetSelector<Semantics> {
-  WidgetSelector<Semantics> withContainerMatching(MatchProp<bool> match) {
+  WidgetSelector<Semantics> whereContainer(MatchProp<bool> match) {
     return withProp<bool>('container', match);
   }
   
@@ -183,7 +183,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
     return withProp<bool>('container', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Semantics> withPropertiesMatching(MatchProp<SemanticsProperties> match) {
+  WidgetSelector<Semantics> whereProperties(MatchProp<SemanticsProperties> match) {
     return withProp<SemanticsProperties>('properties', match);
   }
   
@@ -191,7 +191,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
     return withProp<SemanticsProperties>('properties', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Semantics> withCheckedMatching(MatchProp<bool> match) {
+  WidgetSelector<Semantics> whereChecked(MatchProp<bool> match) {
     return withProp<bool>('checked', match);
   }
   
@@ -199,7 +199,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
     return withProp<bool>('checked', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Semantics> withMixedMatching(MatchProp<bool> match) {
+  WidgetSelector<Semantics> whereMixed(MatchProp<bool> match) {
     return withProp<bool>('mixed', match);
   }
   
@@ -207,7 +207,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
     return withProp<bool>('mixed', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Semantics> withSelectedMatching(MatchProp<bool> match) {
+  WidgetSelector<Semantics> whereSelected(MatchProp<bool> match) {
     return withProp<bool>('selected', match);
   }
   
@@ -215,7 +215,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
     return withProp<bool>('selected', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Semantics> withLabelMatching(MatchProp<String> match) {
+  WidgetSelector<Semantics> whereLabel(MatchProp<String> match) {
     return withProp<String>('label', match);
   }
   
@@ -223,7 +223,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
     return withProp<String>('label', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Semantics> withAttributedLabelMatching(MatchProp<String> match) {
+  WidgetSelector<Semantics> whereAttributedLabel(MatchProp<String> match) {
     return withProp<String>('attributedLabel', match);
   }
   
@@ -231,7 +231,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
     return withProp<String>('attributedLabel', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Semantics> withValueMatching(MatchProp<String> match) {
+  WidgetSelector<Semantics> whereValue(MatchProp<String> match) {
     return withProp<String>('value', match);
   }
   
@@ -239,7 +239,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
     return withProp<String>('value', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Semantics> withAttributedValueMatching(MatchProp<String> match) {
+  WidgetSelector<Semantics> whereAttributedValue(MatchProp<String> match) {
     return withProp<String>('attributedValue', match);
   }
   
@@ -247,7 +247,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
     return withProp<String>('attributedValue', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Semantics> withIncreasedValueMatching(MatchProp<String> match) {
+  WidgetSelector<Semantics> whereIncreasedValue(MatchProp<String> match) {
     return withProp<String>('increasedValue', match);
   }
   
@@ -255,7 +255,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
     return withProp<String>('increasedValue', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Semantics> withAttributedIncreasedValueMatching(MatchProp<String> match) {
+  WidgetSelector<Semantics> whereAttributedIncreasedValue(MatchProp<String> match) {
     return withProp<String>('attributedIncreasedValue', match);
   }
   
@@ -263,7 +263,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
     return withProp<String>('attributedIncreasedValue', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Semantics> withDecreasedValueMatching(MatchProp<String> match) {
+  WidgetSelector<Semantics> whereDecreasedValue(MatchProp<String> match) {
     return withProp<String>('decreasedValue', match);
   }
   
@@ -271,7 +271,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
     return withProp<String>('decreasedValue', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Semantics> withAttributedDecreasedValueMatching(MatchProp<String> match) {
+  WidgetSelector<Semantics> whereAttributedDecreasedValue(MatchProp<String> match) {
     return withProp<String>('attributedDecreasedValue', match);
   }
   
@@ -279,7 +279,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
     return withProp<String>('attributedDecreasedValue', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Semantics> withHintMatching(MatchProp<String> match) {
+  WidgetSelector<Semantics> whereHint(MatchProp<String> match) {
     return withProp<String>('hint', match);
   }
   
@@ -287,7 +287,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
     return withProp<String>('hint', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Semantics> withAttributedHintMatching(MatchProp<String> match) {
+  WidgetSelector<Semantics> whereAttributedHint(MatchProp<String> match) {
     return withProp<String>('attributedHint', match);
   }
   
@@ -295,7 +295,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
     return withProp<String>('attributedHint', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Semantics> withTooltipMatching(MatchProp<String> match) {
+  WidgetSelector<Semantics> whereTooltip(MatchProp<String> match) {
     return withProp<String>('tooltip', match);
   }
   
@@ -303,7 +303,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
     return withProp<String>('tooltip', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Semantics> withTextDirectionMatching(MatchProp<TextDirection> match) {
+  WidgetSelector<Semantics> whereTextDirection(MatchProp<TextDirection> match) {
     return withProp<TextDirection>('textDirection', match);
   }
   
@@ -311,7 +311,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
     return withProp<TextDirection>('textDirection', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Semantics> withSortKeyMatching(MatchProp<SemanticsSortKey> match) {
+  WidgetSelector<Semantics> whereSortKey(MatchProp<SemanticsSortKey> match) {
     return withProp<SemanticsSortKey>('sortKey', match);
   }
   
@@ -319,7 +319,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
     return withProp<SemanticsSortKey>('sortKey', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Semantics> withHintOverridesMatching(MatchProp<SemanticsHintOverrides> match) {
+  WidgetSelector<Semantics> whereHintOverrides(MatchProp<SemanticsHintOverrides> match) {
     return withProp<SemanticsHintOverrides>('hintOverrides', match);
   }
   
@@ -327,7 +327,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
     return withProp<SemanticsHintOverrides>('hintOverrides', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Semantics> withRenderObjectMatching(MatchProp<RenderSemanticsAnnotations> match) {
+  WidgetSelector<Semantics> whereRenderObject(MatchProp<RenderSemanticsAnnotations> match) {
     return withProp<RenderSemanticsAnnotations>('renderObject', match);
   }
   

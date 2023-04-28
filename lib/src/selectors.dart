@@ -991,8 +991,6 @@ extension CreateMatchers<W extends Widget> on WidgetSelector<W> {
     );
 
     for (final DiagnosticsNode prop in props) {
-      String matcherVerb = 'has';
-
       final propName = prop.name!;
       final humanPropName = propNameOverrides[propName] ?? propName;
       String propType = prop.getType();
@@ -1034,6 +1032,8 @@ extension CreateMatchers<W extends Widget> on WidgetSelector<W> {
         continue;
       }
       final propTypeNullable = propType.endsWith('?') ? propType : '$propType?';
+
+      String matcherVerb = 'has';
       if (humanPropName == 'enabled') {
         matcherVerb = 'is';
       }
@@ -1050,7 +1050,7 @@ extension CreateMatchers<W extends Widget> on WidgetSelector<W> {
 ''');
 
       selectorSb.writeln('''
-  WidgetSelector<$widgetType> with${humanPropName.capitalize()}Matching(MatchProp<$propType> match) {
+  WidgetSelector<$widgetType> where${humanPropName.capitalize()}(MatchProp<$propType> match) {
     return withProp<$propType>('$propName', match);
   }
   

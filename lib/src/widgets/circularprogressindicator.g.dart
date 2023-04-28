@@ -20,7 +20,7 @@ extension CircularProgressIndicatorMatcher on WidgetMatcher<CircularProgressIndi
 }
 
 extension CircularProgressIndicatorSelector on WidgetSelector<CircularProgressIndicator> {
-  WidgetSelector<CircularProgressIndicator> withValueMatching(MatchProp<double> match) {
+  WidgetSelector<CircularProgressIndicator> whereValue(MatchProp<double> match) {
     return withProp<double>('value', match);
   }
   

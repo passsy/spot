@@ -140,7 +140,7 @@ extension ImageMatcher on WidgetMatcher<Image> {
 }
 
 extension ImageSelector on WidgetSelector<Image> {
-  WidgetSelector<Image> withImageMatching(MatchProp<ImageProvider<Object>> match) {
+  WidgetSelector<Image> whereImage(MatchProp<ImageProvider<Object>> match) {
     return withProp<ImageProvider<Object>>('image', match);
   }
   
@@ -148,7 +148,7 @@ extension ImageSelector on WidgetSelector<Image> {
     return withProp<ImageProvider<Object>>('image', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Image> withFrameBuilderMatching(MatchProp<Function> match) {
+  WidgetSelector<Image> whereFrameBuilder(MatchProp<Function> match) {
     return withProp<Function>('frameBuilder', match);
   }
   
@@ -156,7 +156,7 @@ extension ImageSelector on WidgetSelector<Image> {
     return withProp<Function>('frameBuilder', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Image> withLoadingBuilderMatching(MatchProp<Function> match) {
+  WidgetSelector<Image> whereLoadingBuilder(MatchProp<Function> match) {
     return withProp<Function>('loadingBuilder', match);
   }
   
@@ -164,7 +164,7 @@ extension ImageSelector on WidgetSelector<Image> {
     return withProp<Function>('loadingBuilder', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Image> withWidthMatching(MatchProp<double> match) {
+  WidgetSelector<Image> whereWidth(MatchProp<double> match) {
     return withProp<double>('width', match);
   }
   
@@ -172,7 +172,7 @@ extension ImageSelector on WidgetSelector<Image> {
     return withProp<double>('width', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Image> withHeightMatching(MatchProp<double> match) {
+  WidgetSelector<Image> whereHeight(MatchProp<double> match) {
     return withProp<double>('height', match);
   }
   
@@ -180,7 +180,7 @@ extension ImageSelector on WidgetSelector<Image> {
     return withProp<double>('height', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Image> withColorMatching(MatchProp<Color> match) {
+  WidgetSelector<Image> whereColor(MatchProp<Color> match) {
     return withProp<Color>('color', match);
   }
   
@@ -188,7 +188,7 @@ extension ImageSelector on WidgetSelector<Image> {
     return withProp<Color>('color', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Image> withOpacityMatching(MatchProp<Animation<double>?> match) {
+  WidgetSelector<Image> whereOpacity(MatchProp<Animation<double>?> match) {
     return withProp<Animation<double>?>('opacity', match);
   }
   
@@ -196,7 +196,7 @@ extension ImageSelector on WidgetSelector<Image> {
     return withProp<Animation<double>?>('opacity', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Image> withColorBlendModeMatching(MatchProp<BlendMode> match) {
+  WidgetSelector<Image> whereColorBlendMode(MatchProp<BlendMode> match) {
     return withProp<BlendMode>('colorBlendMode', match);
   }
   
@@ -204,7 +204,7 @@ extension ImageSelector on WidgetSelector<Image> {
     return withProp<BlendMode>('colorBlendMode', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Image> withFitMatching(MatchProp<BoxFit> match) {
+  WidgetSelector<Image> whereFit(MatchProp<BoxFit> match) {
     return withProp<BoxFit>('fit', match);
   }
   
@@ -212,7 +212,7 @@ extension ImageSelector on WidgetSelector<Image> {
     return withProp<BoxFit>('fit', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Image> withAlignmentMatching(MatchProp<AlignmentGeometry> match) {
+  WidgetSelector<Image> whereAlignment(MatchProp<AlignmentGeometry> match) {
     return withProp<AlignmentGeometry>('alignment', match);
   }
   
@@ -220,7 +220,7 @@ extension ImageSelector on WidgetSelector<Image> {
     return withProp<AlignmentGeometry>('alignment', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Image> withRepeatMatching(MatchProp<ImageRepeat> match) {
+  WidgetSelector<Image> whereRepeat(MatchProp<ImageRepeat> match) {
     return withProp<ImageRepeat>('repeat', match);
   }
   
@@ -228,7 +228,7 @@ extension ImageSelector on WidgetSelector<Image> {
     return withProp<ImageRepeat>('repeat', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Image> withCenterSliceMatching(MatchProp<Rect> match) {
+  WidgetSelector<Image> whereCenterSlice(MatchProp<Rect> match) {
     return withProp<Rect>('centerSlice', match);
   }
   
@@ -236,7 +236,7 @@ extension ImageSelector on WidgetSelector<Image> {
     return withProp<Rect>('centerSlice', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Image> withMatchTextDirectionMatching(MatchProp<bool> match) {
+  WidgetSelector<Image> whereMatchTextDirection(MatchProp<bool> match) {
     return withProp<bool>('matchTextDirection', match);
   }
   
@@ -244,7 +244,7 @@ extension ImageSelector on WidgetSelector<Image> {
     return withProp<bool>('matchTextDirection', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Image> withSemanticLabelMatching(MatchProp<String> match) {
+  WidgetSelector<Image> whereSemanticLabel(MatchProp<String> match) {
     return withProp<String>('semanticLabel', match);
   }
   
@@ -252,7 +252,7 @@ extension ImageSelector on WidgetSelector<Image> {
     return withProp<String>('semanticLabel', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Image> withExcludeFromSemanticsMatching(MatchProp<bool> match) {
+  WidgetSelector<Image> whereExcludeFromSemantics(MatchProp<bool> match) {
     return withProp<bool>('this.excludeFromSemantics', match);
   }
   
@@ -260,7 +260,7 @@ extension ImageSelector on WidgetSelector<Image> {
     return withProp<bool>('this.excludeFromSemantics', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Image> withFilterQualityMatching(MatchProp<FilterQuality> match) {
+  WidgetSelector<Image> whereFilterQuality(MatchProp<FilterQuality> match) {
     return withProp<FilterQuality>('filterQuality', match);
   }
   

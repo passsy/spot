@@ -45,7 +45,7 @@ extension AlignMatcher on WidgetMatcher<Align> {
 }
 
 extension AlignSelector on WidgetSelector<Align> {
-  WidgetSelector<Align> withAlignmentMatching(MatchProp<AlignmentGeometry> match) {
+  WidgetSelector<Align> whereAlignment(MatchProp<AlignmentGeometry> match) {
     return withProp<AlignmentGeometry>('alignment', match);
   }
   
@@ -53,7 +53,7 @@ extension AlignSelector on WidgetSelector<Align> {
     return withProp<AlignmentGeometry>('alignment', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Align> withWidthFactorMatching(MatchProp<double> match) {
+  WidgetSelector<Align> whereWidthFactor(MatchProp<double> match) {
     return withProp<double>('widthFactor', match);
   }
   
@@ -61,7 +61,7 @@ extension AlignSelector on WidgetSelector<Align> {
     return withProp<double>('widthFactor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Align> withHeightFactorMatching(MatchProp<double> match) {
+  WidgetSelector<Align> whereHeightFactor(MatchProp<double> match) {
     return withProp<double>('heightFactor', match);
   }
   
@@ -69,7 +69,7 @@ extension AlignSelector on WidgetSelector<Align> {
     return withProp<double>('heightFactor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Align> withRenderObjectMatching(MatchProp<RenderPositionedBox> match) {
+  WidgetSelector<Align> whereRenderObject(MatchProp<RenderPositionedBox> match) {
     return withProp<RenderPositionedBox>('renderObject', match);
   }
   

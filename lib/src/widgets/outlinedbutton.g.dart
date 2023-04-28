@@ -36,7 +36,7 @@ extension OutlinedButtonMatcher on WidgetMatcher<OutlinedButton> {
 }
 
 extension OutlinedButtonSelector on WidgetSelector<OutlinedButton> {
-  WidgetSelector<OutlinedButton> withEnabledMatching(MatchProp<bool> match) {
+  WidgetSelector<OutlinedButton> whereEnabled(MatchProp<bool> match) {
     return withProp<bool>('enabled', match);
   }
   
@@ -44,7 +44,7 @@ extension OutlinedButtonSelector on WidgetSelector<OutlinedButton> {
     return withProp<bool>('enabled', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<OutlinedButton> withStyleMatching(MatchProp<ButtonStyle> match) {
+  WidgetSelector<OutlinedButton> whereStyle(MatchProp<ButtonStyle> match) {
     return withProp<ButtonStyle>('style', match);
   }
   
@@ -52,7 +52,7 @@ extension OutlinedButtonSelector on WidgetSelector<OutlinedButton> {
     return withProp<ButtonStyle>('style', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<OutlinedButton> withFocusNodeMatching(MatchProp<FocusNode> match) {
+  WidgetSelector<OutlinedButton> whereFocusNode(MatchProp<FocusNode> match) {
     return withProp<FocusNode>('focusNode', match);
   }
   

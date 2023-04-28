@@ -257,7 +257,7 @@ void main() {
 
       expect(
         () => spot<Text>()
-            .withTextMatching((text) => text.startsWith('a'))
+            .whereText((text) => text.startsWith('a'))
             .existsExactlyNTimes(3),
         throwsSpotErrorContaining([
           "Found 4 elements matching 'Text with prop \"data\" starts with 'a'' in widget tree, expected at most 3",

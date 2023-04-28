@@ -37,7 +37,7 @@ extension SizedBoxMatcher on WidgetMatcher<SizedBox> {
 }
 
 extension SizedBoxSelector on WidgetSelector<SizedBox> {
-  WidgetSelector<SizedBox> withWidthMatching(MatchProp<double> match) {
+  WidgetSelector<SizedBox> whereWidth(MatchProp<double> match) {
     return withProp<double>('width', match);
   }
   
@@ -45,7 +45,7 @@ extension SizedBoxSelector on WidgetSelector<SizedBox> {
     return withProp<double>('width', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<SizedBox> withHeightMatching(MatchProp<double> match) {
+  WidgetSelector<SizedBox> whereHeight(MatchProp<double> match) {
     return withProp<double>('height', match);
   }
   
@@ -53,7 +53,7 @@ extension SizedBoxSelector on WidgetSelector<SizedBox> {
     return withProp<double>('height', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<SizedBox> withRenderObjectMatching(MatchProp<RenderConstrainedBox> match) {
+  WidgetSelector<SizedBox> whereRenderObject(MatchProp<RenderConstrainedBox> match) {
     return withProp<RenderConstrainedBox>('renderObject', match);
   }
   

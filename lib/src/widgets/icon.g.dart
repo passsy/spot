@@ -92,7 +92,7 @@ extension IconMatcher on WidgetMatcher<Icon> {
 }
 
 extension IconSelector on WidgetSelector<Icon> {
-  WidgetSelector<Icon> withIconMatching(MatchProp<IconData> match) {
+  WidgetSelector<Icon> whereIcon(MatchProp<IconData> match) {
     return withProp<IconData>('icon', match);
   }
   
@@ -100,7 +100,7 @@ extension IconSelector on WidgetSelector<Icon> {
     return withProp<IconData>('icon', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Icon> withSizeMatching(MatchProp<double> match) {
+  WidgetSelector<Icon> whereSize(MatchProp<double> match) {
     return withProp<double>('size', match);
   }
   
@@ -108,7 +108,7 @@ extension IconSelector on WidgetSelector<Icon> {
     return withProp<double>('size', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Icon> withFillMatching(MatchProp<double> match) {
+  WidgetSelector<Icon> whereFill(MatchProp<double> match) {
     return withProp<double>('fill', match);
   }
   
@@ -116,7 +116,7 @@ extension IconSelector on WidgetSelector<Icon> {
     return withProp<double>('fill', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Icon> withWeightMatching(MatchProp<double> match) {
+  WidgetSelector<Icon> whereWeight(MatchProp<double> match) {
     return withProp<double>('weight', match);
   }
   
@@ -124,7 +124,7 @@ extension IconSelector on WidgetSelector<Icon> {
     return withProp<double>('weight', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Icon> withGradeMatching(MatchProp<double> match) {
+  WidgetSelector<Icon> whereGrade(MatchProp<double> match) {
     return withProp<double>('grade', match);
   }
   
@@ -132,7 +132,7 @@ extension IconSelector on WidgetSelector<Icon> {
     return withProp<double>('grade', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Icon> withOpticalSizeMatching(MatchProp<double> match) {
+  WidgetSelector<Icon> whereOpticalSize(MatchProp<double> match) {
     return withProp<double>('opticalSize', match);
   }
   
@@ -140,7 +140,7 @@ extension IconSelector on WidgetSelector<Icon> {
     return withProp<double>('opticalSize', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Icon> withColorMatching(MatchProp<Color> match) {
+  WidgetSelector<Icon> whereColor(MatchProp<Color> match) {
     return withProp<Color>('color', match);
   }
   
@@ -148,7 +148,7 @@ extension IconSelector on WidgetSelector<Icon> {
     return withProp<Color>('color', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Icon> withShadowsMatching(MatchProp<Shadow> match) {
+  WidgetSelector<Icon> whereShadows(MatchProp<Shadow> match) {
     return withProp<Shadow>('shadows', match);
   }
   
@@ -156,7 +156,7 @@ extension IconSelector on WidgetSelector<Icon> {
     return withProp<Shadow>('shadows', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Icon> withSemanticLabelMatching(MatchProp<String> match) {
+  WidgetSelector<Icon> whereSemanticLabel(MatchProp<String> match) {
     return withProp<String>('semanticLabel', match);
   }
   
@@ -164,7 +164,7 @@ extension IconSelector on WidgetSelector<Icon> {
     return withProp<String>('semanticLabel', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Icon> withTextDirectionMatching(MatchProp<TextDirection> match) {
+  WidgetSelector<Icon> whereTextDirection(MatchProp<TextDirection> match) {
     return withProp<TextDirection>('textDirection', match);
   }
   

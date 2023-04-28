@@ -78,8 +78,8 @@ void main() {
 
     spot<SizedBox>().withKey(key1).existsOnce();
     spot<SizedBox>().withKey(null).existsOnce();
-    spot<SizedBox>().withKeyMatching((it) => it.isNull()).existsOnce();
-    spot<SizedBox>().withKeyMatching((it) => it.equals(key1)).existsOnce();
+    spot<SizedBox>().whereKey((it) => it.isNull()).existsOnce();
+    spot<SizedBox>().whereKey((it) => it.equals(key1)).existsOnce();
   });
 
   group('spotKeys', () {

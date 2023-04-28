@@ -92,7 +92,7 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
 }
 
 extension IconButtonSelector on WidgetSelector<IconButton> {
-  WidgetSelector<IconButton> withIconMatching(MatchProp<Widget> match) {
+  WidgetSelector<IconButton> whereIcon(MatchProp<Widget> match) {
     return withProp<Widget>('icon', match);
   }
   
@@ -100,7 +100,7 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
     return withProp<Widget>('icon', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<IconButton> withTooltipMatching(MatchProp<String> match) {
+  WidgetSelector<IconButton> whereTooltip(MatchProp<String> match) {
     return withProp<String>('tooltip', match);
   }
   
@@ -108,7 +108,7 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
     return withProp<String>('tooltip', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<IconButton> withColorMatching(MatchProp<Color> match) {
+  WidgetSelector<IconButton> whereColor(MatchProp<Color> match) {
     return withProp<Color>('color', match);
   }
   
@@ -116,7 +116,7 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
     return withProp<Color>('color', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<IconButton> withDisabledColorMatching(MatchProp<Color> match) {
+  WidgetSelector<IconButton> whereDisabledColor(MatchProp<Color> match) {
     return withProp<Color>('disabledColor', match);
   }
   
@@ -124,7 +124,7 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
     return withProp<Color>('disabledColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<IconButton> withFocusColorMatching(MatchProp<Color> match) {
+  WidgetSelector<IconButton> whereFocusColor(MatchProp<Color> match) {
     return withProp<Color>('focusColor', match);
   }
   
@@ -132,7 +132,7 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
     return withProp<Color>('focusColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<IconButton> withHoverColorMatching(MatchProp<Color> match) {
+  WidgetSelector<IconButton> whereHoverColor(MatchProp<Color> match) {
     return withProp<Color>('hoverColor', match);
   }
   
@@ -140,7 +140,7 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
     return withProp<Color>('hoverColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<IconButton> withHighlightColorMatching(MatchProp<Color> match) {
+  WidgetSelector<IconButton> whereHighlightColor(MatchProp<Color> match) {
     return withProp<Color>('highlightColor', match);
   }
   
@@ -148,7 +148,7 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
     return withProp<Color>('highlightColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<IconButton> withSplashColorMatching(MatchProp<Color> match) {
+  WidgetSelector<IconButton> whereSplashColor(MatchProp<Color> match) {
     return withProp<Color>('splashColor', match);
   }
   
@@ -156,7 +156,7 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
     return withProp<Color>('splashColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<IconButton> withPaddingMatching(MatchProp<EdgeInsetsGeometry> match) {
+  WidgetSelector<IconButton> wherePadding(MatchProp<EdgeInsetsGeometry> match) {
     return withProp<EdgeInsetsGeometry>('padding', match);
   }
   
@@ -164,7 +164,7 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
     return withProp<EdgeInsetsGeometry>('padding', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<IconButton> withFocusNodeMatching(MatchProp<FocusNode> match) {
+  WidgetSelector<IconButton> whereFocusNode(MatchProp<FocusNode> match) {
     return withProp<FocusNode>('focusNode', match);
   }
   

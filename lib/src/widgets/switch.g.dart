@@ -20,7 +20,7 @@ extension SwitchMatcher on WidgetMatcher<Switch> {
 }
 
 extension SwitchSelector on WidgetSelector<Switch> {
-  WidgetSelector<Switch> withValueMatching(MatchProp<bool> match) {
+  WidgetSelector<Switch> whereValue(MatchProp<bool> match) {
     return withProp<bool>('value', match);
   }
   

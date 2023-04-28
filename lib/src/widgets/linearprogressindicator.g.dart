@@ -20,7 +20,7 @@ extension LinearProgressIndicatorMatcher on WidgetMatcher<LinearProgressIndicato
 }
 
 extension LinearProgressIndicatorSelector on WidgetSelector<LinearProgressIndicator> {
-  WidgetSelector<LinearProgressIndicator> withValueMatching(MatchProp<double> match) {
+  WidgetSelector<LinearProgressIndicator> whereValue(MatchProp<double> match) {
     return withProp<double>('value', match);
   }
   

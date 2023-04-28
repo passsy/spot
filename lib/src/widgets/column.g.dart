@@ -77,7 +77,7 @@ extension ColumnMatcher on WidgetMatcher<Column> {
 }
 
 extension ColumnSelector on WidgetSelector<Column> {
-  WidgetSelector<Column> withDirectionMatching(MatchProp<Axis> match) {
+  WidgetSelector<Column> whereDirection(MatchProp<Axis> match) {
     return withProp<Axis>('direction', match);
   }
   
@@ -85,7 +85,7 @@ extension ColumnSelector on WidgetSelector<Column> {
     return withProp<Axis>('direction', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Column> withMainAxisAlignmentMatching(MatchProp<MainAxisAlignment> match) {
+  WidgetSelector<Column> whereMainAxisAlignment(MatchProp<MainAxisAlignment> match) {
     return withProp<MainAxisAlignment>('mainAxisAlignment', match);
   }
   
@@ -93,7 +93,7 @@ extension ColumnSelector on WidgetSelector<Column> {
     return withProp<MainAxisAlignment>('mainAxisAlignment', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Column> withMainAxisSizeMatching(MatchProp<MainAxisSize> match) {
+  WidgetSelector<Column> whereMainAxisSize(MatchProp<MainAxisSize> match) {
     return withProp<MainAxisSize>('mainAxisSize', match);
   }
   
@@ -101,7 +101,7 @@ extension ColumnSelector on WidgetSelector<Column> {
     return withProp<MainAxisSize>('mainAxisSize', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Column> withCrossAxisAlignmentMatching(MatchProp<CrossAxisAlignment> match) {
+  WidgetSelector<Column> whereCrossAxisAlignment(MatchProp<CrossAxisAlignment> match) {
     return withProp<CrossAxisAlignment>('crossAxisAlignment', match);
   }
   
@@ -109,7 +109,7 @@ extension ColumnSelector on WidgetSelector<Column> {
     return withProp<CrossAxisAlignment>('crossAxisAlignment', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Column> withTextDirectionMatching(MatchProp<TextDirection> match) {
+  WidgetSelector<Column> whereTextDirection(MatchProp<TextDirection> match) {
     return withProp<TextDirection>('textDirection', match);
   }
   
@@ -117,7 +117,7 @@ extension ColumnSelector on WidgetSelector<Column> {
     return withProp<TextDirection>('textDirection', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Column> withVerticalDirectionMatching(MatchProp<VerticalDirection> match) {
+  WidgetSelector<Column> whereVerticalDirection(MatchProp<VerticalDirection> match) {
     return withProp<VerticalDirection>('verticalDirection', match);
   }
   
@@ -125,7 +125,7 @@ extension ColumnSelector on WidgetSelector<Column> {
     return withProp<VerticalDirection>('verticalDirection', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Column> withTextBaselineMatching(MatchProp<TextBaseline> match) {
+  WidgetSelector<Column> whereTextBaseline(MatchProp<TextBaseline> match) {
     return withProp<TextBaseline>('textBaseline', match);
   }
   
@@ -133,7 +133,7 @@ extension ColumnSelector on WidgetSelector<Column> {
     return withProp<TextBaseline>('textBaseline', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Column> withRenderObjectMatching(MatchProp<RenderFlex> match) {
+  WidgetSelector<Column> whereRenderObject(MatchProp<RenderFlex> match) {
     return withProp<RenderFlex>('renderObject', match);
   }
   

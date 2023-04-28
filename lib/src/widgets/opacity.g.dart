@@ -37,7 +37,7 @@ extension OpacityMatcher on WidgetMatcher<Opacity> {
 }
 
 extension OpacitySelector on WidgetSelector<Opacity> {
-  WidgetSelector<Opacity> withOpacityMatching(MatchProp<double> match) {
+  WidgetSelector<Opacity> whereOpacity(MatchProp<double> match) {
     return withProp<double>('opacity', match);
   }
   
@@ -45,7 +45,7 @@ extension OpacitySelector on WidgetSelector<Opacity> {
     return withProp<double>('opacity', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Opacity> withAlwaysIncludeSemanticsMatching(MatchProp<bool> match) {
+  WidgetSelector<Opacity> whereAlwaysIncludeSemantics(MatchProp<bool> match) {
     return withProp<bool>('alwaysIncludeSemantics', match);
   }
   
@@ -53,7 +53,7 @@ extension OpacitySelector on WidgetSelector<Opacity> {
     return withProp<bool>('alwaysIncludeSemantics', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Opacity> withRenderObjectMatching(MatchProp<RenderOpacity> match) {
+  WidgetSelector<Opacity> whereRenderObject(MatchProp<RenderOpacity> match) {
     return withProp<RenderOpacity>('renderObject', match);
   }
   

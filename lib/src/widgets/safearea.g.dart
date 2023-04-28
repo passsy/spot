@@ -44,7 +44,7 @@ extension SafeAreaMatcher on WidgetMatcher<SafeArea> {
 }
 
 extension SafeAreaSelector on WidgetSelector<SafeArea> {
-  WidgetSelector<SafeArea> withLeftMatching(MatchProp<bool> match) {
+  WidgetSelector<SafeArea> whereLeft(MatchProp<bool> match) {
     return withProp<bool>('left', match);
   }
   
@@ -52,7 +52,7 @@ extension SafeAreaSelector on WidgetSelector<SafeArea> {
     return withProp<bool>('left', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<SafeArea> withTopMatching(MatchProp<bool> match) {
+  WidgetSelector<SafeArea> whereTop(MatchProp<bool> match) {
     return withProp<bool>('top', match);
   }
   
@@ -60,7 +60,7 @@ extension SafeAreaSelector on WidgetSelector<SafeArea> {
     return withProp<bool>('top', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<SafeArea> withRightMatching(MatchProp<bool> match) {
+  WidgetSelector<SafeArea> whereRight(MatchProp<bool> match) {
     return withProp<bool>('right', match);
   }
   
@@ -68,7 +68,7 @@ extension SafeAreaSelector on WidgetSelector<SafeArea> {
     return withProp<bool>('right', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<SafeArea> withBottomMatching(MatchProp<bool> match) {
+  WidgetSelector<SafeArea> whereBottom(MatchProp<bool> match) {
     return withProp<bool>('bottom', match);
   }
   

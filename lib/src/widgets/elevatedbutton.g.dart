@@ -36,7 +36,7 @@ extension ElevatedButtonMatcher on WidgetMatcher<ElevatedButton> {
 }
 
 extension ElevatedButtonSelector on WidgetSelector<ElevatedButton> {
-  WidgetSelector<ElevatedButton> withEnabledMatching(MatchProp<bool> match) {
+  WidgetSelector<ElevatedButton> whereEnabled(MatchProp<bool> match) {
     return withProp<bool>('enabled', match);
   }
   
@@ -44,7 +44,7 @@ extension ElevatedButtonSelector on WidgetSelector<ElevatedButton> {
     return withProp<bool>('enabled', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<ElevatedButton> withStyleMatching(MatchProp<ButtonStyle> match) {
+  WidgetSelector<ElevatedButton> whereStyle(MatchProp<ButtonStyle> match) {
     return withProp<ButtonStyle>('style', match);
   }
   
@@ -52,7 +52,7 @@ extension ElevatedButtonSelector on WidgetSelector<ElevatedButton> {
     return withProp<ButtonStyle>('style', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<ElevatedButton> withFocusNodeMatching(MatchProp<FocusNode> match) {
+  WidgetSelector<ElevatedButton> whereFocusNode(MatchProp<FocusNode> match) {
     return withProp<FocusNode>('focusNode', match);
   }
   

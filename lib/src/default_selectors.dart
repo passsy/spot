@@ -23,7 +23,7 @@ extension DefaultWidgetMatchers<W extends Widget> on WidgetMatcher<W> {
 }
 
 extension DefaultWidgetSelectors<W extends Widget> on WidgetSelector<W> {
-  WidgetSelector<W> withDepthMatching(MatchProp<int> match) {
+  WidgetSelector<W> whereDepth(MatchProp<int> match) {
     return withProp<int>('depth', match);
   }
 
@@ -31,7 +31,7 @@ extension DefaultWidgetSelectors<W extends Widget> on WidgetSelector<W> {
     return withProp<int>('depth', (it) => it.equals(value));
   }
 
-  WidgetSelector<W> withKeyMatching(MatchProp<Key> match) {
+  WidgetSelector<W> whereKey(MatchProp<Key> match) {
     return withProp<Key>('key', match);
   }
 

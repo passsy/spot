@@ -36,7 +36,7 @@ extension TextButtonMatcher on WidgetMatcher<TextButton> {
 }
 
 extension TextButtonSelector on WidgetSelector<TextButton> {
-  WidgetSelector<TextButton> withEnabledMatching(MatchProp<bool> match) {
+  WidgetSelector<TextButton> whereEnabled(MatchProp<bool> match) {
     return withProp<bool>('enabled', match);
   }
   
@@ -44,7 +44,7 @@ extension TextButtonSelector on WidgetSelector<TextButton> {
     return withProp<bool>('enabled', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextButton> withStyleMatching(MatchProp<ButtonStyle> match) {
+  WidgetSelector<TextButton> whereStyle(MatchProp<ButtonStyle> match) {
     return withProp<ButtonStyle>('style', match);
   }
   
@@ -52,7 +52,7 @@ extension TextButtonSelector on WidgetSelector<TextButton> {
     return withProp<ButtonStyle>('style', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextButton> withFocusNodeMatching(MatchProp<FocusNode> match) {
+  WidgetSelector<TextButton> whereFocusNode(MatchProp<FocusNode> match) {
     return withProp<FocusNode>('focusNode', match);
   }
   

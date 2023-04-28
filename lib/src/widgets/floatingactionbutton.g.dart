@@ -140,7 +140,7 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
 }
 
 extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
-  WidgetSelector<FloatingActionButton> withTooltipMatching(MatchProp<String> match) {
+  WidgetSelector<FloatingActionButton> whereTooltip(MatchProp<String> match) {
     return withProp<String>('tooltip', match);
   }
   
@@ -148,7 +148,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
     return withProp<String>('tooltip', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<FloatingActionButton> withForegroundColorMatching(MatchProp<Color> match) {
+  WidgetSelector<FloatingActionButton> whereForegroundColor(MatchProp<Color> match) {
     return withProp<Color>('foregroundColor', match);
   }
   
@@ -156,7 +156,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
     return withProp<Color>('foregroundColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<FloatingActionButton> withBackgroundColorMatching(MatchProp<Color> match) {
+  WidgetSelector<FloatingActionButton> whereBackgroundColor(MatchProp<Color> match) {
     return withProp<Color>('backgroundColor', match);
   }
   
@@ -164,7 +164,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
     return withProp<Color>('backgroundColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<FloatingActionButton> withFocusColorMatching(MatchProp<Color> match) {
+  WidgetSelector<FloatingActionButton> whereFocusColor(MatchProp<Color> match) {
     return withProp<Color>('focusColor', match);
   }
   
@@ -172,7 +172,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
     return withProp<Color>('focusColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<FloatingActionButton> withHoverColorMatching(MatchProp<Color> match) {
+  WidgetSelector<FloatingActionButton> whereHoverColor(MatchProp<Color> match) {
     return withProp<Color>('hoverColor', match);
   }
   
@@ -180,7 +180,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
     return withProp<Color>('hoverColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<FloatingActionButton> withSplashColorMatching(MatchProp<Color> match) {
+  WidgetSelector<FloatingActionButton> whereSplashColor(MatchProp<Color> match) {
     return withProp<Color>('splashColor', match);
   }
   
@@ -188,7 +188,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
     return withProp<Color>('splashColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<FloatingActionButton> withHeroTagMatching(MatchProp<Object> match) {
+  WidgetSelector<FloatingActionButton> whereHeroTag(MatchProp<Object> match) {
     return withProp<Object>('heroTag', match);
   }
   
@@ -196,7 +196,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
     return withProp<Object>('heroTag', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<FloatingActionButton> withElevationMatching(MatchProp<double> match) {
+  WidgetSelector<FloatingActionButton> whereElevation(MatchProp<double> match) {
     return withProp<double>('elevation', match);
   }
   
@@ -204,7 +204,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
     return withProp<double>('elevation', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<FloatingActionButton> withFocusElevationMatching(MatchProp<double> match) {
+  WidgetSelector<FloatingActionButton> whereFocusElevation(MatchProp<double> match) {
     return withProp<double>('focusElevation', match);
   }
   
@@ -212,7 +212,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
     return withProp<double>('focusElevation', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<FloatingActionButton> withHoverElevationMatching(MatchProp<double> match) {
+  WidgetSelector<FloatingActionButton> whereHoverElevation(MatchProp<double> match) {
     return withProp<double>('hoverElevation', match);
   }
   
@@ -220,7 +220,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
     return withProp<double>('hoverElevation', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<FloatingActionButton> withHighlightElevationMatching(MatchProp<double> match) {
+  WidgetSelector<FloatingActionButton> whereHighlightElevation(MatchProp<double> match) {
     return withProp<double>('highlightElevation', match);
   }
   
@@ -228,7 +228,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
     return withProp<double>('highlightElevation', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<FloatingActionButton> withDisabledElevationMatching(MatchProp<double> match) {
+  WidgetSelector<FloatingActionButton> whereDisabledElevation(MatchProp<double> match) {
     return withProp<double>('disabledElevation', match);
   }
   
@@ -236,7 +236,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
     return withProp<double>('disabledElevation', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<FloatingActionButton> withShapeMatching(MatchProp<ShapeBorder> match) {
+  WidgetSelector<FloatingActionButton> whereShape(MatchProp<ShapeBorder> match) {
     return withProp<ShapeBorder>('shape', match);
   }
   
@@ -244,7 +244,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
     return withProp<ShapeBorder>('shape', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<FloatingActionButton> withFocusNodeMatching(MatchProp<FocusNode> match) {
+  WidgetSelector<FloatingActionButton> whereFocusNode(MatchProp<FocusNode> match) {
     return withProp<FocusNode>('focusNode', match);
   }
   
@@ -252,7 +252,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
     return withProp<FocusNode>('focusNode', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<FloatingActionButton> withIsExtendedMatching(MatchProp<bool> match) {
+  WidgetSelector<FloatingActionButton> whereIsExtended(MatchProp<bool> match) {
     return withProp<bool>('isExtended', match);
   }
   
@@ -260,7 +260,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
     return withProp<bool>('isExtended', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<FloatingActionButton> withMaterialTapTargetSizeMatching(MatchProp<MaterialTapTargetSize> match) {
+  WidgetSelector<FloatingActionButton> whereMaterialTapTargetSize(MatchProp<MaterialTapTargetSize> match) {
     return withProp<MaterialTapTargetSize>('materialTapTargetSize', match);
   }
   

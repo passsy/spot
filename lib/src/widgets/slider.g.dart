@@ -100,7 +100,7 @@ extension SliderMatcher on WidgetMatcher<Slider> {
 }
 
 extension SliderSelector on WidgetSelector<Slider> {
-  WidgetSelector<Slider> withValueMatching(MatchProp<double> match) {
+  WidgetSelector<Slider> whereValue(MatchProp<double> match) {
     return withProp<double>('value', match);
   }
   
@@ -108,7 +108,7 @@ extension SliderSelector on WidgetSelector<Slider> {
     return withProp<double>('value', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Slider> withSecondaryTrackValueMatching(MatchProp<double> match) {
+  WidgetSelector<Slider> whereSecondaryTrackValue(MatchProp<double> match) {
     return withProp<double>('secondaryTrackValue', match);
   }
   
@@ -116,7 +116,7 @@ extension SliderSelector on WidgetSelector<Slider> {
     return withProp<double>('secondaryTrackValue', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Slider> withMinMatching(MatchProp<double> match) {
+  WidgetSelector<Slider> whereMin(MatchProp<double> match) {
     return withProp<double>('min', match);
   }
   
@@ -124,7 +124,7 @@ extension SliderSelector on WidgetSelector<Slider> {
     return withProp<double>('min', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Slider> withMaxMatching(MatchProp<double> match) {
+  WidgetSelector<Slider> whereMax(MatchProp<double> match) {
     return withProp<double>('max', match);
   }
   
@@ -132,7 +132,7 @@ extension SliderSelector on WidgetSelector<Slider> {
     return withProp<double>('max', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Slider> withDivisionsMatching(MatchProp<int> match) {
+  WidgetSelector<Slider> whereDivisions(MatchProp<int> match) {
     return withProp<int>('divisions', match);
   }
   
@@ -140,7 +140,7 @@ extension SliderSelector on WidgetSelector<Slider> {
     return withProp<int>('divisions', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Slider> withLabelMatching(MatchProp<String> match) {
+  WidgetSelector<Slider> whereLabel(MatchProp<String> match) {
     return withProp<String>('label', match);
   }
   
@@ -148,7 +148,7 @@ extension SliderSelector on WidgetSelector<Slider> {
     return withProp<String>('label', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Slider> withActiveColorMatching(MatchProp<Color> match) {
+  WidgetSelector<Slider> whereActiveColor(MatchProp<Color> match) {
     return withProp<Color>('activeColor', match);
   }
   
@@ -156,7 +156,7 @@ extension SliderSelector on WidgetSelector<Slider> {
     return withProp<Color>('activeColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Slider> withInactiveColorMatching(MatchProp<Color> match) {
+  WidgetSelector<Slider> whereInactiveColor(MatchProp<Color> match) {
     return withProp<Color>('inactiveColor', match);
   }
   
@@ -164,7 +164,7 @@ extension SliderSelector on WidgetSelector<Slider> {
     return withProp<Color>('inactiveColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Slider> withSecondaryActiveColorMatching(MatchProp<Color> match) {
+  WidgetSelector<Slider> whereSecondaryActiveColor(MatchProp<Color> match) {
     return withProp<Color>('secondaryActiveColor', match);
   }
   
@@ -172,7 +172,7 @@ extension SliderSelector on WidgetSelector<Slider> {
     return withProp<Color>('secondaryActiveColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Slider> withFocusNodeMatching(MatchProp<FocusNode> match) {
+  WidgetSelector<Slider> whereFocusNode(MatchProp<FocusNode> match) {
     return withProp<FocusNode>('focusNode', match);
   }
   
@@ -180,7 +180,7 @@ extension SliderSelector on WidgetSelector<Slider> {
     return withProp<FocusNode>('focusNode', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Slider> withAutofocusMatching(MatchProp<bool> match) {
+  WidgetSelector<Slider> whereAutofocus(MatchProp<bool> match) {
     return withProp<bool>('autofocus', match);
   }
   

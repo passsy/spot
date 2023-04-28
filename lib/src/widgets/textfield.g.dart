@@ -333,7 +333,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
 }
 
 extension TextFieldSelector on WidgetSelector<TextField> {
-  WidgetSelector<TextField> withControllerMatching(MatchProp<TextEditingController> match) {
+  WidgetSelector<TextField> whereController(MatchProp<TextEditingController> match) {
     return withProp<TextEditingController>('controller', match);
   }
   
@@ -341,7 +341,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<TextEditingController>('controller', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withFocusNodeMatching(MatchProp<FocusNode> match) {
+  WidgetSelector<TextField> whereFocusNode(MatchProp<FocusNode> match) {
     return withProp<FocusNode>('focusNode', match);
   }
   
@@ -349,7 +349,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<FocusNode>('focusNode', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withUndoControllerMatching(MatchProp<UndoHistoryController> match) {
+  WidgetSelector<TextField> whereUndoController(MatchProp<UndoHistoryController> match) {
     return withProp<UndoHistoryController>('undoController', match);
   }
   
@@ -357,7 +357,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<UndoHistoryController>('undoController', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withEnabledMatching(MatchProp<bool> match) {
+  WidgetSelector<TextField> whereEnabled(MatchProp<bool> match) {
     return withProp<bool>('enabled', match);
   }
   
@@ -365,7 +365,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<bool>('enabled', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withDecorationMatching(MatchProp<InputDecoration> match) {
+  WidgetSelector<TextField> whereDecoration(MatchProp<InputDecoration> match) {
     return withProp<InputDecoration>('decoration', match);
   }
   
@@ -373,7 +373,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<InputDecoration>('decoration', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withKeyboardTypeMatching(MatchProp<TextInputType> match) {
+  WidgetSelector<TextField> whereKeyboardType(MatchProp<TextInputType> match) {
     return withProp<TextInputType>('keyboardType', match);
   }
   
@@ -381,7 +381,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<TextInputType>('keyboardType', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withStyleMatching(MatchProp<TextStyle> match) {
+  WidgetSelector<TextField> whereStyle(MatchProp<TextStyle> match) {
     return withProp<TextStyle>('style', match);
   }
   
@@ -389,7 +389,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<TextStyle>('style', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withAutofocusMatching(MatchProp<bool> match) {
+  WidgetSelector<TextField> whereAutofocus(MatchProp<bool> match) {
     return withProp<bool>('autofocus', match);
   }
   
@@ -397,7 +397,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<bool>('autofocus', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withObscuringCharacterMatching(MatchProp<String> match) {
+  WidgetSelector<TextField> whereObscuringCharacter(MatchProp<String> match) {
     return withProp<String>('obscuringCharacter', match);
   }
   
@@ -405,7 +405,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<String>('obscuringCharacter', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withObscureTextMatching(MatchProp<bool> match) {
+  WidgetSelector<TextField> whereObscureText(MatchProp<bool> match) {
     return withProp<bool>('obscureText', match);
   }
   
@@ -413,7 +413,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<bool>('obscureText', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withAutocorrectMatching(MatchProp<bool> match) {
+  WidgetSelector<TextField> whereAutocorrect(MatchProp<bool> match) {
     return withProp<bool>('autocorrect', match);
   }
   
@@ -421,7 +421,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<bool>('autocorrect', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withSmartDashesTypeMatching(MatchProp<SmartDashesType> match) {
+  WidgetSelector<TextField> whereSmartDashesType(MatchProp<SmartDashesType> match) {
     return withProp<SmartDashesType>('smartDashesType', match);
   }
   
@@ -429,7 +429,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<SmartDashesType>('smartDashesType', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withSmartQuotesTypeMatching(MatchProp<SmartQuotesType> match) {
+  WidgetSelector<TextField> whereSmartQuotesType(MatchProp<SmartQuotesType> match) {
     return withProp<SmartQuotesType>('smartQuotesType', match);
   }
   
@@ -437,7 +437,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<SmartQuotesType>('smartQuotesType', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withEnableSuggestionsMatching(MatchProp<bool> match) {
+  WidgetSelector<TextField> whereEnableSuggestions(MatchProp<bool> match) {
     return withProp<bool>('enableSuggestions', match);
   }
   
@@ -445,7 +445,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<bool>('enableSuggestions', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withMaxLinesMatching(MatchProp<int> match) {
+  WidgetSelector<TextField> whereMaxLines(MatchProp<int> match) {
     return withProp<int>('maxLines', match);
   }
   
@@ -453,7 +453,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<int>('maxLines', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withMinLinesMatching(MatchProp<int> match) {
+  WidgetSelector<TextField> whereMinLines(MatchProp<int> match) {
     return withProp<int>('minLines', match);
   }
   
@@ -461,7 +461,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<int>('minLines', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withExpandsMatching(MatchProp<bool> match) {
+  WidgetSelector<TextField> whereExpands(MatchProp<bool> match) {
     return withProp<bool>('expands', match);
   }
   
@@ -469,7 +469,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<bool>('expands', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withMaxLengthMatching(MatchProp<int> match) {
+  WidgetSelector<TextField> whereMaxLength(MatchProp<int> match) {
     return withProp<int>('maxLength', match);
   }
   
@@ -477,7 +477,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<int>('maxLength', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withMaxLengthEnforcementMatching(MatchProp<MaxLengthEnforcement> match) {
+  WidgetSelector<TextField> whereMaxLengthEnforcement(MatchProp<MaxLengthEnforcement> match) {
     return withProp<MaxLengthEnforcement>('maxLengthEnforcement', match);
   }
   
@@ -485,7 +485,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<MaxLengthEnforcement>('maxLengthEnforcement', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withTextInputActionMatching(MatchProp<TextInputAction> match) {
+  WidgetSelector<TextField> whereTextInputAction(MatchProp<TextInputAction> match) {
     return withProp<TextInputAction>('textInputAction', match);
   }
   
@@ -493,7 +493,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<TextInputAction>('textInputAction', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withTextCapitalizationMatching(MatchProp<TextCapitalization> match) {
+  WidgetSelector<TextField> whereTextCapitalization(MatchProp<TextCapitalization> match) {
     return withProp<TextCapitalization>('textCapitalization', match);
   }
   
@@ -501,7 +501,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<TextCapitalization>('textCapitalization', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withTextAlignMatching(MatchProp<TextAlign> match) {
+  WidgetSelector<TextField> whereTextAlign(MatchProp<TextAlign> match) {
     return withProp<TextAlign>('textAlign', match);
   }
   
@@ -509,7 +509,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<TextAlign>('textAlign', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withTextAlignVerticalMatching(MatchProp<TextAlignVertical> match) {
+  WidgetSelector<TextField> whereTextAlignVertical(MatchProp<TextAlignVertical> match) {
     return withProp<TextAlignVertical>('textAlignVertical', match);
   }
   
@@ -517,7 +517,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<TextAlignVertical>('textAlignVertical', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withTextDirectionMatching(MatchProp<TextDirection> match) {
+  WidgetSelector<TextField> whereTextDirection(MatchProp<TextDirection> match) {
     return withProp<TextDirection>('textDirection', match);
   }
   
@@ -525,7 +525,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<TextDirection>('textDirection', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withCursorWidthMatching(MatchProp<double> match) {
+  WidgetSelector<TextField> whereCursorWidth(MatchProp<double> match) {
     return withProp<double>('cursorWidth', match);
   }
   
@@ -533,7 +533,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<double>('cursorWidth', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withCursorHeightMatching(MatchProp<double> match) {
+  WidgetSelector<TextField> whereCursorHeight(MatchProp<double> match) {
     return withProp<double>('cursorHeight', match);
   }
   
@@ -541,7 +541,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<double>('cursorHeight', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withCursorRadiusMatching(MatchProp<Radius> match) {
+  WidgetSelector<TextField> whereCursorRadius(MatchProp<Radius> match) {
     return withProp<Radius>('cursorRadius', match);
   }
   
@@ -549,7 +549,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<Radius>('cursorRadius', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withCursorOpacityAnimatesMatching(MatchProp<bool> match) {
+  WidgetSelector<TextField> whereCursorOpacityAnimates(MatchProp<bool> match) {
     return withProp<bool>('cursorOpacityAnimates', match);
   }
   
@@ -557,7 +557,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<bool>('cursorOpacityAnimates', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withCursorColorMatching(MatchProp<Color> match) {
+  WidgetSelector<TextField> whereCursorColor(MatchProp<Color> match) {
     return withProp<Color>('cursorColor', match);
   }
   
@@ -565,7 +565,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<Color>('cursorColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withKeyboardAppearanceMatching(MatchProp<Brightness> match) {
+  WidgetSelector<TextField> whereKeyboardAppearance(MatchProp<Brightness> match) {
     return withProp<Brightness>('keyboardAppearance', match);
   }
   
@@ -573,7 +573,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<Brightness>('keyboardAppearance', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withScrollPaddingMatching(MatchProp<EdgeInsetsGeometry> match) {
+  WidgetSelector<TextField> whereScrollPadding(MatchProp<EdgeInsetsGeometry> match) {
     return withProp<EdgeInsetsGeometry>('scrollPadding', match);
   }
   
@@ -581,7 +581,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<EdgeInsetsGeometry>('scrollPadding', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withSelectionEnabledMatching(MatchProp<bool> match) {
+  WidgetSelector<TextField> whereSelectionEnabled(MatchProp<bool> match) {
     return withProp<bool>('selectionEnabled', match);
   }
   
@@ -589,7 +589,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<bool>('selectionEnabled', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withSelectionControlsMatching(MatchProp<TextSelectionControls> match) {
+  WidgetSelector<TextField> whereSelectionControls(MatchProp<TextSelectionControls> match) {
     return withProp<TextSelectionControls>('selectionControls', match);
   }
   
@@ -597,7 +597,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<TextSelectionControls>('selectionControls', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withScrollControllerMatching(MatchProp<ScrollController> match) {
+  WidgetSelector<TextField> whereScrollController(MatchProp<ScrollController> match) {
     return withProp<ScrollController>('scrollController', match);
   }
   
@@ -605,7 +605,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<ScrollController>('scrollController', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withScrollPhysicsMatching(MatchProp<ScrollPhysics> match) {
+  WidgetSelector<TextField> whereScrollPhysics(MatchProp<ScrollPhysics> match) {
     return withProp<ScrollPhysics>('scrollPhysics', match);
   }
   
@@ -613,7 +613,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<ScrollPhysics>('scrollPhysics', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withClipBehaviorMatching(MatchProp<Clip> match) {
+  WidgetSelector<TextField> whereClipBehavior(MatchProp<Clip> match) {
     return withProp<Clip>('clipBehavior', match);
   }
   
@@ -621,7 +621,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<Clip>('clipBehavior', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withScribbleEnabledMatching(MatchProp<bool> match) {
+  WidgetSelector<TextField> whereScribbleEnabled(MatchProp<bool> match) {
     return withProp<bool>('scribbleEnabled', match);
   }
   
@@ -629,7 +629,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<bool>('scribbleEnabled', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withEnableIMEPersonalizedLearningMatching(MatchProp<bool> match) {
+  WidgetSelector<TextField> whereEnableIMEPersonalizedLearning(MatchProp<bool> match) {
     return withProp<bool>('enableIMEPersonalizedLearning', match);
   }
   
@@ -637,7 +637,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<bool>('enableIMEPersonalizedLearning', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withSpellCheckConfigurationMatching(MatchProp<SpellCheckConfiguration> match) {
+  WidgetSelector<TextField> whereSpellCheckConfiguration(MatchProp<SpellCheckConfiguration> match) {
     return withProp<SpellCheckConfiguration>('spellCheckConfiguration', match);
   }
   
@@ -645,7 +645,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
     return withProp<SpellCheckConfiguration>('spellCheckConfiguration', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<TextField> withContentCommitMimeTypesMatching(MatchProp<List<String>> match) {
+  WidgetSelector<TextField> whereContentCommitMimeTypes(MatchProp<List<String>> match) {
     return withProp<List<String>>('contentCommitMimeTypes', match);
   }
   

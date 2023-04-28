@@ -85,7 +85,7 @@ extension WrapMatcher on WidgetMatcher<Wrap> {
 }
 
 extension WrapSelector on WidgetSelector<Wrap> {
-  WidgetSelector<Wrap> withDirectionMatching(MatchProp<Axis> match) {
+  WidgetSelector<Wrap> whereDirection(MatchProp<Axis> match) {
     return withProp<Axis>('direction', match);
   }
   
@@ -93,7 +93,7 @@ extension WrapSelector on WidgetSelector<Wrap> {
     return withProp<Axis>('direction', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Wrap> withAlignmentMatching(MatchProp<WrapAlignment> match) {
+  WidgetSelector<Wrap> whereAlignment(MatchProp<WrapAlignment> match) {
     return withProp<WrapAlignment>('alignment', match);
   }
   
@@ -101,7 +101,7 @@ extension WrapSelector on WidgetSelector<Wrap> {
     return withProp<WrapAlignment>('alignment', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Wrap> withSpacingMatching(MatchProp<double> match) {
+  WidgetSelector<Wrap> whereSpacing(MatchProp<double> match) {
     return withProp<double>('spacing', match);
   }
   
@@ -109,7 +109,7 @@ extension WrapSelector on WidgetSelector<Wrap> {
     return withProp<double>('spacing', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Wrap> withRunAlignmentMatching(MatchProp<WrapAlignment> match) {
+  WidgetSelector<Wrap> whereRunAlignment(MatchProp<WrapAlignment> match) {
     return withProp<WrapAlignment>('runAlignment', match);
   }
   
@@ -117,7 +117,7 @@ extension WrapSelector on WidgetSelector<Wrap> {
     return withProp<WrapAlignment>('runAlignment', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Wrap> withRunSpacingMatching(MatchProp<double> match) {
+  WidgetSelector<Wrap> whereRunSpacing(MatchProp<double> match) {
     return withProp<double>('runSpacing', match);
   }
   
@@ -125,7 +125,7 @@ extension WrapSelector on WidgetSelector<Wrap> {
     return withProp<double>('runSpacing', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Wrap> withCrossAxisAlignmentMatching(MatchProp<WrapCrossAlignment> match) {
+  WidgetSelector<Wrap> whereCrossAxisAlignment(MatchProp<WrapCrossAlignment> match) {
     return withProp<WrapCrossAlignment>('crossAxisAlignment', match);
   }
   
@@ -133,7 +133,7 @@ extension WrapSelector on WidgetSelector<Wrap> {
     return withProp<WrapCrossAlignment>('crossAxisAlignment', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Wrap> withTextDirectionMatching(MatchProp<TextDirection> match) {
+  WidgetSelector<Wrap> whereTextDirection(MatchProp<TextDirection> match) {
     return withProp<TextDirection>('textDirection', match);
   }
   
@@ -141,7 +141,7 @@ extension WrapSelector on WidgetSelector<Wrap> {
     return withProp<TextDirection>('textDirection', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Wrap> withVerticalDirectionMatching(MatchProp<VerticalDirection> match) {
+  WidgetSelector<Wrap> whereVerticalDirection(MatchProp<VerticalDirection> match) {
     return withProp<VerticalDirection>('verticalDirection', match);
   }
   
@@ -149,7 +149,7 @@ extension WrapSelector on WidgetSelector<Wrap> {
     return withProp<VerticalDirection>('verticalDirection', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Wrap> withRenderObjectMatching(MatchProp<RenderWrap> match) {
+  WidgetSelector<Wrap> whereRenderObject(MatchProp<RenderWrap> match) {
     return withProp<RenderWrap>('renderObject', match);
   }
   

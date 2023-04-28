@@ -29,7 +29,7 @@ extension ConstrainedBoxMatcher on WidgetMatcher<ConstrainedBox> {
 }
 
 extension ConstrainedBoxSelector on WidgetSelector<ConstrainedBox> {
-  WidgetSelector<ConstrainedBox> withConstraintsMatching(MatchProp<BoxConstraints> match) {
+  WidgetSelector<ConstrainedBox> whereConstraints(MatchProp<BoxConstraints> match) {
     return withProp<BoxConstraints>('constraints', match);
   }
   
@@ -37,7 +37,7 @@ extension ConstrainedBoxSelector on WidgetSelector<ConstrainedBox> {
     return withProp<BoxConstraints>('constraints', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<ConstrainedBox> withRenderObjectMatching(MatchProp<RenderConstrainedBox> match) {
+  WidgetSelector<ConstrainedBox> whereRenderObject(MatchProp<RenderConstrainedBox> match) {
     return withProp<RenderConstrainedBox>('renderObject', match);
   }
   

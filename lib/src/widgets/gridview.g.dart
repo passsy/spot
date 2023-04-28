@@ -68,7 +68,7 @@ extension GridViewMatcher on WidgetMatcher<GridView> {
 }
 
 extension GridViewSelector on WidgetSelector<GridView> {
-  WidgetSelector<GridView> withScrollDirectionMatching(MatchProp<Axis> match) {
+  WidgetSelector<GridView> whereScrollDirection(MatchProp<Axis> match) {
     return withProp<Axis>('scrollDirection', match);
   }
   
@@ -76,7 +76,7 @@ extension GridViewSelector on WidgetSelector<GridView> {
     return withProp<Axis>('scrollDirection', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<GridView> withReverseMatching(MatchProp<bool> match) {
+  WidgetSelector<GridView> whereReverse(MatchProp<bool> match) {
     return withProp<bool>('reverse', match);
   }
   
@@ -84,7 +84,7 @@ extension GridViewSelector on WidgetSelector<GridView> {
     return withProp<bool>('reverse', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<GridView> withControllerMatching(MatchProp<ScrollController> match) {
+  WidgetSelector<GridView> whereController(MatchProp<ScrollController> match) {
     return withProp<ScrollController>('controller', match);
   }
   
@@ -92,7 +92,7 @@ extension GridViewSelector on WidgetSelector<GridView> {
     return withProp<ScrollController>('controller', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<GridView> withPrimaryMatching(MatchProp<bool> match) {
+  WidgetSelector<GridView> wherePrimary(MatchProp<bool> match) {
     return withProp<bool>('primary', match);
   }
   
@@ -100,7 +100,7 @@ extension GridViewSelector on WidgetSelector<GridView> {
     return withProp<bool>('primary', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<GridView> withPhysicsMatching(MatchProp<ScrollPhysics> match) {
+  WidgetSelector<GridView> wherePhysics(MatchProp<ScrollPhysics> match) {
     return withProp<ScrollPhysics>('physics', match);
   }
   
@@ -108,7 +108,7 @@ extension GridViewSelector on WidgetSelector<GridView> {
     return withProp<ScrollPhysics>('physics', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<GridView> withShrinkWrapMatching(MatchProp<bool> match) {
+  WidgetSelector<GridView> whereShrinkWrap(MatchProp<bool> match) {
     return withProp<bool>('shrinkWrap', match);
   }
   
@@ -116,7 +116,7 @@ extension GridViewSelector on WidgetSelector<GridView> {
     return withProp<bool>('shrinkWrap', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<GridView> withPaddingMatching(MatchProp<EdgeInsetsGeometry> match) {
+  WidgetSelector<GridView> wherePadding(MatchProp<EdgeInsetsGeometry> match) {
     return withProp<EdgeInsetsGeometry>('padding', match);
   }
   

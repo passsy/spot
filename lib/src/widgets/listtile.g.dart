@@ -268,7 +268,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
 }
 
 extension ListTileSelector on WidgetSelector<ListTile> {
-  WidgetSelector<ListTile> withLeadingMatching(MatchProp<Widget> match) {
+  WidgetSelector<ListTile> whereLeading(MatchProp<Widget> match) {
     return withProp<Widget>('leading', match);
   }
   
@@ -276,7 +276,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<Widget>('leading', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<ListTile> withTitleMatching(MatchProp<Widget> match) {
+  WidgetSelector<ListTile> whereTitle(MatchProp<Widget> match) {
     return withProp<Widget>('title', match);
   }
   
@@ -284,7 +284,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<Widget>('title', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<ListTile> withSubtitleMatching(MatchProp<Widget> match) {
+  WidgetSelector<ListTile> whereSubtitle(MatchProp<Widget> match) {
     return withProp<Widget>('subtitle', match);
   }
   
@@ -292,7 +292,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<Widget>('subtitle', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<ListTile> withTrailingMatching(MatchProp<Widget> match) {
+  WidgetSelector<ListTile> whereTrailing(MatchProp<Widget> match) {
     return withProp<Widget>('trailing', match);
   }
   
@@ -300,7 +300,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<Widget>('trailing', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<ListTile> withIsThreeLineMatching(MatchProp<bool> match) {
+  WidgetSelector<ListTile> whereIsThreeLine(MatchProp<bool> match) {
     return withProp<bool>('isThreeLine', match);
   }
   
@@ -308,7 +308,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<bool>('isThreeLine', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<ListTile> withDenseMatching(MatchProp<bool> match) {
+  WidgetSelector<ListTile> whereDense(MatchProp<bool> match) {
     return withProp<bool>('dense', match);
   }
   
@@ -316,7 +316,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<bool>('dense', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<ListTile> withVisualDensityMatching(MatchProp<VisualDensity> match) {
+  WidgetSelector<ListTile> whereVisualDensity(MatchProp<VisualDensity> match) {
     return withProp<VisualDensity>('visualDensity', match);
   }
   
@@ -324,7 +324,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<VisualDensity>('visualDensity', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<ListTile> withShapeMatching(MatchProp<ShapeBorder> match) {
+  WidgetSelector<ListTile> whereShape(MatchProp<ShapeBorder> match) {
     return withProp<ShapeBorder>('shape', match);
   }
   
@@ -332,7 +332,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<ShapeBorder>('shape', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<ListTile> withStyleMatching(MatchProp<ListTileStyle> match) {
+  WidgetSelector<ListTile> whereStyle(MatchProp<ListTileStyle> match) {
     return withProp<ListTileStyle>('style', match);
   }
   
@@ -340,7 +340,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<ListTileStyle>('style', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<ListTile> withSelectedColorMatching(MatchProp<Color> match) {
+  WidgetSelector<ListTile> whereSelectedColor(MatchProp<Color> match) {
     return withProp<Color>('selectedColor', match);
   }
   
@@ -348,7 +348,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<Color>('selectedColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<ListTile> withIconColorMatching(MatchProp<Color> match) {
+  WidgetSelector<ListTile> whereIconColor(MatchProp<Color> match) {
     return withProp<Color>('iconColor', match);
   }
   
@@ -356,7 +356,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<Color>('iconColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<ListTile> withTextColorMatching(MatchProp<Color> match) {
+  WidgetSelector<ListTile> whereTextColor(MatchProp<Color> match) {
     return withProp<Color>('textColor', match);
   }
   
@@ -364,7 +364,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<Color>('textColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<ListTile> withTitleTextStyleMatching(MatchProp<TextStyle> match) {
+  WidgetSelector<ListTile> whereTitleTextStyle(MatchProp<TextStyle> match) {
     return withProp<TextStyle>('titleTextStyle', match);
   }
   
@@ -372,7 +372,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<TextStyle>('titleTextStyle', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<ListTile> withSubtitleTextStyleMatching(MatchProp<TextStyle> match) {
+  WidgetSelector<ListTile> whereSubtitleTextStyle(MatchProp<TextStyle> match) {
     return withProp<TextStyle>('subtitleTextStyle', match);
   }
   
@@ -380,7 +380,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<TextStyle>('subtitleTextStyle', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<ListTile> withLeadingAndTrailingTextStyleMatching(MatchProp<TextStyle> match) {
+  WidgetSelector<ListTile> whereLeadingAndTrailingTextStyle(MatchProp<TextStyle> match) {
     return withProp<TextStyle>('leadingAndTrailingTextStyle', match);
   }
   
@@ -388,7 +388,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<TextStyle>('leadingAndTrailingTextStyle', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<ListTile> withContentPaddingMatching(MatchProp<EdgeInsetsGeometry> match) {
+  WidgetSelector<ListTile> whereContentPadding(MatchProp<EdgeInsetsGeometry> match) {
     return withProp<EdgeInsetsGeometry>('contentPadding', match);
   }
   
@@ -396,7 +396,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<EdgeInsetsGeometry>('contentPadding', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<ListTile> withEnabledMatching(MatchProp<bool> match) {
+  WidgetSelector<ListTile> whereEnabled(MatchProp<bool> match) {
     return withProp<bool>('enabled', match);
   }
   
@@ -404,7 +404,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<bool>('enabled', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<ListTile> withOnTapMatching(MatchProp<Function> match) {
+  WidgetSelector<ListTile> whereOnTap(MatchProp<Function> match) {
     return withProp<Function>('onTap', match);
   }
   
@@ -412,7 +412,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<Function>('onTap', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<ListTile> withOnLongPressMatching(MatchProp<Function> match) {
+  WidgetSelector<ListTile> whereOnLongPress(MatchProp<Function> match) {
     return withProp<Function>('onLongPress', match);
   }
   
@@ -420,7 +420,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<Function>('onLongPress', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<ListTile> withMouseCursorMatching(MatchProp<MouseCursor> match) {
+  WidgetSelector<ListTile> whereMouseCursor(MatchProp<MouseCursor> match) {
     return withProp<MouseCursor>('mouseCursor', match);
   }
   
@@ -428,7 +428,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<MouseCursor>('mouseCursor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<ListTile> withSelectedMatching(MatchProp<bool> match) {
+  WidgetSelector<ListTile> whereSelected(MatchProp<bool> match) {
     return withProp<bool>('selected', match);
   }
   
@@ -436,7 +436,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<bool>('selected', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<ListTile> withFocusColorMatching(MatchProp<Color> match) {
+  WidgetSelector<ListTile> whereFocusColor(MatchProp<Color> match) {
     return withProp<Color>('focusColor', match);
   }
   
@@ -444,7 +444,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<Color>('focusColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<ListTile> withHoverColorMatching(MatchProp<Color> match) {
+  WidgetSelector<ListTile> whereHoverColor(MatchProp<Color> match) {
     return withProp<Color>('hoverColor', match);
   }
   
@@ -452,7 +452,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<Color>('hoverColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<ListTile> withFocusNodeMatching(MatchProp<FocusNode> match) {
+  WidgetSelector<ListTile> whereFocusNode(MatchProp<FocusNode> match) {
     return withProp<FocusNode>('focusNode', match);
   }
   
@@ -460,7 +460,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<FocusNode>('focusNode', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<ListTile> withAutofocusMatching(MatchProp<bool> match) {
+  WidgetSelector<ListTile> whereAutofocus(MatchProp<bool> match) {
     return withProp<bool>('autofocus', match);
   }
   
@@ -468,7 +468,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<bool>('autofocus', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<ListTile> withTileColorMatching(MatchProp<Color> match) {
+  WidgetSelector<ListTile> whereTileColor(MatchProp<Color> match) {
     return withProp<Color>('tileColor', match);
   }
   
@@ -476,7 +476,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<Color>('tileColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<ListTile> withSelectedTileColorMatching(MatchProp<Color> match) {
+  WidgetSelector<ListTile> whereSelectedTileColor(MatchProp<Color> match) {
     return withProp<Color>('selectedTileColor', match);
   }
   
@@ -484,7 +484,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<Color>('selectedTileColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<ListTile> withEnableFeedbackMatching(MatchProp<bool> match) {
+  WidgetSelector<ListTile> whereEnableFeedback(MatchProp<bool> match) {
     return withProp<bool>('enableFeedback', match);
   }
   
@@ -492,7 +492,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<bool>('enableFeedback', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<ListTile> withHorizontalTitleGapMatching(MatchProp<double> match) {
+  WidgetSelector<ListTile> whereHorizontalTitleGap(MatchProp<double> match) {
     return withProp<double>('horizontalTitleGap', match);
   }
   
@@ -500,7 +500,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<double>('horizontalTitleGap', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<ListTile> withMinVerticalPaddingMatching(MatchProp<double> match) {
+  WidgetSelector<ListTile> whereMinVerticalPadding(MatchProp<double> match) {
     return withProp<double>('minVerticalPadding', match);
   }
   
@@ -508,7 +508,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<double>('minVerticalPadding', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<ListTile> withMinLeadingWidthMatching(MatchProp<double> match) {
+  WidgetSelector<ListTile> whereMinLeadingWidth(MatchProp<double> match) {
     return withProp<double>('minLeadingWidth', match);
   }
   
@@ -516,7 +516,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<double>('minLeadingWidth', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<ListTile> withTitleAlignmentMatching(MatchProp<ListTileTitleAlignment> match) {
+  WidgetSelector<ListTile> whereTitleAlignment(MatchProp<ListTileTitleAlignment> match) {
     return withProp<ListTileTitleAlignment>('titleAlignment', match);
   }
   

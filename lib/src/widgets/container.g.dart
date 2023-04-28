@@ -76,7 +76,7 @@ extension ContainerMatcher on WidgetMatcher<Container> {
 }
 
 extension ContainerSelector on WidgetSelector<Container> {
-  WidgetSelector<Container> withAlignmentMatching(MatchProp<AlignmentGeometry> match) {
+  WidgetSelector<Container> whereAlignment(MatchProp<AlignmentGeometry> match) {
     return withProp<AlignmentGeometry>('alignment', match);
   }
   
@@ -84,7 +84,7 @@ extension ContainerSelector on WidgetSelector<Container> {
     return withProp<AlignmentGeometry>('alignment', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Container> withPaddingMatching(MatchProp<EdgeInsetsGeometry> match) {
+  WidgetSelector<Container> wherePadding(MatchProp<EdgeInsetsGeometry> match) {
     return withProp<EdgeInsetsGeometry>('padding', match);
   }
   
@@ -92,7 +92,7 @@ extension ContainerSelector on WidgetSelector<Container> {
     return withProp<EdgeInsetsGeometry>('padding', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Container> withClipBehaviorMatching(MatchProp<Clip> match) {
+  WidgetSelector<Container> whereClipBehavior(MatchProp<Clip> match) {
     return withProp<Clip>('clipBehavior', match);
   }
   
@@ -100,7 +100,7 @@ extension ContainerSelector on WidgetSelector<Container> {
     return withProp<Clip>('clipBehavior', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Container> withBgMatching(MatchProp<Decoration> match) {
+  WidgetSelector<Container> whereBg(MatchProp<Decoration> match) {
     return withProp<Decoration>('bg', match);
   }
   
@@ -108,7 +108,7 @@ extension ContainerSelector on WidgetSelector<Container> {
     return withProp<Decoration>('bg', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Container> withFgMatching(MatchProp<Decoration> match) {
+  WidgetSelector<Container> whereFg(MatchProp<Decoration> match) {
     return withProp<Decoration>('fg', match);
   }
   
@@ -116,7 +116,7 @@ extension ContainerSelector on WidgetSelector<Container> {
     return withProp<Decoration>('fg', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Container> withConstraintsMatching(MatchProp<BoxConstraints> match) {
+  WidgetSelector<Container> whereConstraints(MatchProp<BoxConstraints> match) {
     return withProp<BoxConstraints>('constraints', match);
   }
   
@@ -124,7 +124,7 @@ extension ContainerSelector on WidgetSelector<Container> {
     return withProp<BoxConstraints>('constraints', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Container> withMarginMatching(MatchProp<EdgeInsetsGeometry> match) {
+  WidgetSelector<Container> whereMargin(MatchProp<EdgeInsetsGeometry> match) {
     return withProp<EdgeInsetsGeometry>('margin', match);
   }
   
@@ -132,7 +132,7 @@ extension ContainerSelector on WidgetSelector<Container> {
     return withProp<EdgeInsetsGeometry>('margin', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  WidgetSelector<Container> withTransformMatching(MatchProp<Matrix4> match) {
+  WidgetSelector<Container> whereTransform(MatchProp<Matrix4> match) {
     return withProp<Matrix4>('transform', match);
   }
   
