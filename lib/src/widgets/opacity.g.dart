@@ -1,6 +1,6 @@
 // ignore_for_file: require_trailing_commas
 
- import 'package:flutter/rendering.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:spot/spot.dart';
 
@@ -11,72 +11,72 @@ import 'package:spot/spot.dart';
 /// ```
 /// Matchers for the properties of [Opacity] provided via [Diagnosticable.debugFillProperties]
 extension OpacityMatcher on WidgetMatcher<Opacity> {
-
-  /// Expects that opacity of [Opacity] matches the condition in [match]    
+  /// Expects that opacity of [Opacity] matches the condition in [match]
   WidgetMatcher<Opacity> hasOpacityWhere(MatchProp<double> match) {
     return hasProp<double>('opacity', match);
   }
-  
+
   /// Expects that opacity of [Opacity] equals (==) [value]
   WidgetMatcher<Opacity> hasOpacity(double? value) {
-    return hasProp<double>('opacity', (it) => value == null ? it.isNull() : it.equals(value));
+    return hasProp<double>(
+        'opacity', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that alwaysIncludeSemantics of [Opacity] matches the condition in [match]    
+  /// Expects that alwaysIncludeSemantics of [Opacity] matches the condition in [match]
   WidgetMatcher<Opacity> hasAlwaysIncludeSemanticsWhere(MatchProp<bool> match) {
     return hasProp<bool>('alwaysIncludeSemantics', match);
   }
-  
+
   /// Expects that alwaysIncludeSemantics of [Opacity] equals (==) [value]
   WidgetMatcher<Opacity> hasAlwaysIncludeSemantics(bool? value) {
-    return hasProp<bool>('alwaysIncludeSemantics', (it) => value == null ? it.isNull() : it.equals(value));
+    return hasProp<bool>('alwaysIncludeSemantics',
+        (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that renderObject of [Opacity] matches the condition in [match]    
+  /// Expects that renderObject of [Opacity] matches the condition in [match]
   WidgetMatcher<Opacity> hasRenderObjectWhere(MatchProp<RenderOpacity> match) {
     return hasProp<RenderOpacity>('renderObject', match);
   }
-  
+
   /// Expects that renderObject of [Opacity] equals (==) [value]
   WidgetMatcher<Opacity> hasRenderObject(RenderOpacity? value) {
-    return hasProp<RenderOpacity>('renderObject', (it) => value == null ? it.isNull() : it.equals(value));
+    return hasProp<RenderOpacity>(
+        'renderObject', (it) => value == null ? it.isNull() : it.equals(value));
   }
-
 }
 
 /// Allows filtering [Opacity] by the properties provided via [Diagnosticable.debugFillProperties]
 extension OpacitySelector on WidgetSelector<Opacity> {
-
-  /// Creates a [WidgetSelector] that finds all [Opacity] where opacity matches the condition   
+  /// Creates a [WidgetSelector] that finds all [Opacity] where opacity matches the condition
   WidgetSelector<Opacity> whereOpacity(MatchProp<double> match) {
     return withProp<double>('opacity', match);
   }
-  
+
   /// Creates a [WidgetSelector] that finds all [Opacity] where opacity equals (==) [value]
   WidgetSelector<Opacity> withOpacity(double? value) {
-    return withProp<double>('opacity', (it) => value == null ? it.isNull() : it.equals(value));
+    return withProp<double>(
+        'opacity', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [Opacity] where alwaysIncludeSemantics matches the condition   
+  /// Creates a [WidgetSelector] that finds all [Opacity] where alwaysIncludeSemantics matches the condition
   WidgetSelector<Opacity> whereAlwaysIncludeSemantics(MatchProp<bool> match) {
     return withProp<bool>('alwaysIncludeSemantics', match);
   }
-  
+
   /// Creates a [WidgetSelector] that finds all [Opacity] where alwaysIncludeSemantics equals (==) [value]
   WidgetSelector<Opacity> withAlwaysIncludeSemantics(bool? value) {
-    return withProp<bool>('alwaysIncludeSemantics', (it) => value == null ? it.isNull() : it.equals(value));
+    return withProp<bool>('alwaysIncludeSemantics',
+        (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [Opacity] where renderObject matches the condition   
+  /// Creates a [WidgetSelector] that finds all [Opacity] where renderObject matches the condition
   WidgetSelector<Opacity> whereRenderObject(MatchProp<RenderOpacity> match) {
     return withProp<RenderOpacity>('renderObject', match);
   }
-  
+
   /// Creates a [WidgetSelector] that finds all [Opacity] where renderObject equals (==) [value]
   WidgetSelector<Opacity> withRenderObject(RenderOpacity? value) {
-    return withProp<RenderOpacity>('renderObject', (it) => value == null ? it.isNull() : it.equals(value));
+    return withProp<RenderOpacity>(
+        'renderObject', (it) => value == null ? it.isNull() : it.equals(value));
   }
-
 }
-    
-    

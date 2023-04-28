@@ -10,72 +10,72 @@ import 'package:spot/spot.dart';
 /// ```
 /// Matchers for the properties of [ElevatedButton] provided via [Diagnosticable.debugFillProperties]
 extension ElevatedButtonMatcher on WidgetMatcher<ElevatedButton> {
-
-  /// Expects that enabled of [ElevatedButton] matches the condition in [match]    
+  /// Expects that enabled of [ElevatedButton] matches the condition in [match]
   WidgetMatcher<ElevatedButton> isEnabledWhere(MatchProp<bool> match) {
     return hasProp<bool>('enabled', match);
   }
-  
+
   /// Expects that enabled of [ElevatedButton] equals (==) [value]
   WidgetMatcher<ElevatedButton> isEnabled(bool? value) {
-    return hasProp<bool>('enabled', (it) => value == null ? it.isNull() : it.equals(value));
+    return hasProp<bool>(
+        'enabled', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that style of [ElevatedButton] matches the condition in [match]    
+  /// Expects that style of [ElevatedButton] matches the condition in [match]
   WidgetMatcher<ElevatedButton> hasStyleWhere(MatchProp<ButtonStyle> match) {
     return hasProp<ButtonStyle>('style', match);
   }
-  
+
   /// Expects that style of [ElevatedButton] equals (==) [value]
   WidgetMatcher<ElevatedButton> hasStyle(ButtonStyle? value) {
-    return hasProp<ButtonStyle>('style', (it) => value == null ? it.isNull() : it.equals(value));
+    return hasProp<ButtonStyle>(
+        'style', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that focusNode of [ElevatedButton] matches the condition in [match]    
+  /// Expects that focusNode of [ElevatedButton] matches the condition in [match]
   WidgetMatcher<ElevatedButton> hasFocusNodeWhere(MatchProp<FocusNode> match) {
     return hasProp<FocusNode>('focusNode', match);
   }
-  
+
   /// Expects that focusNode of [ElevatedButton] equals (==) [value]
   WidgetMatcher<ElevatedButton> hasFocusNode(FocusNode? value) {
-    return hasProp<FocusNode>('focusNode', (it) => value == null ? it.isNull() : it.equals(value));
+    return hasProp<FocusNode>(
+        'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
   }
-
 }
 
 /// Allows filtering [ElevatedButton] by the properties provided via [Diagnosticable.debugFillProperties]
 extension ElevatedButtonSelector on WidgetSelector<ElevatedButton> {
-
-  /// Creates a [WidgetSelector] that finds all [ElevatedButton] where enabled matches the condition   
+  /// Creates a [WidgetSelector] that finds all [ElevatedButton] where enabled matches the condition
   WidgetSelector<ElevatedButton> whereEnabled(MatchProp<bool> match) {
     return withProp<bool>('enabled', match);
   }
-  
+
   /// Creates a [WidgetSelector] that finds all [ElevatedButton] where enabled equals (==) [value]
   WidgetSelector<ElevatedButton> withEnabled(bool? value) {
-    return withProp<bool>('enabled', (it) => value == null ? it.isNull() : it.equals(value));
+    return withProp<bool>(
+        'enabled', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [ElevatedButton] where style matches the condition   
+  /// Creates a [WidgetSelector] that finds all [ElevatedButton] where style matches the condition
   WidgetSelector<ElevatedButton> whereStyle(MatchProp<ButtonStyle> match) {
     return withProp<ButtonStyle>('style', match);
   }
-  
+
   /// Creates a [WidgetSelector] that finds all [ElevatedButton] where style equals (==) [value]
   WidgetSelector<ElevatedButton> withStyle(ButtonStyle? value) {
-    return withProp<ButtonStyle>('style', (it) => value == null ? it.isNull() : it.equals(value));
+    return withProp<ButtonStyle>(
+        'style', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [ElevatedButton] where focusNode matches the condition   
+  /// Creates a [WidgetSelector] that finds all [ElevatedButton] where focusNode matches the condition
   WidgetSelector<ElevatedButton> whereFocusNode(MatchProp<FocusNode> match) {
     return withProp<FocusNode>('focusNode', match);
   }
-  
+
   /// Creates a [WidgetSelector] that finds all [ElevatedButton] where focusNode equals (==) [value]
   WidgetSelector<ElevatedButton> withFocusNode(FocusNode? value) {
-    return withProp<FocusNode>('focusNode', (it) => value == null ? it.isNull() : it.equals(value));
+    return withProp<FocusNode>(
+        'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
   }
-
 }
-    
-    

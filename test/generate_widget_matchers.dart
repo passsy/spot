@@ -73,8 +73,7 @@ void main() {
   _generateWidget<Semantics>(
     builder: () => Semantics(),
     imports: "import 'package:flutter/widgets.dart';\n"
-        "import 'package:flutter/rendering.dart';\n"
-        "import 'package:flutter/semantics.dart';\n",
+        "import 'package:flutter/rendering.dart';\n",
   );
 
   // Material
@@ -203,6 +202,14 @@ void main() {
     builder: () => ListTile(),
     imports: "import 'package:flutter/material.dart';",
   );
+
+  test('format at the end', () {
+    final generatedFiles = Directory('lib/src/widgets').listSync();
+    Process.runSync('flutter', [
+      'format',
+      ...generatedFiles.map((e) => e.path),
+    ]);
+  });
 }
 
 void _generateWidget<W extends Widget>({

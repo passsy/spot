@@ -10,32 +10,28 @@ import 'package:spot/spot.dart';
 /// ```
 /// Matchers for the properties of [Switch] provided via [Diagnosticable.debugFillProperties]
 extension SwitchMatcher on WidgetMatcher<Switch> {
-
-  /// Expects that value of [Switch] matches the condition in [match]    
+  /// Expects that value of [Switch] matches the condition in [match]
   WidgetMatcher<Switch> hasValueWhere(MatchProp<bool> match) {
     return hasProp<bool>('value', match);
   }
-  
+
   /// Expects that value of [Switch] equals (==) [value]
   WidgetMatcher<Switch> hasValue(bool? value) {
-    return hasProp<bool>('value', (it) => value == null ? it.isNull() : it.equals(value));
+    return hasProp<bool>(
+        'value', (it) => value == null ? it.isNull() : it.equals(value));
   }
-
 }
 
 /// Allows filtering [Switch] by the properties provided via [Diagnosticable.debugFillProperties]
 extension SwitchSelector on WidgetSelector<Switch> {
-
-  /// Creates a [WidgetSelector] that finds all [Switch] where value matches the condition   
+  /// Creates a [WidgetSelector] that finds all [Switch] where value matches the condition
   WidgetSelector<Switch> whereValue(MatchProp<bool> match) {
     return withProp<bool>('value', match);
   }
-  
+
   /// Creates a [WidgetSelector] that finds all [Switch] where value equals (==) [value]
   WidgetSelector<Switch> withValue(bool? value) {
-    return withProp<bool>('value', (it) => value == null ? it.isNull() : it.equals(value));
+    return withProp<bool>(
+        'value', (it) => value == null ? it.isNull() : it.equals(value));
   }
-
 }
-    
-    
