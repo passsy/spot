@@ -6,7 +6,7 @@ import 'package:spot/src/selectors.dart';
 import 'package:spot/src/tree_snapshot.dart';
 
 MultiWidgetSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
-  final treeSnapshot = snapshotWidgetTree();
+  final treeSnapshot = currentWidgetTreeSnapshot();
 
   if (selector.parents.isEmpty) {
     final MultiWidgetSnapshot<W> snapshot =
@@ -65,7 +65,7 @@ class CandidateGeneratorFromParents<W extends Widget>
 
   @override
   Iterable<WidgetTreeNode> generateCandidates() {
-    final tree = snapshotWidgetTree();
+    final tree = currentWidgetTreeSnapshot();
     final List<MultiWidgetSnapshot<Widget>> parentSnapshots =
         selector.parents.map((selector) {
       final MultiWidgetSnapshot<Widget> widgetSnapshot = snapshot(selector);
@@ -85,7 +85,8 @@ class CandidateGeneratorFromParents<W extends Widget>
       return widgetSnapshot;
     }).toList();
 
-    final selectorWithoutParents = selector.copyWith(parents: []);
+    final WidgetSelector<W> selectorWithoutParents = selector
+        .copyWith(parents: [], expectedQuantity: ExpectedQuantity.multi);
 
     // Take a snapshot from each parent and get the snapshots of all nodes that match
     final List<Map<WidgetTreeNode, List<MultiWidgetSnapshot<W>>>>

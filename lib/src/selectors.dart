@@ -536,18 +536,31 @@ class ChildFilter implements ElementFilter {
 
   @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
-    final tree = snapshotWidgetTree();
+    final tree = currentWidgetTreeSnapshot();
     final List<WidgetTreeNode> matchingChildNodes = [];
     // Then check for every queryMatch if the children and props match
     for (final WidgetTreeNode candidate in candidates) {
-      // TODO it must check all child selectors before adding to the list
+      final Map<WidgetSelector, List<WidgetTreeNode>> matchesPerChild = {};
+
+      final subtreeNodes = tree.scope(candidate).allNodes;
       for (final WidgetSelector<Widget> childSelector in children) {
-        final MultiWidgetSnapshot snapshot =
-            findWithinScope(tree.scope(candidate), childSelector);
-        if (snapshot.discovered.isNotEmpty) {
-          matchingChildNodes.add(candidate);
+        matchesPerChild[childSelector] = [];
+        final MultiWidgetSnapshot ss = snapshot(childSelector);
+        final discoveredInSubtree = ss.discovered
+            .where((element) => subtreeNodes.contains(element))
+            .toList();
+
+        if (discoveredInSubtree.isNotEmpty) {
+          matchesPerChild[childSelector] = discoveredInSubtree;
+        } else {
+          continue;
         }
       }
+      if (matchesPerChild.values.any((list) => list.isEmpty)) {
+        // not all children match
+        continue;
+      }
+      matchingChildNodes.add(candidate);
     }
     return matchingChildNodes;
   }
