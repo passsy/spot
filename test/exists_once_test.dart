@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
+import 'package:spot/src/snapshot.dart';
 
 import 'util/assert_error.dart';
 
@@ -137,8 +138,7 @@ void main() {
       (Subject<Axis> it) {
         it.equals(Axis.horizontal);
       },
-    )
-        .existsAtLeastOnce();
+    ).existsAtLeastOnce();
 
     spotSingle<Wrap>().withDirection(Axis.horizontal).existsAtLeastOnce();
 

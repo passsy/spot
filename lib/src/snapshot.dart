@@ -2,7 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:dartx/dartx.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:spot/spot.dart';
+import 'package:spot/src/selectors.dart';
 import 'package:spot/src/tree_snapshot.dart';
 
 MultiWidgetSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
@@ -196,7 +196,8 @@ extension SingleWidgetSelectorMatcher<W extends Widget>
   }
 }
 
-extension WidgetSelectorMatcher<W extends Widget> on MultiWidgetSnapshot<W> {
+extension MultiWidgetSelectorMatcher<W extends Widget>
+    on MultiWidgetSnapshot<W> {
   void doesNotExist() => _exists(max: 0);
 
   SingleWidgetSnapshot<W> existsOnce() => _exists(min: 1, max: 1).single;

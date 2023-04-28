@@ -9,16 +9,17 @@ import 'package:spot/spot.dart';
 import 'package:spot/src/checks/context.dart';
 import 'package:spot/src/checks/src/checks.dart';
 import 'package:spot/src/snapshot.dart' as snapshot_file show snapshot;
+import 'package:spot/src/snapshot.dart';
 import 'package:spot/src/tree_snapshot.dart';
 
-class Spot with Spotters<Widget> {
+class Spot with Selectors<Widget> {
   const Spot();
 
   @override
   WidgetSelector? get self => null;
 }
 
-mixin Spotters<T extends Widget> {
+mixin Selectors<T extends Widget> {
   WidgetSelector<T>? get self;
 
   SingleWidgetSelector<W> spotSingle<W extends Widget>({
@@ -299,7 +300,7 @@ class LastElement extends ElementFilter {
   }
 }
 
-extension SpotterQueries<W extends Widget> on Spotters<W> {
+extension SelectorQueries<W extends Widget> on Selectors<W> {
   WidgetSelector<W> whereElement(
     bool Function(Element element) predicate, {
     required String description,
@@ -539,7 +540,7 @@ enum ExpectedQuantity {
 /// Represents a chain of widgets in the widget tree that can be asserted
 ///
 /// Compared to normal [Finder], this gives great error messages along the chain
-class WidgetSelector<W extends Widget> with Spotters<W> {
+class WidgetSelector<W extends Widget> with Selectors<W> {
   static final WidgetSelector all = MultiWidgetSelector(
     props: [
       PredicateWithDescription(
@@ -821,7 +822,7 @@ class SingleWidgetSnapshot<W extends Widget> implements WidgetMatcher<W> {
   W get widget => discovered!.element.widget as W;
 }
 
-extension SnapshotSelector<W extends Widget> on WidgetSelector<W> {
+extension SelectorToSnapshot<W extends Widget> on WidgetSelector<W> {
   SingleWidgetSelector<W> get single {
     return SingleWidgetSelector<W>(
       props: props,

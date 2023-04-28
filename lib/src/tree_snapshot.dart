@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:spot/spot.dart';
+import 'package:spot/src/element_extensions.dart';
 
 /// Creates a snapshot of the currently pumped widget via [WidgetTester.pumpWidget].
 WidgetTreeSnapshot snapshotWidgetTree() {

@@ -1,15 +1,32 @@
 library spot;
 
 import 'package:flutter/widgets.dart';
-import 'package:spot/spot.dart';
+import 'package:spot/src/selectors.dart';
 
 export 'package:spot/src/checks/checks.dart' hide it;
 
 export 'package:spot/src/default_selectors.dart';
 export 'package:spot/src/effective_text.dart';
 export 'package:spot/src/finder_interop.dart';
-export 'package:spot/src/selectors.dart';
-export 'package:spot/src/snapshot.dart';
+export 'package:spot/src/selectors.dart'
+    show
+        WidgetSelector,
+        SingleWidgetSelector,
+        MultiWidgetSelector,
+        SelectorQueries,
+        SelectorToSnapshot,
+        SingleWidgetSnapshot,
+        MultiWidgetSnapshot,
+        WidgetMatcher,
+        WidgetMatcherExtensions,
+        MutliMatchers,
+        ElementFilter,
+        MatchProp,
+        ExpectedQuantity,
+        CreateMatchers;
+export 'package:spot/src/snapshot.dart'
+    show SingleWidgetSelectorMatcher, MultiWidgetSelectorMatcher;
+
 export 'package:spot/src/widgets/align.g.dart';
 export 'package:spot/src/widgets/circularprogressindicator.g.dart';
 export 'package:spot/src/widgets/column.g.dart';
