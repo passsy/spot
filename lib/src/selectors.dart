@@ -660,6 +660,10 @@ class WidgetSelector<W extends Widget> with Spotters<W> {
     MatchProp<T> match,
   ) {
     final ConditionSubject<T> nameSubject = it();
+    nameSubject.context.nest<T>(
+      () => ['with prop "$propName"'],
+      (value) => Extracted.value(value),
+    );
     match(nameSubject);
     final name =
         describe(nameSubject).map((it) => it.trim()).toList().join(' ');
