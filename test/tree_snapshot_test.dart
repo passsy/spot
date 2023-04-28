@@ -21,7 +21,7 @@ void main() {
         ),
       ),
     );
-    final tree = snapshotWidgetTree();
+    final tree = widgetTreeSnapshot();
     final widgets = tree.allElements;
     expect(widgets, isNotEmpty);
     final center =
@@ -57,7 +57,7 @@ void main() {
         ),
       ),
     );
-    final tree = snapshotWidgetTree();
+    final tree = widgetTreeSnapshot();
     final widgets = tree.allElements;
     final flutterOrderWidgets =
         collectAllElementsFrom(tree.origin.element, skipOffstage: true)
@@ -80,7 +80,7 @@ void main() {
         ),
       ),
     );
-    final tree = snapshotWidgetTree();
+    final tree = widgetTreeSnapshot();
     final items = tree.allNodes;
     final row =
         items.firstWhere((node) => node.element.widget.runtimeType == Row);
@@ -99,7 +99,7 @@ void main() {
 
   testWidgets('invalidate', (tester) async {
     await tester.pumpWidget(Center());
-    final tree = snapshotWidgetTree();
+    final tree = widgetTreeSnapshot();
     expect(tree.isFromThisFrame, isTrue);
     await tester.pumpWidget(Center());
     expect(tree.isFromThisFrame, isFalse);

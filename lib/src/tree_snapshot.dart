@@ -2,8 +2,15 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/src/element_extensions.dart';
 
+/// caching the tree for the current frame
+WidgetTreeSnapshot? _cachedTree;
+
 /// Creates a snapshot of the currently pumped widget via [WidgetTester.pumpWidget].
-WidgetTreeSnapshot snapshotWidgetTree() {
+WidgetTreeSnapshot widgetTreeSnapshot() {
+  if (_cachedTree != null && _cachedTree!.isFromThisFrame) {
+    return _cachedTree!;
+  }
+
   // ignore: deprecated_member_use
   final rootElement = WidgetsBinding.instance.renderViewElement!;
 
@@ -21,8 +28,7 @@ WidgetTreeSnapshot snapshotWidgetTree() {
 
   final origin = build(rootElement);
 
-  // TODO add caching for the current frame
-  return WidgetTreeSnapshot(
+  return _cachedTree = WidgetTreeSnapshot(
     origin: origin,
     timestamp: DateTime.now(),
   );
