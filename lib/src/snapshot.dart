@@ -147,7 +147,7 @@ MultiWidgetSnapshot<W> findWithinScope<W extends Widget>(
 ) {
   if (selector.parents.isNotEmpty) {
     throw "Don't use findWithinScope with a selector that has parents. "
-        "Either remove the mor use snapshot() instead";
+        "Either remove them or use snapshot() instead";
   }
   final candidates = scope.allNodes;
   final List<ElementFilter> filters = selector.createElementFilters();
