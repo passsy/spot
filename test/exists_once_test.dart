@@ -139,7 +139,6 @@ void main() {
         it.equals(Axis.horizontal);
       },
     )
-        // .withDirection(Axis.horizontal)
         .existsAtLeastOnce();
 
     spotSingle<Wrap>().withDirection(Axis.horizontal).existsAtLeastOnce();
