@@ -51,7 +51,6 @@ void main() {
     ).existsOnce();
     spotSingle<Padding>().existsOnce();
     spotSingle<Wrap>().existsOnce();
-    // spot<Wrap>().spot<Text>().existsAtLeastOnce();
     spotSingle<Wrap>().spot<Text>().existsAtLeastOnce();
     spotSingle<Wrap>().spot<Text>().existsAtLeastOnce();
     spotSingle<GestureDetector>().existsOnce();
