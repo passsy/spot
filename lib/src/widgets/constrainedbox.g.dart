@@ -14,16 +14,16 @@ extension ConstrainedBoxMatcher on WidgetMatcher<ConstrainedBox> {
     return hasProp<BoxConstraints>('constraints', match);
   }
   
-  WidgetMatcher<ConstrainedBox> hasConstraints(BoxConstraints value) {
-    return hasProp<BoxConstraints>('constraints', (it) => it.equals(value));
+  WidgetMatcher<ConstrainedBox> hasConstraints(BoxConstraints? value) {
+    return hasProp<BoxConstraints>('constraints', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<ConstrainedBox> hasRenderObjectWhere(MatchProp<RenderConstrainedBox> match) {
     return hasProp<RenderConstrainedBox>('renderObject', match);
   }
   
-  WidgetMatcher<ConstrainedBox> hasRenderObject(RenderConstrainedBox value) {
-    return hasProp<RenderConstrainedBox>('renderObject', (it) => it.equals(value));
+  WidgetMatcher<ConstrainedBox> hasRenderObject(RenderConstrainedBox? value) {
+    return hasProp<RenderConstrainedBox>('renderObject', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
 }
@@ -33,16 +33,16 @@ extension ConstrainedBoxSelector on WidgetSelector<ConstrainedBox> {
     return withProp<BoxConstraints>('constraints', match);
   }
   
-  WidgetSelector<ConstrainedBox> withConstraints(BoxConstraints value) {
-    return withProp<BoxConstraints>('constraints', (it) => it.equals(value));
+  WidgetSelector<ConstrainedBox> withConstraints(BoxConstraints? value) {
+    return withProp<BoxConstraints>('constraints', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<ConstrainedBox> withRenderObjectMatching(MatchProp<RenderConstrainedBox> match) {
     return withProp<RenderConstrainedBox>('renderObject', match);
   }
   
-  WidgetSelector<ConstrainedBox> withRenderObject(RenderConstrainedBox value) {
-    return withProp<RenderConstrainedBox>('renderObject', (it) => it.equals(value));
+  WidgetSelector<ConstrainedBox> withRenderObject(RenderConstrainedBox? value) {
+    return withProp<RenderConstrainedBox>('renderObject', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
 }

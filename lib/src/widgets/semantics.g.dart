@@ -16,160 +16,160 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
     return hasProp<bool>('container', match);
   }
   
-  WidgetMatcher<Semantics> hasContainer(bool value) {
-    return hasProp<bool>('container', (it) => it.equals(value));
+  WidgetMatcher<Semantics> hasContainer(bool? value) {
+    return hasProp<bool>('container', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Semantics> hasPropertiesWhere(MatchProp<SemanticsProperties> match) {
     return hasProp<SemanticsProperties>('properties', match);
   }
   
-  WidgetMatcher<Semantics> hasProperties(SemanticsProperties value) {
-    return hasProp<SemanticsProperties>('properties', (it) => it.equals(value));
+  WidgetMatcher<Semantics> hasProperties(SemanticsProperties? value) {
+    return hasProp<SemanticsProperties>('properties', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Semantics> hasCheckedWhere(MatchProp<bool> match) {
     return hasProp<bool>('checked', match);
   }
   
-  WidgetMatcher<Semantics> hasChecked(bool value) {
-    return hasProp<bool>('checked', (it) => it.equals(value));
+  WidgetMatcher<Semantics> hasChecked(bool? value) {
+    return hasProp<bool>('checked', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Semantics> hasMixedWhere(MatchProp<bool> match) {
     return hasProp<bool>('mixed', match);
   }
   
-  WidgetMatcher<Semantics> hasMixed(bool value) {
-    return hasProp<bool>('mixed', (it) => it.equals(value));
+  WidgetMatcher<Semantics> hasMixed(bool? value) {
+    return hasProp<bool>('mixed', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Semantics> hasSelectedWhere(MatchProp<bool> match) {
     return hasProp<bool>('selected', match);
   }
   
-  WidgetMatcher<Semantics> hasSelected(bool value) {
-    return hasProp<bool>('selected', (it) => it.equals(value));
+  WidgetMatcher<Semantics> hasSelected(bool? value) {
+    return hasProp<bool>('selected', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Semantics> hasLabelWhere(MatchProp<String> match) {
     return hasProp<String>('label', match);
   }
   
-  WidgetMatcher<Semantics> hasLabel(String value) {
-    return hasProp<String>('label', (it) => it.equals(value));
+  WidgetMatcher<Semantics> hasLabel(String? value) {
+    return hasProp<String>('label', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Semantics> hasAttributedLabelWhere(MatchProp<String> match) {
     return hasProp<String>('attributedLabel', match);
   }
   
-  WidgetMatcher<Semantics> hasAttributedLabel(String value) {
-    return hasProp<String>('attributedLabel', (it) => it.equals(value));
+  WidgetMatcher<Semantics> hasAttributedLabel(String? value) {
+    return hasProp<String>('attributedLabel', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Semantics> hasValueWhere(MatchProp<String> match) {
     return hasProp<String>('value', match);
   }
   
-  WidgetMatcher<Semantics> hasValue(String value) {
-    return hasProp<String>('value', (it) => it.equals(value));
+  WidgetMatcher<Semantics> hasValue(String? value) {
+    return hasProp<String>('value', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Semantics> hasAttributedValueWhere(MatchProp<String> match) {
     return hasProp<String>('attributedValue', match);
   }
   
-  WidgetMatcher<Semantics> hasAttributedValue(String value) {
-    return hasProp<String>('attributedValue', (it) => it.equals(value));
+  WidgetMatcher<Semantics> hasAttributedValue(String? value) {
+    return hasProp<String>('attributedValue', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Semantics> hasIncreasedValueWhere(MatchProp<String> match) {
     return hasProp<String>('increasedValue', match);
   }
   
-  WidgetMatcher<Semantics> hasIncreasedValue(String value) {
-    return hasProp<String>('increasedValue', (it) => it.equals(value));
+  WidgetMatcher<Semantics> hasIncreasedValue(String? value) {
+    return hasProp<String>('increasedValue', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Semantics> hasAttributedIncreasedValueWhere(MatchProp<String> match) {
     return hasProp<String>('attributedIncreasedValue', match);
   }
   
-  WidgetMatcher<Semantics> hasAttributedIncreasedValue(String value) {
-    return hasProp<String>('attributedIncreasedValue', (it) => it.equals(value));
+  WidgetMatcher<Semantics> hasAttributedIncreasedValue(String? value) {
+    return hasProp<String>('attributedIncreasedValue', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Semantics> hasDecreasedValueWhere(MatchProp<String> match) {
     return hasProp<String>('decreasedValue', match);
   }
   
-  WidgetMatcher<Semantics> hasDecreasedValue(String value) {
-    return hasProp<String>('decreasedValue', (it) => it.equals(value));
+  WidgetMatcher<Semantics> hasDecreasedValue(String? value) {
+    return hasProp<String>('decreasedValue', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Semantics> hasAttributedDecreasedValueWhere(MatchProp<String> match) {
     return hasProp<String>('attributedDecreasedValue', match);
   }
   
-  WidgetMatcher<Semantics> hasAttributedDecreasedValue(String value) {
-    return hasProp<String>('attributedDecreasedValue', (it) => it.equals(value));
+  WidgetMatcher<Semantics> hasAttributedDecreasedValue(String? value) {
+    return hasProp<String>('attributedDecreasedValue', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Semantics> hasHintWhere(MatchProp<String> match) {
     return hasProp<String>('hint', match);
   }
   
-  WidgetMatcher<Semantics> hasHint(String value) {
-    return hasProp<String>('hint', (it) => it.equals(value));
+  WidgetMatcher<Semantics> hasHint(String? value) {
+    return hasProp<String>('hint', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Semantics> hasAttributedHintWhere(MatchProp<String> match) {
     return hasProp<String>('attributedHint', match);
   }
   
-  WidgetMatcher<Semantics> hasAttributedHint(String value) {
-    return hasProp<String>('attributedHint', (it) => it.equals(value));
+  WidgetMatcher<Semantics> hasAttributedHint(String? value) {
+    return hasProp<String>('attributedHint', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Semantics> hasTooltipWhere(MatchProp<String> match) {
     return hasProp<String>('tooltip', match);
   }
   
-  WidgetMatcher<Semantics> hasTooltip(String value) {
-    return hasProp<String>('tooltip', (it) => it.equals(value));
+  WidgetMatcher<Semantics> hasTooltip(String? value) {
+    return hasProp<String>('tooltip', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Semantics> hasTextDirectionWhere(MatchProp<TextDirection> match) {
     return hasProp<TextDirection>('textDirection', match);
   }
   
-  WidgetMatcher<Semantics> hasTextDirection(TextDirection value) {
-    return hasProp<TextDirection>('textDirection', (it) => it.equals(value));
+  WidgetMatcher<Semantics> hasTextDirection(TextDirection? value) {
+    return hasProp<TextDirection>('textDirection', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Semantics> hasSortKeyWhere(MatchProp<SemanticsSortKey> match) {
     return hasProp<SemanticsSortKey>('sortKey', match);
   }
   
-  WidgetMatcher<Semantics> hasSortKey(SemanticsSortKey value) {
-    return hasProp<SemanticsSortKey>('sortKey', (it) => it.equals(value));
+  WidgetMatcher<Semantics> hasSortKey(SemanticsSortKey? value) {
+    return hasProp<SemanticsSortKey>('sortKey', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Semantics> hasHintOverridesWhere(MatchProp<SemanticsHintOverrides> match) {
     return hasProp<SemanticsHintOverrides>('hintOverrides', match);
   }
   
-  WidgetMatcher<Semantics> hasHintOverrides(SemanticsHintOverrides value) {
-    return hasProp<SemanticsHintOverrides>('hintOverrides', (it) => it.equals(value));
+  WidgetMatcher<Semantics> hasHintOverrides(SemanticsHintOverrides? value) {
+    return hasProp<SemanticsHintOverrides>('hintOverrides', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Semantics> hasRenderObjectWhere(MatchProp<RenderSemanticsAnnotations> match) {
     return hasProp<RenderSemanticsAnnotations>('renderObject', match);
   }
   
-  WidgetMatcher<Semantics> hasRenderObject(RenderSemanticsAnnotations value) {
-    return hasProp<RenderSemanticsAnnotations>('renderObject', (it) => it.equals(value));
+  WidgetMatcher<Semantics> hasRenderObject(RenderSemanticsAnnotations? value) {
+    return hasProp<RenderSemanticsAnnotations>('renderObject', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
 }
@@ -179,160 +179,160 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
     return withProp<bool>('container', match);
   }
   
-  WidgetSelector<Semantics> withContainer(bool value) {
-    return withProp<bool>('container', (it) => it.equals(value));
+  WidgetSelector<Semantics> withContainer(bool? value) {
+    return withProp<bool>('container', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Semantics> withPropertiesMatching(MatchProp<SemanticsProperties> match) {
     return withProp<SemanticsProperties>('properties', match);
   }
   
-  WidgetSelector<Semantics> withProperties(SemanticsProperties value) {
-    return withProp<SemanticsProperties>('properties', (it) => it.equals(value));
+  WidgetSelector<Semantics> withProperties(SemanticsProperties? value) {
+    return withProp<SemanticsProperties>('properties', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Semantics> withCheckedMatching(MatchProp<bool> match) {
     return withProp<bool>('checked', match);
   }
   
-  WidgetSelector<Semantics> withChecked(bool value) {
-    return withProp<bool>('checked', (it) => it.equals(value));
+  WidgetSelector<Semantics> withChecked(bool? value) {
+    return withProp<bool>('checked', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Semantics> withMixedMatching(MatchProp<bool> match) {
     return withProp<bool>('mixed', match);
   }
   
-  WidgetSelector<Semantics> withMixed(bool value) {
-    return withProp<bool>('mixed', (it) => it.equals(value));
+  WidgetSelector<Semantics> withMixed(bool? value) {
+    return withProp<bool>('mixed', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Semantics> withSelectedMatching(MatchProp<bool> match) {
     return withProp<bool>('selected', match);
   }
   
-  WidgetSelector<Semantics> withSelected(bool value) {
-    return withProp<bool>('selected', (it) => it.equals(value));
+  WidgetSelector<Semantics> withSelected(bool? value) {
+    return withProp<bool>('selected', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Semantics> withLabelMatching(MatchProp<String> match) {
     return withProp<String>('label', match);
   }
   
-  WidgetSelector<Semantics> withLabel(String value) {
-    return withProp<String>('label', (it) => it.equals(value));
+  WidgetSelector<Semantics> withLabel(String? value) {
+    return withProp<String>('label', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Semantics> withAttributedLabelMatching(MatchProp<String> match) {
     return withProp<String>('attributedLabel', match);
   }
   
-  WidgetSelector<Semantics> withAttributedLabel(String value) {
-    return withProp<String>('attributedLabel', (it) => it.equals(value));
+  WidgetSelector<Semantics> withAttributedLabel(String? value) {
+    return withProp<String>('attributedLabel', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Semantics> withValueMatching(MatchProp<String> match) {
     return withProp<String>('value', match);
   }
   
-  WidgetSelector<Semantics> withValue(String value) {
-    return withProp<String>('value', (it) => it.equals(value));
+  WidgetSelector<Semantics> withValue(String? value) {
+    return withProp<String>('value', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Semantics> withAttributedValueMatching(MatchProp<String> match) {
     return withProp<String>('attributedValue', match);
   }
   
-  WidgetSelector<Semantics> withAttributedValue(String value) {
-    return withProp<String>('attributedValue', (it) => it.equals(value));
+  WidgetSelector<Semantics> withAttributedValue(String? value) {
+    return withProp<String>('attributedValue', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Semantics> withIncreasedValueMatching(MatchProp<String> match) {
     return withProp<String>('increasedValue', match);
   }
   
-  WidgetSelector<Semantics> withIncreasedValue(String value) {
-    return withProp<String>('increasedValue', (it) => it.equals(value));
+  WidgetSelector<Semantics> withIncreasedValue(String? value) {
+    return withProp<String>('increasedValue', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Semantics> withAttributedIncreasedValueMatching(MatchProp<String> match) {
     return withProp<String>('attributedIncreasedValue', match);
   }
   
-  WidgetSelector<Semantics> withAttributedIncreasedValue(String value) {
-    return withProp<String>('attributedIncreasedValue', (it) => it.equals(value));
+  WidgetSelector<Semantics> withAttributedIncreasedValue(String? value) {
+    return withProp<String>('attributedIncreasedValue', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Semantics> withDecreasedValueMatching(MatchProp<String> match) {
     return withProp<String>('decreasedValue', match);
   }
   
-  WidgetSelector<Semantics> withDecreasedValue(String value) {
-    return withProp<String>('decreasedValue', (it) => it.equals(value));
+  WidgetSelector<Semantics> withDecreasedValue(String? value) {
+    return withProp<String>('decreasedValue', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Semantics> withAttributedDecreasedValueMatching(MatchProp<String> match) {
     return withProp<String>('attributedDecreasedValue', match);
   }
   
-  WidgetSelector<Semantics> withAttributedDecreasedValue(String value) {
-    return withProp<String>('attributedDecreasedValue', (it) => it.equals(value));
+  WidgetSelector<Semantics> withAttributedDecreasedValue(String? value) {
+    return withProp<String>('attributedDecreasedValue', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Semantics> withHintMatching(MatchProp<String> match) {
     return withProp<String>('hint', match);
   }
   
-  WidgetSelector<Semantics> withHint(String value) {
-    return withProp<String>('hint', (it) => it.equals(value));
+  WidgetSelector<Semantics> withHint(String? value) {
+    return withProp<String>('hint', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Semantics> withAttributedHintMatching(MatchProp<String> match) {
     return withProp<String>('attributedHint', match);
   }
   
-  WidgetSelector<Semantics> withAttributedHint(String value) {
-    return withProp<String>('attributedHint', (it) => it.equals(value));
+  WidgetSelector<Semantics> withAttributedHint(String? value) {
+    return withProp<String>('attributedHint', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Semantics> withTooltipMatching(MatchProp<String> match) {
     return withProp<String>('tooltip', match);
   }
   
-  WidgetSelector<Semantics> withTooltip(String value) {
-    return withProp<String>('tooltip', (it) => it.equals(value));
+  WidgetSelector<Semantics> withTooltip(String? value) {
+    return withProp<String>('tooltip', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Semantics> withTextDirectionMatching(MatchProp<TextDirection> match) {
     return withProp<TextDirection>('textDirection', match);
   }
   
-  WidgetSelector<Semantics> withTextDirection(TextDirection value) {
-    return withProp<TextDirection>('textDirection', (it) => it.equals(value));
+  WidgetSelector<Semantics> withTextDirection(TextDirection? value) {
+    return withProp<TextDirection>('textDirection', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Semantics> withSortKeyMatching(MatchProp<SemanticsSortKey> match) {
     return withProp<SemanticsSortKey>('sortKey', match);
   }
   
-  WidgetSelector<Semantics> withSortKey(SemanticsSortKey value) {
-    return withProp<SemanticsSortKey>('sortKey', (it) => it.equals(value));
+  WidgetSelector<Semantics> withSortKey(SemanticsSortKey? value) {
+    return withProp<SemanticsSortKey>('sortKey', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Semantics> withHintOverridesMatching(MatchProp<SemanticsHintOverrides> match) {
     return withProp<SemanticsHintOverrides>('hintOverrides', match);
   }
   
-  WidgetSelector<Semantics> withHintOverrides(SemanticsHintOverrides value) {
-    return withProp<SemanticsHintOverrides>('hintOverrides', (it) => it.equals(value));
+  WidgetSelector<Semantics> withHintOverrides(SemanticsHintOverrides? value) {
+    return withProp<SemanticsHintOverrides>('hintOverrides', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Semantics> withRenderObjectMatching(MatchProp<RenderSemanticsAnnotations> match) {
     return withProp<RenderSemanticsAnnotations>('renderObject', match);
   }
   
-  WidgetSelector<Semantics> withRenderObject(RenderSemanticsAnnotations value) {
-    return withProp<RenderSemanticsAnnotations>('renderObject', (it) => it.equals(value));
+  WidgetSelector<Semantics> withRenderObject(RenderSemanticsAnnotations? value) {
+    return withProp<RenderSemanticsAnnotations>('renderObject', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
 }

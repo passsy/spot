@@ -364,7 +364,7 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
     final ConditionSubject<T?> conditionSubject = it<T?>();
     final Subject<T> subject = conditionSubject.context.nest<T>(
       () => [selector.toStringBreadcrumb(), 'with property $propName'],
-      (widget) {
+      (_) {
         if (prop == null) {
           return Extracted.rejection(which: ['Has no prop "$propName"']);
         }
@@ -659,36 +659,59 @@ class WidgetSelector<W extends Widget> with Spotters<W> {
     String propName,
     MatchProp<T> match,
   ) {
-    final ConditionSubject<Element> conditionSubject = it<Element>();
-    final Subject<T> subject = conditionSubject.context.nest<T>(
-      () => ['with prop "$propName"'],
-      (Element element) {
-        final diagnosticsNode = element.toDiagnosticsNode();
-        final prop = diagnosticsNode
-            .getProperties()
-            .firstOrNullWhere((e) => e.name == propName);
-        if (prop == null) {
-          return Extracted.rejection(which: ['Has no prop "$propName"']);
-        }
-        if (prop.value is! T) {
-          return Extracted.rejection(
-            which: [
-              'Has no prop "$propName" of type "$T", the type is "${prop.value.runtimeType}"'
-            ],
-          );
-        }
-
-        return Extracted.value(prop.value as T);
-      },
-    );
-    match(subject);
+    final ConditionSubject<T> nameSubject = it();
+    match(nameSubject);
     final name =
-        describe(conditionSubject).map((it) => it.trim()).toList().join(' ');
+        describe(nameSubject).map((it) => it.trim()).toList().join(' ');
 
     return whereElement(
       (element) {
-        final failure = softCheck(element, conditionSubject);
-        return failure == null;
+        final diagnosticsNode = element.toDiagnosticsNode();
+        final DiagnosticsNode? prop = diagnosticsNode
+            .getProperties()
+            .firstOrNullWhere((e) => e.name == propName);
+
+        final actual = prop?.value as T?;
+
+        final ConditionSubject<T?> conditionSubject = it<T?>();
+        final Subject<T> subject = conditionSubject.context.nest<T>(
+          () => [toStringBreadcrumb(), 'with prop "$propName"'],
+          (_) {
+            if (prop == null) {
+              return Extracted.rejection(which: ['Has no prop "$propName"']);
+            }
+            if (prop.value is! T) {
+              return Extracted.rejection(
+                which: [
+                  'Has no prop "$propName" of type "$T", the type is "${prop.value.runtimeType}"'
+                ],
+              );
+            }
+
+            return Extracted.value(actual as T);
+          },
+        );
+        match(subject);
+        final failure = softCheck(actual, conditionSubject);
+        if (failure != null) {
+          final errorParts =
+              describe(conditionSubject).map((it) => it.trim()).toList();
+          // workaround allowing to use
+          // hasPropertyXWhere((subject)=> subject.equals(X));
+          // instead of
+          // hasPropertyXWhere((subject)=> subject.isNotNull().equals(X));
+          //
+          // when Subject is Subject<T> but the value can actually be null (should be Subject<T?>).
+          if (errorParts.last == 'is null' &&
+              failure.rejection.actual.firstOrNull == '<null>') {
+            // property is null and isNull() was called
+            // not error because null == null
+            return true;
+          }
+          return false;
+        }
+
+        return true;
       },
       description: name,
     );
@@ -1007,6 +1030,7 @@ extension CreateMatchers<W extends Widget> on WidgetSelector<W> {
         propType = propValueRuntimeType;
         continue;
       }
+      final propTypeNullable = propType.endsWith('?') ? propType : '$propType?';
       if (humanPropName == 'enabled') {
         matcherVerb = 'is';
       }
@@ -1017,8 +1041,8 @@ extension CreateMatchers<W extends Widget> on WidgetSelector<W> {
     return hasProp<$propType>('$propName', match);
   }
   
-  WidgetMatcher<$widgetType> $matcherVerb${humanPropName.capitalize()}($propType value) {
-    return hasProp<$propType>('$propName', (it) => it.equals(value));
+  WidgetMatcher<$widgetType> $matcherVerb${humanPropName.capitalize()}($propTypeNullable value) {
+    return hasProp<$propType>('$propName', (it) => value == null ? it.isNull() : it.equals(value));
   }
 ''');
 
@@ -1027,8 +1051,8 @@ extension CreateMatchers<W extends Widget> on WidgetSelector<W> {
     return withProp<$propType>('$propName', match);
   }
   
-  WidgetSelector<$widgetType> with${humanPropName.capitalize()}($propType value) {
-    return withProp<$propType>('$propName', (it) => it.equals(value));
+  WidgetSelector<$widgetType> with${humanPropName.capitalize()}($propTypeNullable value) {
+    return withProp<$propType>('$propName', (it) => value == null ? it.isNull() : it.equals(value));
   }
 ''');
     }

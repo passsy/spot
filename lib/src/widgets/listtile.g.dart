@@ -13,256 +13,256 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
     return hasProp<Widget>('leading', match);
   }
   
-  WidgetMatcher<ListTile> hasLeading(Widget value) {
-    return hasProp<Widget>('leading', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasLeading(Widget? value) {
+    return hasProp<Widget>('leading', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasTitleWhere(MatchProp<Widget> match) {
     return hasProp<Widget>('title', match);
   }
   
-  WidgetMatcher<ListTile> hasTitle(Widget value) {
-    return hasProp<Widget>('title', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasTitle(Widget? value) {
+    return hasProp<Widget>('title', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasSubtitleWhere(MatchProp<Widget> match) {
     return hasProp<Widget>('subtitle', match);
   }
   
-  WidgetMatcher<ListTile> hasSubtitle(Widget value) {
-    return hasProp<Widget>('subtitle', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasSubtitle(Widget? value) {
+    return hasProp<Widget>('subtitle', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasTrailingWhere(MatchProp<Widget> match) {
     return hasProp<Widget>('trailing', match);
   }
   
-  WidgetMatcher<ListTile> hasTrailing(Widget value) {
-    return hasProp<Widget>('trailing', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasTrailing(Widget? value) {
+    return hasProp<Widget>('trailing', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasIsThreeLineWhere(MatchProp<bool> match) {
     return hasProp<bool>('isThreeLine', match);
   }
   
-  WidgetMatcher<ListTile> hasIsThreeLine(bool value) {
-    return hasProp<bool>('isThreeLine', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasIsThreeLine(bool? value) {
+    return hasProp<bool>('isThreeLine', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasDenseWhere(MatchProp<bool> match) {
     return hasProp<bool>('dense', match);
   }
   
-  WidgetMatcher<ListTile> hasDense(bool value) {
-    return hasProp<bool>('dense', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasDense(bool? value) {
+    return hasProp<bool>('dense', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasVisualDensityWhere(MatchProp<VisualDensity> match) {
     return hasProp<VisualDensity>('visualDensity', match);
   }
   
-  WidgetMatcher<ListTile> hasVisualDensity(VisualDensity value) {
-    return hasProp<VisualDensity>('visualDensity', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasVisualDensity(VisualDensity? value) {
+    return hasProp<VisualDensity>('visualDensity', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasShapeWhere(MatchProp<ShapeBorder> match) {
     return hasProp<ShapeBorder>('shape', match);
   }
   
-  WidgetMatcher<ListTile> hasShape(ShapeBorder value) {
-    return hasProp<ShapeBorder>('shape', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasShape(ShapeBorder? value) {
+    return hasProp<ShapeBorder>('shape', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasStyleWhere(MatchProp<ListTileStyle> match) {
     return hasProp<ListTileStyle>('style', match);
   }
   
-  WidgetMatcher<ListTile> hasStyle(ListTileStyle value) {
-    return hasProp<ListTileStyle>('style', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasStyle(ListTileStyle? value) {
+    return hasProp<ListTileStyle>('style', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasSelectedColorWhere(MatchProp<Color> match) {
     return hasProp<Color>('selectedColor', match);
   }
   
-  WidgetMatcher<ListTile> hasSelectedColor(Color value) {
-    return hasProp<Color>('selectedColor', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasSelectedColor(Color? value) {
+    return hasProp<Color>('selectedColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasIconColorWhere(MatchProp<Color> match) {
     return hasProp<Color>('iconColor', match);
   }
   
-  WidgetMatcher<ListTile> hasIconColor(Color value) {
-    return hasProp<Color>('iconColor', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasIconColor(Color? value) {
+    return hasProp<Color>('iconColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasTextColorWhere(MatchProp<Color> match) {
     return hasProp<Color>('textColor', match);
   }
   
-  WidgetMatcher<ListTile> hasTextColor(Color value) {
-    return hasProp<Color>('textColor', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasTextColor(Color? value) {
+    return hasProp<Color>('textColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasTitleTextStyleWhere(MatchProp<TextStyle> match) {
     return hasProp<TextStyle>('titleTextStyle', match);
   }
   
-  WidgetMatcher<ListTile> hasTitleTextStyle(TextStyle value) {
-    return hasProp<TextStyle>('titleTextStyle', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasTitleTextStyle(TextStyle? value) {
+    return hasProp<TextStyle>('titleTextStyle', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasSubtitleTextStyleWhere(MatchProp<TextStyle> match) {
     return hasProp<TextStyle>('subtitleTextStyle', match);
   }
   
-  WidgetMatcher<ListTile> hasSubtitleTextStyle(TextStyle value) {
-    return hasProp<TextStyle>('subtitleTextStyle', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasSubtitleTextStyle(TextStyle? value) {
+    return hasProp<TextStyle>('subtitleTextStyle', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasLeadingAndTrailingTextStyleWhere(MatchProp<TextStyle> match) {
     return hasProp<TextStyle>('leadingAndTrailingTextStyle', match);
   }
   
-  WidgetMatcher<ListTile> hasLeadingAndTrailingTextStyle(TextStyle value) {
-    return hasProp<TextStyle>('leadingAndTrailingTextStyle', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasLeadingAndTrailingTextStyle(TextStyle? value) {
+    return hasProp<TextStyle>('leadingAndTrailingTextStyle', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasContentPaddingWhere(MatchProp<EdgeInsetsGeometry> match) {
     return hasProp<EdgeInsetsGeometry>('contentPadding', match);
   }
   
-  WidgetMatcher<ListTile> hasContentPadding(EdgeInsetsGeometry value) {
-    return hasProp<EdgeInsetsGeometry>('contentPadding', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasContentPadding(EdgeInsetsGeometry? value) {
+    return hasProp<EdgeInsetsGeometry>('contentPadding', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<ListTile> isEnabledWhere(MatchProp<bool> match) {
     return hasProp<bool>('enabled', match);
   }
   
-  WidgetMatcher<ListTile> isEnabled(bool value) {
-    return hasProp<bool>('enabled', (it) => it.equals(value));
+  WidgetMatcher<ListTile> isEnabled(bool? value) {
+    return hasProp<bool>('enabled', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasOnTapWhere(MatchProp<Function> match) {
     return hasProp<Function>('onTap', match);
   }
   
-  WidgetMatcher<ListTile> hasOnTap(Function value) {
-    return hasProp<Function>('onTap', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasOnTap(Function? value) {
+    return hasProp<Function>('onTap', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasOnLongPressWhere(MatchProp<Function> match) {
     return hasProp<Function>('onLongPress', match);
   }
   
-  WidgetMatcher<ListTile> hasOnLongPress(Function value) {
-    return hasProp<Function>('onLongPress', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasOnLongPress(Function? value) {
+    return hasProp<Function>('onLongPress', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasMouseCursorWhere(MatchProp<MouseCursor> match) {
     return hasProp<MouseCursor>('mouseCursor', match);
   }
   
-  WidgetMatcher<ListTile> hasMouseCursor(MouseCursor value) {
-    return hasProp<MouseCursor>('mouseCursor', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasMouseCursor(MouseCursor? value) {
+    return hasProp<MouseCursor>('mouseCursor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasSelectedWhere(MatchProp<bool> match) {
     return hasProp<bool>('selected', match);
   }
   
-  WidgetMatcher<ListTile> hasSelected(bool value) {
-    return hasProp<bool>('selected', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasSelected(bool? value) {
+    return hasProp<bool>('selected', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasFocusColorWhere(MatchProp<Color> match) {
     return hasProp<Color>('focusColor', match);
   }
   
-  WidgetMatcher<ListTile> hasFocusColor(Color value) {
-    return hasProp<Color>('focusColor', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasFocusColor(Color? value) {
+    return hasProp<Color>('focusColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasHoverColorWhere(MatchProp<Color> match) {
     return hasProp<Color>('hoverColor', match);
   }
   
-  WidgetMatcher<ListTile> hasHoverColor(Color value) {
-    return hasProp<Color>('hoverColor', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasHoverColor(Color? value) {
+    return hasProp<Color>('hoverColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasFocusNodeWhere(MatchProp<FocusNode> match) {
     return hasProp<FocusNode>('focusNode', match);
   }
   
-  WidgetMatcher<ListTile> hasFocusNode(FocusNode value) {
-    return hasProp<FocusNode>('focusNode', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasFocusNode(FocusNode? value) {
+    return hasProp<FocusNode>('focusNode', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasAutofocusWhere(MatchProp<bool> match) {
     return hasProp<bool>('autofocus', match);
   }
   
-  WidgetMatcher<ListTile> hasAutofocus(bool value) {
-    return hasProp<bool>('autofocus', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasAutofocus(bool? value) {
+    return hasProp<bool>('autofocus', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasTileColorWhere(MatchProp<Color> match) {
     return hasProp<Color>('tileColor', match);
   }
   
-  WidgetMatcher<ListTile> hasTileColor(Color value) {
-    return hasProp<Color>('tileColor', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasTileColor(Color? value) {
+    return hasProp<Color>('tileColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasSelectedTileColorWhere(MatchProp<Color> match) {
     return hasProp<Color>('selectedTileColor', match);
   }
   
-  WidgetMatcher<ListTile> hasSelectedTileColor(Color value) {
-    return hasProp<Color>('selectedTileColor', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasSelectedTileColor(Color? value) {
+    return hasProp<Color>('selectedTileColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasEnableFeedbackWhere(MatchProp<bool> match) {
     return hasProp<bool>('enableFeedback', match);
   }
   
-  WidgetMatcher<ListTile> hasEnableFeedback(bool value) {
-    return hasProp<bool>('enableFeedback', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasEnableFeedback(bool? value) {
+    return hasProp<bool>('enableFeedback', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasHorizontalTitleGapWhere(MatchProp<double> match) {
     return hasProp<double>('horizontalTitleGap', match);
   }
   
-  WidgetMatcher<ListTile> hasHorizontalTitleGap(double value) {
-    return hasProp<double>('horizontalTitleGap', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasHorizontalTitleGap(double? value) {
+    return hasProp<double>('horizontalTitleGap', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasMinVerticalPaddingWhere(MatchProp<double> match) {
     return hasProp<double>('minVerticalPadding', match);
   }
   
-  WidgetMatcher<ListTile> hasMinVerticalPadding(double value) {
-    return hasProp<double>('minVerticalPadding', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasMinVerticalPadding(double? value) {
+    return hasProp<double>('minVerticalPadding', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasMinLeadingWidthWhere(MatchProp<double> match) {
     return hasProp<double>('minLeadingWidth', match);
   }
   
-  WidgetMatcher<ListTile> hasMinLeadingWidth(double value) {
-    return hasProp<double>('minLeadingWidth', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasMinLeadingWidth(double? value) {
+    return hasProp<double>('minLeadingWidth', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<ListTile> hasTitleAlignmentWhere(MatchProp<ListTileTitleAlignment> match) {
     return hasProp<ListTileTitleAlignment>('titleAlignment', match);
   }
   
-  WidgetMatcher<ListTile> hasTitleAlignment(ListTileTitleAlignment value) {
-    return hasProp<ListTileTitleAlignment>('titleAlignment', (it) => it.equals(value));
+  WidgetMatcher<ListTile> hasTitleAlignment(ListTileTitleAlignment? value) {
+    return hasProp<ListTileTitleAlignment>('titleAlignment', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
 }
@@ -272,256 +272,256 @@ extension ListTileSelector on WidgetSelector<ListTile> {
     return withProp<Widget>('leading', match);
   }
   
-  WidgetSelector<ListTile> withLeading(Widget value) {
-    return withProp<Widget>('leading', (it) => it.equals(value));
+  WidgetSelector<ListTile> withLeading(Widget? value) {
+    return withProp<Widget>('leading', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<ListTile> withTitleMatching(MatchProp<Widget> match) {
     return withProp<Widget>('title', match);
   }
   
-  WidgetSelector<ListTile> withTitle(Widget value) {
-    return withProp<Widget>('title', (it) => it.equals(value));
+  WidgetSelector<ListTile> withTitle(Widget? value) {
+    return withProp<Widget>('title', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<ListTile> withSubtitleMatching(MatchProp<Widget> match) {
     return withProp<Widget>('subtitle', match);
   }
   
-  WidgetSelector<ListTile> withSubtitle(Widget value) {
-    return withProp<Widget>('subtitle', (it) => it.equals(value));
+  WidgetSelector<ListTile> withSubtitle(Widget? value) {
+    return withProp<Widget>('subtitle', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<ListTile> withTrailingMatching(MatchProp<Widget> match) {
     return withProp<Widget>('trailing', match);
   }
   
-  WidgetSelector<ListTile> withTrailing(Widget value) {
-    return withProp<Widget>('trailing', (it) => it.equals(value));
+  WidgetSelector<ListTile> withTrailing(Widget? value) {
+    return withProp<Widget>('trailing', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<ListTile> withIsThreeLineMatching(MatchProp<bool> match) {
     return withProp<bool>('isThreeLine', match);
   }
   
-  WidgetSelector<ListTile> withIsThreeLine(bool value) {
-    return withProp<bool>('isThreeLine', (it) => it.equals(value));
+  WidgetSelector<ListTile> withIsThreeLine(bool? value) {
+    return withProp<bool>('isThreeLine', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<ListTile> withDenseMatching(MatchProp<bool> match) {
     return withProp<bool>('dense', match);
   }
   
-  WidgetSelector<ListTile> withDense(bool value) {
-    return withProp<bool>('dense', (it) => it.equals(value));
+  WidgetSelector<ListTile> withDense(bool? value) {
+    return withProp<bool>('dense', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<ListTile> withVisualDensityMatching(MatchProp<VisualDensity> match) {
     return withProp<VisualDensity>('visualDensity', match);
   }
   
-  WidgetSelector<ListTile> withVisualDensity(VisualDensity value) {
-    return withProp<VisualDensity>('visualDensity', (it) => it.equals(value));
+  WidgetSelector<ListTile> withVisualDensity(VisualDensity? value) {
+    return withProp<VisualDensity>('visualDensity', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<ListTile> withShapeMatching(MatchProp<ShapeBorder> match) {
     return withProp<ShapeBorder>('shape', match);
   }
   
-  WidgetSelector<ListTile> withShape(ShapeBorder value) {
-    return withProp<ShapeBorder>('shape', (it) => it.equals(value));
+  WidgetSelector<ListTile> withShape(ShapeBorder? value) {
+    return withProp<ShapeBorder>('shape', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<ListTile> withStyleMatching(MatchProp<ListTileStyle> match) {
     return withProp<ListTileStyle>('style', match);
   }
   
-  WidgetSelector<ListTile> withStyle(ListTileStyle value) {
-    return withProp<ListTileStyle>('style', (it) => it.equals(value));
+  WidgetSelector<ListTile> withStyle(ListTileStyle? value) {
+    return withProp<ListTileStyle>('style', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<ListTile> withSelectedColorMatching(MatchProp<Color> match) {
     return withProp<Color>('selectedColor', match);
   }
   
-  WidgetSelector<ListTile> withSelectedColor(Color value) {
-    return withProp<Color>('selectedColor', (it) => it.equals(value));
+  WidgetSelector<ListTile> withSelectedColor(Color? value) {
+    return withProp<Color>('selectedColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<ListTile> withIconColorMatching(MatchProp<Color> match) {
     return withProp<Color>('iconColor', match);
   }
   
-  WidgetSelector<ListTile> withIconColor(Color value) {
-    return withProp<Color>('iconColor', (it) => it.equals(value));
+  WidgetSelector<ListTile> withIconColor(Color? value) {
+    return withProp<Color>('iconColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<ListTile> withTextColorMatching(MatchProp<Color> match) {
     return withProp<Color>('textColor', match);
   }
   
-  WidgetSelector<ListTile> withTextColor(Color value) {
-    return withProp<Color>('textColor', (it) => it.equals(value));
+  WidgetSelector<ListTile> withTextColor(Color? value) {
+    return withProp<Color>('textColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<ListTile> withTitleTextStyleMatching(MatchProp<TextStyle> match) {
     return withProp<TextStyle>('titleTextStyle', match);
   }
   
-  WidgetSelector<ListTile> withTitleTextStyle(TextStyle value) {
-    return withProp<TextStyle>('titleTextStyle', (it) => it.equals(value));
+  WidgetSelector<ListTile> withTitleTextStyle(TextStyle? value) {
+    return withProp<TextStyle>('titleTextStyle', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<ListTile> withSubtitleTextStyleMatching(MatchProp<TextStyle> match) {
     return withProp<TextStyle>('subtitleTextStyle', match);
   }
   
-  WidgetSelector<ListTile> withSubtitleTextStyle(TextStyle value) {
-    return withProp<TextStyle>('subtitleTextStyle', (it) => it.equals(value));
+  WidgetSelector<ListTile> withSubtitleTextStyle(TextStyle? value) {
+    return withProp<TextStyle>('subtitleTextStyle', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<ListTile> withLeadingAndTrailingTextStyleMatching(MatchProp<TextStyle> match) {
     return withProp<TextStyle>('leadingAndTrailingTextStyle', match);
   }
   
-  WidgetSelector<ListTile> withLeadingAndTrailingTextStyle(TextStyle value) {
-    return withProp<TextStyle>('leadingAndTrailingTextStyle', (it) => it.equals(value));
+  WidgetSelector<ListTile> withLeadingAndTrailingTextStyle(TextStyle? value) {
+    return withProp<TextStyle>('leadingAndTrailingTextStyle', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<ListTile> withContentPaddingMatching(MatchProp<EdgeInsetsGeometry> match) {
     return withProp<EdgeInsetsGeometry>('contentPadding', match);
   }
   
-  WidgetSelector<ListTile> withContentPadding(EdgeInsetsGeometry value) {
-    return withProp<EdgeInsetsGeometry>('contentPadding', (it) => it.equals(value));
+  WidgetSelector<ListTile> withContentPadding(EdgeInsetsGeometry? value) {
+    return withProp<EdgeInsetsGeometry>('contentPadding', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<ListTile> withEnabledMatching(MatchProp<bool> match) {
     return withProp<bool>('enabled', match);
   }
   
-  WidgetSelector<ListTile> withEnabled(bool value) {
-    return withProp<bool>('enabled', (it) => it.equals(value));
+  WidgetSelector<ListTile> withEnabled(bool? value) {
+    return withProp<bool>('enabled', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<ListTile> withOnTapMatching(MatchProp<Function> match) {
     return withProp<Function>('onTap', match);
   }
   
-  WidgetSelector<ListTile> withOnTap(Function value) {
-    return withProp<Function>('onTap', (it) => it.equals(value));
+  WidgetSelector<ListTile> withOnTap(Function? value) {
+    return withProp<Function>('onTap', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<ListTile> withOnLongPressMatching(MatchProp<Function> match) {
     return withProp<Function>('onLongPress', match);
   }
   
-  WidgetSelector<ListTile> withOnLongPress(Function value) {
-    return withProp<Function>('onLongPress', (it) => it.equals(value));
+  WidgetSelector<ListTile> withOnLongPress(Function? value) {
+    return withProp<Function>('onLongPress', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<ListTile> withMouseCursorMatching(MatchProp<MouseCursor> match) {
     return withProp<MouseCursor>('mouseCursor', match);
   }
   
-  WidgetSelector<ListTile> withMouseCursor(MouseCursor value) {
-    return withProp<MouseCursor>('mouseCursor', (it) => it.equals(value));
+  WidgetSelector<ListTile> withMouseCursor(MouseCursor? value) {
+    return withProp<MouseCursor>('mouseCursor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<ListTile> withSelectedMatching(MatchProp<bool> match) {
     return withProp<bool>('selected', match);
   }
   
-  WidgetSelector<ListTile> withSelected(bool value) {
-    return withProp<bool>('selected', (it) => it.equals(value));
+  WidgetSelector<ListTile> withSelected(bool? value) {
+    return withProp<bool>('selected', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<ListTile> withFocusColorMatching(MatchProp<Color> match) {
     return withProp<Color>('focusColor', match);
   }
   
-  WidgetSelector<ListTile> withFocusColor(Color value) {
-    return withProp<Color>('focusColor', (it) => it.equals(value));
+  WidgetSelector<ListTile> withFocusColor(Color? value) {
+    return withProp<Color>('focusColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<ListTile> withHoverColorMatching(MatchProp<Color> match) {
     return withProp<Color>('hoverColor', match);
   }
   
-  WidgetSelector<ListTile> withHoverColor(Color value) {
-    return withProp<Color>('hoverColor', (it) => it.equals(value));
+  WidgetSelector<ListTile> withHoverColor(Color? value) {
+    return withProp<Color>('hoverColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<ListTile> withFocusNodeMatching(MatchProp<FocusNode> match) {
     return withProp<FocusNode>('focusNode', match);
   }
   
-  WidgetSelector<ListTile> withFocusNode(FocusNode value) {
-    return withProp<FocusNode>('focusNode', (it) => it.equals(value));
+  WidgetSelector<ListTile> withFocusNode(FocusNode? value) {
+    return withProp<FocusNode>('focusNode', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<ListTile> withAutofocusMatching(MatchProp<bool> match) {
     return withProp<bool>('autofocus', match);
   }
   
-  WidgetSelector<ListTile> withAutofocus(bool value) {
-    return withProp<bool>('autofocus', (it) => it.equals(value));
+  WidgetSelector<ListTile> withAutofocus(bool? value) {
+    return withProp<bool>('autofocus', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<ListTile> withTileColorMatching(MatchProp<Color> match) {
     return withProp<Color>('tileColor', match);
   }
   
-  WidgetSelector<ListTile> withTileColor(Color value) {
-    return withProp<Color>('tileColor', (it) => it.equals(value));
+  WidgetSelector<ListTile> withTileColor(Color? value) {
+    return withProp<Color>('tileColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<ListTile> withSelectedTileColorMatching(MatchProp<Color> match) {
     return withProp<Color>('selectedTileColor', match);
   }
   
-  WidgetSelector<ListTile> withSelectedTileColor(Color value) {
-    return withProp<Color>('selectedTileColor', (it) => it.equals(value));
+  WidgetSelector<ListTile> withSelectedTileColor(Color? value) {
+    return withProp<Color>('selectedTileColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<ListTile> withEnableFeedbackMatching(MatchProp<bool> match) {
     return withProp<bool>('enableFeedback', match);
   }
   
-  WidgetSelector<ListTile> withEnableFeedback(bool value) {
-    return withProp<bool>('enableFeedback', (it) => it.equals(value));
+  WidgetSelector<ListTile> withEnableFeedback(bool? value) {
+    return withProp<bool>('enableFeedback', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<ListTile> withHorizontalTitleGapMatching(MatchProp<double> match) {
     return withProp<double>('horizontalTitleGap', match);
   }
   
-  WidgetSelector<ListTile> withHorizontalTitleGap(double value) {
-    return withProp<double>('horizontalTitleGap', (it) => it.equals(value));
+  WidgetSelector<ListTile> withHorizontalTitleGap(double? value) {
+    return withProp<double>('horizontalTitleGap', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<ListTile> withMinVerticalPaddingMatching(MatchProp<double> match) {
     return withProp<double>('minVerticalPadding', match);
   }
   
-  WidgetSelector<ListTile> withMinVerticalPadding(double value) {
-    return withProp<double>('minVerticalPadding', (it) => it.equals(value));
+  WidgetSelector<ListTile> withMinVerticalPadding(double? value) {
+    return withProp<double>('minVerticalPadding', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<ListTile> withMinLeadingWidthMatching(MatchProp<double> match) {
     return withProp<double>('minLeadingWidth', match);
   }
   
-  WidgetSelector<ListTile> withMinLeadingWidth(double value) {
-    return withProp<double>('minLeadingWidth', (it) => it.equals(value));
+  WidgetSelector<ListTile> withMinLeadingWidth(double? value) {
+    return withProp<double>('minLeadingWidth', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<ListTile> withTitleAlignmentMatching(MatchProp<ListTileTitleAlignment> match) {
     return withProp<ListTileTitleAlignment>('titleAlignment', match);
   }
   
-  WidgetSelector<ListTile> withTitleAlignment(ListTileTitleAlignment value) {
-    return withProp<ListTileTitleAlignment>('titleAlignment', (it) => it.equals(value));
+  WidgetSelector<ListTile> withTitleAlignment(ListTileTitleAlignment? value) {
+    return withProp<ListTileTitleAlignment>('titleAlignment', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
 }

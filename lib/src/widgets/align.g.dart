@@ -14,32 +14,32 @@ extension AlignMatcher on WidgetMatcher<Align> {
     return hasProp<AlignmentGeometry>('alignment', match);
   }
   
-  WidgetMatcher<Align> hasAlignment(AlignmentGeometry value) {
-    return hasProp<AlignmentGeometry>('alignment', (it) => it.equals(value));
+  WidgetMatcher<Align> hasAlignment(AlignmentGeometry? value) {
+    return hasProp<AlignmentGeometry>('alignment', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Align> hasWidthFactorWhere(MatchProp<double> match) {
     return hasProp<double>('widthFactor', match);
   }
   
-  WidgetMatcher<Align> hasWidthFactor(double value) {
-    return hasProp<double>('widthFactor', (it) => it.equals(value));
+  WidgetMatcher<Align> hasWidthFactor(double? value) {
+    return hasProp<double>('widthFactor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Align> hasHeightFactorWhere(MatchProp<double> match) {
     return hasProp<double>('heightFactor', match);
   }
   
-  WidgetMatcher<Align> hasHeightFactor(double value) {
-    return hasProp<double>('heightFactor', (it) => it.equals(value));
+  WidgetMatcher<Align> hasHeightFactor(double? value) {
+    return hasProp<double>('heightFactor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Align> hasRenderObjectWhere(MatchProp<RenderPositionedBox> match) {
     return hasProp<RenderPositionedBox>('renderObject', match);
   }
   
-  WidgetMatcher<Align> hasRenderObject(RenderPositionedBox value) {
-    return hasProp<RenderPositionedBox>('renderObject', (it) => it.equals(value));
+  WidgetMatcher<Align> hasRenderObject(RenderPositionedBox? value) {
+    return hasProp<RenderPositionedBox>('renderObject', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
 }
@@ -49,32 +49,32 @@ extension AlignSelector on WidgetSelector<Align> {
     return withProp<AlignmentGeometry>('alignment', match);
   }
   
-  WidgetSelector<Align> withAlignment(AlignmentGeometry value) {
-    return withProp<AlignmentGeometry>('alignment', (it) => it.equals(value));
+  WidgetSelector<Align> withAlignment(AlignmentGeometry? value) {
+    return withProp<AlignmentGeometry>('alignment', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Align> withWidthFactorMatching(MatchProp<double> match) {
     return withProp<double>('widthFactor', match);
   }
   
-  WidgetSelector<Align> withWidthFactor(double value) {
-    return withProp<double>('widthFactor', (it) => it.equals(value));
+  WidgetSelector<Align> withWidthFactor(double? value) {
+    return withProp<double>('widthFactor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Align> withHeightFactorMatching(MatchProp<double> match) {
     return withProp<double>('heightFactor', match);
   }
   
-  WidgetSelector<Align> withHeightFactor(double value) {
-    return withProp<double>('heightFactor', (it) => it.equals(value));
+  WidgetSelector<Align> withHeightFactor(double? value) {
+    return withProp<double>('heightFactor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Align> withRenderObjectMatching(MatchProp<RenderPositionedBox> match) {
     return withProp<RenderPositionedBox>('renderObject', match);
   }
   
-  WidgetSelector<Align> withRenderObject(RenderPositionedBox value) {
-    return withProp<RenderPositionedBox>('renderObject', (it) => it.equals(value));
+  WidgetSelector<Align> withRenderObject(RenderPositionedBox? value) {
+    return withProp<RenderPositionedBox>('renderObject', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
 }

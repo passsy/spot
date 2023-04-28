@@ -13,104 +13,104 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
     return hasProp<String>('message', match);
   }
   
-  WidgetMatcher<Tooltip> hasMessage(String value) {
-    return hasProp<String>('message', (it) => it.equals(value));
+  WidgetMatcher<Tooltip> hasMessage(String? value) {
+    return hasProp<String>('message', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Tooltip> hasRichMessageWhere(MatchProp<String> match) {
     return hasProp<String>('richMessage', match);
   }
   
-  WidgetMatcher<Tooltip> hasRichMessage(String value) {
-    return hasProp<String>('richMessage', (it) => it.equals(value));
+  WidgetMatcher<Tooltip> hasRichMessage(String? value) {
+    return hasProp<String>('richMessage', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Tooltip> hasHeightWhere(MatchProp<double> match) {
     return hasProp<double>('height', match);
   }
   
-  WidgetMatcher<Tooltip> hasHeight(double value) {
-    return hasProp<double>('height', (it) => it.equals(value));
+  WidgetMatcher<Tooltip> hasHeight(double? value) {
+    return hasProp<double>('height', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Tooltip> hasPaddingWhere(MatchProp<EdgeInsetsGeometry> match) {
     return hasProp<EdgeInsetsGeometry>('padding', match);
   }
   
-  WidgetMatcher<Tooltip> hasPadding(EdgeInsetsGeometry value) {
-    return hasProp<EdgeInsetsGeometry>('padding', (it) => it.equals(value));
+  WidgetMatcher<Tooltip> hasPadding(EdgeInsetsGeometry? value) {
+    return hasProp<EdgeInsetsGeometry>('padding', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Tooltip> hasMarginWhere(MatchProp<EdgeInsetsGeometry> match) {
     return hasProp<EdgeInsetsGeometry>('margin', match);
   }
   
-  WidgetMatcher<Tooltip> hasMargin(EdgeInsetsGeometry value) {
-    return hasProp<EdgeInsetsGeometry>('margin', (it) => it.equals(value));
+  WidgetMatcher<Tooltip> hasMargin(EdgeInsetsGeometry? value) {
+    return hasProp<EdgeInsetsGeometry>('margin', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Tooltip> hasVerticalOffsetWhere(MatchProp<double> match) {
     return hasProp<double>('vertical offset', match);
   }
   
-  WidgetMatcher<Tooltip> hasVerticalOffset(double value) {
-    return hasProp<double>('vertical offset', (it) => it.equals(value));
+  WidgetMatcher<Tooltip> hasVerticalOffset(double? value) {
+    return hasProp<double>('vertical offset', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Tooltip> hasPositionWhere(MatchProp<bool> match) {
     return hasProp<bool>('position', match);
   }
   
-  WidgetMatcher<Tooltip> hasPosition(bool value) {
-    return hasProp<bool>('position', (it) => it.equals(value));
+  WidgetMatcher<Tooltip> hasPosition(bool? value) {
+    return hasProp<bool>('position', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Tooltip> hasSemanticsWhere(MatchProp<bool> match) {
     return hasProp<bool>('semantics', match);
   }
   
-  WidgetMatcher<Tooltip> hasSemantics(bool value) {
-    return hasProp<bool>('semantics', (it) => it.equals(value));
+  WidgetMatcher<Tooltip> hasSemantics(bool? value) {
+    return hasProp<bool>('semantics', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Tooltip> hasWaitDurationWhere(MatchProp<Duration> match) {
     return hasProp<Duration>('wait duration', match);
   }
   
-  WidgetMatcher<Tooltip> hasWaitDuration(Duration value) {
-    return hasProp<Duration>('wait duration', (it) => it.equals(value));
+  WidgetMatcher<Tooltip> hasWaitDuration(Duration? value) {
+    return hasProp<Duration>('wait duration', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Tooltip> hasShowDurationWhere(MatchProp<Duration> match) {
     return hasProp<Duration>('show duration', match);
   }
   
-  WidgetMatcher<Tooltip> hasShowDuration(Duration value) {
-    return hasProp<Duration>('show duration', (it) => it.equals(value));
+  WidgetMatcher<Tooltip> hasShowDuration(Duration? value) {
+    return hasProp<Duration>('show duration', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Tooltip> hasTriggerModeWhere(MatchProp<TooltipTriggerMode> match) {
     return hasProp<TooltipTriggerMode>('triggerMode', match);
   }
   
-  WidgetMatcher<Tooltip> hasTriggerMode(TooltipTriggerMode value) {
-    return hasProp<TooltipTriggerMode>('triggerMode', (it) => it.equals(value));
+  WidgetMatcher<Tooltip> hasTriggerMode(TooltipTriggerMode? value) {
+    return hasProp<TooltipTriggerMode>('triggerMode', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Tooltip> hasEnableFeedbackWhere(MatchProp<bool> match) {
     return hasProp<bool>('enableFeedback', match);
   }
   
-  WidgetMatcher<Tooltip> hasEnableFeedback(bool value) {
-    return hasProp<bool>('enableFeedback', (it) => it.equals(value));
+  WidgetMatcher<Tooltip> hasEnableFeedback(bool? value) {
+    return hasProp<bool>('enableFeedback', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Tooltip> hasTextAlignWhere(MatchProp<TextAlign> match) {
     return hasProp<TextAlign>('textAlign', match);
   }
   
-  WidgetMatcher<Tooltip> hasTextAlign(TextAlign value) {
-    return hasProp<TextAlign>('textAlign', (it) => it.equals(value));
+  WidgetMatcher<Tooltip> hasTextAlign(TextAlign? value) {
+    return hasProp<TextAlign>('textAlign', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
 }
@@ -120,104 +120,104 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
     return withProp<String>('message', match);
   }
   
-  WidgetSelector<Tooltip> withMessage(String value) {
-    return withProp<String>('message', (it) => it.equals(value));
+  WidgetSelector<Tooltip> withMessage(String? value) {
+    return withProp<String>('message', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Tooltip> withRichMessageMatching(MatchProp<String> match) {
     return withProp<String>('richMessage', match);
   }
   
-  WidgetSelector<Tooltip> withRichMessage(String value) {
-    return withProp<String>('richMessage', (it) => it.equals(value));
+  WidgetSelector<Tooltip> withRichMessage(String? value) {
+    return withProp<String>('richMessage', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Tooltip> withHeightMatching(MatchProp<double> match) {
     return withProp<double>('height', match);
   }
   
-  WidgetSelector<Tooltip> withHeight(double value) {
-    return withProp<double>('height', (it) => it.equals(value));
+  WidgetSelector<Tooltip> withHeight(double? value) {
+    return withProp<double>('height', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Tooltip> withPaddingMatching(MatchProp<EdgeInsetsGeometry> match) {
     return withProp<EdgeInsetsGeometry>('padding', match);
   }
   
-  WidgetSelector<Tooltip> withPadding(EdgeInsetsGeometry value) {
-    return withProp<EdgeInsetsGeometry>('padding', (it) => it.equals(value));
+  WidgetSelector<Tooltip> withPadding(EdgeInsetsGeometry? value) {
+    return withProp<EdgeInsetsGeometry>('padding', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Tooltip> withMarginMatching(MatchProp<EdgeInsetsGeometry> match) {
     return withProp<EdgeInsetsGeometry>('margin', match);
   }
   
-  WidgetSelector<Tooltip> withMargin(EdgeInsetsGeometry value) {
-    return withProp<EdgeInsetsGeometry>('margin', (it) => it.equals(value));
+  WidgetSelector<Tooltip> withMargin(EdgeInsetsGeometry? value) {
+    return withProp<EdgeInsetsGeometry>('margin', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Tooltip> withVerticalOffsetMatching(MatchProp<double> match) {
     return withProp<double>('vertical offset', match);
   }
   
-  WidgetSelector<Tooltip> withVerticalOffset(double value) {
-    return withProp<double>('vertical offset', (it) => it.equals(value));
+  WidgetSelector<Tooltip> withVerticalOffset(double? value) {
+    return withProp<double>('vertical offset', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Tooltip> withPositionMatching(MatchProp<bool> match) {
     return withProp<bool>('position', match);
   }
   
-  WidgetSelector<Tooltip> withPosition(bool value) {
-    return withProp<bool>('position', (it) => it.equals(value));
+  WidgetSelector<Tooltip> withPosition(bool? value) {
+    return withProp<bool>('position', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Tooltip> withSemanticsMatching(MatchProp<bool> match) {
     return withProp<bool>('semantics', match);
   }
   
-  WidgetSelector<Tooltip> withSemantics(bool value) {
-    return withProp<bool>('semantics', (it) => it.equals(value));
+  WidgetSelector<Tooltip> withSemantics(bool? value) {
+    return withProp<bool>('semantics', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Tooltip> withWaitDurationMatching(MatchProp<Duration> match) {
     return withProp<Duration>('wait duration', match);
   }
   
-  WidgetSelector<Tooltip> withWaitDuration(Duration value) {
-    return withProp<Duration>('wait duration', (it) => it.equals(value));
+  WidgetSelector<Tooltip> withWaitDuration(Duration? value) {
+    return withProp<Duration>('wait duration', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Tooltip> withShowDurationMatching(MatchProp<Duration> match) {
     return withProp<Duration>('show duration', match);
   }
   
-  WidgetSelector<Tooltip> withShowDuration(Duration value) {
-    return withProp<Duration>('show duration', (it) => it.equals(value));
+  WidgetSelector<Tooltip> withShowDuration(Duration? value) {
+    return withProp<Duration>('show duration', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Tooltip> withTriggerModeMatching(MatchProp<TooltipTriggerMode> match) {
     return withProp<TooltipTriggerMode>('triggerMode', match);
   }
   
-  WidgetSelector<Tooltip> withTriggerMode(TooltipTriggerMode value) {
-    return withProp<TooltipTriggerMode>('triggerMode', (it) => it.equals(value));
+  WidgetSelector<Tooltip> withTriggerMode(TooltipTriggerMode? value) {
+    return withProp<TooltipTriggerMode>('triggerMode', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Tooltip> withEnableFeedbackMatching(MatchProp<bool> match) {
     return withProp<bool>('enableFeedback', match);
   }
   
-  WidgetSelector<Tooltip> withEnableFeedback(bool value) {
-    return withProp<bool>('enableFeedback', (it) => it.equals(value));
+  WidgetSelector<Tooltip> withEnableFeedback(bool? value) {
+    return withProp<bool>('enableFeedback', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Tooltip> withTextAlignMatching(MatchProp<TextAlign> match) {
     return withProp<TextAlign>('textAlign', match);
   }
   
-  WidgetSelector<Tooltip> withTextAlign(TextAlign value) {
-    return withProp<TextAlign>('textAlign', (it) => it.equals(value));
+  WidgetSelector<Tooltip> withTextAlign(TextAlign? value) {
+    return withProp<TextAlign>('textAlign', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
 }

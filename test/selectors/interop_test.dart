@@ -41,7 +41,9 @@ void main() {
       expect(
         () => find
             .ancestor(
-                of: find.byType(Directionality), matching: find.text('nope'))
+              of: find.byType(Directionality),
+              matching: find.text('nope'),
+            )
             .spot()
             .existsOnce(),
         throwsA(

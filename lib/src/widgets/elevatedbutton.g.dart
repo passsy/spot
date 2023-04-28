@@ -13,24 +13,24 @@ extension ElevatedButtonMatcher on WidgetMatcher<ElevatedButton> {
     return hasProp<bool>('enabled', match);
   }
   
-  WidgetMatcher<ElevatedButton> isEnabled(bool value) {
-    return hasProp<bool>('enabled', (it) => it.equals(value));
+  WidgetMatcher<ElevatedButton> isEnabled(bool? value) {
+    return hasProp<bool>('enabled', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<ElevatedButton> hasStyleWhere(MatchProp<ButtonStyle> match) {
     return hasProp<ButtonStyle>('style', match);
   }
   
-  WidgetMatcher<ElevatedButton> hasStyle(ButtonStyle value) {
-    return hasProp<ButtonStyle>('style', (it) => it.equals(value));
+  WidgetMatcher<ElevatedButton> hasStyle(ButtonStyle? value) {
+    return hasProp<ButtonStyle>('style', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<ElevatedButton> hasFocusNodeWhere(MatchProp<FocusNode> match) {
     return hasProp<FocusNode>('focusNode', match);
   }
   
-  WidgetMatcher<ElevatedButton> hasFocusNode(FocusNode value) {
-    return hasProp<FocusNode>('focusNode', (it) => it.equals(value));
+  WidgetMatcher<ElevatedButton> hasFocusNode(FocusNode? value) {
+    return hasProp<FocusNode>('focusNode', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
 }
@@ -40,24 +40,24 @@ extension ElevatedButtonSelector on WidgetSelector<ElevatedButton> {
     return withProp<bool>('enabled', match);
   }
   
-  WidgetSelector<ElevatedButton> withEnabled(bool value) {
-    return withProp<bool>('enabled', (it) => it.equals(value));
+  WidgetSelector<ElevatedButton> withEnabled(bool? value) {
+    return withProp<bool>('enabled', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<ElevatedButton> withStyleMatching(MatchProp<ButtonStyle> match) {
     return withProp<ButtonStyle>('style', match);
   }
   
-  WidgetSelector<ElevatedButton> withStyle(ButtonStyle value) {
-    return withProp<ButtonStyle>('style', (it) => it.equals(value));
+  WidgetSelector<ElevatedButton> withStyle(ButtonStyle? value) {
+    return withProp<ButtonStyle>('style', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<ElevatedButton> withFocusNodeMatching(MatchProp<FocusNode> match) {
     return withProp<FocusNode>('focusNode', match);
   }
   
-  WidgetSelector<ElevatedButton> withFocusNode(FocusNode value) {
-    return withProp<FocusNode>('focusNode', (it) => it.equals(value));
+  WidgetSelector<ElevatedButton> withFocusNode(FocusNode? value) {
+    return withProp<FocusNode>('focusNode', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
 }

@@ -13,80 +13,80 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
     return hasProp<Widget>('icon', match);
   }
   
-  WidgetMatcher<IconButton> hasIcon(Widget value) {
-    return hasProp<Widget>('icon', (it) => it.equals(value));
+  WidgetMatcher<IconButton> hasIcon(Widget? value) {
+    return hasProp<Widget>('icon', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<IconButton> hasTooltipWhere(MatchProp<String> match) {
     return hasProp<String>('tooltip', match);
   }
   
-  WidgetMatcher<IconButton> hasTooltip(String value) {
-    return hasProp<String>('tooltip', (it) => it.equals(value));
+  WidgetMatcher<IconButton> hasTooltip(String? value) {
+    return hasProp<String>('tooltip', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<IconButton> hasColorWhere(MatchProp<Color> match) {
     return hasProp<Color>('color', match);
   }
   
-  WidgetMatcher<IconButton> hasColor(Color value) {
-    return hasProp<Color>('color', (it) => it.equals(value));
+  WidgetMatcher<IconButton> hasColor(Color? value) {
+    return hasProp<Color>('color', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<IconButton> hasDisabledColorWhere(MatchProp<Color> match) {
     return hasProp<Color>('disabledColor', match);
   }
   
-  WidgetMatcher<IconButton> hasDisabledColor(Color value) {
-    return hasProp<Color>('disabledColor', (it) => it.equals(value));
+  WidgetMatcher<IconButton> hasDisabledColor(Color? value) {
+    return hasProp<Color>('disabledColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<IconButton> hasFocusColorWhere(MatchProp<Color> match) {
     return hasProp<Color>('focusColor', match);
   }
   
-  WidgetMatcher<IconButton> hasFocusColor(Color value) {
-    return hasProp<Color>('focusColor', (it) => it.equals(value));
+  WidgetMatcher<IconButton> hasFocusColor(Color? value) {
+    return hasProp<Color>('focusColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<IconButton> hasHoverColorWhere(MatchProp<Color> match) {
     return hasProp<Color>('hoverColor', match);
   }
   
-  WidgetMatcher<IconButton> hasHoverColor(Color value) {
-    return hasProp<Color>('hoverColor', (it) => it.equals(value));
+  WidgetMatcher<IconButton> hasHoverColor(Color? value) {
+    return hasProp<Color>('hoverColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<IconButton> hasHighlightColorWhere(MatchProp<Color> match) {
     return hasProp<Color>('highlightColor', match);
   }
   
-  WidgetMatcher<IconButton> hasHighlightColor(Color value) {
-    return hasProp<Color>('highlightColor', (it) => it.equals(value));
+  WidgetMatcher<IconButton> hasHighlightColor(Color? value) {
+    return hasProp<Color>('highlightColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<IconButton> hasSplashColorWhere(MatchProp<Color> match) {
     return hasProp<Color>('splashColor', match);
   }
   
-  WidgetMatcher<IconButton> hasSplashColor(Color value) {
-    return hasProp<Color>('splashColor', (it) => it.equals(value));
+  WidgetMatcher<IconButton> hasSplashColor(Color? value) {
+    return hasProp<Color>('splashColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<IconButton> hasPaddingWhere(MatchProp<EdgeInsetsGeometry> match) {
     return hasProp<EdgeInsetsGeometry>('padding', match);
   }
   
-  WidgetMatcher<IconButton> hasPadding(EdgeInsetsGeometry value) {
-    return hasProp<EdgeInsetsGeometry>('padding', (it) => it.equals(value));
+  WidgetMatcher<IconButton> hasPadding(EdgeInsetsGeometry? value) {
+    return hasProp<EdgeInsetsGeometry>('padding', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<IconButton> hasFocusNodeWhere(MatchProp<FocusNode> match) {
     return hasProp<FocusNode>('focusNode', match);
   }
   
-  WidgetMatcher<IconButton> hasFocusNode(FocusNode value) {
-    return hasProp<FocusNode>('focusNode', (it) => it.equals(value));
+  WidgetMatcher<IconButton> hasFocusNode(FocusNode? value) {
+    return hasProp<FocusNode>('focusNode', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
 }
@@ -96,80 +96,80 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
     return withProp<Widget>('icon', match);
   }
   
-  WidgetSelector<IconButton> withIcon(Widget value) {
-    return withProp<Widget>('icon', (it) => it.equals(value));
+  WidgetSelector<IconButton> withIcon(Widget? value) {
+    return withProp<Widget>('icon', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<IconButton> withTooltipMatching(MatchProp<String> match) {
     return withProp<String>('tooltip', match);
   }
   
-  WidgetSelector<IconButton> withTooltip(String value) {
-    return withProp<String>('tooltip', (it) => it.equals(value));
+  WidgetSelector<IconButton> withTooltip(String? value) {
+    return withProp<String>('tooltip', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<IconButton> withColorMatching(MatchProp<Color> match) {
     return withProp<Color>('color', match);
   }
   
-  WidgetSelector<IconButton> withColor(Color value) {
-    return withProp<Color>('color', (it) => it.equals(value));
+  WidgetSelector<IconButton> withColor(Color? value) {
+    return withProp<Color>('color', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<IconButton> withDisabledColorMatching(MatchProp<Color> match) {
     return withProp<Color>('disabledColor', match);
   }
   
-  WidgetSelector<IconButton> withDisabledColor(Color value) {
-    return withProp<Color>('disabledColor', (it) => it.equals(value));
+  WidgetSelector<IconButton> withDisabledColor(Color? value) {
+    return withProp<Color>('disabledColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<IconButton> withFocusColorMatching(MatchProp<Color> match) {
     return withProp<Color>('focusColor', match);
   }
   
-  WidgetSelector<IconButton> withFocusColor(Color value) {
-    return withProp<Color>('focusColor', (it) => it.equals(value));
+  WidgetSelector<IconButton> withFocusColor(Color? value) {
+    return withProp<Color>('focusColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<IconButton> withHoverColorMatching(MatchProp<Color> match) {
     return withProp<Color>('hoverColor', match);
   }
   
-  WidgetSelector<IconButton> withHoverColor(Color value) {
-    return withProp<Color>('hoverColor', (it) => it.equals(value));
+  WidgetSelector<IconButton> withHoverColor(Color? value) {
+    return withProp<Color>('hoverColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<IconButton> withHighlightColorMatching(MatchProp<Color> match) {
     return withProp<Color>('highlightColor', match);
   }
   
-  WidgetSelector<IconButton> withHighlightColor(Color value) {
-    return withProp<Color>('highlightColor', (it) => it.equals(value));
+  WidgetSelector<IconButton> withHighlightColor(Color? value) {
+    return withProp<Color>('highlightColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<IconButton> withSplashColorMatching(MatchProp<Color> match) {
     return withProp<Color>('splashColor', match);
   }
   
-  WidgetSelector<IconButton> withSplashColor(Color value) {
-    return withProp<Color>('splashColor', (it) => it.equals(value));
+  WidgetSelector<IconButton> withSplashColor(Color? value) {
+    return withProp<Color>('splashColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<IconButton> withPaddingMatching(MatchProp<EdgeInsetsGeometry> match) {
     return withProp<EdgeInsetsGeometry>('padding', match);
   }
   
-  WidgetSelector<IconButton> withPadding(EdgeInsetsGeometry value) {
-    return withProp<EdgeInsetsGeometry>('padding', (it) => it.equals(value));
+  WidgetSelector<IconButton> withPadding(EdgeInsetsGeometry? value) {
+    return withProp<EdgeInsetsGeometry>('padding', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<IconButton> withFocusNodeMatching(MatchProp<FocusNode> match) {
     return withProp<FocusNode>('focusNode', match);
   }
   
-  WidgetSelector<IconButton> withFocusNode(FocusNode value) {
-    return withProp<FocusNode>('focusNode', (it) => it.equals(value));
+  WidgetSelector<IconButton> withFocusNode(FocusNode? value) {
+    return withProp<FocusNode>('focusNode', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
 }

@@ -14,24 +14,24 @@ extension SizedBoxMatcher on WidgetMatcher<SizedBox> {
     return hasProp<double>('width', match);
   }
   
-  WidgetMatcher<SizedBox> hasWidth(double value) {
-    return hasProp<double>('width', (it) => it.equals(value));
+  WidgetMatcher<SizedBox> hasWidth(double? value) {
+    return hasProp<double>('width', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<SizedBox> hasHeightWhere(MatchProp<double> match) {
     return hasProp<double>('height', match);
   }
   
-  WidgetMatcher<SizedBox> hasHeight(double value) {
-    return hasProp<double>('height', (it) => it.equals(value));
+  WidgetMatcher<SizedBox> hasHeight(double? value) {
+    return hasProp<double>('height', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<SizedBox> hasRenderObjectWhere(MatchProp<RenderConstrainedBox> match) {
     return hasProp<RenderConstrainedBox>('renderObject', match);
   }
   
-  WidgetMatcher<SizedBox> hasRenderObject(RenderConstrainedBox value) {
-    return hasProp<RenderConstrainedBox>('renderObject', (it) => it.equals(value));
+  WidgetMatcher<SizedBox> hasRenderObject(RenderConstrainedBox? value) {
+    return hasProp<RenderConstrainedBox>('renderObject', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
 }
@@ -41,24 +41,24 @@ extension SizedBoxSelector on WidgetSelector<SizedBox> {
     return withProp<double>('width', match);
   }
   
-  WidgetSelector<SizedBox> withWidth(double value) {
-    return withProp<double>('width', (it) => it.equals(value));
+  WidgetSelector<SizedBox> withWidth(double? value) {
+    return withProp<double>('width', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<SizedBox> withHeightMatching(MatchProp<double> match) {
     return withProp<double>('height', match);
   }
   
-  WidgetSelector<SizedBox> withHeight(double value) {
-    return withProp<double>('height', (it) => it.equals(value));
+  WidgetSelector<SizedBox> withHeight(double? value) {
+    return withProp<double>('height', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<SizedBox> withRenderObjectMatching(MatchProp<RenderConstrainedBox> match) {
     return withProp<RenderConstrainedBox>('renderObject', match);
   }
   
-  WidgetSelector<SizedBox> withRenderObject(RenderConstrainedBox value) {
-    return withProp<RenderConstrainedBox>('renderObject', (it) => it.equals(value));
+  WidgetSelector<SizedBox> withRenderObject(RenderConstrainedBox? value) {
+    return withProp<RenderConstrainedBox>('renderObject', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
 }

@@ -14,24 +14,24 @@ extension OpacityMatcher on WidgetMatcher<Opacity> {
     return hasProp<double>('opacity', match);
   }
   
-  WidgetMatcher<Opacity> hasOpacity(double value) {
-    return hasProp<double>('opacity', (it) => it.equals(value));
+  WidgetMatcher<Opacity> hasOpacity(double? value) {
+    return hasProp<double>('opacity', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Opacity> hasAlwaysIncludeSemanticsWhere(MatchProp<bool> match) {
     return hasProp<bool>('alwaysIncludeSemantics', match);
   }
   
-  WidgetMatcher<Opacity> hasAlwaysIncludeSemantics(bool value) {
-    return hasProp<bool>('alwaysIncludeSemantics', (it) => it.equals(value));
+  WidgetMatcher<Opacity> hasAlwaysIncludeSemantics(bool? value) {
+    return hasProp<bool>('alwaysIncludeSemantics', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetMatcher<Opacity> hasRenderObjectWhere(MatchProp<RenderOpacity> match) {
     return hasProp<RenderOpacity>('renderObject', match);
   }
   
-  WidgetMatcher<Opacity> hasRenderObject(RenderOpacity value) {
-    return hasProp<RenderOpacity>('renderObject', (it) => it.equals(value));
+  WidgetMatcher<Opacity> hasRenderObject(RenderOpacity? value) {
+    return hasProp<RenderOpacity>('renderObject', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
 }
@@ -41,24 +41,24 @@ extension OpacitySelector on WidgetSelector<Opacity> {
     return withProp<double>('opacity', match);
   }
   
-  WidgetSelector<Opacity> withOpacity(double value) {
-    return withProp<double>('opacity', (it) => it.equals(value));
+  WidgetSelector<Opacity> withOpacity(double? value) {
+    return withProp<double>('opacity', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Opacity> withAlwaysIncludeSemanticsMatching(MatchProp<bool> match) {
     return withProp<bool>('alwaysIncludeSemantics', match);
   }
   
-  WidgetSelector<Opacity> withAlwaysIncludeSemantics(bool value) {
-    return withProp<bool>('alwaysIncludeSemantics', (it) => it.equals(value));
+  WidgetSelector<Opacity> withAlwaysIncludeSemantics(bool? value) {
+    return withProp<bool>('alwaysIncludeSemantics', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   WidgetSelector<Opacity> withRenderObjectMatching(MatchProp<RenderOpacity> match) {
     return withProp<RenderOpacity>('renderObject', match);
   }
   
-  WidgetSelector<Opacity> withRenderObject(RenderOpacity value) {
-    return withProp<RenderOpacity>('renderObject', (it) => it.equals(value));
+  WidgetSelector<Opacity> withRenderObject(RenderOpacity? value) {
+    return withProp<RenderOpacity>('renderObject', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
 }

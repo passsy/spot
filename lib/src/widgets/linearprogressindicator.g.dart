@@ -13,8 +13,8 @@ extension LinearProgressIndicatorMatcher on WidgetMatcher<LinearProgressIndicato
     return hasProp<double>('value', match);
   }
   
-  WidgetMatcher<LinearProgressIndicator> hasValue(double value) {
-    return hasProp<double>('value', (it) => it.equals(value));
+  WidgetMatcher<LinearProgressIndicator> hasValue(double? value) {
+    return hasProp<double>('value', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
 }
@@ -24,8 +24,8 @@ extension LinearProgressIndicatorSelector on WidgetSelector<LinearProgressIndica
     return withProp<double>('value', match);
   }
   
-  WidgetSelector<LinearProgressIndicator> withValue(double value) {
-    return withProp<double>('value', (it) => it.equals(value));
+  WidgetSelector<LinearProgressIndicator> withValue(double? value) {
+    return withProp<double>('value', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
 }

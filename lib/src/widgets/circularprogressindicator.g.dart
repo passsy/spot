@@ -13,8 +13,8 @@ extension CircularProgressIndicatorMatcher on WidgetMatcher<CircularProgressIndi
     return hasProp<double>('value', match);
   }
   
-  WidgetMatcher<CircularProgressIndicator> hasValue(double value) {
-    return hasProp<double>('value', (it) => it.equals(value));
+  WidgetMatcher<CircularProgressIndicator> hasValue(double? value) {
+    return hasProp<double>('value', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
 }
@@ -24,8 +24,8 @@ extension CircularProgressIndicatorSelector on WidgetSelector<CircularProgressIn
     return withProp<double>('value', match);
   }
   
-  WidgetSelector<CircularProgressIndicator> withValue(double value) {
-    return withProp<double>('value', (it) => it.equals(value));
+  WidgetSelector<CircularProgressIndicator> withValue(double? value) {
+    return withProp<double>('value', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
 }

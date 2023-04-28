@@ -125,9 +125,9 @@ class CandidateGeneratorFromParents<W extends Widget>
     // find nodes that exist in all parents
     final List<Element> elementsInAllParents =
         distinctElements.where((element) {
-      return discoveryByParent.all(
-          (Map<WidgetTreeNode<Widget>, List<MultiWidgetSnapshot<W>>>
-              discovered) {
+      return discoveryByParent.all((
+        Map<WidgetTreeNode<Widget>, List<MultiWidgetSnapshot<W>>> discovered,
+      ) {
         return discovered.values.any((List<MultiWidgetSnapshot<W>> list) {
           return list.any((node) {
             return node.discovered.map((e) => e.element).contains(element);

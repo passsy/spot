@@ -13,8 +13,8 @@ extension SwitchMatcher on WidgetMatcher<Switch> {
     return hasProp<bool>('value', match);
   }
   
-  WidgetMatcher<Switch> hasValue(bool value) {
-    return hasProp<bool>('value', (it) => it.equals(value));
+  WidgetMatcher<Switch> hasValue(bool? value) {
+    return hasProp<bool>('value', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
 }
@@ -24,8 +24,8 @@ extension SwitchSelector on WidgetSelector<Switch> {
     return withProp<bool>('value', match);
   }
   
-  WidgetSelector<Switch> withValue(bool value) {
-    return withProp<bool>('value', (it) => it.equals(value));
+  WidgetSelector<Switch> withValue(bool? value) {
+    return withProp<bool>('value', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
 }
