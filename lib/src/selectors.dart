@@ -69,7 +69,7 @@ mixin Spotters<T extends Widget> {
     );
   }
 
-  SingleWidgetSelector<W> spotSingleElement<W extends Widget>(
+  SingleWidgetSelector<W> spotElement<W extends Widget>(
     Element element, {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],

@@ -90,7 +90,7 @@ SingleWidgetSelector<W> spotElement<W extends Widget>(
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {
-  return _global.spotSingleElement<W>(element);
+  return _global.spotElement<W>(element);
 }
 
 SingleWidgetSelector<Text> spotSingleText(
