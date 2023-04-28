@@ -44,6 +44,9 @@ class WidgetTreeNode {
 
   final WidgetTreeNode? parent;
 
+  /// Creates a [Element] in the element tree.
+  ///
+  /// Do not forget to call [addChild] manually after creation!
   WidgetTreeNode({
     required this.element,
     required this.parent,

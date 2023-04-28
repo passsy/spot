@@ -4,15 +4,31 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/tree_snapshot.dart';
 
+/// Extensions that convert from the [Finder] API to spot
 extension FinderToSpot on Finder {
+  /// Converts the [Finder] to a [WidgetSelector]
+  ///
+  /// By default, [Finder] matches List<[Element]>, thus the [WidgetSelector]s
+  /// concrete type is [MultiWidgetSelector]. Use [SelectorToSnapshot.single] to
+  /// convert the [Finder] to a [SingleWidgetSelector] when the intention is to
+  /// only match a single [Widget].
   MultiWidgetSelector<W> spot<W extends Widget>() {
     return _FinderSelector<W>(this);
   }
 }
 
+/// Extensions that convert the spot API to the [Finder] API
 extension SpotToFinder<W extends Widget> on WidgetSelector<W> {
+  /// Converts the [WidgetSelector] from spot to a [Finder]
+  ///
+  /// ```dart
+  /// await tester.tap(spot<RaisedButton>().finder);
+  /// ```
   Finder get finder => _FinderFromWidgetSelector(this);
 
+  /// Finds all elements that match [finder] and converts them to a [WidgetSelector].
+  ///
+  /// Use [T] to specify the type of [Widget] to match.
   WidgetSelector<T> spotFinder<T extends Widget>(Finder finder) {
     return _FinderSelector<T>(finder, parent: this);
   }

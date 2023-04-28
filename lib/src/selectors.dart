@@ -22,6 +22,18 @@ class Spot with Selectors<Widget> {
 mixin Selectors<T extends Widget> {
   WidgetSelector<T>? get self;
 
+  /// Creates a [WidgetSelector] that matches a single Widgets of
+  /// type [W] that is in the scope of the parent [WidgetSelector].
+  ///
+  /// This selector compares the Widgets by runtimeType rather than by super
+  /// type (see [WidgetTypeFilter]). This makes sure that e.g. `spot<Align>()`
+  /// does not accidentally match a [Center] Widget, that extends [Align].
+  ///
+  /// ```dart
+  /// final appbar = spotSingle<MaterialApp>()
+  ///    .spotSingle<Scaffold>()
+  ///    .spotSingle<AppBar>()
+  /// ```
   SingleWidgetSelector<W> spotSingle<W extends Widget>({
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
@@ -29,7 +41,16 @@ mixin Selectors<T extends Widget> {
     return spot<W>(parents: parents, children: children).single;
   }
 
-  /// Spots a widget of type [W] in the scope of the parent selector
+  /// Creates a [WidgetSelector] that matches a all Widgets of
+  /// type [W] that are in the scope of the parent [WidgetSelector].
+  ///
+  /// This selector compares the Widgets by runtimeType rather than by super
+  /// type (see [WidgetTypeFilter]). This makes sure that e.g. `spot<Align>()`
+  /// does not accidentally match a [Center] Widget, that extends [Align].
+  ///
+  /// ```dart
+  /// final appbar = spot<MaterialApp>().spot<Scaffold>().spot<AppBar>()
+  /// ```
   MultiWidgetSelector<W> spot<W extends Widget>({
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
@@ -459,9 +480,11 @@ abstract class CandidateGenerator<W extends Widget> {
   Iterable<WidgetTreeNode> generateCandidates();
 }
 
+/// Filters candidates by widget type [W] comparing the runtime type.
+///
+/// Comparing the runtimeType makes sure that `spot<Align>()`
+/// does not accidentally match a [Center] Widget, that extends [Align].
 class WidgetTypeFilter<W extends Widget> implements ElementFilter {
-  WidgetTypeFilter();
-
   @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
     final type = _typeOf<W>();

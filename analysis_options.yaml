@@ -15,3 +15,6 @@ linter:
   rules:
     # Util classes are awesome!
     avoid_classes_with_only_static_members: false
+
+    # Documentation is key
+    #public_member_api_docs: true

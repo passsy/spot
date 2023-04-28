@@ -58,6 +58,17 @@ const Spot _global = Spot();
 
 WidgetSelector<Widget> get allWidgets => WidgetSelector.all;
 
+/// Creates a chainable [WidgetSelector] that matches a single [Widget] of
+/// type [W].
+///
+/// When executed this [WidgetSelector] will fail when it finds multiple
+/// [Widget]s of type [W] in widget tree.
+///
+/// This selector compares the Widgets by runtimeType rather than by super
+/// type (see [WidgetTypeFilter]). This makes sure that e.g. `spotSingle<Align>()`
+/// does not accidentally match a [Center] Widget, that extends [Align].
+///
+/// If multiple Widgets of type [W] are expected, use [spot] instead.
 SingleWidgetSelector<W> spotSingle<W extends Widget>({
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
@@ -68,6 +79,18 @@ SingleWidgetSelector<W> spotSingle<W extends Widget>({
   );
 }
 
+/// Creates a chainable [WidgetSelector] that matches a all Widgets of
+/// type [W] in widget tree.
+///
+/// `spot<SomeWidget>()` is the most common way to chain of selectors. For
+/// performance reasons and better error messages, it can be useful to use
+/// [spotSingle]. Use [spotSingle] in cases where only ever one Widget is
+/// expected. This allows the framework to stop when 100 instead of a
+/// 1 widget is found.
+///
+/// This selector compares the Widgets by runtimeType rather than by super
+/// type (see [WidgetTypeFilter]). This makes sure that e.g. `spot<Align>()`
+/// does not accidentally match a [Center] Widget, that extends [Align].
 WidgetSelector<W> spot<W extends Widget>({
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
