@@ -15,7 +15,6 @@ void main() {
                 style: TextStyle(),
                 maxLines: 2,
                 child: Text('Pepe'),
-                // child: RobinHood(power: Power.rich),
               ),
               actions: [
                 Wrap(
