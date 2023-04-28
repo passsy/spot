@@ -14,8 +14,11 @@ extension DefaultWidgetMatchers<W extends Widget> on WidgetMatcher<W> {
     return hasProp<Key>('key', match);
   }
 
-  WidgetMatcher<W> hasKey(Key value) {
-    return hasProp<Key>('key', (it) => it.equals(value));
+  WidgetMatcher<W> hasKey(Key? value) {
+    return hasProp<Key>(
+      'key',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 
@@ -32,7 +35,10 @@ extension DefaultWidgetSelectors<W extends Widget> on WidgetSelector<W> {
     return withProp<Key>('key', match);
   }
 
-  WidgetSelector<W> withKey(Key value) {
-    return withProp<Key>('key', (it) => it.equals(value));
+  WidgetSelector<W> withKey(Key? value) {
+    return withProp<Key>(
+      'key',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }

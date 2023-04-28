@@ -53,6 +53,35 @@ void main() {
     });
   });
 
+  testWidgets('match key == null', (tester) async {
+    await tester.pumpWidget(SizedBox());
+    spot<SizedBox>().existsOnce().hasKey(null);
+    spot<SizedBox>().existsOnce().hasKeyWhere((it) => it.isNull());
+  });
+  testWidgets('match key', (tester) async {
+    const key1 = ValueKey('1');
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: Row(
+          children: const [
+            SizedBox(key: key1),
+            SizedBox(),
+          ],
+        ),
+      ),
+    );
+    spot<SizedBox>()
+        .existsAtLeastOnce()
+        .any((box) => box.hasKey(key1))
+        .any((box) => box.hasKey(null));
+
+    spot<SizedBox>().withKey(key1).existsOnce();
+    spot<SizedBox>().withKey(null).existsOnce();
+    spot<SizedBox>().withKeyMatching((it) => it.isNull()).existsOnce();
+    spot<SizedBox>().withKeyMatching((it) => it.equals(key1)).existsOnce();
+  });
+
   group('spotKeys', () {
     testWidgets('spot multiple keys', (tester) async {
       const key1 = ValueKey(1);
