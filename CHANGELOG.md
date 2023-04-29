@@ -1,3 +1,8 @@
+# Changelog
+
+## 0.2.2
+- Support for Flutter 3.0.0 / Dart 2.17
+
 ## 0.2.1
 
 - Fix `WidgetSelector` with parents that have parents #4
