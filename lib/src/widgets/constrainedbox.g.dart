@@ -14,24 +14,24 @@ extension ConstrainedBoxMatcher on WidgetMatcher<ConstrainedBox> {
   /// Expects that constraints of [ConstrainedBox] matches the condition in [match]
   WidgetMatcher<ConstrainedBox> hasConstraintsWhere(
       MatchProp<BoxConstraints> match) {
-    return hasProp<BoxConstraints>('constraints', match);
+    return hasDiagnosticProp<BoxConstraints>('constraints', match);
   }
 
   /// Expects that constraints of [ConstrainedBox] equals (==) [value]
   WidgetMatcher<ConstrainedBox> hasConstraints(BoxConstraints? value) {
-    return hasProp<BoxConstraints>(
+    return hasDiagnosticProp<BoxConstraints>(
         'constraints', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Expects that renderObject of [ConstrainedBox] matches the condition in [match]
   WidgetMatcher<ConstrainedBox> hasRenderObjectWhere(
       MatchProp<RenderConstrainedBox> match) {
-    return hasProp<RenderConstrainedBox>('renderObject', match);
+    return hasDiagnosticProp<RenderConstrainedBox>('renderObject', match);
   }
 
   /// Expects that renderObject of [ConstrainedBox] equals (==) [value]
   WidgetMatcher<ConstrainedBox> hasRenderObject(RenderConstrainedBox? value) {
-    return hasProp<RenderConstrainedBox>(
+    return hasDiagnosticProp<RenderConstrainedBox>(
         'renderObject', (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
@@ -41,24 +41,24 @@ extension ConstrainedBoxSelector on WidgetSelector<ConstrainedBox> {
   /// Creates a [WidgetSelector] that finds all [ConstrainedBox] where constraints matches the condition
   WidgetSelector<ConstrainedBox> whereConstraints(
       MatchProp<BoxConstraints> match) {
-    return withProp<BoxConstraints>('constraints', match);
+    return withDiagnosticProp<BoxConstraints>('constraints', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ConstrainedBox] where constraints equals (==) [value]
   WidgetSelector<ConstrainedBox> withConstraints(BoxConstraints? value) {
-    return withProp<BoxConstraints>(
+    return withDiagnosticProp<BoxConstraints>(
         'constraints', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [ConstrainedBox] where renderObject matches the condition
   WidgetSelector<ConstrainedBox> whereRenderObject(
       MatchProp<RenderConstrainedBox> match) {
-    return withProp<RenderConstrainedBox>('renderObject', match);
+    return withDiagnosticProp<RenderConstrainedBox>('renderObject', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ConstrainedBox] where renderObject equals (==) [value]
   WidgetSelector<ConstrainedBox> withRenderObject(RenderConstrainedBox? value) {
-    return withProp<RenderConstrainedBox>(
+    return withDiagnosticProp<RenderConstrainedBox>(
         'renderObject', (it) => value == null ? it.isNull() : it.equals(value));
   }
 }

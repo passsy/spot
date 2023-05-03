@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 
+import '../util/assert_error.dart';
+
 void main() {
-  testWidgets('(effective) max lines matcher/selector', (widgetTester) async {
+  testWidgets('effective maxLines success', (widgetTester) async {
     await widgetTester.pumpWidget(
       MaterialApp(
         home: Column(
@@ -46,5 +48,39 @@ void main() {
         .withEffectiveMaxLinesMatching((it) => it.isNull())
         .existsOnce()
         .hasEffectiveMaxLinesWhere((it) => it.isNull());
+  });
+
+  testWidgets('error shows actual maxLines count', (widgetTester) async {
+    await widgetTester.pumpWidget(
+      MaterialApp(
+        home: Text(''),
+      ),
+    );
+
+    expect(
+      () => spot<Text>().existsOnce().hasEffectiveMaxLines(5),
+      throwsSpotErrorContaining([
+        'with prop "maxLines" that: equals <5>, actual: <null>',
+      ]),
+    );
+  });
+
+  testWidgets('error shows null when no maxLines is set', (widgetTester) async {
+    await widgetTester.pumpWidget(
+      MaterialApp(
+        home: DefaultTextStyle(
+          style: TextStyle(),
+          maxLines: 2,
+          child: Text(''),
+        ),
+      ),
+    );
+
+    expect(
+      () => spot<Text>().existsOnce().hasEffectiveMaxLines(5),
+      throwsSpotErrorContaining([
+        'with prop "maxLines" that: equals <5>, actual: <2>',
+      ]),
+    );
   });
 }

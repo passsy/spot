@@ -372,7 +372,7 @@ class WidgetMatcher<W extends Widget> {
 }
 
 extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
-  WidgetMatcher<W> hasProp<T>(
+  WidgetMatcher<W> hasDiagnosticProp<T>(
     String propName,
     MatchProp<T> match,
   ) {
@@ -421,6 +421,25 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
       throw PropertyCheckFailure(
         'Failed to match widget: $errorMessage, actual: ${literal(actual).joinToString()}',
         matcherDescription: errorParts.skip(1).join(' ').removePrefix('with '),
+      );
+    }
+    return this;
+  }
+
+  WidgetMatcher<W> hasProp<T>(
+    MatchProp<T> match,
+    Subject<T> Function(ConditionSubject<Element>) selector,
+  ) {
+    final ConditionSubject<Element> conditionSubject = it<Element>();
+    final subject = selector(conditionSubject);
+
+    match(subject);
+    final failure = softCheck(element, conditionSubject);
+    if (failure != null) {
+      final errorMessage =
+          describe(conditionSubject).map((it) => it.trim()).toList().join(' ');
+      throw TestFailure(
+        'Failed to match widget: $errorMessage, actual: ${failure.rejection.actual.joinToString()}',
       );
     }
     return this;
@@ -702,6 +721,25 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
   }
 
   WidgetSelector<W> withProp<T>(
+    MatchProp<T> match,
+    Subject<T> Function(ConditionSubject<Element>) selector,
+  ) {
+    final ConditionSubject<Element> elementSubject = it<Element>();
+    final Subject<T> subject = selector(elementSubject);
+    match(subject);
+    final name =
+        describe(elementSubject).map((it) => it.trim()).toList().join(' ');
+
+    return whereElement(
+      (element) {
+        final failure = softCheck(element, elementSubject);
+        return failure == null;
+      },
+      description: name,
+    );
+  }
+
+  WidgetSelector<W> withDiagnosticProp<T>(
     String propName,
     MatchProp<T> match,
   ) {
@@ -1019,7 +1057,7 @@ extension CreateMatchers<W extends Widget> on WidgetSelector<W> {
       }
     } else {
       file
-        ..createSync()
+        ..createSync(recursive: true)
         ..writeAsStringSync(content);
     }
   }
@@ -1103,24 +1141,24 @@ extension ${widgetType}Selector on WidgetSelector<$widgetType> {
       matcherSb.writeln('''
   /// Expects that $humanPropName of [$widgetType] matches the condition in [match]    
   WidgetMatcher<$widgetType> $matcherVerb${humanPropName.capitalize()}Where(MatchProp<$propType> match) {
-    return hasProp<$propType>('$propName', match);
+    return hasDiagnosticProp<$propType>('$propName', match);
   }
   
   /// Expects that $humanPropName of [$widgetType] equals (==) [value]
   WidgetMatcher<$widgetType> $matcherVerb${humanPropName.capitalize()}($propTypeNullable value) {
-    return hasProp<$propType>('$propName', (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<$propType>('$propName', (it) => value == null ? it.isNull() : it.equals(value));
   }
 ''');
 
       selectorSb.writeln('''
   /// Creates a [WidgetSelector] that finds all [$widgetType] where $humanPropName matches the condition   
   WidgetSelector<$widgetType> where${humanPropName.capitalize()}(MatchProp<$propType> match) {
-    return withProp<$propType>('$propName', match);
+    return withDiagnosticProp<$propType>('$propName', match);
   }
   
   /// Creates a [WidgetSelector] that finds all [$widgetType] where $humanPropName equals (==) [value]
   WidgetSelector<$widgetType> with${humanPropName.capitalize()}($propTypeNullable value) {
-    return withProp<$propType>('$propName', (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<$propType>('$propName', (it) => value == null ? it.isNull() : it.equals(value));
   }
 ''');
     }

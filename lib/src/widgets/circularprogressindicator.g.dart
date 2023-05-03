@@ -14,12 +14,12 @@ extension CircularProgressIndicatorMatcher
   /// Expects that value of [CircularProgressIndicator] matches the condition in [match]
   WidgetMatcher<CircularProgressIndicator> hasValueWhere(
       MatchProp<double> match) {
-    return hasProp<double>('value', match);
+    return hasDiagnosticProp<double>('value', match);
   }
 
   /// Expects that value of [CircularProgressIndicator] equals (==) [value]
   WidgetMatcher<CircularProgressIndicator> hasValue(double? value) {
-    return hasProp<double>(
+    return hasDiagnosticProp<double>(
         'value', (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
@@ -30,12 +30,12 @@ extension CircularProgressIndicatorSelector
   /// Creates a [WidgetSelector] that finds all [CircularProgressIndicator] where value matches the condition
   WidgetSelector<CircularProgressIndicator> whereValue(
       MatchProp<double> match) {
-    return withProp<double>('value', match);
+    return withDiagnosticProp<double>('value', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [CircularProgressIndicator] where value equals (==) [value]
   WidgetSelector<CircularProgressIndicator> withValue(double? value) {
-    return withProp<double>(
+    return withDiagnosticProp<double>(
         'value', (it) => value == null ? it.isNull() : it.equals(value));
   }
 }

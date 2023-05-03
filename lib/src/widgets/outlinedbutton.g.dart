@@ -12,34 +12,34 @@ import 'package:spot/spot.dart';
 extension OutlinedButtonMatcher on WidgetMatcher<OutlinedButton> {
   /// Expects that enabled of [OutlinedButton] matches the condition in [match]
   WidgetMatcher<OutlinedButton> isEnabledWhere(MatchProp<bool> match) {
-    return hasProp<bool>('enabled', match);
+    return hasDiagnosticProp<bool>('enabled', match);
   }
 
   /// Expects that enabled of [OutlinedButton] equals (==) [value]
   WidgetMatcher<OutlinedButton> isEnabled(bool? value) {
-    return hasProp<bool>(
+    return hasDiagnosticProp<bool>(
         'enabled', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Expects that style of [OutlinedButton] matches the condition in [match]
   WidgetMatcher<OutlinedButton> hasStyleWhere(MatchProp<ButtonStyle> match) {
-    return hasProp<ButtonStyle>('style', match);
+    return hasDiagnosticProp<ButtonStyle>('style', match);
   }
 
   /// Expects that style of [OutlinedButton] equals (==) [value]
   WidgetMatcher<OutlinedButton> hasStyle(ButtonStyle? value) {
-    return hasProp<ButtonStyle>(
+    return hasDiagnosticProp<ButtonStyle>(
         'style', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Expects that focusNode of [OutlinedButton] matches the condition in [match]
   WidgetMatcher<OutlinedButton> hasFocusNodeWhere(MatchProp<FocusNode> match) {
-    return hasProp<FocusNode>('focusNode', match);
+    return hasDiagnosticProp<FocusNode>('focusNode', match);
   }
 
   /// Expects that focusNode of [OutlinedButton] equals (==) [value]
   WidgetMatcher<OutlinedButton> hasFocusNode(FocusNode? value) {
-    return hasProp<FocusNode>(
+    return hasDiagnosticProp<FocusNode>(
         'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
@@ -48,34 +48,34 @@ extension OutlinedButtonMatcher on WidgetMatcher<OutlinedButton> {
 extension OutlinedButtonSelector on WidgetSelector<OutlinedButton> {
   /// Creates a [WidgetSelector] that finds all [OutlinedButton] where enabled matches the condition
   WidgetSelector<OutlinedButton> whereEnabled(MatchProp<bool> match) {
-    return withProp<bool>('enabled', match);
+    return withDiagnosticProp<bool>('enabled', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [OutlinedButton] where enabled equals (==) [value]
   WidgetSelector<OutlinedButton> withEnabled(bool? value) {
-    return withProp<bool>(
+    return withDiagnosticProp<bool>(
         'enabled', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [OutlinedButton] where style matches the condition
   WidgetSelector<OutlinedButton> whereStyle(MatchProp<ButtonStyle> match) {
-    return withProp<ButtonStyle>('style', match);
+    return withDiagnosticProp<ButtonStyle>('style', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [OutlinedButton] where style equals (==) [value]
   WidgetSelector<OutlinedButton> withStyle(ButtonStyle? value) {
-    return withProp<ButtonStyle>(
+    return withDiagnosticProp<ButtonStyle>(
         'style', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [OutlinedButton] where focusNode matches the condition
   WidgetSelector<OutlinedButton> whereFocusNode(MatchProp<FocusNode> match) {
-    return withProp<FocusNode>('focusNode', match);
+    return withDiagnosticProp<FocusNode>('focusNode', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [OutlinedButton] where focusNode equals (==) [value]
   WidgetSelector<OutlinedButton> withFocusNode(FocusNode? value) {
-    return withProp<FocusNode>(
+    return withDiagnosticProp<FocusNode>(
         'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
