@@ -426,10 +426,32 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
     return this;
   }
 
-  WidgetMatcher<W> hasProp<T>(
-    MatchProp<T> match,
-    Subject<T> Function(ConditionSubject<Element>) selector,
-  ) {
+  /// Allows checking for properties of [Element] that are stored in child
+  /// [Widget]s or in the state.
+  /// Use [selector] to extract the actual value and validate it with [match].
+  ///
+  /// ```dart
+  /// hasProp(
+  ///   selector: (subject) => subject.context.nest<int?>(
+  ///     () => ['has "maxLines"'],
+  ///     (Element element) => Extracted.value(_extractMaxLines(element)),
+  ///   ),
+  ///   match: (maxLines) => maxLines.equals(1),
+  /// );
+  ///
+  /// int? _extractMaxLines(Element element) {
+  ///   element.requireWidgetType<Text>();
+  ///   // every Text widget has a RichText child where the effective maxLines are set
+  ///   final richTextElement =
+  ///       element.children.firstWhere((e) => e.widget is RichText);
+  ///   final richText = richTextElement.widget as RichText;
+  ///   return richText.maxLines;
+  /// }
+  /// ```
+  WidgetMatcher<W> hasProp<T>({
+    required Subject<T> Function(ConditionSubject<Element>) selector,
+    required MatchProp<T> match,
+  }) {
     final ConditionSubject<Element> conditionSubject = it<Element>();
     final subject = selector(conditionSubject);
 
@@ -720,10 +742,21 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
     );
   }
 
-  WidgetSelector<W> withProp<T>(
-    MatchProp<T> match,
-    Subject<T> Function(ConditionSubject<Element>) selector,
-  ) {
+  /// Filters all elements that match the selector
+  ///
+  /// ```dart
+  /// withProp(
+  ///   selector: (subject) => subject.context.nest<int?>(
+  ///     () => ['with "maxLines"'],
+  ///     (Element element) => Extracted.value(_extractMaxLines(element)),
+  ///   ),
+  ///   match: (maxLines) => maxLines.equals(1),
+  /// );
+  /// ```
+  WidgetSelector<W> withProp<T>({
+    required Subject<T> Function(ConditionSubject<Element>) selector,
+    required MatchProp<T> match,
+  }) {
     final ConditionSubject<Element> elementSubject = it<Element>();
     final Subject<T> subject = selector(elementSubject);
     match(subject);
@@ -739,6 +772,8 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
     );
   }
 
+  /// Finds the diagnostic property (from [Element.toDiagnosticsNode]) with
+  /// [propName] and returns the value as type [T]
   WidgetSelector<W> withDiagnosticProp<T>(
     String propName,
     MatchProp<T> match,
