@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dartx/dartx.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -110,13 +111,13 @@ mixin Selectors<T extends Widget> {
     );
   }
 
-  SingleWidgetSelector<Text> spotSingleText(
+  SingleWidgetSelector<W> spotSingleText<W extends Widget>(
     String text, {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
     bool findRichText = false,
   }) {
-    return spotTexts(
+    return spotTexts<W>(
       text,
       parents: [if (self != null) self!, ...parents],
       children: children,
@@ -124,24 +125,27 @@ mixin Selectors<T extends Widget> {
     ).single;
   }
 
-  MultiWidgetSelector<Text> spotTexts(
+  MultiWidgetSelector<W> spotTexts<W extends Widget>(
     String text, {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
     bool findRichText = false,
   }) {
-    return MultiWidgetSelector(
+    return MultiWidgetSelector<W>(
       props: [
         PredicateWithDescription(
           (Element e) {
             if (e.widget is Text) {
-              return (e.widget as Text).data == text;
+              final actual = (e.widget as Text).data;
+              return actual == text;
             }
             if (e.widget is EditableText) {
-              return (e.widget as EditableText).controller.text == text;
+              final actual = (e.widget as EditableText).controller.text;
+              return actual == text;
             }
             if (findRichText == true && e.widget is RichText) {
-              return (e.widget as RichText).text.toPlainText() == text;
+              final actual = (e.widget as RichText).text.toPlainText();
+              return actual == text;
             }
             return false;
           },
@@ -1124,7 +1128,8 @@ extension ${widgetType}Selector on WidgetSelector<$widgetType> {
 ''',
     );
 
-    for (final DiagnosticsNode prop in props) {
+    final distinctProps = props.distinctBy((it) => it.name).toList();
+    for (final DiagnosticsNode prop in distinctProps) {
       final propName = prop.name!;
       final humanPropName = propNameOverrides[propName] ?? propName;
       String propType = prop.getType();
