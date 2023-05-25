@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dartx/dartx.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -110,13 +111,13 @@ mixin Selectors<T extends Widget> {
     );
   }
 
-  SingleWidgetSelector<Text> spotSingleText(
+  SingleWidgetSelector<W> spotSingleText<W extends Widget>(
     String text, {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
     bool findRichText = false,
   }) {
-    return spotTexts(
+    return spotTexts<W>(
       text,
       parents: [if (self != null) self!, ...parents],
       children: children,
@@ -124,24 +125,27 @@ mixin Selectors<T extends Widget> {
     ).single;
   }
 
-  MultiWidgetSelector<Text> spotTexts(
+  MultiWidgetSelector<W> spotTexts<W extends Widget>(
     String text, {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
     bool findRichText = false,
   }) {
-    return MultiWidgetSelector(
+    return MultiWidgetSelector<W>(
       props: [
         PredicateWithDescription(
           (Element e) {
             if (e.widget is Text) {
-              return (e.widget as Text).data == text;
+              final actual = (e.widget as Text).data;
+              return actual == text;
             }
             if (e.widget is EditableText) {
-              return (e.widget as EditableText).controller.text == text;
+              final actual = (e.widget as EditableText).controller.text;
+              return actual == text;
             }
             if (findRichText == true && e.widget is RichText) {
-              return (e.widget as RichText).text.toPlainText() == text;
+              final actual = (e.widget as RichText).text.toPlainText();
+              return actual == text;
             }
             return false;
           },
@@ -372,7 +376,7 @@ class WidgetMatcher<W extends Widget> {
 }
 
 extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
-  WidgetMatcher<W> hasProp<T>(
+  WidgetMatcher<W> hasDiagnosticProp<T>(
     String propName,
     MatchProp<T> match,
   ) {
@@ -421,6 +425,47 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
       throw PropertyCheckFailure(
         'Failed to match widget: $errorMessage, actual: ${literal(actual).joinToString()}',
         matcherDescription: errorParts.skip(1).join(' ').removePrefix('with '),
+      );
+    }
+    return this;
+  }
+
+  /// Allows checking for properties of [Element] that are stored in child
+  /// [Widget]s or in the state.
+  /// Use [selector] to extract the actual value and validate it with [match].
+  ///
+  /// ```dart
+  /// hasProp(
+  ///   selector: (subject) => subject.context.nest<int?>(
+  ///     () => ['has "maxLines"'],
+  ///     (Element element) => Extracted.value(_extractMaxLines(element)),
+  ///   ),
+  ///   match: (maxLines) => maxLines.equals(1),
+  /// );
+  ///
+  /// int? _extractMaxLines(Element element) {
+  ///   element.requireWidgetType<Text>();
+  ///   // every Text widget has a RichText child where the effective maxLines are set
+  ///   final richTextElement =
+  ///       element.children.firstWhere((e) => e.widget is RichText);
+  ///   final richText = richTextElement.widget as RichText;
+  ///   return richText.maxLines;
+  /// }
+  /// ```
+  WidgetMatcher<W> hasProp<T>({
+    required Subject<T> Function(ConditionSubject<Element>) selector,
+    required MatchProp<T> match,
+  }) {
+    final ConditionSubject<Element> conditionSubject = it<Element>();
+    final subject = selector(conditionSubject);
+
+    match(subject);
+    final failure = softCheck(element, conditionSubject);
+    if (failure != null) {
+      final errorMessage =
+          describe(conditionSubject).map((it) => it.trim()).toList().join(' ');
+      throw TestFailure(
+        'Failed to match widget: $errorMessage, actual: ${failure.rejection.actual.joinToString()}',
       );
     }
     return this;
@@ -701,7 +746,39 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
     );
   }
 
-  WidgetSelector<W> withProp<T>(
+  /// Filters all elements that match the selector
+  ///
+  /// ```dart
+  /// withProp(
+  ///   selector: (subject) => subject.context.nest<int?>(
+  ///     () => ['with "maxLines"'],
+  ///     (Element element) => Extracted.value(_extractMaxLines(element)),
+  ///   ),
+  ///   match: (maxLines) => maxLines.equals(1),
+  /// );
+  /// ```
+  WidgetSelector<W> withProp<T>({
+    required Subject<T> Function(ConditionSubject<Element>) selector,
+    required MatchProp<T> match,
+  }) {
+    final ConditionSubject<Element> elementSubject = it<Element>();
+    final Subject<T> subject = selector(elementSubject);
+    match(subject);
+    final name =
+        describe(elementSubject).map((it) => it.trim()).toList().join(' ');
+
+    return whereElement(
+      (element) {
+        final failure = softCheck(element, elementSubject);
+        return failure == null;
+      },
+      description: name,
+    );
+  }
+
+  /// Finds the diagnostic property (from [Element.toDiagnosticsNode]) with
+  /// [propName] and returns the value as type [T]
+  WidgetSelector<W> withDiagnosticProp<T>(
     String propName,
     MatchProp<T> match,
   ) {
@@ -1019,7 +1096,7 @@ extension CreateMatchers<W extends Widget> on WidgetSelector<W> {
       }
     } else {
       file
-        ..createSync()
+        ..createSync(recursive: true)
         ..writeAsStringSync(content);
     }
   }
@@ -1051,7 +1128,8 @@ extension ${widgetType}Selector on WidgetSelector<$widgetType> {
 ''',
     );
 
-    for (final DiagnosticsNode prop in props) {
+    final distinctProps = props.distinctBy((it) => it.name).toList();
+    for (final DiagnosticsNode prop in distinctProps) {
       final propName = prop.name!;
       final humanPropName = propNameOverrides[propName] ?? propName;
       String propType = prop.getType();
@@ -1103,24 +1181,24 @@ extension ${widgetType}Selector on WidgetSelector<$widgetType> {
       matcherSb.writeln('''
   /// Expects that $humanPropName of [$widgetType] matches the condition in [match]    
   WidgetMatcher<$widgetType> $matcherVerb${humanPropName.capitalize()}Where(MatchProp<$propType> match) {
-    return hasProp<$propType>('$propName', match);
+    return hasDiagnosticProp<$propType>('$propName', match);
   }
   
   /// Expects that $humanPropName of [$widgetType] equals (==) [value]
   WidgetMatcher<$widgetType> $matcherVerb${humanPropName.capitalize()}($propTypeNullable value) {
-    return hasProp<$propType>('$propName', (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<$propType>('$propName', (it) => value == null ? it.isNull() : it.equals(value));
   }
 ''');
 
       selectorSb.writeln('''
   /// Creates a [WidgetSelector] that finds all [$widgetType] where $humanPropName matches the condition   
   WidgetSelector<$widgetType> where${humanPropName.capitalize()}(MatchProp<$propType> match) {
-    return withProp<$propType>('$propName', match);
+    return withDiagnosticProp<$propType>('$propName', match);
   }
   
   /// Creates a [WidgetSelector] that finds all [$widgetType] where $humanPropName equals (==) [value]
   WidgetSelector<$widgetType> with${humanPropName.capitalize()}($propTypeNullable value) {
-    return withProp<$propType>('$propName', (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<$propType>('$propName', (it) => value == null ? it.isNull() : it.equals(value));
   }
 ''');
     }

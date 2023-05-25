@@ -13,6 +13,15 @@ void main() {
       'data': 'text',
     },
   );
+  _generateWidget<EditableText>(
+    builder: () => EditableText(
+      controller: TextEditingController(),
+      focusNode: FocusNode(),
+      style: TextStyle(),
+      cursorColor: Colors.black,
+      backgroundCursorColor: Colors.black,
+    ),
+  );
   _generateWidget<Container>(
     builder: () => Container(),
     propNameOverrides: {
@@ -77,6 +86,13 @@ void main() {
   );
 
   // Material
+  _generateWidget<SelectableText>(
+    builder: () => SelectableText(''),
+    imports: "import 'package:flutter/material.dart';",
+    propNameOverrides: {
+      'data': 'text',
+    },
+  );
   _generateWidget<MaterialApp>(
     builder: () => _partOfMaterialApp,
     imports: "import 'package:flutter/material.dart';",
@@ -205,7 +221,7 @@ void main() {
 
   test('format at the end', () {
     final generatedFiles = Directory('lib/src/widgets').listSync();
-    Process.runSync('flutter', [
+    Process.runSync('dart', [
       'format',
       ...generatedFiles.map((e) => e.path),
     ]);

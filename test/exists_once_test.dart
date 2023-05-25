@@ -133,7 +133,7 @@ void main() {
     appBar.spotSingle<Text>().existsOnce().hasText('App Title').hasMaxLines(2);
 
     // Error message only show that it could not be found
-    spotSingle<Wrap>().withDirection(Axis.horizontal).withProp<Axis>(
+    spotSingle<Wrap>().withDirection(Axis.horizontal).withDiagnosticProp<Axis>(
       'direction',
       (Subject<Axis> it) {
         it.equals(Axis.horizontal);

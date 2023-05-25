@@ -12,100 +12,122 @@ import 'package:spot/spot.dart';
 extension SliderMatcher on WidgetMatcher<Slider> {
   /// Expects that value of [Slider] matches the condition in [match]
   WidgetMatcher<Slider> hasValueWhere(MatchProp<double> match) {
-    return hasProp<double>('value', match);
+    return hasDiagnosticProp<double>('value', match);
   }
 
   /// Expects that value of [Slider] equals (==) [value]
   WidgetMatcher<Slider> hasValue(double? value) {
-    return hasProp<double>(
+    return hasDiagnosticProp<double>(
         'value', (it) => value == null ? it.isNull() : it.equals(value));
+  }
+
+  /// Expects that secondaryTrackValue of [Slider] matches the condition in [match]
+  WidgetMatcher<Slider> hasSecondaryTrackValueWhere(MatchProp<double> match) {
+    return hasDiagnosticProp<double>('secondaryTrackValue', match);
+  }
+
+  /// Expects that secondaryTrackValue of [Slider] equals (==) [value]
+  WidgetMatcher<Slider> hasSecondaryTrackValue(double? value) {
+    return hasDiagnosticProp<double>('secondaryTrackValue',
+        (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Expects that min of [Slider] matches the condition in [match]
   WidgetMatcher<Slider> hasMinWhere(MatchProp<double> match) {
-    return hasProp<double>('min', match);
+    return hasDiagnosticProp<double>('min', match);
   }
 
   /// Expects that min of [Slider] equals (==) [value]
   WidgetMatcher<Slider> hasMin(double? value) {
-    return hasProp<double>(
+    return hasDiagnosticProp<double>(
         'min', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Expects that max of [Slider] matches the condition in [match]
   WidgetMatcher<Slider> hasMaxWhere(MatchProp<double> match) {
-    return hasProp<double>('max', match);
+    return hasDiagnosticProp<double>('max', match);
   }
 
   /// Expects that max of [Slider] equals (==) [value]
   WidgetMatcher<Slider> hasMax(double? value) {
-    return hasProp<double>(
+    return hasDiagnosticProp<double>(
         'max', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Expects that divisions of [Slider] matches the condition in [match]
   WidgetMatcher<Slider> hasDivisionsWhere(MatchProp<int> match) {
-    return hasProp<int>('divisions', match);
+    return hasDiagnosticProp<int>('divisions', match);
   }
 
   /// Expects that divisions of [Slider] equals (==) [value]
   WidgetMatcher<Slider> hasDivisions(int? value) {
-    return hasProp<int>(
+    return hasDiagnosticProp<int>(
         'divisions', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Expects that label of [Slider] matches the condition in [match]
   WidgetMatcher<Slider> hasLabelWhere(MatchProp<String> match) {
-    return hasProp<String>('label', match);
+    return hasDiagnosticProp<String>('label', match);
   }
 
   /// Expects that label of [Slider] equals (==) [value]
   WidgetMatcher<Slider> hasLabel(String? value) {
-    return hasProp<String>(
+    return hasDiagnosticProp<String>(
         'label', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Expects that activeColor of [Slider] matches the condition in [match]
   WidgetMatcher<Slider> hasActiveColorWhere(MatchProp<Color> match) {
-    return hasProp<Color>('activeColor', match);
+    return hasDiagnosticProp<Color>('activeColor', match);
   }
 
   /// Expects that activeColor of [Slider] equals (==) [value]
   WidgetMatcher<Slider> hasActiveColor(Color? value) {
-    return hasProp<Color>(
+    return hasDiagnosticProp<Color>(
         'activeColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Expects that inactiveColor of [Slider] matches the condition in [match]
   WidgetMatcher<Slider> hasInactiveColorWhere(MatchProp<Color> match) {
-    return hasProp<Color>('inactiveColor', match);
+    return hasDiagnosticProp<Color>('inactiveColor', match);
   }
 
   /// Expects that inactiveColor of [Slider] equals (==) [value]
   WidgetMatcher<Slider> hasInactiveColor(Color? value) {
-    return hasProp<Color>('inactiveColor',
+    return hasDiagnosticProp<Color>('inactiveColor',
+        (it) => value == null ? it.isNull() : it.equals(value));
+  }
+
+  /// Expects that secondaryActiveColor of [Slider] matches the condition in [match]
+  WidgetMatcher<Slider> hasSecondaryActiveColorWhere(MatchProp<Color> match) {
+    return hasDiagnosticProp<Color>('secondaryActiveColor', match);
+  }
+
+  /// Expects that secondaryActiveColor of [Slider] equals (==) [value]
+  WidgetMatcher<Slider> hasSecondaryActiveColor(Color? value) {
+    return hasDiagnosticProp<Color>('secondaryActiveColor',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Expects that focusNode of [Slider] matches the condition in [match]
   WidgetMatcher<Slider> hasFocusNodeWhere(MatchProp<FocusNode> match) {
-    return hasProp<FocusNode>('focusNode', match);
+    return hasDiagnosticProp<FocusNode>('focusNode', match);
   }
 
   /// Expects that focusNode of [Slider] equals (==) [value]
   WidgetMatcher<Slider> hasFocusNode(FocusNode? value) {
-    return hasProp<FocusNode>(
+    return hasDiagnosticProp<FocusNode>(
         'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Expects that autofocus of [Slider] matches the condition in [match]
   WidgetMatcher<Slider> hasAutofocusWhere(MatchProp<bool> match) {
-    return hasProp<bool>('autofocus', match);
+    return hasDiagnosticProp<bool>('autofocus', match);
   }
 
   /// Expects that autofocus of [Slider] equals (==) [value]
   WidgetMatcher<Slider> hasAutofocus(bool? value) {
-    return hasProp<bool>(
+    return hasDiagnosticProp<bool>(
         'autofocus', (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
@@ -114,100 +136,122 @@ extension SliderMatcher on WidgetMatcher<Slider> {
 extension SliderSelector on WidgetSelector<Slider> {
   /// Creates a [WidgetSelector] that finds all [Slider] where value matches the condition
   WidgetSelector<Slider> whereValue(MatchProp<double> match) {
-    return withProp<double>('value', match);
+    return withDiagnosticProp<double>('value', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Slider] where value equals (==) [value]
   WidgetSelector<Slider> withValue(double? value) {
-    return withProp<double>(
+    return withDiagnosticProp<double>(
         'value', (it) => value == null ? it.isNull() : it.equals(value));
+  }
+
+  /// Creates a [WidgetSelector] that finds all [Slider] where secondaryTrackValue matches the condition
+  WidgetSelector<Slider> whereSecondaryTrackValue(MatchProp<double> match) {
+    return withDiagnosticProp<double>('secondaryTrackValue', match);
+  }
+
+  /// Creates a [WidgetSelector] that finds all [Slider] where secondaryTrackValue equals (==) [value]
+  WidgetSelector<Slider> withSecondaryTrackValue(double? value) {
+    return withDiagnosticProp<double>('secondaryTrackValue',
+        (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Slider] where min matches the condition
   WidgetSelector<Slider> whereMin(MatchProp<double> match) {
-    return withProp<double>('min', match);
+    return withDiagnosticProp<double>('min', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Slider] where min equals (==) [value]
   WidgetSelector<Slider> withMin(double? value) {
-    return withProp<double>(
+    return withDiagnosticProp<double>(
         'min', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Slider] where max matches the condition
   WidgetSelector<Slider> whereMax(MatchProp<double> match) {
-    return withProp<double>('max', match);
+    return withDiagnosticProp<double>('max', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Slider] where max equals (==) [value]
   WidgetSelector<Slider> withMax(double? value) {
-    return withProp<double>(
+    return withDiagnosticProp<double>(
         'max', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Slider] where divisions matches the condition
   WidgetSelector<Slider> whereDivisions(MatchProp<int> match) {
-    return withProp<int>('divisions', match);
+    return withDiagnosticProp<int>('divisions', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Slider] where divisions equals (==) [value]
   WidgetSelector<Slider> withDivisions(int? value) {
-    return withProp<int>(
+    return withDiagnosticProp<int>(
         'divisions', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Slider] where label matches the condition
   WidgetSelector<Slider> whereLabel(MatchProp<String> match) {
-    return withProp<String>('label', match);
+    return withDiagnosticProp<String>('label', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Slider] where label equals (==) [value]
   WidgetSelector<Slider> withLabel(String? value) {
-    return withProp<String>(
+    return withDiagnosticProp<String>(
         'label', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Slider] where activeColor matches the condition
   WidgetSelector<Slider> whereActiveColor(MatchProp<Color> match) {
-    return withProp<Color>('activeColor', match);
+    return withDiagnosticProp<Color>('activeColor', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Slider] where activeColor equals (==) [value]
   WidgetSelector<Slider> withActiveColor(Color? value) {
-    return withProp<Color>(
+    return withDiagnosticProp<Color>(
         'activeColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Slider] where inactiveColor matches the condition
   WidgetSelector<Slider> whereInactiveColor(MatchProp<Color> match) {
-    return withProp<Color>('inactiveColor', match);
+    return withDiagnosticProp<Color>('inactiveColor', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Slider] where inactiveColor equals (==) [value]
   WidgetSelector<Slider> withInactiveColor(Color? value) {
-    return withProp<Color>('inactiveColor',
+    return withDiagnosticProp<Color>('inactiveColor',
+        (it) => value == null ? it.isNull() : it.equals(value));
+  }
+
+  /// Creates a [WidgetSelector] that finds all [Slider] where secondaryActiveColor matches the condition
+  WidgetSelector<Slider> whereSecondaryActiveColor(MatchProp<Color> match) {
+    return withDiagnosticProp<Color>('secondaryActiveColor', match);
+  }
+
+  /// Creates a [WidgetSelector] that finds all [Slider] where secondaryActiveColor equals (==) [value]
+  WidgetSelector<Slider> withSecondaryActiveColor(Color? value) {
+    return withDiagnosticProp<Color>('secondaryActiveColor',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Slider] where focusNode matches the condition
   WidgetSelector<Slider> whereFocusNode(MatchProp<FocusNode> match) {
-    return withProp<FocusNode>('focusNode', match);
+    return withDiagnosticProp<FocusNode>('focusNode', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Slider] where focusNode equals (==) [value]
   WidgetSelector<Slider> withFocusNode(FocusNode? value) {
-    return withProp<FocusNode>(
+    return withDiagnosticProp<FocusNode>(
         'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Slider] where autofocus matches the condition
   WidgetSelector<Slider> whereAutofocus(MatchProp<bool> match) {
-    return withProp<bool>('autofocus', match);
+    return withDiagnosticProp<bool>('autofocus', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Slider] where autofocus equals (==) [value]
   WidgetSelector<Slider> withAutofocus(bool? value) {
-    return withProp<bool>(
+    return withDiagnosticProp<bool>(
         'autofocus', (it) => value == null ? it.isNull() : it.equals(value));
   }
 }

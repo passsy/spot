@@ -12,79 +12,79 @@ import 'package:spot/spot.dart';
 extension GridViewMatcher on WidgetMatcher<GridView> {
   /// Expects that scrollDirection of [GridView] matches the condition in [match]
   WidgetMatcher<GridView> hasScrollDirectionWhere(MatchProp<Axis> match) {
-    return hasProp<Axis>('scrollDirection', match);
+    return hasDiagnosticProp<Axis>('scrollDirection', match);
   }
 
   /// Expects that scrollDirection of [GridView] equals (==) [value]
   WidgetMatcher<GridView> hasScrollDirection(Axis? value) {
-    return hasProp<Axis>('scrollDirection',
+    return hasDiagnosticProp<Axis>('scrollDirection',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Expects that reverse of [GridView] matches the condition in [match]
   WidgetMatcher<GridView> hasReverseWhere(MatchProp<bool> match) {
-    return hasProp<bool>('reverse', match);
+    return hasDiagnosticProp<bool>('reverse', match);
   }
 
   /// Expects that reverse of [GridView] equals (==) [value]
   WidgetMatcher<GridView> hasReverse(bool? value) {
-    return hasProp<bool>(
+    return hasDiagnosticProp<bool>(
         'reverse', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Expects that controller of [GridView] matches the condition in [match]
   WidgetMatcher<GridView> hasControllerWhere(
       MatchProp<ScrollController> match) {
-    return hasProp<ScrollController>('controller', match);
+    return hasDiagnosticProp<ScrollController>('controller', match);
   }
 
   /// Expects that controller of [GridView] equals (==) [value]
   WidgetMatcher<GridView> hasController(ScrollController? value) {
-    return hasProp<ScrollController>(
+    return hasDiagnosticProp<ScrollController>(
         'controller', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Expects that primary of [GridView] matches the condition in [match]
   WidgetMatcher<GridView> hasPrimaryWhere(MatchProp<bool> match) {
-    return hasProp<bool>('primary', match);
+    return hasDiagnosticProp<bool>('primary', match);
   }
 
   /// Expects that primary of [GridView] equals (==) [value]
   WidgetMatcher<GridView> hasPrimary(bool? value) {
-    return hasProp<bool>(
+    return hasDiagnosticProp<bool>(
         'primary', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Expects that physics of [GridView] matches the condition in [match]
   WidgetMatcher<GridView> hasPhysicsWhere(MatchProp<ScrollPhysics> match) {
-    return hasProp<ScrollPhysics>('physics', match);
+    return hasDiagnosticProp<ScrollPhysics>('physics', match);
   }
 
   /// Expects that physics of [GridView] equals (==) [value]
   WidgetMatcher<GridView> hasPhysics(ScrollPhysics? value) {
-    return hasProp<ScrollPhysics>(
+    return hasDiagnosticProp<ScrollPhysics>(
         'physics', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Expects that shrinkWrap of [GridView] matches the condition in [match]
   WidgetMatcher<GridView> hasShrinkWrapWhere(MatchProp<bool> match) {
-    return hasProp<bool>('shrinkWrap', match);
+    return hasDiagnosticProp<bool>('shrinkWrap', match);
   }
 
   /// Expects that shrinkWrap of [GridView] equals (==) [value]
   WidgetMatcher<GridView> hasShrinkWrap(bool? value) {
-    return hasProp<bool>(
+    return hasDiagnosticProp<bool>(
         'shrinkWrap', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Expects that padding of [GridView] matches the condition in [match]
   WidgetMatcher<GridView> hasPaddingWhere(MatchProp<EdgeInsetsGeometry> match) {
-    return hasProp<EdgeInsetsGeometry>('padding', match);
+    return hasDiagnosticProp<EdgeInsetsGeometry>('padding', match);
   }
 
   /// Expects that padding of [GridView] equals (==) [value]
   WidgetMatcher<GridView> hasPadding(EdgeInsetsGeometry? value) {
-    return hasProp<EdgeInsetsGeometry>(
+    return hasDiagnosticProp<EdgeInsetsGeometry>(
         'padding', (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
@@ -93,78 +93,78 @@ extension GridViewMatcher on WidgetMatcher<GridView> {
 extension GridViewSelector on WidgetSelector<GridView> {
   /// Creates a [WidgetSelector] that finds all [GridView] where scrollDirection matches the condition
   WidgetSelector<GridView> whereScrollDirection(MatchProp<Axis> match) {
-    return withProp<Axis>('scrollDirection', match);
+    return withDiagnosticProp<Axis>('scrollDirection', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [GridView] where scrollDirection equals (==) [value]
   WidgetSelector<GridView> withScrollDirection(Axis? value) {
-    return withProp<Axis>('scrollDirection',
+    return withDiagnosticProp<Axis>('scrollDirection',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [GridView] where reverse matches the condition
   WidgetSelector<GridView> whereReverse(MatchProp<bool> match) {
-    return withProp<bool>('reverse', match);
+    return withDiagnosticProp<bool>('reverse', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [GridView] where reverse equals (==) [value]
   WidgetSelector<GridView> withReverse(bool? value) {
-    return withProp<bool>(
+    return withDiagnosticProp<bool>(
         'reverse', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [GridView] where controller matches the condition
   WidgetSelector<GridView> whereController(MatchProp<ScrollController> match) {
-    return withProp<ScrollController>('controller', match);
+    return withDiagnosticProp<ScrollController>('controller', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [GridView] where controller equals (==) [value]
   WidgetSelector<GridView> withController(ScrollController? value) {
-    return withProp<ScrollController>(
+    return withDiagnosticProp<ScrollController>(
         'controller', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [GridView] where primary matches the condition
   WidgetSelector<GridView> wherePrimary(MatchProp<bool> match) {
-    return withProp<bool>('primary', match);
+    return withDiagnosticProp<bool>('primary', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [GridView] where primary equals (==) [value]
   WidgetSelector<GridView> withPrimary(bool? value) {
-    return withProp<bool>(
+    return withDiagnosticProp<bool>(
         'primary', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [GridView] where physics matches the condition
   WidgetSelector<GridView> wherePhysics(MatchProp<ScrollPhysics> match) {
-    return withProp<ScrollPhysics>('physics', match);
+    return withDiagnosticProp<ScrollPhysics>('physics', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [GridView] where physics equals (==) [value]
   WidgetSelector<GridView> withPhysics(ScrollPhysics? value) {
-    return withProp<ScrollPhysics>(
+    return withDiagnosticProp<ScrollPhysics>(
         'physics', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [GridView] where shrinkWrap matches the condition
   WidgetSelector<GridView> whereShrinkWrap(MatchProp<bool> match) {
-    return withProp<bool>('shrinkWrap', match);
+    return withDiagnosticProp<bool>('shrinkWrap', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [GridView] where shrinkWrap equals (==) [value]
   WidgetSelector<GridView> withShrinkWrap(bool? value) {
-    return withProp<bool>(
+    return withDiagnosticProp<bool>(
         'shrinkWrap', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [GridView] where padding matches the condition
   WidgetSelector<GridView> wherePadding(MatchProp<EdgeInsetsGeometry> match) {
-    return withProp<EdgeInsetsGeometry>('padding', match);
+    return withDiagnosticProp<EdgeInsetsGeometry>('padding', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [GridView] where padding equals (==) [value]
   WidgetSelector<GridView> withPadding(EdgeInsetsGeometry? value) {
-    return withProp<EdgeInsetsGeometry>(
+    return withDiagnosticProp<EdgeInsetsGeometry>(
         'padding', (it) => value == null ? it.isNull() : it.equals(value));
   }
 }

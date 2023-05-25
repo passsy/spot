@@ -14,12 +14,12 @@ extension LinearProgressIndicatorMatcher
   /// Expects that value of [LinearProgressIndicator] matches the condition in [match]
   WidgetMatcher<LinearProgressIndicator> hasValueWhere(
       MatchProp<double> match) {
-    return hasProp<double>('value', match);
+    return hasDiagnosticProp<double>('value', match);
   }
 
   /// Expects that value of [LinearProgressIndicator] equals (==) [value]
   WidgetMatcher<LinearProgressIndicator> hasValue(double? value) {
-    return hasProp<double>(
+    return hasDiagnosticProp<double>(
         'value', (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
@@ -29,12 +29,12 @@ extension LinearProgressIndicatorSelector
     on WidgetSelector<LinearProgressIndicator> {
   /// Creates a [WidgetSelector] that finds all [LinearProgressIndicator] where value matches the condition
   WidgetSelector<LinearProgressIndicator> whereValue(MatchProp<double> match) {
-    return withProp<double>('value', match);
+    return withDiagnosticProp<double>('value', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [LinearProgressIndicator] where value equals (==) [value]
   WidgetSelector<LinearProgressIndicator> withValue(double? value) {
-    return withProp<double>(
+    return withDiagnosticProp<double>(
         'value', (it) => value == null ? it.isNull() : it.equals(value));
   }
 }

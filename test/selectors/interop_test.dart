@@ -27,7 +27,7 @@ void main() {
           .byType(Text)
           .spot() // not using <Type>
           .existsOnce()
-          .hasProp<String>('data', (it) => it.equals('a'));
+          .hasDiagnosticProp<String>('data', (it) => it.equals('a'));
     });
 
     testWidgets('readable error messages', (tester) async {

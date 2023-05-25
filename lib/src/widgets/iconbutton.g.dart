@@ -12,112 +12,112 @@ import 'package:spot/spot.dart';
 extension IconButtonMatcher on WidgetMatcher<IconButton> {
   /// Expects that icon of [IconButton] matches the condition in [match]
   WidgetMatcher<IconButton> hasIconWhere(MatchProp<Widget> match) {
-    return hasProp<Widget>('icon', match);
+    return hasDiagnosticProp<Widget>('icon', match);
   }
 
   /// Expects that icon of [IconButton] equals (==) [value]
   WidgetMatcher<IconButton> hasIcon(Widget? value) {
-    return hasProp<Widget>(
+    return hasDiagnosticProp<Widget>(
         'icon', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Expects that tooltip of [IconButton] matches the condition in [match]
   WidgetMatcher<IconButton> hasTooltipWhere(MatchProp<String> match) {
-    return hasProp<String>('tooltip', match);
+    return hasDiagnosticProp<String>('tooltip', match);
   }
 
   /// Expects that tooltip of [IconButton] equals (==) [value]
   WidgetMatcher<IconButton> hasTooltip(String? value) {
-    return hasProp<String>(
+    return hasDiagnosticProp<String>(
         'tooltip', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Expects that color of [IconButton] matches the condition in [match]
   WidgetMatcher<IconButton> hasColorWhere(MatchProp<Color> match) {
-    return hasProp<Color>('color', match);
+    return hasDiagnosticProp<Color>('color', match);
   }
 
   /// Expects that color of [IconButton] equals (==) [value]
   WidgetMatcher<IconButton> hasColor(Color? value) {
-    return hasProp<Color>(
+    return hasDiagnosticProp<Color>(
         'color', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Expects that disabledColor of [IconButton] matches the condition in [match]
   WidgetMatcher<IconButton> hasDisabledColorWhere(MatchProp<Color> match) {
-    return hasProp<Color>('disabledColor', match);
+    return hasDiagnosticProp<Color>('disabledColor', match);
   }
 
   /// Expects that disabledColor of [IconButton] equals (==) [value]
   WidgetMatcher<IconButton> hasDisabledColor(Color? value) {
-    return hasProp<Color>('disabledColor',
+    return hasDiagnosticProp<Color>('disabledColor',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Expects that focusColor of [IconButton] matches the condition in [match]
   WidgetMatcher<IconButton> hasFocusColorWhere(MatchProp<Color> match) {
-    return hasProp<Color>('focusColor', match);
+    return hasDiagnosticProp<Color>('focusColor', match);
   }
 
   /// Expects that focusColor of [IconButton] equals (==) [value]
   WidgetMatcher<IconButton> hasFocusColor(Color? value) {
-    return hasProp<Color>(
+    return hasDiagnosticProp<Color>(
         'focusColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Expects that hoverColor of [IconButton] matches the condition in [match]
   WidgetMatcher<IconButton> hasHoverColorWhere(MatchProp<Color> match) {
-    return hasProp<Color>('hoverColor', match);
+    return hasDiagnosticProp<Color>('hoverColor', match);
   }
 
   /// Expects that hoverColor of [IconButton] equals (==) [value]
   WidgetMatcher<IconButton> hasHoverColor(Color? value) {
-    return hasProp<Color>(
+    return hasDiagnosticProp<Color>(
         'hoverColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Expects that highlightColor of [IconButton] matches the condition in [match]
   WidgetMatcher<IconButton> hasHighlightColorWhere(MatchProp<Color> match) {
-    return hasProp<Color>('highlightColor', match);
+    return hasDiagnosticProp<Color>('highlightColor', match);
   }
 
   /// Expects that highlightColor of [IconButton] equals (==) [value]
   WidgetMatcher<IconButton> hasHighlightColor(Color? value) {
-    return hasProp<Color>('highlightColor',
+    return hasDiagnosticProp<Color>('highlightColor',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Expects that splashColor of [IconButton] matches the condition in [match]
   WidgetMatcher<IconButton> hasSplashColorWhere(MatchProp<Color> match) {
-    return hasProp<Color>('splashColor', match);
+    return hasDiagnosticProp<Color>('splashColor', match);
   }
 
   /// Expects that splashColor of [IconButton] equals (==) [value]
   WidgetMatcher<IconButton> hasSplashColor(Color? value) {
-    return hasProp<Color>(
+    return hasDiagnosticProp<Color>(
         'splashColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Expects that padding of [IconButton] matches the condition in [match]
   WidgetMatcher<IconButton> hasPaddingWhere(
       MatchProp<EdgeInsetsGeometry> match) {
-    return hasProp<EdgeInsetsGeometry>('padding', match);
+    return hasDiagnosticProp<EdgeInsetsGeometry>('padding', match);
   }
 
   /// Expects that padding of [IconButton] equals (==) [value]
   WidgetMatcher<IconButton> hasPadding(EdgeInsetsGeometry? value) {
-    return hasProp<EdgeInsetsGeometry>(
+    return hasDiagnosticProp<EdgeInsetsGeometry>(
         'padding', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Expects that focusNode of [IconButton] matches the condition in [match]
   WidgetMatcher<IconButton> hasFocusNodeWhere(MatchProp<FocusNode> match) {
-    return hasProp<FocusNode>('focusNode', match);
+    return hasDiagnosticProp<FocusNode>('focusNode', match);
   }
 
   /// Expects that focusNode of [IconButton] equals (==) [value]
   WidgetMatcher<IconButton> hasFocusNode(FocusNode? value) {
-    return hasProp<FocusNode>(
+    return hasDiagnosticProp<FocusNode>(
         'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
@@ -126,111 +126,111 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
 extension IconButtonSelector on WidgetSelector<IconButton> {
   /// Creates a [WidgetSelector] that finds all [IconButton] where icon matches the condition
   WidgetSelector<IconButton> whereIcon(MatchProp<Widget> match) {
-    return withProp<Widget>('icon', match);
+    return withDiagnosticProp<Widget>('icon', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [IconButton] where icon equals (==) [value]
   WidgetSelector<IconButton> withIcon(Widget? value) {
-    return withProp<Widget>(
+    return withDiagnosticProp<Widget>(
         'icon', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [IconButton] where tooltip matches the condition
   WidgetSelector<IconButton> whereTooltip(MatchProp<String> match) {
-    return withProp<String>('tooltip', match);
+    return withDiagnosticProp<String>('tooltip', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [IconButton] where tooltip equals (==) [value]
   WidgetSelector<IconButton> withTooltip(String? value) {
-    return withProp<String>(
+    return withDiagnosticProp<String>(
         'tooltip', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [IconButton] where color matches the condition
   WidgetSelector<IconButton> whereColor(MatchProp<Color> match) {
-    return withProp<Color>('color', match);
+    return withDiagnosticProp<Color>('color', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [IconButton] where color equals (==) [value]
   WidgetSelector<IconButton> withColor(Color? value) {
-    return withProp<Color>(
+    return withDiagnosticProp<Color>(
         'color', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [IconButton] where disabledColor matches the condition
   WidgetSelector<IconButton> whereDisabledColor(MatchProp<Color> match) {
-    return withProp<Color>('disabledColor', match);
+    return withDiagnosticProp<Color>('disabledColor', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [IconButton] where disabledColor equals (==) [value]
   WidgetSelector<IconButton> withDisabledColor(Color? value) {
-    return withProp<Color>('disabledColor',
+    return withDiagnosticProp<Color>('disabledColor',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [IconButton] where focusColor matches the condition
   WidgetSelector<IconButton> whereFocusColor(MatchProp<Color> match) {
-    return withProp<Color>('focusColor', match);
+    return withDiagnosticProp<Color>('focusColor', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [IconButton] where focusColor equals (==) [value]
   WidgetSelector<IconButton> withFocusColor(Color? value) {
-    return withProp<Color>(
+    return withDiagnosticProp<Color>(
         'focusColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [IconButton] where hoverColor matches the condition
   WidgetSelector<IconButton> whereHoverColor(MatchProp<Color> match) {
-    return withProp<Color>('hoverColor', match);
+    return withDiagnosticProp<Color>('hoverColor', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [IconButton] where hoverColor equals (==) [value]
   WidgetSelector<IconButton> withHoverColor(Color? value) {
-    return withProp<Color>(
+    return withDiagnosticProp<Color>(
         'hoverColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [IconButton] where highlightColor matches the condition
   WidgetSelector<IconButton> whereHighlightColor(MatchProp<Color> match) {
-    return withProp<Color>('highlightColor', match);
+    return withDiagnosticProp<Color>('highlightColor', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [IconButton] where highlightColor equals (==) [value]
   WidgetSelector<IconButton> withHighlightColor(Color? value) {
-    return withProp<Color>('highlightColor',
+    return withDiagnosticProp<Color>('highlightColor',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [IconButton] where splashColor matches the condition
   WidgetSelector<IconButton> whereSplashColor(MatchProp<Color> match) {
-    return withProp<Color>('splashColor', match);
+    return withDiagnosticProp<Color>('splashColor', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [IconButton] where splashColor equals (==) [value]
   WidgetSelector<IconButton> withSplashColor(Color? value) {
-    return withProp<Color>(
+    return withDiagnosticProp<Color>(
         'splashColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [IconButton] where padding matches the condition
   WidgetSelector<IconButton> wherePadding(MatchProp<EdgeInsetsGeometry> match) {
-    return withProp<EdgeInsetsGeometry>('padding', match);
+    return withDiagnosticProp<EdgeInsetsGeometry>('padding', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [IconButton] where padding equals (==) [value]
   WidgetSelector<IconButton> withPadding(EdgeInsetsGeometry? value) {
-    return withProp<EdgeInsetsGeometry>(
+    return withDiagnosticProp<EdgeInsetsGeometry>(
         'padding', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [IconButton] where focusNode matches the condition
   WidgetSelector<IconButton> whereFocusNode(MatchProp<FocusNode> match) {
-    return withProp<FocusNode>('focusNode', match);
+    return withDiagnosticProp<FocusNode>('focusNode', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [IconButton] where focusNode equals (==) [value]
   WidgetSelector<IconButton> withFocusNode(FocusNode? value) {
-    return withProp<FocusNode>(
+    return withDiagnosticProp<FocusNode>(
         'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
   }
 }

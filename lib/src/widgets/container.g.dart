@@ -13,91 +13,91 @@ extension ContainerMatcher on WidgetMatcher<Container> {
   /// Expects that alignment of [Container] matches the condition in [match]
   WidgetMatcher<Container> hasAlignmentWhere(
       MatchProp<AlignmentGeometry> match) {
-    return hasProp<AlignmentGeometry>('alignment', match);
+    return hasDiagnosticProp<AlignmentGeometry>('alignment', match);
   }
 
   /// Expects that alignment of [Container] equals (==) [value]
   WidgetMatcher<Container> hasAlignment(AlignmentGeometry? value) {
-    return hasProp<AlignmentGeometry>(
+    return hasDiagnosticProp<AlignmentGeometry>(
         'alignment', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Expects that padding of [Container] matches the condition in [match]
   WidgetMatcher<Container> hasPaddingWhere(
       MatchProp<EdgeInsetsGeometry> match) {
-    return hasProp<EdgeInsetsGeometry>('padding', match);
+    return hasDiagnosticProp<EdgeInsetsGeometry>('padding', match);
   }
 
   /// Expects that padding of [Container] equals (==) [value]
   WidgetMatcher<Container> hasPadding(EdgeInsetsGeometry? value) {
-    return hasProp<EdgeInsetsGeometry>(
+    return hasDiagnosticProp<EdgeInsetsGeometry>(
         'padding', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Expects that clipBehavior of [Container] matches the condition in [match]
   WidgetMatcher<Container> hasClipBehaviorWhere(MatchProp<Clip> match) {
-    return hasProp<Clip>('clipBehavior', match);
+    return hasDiagnosticProp<Clip>('clipBehavior', match);
   }
 
   /// Expects that clipBehavior of [Container] equals (==) [value]
   WidgetMatcher<Container> hasClipBehavior(Clip? value) {
-    return hasProp<Clip>(
+    return hasDiagnosticProp<Clip>(
         'clipBehavior', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Expects that background of [Container] matches the condition in [match]
   WidgetMatcher<Container> hasBackgroundWhere(MatchProp<Decoration> match) {
-    return hasProp<Decoration>('bg', match);
+    return hasDiagnosticProp<Decoration>('bg', match);
   }
 
   /// Expects that background of [Container] equals (==) [value]
   WidgetMatcher<Container> hasBackground(Decoration? value) {
-    return hasProp<Decoration>(
+    return hasDiagnosticProp<Decoration>(
         'bg', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Expects that foreground of [Container] matches the condition in [match]
   WidgetMatcher<Container> hasForegroundWhere(MatchProp<Decoration> match) {
-    return hasProp<Decoration>('fg', match);
+    return hasDiagnosticProp<Decoration>('fg', match);
   }
 
   /// Expects that foreground of [Container] equals (==) [value]
   WidgetMatcher<Container> hasForeground(Decoration? value) {
-    return hasProp<Decoration>(
+    return hasDiagnosticProp<Decoration>(
         'fg', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Expects that constraints of [Container] matches the condition in [match]
   WidgetMatcher<Container> hasConstraintsWhere(
       MatchProp<BoxConstraints> match) {
-    return hasProp<BoxConstraints>('constraints', match);
+    return hasDiagnosticProp<BoxConstraints>('constraints', match);
   }
 
   /// Expects that constraints of [Container] equals (==) [value]
   WidgetMatcher<Container> hasConstraints(BoxConstraints? value) {
-    return hasProp<BoxConstraints>(
+    return hasDiagnosticProp<BoxConstraints>(
         'constraints', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Expects that margin of [Container] matches the condition in [match]
   WidgetMatcher<Container> hasMarginWhere(MatchProp<EdgeInsetsGeometry> match) {
-    return hasProp<EdgeInsetsGeometry>('margin', match);
+    return hasDiagnosticProp<EdgeInsetsGeometry>('margin', match);
   }
 
   /// Expects that margin of [Container] equals (==) [value]
   WidgetMatcher<Container> hasMargin(EdgeInsetsGeometry? value) {
-    return hasProp<EdgeInsetsGeometry>(
+    return hasDiagnosticProp<EdgeInsetsGeometry>(
         'margin', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Expects that transform of [Container] matches the condition in [match]
   WidgetMatcher<Container> hasTransformWhere(MatchProp<Matrix4> match) {
-    return hasProp<Matrix4>('transform', match);
+    return hasDiagnosticProp<Matrix4>('transform', match);
   }
 
   /// Expects that transform of [Container] equals (==) [value]
   WidgetMatcher<Container> hasTransform(Matrix4? value) {
-    return hasProp<Matrix4>(
+    return hasDiagnosticProp<Matrix4>(
         'transform', (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
@@ -106,89 +106,89 @@ extension ContainerMatcher on WidgetMatcher<Container> {
 extension ContainerSelector on WidgetSelector<Container> {
   /// Creates a [WidgetSelector] that finds all [Container] where alignment matches the condition
   WidgetSelector<Container> whereAlignment(MatchProp<AlignmentGeometry> match) {
-    return withProp<AlignmentGeometry>('alignment', match);
+    return withDiagnosticProp<AlignmentGeometry>('alignment', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Container] where alignment equals (==) [value]
   WidgetSelector<Container> withAlignment(AlignmentGeometry? value) {
-    return withProp<AlignmentGeometry>(
+    return withDiagnosticProp<AlignmentGeometry>(
         'alignment', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Container] where padding matches the condition
   WidgetSelector<Container> wherePadding(MatchProp<EdgeInsetsGeometry> match) {
-    return withProp<EdgeInsetsGeometry>('padding', match);
+    return withDiagnosticProp<EdgeInsetsGeometry>('padding', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Container] where padding equals (==) [value]
   WidgetSelector<Container> withPadding(EdgeInsetsGeometry? value) {
-    return withProp<EdgeInsetsGeometry>(
+    return withDiagnosticProp<EdgeInsetsGeometry>(
         'padding', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Container] where clipBehavior matches the condition
   WidgetSelector<Container> whereClipBehavior(MatchProp<Clip> match) {
-    return withProp<Clip>('clipBehavior', match);
+    return withDiagnosticProp<Clip>('clipBehavior', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Container] where clipBehavior equals (==) [value]
   WidgetSelector<Container> withClipBehavior(Clip? value) {
-    return withProp<Clip>(
+    return withDiagnosticProp<Clip>(
         'clipBehavior', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Container] where background matches the condition
   WidgetSelector<Container> whereBackground(MatchProp<Decoration> match) {
-    return withProp<Decoration>('bg', match);
+    return withDiagnosticProp<Decoration>('bg', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Container] where background equals (==) [value]
   WidgetSelector<Container> withBackground(Decoration? value) {
-    return withProp<Decoration>(
+    return withDiagnosticProp<Decoration>(
         'bg', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Container] where foreground matches the condition
   WidgetSelector<Container> whereForeground(MatchProp<Decoration> match) {
-    return withProp<Decoration>('fg', match);
+    return withDiagnosticProp<Decoration>('fg', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Container] where foreground equals (==) [value]
   WidgetSelector<Container> withForeground(Decoration? value) {
-    return withProp<Decoration>(
+    return withDiagnosticProp<Decoration>(
         'fg', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Container] where constraints matches the condition
   WidgetSelector<Container> whereConstraints(MatchProp<BoxConstraints> match) {
-    return withProp<BoxConstraints>('constraints', match);
+    return withDiagnosticProp<BoxConstraints>('constraints', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Container] where constraints equals (==) [value]
   WidgetSelector<Container> withConstraints(BoxConstraints? value) {
-    return withProp<BoxConstraints>(
+    return withDiagnosticProp<BoxConstraints>(
         'constraints', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Container] where margin matches the condition
   WidgetSelector<Container> whereMargin(MatchProp<EdgeInsetsGeometry> match) {
-    return withProp<EdgeInsetsGeometry>('margin', match);
+    return withDiagnosticProp<EdgeInsetsGeometry>('margin', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Container] where margin equals (==) [value]
   WidgetSelector<Container> withMargin(EdgeInsetsGeometry? value) {
-    return withProp<EdgeInsetsGeometry>(
+    return withDiagnosticProp<EdgeInsetsGeometry>(
         'margin', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Container] where transform matches the condition
   WidgetSelector<Container> whereTransform(MatchProp<Matrix4> match) {
-    return withProp<Matrix4>('transform', match);
+    return withDiagnosticProp<Matrix4>('transform', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Container] where transform equals (==) [value]
   WidgetSelector<Container> withTransform(Matrix4? value) {
-    return withProp<Matrix4>(
+    return withDiagnosticProp<Matrix4>(
         'transform', (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
