@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.1
+- Fix compilation error with Flutter 3.0.0
+
 ## 0.3.0
 - `spotTexts` now matches `EditableText` and `SelectableText` #5
 - `spotTexts` now has generic type `<W>` instead of static `Text`. This changes the return type from  `MultiWidgetSelector<Text>` -> `MultiWidgetSelector<W>` #5
