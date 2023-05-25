@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0
+- `spotTexts` now matches `EditableText` and `SelectableText` #5
+- `spotTexts` now has generic type `<W>` instead of static `Text`. This changes the return type from  `MultiWidgetSelector<Text>` -> `MultiWidgetSelector<W>` #5
+- Changed signature of `SingleWidgetSelector.withProp` and `MultiWidgetSelector.withProp`.
+- New matchers for `EditableText`, `ListTile`, `SelectableText` 
+
 ## 0.2.2
 - Support for Flutter 3.0.0 / Dart 2.17
 
