@@ -354,18 +354,6 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
     return hasDiagnosticProp<double>('minLeadingWidth',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
-
-  /// Expects that titleAlignment of [ListTile] matches the condition in [match]
-  WidgetMatcher<ListTile> hasTitleAlignmentWhere(
-      MatchProp<ListTileTitleAlignment> match) {
-    return hasDiagnosticProp<ListTileTitleAlignment>('titleAlignment', match);
-  }
-
-  /// Expects that titleAlignment of [ListTile] equals (==) [value]
-  WidgetMatcher<ListTile> hasTitleAlignment(ListTileTitleAlignment? value) {
-    return hasDiagnosticProp<ListTileTitleAlignment>('titleAlignment',
-        (it) => value == null ? it.isNull() : it.equals(value));
-  }
 }
 
 /// Allows filtering [ListTile] by the properties provided via [Diagnosticable.debugFillProperties]
@@ -710,18 +698,6 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where minLeadingWidth equals (==) [value]
   WidgetSelector<ListTile> withMinLeadingWidth(double? value) {
     return withDiagnosticProp<double>('minLeadingWidth',
-        (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
-  /// Creates a [WidgetSelector] that finds all [ListTile] where titleAlignment matches the condition
-  WidgetSelector<ListTile> whereTitleAlignment(
-      MatchProp<ListTileTitleAlignment> match) {
-    return withDiagnosticProp<ListTileTitleAlignment>('titleAlignment', match);
-  }
-
-  /// Creates a [WidgetSelector] that finds all [ListTile] where titleAlignment equals (==) [value]
-  WidgetSelector<ListTile> withTitleAlignment(ListTileTitleAlignment? value) {
-    return withDiagnosticProp<ListTileTitleAlignment>('titleAlignment',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 }

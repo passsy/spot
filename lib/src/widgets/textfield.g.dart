@@ -34,18 +34,6 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
         'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that undoController of [TextField] matches the condition in [match]
-  WidgetMatcher<TextField> hasUndoControllerWhere(
-      MatchProp<UndoHistoryController> match) {
-    return hasDiagnosticProp<UndoHistoryController>('undoController', match);
-  }
-
-  /// Expects that undoController of [TextField] equals (==) [value]
-  WidgetMatcher<TextField> hasUndoController(UndoHistoryController? value) {
-    return hasDiagnosticProp<UndoHistoryController>('undoController',
-        (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
   /// Expects that enabled of [TextField] matches the condition in [match]
   WidgetMatcher<TextField> isEnabledWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('enabled', match);
@@ -449,20 +437,6 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that spellCheckConfiguration of [TextField] matches the condition in [match]
-  WidgetMatcher<TextField> hasSpellCheckConfigurationWhere(
-      MatchProp<SpellCheckConfiguration> match) {
-    return hasDiagnosticProp<SpellCheckConfiguration>(
-        'spellCheckConfiguration', match);
-  }
-
-  /// Expects that spellCheckConfiguration of [TextField] equals (==) [value]
-  WidgetMatcher<TextField> hasSpellCheckConfiguration(
-      SpellCheckConfiguration? value) {
-    return hasDiagnosticProp<SpellCheckConfiguration>('spellCheckConfiguration',
-        (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
   /// Expects that contentCommitMimeTypes of [TextField] matches the condition in [match]
   WidgetMatcher<TextField> hasContentCommitMimeTypesWhere(
       MatchProp<List<String>> match) {
@@ -499,18 +473,6 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   WidgetSelector<TextField> withFocusNode(FocusNode? value) {
     return withDiagnosticProp<FocusNode>(
         'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
-  /// Creates a [WidgetSelector] that finds all [TextField] where undoController matches the condition
-  WidgetSelector<TextField> whereUndoController(
-      MatchProp<UndoHistoryController> match) {
-    return withDiagnosticProp<UndoHistoryController>('undoController', match);
-  }
-
-  /// Creates a [WidgetSelector] that finds all [TextField] where undoController equals (==) [value]
-  WidgetSelector<TextField> withUndoController(UndoHistoryController? value) {
-    return withDiagnosticProp<UndoHistoryController>('undoController',
-        (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where enabled matches the condition
@@ -910,21 +872,6 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where enableIMEPersonalizedLearning equals (==) [value]
   WidgetSelector<TextField> withEnableIMEPersonalizedLearning(bool? value) {
     return withDiagnosticProp<bool>('enableIMEPersonalizedLearning',
-        (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
-  /// Creates a [WidgetSelector] that finds all [TextField] where spellCheckConfiguration matches the condition
-  WidgetSelector<TextField> whereSpellCheckConfiguration(
-      MatchProp<SpellCheckConfiguration> match) {
-    return withDiagnosticProp<SpellCheckConfiguration>(
-        'spellCheckConfiguration', match);
-  }
-
-  /// Creates a [WidgetSelector] that finds all [TextField] where spellCheckConfiguration equals (==) [value]
-  WidgetSelector<TextField> withSpellCheckConfiguration(
-      SpellCheckConfiguration? value) {
-    return withDiagnosticProp<SpellCheckConfiguration>(
-        'spellCheckConfiguration',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 

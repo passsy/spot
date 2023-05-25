@@ -453,32 +453,6 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that undoController of [EditableText] matches the condition in [match]
-  WidgetMatcher<EditableText> hasUndoControllerWhere(
-      MatchProp<UndoHistoryController> match) {
-    return hasDiagnosticProp<UndoHistoryController>('undoController', match);
-  }
-
-  /// Expects that undoController of [EditableText] equals (==) [value]
-  WidgetMatcher<EditableText> hasUndoController(UndoHistoryController? value) {
-    return hasDiagnosticProp<UndoHistoryController>('undoController',
-        (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
-  /// Expects that spellCheckConfiguration of [EditableText] matches the condition in [match]
-  WidgetMatcher<EditableText> hasSpellCheckConfigurationWhere(
-      MatchProp<SpellCheckConfiguration> match) {
-    return hasDiagnosticProp<SpellCheckConfiguration>(
-        'spellCheckConfiguration', match);
-  }
-
-  /// Expects that spellCheckConfiguration of [EditableText] equals (==) [value]
-  WidgetMatcher<EditableText> hasSpellCheckConfiguration(
-      SpellCheckConfiguration? value) {
-    return hasDiagnosticProp<SpellCheckConfiguration>('spellCheckConfiguration',
-        (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
   /// Expects that contentCommitMimeTypes of [EditableText] matches the condition in [match]
   WidgetMatcher<EditableText> hasContentCommitMimeTypesWhere(
       MatchProp<List<String>> match) {
@@ -935,34 +909,6 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// Creates a [WidgetSelector] that finds all [EditableText] where enableInteractiveSelection equals (==) [value]
   WidgetSelector<EditableText> withEnableInteractiveSelection(bool? value) {
     return withDiagnosticProp<bool>('enableInteractiveSelection',
-        (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
-  /// Creates a [WidgetSelector] that finds all [EditableText] where undoController matches the condition
-  WidgetSelector<EditableText> whereUndoController(
-      MatchProp<UndoHistoryController> match) {
-    return withDiagnosticProp<UndoHistoryController>('undoController', match);
-  }
-
-  /// Creates a [WidgetSelector] that finds all [EditableText] where undoController equals (==) [value]
-  WidgetSelector<EditableText> withUndoController(
-      UndoHistoryController? value) {
-    return withDiagnosticProp<UndoHistoryController>('undoController',
-        (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
-  /// Creates a [WidgetSelector] that finds all [EditableText] where spellCheckConfiguration matches the condition
-  WidgetSelector<EditableText> whereSpellCheckConfiguration(
-      MatchProp<SpellCheckConfiguration> match) {
-    return withDiagnosticProp<SpellCheckConfiguration>(
-        'spellCheckConfiguration', match);
-  }
-
-  /// Creates a [WidgetSelector] that finds all [EditableText] where spellCheckConfiguration equals (==) [value]
-  WidgetSelector<EditableText> withSpellCheckConfiguration(
-      SpellCheckConfiguration? value) {
-    return withDiagnosticProp<SpellCheckConfiguration>(
-        'spellCheckConfiguration',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
