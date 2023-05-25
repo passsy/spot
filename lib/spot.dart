@@ -1,3 +1,4 @@
+/// Spot is a library for testing the Widget tree of Flutter apps.
 library spot;
 
 import 'package:flutter/widgets.dart';
@@ -6,33 +7,33 @@ import 'package:spot/src/selectors.dart';
 export 'package:spot/src/checks/checks.dart'
     hide
         // it() is an odd API, spot sticks to normal lambdas
-        it,
-        // async checks are not useful for spot
         FutureChecks,
+        // async checks are not useful for spot
         StreamChecks,
-        WithQueueExtension;
+        WithQueueExtension,
+        it;
 
 export 'package:spot/src/default_selectors.dart';
 export 'package:spot/src/effective_text.dart';
 export 'package:spot/src/finder_interop.dart';
 export 'package:spot/src/selectors.dart'
     show
-        WidgetSelector,
-        SingleWidgetSelector,
+        CreateMatchers,
+        ElementFilter,
+        ExpectedQuantity,
+        MatchProp,
         MultiWidgetSelector,
+        MultiWidgetSnapshot,
+        MutliMatchers,
         SelectorQueries,
         SelectorToSnapshot,
+        SingleWidgetSelector,
         SingleWidgetSnapshot,
-        MultiWidgetSnapshot,
         WidgetMatcher,
         WidgetMatcherExtensions,
-        MutliMatchers,
-        ElementFilter,
-        MatchProp,
-        ExpectedQuantity,
-        CreateMatchers;
+        WidgetSelector;
 export 'package:spot/src/snapshot.dart'
-    show SingleWidgetSelectorMatcher, MultiWidgetSelectorMatcher;
+    show MultiWidgetSelectorMatcher, SingleWidgetSelectorMatcher;
 
 export 'package:spot/src/widgets/align.g.dart';
 export 'package:spot/src/widgets/circularprogressindicator.g.dart';

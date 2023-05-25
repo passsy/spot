@@ -16,8 +16,8 @@ void main() {
       ]),
     );
 
-    final horizontalWrapSpot = spotSingle<Wrap>()
-        .whereDirection((it) => it.equals(Axis.horizontal));
+    final horizontalWrapSpot =
+        spotSingle<Wrap>().whereDirection((it) => it.equals(Axis.horizontal));
 
     expect(
       horizontalWrapSpot.toString(),
