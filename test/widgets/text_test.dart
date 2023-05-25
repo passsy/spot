@@ -3,8 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
-import 'package:spot/src/widgets/editabletext.g.dart';
-import 'package:spot/src/widgets/selectabletext.g.dart';
 
 void main() {
   testWidgets('spotTexts finds Text', (widgetTester) async {
