@@ -103,6 +103,7 @@ Could not find 'icon "IconData(U+0E57F)"' as child of [type "MaterialApp" > 'typ
 - [x] Generate code for custom properties for Flutter widgets
 - [x] Allow generating code for properties of 3rd party widgets
 - [ ] Print only widget tree of the parent scope when test fails
+- [ ] Allow manually printing a screenshot at certain points
 - [ ] Create screenshot when test fails
 - [ ] Create interactive HTML page with all widgets and matchers when test fails
 
