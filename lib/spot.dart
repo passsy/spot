@@ -34,6 +34,7 @@ export 'package:spot/src/selectors.dart'
         WidgetSelector;
 export 'package:spot/src/snapshot.dart'
     show MultiWidgetSelectorMatcher, SingleWidgetSelectorMatcher;
+export 'package:spot/src/touch_event.dart';
 
 export 'package:spot/src/widgets/align.g.dart';
 export 'package:spot/src/widgets/circularprogressindicator.g.dart';
