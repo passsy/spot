@@ -14,7 +14,7 @@ class TouchEvent {
 
   static Offset _getPosition(SingleWidgetSelector selector) {
     final snapshot = selector.snapshot();
-    final element = snapshot.discoveredElements;
+    final element = snapshot.discoveredElement;
     final box = element?.renderObject as RenderBox?;
 
     if (box == null) {
