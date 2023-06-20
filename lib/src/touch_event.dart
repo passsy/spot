@@ -3,6 +3,16 @@ import 'package:spot/spot.dart';
 
 class TouchEvent {
   static void tap(SingleWidgetSelector selector) {
+    final position = _getPosition(selector);
+
+    final downEvent = PointerDownEvent(position: position);
+    WidgetsBinding.instance.handlePointerEvent(downEvent);
+
+    final upEvent = PointerUpEvent(position: position);
+    WidgetsBinding.instance.handlePointerEvent(upEvent);
+  }
+
+  static Offset _getPosition(SingleWidgetSelector selector) {
     final snapshot = selector.snapshot();
     final element = snapshot.discoveredElements;
     final box = element?.renderObject as RenderBox?;
@@ -12,11 +22,6 @@ class TouchEvent {
     }
 
     final position = box.localToGlobal(box.size.center(Offset.zero));
-
-    final downEvent = PointerDownEvent(position: position);
-    WidgetsBinding.instance.handlePointerEvent(downEvent);
-
-    final upEvent = PointerUpEvent(position: position);
-    WidgetsBinding.instance.handlePointerEvent(upEvent);
+    return position;
   }
 }
