@@ -57,7 +57,7 @@ class WidgetTreeNode {
 
   final WidgetTreeNode? parent;
 
-  /// Creates a [Element] in the element tree.
+  /// Creates an [Element] in the element tree.
   ///
   /// Do not forget to call [addChild] manually after creation!
   WidgetTreeNode({

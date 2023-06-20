@@ -148,7 +148,7 @@ SingleWidgetSelector<W> spotElement<W extends Widget>(
 /// Set [findRichText] to true to also find [RichText] Widgets.
 ///
 /// To find [SelectableText] Widgets, use `spotSingle<SelectableText>(children: [spotTexts('foo')])`
-/// which finds a [SelectableText] Widget that contains a [EditableText] with 'foo'.
+/// which finds a [SelectableText] Widget that contains an [EditableText] with 'foo'.
 SingleWidgetSelector<Text> spotSingleText(
   String text, {
   List<WidgetSelector> parents = const [],
@@ -168,7 +168,7 @@ SingleWidgetSelector<Text> spotSingleText(
 /// Set [findRichText] to true to also find [RichText] Widgets.
 ///
 /// To find [SelectableText] Widgets, use `spotSingle<SelectableText>(children: [spotTexts('foo')])`
-/// which finds a [SelectableText] Widget that contains a [EditableText] with 'foo'.
+/// which finds a [SelectableText] Widget that contains an [EditableText] with 'foo'.
 WidgetSelector<W> spotTexts<W extends Widget>(
   String text, {
   List<WidgetSelector> parents = const [],
