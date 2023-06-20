@@ -20,14 +20,15 @@ void main() {
       ),
     );
 
-    final button = find.byType(ElevatedButton);
-    expect(button, findsOneWidget);
-    final buttonRect = tester.getRect(button);
+    final elevatedButton = spotSingle<MaterialApp>().spotSingle<Scaffold>().spotSingle<ElevatedButton>().snapshot();
+    final element = elevatedButton.discoveredElements;
+    final box = element?.renderObject as RenderBox?;
+    final position = box!.localToGlobal(box.size.center(Offset.zero));
 
     expect(i, 0);
-    TouchEvent.tap(buttonRect.center);
+    TouchEvent.tap(position);
     expect(i, 1);
-    TouchEvent.tap(buttonRect.center);
+    TouchEvent.tap(position);
     expect(i, 2);
   });
 }
