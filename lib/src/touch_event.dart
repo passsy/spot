@@ -18,7 +18,7 @@ class TouchEvent {
     final box = element?.renderObject as RenderBox?;
 
     if (box == null) {
-      throw Exception("Element has no render object and can't be tapped");
+      throw Exception("Element ${selector.type} has no render object and can't be tapped");
     }
 
     final position = box.localToGlobal(box.size.center(Offset.zero));
