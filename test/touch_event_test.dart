@@ -20,15 +20,12 @@ void main() {
       ),
     );
 
-    final elevatedButton = spotSingle<MaterialApp>().spotSingle<Scaffold>().spotSingle<ElevatedButton>().snapshot();
-    final element = elevatedButton.discoveredElements;
-    final box = element?.renderObject as RenderBox?;
-    final position = box!.localToGlobal(box.size.center(Offset.zero));
+    final button = spotSingle<MaterialApp>().spotSingle<Scaffold>().spotSingle<ElevatedButton>();
 
     expect(i, 0);
-    TouchEvent.tap(position);
+    TouchEvent.tap(button);
     expect(i, 1);
-    TouchEvent.tap(position);
+    TouchEvent.tap(button);
     expect(i, 2);
   });
 }
