@@ -21,9 +21,9 @@ void main() {
     final button = spotSingle<MaterialApp>().spotSingle<ElevatedButton>();
 
     expect(i, 0);
-    TouchEvent.tap(button);
+    button.tap();
     expect(i, 1);
-    TouchEvent.tap(button);
+    button.tap();
     expect(i, 2);
   });
 }

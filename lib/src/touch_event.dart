@@ -1,6 +1,10 @@
 import 'package:flutter/widgets.dart';
 import 'package:spot/spot.dart';
 
+extension TouchEventExtension on SingleWidgetSelector {
+  void tap() => TouchEvent.tap(this);
+}
+
 class TouchEvent {
   static void tap(SingleWidgetSelector selector) {
     final position = _getPosition(selector);
