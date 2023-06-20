@@ -9,18 +9,16 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        home: Scaffold(
-          body: Center(
-            child: ElevatedButton(
-              onPressed: onPressed,
-              child: null,
-            ),
+        home: Center(
+          child: ElevatedButton(
+            onPressed: onPressed,
+            child: null,
           ),
         ),
       ),
     );
 
-    final button = spotSingle<MaterialApp>().spotSingle<Scaffold>().spotSingle<ElevatedButton>();
+    final button = spotSingle<MaterialApp>().spotSingle<ElevatedButton>();
 
     expect(i, 0);
     TouchEvent.tap(button);
