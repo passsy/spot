@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 
 void main() {
-  testWidgets('test pointer', (tester) async {
+  testWidgets('test touch event', (tester) async {
     int i = 0;
     void onPressed() => i++;
 
