@@ -246,7 +246,7 @@ extension ContextExtension<T> on Subject<T> {
 ///
 ///
 /// In expectation extension methods calling [nest] or [nestAsync], the
-/// `extract` callback can return a [Extracted.rejection] if the value fails to
+/// `extract` callback can return an [Extracted.rejection] if the value fails to
 /// satisfy an expectation which disallows extracting the value, or an
 /// [Extracted.value] to become the value in a nested subject.
 /// The description will be passed in a "label" callback.

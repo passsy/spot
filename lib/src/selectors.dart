@@ -939,7 +939,7 @@ class SingleWidgetSnapshot<W extends Widget> implements WidgetMatcher<W> {
 
   W? get discoveredWidget => element.widget as W?;
 
-  Element? get discoveredElements => element;
+  Element? get discoveredElement => element;
 
   @override
   W get widget => discovered!.element.widget as W;
