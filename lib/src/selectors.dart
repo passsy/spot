@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:checks/checks.dart';
+import 'package:checks/context.dart';
 import 'package:dartx/dartx.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -7,8 +9,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
-import 'package:spot/src/checks/context.dart';
-import 'package:spot/src/checks/src/checks.dart';
 import 'package:spot/src/snapshot.dart' as snapshot_file show snapshot;
 import 'package:spot/src/snapshot.dart';
 import 'package:spot/src/tree_snapshot.dart';
