@@ -21,7 +21,8 @@ class Act {
 
     late final bool previousShouldPropagateDevicePointerEvents;
     if (isIntegrationTest) {
-      previousShouldPropagateDevicePointerEvents = binding.shouldPropagateDevicePointerEvents;
+      previousShouldPropagateDevicePointerEvents =
+          binding.shouldPropagateDevicePointerEvents;
 
       // Actually tap the widget and not show which widgets are located at
       // that position in console. This is only necessary when executing the
@@ -37,7 +38,8 @@ class Act {
     binding.handlePointerEvent(upEvent);
 
     if (isIntegrationTest) {
-      binding.shouldPropagateDevicePointerEvents = previousShouldPropagateDevicePointerEvents;
+      binding.shouldPropagateDevicePointerEvents =
+          previousShouldPropagateDevicePointerEvents;
     }
   }
 
