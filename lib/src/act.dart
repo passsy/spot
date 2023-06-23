@@ -18,14 +18,15 @@ class Act {
   /// Triggers a tap event on a given widget.
   void tap(SingleWidgetSelector selector) {
     final binding = WidgetsBinding.instance;
-    final liveBinding = LiveTestWidgetsFlutterBinding.instance;
 
-    final previousShouldPropagateDevicePointerEvents =
-        liveBinding.shouldPropagateDevicePointerEvents;
-    if (liveBinding == binding) {
+    late final bool previousShouldPropagateDevicePointerEvents;
+    if (binding is LiveTestWidgetsFlutterBinding) {
+      final liveBinding = LiveTestWidgetsFlutterBinding.instance;
+      previousShouldPropagateDevicePointerEvents =
+          liveBinding.shouldPropagateDevicePointerEvents;
       // actually tap the widget and not show which widgets are located at
       // that position in console. This is only necessary when executing the
-      // widget test on a real device
+      // widget test on a device
       liveBinding.shouldPropagateDevicePointerEvents = true;
     }
 
@@ -36,7 +37,8 @@ class Act {
     final upEvent = PointerUpEvent(position: position);
     binding.handlePointerEvent(upEvent);
 
-    if (liveBinding == binding) {
+    if (binding is LiveTestWidgetsFlutterBinding) {
+      final liveBinding = LiveTestWidgetsFlutterBinding.instance;
       liveBinding.shouldPropagateDevicePointerEvents =
           previousShouldPropagateDevicePointerEvents;
     }
