@@ -4,6 +4,7 @@ library spot;
 import 'package:flutter/widgets.dart';
 import 'package:spot/src/selectors.dart';
 
+export 'package:spot/src/act.dart';
 export 'package:spot/src/checks/checks.dart'
     hide
         // it() is an odd API, spot sticks to normal lambdas
@@ -34,7 +35,6 @@ export 'package:spot/src/selectors.dart'
         WidgetSelector;
 export 'package:spot/src/snapshot.dart'
     show MultiWidgetSelectorMatcher, SingleWidgetSelectorMatcher;
-export 'package:spot/src/touch_event.dart';
 
 export 'package:spot/src/widgets/align.g.dart';
 export 'package:spot/src/widgets/circularprogressindicator.g.dart';
