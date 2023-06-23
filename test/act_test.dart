@@ -3,7 +3,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 
 void main() {
-  testWidgets('test touch event', (tester) async {
+  // Runs the tests as executed with `flutter test`
+  AutomatedTestWidgetsFlutterBinding.ensureInitialized();
+  assert(WidgetsBinding.instance is! LiveTestWidgetsFlutterBinding);
+  group('AutomatedTestWidgetsFlutterBinding', actTests);
+}
+
+/// All tests for [act]
+void actTests() {
+  testWidgets('act.tap()', (tester) async {
     int i = 0;
     void onPressed() => i++;
 
