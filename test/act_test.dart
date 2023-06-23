@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 
+import 'util/assert_error.dart';
+
 void main() {
   // Runs the tests as executed with `flutter test`
   AutomatedTestWidgetsFlutterBinding.ensureInitialized();
@@ -55,7 +57,12 @@ void actTests() {
 
     final button = spotSingle<ElevatedButton>();
 
-    expect(() => act.tap(button), throwsException);
+    expect(
+      () => act.tap(button),
+      throwsSpotErrorContaining([
+        "Could not find 'ElevatedButton' in widget tree",
+      ]),
+    );
 
     await tester.scrollUntilVisible(find.byType(ElevatedButton), 100);
 
