@@ -11,3 +11,5 @@ pubspec.lock
 coverage
 .idea
 .DS_Store
+.flutter-plugins
+.flutter-plugins-dependencies
