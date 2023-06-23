@@ -4,8 +4,7 @@ library spot;
 import 'package:flutter/widgets.dart';
 import 'package:spot/src/selectors.dart';
 
-export 'package:spot/src/act.dart';
-export 'package:spot/src/checks/checks.dart'
+export 'package:checks/checks.dart'
     hide
         // it() is an odd API, spot sticks to normal lambdas
         FutureChecks,
@@ -14,6 +13,7 @@ export 'package:spot/src/checks/checks.dart'
         WithQueueExtension,
         it;
 
+export 'package:spot/src/act.dart';
 export 'package:spot/src/default_selectors.dart';
 export 'package:spot/src/effective_text.dart';
 export 'package:spot/src/finder_interop.dart';
