@@ -1,14 +1,38 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 
 extension TouchEventExtension on SingleWidgetSelector {
-  void tap() => _TouchEvent.tap(this);
+  void tap() => TouchEvent.tap(this);
 }
 
-class _TouchEvent {
-  static void tap(SingleWidgetSelector selector) {
-    final position = _getPosition(selector);
+class TouchEvent {
+  static void initIntegrationTest() {
     final binding = WidgetsBinding.instance;
+    if (binding is LiveTestWidgetsFlutterBinding) {
+      LiveTestWidgetsFlutterBinding.ensureInitialized();
+      binding.shouldPropagateDevicePointerEvents = true;
+    }
+  }
+
+  static void _checkIfInitialized(WidgetsBinding binding) {
+    if (binding is LiveTestWidgetsFlutterBinding) {
+      LiveTestWidgetsFlutterBinding.ensureInitialized();
+      final isInitialized = binding.shouldPropagateDevicePointerEvents == true;
+      if (!isInitialized) {
+        throw Exception(
+          "Need to call TouchEvent.initIntegrationTest() before the test in main(). "
+          "This sets LiveTestWidgetsFlutterBinding.shouldPropagateDevicePointerEvents to true.",
+        );
+      }
+    }
+  }
+
+  static void tap(SingleWidgetSelector selector) {
+    final binding = WidgetsBinding.instance;
+    _checkIfInitialized(binding);
+
+    final position = _getPosition(selector);
 
     final downEvent = PointerDownEvent(position: position);
     binding.handlePointerEvent(downEvent);

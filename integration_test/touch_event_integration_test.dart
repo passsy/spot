@@ -3,9 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 
 void main() {
-  LiveTestWidgetsFlutterBinding.ensureInitialized();
-
-  (WidgetsBinding.instance as LiveTestWidgetsFlutterBinding).shouldPropagateDevicePointerEvents = true;
+  TouchEvent.initIntegrationTest();
 
   testWidgets('test touch event', (tester) async {
     int i = 0;
