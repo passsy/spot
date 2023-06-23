@@ -3,7 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 
 class Act {
-  static void tap(SingleWidgetSelector selector) {
+  const Act();
+
+  void tap(SingleWidgetSelector selector) {
     final binding = WidgetsBinding.instance;
     _checkIfInitialized(binding);
 

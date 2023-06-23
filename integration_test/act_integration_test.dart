@@ -4,8 +4,9 @@ import 'package:spot/spot.dart';
 
 void main() {
   Act.initIntegrationTest();
+  const act = Act();
 
-  testWidgets('test touch event', (tester) async {
+  testWidgets('test touch event for integration tests', (tester) async {
     int i = 0;
     void onPressed() => i++;
 
@@ -23,9 +24,9 @@ void main() {
     final button = spotSingle<MaterialApp>().spotSingle<ElevatedButton>();
 
     expect(i, 0);
-    Act.tap(button);
+    act.tap(button);
     expect(i, 1);
-    Act.tap(button);
+    act.tap(button);
     expect(i, 2);
   });
 }
