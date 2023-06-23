@@ -20,8 +20,6 @@ void main() {
 
     final button = spotSingle<MaterialApp>().spotSingle<ElevatedButton>();
 
-    const act = Act();
-
     expect(i, 0);
     act.tap(button);
     expect(i, 1);
