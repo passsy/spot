@@ -16,6 +16,8 @@ class Act {
 
   /// Triggers a tap event on a given widget.
   void tap(SingleWidgetSelector selector) {
+    final position = _getPosition(selector);
+
     final binding = WidgetsBinding.instance;
     final isIntegrationTest = binding is LiveTestWidgetsFlutterBinding;
 
@@ -30,7 +32,6 @@ class Act {
       binding.shouldPropagateDevicePointerEvents = true;
     }
 
-    final position = _getPosition(selector);
     final downEvent = PointerDownEvent(position: position);
     binding.handlePointerEvent(downEvent);
 
