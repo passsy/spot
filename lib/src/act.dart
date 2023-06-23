@@ -2,12 +2,12 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 
-/// {@template Act}
+// {@template Act}
 /// Class that provides methods to trigger events on widgets.
 ///
 /// If running a test on a device, make sure to call [Act.initIntegrationTest]
 /// in test's main() method, before [testWidgets].
-/// {@endtemplate}
+// {@endtemplate}
 class Act {
   /// {@macro Act}
   const Act();
