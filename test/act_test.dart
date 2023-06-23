@@ -34,4 +34,35 @@ void actTests() {
     act.tap(button);
     expect(i, 2);
   });
+
+  testWidgets('act.tap() throws if widget not on screen', (tester) async {
+    int i = 0;
+    void onPressed() => i++;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ListView(
+          children: [
+            for (int i = 0; i < 10; i++) const SizedBox(height: 200),
+            ElevatedButton(
+              onPressed: onPressed,
+              child: null,
+            ),
+          ],
+        ),
+      ),
+    );
+
+    final button = spotSingle<ElevatedButton>();
+
+    expect(() => act.tap(button), throwsException);
+
+    await tester.scrollUntilVisible(find.byType(ElevatedButton), 100);
+
+    expect(i, 0);
+    act.tap(button);
+    expect(i, 1);
+    act.tap(button);
+    expect(i, 2);
+  });
 }

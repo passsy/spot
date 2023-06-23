@@ -45,9 +45,19 @@ class Act {
 
   /// Returns the center position of a widget.
   static Offset _getPosition(SingleWidgetSelector selector) {
+    selector.existsOnce();
+
     final snapshot = selector.snapshot();
-    final element = snapshot.discoveredElement;
-    final box = element?.renderObject as RenderBox?;
+    final discovered = snapshot.discovered;
+
+    if (discovered == null) {
+      throw Exception(
+        "Widget ${selector.type} can't be tapped.",
+      );
+    }
+
+    final element = discovered.element;
+    final box = element.renderObject as RenderBox?;
 
     if (box == null) {
       throw Exception(
