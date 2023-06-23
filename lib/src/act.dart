@@ -8,26 +8,25 @@ import 'package:spot/spot.dart';
 /// final button = spotSingle<FloatingActionButton>();
 /// act.tap(button);
 /// ```
-const Act act = Act._();
+const act = Act._();
 
-/// Entrypoint to interact with widgets found via [spot]
+/// Entrypoint to interact with widgets found via [spot].
 class Act {
-  /// {@macro Act}
   const Act._();
 
   /// Triggers a tap event on a given widget.
   void tap(SingleWidgetSelector selector) {
     final binding = WidgetsBinding.instance;
+    final isIntegrationTest = binding is LiveTestWidgetsFlutterBinding;
 
     late final bool previousShouldPropagateDevicePointerEvents;
-    if (binding is LiveTestWidgetsFlutterBinding) {
-      final liveBinding = LiveTestWidgetsFlutterBinding.instance;
-      previousShouldPropagateDevicePointerEvents =
-          liveBinding.shouldPropagateDevicePointerEvents;
-      // actually tap the widget and not show which widgets are located at
+    if (isIntegrationTest) {
+      previousShouldPropagateDevicePointerEvents = binding.shouldPropagateDevicePointerEvents;
+
+      // Actually tap the widget and not show which widgets are located at
       // that position in console. This is only necessary when executing the
-      // widget test on a device
-      liveBinding.shouldPropagateDevicePointerEvents = true;
+      // widget test on a real device or simulator.
+      binding.shouldPropagateDevicePointerEvents = true;
     }
 
     final position = _getPosition(selector);
@@ -37,10 +36,8 @@ class Act {
     final upEvent = PointerUpEvent(position: position);
     binding.handlePointerEvent(upEvent);
 
-    if (binding is LiveTestWidgetsFlutterBinding) {
-      final liveBinding = LiveTestWidgetsFlutterBinding.instance;
-      liveBinding.shouldPropagateDevicePointerEvents =
-          previousShouldPropagateDevicePointerEvents;
+    if (isIntegrationTest) {
+      binding.shouldPropagateDevicePointerEvents = previousShouldPropagateDevicePointerEvents;
     }
   }
 
