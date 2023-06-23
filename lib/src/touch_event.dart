@@ -8,12 +8,13 @@ extension TouchEventExtension on SingleWidgetSelector {
 class _TouchEvent {
   static void tap(SingleWidgetSelector selector) {
     final position = _getPosition(selector);
+    final binding = WidgetsBinding.instance;
 
     final downEvent = PointerDownEvent(position: position);
-    WidgetsBinding.instance.handlePointerEvent(downEvent);
+    binding.handlePointerEvent(downEvent);
 
     final upEvent = PointerUpEvent(position: position);
-    WidgetsBinding.instance.handlePointerEvent(upEvent);
+    binding.handlePointerEvent(upEvent);
   }
 
   static Offset _getPosition(SingleWidgetSelector selector) {
