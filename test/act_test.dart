@@ -73,7 +73,7 @@ void actTests() {
     expect(i, 2);
   });
 
-  testWidgets('tap throws if widget not visible', (tester) async {
+  testWidgets('tap throws if widget not in viewport', (tester) async {
     int i = 0;
     void onPressed() => i++;
 
@@ -99,9 +99,43 @@ void actTests() {
       () => act.tap(button),
       throwsA(
         predicate(
-          (TestFailure error) =>
-              error.message ==
-              "Widget 'ElevatedButton' is not visible and can't be tapped",
+          (TestFailure error) => error.message == "Widget 'ElevatedButton' is not visible and can't be tapped",
+        ),
+      ),
+    );
+  });
+
+  testWidgets('tap throws if widget is obstructed by another widget', (tester) async {
+    int i = 0;
+    void onPressed() => i++;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Stack(
+          children: [
+            Center(
+              child: ElevatedButton(
+                onPressed: onPressed,
+                child: null,
+              ),
+            ),
+            const Positioned.fill(
+              child: ColoredBox(
+                color: Colors.green,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    final button = spotSingle<ElevatedButton>();
+
+    expect(
+      () => act.tap(button),
+      throwsA(
+        predicate(
+          (TestFailure error) => error.message == "Widget 'ElevatedButton' is not visible and can't be tapped",
         ),
       ),
     );
