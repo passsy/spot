@@ -47,7 +47,7 @@ class Act {
 
   /// Returns the center position of a widget.
   static Offset _getPosition(SingleWidgetSelector selector) {
-    // Check if widget is in the widget tree.
+    // Check if widget is in the widget tree. Throws if not.
     selector.existsOnce();
 
     final snapshot = selector.snapshot();
