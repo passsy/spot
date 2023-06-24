@@ -13,7 +13,7 @@ void main() {
 
 /// All tests for [act]
 void actTests() {
-  testWidgets('act.tap()', (tester) async {
+  testWidgets('tap', (tester) async {
     int i = 0;
     void onPressed() => i++;
 
@@ -37,7 +37,7 @@ void actTests() {
     expect(i, 2);
   });
 
-  testWidgets('act.tap() throws if widget not on screen', (tester) async {
+  testWidgets('tap throws if widget not in widget tree', (tester) async {
     int i = 0;
     void onPressed() => i++;
 
@@ -71,5 +71,39 @@ void actTests() {
     expect(i, 1);
     act.tap(button);
     expect(i, 2);
+  });
+
+  testWidgets('tap throws if widget not visible', (tester) async {
+    int i = 0;
+    void onPressed() => i++;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Stack(
+          children: [
+            Positioned(
+              top: -1000,
+              child: ElevatedButton(
+                onPressed: onPressed,
+                child: null,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    final button = spotSingle<ElevatedButton>();
+
+    expect(
+      () => act.tap(button),
+      throwsA(
+        predicate(
+          (TestFailure error) =>
+              error.message ==
+              "Widget 'ElevatedButton' is not visible and can't be tapped",
+        ),
+      ),
+    );
   });
 }

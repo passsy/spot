@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
@@ -46,14 +47,15 @@ class Act {
 
   /// Returns the center position of a widget.
   static Offset _getPosition(SingleWidgetSelector selector) {
+    // Check if widget is in the widget tree.
     selector.existsOnce();
 
     final snapshot = selector.snapshot();
     final discovered = snapshot.discovered;
 
     if (discovered == null) {
-      throw Exception(
-        "Widget ${selector.type} can't be tapped.",
+      throw TestFailure(
+        "Widget '${selector.type}' can't be tapped",
       );
     }
 
@@ -61,12 +63,34 @@ class Act {
     final box = element.renderObject as RenderBox?;
 
     if (box == null) {
-      throw Exception(
-        "Element ${selector.type} has no render object and can't be tapped",
+      throw TestFailure(
+        "Widget '${selector.type}' has no render object and can't be tapped",
       );
     }
 
     final position = box.localToGlobal(box.size.center(Offset.zero));
+
+    final isVisible = _checkIfVisible(position: position, box: box);
+
+    if (!isVisible) {
+      throw TestFailure(
+        "Widget '${selector.type}' is not visible and can't be tapped",
+      );
+    }
+
     return position;
+  }
+
+  static bool _checkIfVisible(
+      {required Offset position, required RenderBox box}) {
+    final binding = WidgetsBinding.instance;
+    final HitTestResult result = HitTestResult();
+    binding.hitTest(result, position);
+    for (final HitTestEntry entry in result.path) {
+      if (entry.target == box) {
+        return true;
+      }
+    }
+    return false;
   }
 }
