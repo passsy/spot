@@ -99,13 +99,16 @@ void actTests() {
       () => act.tap(button),
       throwsA(
         predicate(
-          (TestFailure error) => error.message == "Widget 'ElevatedButton' is not visible and can't be tapped",
+          (TestFailure error) =>
+              error.message ==
+              "Widget 'ElevatedButton' is not visible and can't be tapped",
         ),
       ),
     );
   });
 
-  testWidgets('tap throws if widget is obstructed by another widget', (tester) async {
+  testWidgets('tap throws if widget is obstructed by another widget',
+      (tester) async {
     int i = 0;
     void onPressed() => i++;
 
@@ -135,7 +138,9 @@ void actTests() {
       () => act.tap(button),
       throwsA(
         predicate(
-          (TestFailure error) => error.message == "Widget 'ElevatedButton' is not visible and can't be tapped",
+          (TestFailure error) =>
+              error.message ==
+              "Widget 'ElevatedButton' is not visible and can't be tapped",
         ),
       ),
     );
