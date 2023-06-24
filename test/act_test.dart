@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 
@@ -106,4 +107,80 @@ void actTests() {
       ]),
     );
   });
+
+  testWidgets('tapping throws for non cartesian widgets', (tester) async {
+    await tester.pumpWidget(_NonCartesianWidget());
+    final button = spotSingle<_NonCartesianWidget>()..existsOnce();
+    expect(
+      () => act.tap(button),
+      throwsSpotErrorContaining([
+        "Widget '_NonCartesianWidget' is associated to _CustomRenderObject",
+        "which is not a RenderObject",
+        "RenderBox",
+      ]),
+    );
+  });
+
+  testWidgets('tapping throws for widgets without a RenderObject',
+      (tester) async {
+    await tester.pumpWidget(_NoRenderObjectWidget());
+    final button = spotSingle<_NoRenderObjectWidget>()..existsOnce();
+    expect(
+      () => act.tap(button),
+      throwsSpotErrorContaining([
+        "Widget '_NoRenderObjectWidget' has no associated RenderObject",
+      ]),
+    );
+  });
+}
+
+class _NonCartesianWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => const SizedBox();
+
+  @override
+  _StatelessElementWithoutRenderObject createElement() {
+    return _StatelessElementWithoutRenderObject(this);
+  }
+}
+
+class _StatelessElementWithoutRenderObject extends StatelessElement {
+  _StatelessElementWithoutRenderObject(super.widget);
+
+  @override
+  RenderObject? get renderObject => _CustomRenderObject();
+}
+
+class _CustomRenderObject extends RenderObject {
+  @override
+  void performLayout() {}
+
+  @override
+  void debugAssertDoesMeetConstraints() {}
+
+  @override
+  Rect get paintBounds => Rect.zero;
+
+  @override
+  void performResize() {}
+
+  @override
+  Rect get semanticBounds => Rect.zero;
+}
+
+class _NoRenderObjectWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => const SizedBox();
+
+  @override
+  _NoRenderObjectElement createElement() {
+    return _NoRenderObjectElement(this);
+  }
+}
+
+class _NoRenderObjectElement extends StatelessElement {
+  _NoRenderObjectElement(super.widget);
+
+  @override
+  RenderObject? get renderObject => null;
 }

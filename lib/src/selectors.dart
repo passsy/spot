@@ -925,6 +925,7 @@ class SingleWidgetSnapshot<W extends Widget> implements WidgetMatcher<W> {
   /// Only ever use this for debugging purposes, the number of candidates can vary
   final List<Element> debugCandidates;
 
+  /// The node in the widget tree that was found by [selector]
   final WidgetTreeNode? discovered;
 
   @override
