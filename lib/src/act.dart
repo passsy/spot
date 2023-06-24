@@ -81,8 +81,10 @@ class Act {
     return position;
   }
 
-  static bool _checkIfVisible(
-      {required Offset position, required RenderBox box}) {
+  static bool _checkIfVisible({
+    required Offset position,
+    required RenderBox box,
+  }) {
     final binding = WidgetsBinding.instance;
     final HitTestResult result = HitTestResult();
     binding.hitTest(result, position);
