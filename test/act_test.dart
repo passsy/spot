@@ -28,7 +28,7 @@ void actTests() {
       ),
     );
 
-    final button = spotSingle<MaterialApp>().spotSingle<ElevatedButton>();
+    final button = spotSingle<ElevatedButton>()..existsOnce();
 
     expect(i, 0);
     act.tap(button);
@@ -38,24 +38,8 @@ void actTests() {
   });
 
   testWidgets('tap throws if widget not in widget tree', (tester) async {
-    int i = 0;
-    void onPressed() => i++;
-
-    await tester.pumpWidget(
-      MaterialApp(
-        home: ListView(
-          children: [
-            for (int i = 0; i < 10; i++) const SizedBox(height: 200),
-            ElevatedButton(
-              onPressed: onPressed,
-              child: null,
-            ),
-          ],
-        ),
-      ),
-    );
-
-    final button = spotSingle<ElevatedButton>();
+    await tester.pumpWidget(const MaterialApp());
+    final button = spotSingle<ElevatedButton>()..doesNotExist();
 
     expect(
       () => act.tap(button),
@@ -63,20 +47,9 @@ void actTests() {
         "Could not find 'ElevatedButton' in widget tree",
       ]),
     );
-
-    await tester.scrollUntilVisible(find.byType(ElevatedButton), 100);
-
-    expect(i, 0);
-    act.tap(button);
-    expect(i, 1);
-    act.tap(button);
-    expect(i, 2);
   });
 
   testWidgets('tap throws if widget not in viewport', (tester) async {
-    int i = 0;
-    void onPressed() => i++;
-
     await tester.pumpWidget(
       MaterialApp(
         home: Stack(
@@ -84,7 +57,7 @@ void actTests() {
             Positioned(
               top: -1000,
               child: ElevatedButton(
-                onPressed: onPressed,
+                onPressed: () {},
                 child: null,
               ),
             ),
@@ -93,32 +66,25 @@ void actTests() {
       ),
     );
 
-    final button = spotSingle<ElevatedButton>();
+    final button = spotSingle<ElevatedButton>()..existsOnce();
 
     expect(
       () => act.tap(button),
-      throwsA(
-        predicate(
-          (TestFailure error) =>
-              error.message ==
-              "Widget 'ElevatedButton' is not visible and can't be tapped",
-        ),
-      ),
+      throwsSpotErrorContaining([
+        "Widget 'ElevatedButton' is not visible and can't be tapped",
+      ]),
     );
   });
 
   testWidgets('tap throws if widget is obstructed by another widget',
       (tester) async {
-    int i = 0;
-    void onPressed() => i++;
-
     await tester.pumpWidget(
       MaterialApp(
         home: Stack(
           children: [
             Center(
               child: ElevatedButton(
-                onPressed: onPressed,
+                onPressed: () {},
                 child: null,
               ),
             ),
@@ -132,17 +98,12 @@ void actTests() {
       ),
     );
 
-    final button = spotSingle<ElevatedButton>();
-
+    final button = spotSingle<ElevatedButton>()..existsOnce();
     expect(
       () => act.tap(button),
-      throwsA(
-        predicate(
-          (TestFailure error) =>
-              error.message ==
-              "Widget 'ElevatedButton' is not visible and can't be tapped",
-        ),
-      ),
+      throwsSpotErrorContaining([
+        "Widget 'ElevatedButton' is not visible and can't be tapped",
+      ]),
     );
   });
 }
