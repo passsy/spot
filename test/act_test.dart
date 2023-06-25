@@ -72,7 +72,8 @@ void actTests() {
     expect(
       () => act.tap(button),
       throwsSpotErrorContaining([
-        "Widget 'ElevatedButton' is not visible and can't be tapped",
+        "Widget 'ElevatedButton' is located outside the viewport",
+        "-1000",
       ]),
     );
   });
@@ -103,7 +104,8 @@ void actTests() {
     expect(
       () => act.tap(button),
       throwsSpotErrorContaining([
-        "Widget 'ElevatedButton' is not visible and can't be tapped",
+        "Widget 'ElevatedButton' is covered by ColoredBox",
+        "Stack(",
       ]),
     );
   });
