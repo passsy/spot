@@ -1,4 +1,5 @@
 // ignore_for_file: require_trailing_commas
+// coverage:ignore-file
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

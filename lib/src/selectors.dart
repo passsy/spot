@@ -1218,6 +1218,7 @@ extension ${widgetType}Selector on WidgetSelector<$widgetType> {
 
     return '''
 // ignore_for_file: require_trailing_commas
+// coverage:ignore-file
 
 ${imports ?? "import 'package:flutter/widgets.dart';"}
 import 'package:spot/spot.dart';
