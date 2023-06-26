@@ -2,7 +2,7 @@
 library spot;
 
 import 'package:flutter/widgets.dart';
-import 'package:spot/src/selectors.dart';
+import 'package:spot/src/spot/selectors.dart';
 
 export 'package:checks/checks.dart'
     hide
@@ -13,11 +13,11 @@ export 'package:checks/checks.dart'
         WithQueueExtension,
         it;
 
-export 'package:spot/src/act.dart';
-export 'package:spot/src/default_selectors.dart';
-export 'package:spot/src/effective_text.dart';
-export 'package:spot/src/finder_interop.dart';
-export 'package:spot/src/selectors.dart'
+export 'package:spot/src/act/act.dart';
+export 'package:spot/src/spot/default_selectors.dart';
+export 'package:spot/src/spot/effective/effective_text.dart';
+export 'package:spot/src/spot/finder_interop.dart';
+export 'package:spot/src/spot/selectors.dart'
     show
         CreateMatchers,
         ElementFilter,
@@ -33,7 +33,7 @@ export 'package:spot/src/selectors.dart'
         WidgetMatcher,
         WidgetMatcherExtensions,
         WidgetSelector;
-export 'package:spot/src/snapshot.dart'
+export 'package:spot/src/spot/snapshot.dart'
     show MultiWidgetSelectorMatcher, SingleWidgetSelectorMatcher;
 
 export 'package:spot/src/widgets/align.g.dart';

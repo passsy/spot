@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:spot/src/element_extensions.dart';
+import 'package:spot/src/spot/element_extensions.dart';
 
 /// caching the tree for the current frame
 WidgetTreeSnapshot? _cachedTree;

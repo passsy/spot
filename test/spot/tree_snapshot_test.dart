@@ -2,7 +2,7 @@
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:spot/src/tree_snapshot.dart';
+import 'package:spot/src/spot/tree_snapshot.dart';
 
 void main() {
   testWidgets('allElements are returned depth-first', (tester) async {

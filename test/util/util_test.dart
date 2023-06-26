@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:spot/src/snapshot.dart';
+import 'package:spot/src/spot/snapshot.dart';
 
 void main() {
   group('getAllSubsets', () {

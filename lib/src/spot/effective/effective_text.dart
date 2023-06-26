@@ -1,7 +1,7 @@
 import 'package:checks/context.dart';
 import 'package:flutter/widgets.dart';
 import 'package:spot/spot.dart';
-import 'package:spot/src/element_extensions.dart';
+import 'package:spot/src/spot/element_extensions.dart';
 
 extension EffectiveTextMatcher on WidgetMatcher<Text> {
   WidgetMatcher<Text> hasEffectiveMaxLinesWhere(MatchProp<int?> match) {

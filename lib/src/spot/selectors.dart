@@ -9,9 +9,9 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
-import 'package:spot/src/snapshot.dart' as snapshot_file show snapshot;
-import 'package:spot/src/snapshot.dart';
-import 'package:spot/src/tree_snapshot.dart';
+import 'package:spot/src/spot/snapshot.dart' as snapshot_file show snapshot;
+import 'package:spot/src/spot/snapshot.dart';
+import 'package:spot/src/spot/tree_snapshot.dart';
 
 class Spot with Selectors<Widget> {
   const Spot();

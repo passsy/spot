@@ -2,8 +2,8 @@ import 'package:collection/collection.dart';
 import 'package:dartx/dartx.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:spot/src/selectors.dart';
-import 'package:spot/src/tree_snapshot.dart';
+import 'package:spot/src/spot/selectors.dart';
+import 'package:spot/src/spot/tree_snapshot.dart';
 
 MultiWidgetSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
   final treeSnapshot = currentWidgetTreeSnapshot();

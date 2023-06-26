@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 
-import 'util/assert_error.dart';
+import '../util/assert_error.dart';
 
 void main() {
   // Runs the tests as executed with `flutter test`
