@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.0
+- Added `act.tap(button)` to tap widgets #9
+- Raise min Flutter version to 3.10.0
+- Switch to the official [`checks`](https://pub.dev/packages/checks) package #12
+- Rename `SingleWidgetSnapshot.discoveredElements` -> `SingleWidgetSnapshot.discoveredElement` #11
+
 ## 0.3.1
 - Fix compilation error with Flutter 3.0.0
 
