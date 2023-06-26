@@ -12,25 +12,38 @@ Fluent, chainable Widget finders and better assertions for Flutter widget tests
 ## Usage
 
 ```dart
-// Create widget selectors for elements in the widget tree
-final scaffold = spot<MaterialApp>().spot<Scaffold>();
-final appBar = scaffold.spot<AppBar>();
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:spot/spot.dart';
 
-// Assert for values of widgets
-appBar.spot<Text>().existsOnce().hasText('Pepe');
+void main() {
+  testWidgets('Widget test with spot', (tester) async {
+    // Create widget selectors for elements in the widget tree
+    final scaffold = spot<MaterialApp>().spot<Scaffold>();
+    final appBar = scaffold.spot<AppBar>();
+    
+    // Assert for values of widgets
+    appBar.spot<Text>().existsOnce().hasText('Pepe');
+    
+    // Find widgets based on child widgets
+    appBar
+        .spot<IconButton>(children: [spotSingleIcon(Icons.home)])
+        .existsOnce()
+        .hasTooltip('home');
 
-// Find widgets based on child widgets
-appBar
-    .spot<IconButton>(children: [spotSingleIcon(Icons.home)])
-    .existsOnce()
-    .hasTooltip('home');
+    // Find widgets based on parent widgets
+    spot<Icon>(parents: [appBar, spot<IconButton>()])
+        .existsExactlyNTimes(2)
+        .all((icon) {
+      icon.hasColorWhere((color) => color.equals(Colors.black));
+    });
 
-// Find widgets based on parent widgets
-spot<Icon>(parents: [appBar, spot<IconButton>()])
-    .existsExactlyNTimes(2)
-    .all((icon) {
-icon.hasColorWhere((color) => color.equals(Colors.black));
-});
+    // Interact with widgets using `act`
+    final button = spotSingle<FloatingActionButton>();
+    act.tap(button);
+  });
+}
+
 ```
 
 ### Better errors
@@ -102,6 +115,7 @@ Could not find 'icon "IconData(U+0E57F)"' as child of [type "MaterialApp" > 'typ
 - [x] Allow matching of nested properties (with checks API)
 - [x] Generate code for custom properties for Flutter widgets
 - [x] Allow generating code for properties of 3rd party widgets
+- [x] Interact with widgets (`act`)
 - [ ] Print only widget tree of the parent scope when test fails
 - [ ] Allow manually printing a screenshot at certain points
 - [ ] Create screenshot when test fails
@@ -112,7 +126,7 @@ Could not find 'icon "IconData(U+0E57F)"' as child of [type "MaterialApp" > 'typ
 The public `spot<X>()` API at this point is well-thought-out and stable.
 You can absolutely use it today in your tests.
 
-If you build on top of the `WidgetSelector` API, you might see some class renaming. But those should be trivial to and are not used by most people.
+The `act` API is experimental and might change. 
 
 The error messages will see some major improvements in the future but the current ones are already more helpful than the ones from the `finder` API.
 
