@@ -17,7 +17,7 @@ MultiWidgetSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
         throw TestFailure(
           'Found ${snapshot.discovered.length} elements matching $selector in widget tree, '
           'expected only one\n'
-          '${_findCommonAncestor(snapshot.discovered.map((e) => e.element)).toStringDeep()}'
+          '${findCommonAncestor(snapshot.discovered.map((e) => e.element)).toStringDeep()}'
           'Found ${snapshot.discovered.length} elements matching $selector in widget tree, '
           'expected only one',
         );
@@ -42,7 +42,7 @@ MultiWidgetSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
       throw TestFailure(
         'Found ${discovered.length} elements matching $selector in widget tree, '
         'expected only one\n'
-        '${_findCommonAncestor(distinctCandidateElements).toStringDeep()} '
+        '${findCommonAncestor(distinctCandidateElements).toStringDeep()} '
         'Found ${discovered.length} elements matching $selector in widget tree, '
         'expected only one',
       );
@@ -75,7 +75,7 @@ class CandidateGeneratorFromParents<W extends Widget>
           throw TestFailure(
             'Found ${widgetSnapshot.discovered.length} elements matching $selector in widget tree, '
             'expected only one\n'
-            '${_findCommonAncestor(widgetSnapshot.discovered.map((e) => e.element)).toStringDeep()}'
+            '${findCommonAncestor(widgetSnapshot.discovered.map((e) => e.element)).toStringDeep()}'
             'Found ${widgetSnapshot.discovered.length} elements matching $selector in widget tree, '
             'expected only one',
           );
@@ -389,7 +389,7 @@ List<List<T>> getAllSubsets<T>(List<T> list) {
   return result.sortedByDescending((element) => element.length).toList();
 }
 
-Element _findCommonAncestor(Iterable<Element> elements) {
+Element findCommonAncestor(Iterable<Element> elements) {
   // ignore: deprecated_member_use
   final rootElement = WidgetsBinding.instance.renderViewElement!;
   if (elements.isEmpty) {

@@ -13,6 +13,7 @@ export 'package:checks/checks.dart'
         WithQueueExtension,
         it;
 
+export 'package:spot/src/act.dart';
 export 'package:spot/src/default_selectors.dart';
 export 'package:spot/src/effective_text.dart';
 export 'package:spot/src/finder_interop.dart';
