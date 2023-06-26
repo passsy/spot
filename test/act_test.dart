@@ -103,7 +103,7 @@ void actTests() {
     expect(
       () => act.tap(button),
       throwsSpotErrorContaining([
-        "Widget 'ElevatedButton' is covered by ColoredBox",
+        "Widget 'ElevatedButton' is covered by 'ColoredBox'",
         "Stack(",
       ]),
     );
