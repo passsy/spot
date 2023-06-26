@@ -123,7 +123,7 @@ class Act {
         findCommonAncestor([elements.first, snapshot.discoveredElement!]);
 
     throw TestFailure(
-      "Widget '${snapshot.selector.toStringWithoutParents()}' is covered by ${elements.first.widget.toStringShort()} and can't be tapped.\n"
+      "Widget '${snapshot.selector.toStringWithoutParents()}' is covered by '${elements.first.widget.toStringShort()}' and can't be tapped.\n"
       "The common ancestor of both widgets is:\n"
       "${commonAncestor.toStringDeep()}",
     );
