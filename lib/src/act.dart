@@ -57,7 +57,7 @@ class Act {
 
       final binding = WidgetsBinding.instance;
 
-      // Finally, tap the widget by sending an down and up event.
+      // Finally, tap the widget by sending a down and up event.
       final downEvent = PointerDownEvent(position: centerPosition);
       binding.handlePointerEvent(downEvent);
 
