@@ -5,11 +5,11 @@ repository: https://github.com/passsy/spot
 issue_tracker: https://github.com/passsy/spot/issues
 
 environment:
-  sdk: '>=2.17.0 <4.0.0'
-  flutter: '>=3.0.0 <4.0.0'
+  sdk: '>=3.0.0 <3.999.0'
+  flutter: '>=3.10.0 <4.0.0'
 
 dependencies:
-  collection: ^1.16.0
+  collection: ^1.17.0
   checks: ^0.2.2
   dartx: ^1.1.0
   flutter:
@@ -18,12 +18,7 @@ dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
-  test: ^1.20.0
-
-  # checks deps
-  async: ^2.6.0
-  meta: ^1.5.0
-  test_api: '>=0.3.0 <0.7.0'
+  test: ^1.24.0
 
 dev_dependencies:
-  lint: '>=1.0.0 <3.0.0'
+  lint: ^2.0.0
