@@ -77,6 +77,44 @@ void actTests() {
     );
   });
 
+  testWidgets(
+      'tap does not throw if widget is partially obstructed by another widget',
+      (tester) async {
+    int i = 0;
+    void onPressed() => i++;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Stack(
+          children: [
+            Center(
+              child: ElevatedButton(
+                onPressed: onPressed,
+                child: null,
+              ),
+            ),
+            const Align(
+              child: SizedBox(
+                width: 50,
+                height: 50,
+                child: ColoredBox(
+                  color: Colors.green,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    final button = spotSingle<ElevatedButton>()..existsOnce();
+    expect(i, 0);
+    act.tap(button);
+    expect(i, 1);
+    act.tap(button);
+    expect(i, 2);
+  });
+
   testWidgets('tap throws if widget is obstructed by another widget',
       (tester) async {
     await tester.pumpWidget(
