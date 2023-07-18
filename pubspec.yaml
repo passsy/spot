@@ -20,7 +20,7 @@ dependencies:
     sdk: flutter
   test: ^1.24.0
   stack_trace: ^1.11.0
-  ulid: ^2.0.0
+  nanoid2: ^2.0.0
   test_api: ^0.5.0
 
 dev_dependencies:

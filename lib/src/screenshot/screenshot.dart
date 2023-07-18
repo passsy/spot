@@ -8,10 +8,9 @@ import 'package:dartx/dartx_io.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:nanoid2/nanoid2.dart';
 import 'package:spot/spot.dart';
 import 'package:stack_trace/stack_trace.dart';
-import 'package:test_api/hooks.dart';
-import 'package:ulid/ulid.dart';
 
 class Screenshot {
   Screenshot({required this.file});
@@ -99,7 +98,7 @@ Future<Screenshot> takeScreenshot({
   final String screenshotFileName = () {
     final n = name ?? callerFileName();
     // always append a unique id to avoid name collisions
-    final uniqueId = Ulid().toCanonical().substring(0, 5); // nanoid(5)
+    final uniqueId = nanoid(length: 5);
     return '$n-$uniqueId.png';
   }();
   final file = spotTempDir.file(screenshotFileName);
