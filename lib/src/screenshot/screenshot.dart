@@ -12,11 +12,28 @@ import 'package:nanoid2/nanoid2.dart';
 import 'package:spot/spot.dart';
 import 'package:stack_trace/stack_trace.dart';
 
+/// A screenshot taken from a widget test.
+///
+/// May also be just a single widget, not the entire screen
 class Screenshot {
-  Screenshot({required this.file});
+  Screenshot({
+    required this.file,
+    this.initiator,
+  });
+
+  /// The file where the screenshot was saved to
   final File file;
+
+  /// Call stack of the code that initiated the screenshot
+  final Frame? initiator;
 }
 
+/// Takes a screenshot of the entire screen or a single widget.
+///
+/// Provide a [selector], [snapshot] or [element] to take a screenshot of.
+/// When the screenshot is taken from a larger than just your widget, wrap your
+/// widget with a [RepaintBoundary] to indicate where the screenshot should be
+/// taken.
 Future<Screenshot> takeScreenshot({
   Element? element,
   SingleWidgetSnapshot? snapshot,
@@ -25,7 +42,7 @@ Future<Screenshot> takeScreenshot({
   bool print = true,
 }) async {
   final TestWidgetsFlutterBinding binding = TestWidgetsFlutterBinding.instance;
-  final frame = _caller();
+  final Frame? frame = _caller();
 
   // Element that is currently active in the widget tree, to take a screenshot of
   final Element liveElement = () {
@@ -63,6 +80,8 @@ Future<Screenshot> takeScreenshot({
     }
 
     // fallback to screenshotting the entire app
+    // Deprecated, but as of today there is no multi window support for widget tests
+    // ignore: deprecated_member_use
     return binding.renderViewElement!;
   }();
 

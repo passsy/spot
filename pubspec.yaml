@@ -24,4 +24,5 @@ dependencies:
   test_api: ^0.5.0
 
 dev_dependencies:
+  image: ^4.0.0
   lint: ^2.0.0
