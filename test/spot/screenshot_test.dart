@@ -173,47 +173,28 @@ void main() {
   });
 
   testWidgets('Take screenshot with custom name', (tester) async {
-    tester.view.physicalSize = const Size(210, 210);
-    tester.view.devicePixelRatio = 1.0;
-    const red = Color(0xffff0000);
-    await tester.pumpWidget(
-      Center(
-        child: Container(height: 200, width: 200, color: red),
-      ),
-    );
-
     final shot = await takeScreenshot(name: 'custom_name');
     expect(shot.file.name, contains('custom_name'));
   });
 
   testWidgets('screenshot file name contains test file name', (tester) async {
-    tester.view.physicalSize = const Size(210, 210);
-    tester.view.devicePixelRatio = 1.0;
-    const red = Color(0xffff0000);
-    await tester.pumpWidget(
-      Center(
-        child: Container(height: 200, width: 200, color: red),
-      ),
-    );
-
     final shot = await takeScreenshot();
     final lineNumber = _currentLineNumber() - 1;
     expect(shot.file.name, contains('screenshot_test:$lineNumber'));
   });
 
   testWidgets('name gets escaped to prevent slashes', (tester) async {
-    tester.view.physicalSize = const Size(210, 210);
-    tester.view.devicePixelRatio = 1.0;
-    const red = Color(0xffff0000);
-    await tester.pumpWidget(
-      Center(
-        child: Container(height: 200, width: 200, color: red),
-      ),
-    );
-
     final shot = await takeScreenshot(name: 'path/to/name');
     expect(shot.file.name, isNot(contains('path/to/name')));
     expect(shot.file.name, contains('path%2Fto%2Fname'));
+  });
+
+  testWidgets('initiator frame is attached', (tester) async {
+    final shot = await takeScreenshot();
+    final lineNumber = _currentLineNumber() - 1;
+    expect(shot.initiator!.line, lineNumber);
+    expect(shot.initiator!.uri.toString(), endsWith('screenshot_test.dart'));
+    expect(shot.initiator!.member, 'main.<fn>');
   });
 
   testWidgets('prints name to console', (tester) async {
@@ -268,6 +249,7 @@ Future<double> percentageOfPixelsWithColor(File file, Color color) async {
   return redPixelCoverage;
 }
 
+/// The line number of this function call
 int _currentLineNumber() {
   final lines = StackTrace.current.toString().split('\n');
   final callerLine = lines[1];

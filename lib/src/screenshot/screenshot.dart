@@ -137,7 +137,7 @@ Future<Screenshot> takeScreenshot({
     'Screenshot file://${file.path}\n'
     '  taken at ${frame?.member} ${frame?.uri}:${frame?.line}:${frame?.column}',
   );
-  return Screenshot(file: file);
+  return Screenshot(file: file, initiator: frame);
 }
 
 extension SelectorScreenshotExtension<W extends Widget>
