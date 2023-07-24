@@ -4,7 +4,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:dartx/dartx_io.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image/image.dart' as img;
 import 'package:spot/spot.dart';
@@ -217,6 +217,46 @@ void main() {
     expect(text, contains('.png'));
     expect(text, contains('taken at main'));
     expect(text, contains('screenshot_test.dart:$line'));
+  });
+
+  testWidgets('warning when screenshot is bigger than target', (tester) async {
+    tester.pumpWidget(
+      MaterialApp(
+        home: Center(
+          child: ElevatedButton(
+            child: Text('button'),
+            onPressed: () {},
+          ),
+        ),
+      ),
+    );
+
+    final log = <String>[];
+    await runZoned(
+      () async {
+        await takeScreenshot(selector: spotSingleText('button'));
+      },
+      zoneSpecification: ZoneSpecification(
+        print: (self, parent, zone, message) {
+          log.add(message);
+        },
+      ),
+    );
+
+    final text = log.join('\n');
+    expect(
+      text,
+      contains(
+        'Warning: The screenshot captured (Size(800.0, 600.0)) '
+        'of Text is larger than then Element Size(84.0, 14.0) itself.',
+      ),
+    );
+    expect(
+      text,
+      contains(
+        'Wrap the Text in a RepaintBoundary to capture only that layer.',
+      ),
+    );
   });
 }
 

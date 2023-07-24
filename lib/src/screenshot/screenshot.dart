@@ -179,6 +179,19 @@ Future<ui.Image> _captureImage(Element element) {
     renderObject = renderObject.parent! as RenderObject;
   }
   assert(!renderObject.debugNeedsPaint);
+
+  if (element.renderObject is RenderBox && renderObject is RenderBox) {
+    final expectedSize = (element.renderObject as RenderBox?)!.size;
+    final layerSize = renderObject.size;
+    if (expectedSize.width != layerSize.width ||
+        expectedSize.height != layerSize.height) {
+      // ignore: avoid_print
+      print(
+        'Warning: The screenshot captured ($layerSize) of ${element.toStringShort()} is larger than then Element $expectedSize itself.\n'
+        'Wrap the ${element.toStringShort()} in a RepaintBoundary to capture only that layer. ',
+      );
+    }
+  }
   final OffsetLayer layer = renderObject.debugLayer! as OffsetLayer;
   return layer.toImage(renderObject.paintBounds);
 }
