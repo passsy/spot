@@ -25,4 +25,4 @@ dependencies:
 
 dev_dependencies:
   image: ^4.0.0
-  lint: ^2.0.0
+  lint: ^2.1.0
