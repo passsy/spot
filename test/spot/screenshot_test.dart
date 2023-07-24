@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image/image.dart' as img;
 import 'package:spot/spot.dart';
-import 'package:spot/src/screenshot/screenshot.dart';
 
 import '../util/assert_error.dart';
 

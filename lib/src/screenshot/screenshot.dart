@@ -14,6 +14,8 @@ import 'package:spot/src/screenshot/screenshot.dart' as self
     show takeScreenshot;
 import 'package:stack_trace/stack_trace.dart';
 
+export 'package:stack_trace/stack_trace.dart' show Frame;
+
 /// A screenshot taken from a widget test.
 ///
 /// May also be just a single widget, not the entire screen
