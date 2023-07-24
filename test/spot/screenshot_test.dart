@@ -199,6 +199,21 @@ void main() {
     final lineNumber = _currentLineNumber() - 1;
     expect(shot.file.name, contains('screenshot_test:$lineNumber'));
   });
+
+  testWidgets('name gets escaped to prevent slashes', (tester) async {
+    tester.view.physicalSize = const Size(210, 210);
+    tester.view.devicePixelRatio = 1.0;
+    const red = Color(0xffff0000);
+    await tester.pumpWidget(
+      Center(
+        child: Container(height: 200, width: 200, color: red),
+      ),
+    );
+
+    final shot = await takeScreenshot(name: 'path/to/name');
+    expect(shot.file.name, isNot(contains('path/to/name')));
+    expect(shot.file.name, contains('path%2Fto%2Fname'));
+  });
 }
 
 /// Parses an png image file and reads the percentage of pixels of a given [color].

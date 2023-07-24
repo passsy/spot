@@ -119,7 +119,14 @@ Future<Screenshot> takeScreenshot({
   }
 
   final String screenshotFileName = () {
-    final n = name ?? callerFileName();
+    final String n;
+    if (name != null) {
+      // escape /
+      n = Uri.encodeQueryComponent(name);
+    } else {
+      n = callerFileName();
+    }
+
     // always append a unique id to avoid name collisions
     final uniqueId = nanoid(length: 5);
     return '$n-$uniqueId.png';
