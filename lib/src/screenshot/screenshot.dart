@@ -172,7 +172,7 @@ extension ElementScreenshotExtension on Element {
 /// See also:
 ///
 ///  * [OffsetLayer.toImage] which is the actual method being called.
-Future<ui.Image> _captureImage(Element element) {
+Future<ui.Image> _captureImage(Element element) async {
   assert(element.renderObject != null);
   RenderObject renderObject = element.renderObject!;
   while (!renderObject.isRepaintBoundary) {
@@ -180,20 +180,24 @@ Future<ui.Image> _captureImage(Element element) {
   }
   assert(!renderObject.debugNeedsPaint);
 
-  if (element.renderObject is RenderBox && renderObject is RenderBox) {
+  final OffsetLayer layer = renderObject.debugLayer! as OffsetLayer;
+  final ui.Image image = await layer.toImage(renderObject.paintBounds);
+
+  if (element.renderObject is RenderBox) {
     final expectedSize = (element.renderObject as RenderBox?)!.size;
-    final layerSize = renderObject.size;
-    if (expectedSize.width != layerSize.width ||
-        expectedSize.height != layerSize.height) {
+    if (expectedSize.width != image.width ||
+        expectedSize.height != image.height) {
       // ignore: avoid_print
       print(
-        'Warning: The screenshot captured ($layerSize) of ${element.toStringShort()} is larger than then Element $expectedSize itself.\n'
-        'Wrap the ${element.toStringShort()} in a RepaintBoundary to capture only that layer. ',
+        'Warning: The screenshot captured of ${element.toStringShort()} is '
+        'larger (${image.width}, ${image.height}) than '
+        '${element.toStringShort()} (${expectedSize.width}, ${expectedSize.height}) itself.\n'
+        'Wrap the ${element.toStringShort()} in a RepaintBoundary to be able to capture only that layer. ',
       );
     }
   }
-  final OffsetLayer layer = renderObject.debugLayer! as OffsetLayer;
-  return layer.toImage(renderObject.paintBounds);
+
+  return image;
 }
 
 /// Returns the frame in the call stack that is most useful for identifying for

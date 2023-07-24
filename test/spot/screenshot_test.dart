@@ -247,14 +247,13 @@ void main() {
     expect(
       text,
       contains(
-        'Warning: The screenshot captured (Size(800.0, 600.0)) '
-        'of Text is larger than then Element Size(84.0, 14.0) itself.',
+        'Warning: The screenshot captured of Text is larger (800, 600) than Text (84.0, 14.0) itself.',
       ),
     );
     expect(
       text,
       contains(
-        'Wrap the Text in a RepaintBoundary to capture only that layer.',
+        'Wrap the Text in a RepaintBoundary to be able to capture only that layer.',
       ),
     );
   });
