@@ -45,7 +45,6 @@ Future<Screenshot> takeScreenshot({
   SingleWidgetSnapshot? snapshot,
   SingleWidgetSelector? selector,
   String? name,
-  bool print = true,
 }) async {
   final TestWidgetsFlutterBinding binding = TestWidgetsFlutterBinding.instance;
   final Frame? frame = _caller();
@@ -133,21 +132,19 @@ Future<Screenshot> takeScreenshot({
   }();
   final file = spotTempDir.file(screenshotFileName);
   file.writeAsBytesSync(bytes);
-  if (print) {
-    // ignore: avoid_print
-    core.print(
-      'Screenshot file://${file.path}\n'
-      '  taken at ${frame?.member} ${frame?.uri}:${frame?.line}:${frame?.column}',
-    );
-  }
+  // ignore: avoid_print
+  core.print(
+    'Screenshot file://${file.path}\n'
+    '  taken at ${frame?.member} ${frame?.uri}:${frame?.line}:${frame?.column}',
+  );
   return Screenshot(file: file);
 }
 
 extension SelectorScreenshotExtension<W extends Widget>
     on SingleWidgetSelector<W> {
   /// Takes as screenshot of the widget that can be found by this selector.
-  Future<Screenshot> takeScreenshot({String? name, bool print = true}) {
-    return self.takeScreenshot(selector: this, name: name, print: print);
+  Future<Screenshot> takeScreenshot({String? name}) {
+    return self.takeScreenshot(selector: this, name: name);
   }
 }
 
@@ -156,8 +153,8 @@ extension SnapshotScreenshotExtension<W extends Widget>
   /// Takes as screenshot of the widget that was captured in this snapshot.
   ///
   /// The snapshot must have been taken at the same frame
-  Future<Screenshot> takeScreenshot({String? name, bool print = true}) {
-    return self.takeScreenshot(snapshot: this, name: name, print: print);
+  Future<Screenshot> takeScreenshot({String? name}) {
+    return self.takeScreenshot(snapshot: this, name: name);
   }
 }
 
@@ -165,8 +162,8 @@ extension ElementScreenshotExtension on Element {
   /// Takes as screenshot of this element
   ///
   /// The element must be mounted
-  Future<Screenshot> takeScreenshot({String? name, bool print = true}) {
-    return self.takeScreenshot(element: this, name: name, print: print);
+  Future<Screenshot> takeScreenshot({String? name}) {
+    return self.takeScreenshot(element: this, name: name);
   }
 }
 

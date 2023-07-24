@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:dartx/dartx_io.dart';
@@ -213,6 +214,28 @@ void main() {
     final shot = await takeScreenshot(name: 'path/to/name');
     expect(shot.file.name, isNot(contains('path/to/name')));
     expect(shot.file.name, contains('path%2Fto%2Fname'));
+  });
+
+  testWidgets('prints name to console', (tester) async {
+    final log = <String>[];
+    int line = 0;
+    await runZoned(
+      () async {
+        await takeScreenshot();
+        line = _currentLineNumber() - 1;
+      },
+      zoneSpecification: ZoneSpecification(
+        print: (self, parent, zone, message) {
+          log.add(message);
+        },
+      ),
+    );
+    final text = log.join('\n');
+    expect(text, contains('Screenshot file://'));
+    expect(text, contains('screenshot_test'));
+    expect(text, contains('.png'));
+    expect(text, contains('taken at main'));
+    expect(text, contains('screenshot_test.dart:$line'));
   });
 }
 
