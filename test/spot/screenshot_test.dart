@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:dartx/dartx_io.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image/image.dart' as img;
@@ -169,6 +170,35 @@ void main() {
         await spotSingle<Container>().snapshot().element.takeScreenshot();
     expect(screenshot3.file.existsSync(), isTrue);
   });
+
+  testWidgets('Take screenshot with custom name', (tester) async {
+    tester.view.physicalSize = const Size(210, 210);
+    tester.view.devicePixelRatio = 1.0;
+    const red = Color(0xffff0000);
+    await tester.pumpWidget(
+      Center(
+        child: Container(height: 200, width: 200, color: red),
+      ),
+    );
+
+    final shot = await takeScreenshot(name: 'custom_name');
+    expect(shot.file.name, contains('custom_name'));
+  });
+
+  testWidgets('screenshot file name contains test file name', (tester) async {
+    tester.view.physicalSize = const Size(210, 210);
+    tester.view.devicePixelRatio = 1.0;
+    const red = Color(0xffff0000);
+    await tester.pumpWidget(
+      Center(
+        child: Container(height: 200, width: 200, color: red),
+      ),
+    );
+
+    final shot = await takeScreenshot();
+    final lineNumber = _currentLineNumber() - 1;
+    expect(shot.file.name, contains('screenshot_test:$lineNumber'));
+  });
 }
 
 /// Parses an png image file and reads the percentage of pixels of a given [color].
@@ -198,4 +228,12 @@ Future<double> percentageOfPixelsWithColor(File file, Color color) async {
   // Calculate the red pixel coverage percentage
   final double redPixelCoverage = redPixelCount / totalPixelCount;
   return redPixelCoverage;
+}
+
+int _currentLineNumber() {
+  final lines = StackTrace.current.toString().split('\n');
+  final callerLine = lines[1];
+  final parts = callerLine.split(':');
+  // parts[parts.length - 1] is the column number
+  return parts[parts.length - 2].toInt();
 }

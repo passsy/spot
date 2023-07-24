@@ -36,6 +36,10 @@ class Screenshot {
 /// When the screenshot is taken from a larger than just your widget, wrap your
 /// widget with a [RepaintBoundary] to indicate where the screenshot should be
 /// taken.
+///
+/// Use [name] to make it easier to identify the screenshot in the file system.
+/// By default, a random name is generated prefixed with the test file name and
+/// line number.
 Future<Screenshot> takeScreenshot({
   Element? element,
   SingleWidgetSnapshot? snapshot,
@@ -103,9 +107,7 @@ Future<Screenshot> takeScreenshot({
     spotTempDir.createSync();
   }
   String callerFileName() {
-    final file = frame?.uri.pathSegments.last
-        .replaceFirst('_test.dart', '')
-        .replaceFirst('.dart', '');
+    final file = frame?.uri.pathSegments.last.replaceFirst('.dart', '');
     final line = frame?.line;
     if (file != null && line != null) {
       return '$file:$line';
