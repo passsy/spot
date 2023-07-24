@@ -1,5 +1,5 @@
 # This file configures the analyzer to use the lint rule set from `package:lint`
-include: package:lint/analysis_options_package.yaml
+include: package:lint/package.yaml
 
 # You might want to exclude auto-generated files from dart analysis
 analyzer:
