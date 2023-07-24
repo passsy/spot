@@ -146,6 +146,29 @@ void main() {
       ]),
     );
   });
+
+  testWidgets('takeScreenshot() extensions', (tester) async {
+    tester.view.physicalSize = const Size(1000, 1000);
+    tester.view.devicePixelRatio = 1.0;
+    const red = Color(0xffff0000);
+    await tester.pumpWidget(
+      Center(
+        child: RepaintBoundary(
+          child: Container(height: 200, width: 200, color: red),
+        ),
+      ),
+    );
+    final screenshot1 = await spotSingle<Container>().takeScreenshot();
+    expect(screenshot1.file.existsSync(), isTrue);
+
+    final screenshot2 =
+        await spotSingle<Container>().snapshot().takeScreenshot();
+    expect(screenshot2.file.existsSync(), isTrue);
+
+    final screenshot3 =
+        await spotSingle<Container>().snapshot().element.takeScreenshot();
+    expect(screenshot3.file.existsSync(), isTrue);
+  });
 }
 
 /// Parses an png image file and reads the percentage of pixels of a given [color].

@@ -10,6 +10,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nanoid2/nanoid2.dart';
 import 'package:spot/spot.dart';
+import 'package:spot/src/screenshot/screenshot.dart' as self
+    show takeScreenshot;
 import 'package:stack_trace/stack_trace.dart';
 
 /// A screenshot taken from a widget test.
@@ -130,6 +132,33 @@ Future<Screenshot> takeScreenshot({
     );
   }
   return Screenshot(file: file);
+}
+
+extension SelectorScreenshotExtension<W extends Widget>
+    on SingleWidgetSelector<W> {
+  /// Takes as screenshot of the widget that can be found by this selector.
+  Future<Screenshot> takeScreenshot({String? name, bool print = true}) {
+    return self.takeScreenshot(selector: this, name: name, print: print);
+  }
+}
+
+extension SnapshotScreenshotExtension<W extends Widget>
+    on SingleWidgetSnapshot<W> {
+  /// Takes as screenshot of the widget that was captured in this snapshot.
+  ///
+  /// The snapshot must have been taken at the same frame
+  Future<Screenshot> takeScreenshot({String? name, bool print = true}) {
+    return self.takeScreenshot(snapshot: this, name: name, print: print);
+  }
+}
+
+extension ElementScreenshotExtension on Element {
+  /// Takes as screenshot of this element
+  ///
+  /// The element must be mounted
+  Future<Screenshot> takeScreenshot({String? name, bool print = true}) {
+    return self.takeScreenshot(element: this, name: name, print: print);
+  }
 }
 
 /// Render the closest [RepaintBoundary] of the [element] into an image.
