@@ -286,9 +286,10 @@ void _tryMatchingLessSpecificCriteria<W extends Widget>(
           'Please check the ${lessSpecificSnapshot.discoveredElements.length} '
           'matches for ${lessSpecificSelector.toStringBreadcrumb()} and adjust the constraints of the selector $selector accordingly:');
       int index = 0;
-      for (final Widget match in lessSpecificSnapshot.discoveredWidgets) {
+      for (final Element match in lessSpecificSnapshot.discoveredElements) {
         index++;
-        errorBuilder.writeln('Possible match #$index: ${match.toStringDeep()}');
+        errorBuilder
+            .writeln('Possible match #$index: ${match.widget.toStringDeep()}');
       }
       fail(errorBuilder.toString());
     }

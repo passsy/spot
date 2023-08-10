@@ -11,16 +11,32 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/spot/snapshot.dart' as snapshot_file show snapshot;
 import 'package:spot/src/spot/snapshot.dart';
+import 'package:spot/src/spot/text/any_text.dart';
 import 'package:spot/src/spot/tree_snapshot.dart';
 
+export 'package:checks/context.dart';
+
+/// Root of a [WidgetSelector] chain.
+///
+/// Do not use this class directly, instead use the top-level entrypoints like
+/// - [spot]
+/// - [spotSingle]
+/// - [spotTexts]
+/// - [spotWidgets]
+/// - [spotKeys]
 class Spot with Selectors<Widget> {
+  /// Creates a starting point for a [WidgetSelector] chain.
   const Spot();
 
   @override
   WidgetSelector? get self => null;
 }
 
+/// A mixin that provides chainable builder methods to create a [WidgetSelector].
 mixin Selectors<T extends Widget> {
+  /// The [WidgetSelector] the chainable methods build upon.
+  ///
+  /// This is `null` for the root of the chain.
   WidgetSelector<T>? get self;
 
   /// Creates a [WidgetSelector] that matches a single Widgets of
@@ -57,7 +73,9 @@ mixin Selectors<T extends Widget> {
     List<WidgetSelector> children = const [],
   }) {
     final selector = MultiWidgetSelector<W>(
-      props: [],
+      props: [
+        WidgetTypePredicate<W>(),
+      ],
       parents: [if (self != null) self!, ...parents],
       children: children,
     );
@@ -65,6 +83,10 @@ mixin Selectors<T extends Widget> {
     return selector;
   }
 
+  /// Creates a [WidgetSelector] that finds [widget] by identity and returns
+  /// only that widget
+  ///
+  /// The comparison happens by identity (===)
   SingleWidgetSelector<W> spotSingleWidget<W extends Widget>(
     W widget, {
     List<WidgetSelector> parents = const [],
@@ -77,6 +99,9 @@ mixin Selectors<T extends Widget> {
     ).single;
   }
 
+  /// Creates a [WidgetSelector] that finds all [widget] by identity
+  ///
+  /// The comparison happens by identity (===)
   MultiWidgetSelector<W> spotWidgets<W extends Widget>(
     W widget, {
     List<WidgetSelector> parents = const [],
@@ -84,6 +109,7 @@ mixin Selectors<T extends Widget> {
   }) {
     return MultiWidgetSelector<W>(
       props: [
+        WidgetTypePredicate<W>(),
         PredicateWithDescription(
           (Element e) => identical(e.widget, widget),
           description: 'Widget === $widget',
@@ -94,6 +120,10 @@ mixin Selectors<T extends Widget> {
     );
   }
 
+  /// Creates a [WidgetSelector] that finds the widget that is associated with
+  /// [element]
+  ///
+  /// The comparison happens by identity (===)
   SingleWidgetSelector<W> spotElement<W extends Widget>(
     Element element, {
     List<WidgetSelector> parents = const [],
@@ -101,6 +131,7 @@ mixin Selectors<T extends Widget> {
   }) {
     return SingleWidgetSelector<W>(
       props: [
+        WidgetTypePredicate<W>(),
         PredicateWithDescription(
           (Element e) => identical(e, element),
           description: 'Element === $element',
@@ -111,6 +142,40 @@ mixin Selectors<T extends Widget> {
     );
   }
 
+  SingleWidgetSelector<AnyText> spotText(
+    String text, {
+    List<WidgetSelector> parents = const [],
+    List<WidgetSelector> children = const [],
+    bool findRichText = false,
+  }) {
+    return SingleAnyTextWidgetSelector(
+      props: [
+        PredicateWithDescription(
+          (Element e) {
+            if (e.widget is Text) {
+              final actual = (e.widget as Text).data;
+              return actual == text;
+            }
+            if (e.widget is EditableText) {
+              final actual = (e.widget as EditableText).controller.text;
+              return actual == text;
+            }
+            if (findRichText == true && e.widget is RichText) {
+              final actual = (e.widget as RichText).text.toPlainText();
+              return actual == text;
+            }
+            return false;
+          },
+          description: 'with exact String: "$text"',
+        ),
+      ],
+      parents: [if (self != null) self!, ...parents],
+      children: children,
+    );
+  }
+
+  /// Creates a [WidgetSelector] that finds a single [Text], [EditableText] or
+  /// [RichText] where [text] is the content
   SingleWidgetSelector<W> spotSingleText<W extends Widget>(
     String text, {
     List<WidgetSelector> parents = const [],
@@ -125,6 +190,8 @@ mixin Selectors<T extends Widget> {
     ).single;
   }
 
+  /// Creates a [WidgetSelector] that finds all [Text], [EditableText] or
+  /// [RichText] where [text] is the content
   MultiWidgetSelector<W> spotTexts<W extends Widget>(
     String text, {
     List<WidgetSelector> parents = const [],
@@ -133,10 +200,16 @@ mixin Selectors<T extends Widget> {
   }) {
     return MultiWidgetSelector<W>(
       props: [
+        WidgetTypePredicate<W>(),
         PredicateWithDescription(
           (Element e) {
             if (e.widget is Text) {
               final actual = (e.widget as Text).data;
+              return actual == text;
+            }
+            if (e.widget is SelectableText) {
+              // TODO fix, don't find it twice
+              final actual = (e.widget as SelectableText).data;
               return actual == text;
             }
             if (e.widget is EditableText) {
@@ -157,6 +230,7 @@ mixin Selectors<T extends Widget> {
     );
   }
 
+  /// Creates a [WidgetSelector] that finds a single [Icon] based on the [icon]
   SingleWidgetSelector<Icon> spotSingleIcon(
     IconData icon, {
     bool skipOffstage = true,
@@ -170,6 +244,7 @@ mixin Selectors<T extends Widget> {
     ).single;
   }
 
+  /// Creates a [WidgetSelector] that finds all [Icon] widgets based on the [icon]
   MultiWidgetSelector<Icon> spotIcons(
     IconData icon, {
     bool skipOffstage = true,
@@ -178,6 +253,7 @@ mixin Selectors<T extends Widget> {
   }) {
     return MultiWidgetSelector(
       props: [
+        WidgetTypePredicate<Icon>(),
         PredicateWithDescription(
           (Element e) {
             if (e.widget is Icon) {
@@ -193,6 +269,7 @@ mixin Selectors<T extends Widget> {
     );
   }
 
+  /// Creates a [WidgetSelector] that finds a single widget with the given [key]
   SingleWidgetSelector<W> spotSingleKey<W extends Widget>(
     Key key, {
     List<WidgetSelector> parents = const [],
@@ -205,6 +282,7 @@ mixin Selectors<T extends Widget> {
     ).single;
   }
 
+  /// Creates a [WidgetSelector] that finds all widgets with the given [key]
   MultiWidgetSelector<W> spotKeys<W extends Widget>(
     Key key, {
     List<WidgetSelector> parents = const [],
@@ -212,6 +290,7 @@ mixin Selectors<T extends Widget> {
   }) {
     return MultiWidgetSelector(
       props: [
+        WidgetTypePredicate<W>(),
         PredicateWithDescription(
           (Element e) {
             if (e.widget is W) {
@@ -236,6 +315,11 @@ mixin Selectors<T extends Widget> {
     );
   }
 
+  /// Selects the first of n widgets
+  ///
+  /// "first" is neither the top-most or the bottom-most widget. Instead, it is
+  /// the widget that was found first during a depth-first search of the widget
+  /// tree
   SingleWidgetSelector<T> first() {
     return FirstWidgetSelector<T>(
       props: self!.props,
@@ -244,6 +328,11 @@ mixin Selectors<T extends Widget> {
     );
   }
 
+  /// Selects the last of n widgets
+  ///
+  /// "last" is neither the top-most or the bottom-most widget. Instead, it is
+  /// the widget that was found last during a depth-first search of the widget
+  /// tree
   SingleWidgetSelector<T> last() {
     return LastWidgetSelector<T>(
       props: self!.props,
@@ -326,6 +415,8 @@ class LastElement extends ElementFilter {
 }
 
 extension SelectorQueries<W extends Widget> on Selectors<W> {
+  /// Creates a filter for the discovered elements which is applied when the
+  /// [Selector] is snapshotted
   WidgetSelector<W> whereElement(
     bool Function(Element element) predicate, {
     required String description,
@@ -341,6 +432,8 @@ extension SelectorQueries<W extends Widget> on Selectors<W> {
     );
   }
 
+  /// Creates a filter for the widgets of the discovered elements which is
+  /// applied when the [Selector] is snapshotted
   WidgetSelector<W> whereWidget(
     bool Function(W widget) predicate, {
     required String description,
@@ -362,7 +455,18 @@ extension SelectorQueries<W extends Widget> on Selectors<W> {
   }
 }
 
+/// A Function that fires checks against [T] using the [Subject] API
+///
+/// The [Subject] keeps the error states and is further processed
 typedef MatchProp<T> = void Function(Subject<T>);
+
+extension MatchPropNullable<T> on MatchProp<T> {
+  MatchProp<T?> allowNull() {
+    return (Subject<T?> subject) {
+      this.call(subject.isNotNull());
+    };
+  }
+}
 
 class WidgetMatcher<W extends Widget> {
   W get widget => element.widget as W;
@@ -462,10 +566,24 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
     match(subject);
     final failure = softCheck(element, conditionSubject);
     if (failure != null) {
-      final errorMessage =
-          describe(conditionSubject).map((it) => it.trim()).toList().join(' ');
-      throw TestFailure(
+      final errorParts =
+          describe(conditionSubject).map((it) => it.trim()).toList();
+      // workaround allowing to use
+      // hasPropertyXWhere((subject)=> subject.equals(X));
+      // instead of
+      // hasPropertyXWhere((subject)=> subject.isNotNull().equals(X));
+      //
+      // when Subject is Subject<T> but the value can actually be null (should be Subject<T?>).
+      final errorMessage = errorParts.join(' ');
+      if (errorParts.last == 'is null' &&
+          failure.rejection.actual.firstOrNull == '<null>') {
+        // property is null and isNull() was called
+        // not error because null == null
+        return this;
+      }
+      throw PropertyCheckFailure(
         'Failed to match widget: $errorMessage, actual: ${failure.rejection.actual.joinToString()}',
+        matcherDescription: errorParts.skip(1).join(' ').removePrefix('with '),
       );
     }
     return this;
@@ -496,6 +614,10 @@ class PredicateWithDescription {
   final String description;
 
   PredicateWithDescription(this.predicate, {required this.description});
+}
+
+class WidgetTypePredicate<W extends Widget> extends PredicateWithDescription {
+  WidgetTypePredicate() : super((e) => e.widget is W, description: '$W');
 }
 
 /// A [WidgetSelector] that intends to resolve to a single widget
@@ -632,6 +754,7 @@ enum ExpectedQuantity {
 ///
 /// Compared to normal [Finder], this gives great error messages along the chain
 class WidgetSelector<W extends Widget> with Selectors<W> {
+  /// Matches any widget currently mounted
   static final WidgetSelector all = MultiWidgetSelector(
     props: [
       PredicateWithDescription(
@@ -668,7 +791,6 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
   /// filters that are not covered by this base implementation.
   List<ElementFilter> createElementFilters() {
     return [
-      if (W != Widget) WidgetTypeFilter<W>(),
       if (props.isNotEmpty) PropFilter(props),
       if (children.isNotEmpty) ChildFilter(children),
     ];
@@ -853,7 +975,7 @@ class MultiWidgetSnapshot<W extends Widget> {
     required this.debugCandidates,
     required this.scope,
   }) : _widgets = Map.fromEntries(
-          discovered.map((e) => MapEntry(e, e.element.widget as W)),
+          discovered.map((e) => MapEntry(e, e.element.widget)),
         );
 
   /// The widgets at the point when the snapshot was taken
@@ -862,7 +984,7 @@ class MultiWidgetSnapshot<W extends Widget> {
   /// was taken. This is a reference to the widget that was found at the time
   /// the snapshot was taken. This allows to compare the widget with the current
   /// widget in the tree.
-  final Map<WidgetTreeNode, W> _widgets;
+  final Map<WidgetTreeNode, Widget> _widgets;
 
   final WidgetSelector<W> selector;
 
@@ -875,10 +997,13 @@ class MultiWidgetSnapshot<W extends Widget> {
 
   final List<WidgetTreeNode> discovered;
 
-  /// The parent nodes from where the node has been found
-  // final List<MultiWidgetSnapshot> parents;
-
-  List<W> get discoveredWidgets => _widgets.values.toList();
+  /// Shorthand to get the widgets of all discovered elements
+  /// (see [discovered] or [discoveredElements])
+  ///
+  /// This list may be incomplete for synthetic widgets like [AnyText], when the widgets are not of type [W].
+  ///
+  /// To check the number of discovered elements, always use [discovered] or [discoveredElements]. Use [discoveredWidgets] only when you need to access any properties of the widgets.
+  List<W> get discoveredWidgets => _widgets.values.whereType<W>().toList();
 
   List<Element> get discoveredElements =>
       discovered.map((e) => e.element).toList();

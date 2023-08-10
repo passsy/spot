@@ -1,29 +1,41 @@
 import 'package:flutter/widgets.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/spot/element_extensions.dart';
+import 'package:spot/src/spot/selectors.dart';
 
 extension EffectiveTextMatcher on WidgetMatcher<Text> {
-  WidgetMatcher<Text> hasEffectiveMaxLinesWhere(MatchProp<int?> match) {
+  /// Matches the [Text] widget when it has the given [maxLines]
+  ///
+  /// ```dart
+  /// spotTexts('foo').hasEffectiveMaxLinesWhere((it)=> it.equals(1));
+  /// ```
+  WidgetMatcher<Text> hasEffectiveMaxLinesWhere(MatchProp<int> match) {
     return hasProp(
       selector: (subject) => subject.context.nest<int?>(
         () => ['has "maxLines"'],
         (Element element) => Extracted.value(_extractMaxLines(element)),
       ),
-      match: match,
+      match: match.allowNull(),
     );
   }
 
   WidgetMatcher<Text> hasEffectiveMaxLines(int? value) {
-    return hasEffectiveMaxLinesWhere((it) => it.equals(value));
+    return hasEffectiveMaxLinesWhere((it) {
+      if (value == null) {
+        it.isNull();
+      } else {
+        it.equals(value);
+      }
+    });
   }
 
   WidgetMatcher<Text> hasEffectiveTextStyleWhere(MatchProp<TextStyle> match) {
     return hasProp(
-      selector: (subject) => subject.context.nest<TextStyle>(
+      selector: (subject) => subject.context.nest<TextStyle?>(
         () => ['has "textStyle"'],
         (Element element) => Extracted.value(_extractTextStyle(element)),
       ),
-      match: match,
+      match: match.allowNull(),
     );
   }
 }

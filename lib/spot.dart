@@ -3,6 +3,7 @@ library spot;
 
 import 'package:flutter/widgets.dart';
 import 'package:spot/src/spot/selectors.dart';
+import 'package:spot/src/spot/text/any_text.dart' show AnyText;
 
 export 'package:checks/checks.dart'
     hide
@@ -45,6 +46,8 @@ export 'package:spot/src/spot/selectors.dart'
         WidgetSelector;
 export 'package:spot/src/spot/snapshot.dart'
     show MultiWidgetSelectorMatcher, SingleWidgetSelectorMatcher;
+export 'package:spot/src/spot/text/any_text.dart'
+    show AnyText, AnyTextMatcher, AnyTextSelector;
 
 export 'package:spot/src/widgets/align.g.dart';
 export 'package:spot/src/widgets/circularprogressindicator.g.dart';
@@ -77,6 +80,20 @@ export 'package:spot/src/widgets/wrap.g.dart';
 
 const Spot _global = Spot();
 
+/// A WidgetSelector that matches all widgets in the widget tree.
+///
+/// ```
+/// final globalKeyWidgets = allWidgets
+///     .whereWidget(
+///       (widget) => widget.key is GlobalKey,
+///       description: 'with GlobalKey',
+///     )
+///     .snapshot();
+/// print(globalKeyWidgets.discoveredWidgets);
+/// // [View-[GlobalObjectKey TestFlutterView#81689],
+/// // WidgetsApp-[GlobalObjectKey _MaterialAppState#5b870],
+/// // ...
+/// ```
 WidgetSelector<Widget> get allWidgets => WidgetSelector.all;
 
 /// Creates a chainable [WidgetSelector] that matches a single [Widget] of
@@ -122,6 +139,8 @@ WidgetSelector<W> spot<W extends Widget>({
   );
 }
 
+/// Creates a chainable [WidgetSelector] that matches a single [Widget] by
+/// identity
 SingleWidgetSelector<W> spotSingleWidget<W extends Widget>(
   W widget, {
   List<WidgetSelector> parents = const [],
@@ -134,6 +153,7 @@ SingleWidgetSelector<W> spotSingleWidget<W extends Widget>(
   );
 }
 
+/// Creates a chainable [WidgetSelector] that finds all [widget] by identity
 WidgetSelector<W> spotWidgets<W extends Widget>(
   W widget, {
   List<WidgetSelector> parents = const [],
@@ -146,6 +166,8 @@ WidgetSelector<W> spotWidgets<W extends Widget>(
   );
 }
 
+/// Creates a chainable [WidgetSelector] that finds the widget that is currently
+/// associated to the given [element].
 SingleWidgetSelector<W> spotElement<W extends Widget>(
   Element element, {
   List<WidgetSelector> parents = const [],
@@ -160,13 +182,27 @@ SingleWidgetSelector<W> spotElement<W extends Widget>(
 ///
 /// To find [SelectableText] Widgets, use `spotSingle<SelectableText>(children: [spotTexts('foo')])`
 /// which finds a [SelectableText] Widget that contains an [EditableText] with 'foo'.
-SingleWidgetSelector<Text> spotSingleText(
+SingleWidgetSelector<W> spotSingleText<W extends Widget>(
   String text, {
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
   bool findRichText = false,
 }) {
   return _global.spotSingleText(
+    text,
+    parents: parents,
+    children: children,
+    findRichText: findRichText,
+  );
+}
+
+SingleWidgetSelector<AnyText> spotText(
+  String text, {
+  List<WidgetSelector> parents = const [],
+  List<WidgetSelector> children = const [],
+  bool findRichText = false,
+}) {
+  return _global.spotText(
     text,
     parents: parents,
     children: children,
@@ -194,6 +230,8 @@ WidgetSelector<W> spotTexts<W extends Widget>(
   );
 }
 
+/// Creates a chainable [WidgetSelector] that finds a [Icon] based on [IconData]
+/// [icon]
 SingleWidgetSelector<Icon> spotSingleIcon(
   IconData icon, {
   bool skipOffstage = true,
@@ -207,6 +245,8 @@ SingleWidgetSelector<Icon> spotSingleIcon(
   );
 }
 
+/// Creates a chainable [WidgetSelector] that finds all widgets of type [Icon]
+/// that have [icon] as [IconData]
 WidgetSelector<Icon> spotIcons(
   IconData icon, {
   bool skipOffstage = true,
@@ -220,6 +260,7 @@ WidgetSelector<Icon> spotIcons(
   );
 }
 
+/// Creates a chainable [WidgetSelector] that finds a widget with the given [key].
 SingleWidgetSelector<W> spotSingleKey<W extends Widget>(
   Key key, {
   List<WidgetSelector> parents = const [],
@@ -232,6 +273,8 @@ SingleWidgetSelector<W> spotSingleKey<W extends Widget>(
   );
 }
 
+/// Creates a chainable [WidgetSelector] that finds all widgets with the given
+/// [key].
 MultiWidgetSelector<W> spotKeys<W extends Widget>(
   Key key, {
   List<WidgetSelector> parents = const [],
