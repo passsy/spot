@@ -200,13 +200,11 @@ SingleWidgetSelector<AnyText> spotText(
   String text, {
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
-  bool findRichText = false,
 }) {
   return _global.spotText(
     text,
     parents: parents,
     children: children,
-    findRichText: findRichText,
   );
 }
 

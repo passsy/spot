@@ -6,7 +6,6 @@ import 'package:dartx/dartx.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/spot/snapshot.dart' as snapshot_file show snapshot;
@@ -143,30 +142,15 @@ mixin Selectors<T extends Widget> {
   }
 
   SingleWidgetSelector<AnyText> spotText(
-    String text, {
+    Pattern text, {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
-    bool findRichText = false,
   }) {
     return SingleAnyTextWidgetSelector(
       props: [
-        PredicateWithDescription(
-          (Element e) {
-            if (e.widget is Text) {
-              final actual = (e.widget as Text).data;
-              return actual == text;
-            }
-            if (e.widget is EditableText) {
-              final actual = (e.widget as EditableText).controller.text;
-              return actual == text;
-            }
-            if (findRichText == true && e.widget is RichText) {
-              final actual = (e.widget as RichText).text.toPlainText();
-              return actual == text;
-            }
-            return false;
-          },
-          description: 'with exact String: "$text"',
+        MatchTextPredicate(
+          match: (it) => it.contains(text),
+          description: 'contains text "$text"',
         ),
       ],
       parents: [if (self != null) self!, ...parents],
@@ -659,7 +643,7 @@ abstract class ElementFilter {
   /// Filters all candidates, retuning only a subset that matches
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates);
 
-  // TODO add description
+// TODO add description
 }
 
 abstract class CandidateGenerator<W extends Widget> {
@@ -687,6 +671,7 @@ class WidgetTypeFilter<W extends Widget> implements ElementFilter {
 
 class PropFilter implements ElementFilter {
   final List<PredicateWithDescription> props;
+
   PropFilter(this.props);
 
   @override
@@ -708,6 +693,7 @@ class PropFilter implements ElementFilter {
 
 class ChildFilter implements ElementFilter {
   final List<WidgetSelector> children;
+
   ChildFilter(this.children);
 
   @override

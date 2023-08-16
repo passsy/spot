@@ -1,9 +1,8 @@
+import 'package:checks/checks.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/spot/element_extensions.dart';
 import 'package:spot/src/spot/selectors.dart';
-import 'package:spot/src/spot/tree_snapshot.dart';
 
 /// A union type for any text widget that can be found in the widget tree.
 /// Specifically this includes:
@@ -13,6 +12,8 @@ import 'package:spot/src/spot/tree_snapshot.dart';
 /// - [EditableText]
 ///
 class AnyText extends Widget {
+  const AnyText._();
+
   int? get maxLines {
     return 0;
   }
@@ -64,7 +65,9 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   WidgetMatcher<AnyText> hasMaxLines(int? value) {
     return hasDiagnosticProp<int>(
       'maxLines',
-      (it) => value == null ? it.isNull() : it.equals(value),
+      (it) {
+        value == null ? it.isNull() : it.equals(value);
+      },
     );
   }
 
@@ -100,7 +103,8 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   }
 
   WidgetMatcher<AnyText> hasEffectiveTextStyleWhere(
-      MatchProp<TextStyle> match) {
+    MatchProp<TextStyle> match,
+  ) {
     return hasProp(
       selector: (subject) => subject.context.nest<TextStyle?>(
         () => ['has "textStyle"'],
@@ -157,5 +161,55 @@ extension on Element {
     if (widget is! W) {
       throw 'Require widget of type $W but got ${widget.runtimeType} from Element $this';
     }
+  }
+}
+
+class MatchTextPredicate implements PredicateWithDescription {
+  MatchTextPredicate({
+    required this.match,
+    required this.description,
+  });
+
+  void Function(Subject<String> it) match;
+
+  @override
+  final String description;
+
+  @override
+  bool Function(Element e) get predicate => _match;
+
+  bool _match(Element element) {
+    final actual = _extractTextData(element);
+    final subject = it<String?>();
+
+    match(subject.hideNullability());
+    final failure = softCheck(actual, subject);
+    return failure == null;
+  }
+
+  String? _extractTextData(Element e) {
+    // if (e.widget is Text) {
+    //   return (e.widget as Text).data;
+    // }
+    if (e.widget is EditableText) {
+      return (e.widget as EditableText).controller.text;
+    }
+    if (e.widget is RichText) {
+      return (e.widget as RichText).text.toPlainText();
+    }
+    return null;
+  }
+}
+
+extension NullableSubject<T> on Subject<T?> {
+  Subject<T> hideNullability() {
+    return context.nest<T>(
+      () => [], // no label, this is synthetic
+      (actual) {
+        if (actual == null) return Extracted.rejection();
+        return Extracted.value(actual);
+      },
+      atSameLevel: true,
+    );
   }
 }
