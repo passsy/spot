@@ -277,7 +277,7 @@ void _tryMatchingLessSpecificCriteria<W extends Widget>(
     // error that selector could not be found, but instead spot detected lessSpecificSnapshot, which might be useful
     if (lessSpecificSnapshot.discoveredElements.isNotEmpty) {
       errorBuilder.writeln(
-        'Could not find ${min != null ? 'at least $min ' : ''}matches for '
+        'Could not find ${min != null && min > 1 ? 'at least $min matches for ' : ''}'
         '${selector.toStringBreadcrumb()} in widget tree, but found '
         '${lessSpecificSnapshot.discoveredElements.length} matches '
         'when searching for $lessSpecificSelector',

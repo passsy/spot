@@ -100,7 +100,7 @@ void main() {
       spotSingleText<EditableText>('foo').existsOnce().hasMaxLines(1);
     });
 
-    testWidgets('spotSingleText finds EditableText', (widgetTester) async {
+    testWidgets('spotText finds EditableText', (widgetTester) async {
       await widgetTester.pumpWidget(tree);
 
       spotText('foo').existsOnce();

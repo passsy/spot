@@ -298,7 +298,7 @@ mixin Selectors<T extends Widget> {
             }
             return false;
           },
-          description: 'Widget with key: "$key"',
+          description: 'with key: "$key"',
         ),
       ],
       parents: [if (self != null) self!, ...parents],
@@ -463,7 +463,16 @@ typedef MatchProp<T> = void Function(Subject<T>);
 extension MatchPropNullable<T> on MatchProp<T> {
   MatchProp<T?> allowNull() {
     return (Subject<T?> subject) {
-      this.call(subject.isNotNull());
+      this.call(
+        subject.context.nest<T>(
+          () => [], // no label, this is synthetic
+          (actual) {
+            if (actual == null) return Extracted.rejection();
+            return Extracted.value(actual);
+          },
+          atSameLevel: true,
+        ),
+      );
     };
   }
 }
@@ -812,10 +821,7 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
         ? this.props.map((e) => e.description).join(' ')
         : null;
 
-    final widgetType = W != Widget ? '$W' : null;
-
-    final constraints =
-        [widgetType, props, children, parents].where((e) => e != null);
+    final constraints = [props, children, parents].where((e) => e != null);
     if (constraints.isEmpty) {
       return '';
     }
@@ -830,9 +836,7 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
         ? this.props.map((e) => e.description).join(' ')
         : null;
 
-    final widgetType = W != Widget ? '$W' : null;
-
-    final constraints = [widgetType, props, children].where((e) => e != null);
+    final constraints = [props, children].where((e) => e != null);
     return constraints.join(' ');
   }
 

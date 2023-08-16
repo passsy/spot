@@ -62,7 +62,6 @@ void main() {
           home: Text(''),
         ),
       );
-
       expect(
         () => spot<Text>().existsOnce().hasEffectiveMaxLines(5),
         throwsSpotErrorContaining([
