@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.2
+- Export all types from `checks.dart` which are required to use `hasProp` 
+
 ## 0.3.1
 - Fix compilation error with Flutter 3.0.0
 
