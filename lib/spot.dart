@@ -14,13 +14,13 @@ export 'package:checks/checks.dart'
         it;
 export 'package:checks/context.dart'
     show
-        Subject,
-        Context,
-        ConditionSubject,
         Condition,
+        ConditionSubject,
+        Context,
         ContextExtension,
+        Extracted,
         Rejection,
-        Extracted;
+        Subject;
 
 export 'package:spot/src/act/act.dart';
 export 'package:spot/src/screenshot/screenshot.dart';

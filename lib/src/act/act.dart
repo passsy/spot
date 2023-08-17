@@ -96,6 +96,7 @@ class Act {
   }) {
     final binding = WidgetsBinding.instance;
     final HitTestResult result = HitTestResult();
+    // ignore: deprecated_member_use
     binding.hitTest(result, position);
     final hitTestEntries = result.path.toList();
     for (final HitTestEntry entry in hitTestEntries) {

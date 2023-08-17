@@ -87,7 +87,7 @@ mixin Selectors<T extends Widget> {
         PredicateWithDescription(
           (Element e) => identical(e.widget, widget),
           description: 'Widget === $widget',
-        )
+        ),
       ],
       parents: [if (self != null) self!, ...parents],
       children: children,
@@ -336,7 +336,7 @@ extension SelectorQueries<W extends Widget> on Selectors<W> {
         PredicateWithDescription(
           (Element e) => predicate(e),
           description: description,
-        )
+        ),
       ],
     );
   }
@@ -356,7 +356,7 @@ extension SelectorQueries<W extends Widget> on Selectors<W> {
             return false;
           },
           description: description,
-        )
+        ),
       ],
     );
   }
@@ -397,7 +397,7 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
         if (prop.value is! T) {
           return Extracted.rejection(
             which: [
-              'Has no prop "$propName" of type "$T", the type is "${prop.value.runtimeType}"'
+              'Has no prop "$propName" of type "$T", the type is "${prop.value.runtimeType}"',
             ],
           );
         }
@@ -637,7 +637,7 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
       PredicateWithDescription(
         (e) => true,
         description: 'any Widget',
-      )
+      ),
     ],
   );
 
@@ -810,7 +810,7 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
             if (prop.value is! T) {
               return Extracted.rejection(
                 which: [
-                  'Has no prop "$propName" of type "$T", the type is "${prop.value.runtimeType}"'
+                  'Has no prop "$propName" of type "$T", the type is "${prop.value.runtimeType}"',
                 ],
               );
             }

@@ -178,6 +178,7 @@ Future<ui.Image> _captureImage(Element element) async {
   assert(element.renderObject != null);
   RenderObject renderObject = element.renderObject!;
   while (!renderObject.isRepaintBoundary) {
+    // ignore: unnecessary_cast
     renderObject = renderObject.parent! as RenderObject;
   }
   assert(!renderObject.debugNeedsPaint);
