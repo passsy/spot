@@ -43,6 +43,7 @@ void main() {
     await widgetTester.pumpWidget(
       MaterialApp(
         home: Column(
+          // ignore: require_trailing_commas
           children: [
             EditableText(
               controller: TextEditingController(text: 'foo'),
@@ -50,7 +51,7 @@ void main() {
               style: TextStyle(),
               cursorColor: Colors.black,
               backgroundCursorColor: Colors.black,
-            )
+            ),
           ],
         ),
       ),
