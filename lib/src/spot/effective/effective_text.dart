@@ -15,7 +15,7 @@ extension EffectiveTextMatcher on WidgetMatcher<Text> {
         () => ['has "maxLines"'],
         (Element element) => Extracted.value(_extractMaxLines(element)),
       ),
-      match: match.allowNull(),
+      match: match.hideNullability(),
     );
   }
 
@@ -35,7 +35,7 @@ extension EffectiveTextMatcher on WidgetMatcher<Text> {
         () => ['has "textStyle"'],
         (Element element) => Extracted.value(_extractTextStyle(element)),
       ),
-      match: match.allowNull(),
+      match: match.hideNullability(),
     );
   }
 }

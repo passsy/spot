@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
+import 'package:spot/src/checks/checks_nullability.dart';
 import 'package:spot/src/spot/snapshot.dart' as snapshot_file show snapshot;
 import 'package:spot/src/spot/snapshot.dart';
 import 'package:spot/src/spot/text/any_text.dart';
@@ -445,19 +446,8 @@ extension SelectorQueries<W extends Widget> on Selectors<W> {
 typedef MatchProp<T> = void Function(Subject<T>);
 
 extension MatchPropNullable<T> on MatchProp<T> {
-  MatchProp<T?> allowNull() {
-    return (Subject<T?> subject) {
-      this.call(
-        subject.context.nest<T>(
-          () => [], // no label, this is synthetic
-          (actual) {
-            if (actual == null) return Extracted.rejection();
-            return Extracted.value(actual);
-          },
-          atSameLevel: true,
-        ),
-      );
-    };
+  MatchProp<T?> hideNullability() {
+    return (Subject<T?> subject) => subject.hideNullability();
   }
 }
 

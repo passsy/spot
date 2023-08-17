@@ -1,6 +1,7 @@
 import 'package:checks/checks.dart';
 import 'package:flutter/material.dart';
 import 'package:spot/spot.dart';
+import 'package:spot/src/checks/checks_nullability.dart';
 import 'package:spot/src/spot/element_extensions.dart';
 import 'package:spot/src/spot/selectors.dart';
 
@@ -84,7 +85,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
           throw 'unsupported widget type ${widget.runtimeType}';
         },
       ),
-      match: match.allowNull(),
+      match: match.hideNullability(),
     );
   }
 
@@ -94,7 +95,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
         () => ['has "maxLines"'],
         (element) => Extracted.value(_extractMaxLines(element)),
       ),
-      match: match.allowNull(),
+      match: match.hideNullability(),
     );
   }
 
@@ -110,7 +111,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
         () => ['has "textStyle"'],
         (Element element) => Extracted.value(_extractTextStyle(element)),
       ),
-      match: match.allowNull(),
+      match: match.hideNullability(),
     );
   }
 }
@@ -198,18 +199,5 @@ class MatchTextPredicate implements PredicateWithDescription {
       return (e.widget as RichText).text.toPlainText();
     }
     return null;
-  }
-}
-
-extension NullableSubject<T> on Subject<T?> {
-  Subject<T> hideNullability() {
-    return context.nest<T>(
-      () => [], // no label, this is synthetic
-      (actual) {
-        if (actual == null) return Extracted.rejection();
-        return Extracted.value(actual);
-      },
-      atSameLevel: true,
-    );
   }
 }
