@@ -21,7 +21,7 @@ export 'package:checks/context.dart';
 /// Do not use this class directly, instead use the top-level entrypoints like
 /// - [spot]
 /// - [spotSingle]
-/// - [spotTexts]
+/// - [spotText]
 /// - [spotWidgets]
 /// - [spotKeys]
 class Spot with Selectors<Widget> {
@@ -161,6 +161,10 @@ mixin Selectors<T extends Widget> {
 
   /// Creates a [WidgetSelector] that finds a single [Text], [EditableText] or
   /// [RichText] where [text] is the content
+  @Deprecated(
+    'Use spotText("Hello") or '
+    'spot<Text>().whereText((it) => it.equals("Hello")).first() instead',
+  )
   SingleWidgetSelector<W> spotSingleText<W extends Widget>(
     String text, {
     List<WidgetSelector> parents = const [],
@@ -177,6 +181,10 @@ mixin Selectors<T extends Widget> {
 
   /// Creates a [WidgetSelector] that finds all [Text], [EditableText] or
   /// [RichText] where [text] is the content
+  @Deprecated(
+    'Use spotText("Hello") or '
+    'spot<Text>().whereText((it) => it.equals("Hello")) instead',
+  )
   MultiWidgetSelector<W> spotTexts<W extends Widget>(
     String text, {
     List<WidgetSelector> parents = const [],
@@ -447,7 +455,9 @@ typedef MatchProp<T> = void Function(Subject<T>);
 
 extension MatchPropNullable<T> on MatchProp<T> {
   MatchProp<T?> hideNullability() {
-    return (Subject<T?> subject) => subject.hideNullability();
+    return (Subject<T?> subject) {
+      this.call(subject.hideNullability());
+    };
   }
 }
 

@@ -2,8 +2,8 @@
 library spot;
 
 import 'package:flutter/widgets.dart';
-import 'package:spot/src/spot/selectors.dart';
-import 'package:spot/src/spot/text/any_text.dart' show AnyText;
+import 'package:spot/spot.dart';
+import 'package:spot/src/spot/selectors.dart' show Spot;
 
 export 'package:checks/checks.dart'
     hide
@@ -176,12 +176,40 @@ SingleWidgetSelector<W> spotElement<W extends Widget>(
   return _global.spotElement<W>(element);
 }
 
+/// Finds text on the screen
+///
+/// This method combines finding of [Text], [EditableText] and [SelectableText]
+/// widgets. Ultimately, all widgets show text as [RichText] widget.
+///
+/// For assertions against specific text widgets and their properties, use the
+/// normal [spot] method and set the text widget type as generic type argument.
+///
+/// ```dart
+/// final welcome = spot<Text>().whereText((it) => it.equals("Hello"));
+/// welcome.first().snapshot().hasMaxLines(1).hasTextAlign(TextAlign.center);
+/// ```
+SingleWidgetSelector<AnyText> spotText(
+  String text, {
+  List<WidgetSelector> parents = const [],
+  List<WidgetSelector> children = const [],
+}) {
+  return _global.spotText(
+    text,
+    parents: parents,
+    children: children,
+  );
+}
+
 /// Either finds [Text] or [EditableText] Widgets.
 ///
 /// Set [findRichText] to true to also find [RichText] Widgets.
 ///
 /// To find [SelectableText] Widgets, use `spotSingle<SelectableText>(children: [spotTexts('foo')])`
 /// which finds a [SelectableText] Widget that contains an [EditableText] with 'foo'.
+@Deprecated(
+  'Use spotText("Hello") or '
+  'spot<Text>().whereText((it) => it.equals("Hello")).first() instead',
+)
 SingleWidgetSelector<W> spotSingleText<W extends Widget>(
   String text, {
   List<WidgetSelector> parents = const [],
@@ -196,24 +224,16 @@ SingleWidgetSelector<W> spotSingleText<W extends Widget>(
   );
 }
 
-SingleWidgetSelector<AnyText> spotText(
-  String text, {
-  List<WidgetSelector> parents = const [],
-  List<WidgetSelector> children = const [],
-}) {
-  return _global.spotText(
-    text,
-    parents: parents,
-    children: children,
-  );
-}
-
 /// Either finds [Text] or [EditableText] Widgets (set [W] accordingly).
 ///
 /// Set [findRichText] to true to also find [RichText] Widgets.
 ///
 /// To find [SelectableText] Widgets, use `spotSingle<SelectableText>(children: [spotTexts('foo')])`
 /// which finds a [SelectableText] Widget that contains an [EditableText] with 'foo'.
+@Deprecated(
+  'Use spotText("Hello") or '
+  'spot<Text>().whereText((it) => it.equals("Hello")) instead',
+)
 WidgetSelector<W> spotTexts<W extends Widget>(
   String text, {
   List<WidgetSelector> parents = const [],

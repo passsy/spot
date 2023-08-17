@@ -180,24 +180,35 @@ class MatchTextPredicate implements PredicateWithDescription {
   bool Function(Element e) get predicate => _match;
 
   bool _match(Element element) {
-    final actual = _extractTextData(element);
-    final subject = it<String?>();
-
-    match(subject.hideNullability());
-    final failure = softCheck(actual, subject);
-    return failure == null;
+    try {
+      final actual = _extractTextData(element);
+      final subject = it<String?>();
+      match(subject.hideNullability());
+      final failure = softCheck(actual, subject);
+      return failure == null;
+    } on _UnsupportedWidgetTypeException {
+      return false;
+    }
   }
 
   String? _extractTextData(Element e) {
-    // if (e.widget is Text) {
-    //   return (e.widget as Text).data;
-    // }
     if (e.widget is EditableText) {
       return (e.widget as EditableText).controller.text;
     }
     if (e.widget is RichText) {
       return (e.widget as RichText).text.toPlainText();
     }
-    return null;
+    throw _UnsupportedWidgetTypeException(e.widget);
+  }
+}
+
+class _UnsupportedWidgetTypeException implements Exception {
+  _UnsupportedWidgetTypeException(this.widget);
+
+  final Widget widget;
+
+  @override
+  String toString() {
+    return 'UnsupportedWidgetTypeException: ${widget.toStringShort()}';
   }
 }
