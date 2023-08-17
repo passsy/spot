@@ -12,6 +12,15 @@ export 'package:spot/src/checks/checks.dart'
         StreamChecks,
         WithQueueExtension,
         it;
+export 'package:spot/src/checks/context.dart'
+    show
+        Subject,
+        Context,
+        ConditionSubject,
+        Condition,
+        ContextExtension,
+        Rejection,
+        Extracted;
 
 export 'package:spot/src/default_selectors.dart';
 export 'package:spot/src/effective_text.dart';
