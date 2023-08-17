@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.4.1
+- Added screenshot methods #14
+  ```dart
+  /// Takes a screenshot of the entire window
+  await takeScreenshot();
+  
+  /// Takes a screenshot of a single Screen/Widget
+  final homePage = spotSingle<HomePage>();
+  await takeScreenshot(selector: homePage);
+  
+  /// Use it as extension
+  await spotSingle<HomePage>().takeScreenshot();
+  ```
+- Export all types from `checks.dart` which are required to use `hasProp`
+- Update for Flutter 3.13
+
 ## 0.4.0
 - Added `act.tap(button)` to tap widgets #9
 - Raise min Flutter version to 3.10.0
