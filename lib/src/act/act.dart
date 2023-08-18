@@ -99,6 +99,25 @@ class Act {
     // ignore: deprecated_member_use
     binding.hitTest(result, position);
     final hitTestEntries = result.path.toList();
+
+    final firstResponder = hitTestEntries.first.target;
+    if (firstResponder is RenderObject) {
+      final firstResponderElement =
+          (firstResponder.debugCreator as DebugCreator?)?.element;
+      if (firstResponderElement != null) {
+        final childElement = firstResponderElement.children.firstOrNull;
+        if (childElement?.widget is AbsorbPointer) {
+          final absorbPointer = childElement!.widget as AbsorbPointer;
+          if (absorbPointer.absorbing) {
+            throw TestFailure(
+                "Widget '${snapshot.selector.toStringWithoutParents()}' is wrapped in AbsorbPointer and doesn't receive taps. "
+                "The closest widget reacting to the touch event is:\n"
+                "${firstResponderElement.toStringDeep()}");
+          }
+        }
+      }
+    }
+
     for (final HitTestEntry entry in hitTestEntries) {
       if (entry.target == target) {
         // Success, target was hit by hitTest

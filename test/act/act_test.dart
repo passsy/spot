@@ -109,6 +109,31 @@ void actTests() {
     );
   });
 
+  testWidgets('tap throws when widget is wrapped in AbsorbPointer',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Center(
+          child: AbsorbPointer(
+            child: ElevatedButton(
+              onPressed: () {},
+              child: null,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final button = spotSingle<ElevatedButton>()..existsOnce();
+    expect(
+      () => act.tap(button),
+      throwsSpotErrorContaining([
+        "Widget 'ElevatedButton' is wrapped in AbsorbPointer and doesn't receive taps. The closest widget reacting to the touch event is:",
+        "Center(",
+      ]),
+    );
+  });
+
   testWidgets('tapping throws for non cartesian widgets', (tester) async {
     await tester.pumpWidget(_NonCartesianWidget());
     final button = spotSingle<_NonCartesianWidget>()..existsOnce();
