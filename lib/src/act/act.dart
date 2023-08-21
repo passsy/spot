@@ -139,8 +139,11 @@ class Act {
     if (childElement?.widget is AbsorbPointer) {
       final absorbPointer = childElement!.widget as AbsorbPointer;
       if (absorbPointer.absorbing) {
+        final location = getCreationLocation(childElement) ??
+            childElement.debugGetCreatorChain(100);
         throw TestFailure(
-            "Widget '${snapshot.selector.toStringWithoutParents()}' is wrapped in AbsorbPointer and doesn't receive taps. "
+            "Widget '${snapshot.selector.toStringWithoutParents()}' is wrapped in AbsorbPointer and doesn't receive taps.\n"
+            "AbsorbPointer is created at $location\n"
             "The closest widget reacting to the touch event is:\n"
             "${hitTarget.toStringDeep()}");
       }

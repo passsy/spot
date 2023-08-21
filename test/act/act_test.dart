@@ -128,7 +128,10 @@ void actTests() {
     expect(
       () => act.tap(button),
       throwsSpotErrorContaining([
-        "Widget 'ElevatedButton' is wrapped in AbsorbPointer and doesn't receive taps. The closest widget reacting to the touch event is:",
+        "Widget 'ElevatedButton' is wrapped in AbsorbPointer and doesn't receive taps.",
+        "AbsorbPointer is created at",
+        "act_test.dart:",
+        "The closest widget reacting to the touch event is:",
         "Center(",
       ]),
     );
@@ -155,7 +158,7 @@ void actTests() {
       throwsSpotErrorContaining([
         "Widget 'ElevatedButton' is wrapped in IgnorePointer and doesn't receive taps",
         "The IgnorePointer is located at",
-        "act_test.dart",
+        "act_test.dart:",
       ]),
     );
   });
