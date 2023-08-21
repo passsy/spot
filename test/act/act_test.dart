@@ -134,6 +134,32 @@ void actTests() {
     );
   });
 
+  testWidgets('tap throws when widget is wrapped in IgnorePointer',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Center(
+          child: IgnorePointer(
+            child: ElevatedButton(
+              onPressed: () {},
+              child: null,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final button = spotSingle<ElevatedButton>()..existsOnce();
+    expect(
+      () => act.tap(button),
+      throwsSpotErrorContaining([
+        "Widget 'ElevatedButton' is wrapped in IgnorePointer and doesn't receive taps",
+        "The IgnorePointer is located at",
+        "act_test.dart",
+      ]),
+    );
+  });
+
   testWidgets('tapping throws for non cartesian widgets', (tester) async {
     await tester.pumpWidget(_NonCartesianWidget());
     final button = spotSingle<_NonCartesianWidget>()..existsOnce();
