@@ -19,8 +19,8 @@ class Act {
   const Act._();
 
   /// Triggers a tap event on a given widget.
-  void tap(SingleWidgetSelector selector) {
-    return _alwaysPropagateDevicePointerEvents(() {
+  Future<void> tap(SingleWidgetSelector selector) async {
+    return _alwaysPropagateDevicePointerEvents(() async {
       final snapshot = selector.snapshot();
 
       // Check if widget is in the widget tree. Throws if not.
