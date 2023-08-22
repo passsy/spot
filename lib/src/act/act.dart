@@ -1,4 +1,5 @@
 import 'package:dartx/dartx.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -95,10 +96,14 @@ class Act {
     required SingleWidgetSnapshot snapshot,
   }) {
     final binding = WidgetsBinding.instance;
+
+    // do the tap, hit test the position of [target]
     final HitTestResult result = HitTestResult();
     // ignore: deprecated_member_use
     binding.hitTest(result, position);
     final hitTestEntries = result.path.toList();
+
+    // Check if [target] received the tap event
     for (final HitTestEntry entry in hitTestEntries) {
       if (entry.target == target) {
         // Success, target was hit by hitTest
@@ -106,28 +111,78 @@ class Act {
       }
     }
 
-    // did not hit RenderObject, it is either covered by another widget
-    final elements = hitTestEntries.mapNotNull((e) {
-      if (e.target is RenderObject) {
-        final renderObject = e.target as RenderObject;
-        if (renderObject.debugCreator is DebugCreator?) {
-          final debugCreator = renderObject.debugCreator as DebugCreator?;
-          if (debugCreator != null) {
-            return debugCreator.element;
-          }
-        }
-      }
-      return null;
-    }).toList();
+    final List<Element> hitTargetElements =
+        hitTestEntries.mapNotNull((e) => e.element).toList();
 
-    final Element commonAncestor =
-        findCommonAncestor([elements.first, snapshot.discoveredElement!]);
+    _detectAbsorbPointer(hitTargetElements.first, snapshot);
+    _detectIgnorePointer(target, snapshot);
+
+    final Element commonAncestor = findCommonAncestor(
+      [hitTargetElements.first, snapshot.discoveredElement!],
+    );
 
     throw TestFailure(
-      "Widget '${snapshot.selector.toStringWithoutParents()}' is covered by '${elements.first.widget.toStringShort()}' and can't be tapped.\n"
+      "Widget '${snapshot.selector.toStringWithoutParents()}' is covered by '${hitTargetElements.first.widget.toStringShort()}' and can't be tapped.\n"
       "The common ancestor of both widgets is:\n"
       "${commonAncestor.toStringDeep()}",
     );
+  }
+
+  /// Throws when the widget is wrapped in an AbsorbPointer that is absorbing
+  /// the taps and doesn't forward them to the child
+  void _detectAbsorbPointer(
+    Element hitTarget,
+    SingleWidgetSnapshot<Widget> snapshot,
+  ) {
+    final childElement = hitTarget.children.firstOrNull;
+    if (childElement?.widget is AbsorbPointer) {
+      final absorbPointer = childElement!.widget as AbsorbPointer;
+      if (absorbPointer.absorbing) {
+        final location = getCreationLocation(childElement) ??
+            childElement.debugGetCreatorChain(100);
+        throw TestFailure(
+            "Widget '${snapshot.selector.toStringWithoutParents()}' is wrapped in AbsorbPointer and doesn't receive taps.\n"
+            "AbsorbPointer is created at $location\n"
+            "The closest widget reacting to the touch event is:\n"
+            "${hitTarget.toStringDeep()}");
+      }
+    }
+  }
+
+  /// Throws if the widget is wrapped in an IgnorePointer that is not forwarding events
+  void _detectIgnorePointer(
+    RenderObject target,
+    SingleWidgetSnapshot<Widget> snapshot,
+  ) {
+    final targetElement = (target.debugCreator as DebugCreator?)!.element;
+    // sorted from root to target
+    final parents = targetElement.parents.reversed.toList();
+    // the first IgnorePointer that is not forwarding events
+    final ignorePointer = parents.firstOrNullWhere(
+      (element) {
+        if (element.widget is! IgnorePointer) return false;
+        final ignorePointer = element.widget as IgnorePointer;
+        return ignorePointer.ignoring;
+      },
+    );
+    if (ignorePointer != null) {
+      final location = getCreationLocation(ignorePointer) ??
+          targetElement.debugGetCreatorChain(100);
+      throw TestFailure(
+        "Widget '${snapshot.selector.toStringWithoutParents()}' is wrapped in IgnorePointer and doesn't receive taps. "
+        "The IgnorePointer is located at $location",
+      );
+    }
+  }
+}
+
+extension on HitTestEntry {
+  Element? get element {
+    if (target is! RenderObject) return null;
+    final t = target as RenderObject;
+    if (t.debugCreator is! DebugCreator?) return null;
+    final debugCreator = t.debugCreator as DebugCreator?;
+    return debugCreator?.element;
   }
 }
 
@@ -155,4 +210,26 @@ T _alwaysPropagateDevicePointerEvents<T>(T Function() block) {
       binding.shouldPropagateDevicePointerEvents = previousPropagateValue;
     }
   }
+}
+
+/// Workaround to the the location of a widget in code
+///
+/// This method is a workaround to call `_getCreationLocation()` which is private
+String? getCreationLocation(Element element) {
+  final debugCreator = element.renderObject?.debugCreator;
+  if (debugCreator is! DebugCreator) {
+    return null;
+  }
+  final block =
+      debugTransformDebugCreator([DiagnosticsDebugCreator(debugCreator)]).first
+          as DiagnosticsBlock;
+  final description = block.getChildren().first as ErrorDescription;
+  final location = description.value.first.toString();
+  // _Location .toString() looks something like this:
+  // IgnorePointer IgnorePointer:file:///Users/pascalwelsch/Projects/passsy/spot/test/act/act_test.dart:142:18
+
+  final matches = RegExp('.*(file:///.*)').allMatches(location);
+  final filePath = matches.first.group(1);
+
+  return filePath;
 }

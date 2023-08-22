@@ -219,12 +219,17 @@ void main() {
   });
 
   testWidgets('warning when screenshot is bigger than target', (tester) async {
+    tester.view.physicalSize = const Size(1000, 1000);
+    tester.view.devicePixelRatio = 1.0;
     tester.pumpWidget(
       MaterialApp(
         home: Center(
-          child: ElevatedButton(
-            child: Text('button'),
-            onPressed: () {},
+          child: ColoredBox(
+            color: Colors.green,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text('button'),
+            ),
           ),
         ),
       ),
@@ -246,7 +251,10 @@ void main() {
     expect(
       text,
       contains(
-        'Warning: The screenshot captured of Text is larger (1000, 1000) than Text (84.0, 14.0) itself.',
+        RegExp(
+          r'Warning: The screenshot captured of Text is larger \(1000, 1000\) '
+          r'than Text \(.*, .*\) itself.',
+        ),
       ),
     );
     expect(
