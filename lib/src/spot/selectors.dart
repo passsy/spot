@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:checks/checks.dart';
 import 'package:checks/context.dart';
 import 'package:dartx/dartx.dart';
 import 'package:flutter/foundation.dart';
@@ -484,28 +483,29 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
 
     final actual = prop?.value as T?;
 
-    final ConditionSubject<T?> conditionSubject = it<T?>();
-    final Subject<T> subject = conditionSubject.context.nest<T>(
-      () => [selector.toStringBreadcrumb(), 'with property $propName'],
-      (_) {
-        if (prop == null) {
-          return Extracted.rejection(which: ['Has no prop "$propName"']);
-        }
-        if (prop.value is! T) {
-          return Extracted.rejection(
-            which: [
-              'Has no prop "$propName" of type "$T", the type is "${prop.value.runtimeType}"',
-            ],
-          );
-        }
-        return Extracted.value(actual as T);
-      },
-    );
-    match(subject);
-    final failure = softCheck(actual, conditionSubject);
+    void condition(Subject<T?> subject) {
+      subject.context.nest<T>(
+        () => [selector.toStringBreadcrumb(), 'with property $propName'],
+        (_) {
+          if (prop == null) {
+            return Extracted.rejection(which: ['Has no prop "$propName"']);
+          }
+          if (prop.value is! T) {
+            return Extracted.rejection(
+              which: [
+                'Has no prop "$propName" of type "$T", the type is "${prop.value.runtimeType}"',
+              ],
+            );
+          }
+          return Extracted.value(actual as T);
+        },
+      );
+      match(subject.hideNullability());
+    }
+
+    final failure = softCheck(actual, condition);
     if (failure != null) {
-      final errorParts =
-          describe(conditionSubject).map((it) => it.trim()).toList();
+      final errorParts = describe(condition).map((it) => it.trim()).toList();
       // workaround allowing to use
       // hasPropertyXWhere((subject)=> subject.equals(X));
       // instead of
@@ -550,17 +550,17 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
   /// }
   /// ```
   WidgetMatcher<W> hasProp<T>({
-    required Subject<T> Function(ConditionSubject<Element>) selector,
+    required Subject<T> Function(Subject<Element>) selector,
     required MatchProp<T> match,
   }) {
-    final ConditionSubject<Element> conditionSubject = it<Element>();
-    final subject = selector(conditionSubject);
+    void condition(Subject<Element> subject) {
+      final Subject<T> typedSubject = selector(subject);
+      match(typedSubject);
+    }
 
-    match(subject);
-    final failure = softCheck(element, conditionSubject);
+    final failure = softCheck(element, condition);
     if (failure != null) {
-      final errorParts =
-          describe(conditionSubject).map((it) => it.trim()).toList();
+      final errorParts = describe(condition).map((it) => it.trim()).toList();
       // workaround allowing to use
       // hasPropertyXWhere((subject)=> subject.equals(X));
       // instead of
@@ -870,18 +870,19 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
   /// );
   /// ```
   WidgetSelector<W> withProp<T>({
-    required Subject<T> Function(ConditionSubject<Element>) selector,
+    required Subject<T> Function(Subject<Element>) selector,
     required MatchProp<T> match,
   }) {
-    final ConditionSubject<Element> elementSubject = it<Element>();
-    final Subject<T> subject = selector(elementSubject);
-    match(subject);
-    final name =
-        describe(elementSubject).map((it) => it.trim()).toList().join(' ');
+    void condition(Subject<Element> subject) {
+      final Subject<T> typedSubject = selector(subject);
+      match(typedSubject);
+    }
+
+    final name = describe(condition).map((it) => it.trim()).toList().join(' ');
 
     return whereElement(
       (element) {
-        final failure = softCheck(element, elementSubject);
+        final failure = softCheck(element, condition);
         return failure == null;
       },
       description: name,
@@ -894,14 +895,15 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
     String propName,
     MatchProp<T> match,
   ) {
-    final ConditionSubject<T> nameSubject = it();
-    nameSubject.context.nest<T>(
-      () => ['with prop "$propName"'],
-      (value) => Extracted.value(value),
-    );
-    match(nameSubject);
-    final name =
-        describe(nameSubject).map((it) => it.trim()).toList().join(' ');
+    void condition(Subject<T?> subject) {
+      subject.hideNullability().context.nest<T>(
+            () => ['with prop "$propName"'],
+            (value) => Extracted.value(value),
+          );
+      match(subject.hideNullability());
+    }
+
+    final name = describe(condition).map((it) => it.trim()).toList().join(' ');
 
     return whereElement(
       (element) {
@@ -912,29 +914,31 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
 
         final actual = prop?.value as T?;
 
-        final ConditionSubject<T?> conditionSubject = it<T?>();
-        final Subject<T> subject = conditionSubject.context.nest<T>(
-          () => [toStringBreadcrumb(), 'with prop "$propName"'],
-          (_) {
-            if (prop == null) {
-              return Extracted.rejection(which: ['Has no prop "$propName"']);
-            }
-            if (prop.value is! T) {
-              return Extracted.rejection(
-                which: [
-                  'Has no prop "$propName" of type "$T", the type is "${prop.value.runtimeType}"',
-                ],
-              );
-            }
+        void condition(Subject<T?> subject) {
+          subject.context.nest<T>(
+            () => [toStringBreadcrumb(), 'with prop "$propName"'],
+            (_) {
+              if (prop == null) {
+                return Extracted.rejection(which: ['Has no prop "$propName"']);
+              }
+              if (prop.value is! T) {
+                return Extracted.rejection(
+                  which: [
+                    'Has no prop "$propName" of type "$T", the type is "${prop.value.runtimeType}"',
+                  ],
+                );
+              }
 
-            return Extracted.value(actual as T);
-          },
-        );
-        match(subject);
-        final failure = softCheck(actual, conditionSubject);
+              return Extracted.value(actual as T);
+            },
+          );
+          match(subject.hideNullability());
+        }
+
+        final failure = softCheck(actual, condition);
         if (failure != null) {
           final errorParts =
-              describe(conditionSubject).map((it) => it.trim()).toList();
+              describe(condition).map((it) => it.trim()).toList();
           // workaround allowing to use
           // hasPropertyXWhere((subject)=> subject.equals(X));
           // instead of

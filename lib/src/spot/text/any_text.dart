@@ -1,4 +1,3 @@
-import 'package:checks/checks.dart';
 import 'package:flutter/material.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/checks/checks_nullability.dart';
@@ -182,9 +181,13 @@ class MatchTextPredicate implements PredicateWithDescription {
   bool _match(Element element) {
     try {
       final actual = _extractTextData(element);
-      final subject = it<String?>();
-      match(subject.hideNullability());
-      final failure = softCheck(actual, subject);
+
+      final failure = softCheck<String?>(
+        actual,
+        (subject) {
+          match(subject.hideNullability());
+        },
+      );
       return failure == null;
     } on _UnsupportedWidgetTypeException {
       return false;

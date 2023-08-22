@@ -10,7 +10,7 @@ environment:
 
 dependencies:
   collection: ^1.17.0
-  checks: ^0.2.2
+  checks: ^0.3.0
   dartx: ^1.1.0
   flutter:
     sdk: flutter
@@ -22,6 +22,13 @@ dependencies:
   test: ^1.24.0
   test_api: '>=0.5.0 <0.7.0'
   stack_trace: ^1.11.0
+
+dependency_overrides:
+  checks:
+    git:
+      url: https://github.com/dart-lang/test
+      path: pkgs/checks
+      ref: 7f81deeac294a1120917aeaa35d5b670146c4529
 
 dev_dependencies:
   image: ^4.0.0
