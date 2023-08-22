@@ -460,6 +460,22 @@ extension MatchPropNullable<T> on MatchProp<T> {
   }
 }
 
+extension MatchPropToCondition<T> on MatchProp<T> {
+  /// Converts a MatchProp to a [Condition]
+  ///
+  /// This method is useful when transitioning from [Condition] in checks 0.2.2
+  /// to [Condition] it checks 0.3.0 https://github.com/dart-lang/test/pull/1956
+  ///
+  /// Side note: [MatchProp] has the same form as the new [Condition] API.
+  ///
+  /// TODO: remove this method when checks 0.3.0 is released
+  Condition<T> toCondition() {
+    final subject = it<T>();
+    this.call(subject);
+    return subject;
+  }
+}
+
 class WidgetMatcher<W extends Widget> {
   W get widget => element.widget as W;
   final Element element;
@@ -503,9 +519,10 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
       match(subject.hideNullability());
     }
 
-    final failure = softCheck(actual, condition);
+    final failure = softCheck(actual, condition.toCondition());
     if (failure != null) {
-      final errorParts = describe(condition).map((it) => it.trim()).toList();
+      final errorParts =
+          describe(condition.toCondition()).map((it) => it.trim()).toList();
       // workaround allowing to use
       // hasPropertyXWhere((subject)=> subject.equals(X));
       // instead of
@@ -558,9 +575,10 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
       match(typedSubject);
     }
 
-    final failure = softCheck(element, condition);
+    final failure = softCheck(element, condition.toCondition());
     if (failure != null) {
-      final errorParts = describe(condition).map((it) => it.trim()).toList();
+      final errorParts =
+          describe(condition.toCondition()).map((it) => it.trim()).toList();
       // workaround allowing to use
       // hasPropertyXWhere((subject)=> subject.equals(X));
       // instead of
@@ -878,11 +896,14 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
       match(typedSubject);
     }
 
-    final name = describe(condition).map((it) => it.trim()).toList().join(' ');
+    final name = describe(condition.toCondition())
+        .map((it) => it.trim())
+        .toList()
+        .join(' ');
 
     return whereElement(
       (element) {
-        final failure = softCheck(element, condition);
+        final failure = softCheck(element, condition.toCondition());
         return failure == null;
       },
       description: name,
@@ -903,7 +924,10 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
       match(subject.hideNullability());
     }
 
-    final name = describe(condition).map((it) => it.trim()).toList().join(' ');
+    final name = describe(condition.toCondition())
+        .map((it) => it.trim())
+        .toList()
+        .join(' ');
 
     return whereElement(
       (element) {
@@ -935,10 +959,10 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
           match(subject.hideNullability());
         }
 
-        final failure = softCheck(actual, condition);
+        final failure = softCheck(actual, condition.toCondition());
         if (failure != null) {
           final errorParts =
-              describe(condition).map((it) => it.trim()).toList();
+              describe(condition.toCondition()).map((it) => it.trim()).toList();
           // workaround allowing to use
           // hasPropertyXWhere((subject)=> subject.equals(X));
           // instead of

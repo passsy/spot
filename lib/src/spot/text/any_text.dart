@@ -184,9 +184,9 @@ class MatchTextPredicate implements PredicateWithDescription {
 
       final failure = softCheck<String?>(
         actual,
-        (subject) {
+        (Subject<String?> subject) {
           match(subject.hideNullability());
-        },
+        }.toCondition(),
       );
       return failure == null;
     } on _UnsupportedWidgetTypeException {
