@@ -37,6 +37,31 @@ void actTests() {
     expect(i, 2);
   });
 
+  testWidgets('tap must be awaited', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Center(
+          child: ElevatedButton(
+            onPressed: () {},
+            child: const Text('Home'),
+          ),
+        ),
+      ),
+    );
+    final future = act.tap(spotSingle<ElevatedButton>());
+
+    try {
+      TestAsyncUtils.guardSync();
+      fail('Expected to throw');
+    } catch (e) {
+      check(e).isA<FlutterError>().has((it) => it.message, 'message')
+        ..contains('You must use "await" with all Future-returning test APIs.')
+        ..contains('The guarded method "tap" from class Act was called from')
+        ..contains('act_test.dart');
+    }
+    await future;
+  });
+
   testWidgets('tap throws if widget not in widget tree', (tester) async {
     await tester.pumpWidget(const MaterialApp());
     final button = spotSingle<ElevatedButton>()..doesNotExist();

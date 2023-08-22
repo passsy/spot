@@ -507,6 +507,7 @@ class SingleWidgetSelector<W extends Widget> extends WidgetSelector<W> {
   }) : super(expectedQuantity: ExpectedQuantity.single);
 
   SingleWidgetSnapshot<W> snapshot() {
+    TestAsyncUtils.guardSync();
     return snapshot_file.snapshot(this).single;
   }
 }
@@ -520,6 +521,7 @@ class MultiWidgetSelector<W extends Widget> extends WidgetSelector<W> {
   }) : super(expectedQuantity: ExpectedQuantity.multi);
 
   MultiWidgetSnapshot<W> snapshot() {
+    TestAsyncUtils.guardSync();
     return snapshot_file.snapshot(this);
   }
 }
@@ -971,26 +973,32 @@ extension SelectorToSnapshot<W extends Widget> on WidgetSelector<W> {
   }
 
   MultiWidgetSnapshot<W> snapshot() {
+    TestAsyncUtils.guardSync();
     return snapshot_file.snapshot(this);
   }
 
   MultiWidgetSnapshot<W> existsAtLeastOnce() {
+    TestAsyncUtils.guardSync();
     return snapshot().existsAtLeastOnce();
   }
 
   void doesNotExist() {
+    TestAsyncUtils.guardSync();
     snapshot().doesNotExist();
   }
 
   SingleWidgetSnapshot<W> existsOnce() {
+    TestAsyncUtils.guardSync();
     return snapshot().existsOnce();
   }
 
   MultiWidgetSnapshot<W> existsExactlyNTimes(int n) {
+    TestAsyncUtils.guardSync();
     return snapshot().existsExactlyNTimes(n);
   }
 
   MultiWidgetSnapshot<W> existsAtLeastNTimes(int n) {
+    TestAsyncUtils.guardSync();
     return snapshot().existsAtLeastNTimes(n);
   }
 }
@@ -1005,6 +1013,7 @@ extension SingleSnapshotSelector<W extends Widget> on SingleWidgetSelector<W> {
   }
 
   SingleWidgetSnapshot<W> snapshot() {
+    TestAsyncUtils.guardSync();
     return snapshot_file.snapshot(this).single;
   }
 }
@@ -1021,6 +1030,7 @@ extension AssertionMatcher<W extends Widget> on MultiWidgetSnapshot<W> {
 
 extension MutliMatchers<W extends Widget> on MultiWidgetSnapshot<W> {
   MultiWidgetSnapshot<W> any(void Function(WidgetMatcher<W>) matcher) {
+    TestAsyncUtils.guardSync();
     if (discovered.isEmpty) {
       throw Exception('Expected at least one match for $this, but found none');
     }
@@ -1050,6 +1060,7 @@ extension MutliMatchers<W extends Widget> on MultiWidgetSnapshot<W> {
   }
 
   MultiWidgetSnapshot<W> all(void Function(WidgetMatcher<W>) matcher) {
+    TestAsyncUtils.guardSync();
     if (discovered.isEmpty) {
       throw Exception('Expected at least one match for $this, but found none');
     }

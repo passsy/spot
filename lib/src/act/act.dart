@@ -20,50 +20,52 @@ class Act {
 
   /// Triggers a tap event on a given widget.
   Future<void> tap(SingleWidgetSelector selector) async {
-    return _alwaysPropagateDevicePointerEvents(() async {
-      final snapshot = selector.snapshot();
+    final snapshot = selector.snapshot();
 
-      // Check if widget is in the widget tree. Throws if not.
-      selector.existsOnce();
+    // Check if widget is in the widget tree. Throws if not.
+    selector.existsOnce();
 
-      // Find the associated RenderObject to get the position of the element on the screen
-      final element = snapshot.discovered!.element;
-      final renderObject = element.renderObject;
-      if (renderObject == null) {
-        throw TestFailure(
-          "Widget '${selector.toStringWithoutParents()}' has no associated RenderObject.\n"
-          "Spot does not know where the widget is located on the screen.",
+    return TestAsyncUtils.guard<void>(() async {
+      return _alwaysPropagateDevicePointerEvents(() async {
+        // Find the associated RenderObject to get the position of the element on the screen
+        final element = snapshot.discovered!.element;
+        final renderObject = element.renderObject;
+        if (renderObject == null) {
+          throw TestFailure(
+            "Widget '${selector.toStringWithoutParents()}' has no associated RenderObject.\n"
+            "Spot does not know where the widget is located on the screen.",
+          );
+        }
+        if (renderObject is! RenderBox) {
+          throw TestFailure(
+            "Widget '${selector.toStringWithoutParents()}' is associated to $renderObject which "
+            "is not a RenderObject in the 2D Cartesian coordinate system "
+            "(implements RenderBox).\n"
+            "Spot does not know how to hit test such a widget.",
+          );
+        }
+        _validateViewBounds(renderObject, selector: selector);
+
+        final centerPosition =
+            renderObject.localToGlobal(renderObject.size.center(Offset.zero));
+
+        // Before tapping the widget, we need to make sure that the widget is not
+        // covered by another widget, or outside the viewport.
+        _pokeRenderObject(
+          position: centerPosition,
+          target: renderObject,
+          snapshot: snapshot,
         );
-      }
-      if (renderObject is! RenderBox) {
-        throw TestFailure(
-          "Widget '${selector.toStringWithoutParents()}' is associated to $renderObject which "
-          "is not a RenderObject in the 2D Cartesian coordinate system "
-          "(implements RenderBox).\n"
-          "Spot does not know how to hit test such a widget.",
-        );
-      }
-      _validateViewBounds(renderObject, selector: selector);
 
-      final centerPosition =
-          renderObject.localToGlobal(renderObject.size.center(Offset.zero));
+        final binding = WidgetsBinding.instance;
 
-      // Before tapping the widget, we need to make sure that the widget is not
-      // covered by another widget, or outside the viewport.
-      _pokeRenderObject(
-        position: centerPosition,
-        target: renderObject,
-        snapshot: snapshot,
-      );
+        // Finally, tap the widget by sending a down and up event.
+        final downEvent = PointerDownEvent(position: centerPosition);
+        binding.handlePointerEvent(downEvent);
 
-      final binding = WidgetsBinding.instance;
-
-      // Finally, tap the widget by sending a down and up event.
-      final downEvent = PointerDownEvent(position: centerPosition);
-      binding.handlePointerEvent(downEvent);
-
-      final upEvent = PointerUpEvent(position: centerPosition);
-      binding.handlePointerEvent(upEvent);
+        final upEvent = PointerUpEvent(position: centerPosition);
+        binding.handlePointerEvent(upEvent);
+      });
     });
   }
 
@@ -177,6 +179,7 @@ class Act {
 }
 
 extension on HitTestEntry {
+  /// Returns the [Element] that created this [RenderObject]
   Element? get element {
     if (target is! RenderObject) return null;
     final t = target as RenderObject;
