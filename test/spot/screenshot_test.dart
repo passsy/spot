@@ -219,8 +219,15 @@ void main() {
   });
 
   testWidgets('warning when screenshot is bigger than target', (tester) async {
+    tester.view.physicalSize = const Size(1000, 1000);
+    tester.view.devicePixelRatio = 1.0;
     tester.pumpWidget(
       MaterialApp(
+        theme: ThemeData(
+          textTheme: TextTheme(
+            labelLarge: TextStyle(fontSize: 14),
+          ),
+        ),
         home: Center(
           child: ElevatedButton(
             child: Text('button'),
