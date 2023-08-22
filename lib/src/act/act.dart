@@ -1,7 +1,6 @@
 import 'package:dartx/dartx.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/src/gestures/hit_test.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
