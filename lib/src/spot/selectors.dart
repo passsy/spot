@@ -201,7 +201,6 @@ mixin Selectors<T extends Widget> {
               return actual == text;
             }
             if (e.widget is SelectableText) {
-              // TODO fix, don't find it twice
               final actual = (e.widget as SelectableText).data;
               return actual == text;
             }
@@ -285,12 +284,7 @@ mixin Selectors<T extends Widget> {
       props: [
         WidgetTypePredicate<W>(),
         PredicateWithDescription(
-          (Element e) {
-            if (e.widget is W) {
-              return (e.widget as W).key == key;
-            }
-            return false;
-          },
+          (element) => element.widget.key == key,
           description: 'with key: "$key"',
         ),
       ],
@@ -793,8 +787,8 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
     return CandidateGeneratorFromParents(this);
   }
 
-  /// Overwrite this method when W is a synthetic widget like [AnyText] that
-  /// combines multiple widgets of similar but not exact Type
+  /// Overwrite this method when [W] is a synthetic widget like [AnyText] that
+  /// combines multiple widgets of similar (but not exact) Type
   W mapElementToWidget(Element element) {
     return element.widget as W;
   }
