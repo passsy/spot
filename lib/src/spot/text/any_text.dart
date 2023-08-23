@@ -76,44 +76,15 @@ class SingleAnyTextWidgetSelector extends SingleWidgetSelector<AnyText> {
 
   @override
   AnyText mapElementToWidget(Element element) {
-    if (element.widget is Text) {
-      return AnyText.fromText(element.widget as Text);
-    }
-    if (element.widget is SelectableText) {
-      return AnyText.fromSelectableText(element.widget as SelectableText);
-    }
     if (element.widget is RichText) {
       return AnyText.fromRichText(element.widget as RichText);
     }
     if (element.widget is EditableText) {
       return AnyText.fromEditableText(element.widget as EditableText);
     }
-
     return super.mapElementToWidget(element);
   }
 }
-
-// class _AnyTextWidgetFilter<W extends Widget> implements ElementFilter {
-//   static const allowedTypes = [
-//     Text,
-//     SelectableText,
-//     RichText,
-//     EditableText,
-//   ];
-//
-//   @override
-//   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
-//     return candidates
-//         .where((WidgetTreeNode node) =>
-//             allowedTypes.contains(node.element.widget.runtimeType))
-//         .toList();
-//   }
-//
-//   @override
-//   String toString() {
-//     return 'AnyTextWidgetFilter';
-//   }
-// }
 
 extension AnyTextMatcher on WidgetMatcher<AnyText> {
   WidgetMatcher<AnyText> hasMaxLines(int? value) {
