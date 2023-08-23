@@ -189,7 +189,7 @@ SingleWidgetSelector<W> spotElement<W extends Widget>(
 /// welcome.first().snapshot().hasMaxLines(1).hasTextAlign(TextAlign.center);
 /// ```
 SingleWidgetSelector<AnyText> spotText(
-  String text, {
+  Pattern text, {
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {

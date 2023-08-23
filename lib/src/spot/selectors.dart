@@ -435,11 +435,9 @@ extension SelectorQueries<W extends Widget> on Selectors<W> {
       props: [
         ...self!.props,
         PredicateWithDescription(
-          (Element e) {
-            if (e.widget is W) {
-              return predicate(e.widget as W);
-            }
-            return false;
+          (Element element) {
+            final widget = self!.mapElementToWidget(element);
+            return predicate(widget);
           },
           description: description,
         ),
@@ -793,6 +791,12 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
 
   CandidateGenerator<W> createCandidateGenerator() {
     return CandidateGeneratorFromParents(this);
+  }
+
+  /// Overwrite this method when W is a synthetic widget like [AnyText] that
+  /// combines multiple widgets of similar but not exact Type
+  W mapElementToWidget(Element element) {
+    return element.widget as W;
   }
 
   @override

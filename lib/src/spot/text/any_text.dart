@@ -13,11 +13,46 @@ import 'package:spot/src/spot/selectors.dart';
 /// - [EditableText]
 ///
 class AnyText extends Widget {
-  const AnyText._();
+  const AnyText._({
+    this.maxLines,
+    this.textStyle,
+    this.text,
+  });
 
-  int? get maxLines {
-    return 0;
+  factory AnyText.fromText(Text widget) {
+    return AnyText._(
+      textStyle: widget.style,
+      maxLines: widget.maxLines,
+      text: widget.data,
+    );
   }
+  factory AnyText.fromSelectableText(SelectableText widget) {
+    return AnyText._(
+      textStyle: widget.style,
+      maxLines: widget.maxLines,
+      text: widget.data,
+    );
+  }
+  factory AnyText.fromEditableText(EditableText widget) {
+    return AnyText._(
+      textStyle: widget.style,
+      maxLines: widget.maxLines,
+      text: widget.controller.text,
+    );
+  }
+  factory AnyText.fromRichText(RichText widget) {
+    return AnyText._(
+      textStyle: widget.text.style,
+      maxLines: widget.maxLines,
+      text: widget.text.toPlainText(),
+    );
+  }
+
+  final int? maxLines;
+
+  final TextStyle? textStyle;
+
+  final String? text;
 
   @override
   Element createElement() {
@@ -37,6 +72,24 @@ class SingleAnyTextWidgetSelector extends SingleWidgetSelector<AnyText> {
   List<ElementFilter> createElementFilters() {
     return super.createElementFilters()
       ..removeWhere((it) => it is WidgetTypeFilter);
+  }
+
+  @override
+  AnyText mapElementToWidget(Element element) {
+    if (element.widget is Text) {
+      return AnyText.fromText(element.widget as Text);
+    }
+    if (element.widget is SelectableText) {
+      return AnyText.fromSelectableText(element.widget as SelectableText);
+    }
+    if (element.widget is RichText) {
+      return AnyText.fromRichText(element.widget as RichText);
+    }
+    if (element.widget is EditableText) {
+      return AnyText.fromEditableText(element.widget as EditableText);
+    }
+
+    return super.mapElementToWidget(element);
   }
 }
 

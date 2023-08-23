@@ -127,16 +127,27 @@ void main() {
         spotText('oo').existsOnce().hasMaxLines(null);
       });
 
+      testWidgets('whereWidget', (tester) async {
+        await tester.pumpWidget(treeText);
+        final checked = [];
+        spotText('foo').whereWidget(
+          (AnyText widget) {
+            checked.add(widget);
+            return widget.maxLines == 3;
+          },
+          description: 'maxlines 3',
+        ).doesNotExist();
+        // found one item, but nothing matched maxlines 3
+        expect(checked, hasLength(1));
+      });
+    });
+
+    group('RegEx', () {
       testWidgets('finds Text', (tester) async {
         await tester.pumpWidget(treeText);
 
-        spotText('oo').existsOnce();
-        spotText('oo').existsOnce().hasMaxLines(null);
-
-        spotText('').whereWidget(
-          (AnyText widget) => widget.maxLines == 3,
-          description: 'maxlines 3',
-        );
+        spotText(RegExp('f.*o')).existsOnce();
+        spotText(RegExp('f.*o')).existsOnce().hasMaxLines(null);
       });
     });
   });
