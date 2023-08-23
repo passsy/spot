@@ -16,6 +16,7 @@ void main() {
       EditableText(
         controller: TextEditingController(text: 'foo'),
         focusNode: FocusNode(),
+        maxLines: null,
         style: TextStyle(),
         cursorColor: Colors.black,
         backgroundCursorColor: Colors.black,
@@ -28,33 +29,51 @@ void main() {
   );
 
   group('spotText', () {
-    testWidgets('finds EditableText', (tester) async {
-      await tester.pumpWidget(treeEditableText);
+    final trees = {
+      'Text': treeText,
+      'SelectableText': treeSelectableText,
+      'EditableText': treeEditableText,
+      'RichText': treeRichText,
+    };
 
-      spotText('foo').existsOnce();
-      spotText('foo').existsOnce().hasMaxLines(1);
-    });
+    for (final tree in trees.entries) {
+      final widgetType = tree.key;
 
-    testWidgets('finds SelectableText', (tester) async {
-      await tester.pumpWidget(treeSelectableText);
+      testWidgets('$widgetType finds', (tester) async {
+        await tester.pumpWidget(tree.value);
 
-      spotText('foo').existsOnce();
-      spotText('foo').existsOnce().hasMaxLines(null);
-    });
+        spotText('foo').existsOnce();
+        spotText('foo').existsOnce().hasMaxLines(null);
+      });
 
-    testWidgets('finds Text', (tester) async {
-      await tester.pumpWidget(treeText);
+      testWidgets('$widgetType contains', (tester) async {
+        await tester.pumpWidget(tree.value);
 
-      spotText('foo').existsOnce();
-      spotText('foo').existsOnce().hasMaxLines(null);
-    });
+        spotText('oo').existsOnce();
+        spotText('oo').existsOnce().hasMaxLines(null);
+      });
 
-    testWidgets('finds RichText', (tester) async {
-      await tester.pumpWidget(treeRichText);
+      testWidgets('$widgetType whereWidget', (tester) async {
+        await tester.pumpWidget(tree.value);
+        final checked = [];
+        spotText('foo').whereWidget(
+          (AnyText widget) {
+            checked.add(widget);
+            return widget.maxLines == 3;
+          },
+          description: 'maxlines 3',
+        ).doesNotExist();
+        // found one item, but nothing matched maxlines 3
+        expect(checked, hasLength(1));
+      });
 
-      spotText('foo').existsOnce();
-      spotText('foo').existsOnce().hasMaxLines(null);
-    });
+      testWidgets('$widgetType RegEx', (tester) async {
+        await tester.pumpWidget(tree.value);
+
+        spotText(RegExp('f.*o')).existsOnce();
+        spotText(RegExp('f.*o')).existsOnce().hasMaxLines(null);
+      });
+    }
 
     group('RichText', () {
       testWidgets('concatenates text spans', (tester) async {
@@ -102,52 +121,6 @@ void main() {
         // https://www.codetable.net/decimal/65532
         final obj = String.fromCharCode(0xfffc);
         spotText('foo${obj}bar').existsOnce(); // WidgetSpan becomes whitespace
-      });
-    });
-
-    group('contains', () {
-      testWidgets('finds EditableText', (tester) async {
-        await tester.pumpWidget(treeEditableText);
-
-        spotText('oo').existsOnce();
-        spotText('oo').existsOnce().hasMaxLines(1);
-      });
-
-      testWidgets('finds SelectableText', (tester) async {
-        await tester.pumpWidget(treeSelectableText);
-
-        spotText('oo').existsOnce();
-        spotText('oo').existsOnce().hasMaxLines(null);
-      });
-
-      testWidgets('finds Text', (tester) async {
-        await tester.pumpWidget(treeText);
-
-        spotText('oo').existsOnce();
-        spotText('oo').existsOnce().hasMaxLines(null);
-      });
-
-      testWidgets('whereWidget', (tester) async {
-        await tester.pumpWidget(treeText);
-        final checked = [];
-        spotText('foo').whereWidget(
-          (AnyText widget) {
-            checked.add(widget);
-            return widget.maxLines == 3;
-          },
-          description: 'maxlines 3',
-        ).doesNotExist();
-        // found one item, but nothing matched maxlines 3
-        expect(checked, hasLength(1));
-      });
-    });
-
-    group('RegEx', () {
-      testWidgets('finds Text', (tester) async {
-        await tester.pumpWidget(treeText);
-
-        spotText(RegExp('f.*o')).existsOnce();
-        spotText(RegExp('f.*o')).existsOnce().hasMaxLines(null);
       });
     });
   });
@@ -216,7 +189,7 @@ void main() {
 
         spotTexts('foo').existsOnce();
         spotTexts<EditableText>('foo').existsOnce();
-        spotTexts<EditableText>('foo').existsOnce().hasMaxLines(1);
+        spotTexts<EditableText>('foo').existsOnce().hasMaxLines(null);
       });
 
       testWidgets('spotSingleText finds EditableText', (tester) async {
@@ -224,14 +197,14 @@ void main() {
 
         spotSingleText('foo').existsOnce();
         spotSingleText<EditableText>('foo').existsOnce();
-        spotSingleText<EditableText>('foo').existsOnce().hasMaxLines(1);
+        spotSingleText<EditableText>('foo').existsOnce().hasMaxLines(null);
       });
 
       testWidgets('spotText finds EditableText', (tester) async {
         await tester.pumpWidget(treeEditableText);
 
         spotText('foo').existsOnce();
-        spotText('foo').existsOnce().hasMaxLines(1);
+        spotText('foo').existsOnce().hasMaxLines(null);
       });
     });
   });
