@@ -11,7 +11,7 @@ extension EffectiveTextMatcher on WidgetMatcher<Text> {
   /// ```
   WidgetMatcher<Text> hasEffectiveMaxLinesWhere(MatchProp<int> match) {
     return hasProp(
-      selector: (subject) => subject.context.nest<int?>(
+      elementSelector: (subject) => subject.context.nest<int?>(
         () => ['has "maxLines"'],
         (Element element) => Extracted.value(_extractMaxLines(element)),
       ),
@@ -31,7 +31,7 @@ extension EffectiveTextMatcher on WidgetMatcher<Text> {
 
   WidgetMatcher<Text> hasEffectiveTextStyleWhere(MatchProp<TextStyle> match) {
     return hasProp(
-      selector: (subject) => subject.context.nest<TextStyle?>(
+      elementSelector: (subject) => subject.context.nest<TextStyle?>(
         () => ['has "textStyle"'],
         (Element element) => Extracted.value(_extractTextStyle(element)),
       ),
@@ -73,7 +73,7 @@ extension TextStyleSubject on Subject<TextStyle> {
 extension EffectiveTextSelector on WidgetSelector<Text> {
   WidgetSelector<Text> withEffectiveMaxLinesMatching(MatchProp<int?> match) {
     return withProp(
-      selector: (subject) => subject.context.nest<int?>(
+      elementSelector: (subject) => subject.context.nest<int?>(
         () => ['with "maxLines"'],
         (Element element) => Extracted.value(_extractMaxLines(element)),
       ),

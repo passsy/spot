@@ -25,7 +25,7 @@ void main() {
   );
 
   final treeRichText = _stage(
-    children: [RichText(text: TextSpan(text: 'foo'))],
+    children: [RichText(text: TextSpan(text: 'foo', style: TextStyle()))],
   );
 
   group('spotText', () {
@@ -65,6 +65,24 @@ void main() {
         ).doesNotExist();
         // found one item, but nothing matched maxlines 3
         expect(checked, hasLength(1));
+      });
+
+      testWidgets('$widgetType with filter', (tester) async {
+        await tester.pumpWidget(tree.value);
+        spotText('foo')
+            .withMaxLinesMatching((it) => it.isNull())
+            .withTextMatching((it) => it.equals('foo'))
+            .withTextStyleMatching((it) => it.isNotNull())
+            .existsOnce();
+      });
+
+      testWidgets('$widgetType matches', (tester) async {
+        await tester.pumpWidget(tree.value);
+        spotText('foo')
+            .existsOnce()
+            .hasTextWhere((it) => it.equals('foo'))
+            .hasMaxLinesWhere((it) => it.isNull())
+            .hasTextStyleWhere((it) => it.isNotNull());
       });
 
       testWidgets('$widgetType RegEx', (tester) async {

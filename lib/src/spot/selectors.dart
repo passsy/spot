@@ -542,11 +542,37 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
   /// }
   /// ```
   WidgetMatcher<W> hasProp<T>({
-    required Subject<T> Function(ConditionSubject<Element>) selector,
+    @Deprecated('use elementSelector instead')
+    Subject<T> Function(ConditionSubject<Element>)? selector,
+    Subject<T> Function(ConditionSubject<Element>)? elementSelector,
+    Subject<T> Function(Subject<W>)? widgetSelector,
     required MatchProp<T> match,
   }) {
     final ConditionSubject<Element> conditionSubject = it<Element>();
-    final subject = selector(conditionSubject);
+    final Subject<T> subject = () {
+      if (selector != null) {
+        return selector(conditionSubject);
+      }
+      if (elementSelector != null) {
+        return elementSelector(conditionSubject);
+      }
+      assert(widgetSelector != null);
+
+      if (widgetSelector != null) {
+        final Subject<W> widgetSubject = conditionSubject.context.nest<W>(
+          () => ['widget $W'],
+          (element) {
+            final widget = this.selector.mapElementToWidget(element);
+            return Extracted.value(widget);
+          },
+        );
+        return widgetSelector.call(widgetSubject);
+      }
+
+      throw ArgumentError(
+        'Either elementSelector (former selector) or widgetSelector must be set',
+      );
+    }();
 
     match(subject);
     final failure = softCheck(element, conditionSubject);
@@ -611,6 +637,7 @@ class SingleWidgetSelector<W extends Widget> extends WidgetSelector<W> {
     required super.props,
     super.parents,
     super.children,
+    super.mapElementToWidget,
   }) : super(expectedQuantity: ExpectedQuantity.single);
 
   SingleWidgetSnapshot<W> snapshot() {
@@ -624,6 +651,7 @@ class MultiWidgetSelector<W extends Widget> extends WidgetSelector<W> {
     super.props,
     super.parents,
     super.children,
+    super.mapElementToWidget,
   }) : super(expectedQuantity: ExpectedQuantity.multi);
 
   MultiWidgetSnapshot<W> snapshot() {
@@ -758,9 +786,11 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
     List<WidgetSelector>? parents,
     List<WidgetSelector>? children,
     required this.expectedQuantity,
+    W Function(Element element)? mapElementToWidget,
   })  : props = List.unmodifiable(props ?? []),
         parents = List.unmodifiable(parents?.toSet().toList() ?? []),
-        children = List.unmodifiable(children ?? []);
+        children = List.unmodifiable(children ?? []),
+        mapElementToWidget = mapElementToWidget ?? defaultMapElementToWidget<W>;
 
   final List<PredicateWithDescription> props;
 
@@ -770,6 +800,14 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
 
   /// Whether this selector expects to find a single or multiple widgets
   final ExpectedQuantity expectedQuantity;
+
+  static W defaultMapElementToWidget<W>(Element element) {
+    return element.widget as W;
+  }
+
+  /// Overwrite this method when [W] is a synthetic widget like [AnyText] that
+  /// combines multiple widgets of similar (but not exact) Type
+  final W Function(Element element) mapElementToWidget;
 
   /// Returns a list of [ElementFilter] that is used to filter the widget tree
   /// (or subtrees of [parents]) for widgets that match this selectors criteria
@@ -785,12 +823,6 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
 
   CandidateGenerator<W> createCandidateGenerator() {
     return CandidateGeneratorFromParents(this);
-  }
-
-  /// Overwrite this method when [W] is a synthetic widget like [AnyText] that
-  /// combines multiple widgets of similar (but not exact) Type
-  W mapElementToWidget(Element element) {
-    return element.widget as W;
   }
 
   @override
@@ -847,12 +879,14 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
     List<WidgetSelector>? parents,
     List<WidgetSelector>? children,
     ExpectedQuantity? expectedQuantity,
+    W Function(Element element)? mapElementToWidget,
   }) {
     return WidgetSelector<W>(
       props: props ?? this.props,
       parents: parents ?? this.parents,
       children: children ?? this.children,
       expectedQuantity: expectedQuantity ?? this.expectedQuantity,
+      mapElementToWidget: mapElementToWidget ?? this.mapElementToWidget,
     );
   }
 
@@ -868,11 +902,38 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
   /// );
   /// ```
   WidgetSelector<W> withProp<T>({
-    required Subject<T> Function(ConditionSubject<Element>) selector,
+    @Deprecated('use elementSelector instead')
+    Subject<T> Function(ConditionSubject<Element>)? selector,
+    Subject<T> Function(ConditionSubject<Element>)? elementSelector,
+    Subject<T> Function(Subject<W>)? widgetSelector,
     required MatchProp<T> match,
   }) {
     final ConditionSubject<Element> elementSubject = it<Element>();
-    final Subject<T> subject = selector(elementSubject);
+    final Subject<T> subject = () {
+      if (selector != null) {
+        return selector(elementSubject);
+      }
+      if (elementSelector != null) {
+        return elementSelector(elementSubject);
+      }
+      assert(widgetSelector != null);
+
+      if (widgetSelector != null) {
+        final Subject<W> widgetSubject = elementSubject.context.nest<W>(
+          () => ['widget $W'],
+          (element) {
+            final widget = this.mapElementToWidget(element);
+            return Extracted.value(widget);
+          },
+        );
+        return widgetSelector.call(widgetSubject);
+      }
+
+      throw ArgumentError(
+        'Either elementSelector (former selector) or widgetSelector must be set',
+      );
+    }();
+
     match(subject);
     final name =
         describe(elementSubject).map((it) => it.trim()).toList().join(' ');

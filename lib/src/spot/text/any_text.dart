@@ -2,7 +2,6 @@ import 'package:checks/checks.dart';
 import 'package:flutter/material.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/checks/checks_nullability.dart';
-import 'package:spot/src/spot/element_extensions.dart';
 import 'package:spot/src/spot/selectors.dart';
 
 /// A union type for any text widget that can be found in the widget tree.
@@ -19,20 +18,6 @@ class AnyText extends Widget {
     this.text,
   });
 
-  factory AnyText.fromText(Text widget) {
-    return AnyText._(
-      textStyle: widget.style,
-      maxLines: widget.maxLines,
-      text: widget.data,
-    );
-  }
-  factory AnyText.fromSelectableText(SelectableText widget) {
-    return AnyText._(
-      textStyle: widget.style,
-      maxLines: widget.maxLines,
-      text: widget.data,
-    );
-  }
   factory AnyText.fromEditableText(EditableText widget) {
     return AnyText._(
       textStyle: widget.style,
@@ -59,133 +44,143 @@ class AnyText extends Widget {
     throw UnimplementedError();
   }
 }
-// typedef AnyText = Widget;
 
+/// A [WidgetSelector] that matches any text on the screen, including:
+/// - [Text]
+/// - [SelectableText]
+/// - [RichText]
+/// - [EditableText]
 class SingleAnyTextWidgetSelector extends SingleWidgetSelector<AnyText> {
   SingleAnyTextWidgetSelector({
     required super.props,
     super.children,
     super.parents,
-  });
+  }) : super(mapElementToWidget: _mapElementToAnyText);
 
-  @override
-  List<ElementFilter> createElementFilters() {
-    return super.createElementFilters()
-      ..removeWhere((it) => it is WidgetTypeFilter);
-  }
-
-  @override
-  AnyText mapElementToWidget(Element element) {
+  static AnyText _mapElementToAnyText(Element element) {
     if (element.widget is RichText) {
+      // RichText is used by Text and SelectableText under the hood
       return AnyText.fromRichText(element.widget as RichText);
     }
     if (element.widget is EditableText) {
       return AnyText.fromEditableText(element.widget as EditableText);
     }
-    return super.mapElementToWidget(element);
+    throw ArgumentError(
+      'Widget ${element.widget.toStringShort()} is not supported by AnyText',
+    );
+  }
+
+  @override
+  List<ElementFilter> createElementFilters() {
+    return super.createElementFilters()
+      // Matches multiple widget types, can't filter by synthetic type AnyText
+      ..removeWhere((it) => it is WidgetTypeFilter);
   }
 }
 
 extension AnyTextMatcher on WidgetMatcher<AnyText> {
   WidgetMatcher<AnyText> hasMaxLines(int? value) {
-    return hasDiagnosticProp<int>(
-      'maxLines',
-      (it) {
-        value == null ? it.isNull() : it.equals(value);
-      },
-    );
+    return hasMaxLinesWhere((it) => it.equals(value));
   }
 
   WidgetMatcher<AnyText> hasMaxLinesWhere(MatchProp<int?> match) {
-    return hasProp(
-      selector: (subject) => subject.context.nest<int?>(
-        () => ['has "maxLines"'],
-        (Element element) {
-          final widget = element.widget;
-
-          if (widget is Text) {
+    return hasProp<int?>(
+      widgetSelector: (Subject<AnyText> widget) {
+        return widget.context.nest<int?>(
+          () => ['has maxLines'],
+          (AnyText widget) {
             return Extracted.value(widget.maxLines);
-          }
-          throw 'unsupported widget type ${widget.runtimeType}';
-        },
-      ),
+          },
+        );
+      },
+      match: match,
+    );
+  }
+
+  WidgetMatcher<AnyText> hasText(String value) {
+    return hasTextWhere((it) => it.equals(value));
+  }
+
+  WidgetMatcher<AnyText> hasTextWhere(MatchProp<String?> match) {
+    return hasProp<String?>(
+      widgetSelector: (Subject<AnyText> widget) {
+        return widget.context.nest<String?>(
+          () => ['has text'],
+          (AnyText widget) {
+            return Extracted.value(widget.text);
+          },
+        );
+      },
       match: match.hideNullability(),
     );
   }
 
-  WidgetMatcher<AnyText> hasEffectiveMaxLinesWhere(MatchProp<int?> match) {
-    return hasProp(
-      selector: (subject) => subject.context.nest<int?>(
-        () => ['has "maxLines"'],
-        (element) => Extracted.value(_extractMaxLines(element)),
-      ),
-      match: match.hideNullability(),
-    );
+  WidgetMatcher<AnyText> hasTextStyle(TextStyle value) {
+    return hasTextStyleWhere((it) => it.equals(value));
   }
 
-  WidgetMatcher<AnyText> hasEffectiveMaxLines(int? value) {
-    return hasEffectiveMaxLinesWhere((it) => it.equals(value));
-  }
-
-  WidgetMatcher<AnyText> hasEffectiveTextStyleWhere(
-    MatchProp<TextStyle> match,
-  ) {
-    return hasProp(
-      selector: (subject) => subject.context.nest<TextStyle?>(
-        () => ['has "textStyle"'],
-        (Element element) => Extracted.value(_extractTextStyle(element)),
-      ),
+  WidgetMatcher<AnyText> hasTextStyleWhere(MatchProp<TextStyle?> match) {
+    return hasProp<TextStyle?>(
+      widgetSelector: (Subject<AnyText> widget) {
+        return widget.context.nest<TextStyle?>(
+          () => ['has textStyle'],
+          (AnyText widget) {
+            return Extracted.value(widget.textStyle);
+          },
+        );
+      },
       match: match.hideNullability(),
     );
   }
 }
 
 extension AnyTextSelector on WidgetSelector<AnyText> {
-  WidgetSelector<AnyText> withEffectiveMaxLinesMatching(MatchProp<int?> match) {
-    return withProp(
-      selector: (subject) => subject.context.nest<int?>(
-        () => ['with "maxLines"'],
-        (Element element) {
-          final widget = element.widget;
+  WidgetSelector<AnyText> withMaxLines(int? value) {
+    return withMaxLinesMatching((it) => it.equals(value));
+  }
 
-          if (widget is Text) {
-            return Extracted.value(widget.maxLines);
-          }
-          throw 'unsupported widget type ${widget.runtimeType}';
+  WidgetSelector<AnyText> withMaxLinesMatching(MatchProp<int?> match) {
+    return withProp(
+      widgetSelector: (subject) => subject.context.nest<int?>(
+        () => ['with "maxLines"'],
+        (AnyText widget) {
+          return Extracted.value(widget.maxLines);
         },
       ),
       match: match,
     );
   }
 
-  WidgetSelector<AnyText> withEffectiveMaxLines(int? value) {
-    return withEffectiveMaxLinesMatching((it) => it.equals(value));
+  WidgetSelector<AnyText> withText(String value) {
+    return withTextMatching((it) => it.equals(value));
   }
-}
 
-int? _extractMaxLines(Element element) {
-  element.requireWidgetType<Text>();
-  // every Text widget has a RichText child where the effective maxLines are set
-  final richTextElement =
-      element.children.firstWhere((e) => e.widget is RichText);
-  final richText = richTextElement.widget as RichText;
-  return richText.maxLines;
-}
+  WidgetSelector<AnyText> withTextMatching(MatchProp<String?> match) {
+    return withProp(
+      widgetSelector: (subject) => subject.context.nest<String?>(
+        () => ['with "text"'],
+        (AnyText widget) {
+          return Extracted.value(widget.text);
+        },
+      ),
+      match: match.hideNullability(),
+    );
+  }
 
-TextStyle _extractTextStyle(Element element) {
-  element.requireWidgetType<Text>();
-  // every Text widget has a RichText child where
-  final richTextElement =
-      element.children.firstWhere((e) => e.widget is RichText);
-  final richText = richTextElement.widget as RichText;
-  return richText.text.style!;
-}
+  WidgetSelector<AnyText> withTextStyle(TextStyle value) {
+    return withTextStyleMatching((it) => it.equals(value));
+  }
 
-extension on Element {
-  void requireWidgetType<W extends Widget>() {
-    if (widget is! W) {
-      throw 'Require widget of type $W but got ${widget.runtimeType} from Element $this';
-    }
+  WidgetSelector<AnyText> withTextStyleMatching(MatchProp<TextStyle?> match) {
+    return withProp(
+      widgetSelector: (subject) => subject.context.nest<TextStyle?>(
+        () => ['with "textStyle"'],
+        (AnyText widget) {
+          return Extracted.value(widget.textStyle);
+        },
+      ),
+      match: match.hideNullability(),
+    );
   }
 }
 
