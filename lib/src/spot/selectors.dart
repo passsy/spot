@@ -142,6 +142,18 @@ mixin Selectors<T extends Widget> {
     );
   }
 
+  /// Creates a [WidgetSelector] that finds text within the parent
+  ///
+  /// This method combines finding of [Text], [EditableText] and [SelectableText]
+  /// widgets. Ultimately, all widgets show text as [RichText] widget.
+  ///
+  /// For assertions against specific text widgets and their properties, use the
+  /// normal [spot] method and set the text widget type as generic type argument.
+  ///
+  /// ```dart
+  /// final welcome = spot<Text>().whereText((it) => it.equals("Hello"));
+  /// welcome.first().snapshot().hasMaxLines(1).hasTextAlign(TextAlign.center);
+  /// ```
   SingleWidgetSelector<AnyText> spotText(
     Pattern text, {
     List<WidgetSelector> parents = const [],
@@ -1125,9 +1137,18 @@ class SingleWidgetSnapshot<W extends Widget> implements WidgetMatcher<W> {
   }
 
   @override
-  Element get element => discovered!.element;
+  Element get element {
+    if (discovered == null) {
+      throw StateError(
+        "WidgetSelector does not match any widget, can not access the shorthand 'element'. "
+        "Instead check if 'discovered' is null.",
+      );
+    }
+    return discovered!.element;
+  }
 
-  W? get discoveredWidget => element.widget as W?;
+  W? get discoveredWidget =>
+      discovered == null ? null : selector.mapElementToWidget(element);
 
   Element? get discoveredElement => element;
 

@@ -91,6 +91,21 @@ void main() {
         spotText(RegExp('f.*o')).existsOnce();
         spotText(RegExp('f.*o')).existsOnce().hasMaxLines(null);
       });
+
+      testWidgets('snapshot', (tester) async {
+        await tester.pumpWidget(tree.value);
+        final foundSnapshot = spotText('foo').snapshot();
+        check(foundSnapshot.discovered).isA<WidgetTreeNode>();
+        check(foundSnapshot.discoveredElement).isA<Element>();
+        check(foundSnapshot.discoveredWidget).isA<AnyText>();
+        check(foundSnapshot.element).isA<Element>();
+
+        final notFound = spotText('bar').snapshot();
+        check(notFound.discovered).isNull();
+        check(notFound.discoveredWidget).isNull();
+        check(() => notFound.element).throws<StateError>();
+        check(() => notFound.discoveredElement).throws<StateError>();
+      });
     }
 
     group('RichText', () {
