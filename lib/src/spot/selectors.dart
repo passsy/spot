@@ -771,9 +771,13 @@ class ChildFilter implements ElementFilter {
     for (final WidgetTreeNode candidate in candidates) {
       final Map<WidgetSelector, List<WidgetTreeNode>> matchesPerChild = {};
 
-      final subtreeNodes = tree.scope(candidate).allNodes;
+      final subtree = tree.scope(candidate);
+      final List<WidgetTreeNode> subtreeNodes = subtree.allNodes;
       for (final WidgetSelector<Widget> childSelector in children) {
         matchesPerChild[childSelector] = [];
+        // TODO instead of searching the children, starting from the root widget, find a way to reverse the search and
+        //  start form the subtree.
+        //  Keep in mind, each child selector might be defined with parents which are outside of the subtree
         final MultiWidgetSnapshot ss = snapshot(childSelector);
         final discoveredInSubtree = ss.discovered
             .where((element) => subtreeNodes.contains(element))
