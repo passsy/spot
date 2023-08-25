@@ -144,6 +144,9 @@ mixin Selectors<T extends Widget> {
 
   /// Creates a [WidgetSelector] that finds text within the parent
   ///
+  /// [spotText] compares text using 'contains'. For more control over the
+  /// comparison, use [spotTextWhere]
+  ///
   /// This method combines finding of [Text], [EditableText] and [SelectableText]
   /// widgets. Ultimately, all widgets show text as [RichText] widget.
   ///
@@ -159,11 +162,43 @@ mixin Selectors<T extends Widget> {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
+    return spotTextWhere(
+      (it) => it.contains(text),
+      parents: parents,
+      children: children,
+      description: 'contains text "$text"',
+    );
+  }
+
+  /// Creates a [WidgetSelector] that finds text matching [match] in the parent
+  ///
+  /// ``` dart
+  /// Text('Hello World');
+  ///
+  /// // all match the Text widget above
+  /// spotTextWhere((it) => it.equals('Hello World'));
+  /// spotTextWhere((it) => it.startsWith('Hello'));
+  /// spotTextWhere((it) => it.endsWith('World!'));
+  /// spotTextWhere((it) => it.contains('Wo'));
+  /// spotText('Wo');
+  /// ```
+  SingleWidgetSelector<AnyText> spotTextWhere(
+    void Function(Subject<String>) match, {
+    List<WidgetSelector> parents = const [],
+    List<WidgetSelector> children = const [],
+    String? description,
+  }) {
+    final String name = description ??
+        () {
+          final ConditionSubject<String> subject = it();
+          match(subject);
+          return describe(subject).map((it) => it.trim()).toList().join(' ');
+        }();
     return SingleAnyTextWidgetSelector(
       props: [
         MatchTextPredicate(
-          match: (it) => it.contains(text),
-          description: 'contains text "$text"',
+          match: (it) => match(it),
+          description: 'Widget with text $name',
         ),
       ],
       parents: [if (self != null) self!, ...parents],

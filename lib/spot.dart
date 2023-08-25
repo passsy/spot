@@ -179,6 +179,9 @@ SingleWidgetSelector<W> spotElement<W extends Widget>(
 
 /// Finds text on the screen
 ///
+/// [spotText] compares text using 'contains'. For more control over the
+/// comparison, use [spotTextWhere]
+///
 /// This method combines finding of [Text], [EditableText] and [SelectableText]
 /// widgets. Ultimately, all widgets show text as [RichText] widget.
 ///
@@ -196,6 +199,32 @@ SingleWidgetSelector<AnyText> spotText(
 }) {
   return _global.spotText(
     text,
+    parents: parents,
+    children: children,
+  );
+}
+
+/// Finds text matching [match] on the screen
+///
+/// This methods gives more control how the text is matched compared to [spotText].
+///
+/// ``` dart
+/// Text('Hello World');
+///
+/// // all match the Text widget above
+/// spotTextWhere((it) => it.equals('Hello World'));
+/// spotTextWhere((it) => it.startsWith('Hello'));
+/// spotTextWhere((it) => it.endsWith('World!'));
+/// spotTextWhere((it) => it.contains('Wo'));
+/// spotText('Wo');
+/// ```
+SingleWidgetSelector<AnyText> spotTextWhere(
+  void Function(Subject<String>) match, {
+  List<WidgetSelector> parents = const [],
+  List<WidgetSelector> children = const [],
+}) {
+  return _global.spotTextWhere(
+    match,
     parents: parents,
     children: children,
   );

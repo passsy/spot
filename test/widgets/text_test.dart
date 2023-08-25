@@ -28,14 +28,13 @@ void main() {
     children: [RichText(text: TextSpan(text: 'foo', style: TextStyle()))],
   );
 
+  final trees = {
+    'Text': treeText,
+    'SelectableText': treeSelectableText,
+    'EditableText': treeEditableText,
+    'RichText': treeRichText,
+  };
   group('spotText', () {
-    final trees = {
-      'Text': treeText,
-      'SelectableText': treeSelectableText,
-      'EditableText': treeEditableText,
-      'RichText': treeRichText,
-    };
-
     for (final tree in trees.entries) {
       final widgetType = tree.key;
 
@@ -156,6 +155,26 @@ void main() {
         spotText('foo${obj}bar').existsOnce(); // WidgetSpan becomes whitespace
       });
     });
+  });
+
+  group('spotTextWhere', () {
+    for (final tree in trees.entries) {
+      final widgetType = tree.key;
+
+      testWidgets('$widgetType equals', (tester) async {
+        await tester.pumpWidget(tree.value);
+
+        spotTextWhere((it) => it.equals('foo')).existsOnce();
+        spotTextWhere((it) => it.equals('oo')).doesNotExist();
+      });
+
+      testWidgets('$widgetType startsWith', (tester) async {
+        await tester.pumpWidget(tree.value);
+
+        spotTextWhere((it) => it.startsWith('fo')).existsOnce();
+        spotTextWhere((it) => it.startsWith('oo')).doesNotExist();
+      });
+    }
   });
 
   group('deprecated', () {
