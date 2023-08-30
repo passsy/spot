@@ -102,7 +102,7 @@ void main() {
         icon.hasColorWhere((color) => color.equals(Colors.black));
       }),
       throwsSpotErrorContaining([
-        "Expected that all candidates fulfill matcher 'property color that: equals <Color(0xff000000)>', but only 0 of 2 did."
+        "Expected that all candidates fulfill matcher 'property color that: equals <Color(0xff000000)>', but only 0 of 2 did.",
       ]),
     );
   });
@@ -139,7 +139,7 @@ void main() {
         icon.hasColorWhere((color) => color.equals(Colors.black));
       }),
       throwsSpotErrorContaining([
-        "Expected that at least one candidate fulfills matcher 'property color that: equals <Color(0xff000000)>', but none did."
+        "Expected that at least one candidate fulfills matcher 'property color that: equals <Color(0xff000000)>', but none did.",
       ]),
     );
   });

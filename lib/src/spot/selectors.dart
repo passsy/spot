@@ -87,7 +87,7 @@ mixin Selectors<T extends Widget> {
         PredicateWithDescription(
           (Element e) => identical(e.widget, widget),
           description: 'Widget === $widget',
-        )
+        ),
       ],
       parents: [if (self != null) self!, ...parents],
       children: children,
@@ -336,7 +336,7 @@ extension SelectorQueries<W extends Widget> on Selectors<W> {
         PredicateWithDescription(
           (Element e) => predicate(e),
           description: description,
-        )
+        ),
       ],
     );
   }
@@ -356,7 +356,7 @@ extension SelectorQueries<W extends Widget> on Selectors<W> {
             return false;
           },
           description: description,
-        )
+        ),
       ],
     );
   }
@@ -397,7 +397,7 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
         if (prop.value is! T) {
           return Extracted.rejection(
             which: [
-              'Has no prop "$propName" of type "$T", the type is "${prop.value.runtimeType}"'
+              'Has no prop "$propName" of type "$T", the type is "${prop.value.runtimeType}"',
             ],
           );
         }
@@ -637,7 +637,7 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
       PredicateWithDescription(
         (e) => true,
         description: 'any Widget',
-      )
+      ),
     ],
   );
 
@@ -810,7 +810,7 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
             if (prop.value is! T) {
               return Extracted.rejection(
                 which: [
-                  'Has no prop "$propName" of type "$T", the type is "${prop.value.runtimeType}"'
+                  'Has no prop "$propName" of type "$T", the type is "${prop.value.runtimeType}"',
                 ],
               );
             }
@@ -847,6 +847,23 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
 
 /// A collection of [discovered] elements that match [selector]
 class MultiWidgetSnapshot<W extends Widget> {
+  MultiWidgetSnapshot({
+    required this.selector,
+    required this.discovered,
+    required this.debugCandidates,
+    required this.scope,
+  }) : _widgets = Map.fromEntries(
+          discovered.map((e) => MapEntry(e, e.element.widget as W)),
+        );
+
+  /// The widgets at the point when the snapshot was taken
+  ///
+  /// [Element] is a mutable object that might have changed since the snapshot
+  /// was taken. This is a reference to the widget that was found at the time
+  /// the snapshot was taken. This allows to compare the widget with the current
+  /// widget in the tree.
+  final Map<WidgetTreeNode, W> _widgets;
+
   final WidgetSelector<W> selector;
 
   final ScopedWidgetTreeSnapshot scope;
@@ -861,18 +878,10 @@ class MultiWidgetSnapshot<W extends Widget> {
   /// The parent nodes from where the node has been found
   // final List<MultiWidgetSnapshot> parents;
 
-  List<W> get discoveredWidgets =>
-      discovered.map((e) => e.element.widget as W).toList();
+  List<W> get discoveredWidgets => _widgets.values.toList();
 
   List<Element> get discoveredElements =>
       discovered.map((e) => e.element).toList();
-
-  MultiWidgetSnapshot({
-    required this.selector,
-    required this.discovered,
-    required this.debugCandidates,
-    required this.scope,
-  });
 
   @override
   String toString() {
@@ -915,7 +924,15 @@ class SingleWidgetSnapshot<W extends Widget> implements WidgetMatcher<W> {
     required this.selector,
     required this.discovered,
     required this.debugCandidates,
-  });
+  }) : _widget = discovered?.element.widget;
+
+  /// The widget at the point when the snapshot was taken
+  ///
+  /// [Element] is a mutable object that might have changed since the snapshot
+  /// was taken. This is a reference to the widget that was found at the time
+  /// the snapshot was taken. This allows to compare the widget with the current
+  /// widget in the tree.
+  final Widget? _widget;
 
   @override
   final WidgetSelector<W> selector;
@@ -930,20 +947,18 @@ class SingleWidgetSnapshot<W extends Widget> implements WidgetMatcher<W> {
 
   @override
   String toString() {
-    return 'SingleSpotSnapshot of $selector (${discovered == null ? 'no' : '1'} match)}';
+    return 'SingleSpotSnapshot{widget: $_widget, selector: $selector, element: ${discovered?.element}}';
   }
 
   @override
-  Element get element {
-    return discovered!.element;
-  }
+  Element get element => discovered!.element;
 
   W? get discoveredWidget => element.widget as W?;
 
   Element? get discoveredElement => element;
 
   @override
-  W get widget => discovered!.element.widget as W;
+  W get widget => _widget! as W;
 }
 
 extension SelectorToSnapshot<W extends Widget> on WidgetSelector<W> {

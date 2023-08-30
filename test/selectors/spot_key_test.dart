@@ -102,7 +102,7 @@ void main() {
                   Text('x', key: key1),
                   Text('y', key: key2),
                 ],
-              )
+              ),
             ],
           ),
         ),
@@ -132,7 +132,7 @@ void main() {
                     Text('x', key: key1),
                     Text('y', key: key2),
                   ],
-                )
+                ),
               ],
             ),
           ),
