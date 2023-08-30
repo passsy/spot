@@ -73,6 +73,7 @@ void main() {
     builder: () => Image.file(File('')),
     propNameOverrides: {
       'this.excludeFromSemantics': 'excludeFromSemantics',
+      'thisExcludeFromSemantics': 'excludeFromSemantics',
     },
   );
   _generateWidget<Form>(builder: () => Form(child: _child));
@@ -219,6 +220,19 @@ void main() {
     imports: "import 'package:flutter/material.dart';",
   );
 
+  // UnionTypes
+  _generateWidget<AnyText>(
+    builder: () => AnyText.fromRichText(
+      RichText(
+        text: const TextSpan(text: 'Hello', style: TextStyle()),
+      ),
+    ),
+    filter: (node) {
+      if (node.name == 'renderObject') return false;
+      return true;
+    },
+  );
+
   test('format at the end', () {
     final generatedFiles = Directory('lib/src/widgets').listSync();
     Process.runSync('dart', [
@@ -232,6 +246,7 @@ void _generateWidget<W extends Widget>({
   required Widget Function() builder,
   Map<String, String> propNameOverrides = const {},
   String? imports,
+  bool Function(DiagnosticsNode node)? filter,
 }) {
   String name = W.toString();
   if (name.contains('<')) {
@@ -251,6 +266,7 @@ void _generateWidget<W extends Widget>({
       path: 'lib/src/widgets/${name.toLowerCase()}.g.dart',
       propNameOverrides: propNameOverrides,
       imports: imports,
+      filter: filter,
     );
   });
 }

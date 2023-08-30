@@ -20,6 +20,7 @@ export 'package:stack_trace/stack_trace.dart' show Frame;
 ///
 /// May also be just a single widget, not the entire screen
 class Screenshot {
+  /// Creates a [Screenshot] that points to a file on disk.
   Screenshot({
     required this.file,
     this.initiator,
@@ -142,6 +143,7 @@ Future<Screenshot> takeScreenshot({
   return Screenshot(file: file, initiator: frame);
 }
 
+/// Provides the ability to create screenshots of a [SingleWidgetSelector]
 extension SelectorScreenshotExtension<W extends Widget>
     on SingleWidgetSelector<W> {
   /// Takes as screenshot of the widget that can be found by this selector.
@@ -150,6 +152,7 @@ extension SelectorScreenshotExtension<W extends Widget>
   }
 }
 
+/// Provides the ability to create screenshots of a [SingleWidgetSnapshot]
 extension SnapshotScreenshotExtension<W extends Widget>
     on SingleWidgetSnapshot<W> {
   /// Takes as screenshot of the widget that was captured in this snapshot.
@@ -160,6 +163,7 @@ extension SnapshotScreenshotExtension<W extends Widget>
   }
 }
 
+/// Provides the ability to create screenshots of an [Element]
 extension ElementScreenshotExtension on Element {
   /// Takes as screenshot of this element
   ///

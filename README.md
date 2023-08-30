@@ -23,7 +23,7 @@ void main() {
     final appBar = scaffold.spot<AppBar>();
     
     // Assert for values of widgets
-    appBar.spot<Text>().existsOnce().hasText('Pepe');
+    appBar.spotText('Dash').hasFontSize(14).hasFontColor(Colors.black87);
     
     // Find widgets based on child widgets
     appBar
@@ -31,7 +31,7 @@ void main() {
         .existsOnce()
         .hasTooltip('home');
 
-    // Find widgets based on parent widgets
+    // Find widgets based on multiple parent widgets
     spot<Icon>(parents: [appBar, spot<IconButton>()])
         .existsExactlyNTimes(2)
         .all((icon) {
