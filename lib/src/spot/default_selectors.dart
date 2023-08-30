@@ -2,6 +2,7 @@
 
 import 'package:flutter/widgets.dart';
 import 'package:spot/spot.dart';
+import 'package:spot/src/spot/selectors.dart';
 
 extension DefaultWidgetMatchers<W extends Widget> on WidgetMatcher<W> {
   WidgetMatcher<W> hasDepthWhere(MatchProp<int> match) {
@@ -13,14 +14,17 @@ extension DefaultWidgetMatchers<W extends Widget> on WidgetMatcher<W> {
   }
 
   WidgetMatcher<W> hasKeyWhere(MatchProp<Key> match) {
-    return hasDiagnosticProp<Key>('key', match);
+    return hasProp(
+      widgetSelector: (subject) => subject.context.nest<Key?>(
+        () => ['has key'],
+        (W widget) => Extracted.value(widget.key),
+      ),
+      match: match.hideNullability(),
+    );
   }
 
   WidgetMatcher<W> hasKey(Key? value) {
-    return hasDiagnosticProp<Key>(
-      'key',
-      (it) => value == null ? it.isNull() : it.equals(value),
-    );
+    return hasKeyWhere((it) => value == null ? it.isNull() : it.equals(value));
   }
 }
 
@@ -34,13 +38,16 @@ extension DefaultWidgetSelectors<W extends Widget> on WidgetSelector<W> {
   }
 
   WidgetSelector<W> whereKey(MatchProp<Key> match) {
-    return withDiagnosticProp<Key>('key', match);
+    return withProp(
+      widgetSelector: (subject) => subject.context.nest<Key?>(
+        () => ['has key'],
+        (W widget) => Extracted.value(widget.key),
+      ),
+      match: match.hideNullability(),
+    );
   }
 
   WidgetSelector<W> withKey(Key? value) {
-    return withDiagnosticProp<Key>(
-      'key',
-      (it) => value == null ? it.isNull() : it.equals(value),
-    );
+    return whereKey((it) => value == null ? it.isNull() : it.equals(value));
   }
 }

@@ -516,28 +516,29 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
     String propName,
     MatchProp<T> match,
   ) {
-    final diagnosticsNode = element.toDiagnosticsNode();
+    final mappedElement = selector.mapElementToWidget(element);
+    final diagnosticsNode = mappedElement.toDiagnosticsNode();
     final DiagnosticsNode? prop = diagnosticsNode
         .getProperties()
         .firstOrNullWhere((e) => e.name == propName);
 
-    final actual = prop?.value as T?;
+    final actual = prop?.value as T? ?? prop?.getDefaultValue<T>();
 
     final ConditionSubject<T?> conditionSubject = it<T?>();
     final Subject<T> subject = conditionSubject.context.nest<T>(
       () => [selector.toStringBreadcrumb(), 'with property $propName'],
-      (_) {
+      (value) {
         if (prop == null) {
           return Extracted.rejection(which: ['Has no prop "$propName"']);
         }
-        if (prop.value is! T) {
+        if (value is! T) {
           return Extracted.rejection(
             which: [
               'Has no prop "$propName" of type "$T", the type is "${prop.value.runtimeType}"',
             ],
           );
         }
-        return Extracted.value(actual as T);
+        return Extracted.value(value);
       },
     );
     match(subject);
@@ -672,6 +673,11 @@ class PredicateWithDescription {
   final String description;
 
   PredicateWithDescription(this.predicate, {required this.description});
+
+  @override
+  String toString() {
+    return 'PredicateWithDescription{"$description"}';
+  }
 }
 
 class WidgetTypePredicate<W extends Widget> extends PredicateWithDescription {
@@ -743,9 +749,11 @@ class PropFilter implements ElementFilter {
 
   @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
-    return candidates
-        .where((node) => props.all((prop) => prop.predicate(node.element)))
-        .toList();
+    return candidates.where((node) {
+      return props.all((prop) {
+        return prop.predicate(node.element);
+      });
+    }).toList();
   }
 
   @override
@@ -971,7 +979,7 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
 
       if (widgetSelector != null) {
         final Subject<W> widgetSubject = elementSubject.context.nest<W>(
-          () => ['widget $W'],
+          () => [],
           (element) {
             final widget = this.mapElementToWidget(element);
             return Extracted.value(widget);
@@ -992,7 +1000,24 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
     return whereElement(
       (element) {
         final failure = softCheck(element, elementSubject);
-        return failure == null;
+        if (failure != null) {
+          final errorParts =
+              describe(elementSubject).map((it) => it.trim()).toList();
+          // workaround allowing to use
+          // hasPropertyXWhere((subject)=> subject.equals(X));
+          // instead of
+          // hasPropertyXWhere((subject)=> subject.isNotNull().equals(X));
+          //
+          // when Subject is Subject<T> but the value can actually be null (should be Subject<T?>).
+          if (errorParts.last == 'is null' &&
+              failure.rejection.actual.firstOrNull == '<null>') {
+            // property is null and isNull() was called
+            // not error because null == null
+            return true;
+          }
+          return false;
+        }
+        return true;
       },
       description: name,
     );
@@ -1015,21 +1040,21 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
 
     return whereElement(
       (element) {
-        final diagnosticsNode = element.toDiagnosticsNode();
+        final diagnosticsNode = mapElementToWidget(element).toDiagnosticsNode();
         final DiagnosticsNode? prop = diagnosticsNode
             .getProperties()
             .firstOrNullWhere((e) => e.name == propName);
 
-        final actual = prop?.value as T?;
+        final actual = prop?.value as T? ?? prop?.getDefaultValue<T>();
 
         final ConditionSubject<T?> conditionSubject = it<T?>();
         final Subject<T> subject = conditionSubject.context.nest<T>(
           () => [toStringBreadcrumb(), 'with prop "$propName"'],
-          (_) {
+          (value) {
             if (prop == null) {
               return Extracted.rejection(which: ['Has no prop "$propName"']);
             }
-            if (prop.value is! T) {
+            if (value is! T) {
               return Extracted.rejection(
                 which: [
                   'Has no prop "$propName" of type "$T", the type is "${prop.value.runtimeType}"',
@@ -1334,10 +1359,12 @@ extension CreateMatchers<W extends Widget> on WidgetSelector<W> {
     required String path,
     Map<String, String> propNameOverrides = const {},
     String? imports,
+    bool Function(DiagnosticsNode node)? filter,
   }) {
     final content = createMatcherString(
       propNameOverrides: propNameOverrides,
       imports: imports,
+      filter: filter,
     );
     final file = File(path);
     if (content == null) {
@@ -1354,10 +1381,15 @@ extension CreateMatchers<W extends Widget> on WidgetSelector<W> {
   String? createMatcherString({
     Map<String, String> propNameOverrides = const {},
     String? imports,
+    bool Function(DiagnosticsNode node)? filter,
   }) {
     final snapshot = existsAtLeastOnce();
     final anyElement = snapshot.discoveredElements.first;
-    final props = anyElement.toDiagnosticsNode().getProperties();
+
+    final elementProps = anyElement.toDiagnosticsNode().getProperties();
+    final widgetProps =
+        mapElementToWidget(anyElement).toDiagnosticsNode().getProperties();
+
     String widgetType = _typeOf<W>().toString().capitalize();
     if (widgetType.contains('<')) {
       widgetType = widgetType.substring(0, widgetType.indexOf('<'));
@@ -1378,17 +1410,33 @@ extension ${widgetType}Selector on WidgetSelector<$widgetType> {
 ''',
     );
 
-    final distinctProps = props.distinctBy((it) => it.name).toList();
+    final distinctProps =
+        [...widgetProps, ...elementProps].distinctBy((it) => it.name).toList();
     for (final DiagnosticsNode prop in distinctProps) {
-      final propName = prop.name!;
-      final humanPropName = propNameOverrides[propName] ?? propName;
+      if (filter != null && !filter(prop)) {
+        continue;
+      }
+      final String diagnosticPropName = prop.name!;
+      final String methodPropName = () {
+        final String name = prop.name!;
+        final parts = name.split(RegExp('[^a-zA-Z]'));
+        if (parts.length == 1) {
+          return name;
+        }
+
+        // camel case
+        return parts
+            .mapIndexed((index, it) => index == 0 ? it : it.capitalize())
+            .join();
+      }();
+      final humanPropName = propNameOverrides[methodPropName] ?? methodPropName;
       String propType = prop.getType();
       if (prop is ObjectFlagProperty &&
           (propType == 'Widget' || propType == 'Widget?')) {
         // matchers on widgets are not supported, use .spot() to check the tree further down
         continue;
       }
-      if (prop is FlagProperty && propName == 'dirty') {
+      if (prop is FlagProperty && methodPropName == 'dirty') {
         // dirty flags are irrelevant for assertions (and always false)
         continue;
       }
@@ -1400,9 +1448,12 @@ extension ${widgetType}Selector on WidgetSelector<$widgetType> {
         // ignore default properties that are covered by general Wiget selectors
         continue;
       }
-      if (prop.name == 'dependencies' && propType == 'List<DiagnosticsNode>') {
-        // Widget dependencies are only indirect properties
-        continue;
+      if (prop.name == 'dependencies') {
+        if (propType == 'List<DiagnosticsNode>' ||
+            propType == 'Set<InheritedElement>') {
+          // Widget dependencies are only indirect properties
+          continue;
+        }
       }
       if (prop.name == 'renderObject' && propType == 'RenderObject') {
         final propValueRuntimeType = prop.value.runtimeType.toString();
@@ -1431,24 +1482,24 @@ extension ${widgetType}Selector on WidgetSelector<$widgetType> {
       matcherSb.writeln('''
   /// Expects that $humanPropName of [$widgetType] matches the condition in [match]    
   WidgetMatcher<$widgetType> $matcherVerb${humanPropName.capitalize()}Where(MatchProp<$propType> match) {
-    return hasDiagnosticProp<$propType>('$propName', match);
+    return hasDiagnosticProp<$propType>('$diagnosticPropName', match);
   }
   
   /// Expects that $humanPropName of [$widgetType] equals (==) [value]
   WidgetMatcher<$widgetType> $matcherVerb${humanPropName.capitalize()}($propTypeNullable value) {
-    return hasDiagnosticProp<$propType>('$propName', (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<$propType>('$diagnosticPropName', (it) => value == null ? it.isNull() : it.equals(value));
   }
 ''');
 
       selectorSb.writeln('''
   /// Creates a [WidgetSelector] that finds all [$widgetType] where $humanPropName matches the condition   
   WidgetSelector<$widgetType> where${humanPropName.capitalize()}(MatchProp<$propType> match) {
-    return withDiagnosticProp<$propType>('$propName', match);
+    return withDiagnosticProp<$propType>('$diagnosticPropName', match);
   }
   
   /// Creates a [WidgetSelector] that finds all [$widgetType] where $humanPropName equals (==) [value]
   WidgetSelector<$widgetType> with${humanPropName.capitalize()}($propTypeNullable value) {
-    return withDiagnosticProp<$propType>('$propName', (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<$propType>('$diagnosticPropName', (it) => value == null ? it.isNull() : it.equals(value));
   }
 ''');
     }
@@ -1463,7 +1514,13 @@ extension ${widgetType}Selector on WidgetSelector<$widgetType> {
 
     final overridesParam = propNameOverrides.isEmpty
         ? ''
-        : 'propNameOverrides: ${propNameOverrides.mapEntries((it) => MapEntry("'${it.key}'", "'${it.value}'"))}';
+        : () {
+            final map = propNameOverrides
+                .mapEntries((it) => MapEntry("'${it.key}'", "'${it.value}'"))
+                .map((it) => '${it.key}: ${it.value}')
+                .joinToString(separator: ', ', prefix: '{', postfix: '}');
+            return 'propNameOverrides: $map';
+          }();
 
     return '''
 // ignore_for_file: require_trailing_commas
@@ -1546,5 +1603,18 @@ extension ReadType on DiagnosticsNode {
     }
 
     return 'Object?';
+  }
+}
+
+extension on DiagnosticsNode {
+  T? getDefaultValue<T>() {
+    try {
+      if (this is DiagnosticsProperty) {
+        return (this as DiagnosticsProperty).defaultValue as T?;
+      }
+    } catch (_) {
+      return null;
+    }
+    return null;
   }
 }

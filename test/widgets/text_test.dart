@@ -6,9 +6,11 @@ import 'package:spot/spot.dart';
 
 import '../spot/existence_comparison_test.dart';
 
-void main() {
-  final treeText = _stage(children: [Text('foo')]);
+const testTextStyle = TextStyle(color: Colors.red);
 
+void main() {
+  // does inherit TextStyle
+  final treeText = _stage(children: [Text('foo')]);
   final treeSelectableText = _stage(children: [SelectableText('foo')]);
 
   final treeEditableText = _stage(
@@ -17,7 +19,7 @@ void main() {
         controller: TextEditingController(text: 'foo'),
         focusNode: FocusNode(),
         maxLines: null,
-        style: TextStyle(),
+        style: testTextStyle, // not inherited from DefaultTextStyle
         cursorColor: Colors.black,
         backgroundCursorColor: Colors.black,
       ),
@@ -25,7 +27,14 @@ void main() {
   );
 
   final treeRichText = _stage(
-    children: [RichText(text: TextSpan(text: 'foo', style: TextStyle()))],
+    children: [
+      RichText(
+        text: TextSpan(
+          text: 'foo',
+          style: testTextStyle, // not inherited from DefaultTextStyle
+        ),
+      ),
+    ],
   );
 
   final trees = {
@@ -69,9 +78,9 @@ void main() {
       testWidgets('$widgetType with filter', (tester) async {
         await tester.pumpWidget(tree.value);
         spotText('foo')
-            .withMaxLinesMatching((it) => it.isNull())
-            .withTextMatching((it) => it.equals('foo'))
-            .withTextStyleMatching((it) => it.isNotNull())
+            .whereMaxLines((it) => it.isNull())
+            .whereText((it) => it.equals('foo'))
+            .whereFontColor((it) => it.isNotNull())
             .existsOnce();
       });
 
@@ -81,7 +90,9 @@ void main() {
             .existsOnce()
             .hasTextWhere((it) => it.equals('foo'))
             .hasMaxLinesWhere((it) => it.isNull())
-            .hasTextStyleWhere((it) => it.isNotNull());
+            .hasFontColor(Colors.red)
+            .hasFontSize(14)
+            .hasFontStyleWhere((it) => it.isNull());
       });
 
       testWidgets('$widgetType RegEx', (tester) async {
@@ -241,7 +252,7 @@ void main() {
 
         spotTexts('foo').existsOnce();
         spotTexts<EditableText>('foo').existsOnce();
-        spotTexts<EditableText>('foo').existsOnce().hasMaxLines(null);
+        spotTexts<EditableText>('foo').existsOnce().hasMaxLines(1);
       });
 
       testWidgets('spotSingleText finds EditableText', (tester) async {
@@ -249,7 +260,7 @@ void main() {
 
         spotSingleText('foo').existsOnce();
         spotSingleText<EditableText>('foo').existsOnce();
-        spotSingleText<EditableText>('foo').existsOnce().hasMaxLines(null);
+        spotSingleText<EditableText>('foo').existsOnce().hasMaxLines(1);
       });
 
       testWidgets('spotText finds EditableText', (tester) async {
@@ -265,8 +276,11 @@ void main() {
 Widget _stage({required List<Widget> children}) {
   return MaterialApp(
     home: Scaffold(
-      body: Column(
-        children: children,
+      body: DefaultTextStyle(
+        style: testTextStyle,
+        child: Column(
+          children: children,
+        ),
       ),
     ),
   );

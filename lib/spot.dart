@@ -46,11 +46,11 @@ export 'package:spot/src/spot/selectors.dart'
         WidgetSelector;
 export 'package:spot/src/spot/snapshot.dart'
     show MultiWidgetSelectorMatcher, SingleWidgetSelectorMatcher;
-export 'package:spot/src/spot/text/any_text.dart'
-    show AnyText, AnyTextMatcher, AnyTextSelector;
+export 'package:spot/src/spot/text/any_text.dart' show AnyText;
 export 'package:spot/src/spot/tree_snapshot.dart' show WidgetTreeNode;
 
 export 'package:spot/src/widgets/align.g.dart';
+export 'package:spot/src/widgets/anytext.g.dart';
 export 'package:spot/src/widgets/circularprogressindicator.g.dart';
 export 'package:spot/src/widgets/column.g.dart';
 export 'package:spot/src/widgets/constrainedbox.g.dart';
