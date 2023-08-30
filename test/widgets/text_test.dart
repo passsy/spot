@@ -95,6 +95,12 @@ void main() {
             .hasFontStyleWhere((it) => it.isNull());
       });
 
+      testWidgets('$widgetType exact', (tester) async {
+        await tester.pumpWidget(tree.value);
+        spotText('foo', exact: true).existsOnce();
+        spotText('oo', exact: true).doesNotExist();
+      });
+
       testWidgets('$widgetType RegEx', (tester) async {
         await tester.pumpWidget(tree.value);
 

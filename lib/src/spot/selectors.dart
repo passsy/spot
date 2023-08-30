@@ -145,7 +145,7 @@ mixin Selectors<T extends Widget> {
   /// Creates a [WidgetSelector] that finds text within the parent
   ///
   /// [spotText] compares text using 'contains'. For more control over the
-  /// comparison, use [spotTextWhere]
+  /// comparison, use [spotTextWhere] or set [exact] to `true`.
   ///
   /// This method combines finding of [Text], [EditableText] and [SelectableText]
   /// widgets. Ultimately, all widgets show text as [RichText] widget.
@@ -161,12 +161,28 @@ mixin Selectors<T extends Widget> {
     Pattern text, {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
+    bool exact = false,
   }) {
+    if (exact) {
+      if (text is! String) {
+        throw ArgumentError(
+          'Patterns are not supported for exact matching',
+        );
+      }
+      return spotTextWhere(
+        (it) => it.equals(text),
+        description: 'with text "$text"',
+        parents: parents,
+        children: children,
+      );
+    }
+
+    // default with contains
     return spotTextWhere(
       (it) => it.contains(text),
+      description: 'contains text "$text"',
       parents: parents,
       children: children,
-      description: 'contains text "$text"',
     );
   }
 

@@ -180,7 +180,7 @@ SingleWidgetSelector<W> spotElement<W extends Widget>(
 /// Finds text on the screen
 ///
 /// [spotText] compares text using 'contains'. For more control over the
-/// comparison, use [spotTextWhere]
+/// comparison, use [spotTextWhere] or set [exact] to `true`.
 ///
 /// This method combines finding of [Text], [EditableText] and [SelectableText]
 /// widgets. Ultimately, all widgets show text as [RichText] widget.
@@ -196,11 +196,13 @@ SingleWidgetSelector<AnyText> spotText(
   Pattern text, {
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
+  bool exact = false,
 }) {
   return _global.spotText(
     text,
     parents: parents,
     children: children,
+    exact: exact,
   );
 }
 
