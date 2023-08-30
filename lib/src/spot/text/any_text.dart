@@ -1,9 +1,7 @@
 import 'package:checks/checks.dart';
 import 'package:collection/collection.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:spot/spot.dart';
 import 'package:spot/src/checks/checks_nullability.dart';
 import 'package:spot/src/spot/selectors.dart';
 
@@ -156,8 +154,13 @@ class AnyText extends LeafRenderObjectWidget {
         showName: true,
       ),
     );
-    properties.add(EnumProperty<TextOverflow>('overflow', overflow,
-        defaultValue: TextOverflow.clip));
+    properties.add(
+      EnumProperty<TextOverflow>(
+        'overflow',
+        overflow,
+        defaultValue: TextOverflow.clip,
+      ),
+    );
     properties.add(IntProperty('maxLines', maxLines, ifNull: 'unlimited'));
     properties
         .add(DiagnosticsProperty<Locale>('locale', locale, defaultValue: null));
