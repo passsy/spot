@@ -266,16 +266,7 @@ void _generateWidget<W extends Widget>({
       path: 'lib/src/widgets/${name.toLowerCase()}.g.dart',
       propNameOverrides: propNameOverrides,
       imports: imports,
-      filter: (e) {
-        if (filter != null && !filter(e)) {
-          return false;
-        }
-
-        // if (e.name == 'dependencies') {
-        //   return false;
-        // }
-        return true;
-      },
+      filter: filter,
     );
   });
 }
