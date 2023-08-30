@@ -6,6 +6,7 @@ import 'package:spot/src/spot/selectors.dart';
 import 'package:spot/src/spot/tree_snapshot.dart';
 
 MultiWidgetSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
+  TestAsyncUtils.guardSync();
   final treeSnapshot = currentWidgetTreeSnapshot();
 
   if (selector.parents.isEmpty) {

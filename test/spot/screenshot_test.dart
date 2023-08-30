@@ -221,7 +221,7 @@ void main() {
   testWidgets('warning when screenshot is bigger than target', (tester) async {
     tester.view.physicalSize = const Size(1000, 1000);
     tester.view.devicePixelRatio = 1.0;
-    tester.pumpWidget(
+    await tester.pumpWidget(
       MaterialApp(
         home: Center(
           child: ColoredBox(
