@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.0
+- **Breaking** `act.tap` is now async, use `await act.tap()` #17
+- New: `spotText('foo')` finds any text on screen using "contains". The new `AnyText` widget combines `Text`, `SelectableText`, `RichText` and `EditableText` #18
+- New: `spotTextWhere((text) => )` allows to match text with custom logic #18
+- Deprecated: `spotSingleText` and `spotTexts` are deprecated in favor of `spotText` and the basic `spot<Text>()`, `spot<SelectableText>()`, ... #18
+- Fix: `hasProp` matcher can now check for null values with `(it) => it.isNull()` #18
+- Improvement: `withDiagnosticProp` now falls back to the default value of a `DiagnosticNode` #18
+
 ## 0.4.1
 - Added screenshot methods #14
   ```dart
