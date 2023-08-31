@@ -19,6 +19,18 @@ void main() {
       horizontalWrapSpot.existsOnce();
     });
 
+    testWidgets('filter with subject', (widgetTester) async {
+      await widgetTester.pumpWidget(MaterialApp(home: Wrap()));
+
+      final verticalWrapSpot =
+          spotSingle<Wrap>().whereDirection((it) => it.equals(Axis.vertical));
+      verticalWrapSpot.doesNotExist();
+
+      final horizontalWrapSpot =
+          spotSingle<Wrap>().whereDirection((it) => it.equals(Axis.horizontal));
+      horizontalWrapSpot.existsOnce();
+    });
+
     testWidgets('assert', (widgetTester) async {
       await widgetTester.pumpWidget(MaterialApp(home: Wrap()));
       final wrap = spot<Wrap>().existsOnce();

@@ -47,7 +47,7 @@ void main() {
       expect(
         () => spot<Center>().spotSingleKey(const ValueKey('key')).existsOnce(),
         throwsSpotErrorContaining([
-          "Could not find 'Widget with key: \"[<'key'>]\" with parents: ['Center']' in widget tree",
+          "Could not find Center > Widget with key: \"[<'key'>]\" in widget tree",
         ]),
       );
     });

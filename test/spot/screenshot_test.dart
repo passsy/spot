@@ -221,7 +221,7 @@ void main() {
   testWidgets('warning when screenshot is bigger than target', (tester) async {
     tester.view.physicalSize = const Size(1000, 1000);
     tester.view.devicePixelRatio = 1.0;
-    tester.pumpWidget(
+    await tester.pumpWidget(
       MaterialApp(
         home: Center(
           child: ColoredBox(
@@ -238,7 +238,7 @@ void main() {
     final log = <String>[];
     await runZoned(
       () async {
-        await takeScreenshot(selector: spotSingleText('button'));
+        await takeScreenshot(selector: spotText('button'));
       },
       zoneSpecification: ZoneSpecification(
         print: (self, parent, zone, message) {
@@ -252,15 +252,15 @@ void main() {
       text,
       contains(
         RegExp(
-          r'Warning: The screenshot captured of Text is larger \(1000, 1000\) '
-          r'than Text \(.*, .*\) itself.',
+          r'Warning: The screenshot captured of RichText is larger \(1000, 1000\) '
+          r'than RichText \(.*, .*\) itself.',
         ),
       ),
     );
     expect(
       text,
       contains(
-        'Wrap the Text in a RepaintBoundary to be able to capture only that layer.',
+        'Wrap the RichText in a RepaintBoundary to be able to capture only that layer.',
       ),
     );
   });

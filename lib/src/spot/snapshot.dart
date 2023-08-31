@@ -6,6 +6,7 @@ import 'package:spot/src/spot/selectors.dart';
 import 'package:spot/src/spot/tree_snapshot.dart';
 
 MultiWidgetSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
+  TestAsyncUtils.guardSync();
   final treeSnapshot = currentWidgetTreeSnapshot();
 
   if (selector.parents.isEmpty) {
@@ -277,7 +278,7 @@ void _tryMatchingLessSpecificCriteria<W extends Widget>(
     // error that selector could not be found, but instead spot detected lessSpecificSnapshot, which might be useful
     if (lessSpecificSnapshot.discoveredElements.isNotEmpty) {
       errorBuilder.writeln(
-        'Could not find ${min != null ? 'at least $min ' : ''}matches for '
+        'Could not find ${min != null && min > 1 ? 'at least $min matches for ' : ''}'
         '${selector.toStringBreadcrumb()} in widget tree, but found '
         '${lessSpecificSnapshot.discoveredElements.length} matches '
         'when searching for $lessSpecificSelector',
@@ -286,9 +287,10 @@ void _tryMatchingLessSpecificCriteria<W extends Widget>(
           'Please check the ${lessSpecificSnapshot.discoveredElements.length} '
           'matches for ${lessSpecificSelector.toStringBreadcrumb()} and adjust the constraints of the selector $selector accordingly:');
       int index = 0;
-      for (final Widget match in lessSpecificSnapshot.discoveredWidgets) {
+      for (final Element match in lessSpecificSnapshot.discoveredElements) {
         index++;
-        errorBuilder.writeln('Possible match #$index: ${match.toStringDeep()}');
+        errorBuilder
+            .writeln('Possible match #$index: ${match.widget.toStringDeep()}');
       }
       fail(errorBuilder.toString());
     }

@@ -31,17 +31,42 @@ void actTests() {
     final button = spotSingle<ElevatedButton>()..existsOnce();
 
     expect(i, 0);
-    act.tap(button);
+    await act.tap(button);
     expect(i, 1);
-    act.tap(button);
+    await act.tap(button);
     expect(i, 2);
+  });
+
+  testWidgets('tap must be awaited', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Center(
+          child: ElevatedButton(
+            onPressed: () {},
+            child: const Text('Home'),
+          ),
+        ),
+      ),
+    );
+    final future = act.tap(spotSingle<ElevatedButton>());
+
+    try {
+      TestAsyncUtils.guardSync();
+      fail('Expected to throw');
+    } catch (e) {
+      check(e).isA<FlutterError>().has((it) => it.message, 'message')
+        ..contains('You must use "await" with all Future-returning test APIs.')
+        ..contains('The guarded method "tap" from class Act was called from')
+        ..contains('act_test.dart');
+    }
+    await future;
   });
 
   testWidgets('tap throws if widget not in widget tree', (tester) async {
     await tester.pumpWidget(const MaterialApp());
     final button = spotSingle<ElevatedButton>()..doesNotExist();
 
-    expect(
+    await expectLater(
       () => act.tap(button),
       throwsSpotErrorContaining([
         "Could not find 'ElevatedButton' in widget tree",
@@ -68,7 +93,7 @@ void actTests() {
 
     final button = spotSingle<ElevatedButton>()..existsOnce();
 
-    expect(
+    await expectLater(
       () => act.tap(button),
       throwsSpotErrorContaining([
         "Widget 'ElevatedButton' is located outside the viewport",
@@ -138,7 +163,7 @@ void actTests() {
     );
 
     final button = spotSingle<ElevatedButton>()..existsOnce();
-    expect(
+    await expectLater(
       () => act.tap(button),
       throwsSpotErrorContaining([
         "Widget 'ElevatedButton' is covered by 'ColoredBox'",
@@ -163,7 +188,7 @@ void actTests() {
     );
 
     final button = spotSingle<ElevatedButton>()..existsOnce();
-    expect(
+    await expectLater(
       () => act.tap(button),
       throwsSpotErrorContaining([
         "Widget 'ElevatedButton' is wrapped in AbsorbPointer and doesn't receive taps.",
@@ -191,7 +216,7 @@ void actTests() {
     );
 
     final button = spotSingle<ElevatedButton>()..existsOnce();
-    expect(
+    await expectLater(
       () => act.tap(button),
       throwsSpotErrorContaining([
         "Widget 'ElevatedButton' is wrapped in IgnorePointer and doesn't receive taps",
@@ -204,7 +229,7 @@ void actTests() {
   testWidgets('tapping throws for non cartesian widgets', (tester) async {
     await tester.pumpWidget(_NonCartesianWidget());
     final button = spotSingle<_NonCartesianWidget>()..existsOnce();
-    expect(
+    await expectLater(
       () => act.tap(button),
       throwsSpotErrorContaining([
         "Widget '_NonCartesianWidget' is associated to _CustomRenderObject",
@@ -218,7 +243,7 @@ void actTests() {
       (tester) async {
     await tester.pumpWidget(_NoRenderObjectWidget());
     final button = spotSingle<_NoRenderObjectWidget>()..existsOnce();
-    expect(
+    await expectLater(
       () => act.tap(button),
       throwsSpotErrorContaining([
         "Widget '_NoRenderObjectWidget' has no associated RenderObject",

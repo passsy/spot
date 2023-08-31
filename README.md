@@ -23,7 +23,7 @@ void main() {
     final appBar = scaffold.spot<AppBar>();
     
     // Assert for values of widgets
-    appBar.spot<Text>().existsOnce().hasText('Pepe');
+    appBar.spotText('Dash').hasFontSize(14).hasFontColor(Colors.black87);
     
     // Find widgets based on child widgets
     appBar
@@ -31,7 +31,7 @@ void main() {
         .existsOnce()
         .hasTooltip('home');
 
-    // Find widgets based on parent widgets
+    // Find widgets based on multiple parent widgets
     spot<Icon>(parents: [appBar, spot<IconButton>()])
         .existsExactlyNTimes(2)
         .all((icon) {
@@ -106,22 +106,22 @@ Could not find 'icon "IconData(U+0E57F)"' as child of [type "MaterialApp" > 'typ
 
 ## Roadmap
 
-- [x] Make chainable `WidgetSelector`s
-- [x] Print full widget tree when assertions fail
-- [x] Allow defining `WidgetSelector` with children
-- [x] Allow defining `WidgetSelector` with parents
-- [x] Interop with `Finder` API
-- [x] Match properties of widgets (via `DiagnosticsNode`)
-- [x] Allow matching of nested properties (with checks API)
-- [x] Generate code for custom properties for Flutter widgets
-- [x] Allow generating code for properties of 3rd party widgets
-- [x] Interact with widgets (`act`)
-- [x] Allow manually printing a screenshot at certain points
-- [ ] More `act` features
-- [ ] Print only widget tree of the parent scope when test fails
-- [ ] Create screenshot when test fails
-- [ ] Automatically create report with screenshots of all user interactions
-- [ ] Create interactive HTML page with all widgets and matchers when test fails
+- ✅ Make chainable `WidgetSelector`s
+- ✅ Print full widget tree when assertions fail
+- ✅ Allow defining `WidgetSelector` with children
+- ✅ Allow defining `WidgetSelector` with parents
+- ✅ Interop with `Finder` API
+- ✅ Match properties of widgets (via `DiagnosticsNode`)
+- ✅ Allow matching of nested properties (with checks API)
+- ✅ Generate code for custom properties for Flutter widgets
+- ✅ Allow generating code for properties of 3rd party widgets
+- ✅ Interact with widgets (`act`)
+- ✅ Allow manually printing a screenshot at certain points
+- ⬜️ More `act` features
+- ⬜️ Print only widget tree of the parent scope when test fails
+- ⬜️ Create screenshot when test fails
+- ⬜️ Automatically create report with screenshots of all user interactions
+- ⬜️ Create interactive HTML page with all widgets and matchers when test fails
 
 ## Project state
 
