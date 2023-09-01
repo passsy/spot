@@ -40,10 +40,136 @@ void main() {
 
     // Interact with widgets using `act`
     final button = spotSingle<FloatingActionButton>();
-    act.tap(button);
+    await act.tap(button);
   });
 }
 
+```
+
+### Chain selectors
+
+You know exactly where your widgets are. 
+Like a button in the AppBar or a Text in a Dialog. 
+Spot allows you to chain matchers, narrowing down the search space.
+
+Chaining allows spot to create better error messages for you.
+Spot follows the chain of your selectors and can tell you exactly where the widget is missing.
+Like: `Could not find "IconButton" in "AppBar", but found these widgets instead: <AppBar-widget-tree>.`
+
+```dart
+spot<AppBar>().spot<IconButton>();
+spot<IconButton>(parents: [spot<AppBar>()]);
+```
+
+Both syntax are identical. The first is shorter for when you only need a single parent.
+The second allows checking for multiple parents, which is only required for rare use cases.
+
+### Selectors
+
+Spot has two features, creating **selectors** and asserting on them with **matchers**.
+
+A selector is a query to find a set of widgets. 
+Like a SQL query, or a CSS selector. 
+It is only a description of what to search for, without actually doing the search.
+
+Selectors can be rather complex, it is therefore recommended to **reuse** them. 
+You can even save them top-level and reuse them across multiple tests.
+
+```dart
+spotSingle<ElevatedButton>();
+
+final MultiWidgetSelector<TextField> textFields = 
+    spot<LoginScreen>().spot<LoginForm>().spot<TextField>();
+
+final SingleWidgetSelector<TextField> usernameTextField =
+    spotSingle<TextField>(
+      parents: [
+        spot<TextWithLabel>(
+          children: [
+            spotText('Username'),
+          ],
+        ),
+      ],
+    );
+```
+
+Not that there are two kind of selectors, `SingleWidgetSelector` and `MultiWidgetSelector`. 
+Depending on how many widgets you expect to find, you should use the correct one as it allows you to use different matchers.
+
+### Matchers
+
+After creating a selector, you want to assert the widgets it found. 
+The `snapshot()` method creates a `MultiWidgetSnapshot` of the widget tree at that point in time and finds all widgets that match the selector
+
+You rarely have to use `snapshot()` directly, because the quantity matchers do it for you.
+
+#### Quantity matchers
+
+The easiest matchers are the quantity matchers. They allow checking how many widgets were found.
+
+- `existsOnce()` asserts that exactly one widget was found
+- `doesNotExist()` asserts that no widget was found
+- `existsExactlyNTimes(n)` asserts that exactly `n` widgets were found
+- `existsAtLeastOnce()` asserts that at least one widget was found
+- `existsAtMostOnce()` asserts that at most one widget was found
+
+```dart
+
+final selector = spotSingle<ElevatedButton>();
+
+// calls snapshot() internally
+final snapshot = selector.existsOnce(); 
+final snapshot5 = selector.existsExactlyNTimes(5);
+
+selector.doesNotExist(); // end, nothing to match on 
+```
+
+#### Property matchers
+
+The property matchers allow asserting on the properties of the widgets.
+You don't have to use `execpt()`, instead you can use the `has*`/`is*` matchers directly.
+
+```dart
+spotSingle<Tooltip>()
+    .existsOnce() // takes snapshot and asserts quantity
+    // start your chain of matchers
+    .hasMessage('Favorite')
+    .hasShowDurationWhere(
+      (it) => it.isGreaterOrEqual(Duration(seconds: 1000)),
+    )
+    .hasTriggerMode(TooltipTriggerMode.longPress);
+```
+
+To match multiple widgets use `all()` or `any()`
+
+```dart
+spot<AppBar>().spot<Tooltip>().existsAtLeastOnce()
+    .all((tooltip) => tooltip
+      .hasShowDurationWhere(
+         (it) => it.isGreaterOrEqual(Duration(seconds: 1000)),
+      )
+      .hasTriggerMode(TooltipTriggerMode.longPress)
+    );
+```
+
+### Selectors vs Matchers
+
+It is recommended to use matchers instead of selectors once you have narrowed down the search space to the widget you want to assert on.
+This makes the error messages much clearer. 
+Instead of `widget not found` you'll get `Found ToolTip with message 'Settings' but expected 'Favorite'` as error message.
+
+```dart
+// DON'T
+spot<Tooltip>()
+    .withMessage('Favorite') // selector
+    .withTriggerMode(TooltipTriggerMode.longPress) // selector
+    .existsOnce();
+
+// DO
+spot<Tooltip>()
+    .existsOnce()
+    .hasMessage('Favorite') // matcher
+    .hasTriggerMode(TooltipTriggerMode.longPress); // matcher
 ```
 
 ### Better errors
@@ -125,12 +251,12 @@ Could not find 'icon "IconData(U+0E57F)"' as child of [type "MaterialApp" > 'typ
 
 ## Project state
 
+Spot is used in production by many apps already.
+
 The public `spot<X>()` API at this point is well-thought-out and stable.
-You can absolutely use it today in your tests.
 
-The `act` API is experimental and might change. 
+The `act` API is waiting for more methods, but without breaking changes
 
-The error messages will see some major improvements in the future but the current ones are already more helpful than the ones from the `finder` API.
 
 ## License
 
