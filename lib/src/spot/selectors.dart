@@ -709,6 +709,15 @@ class SingleWidgetSelector<W extends Widget> extends WidgetSelector<W> {
     super.mapElementToWidget,
   }) : super(expectedQuantity: ExpectedQuantity.single);
 
+  SingleWidgetSelector.fromWidgetSelector(WidgetSelector<W> selector)
+      : super(
+          props: selector.props,
+          parents: selector.parents,
+          children: selector.children,
+          mapElementToWidget: selector.mapElementToWidget,
+          expectedQuantity: ExpectedQuantity.single,
+        );
+
   SingleWidgetSnapshot<W> snapshot() {
     TestAsyncUtils.guardSync();
     return snapshot_file.snapshot(this).single;
@@ -723,6 +732,15 @@ class MultiWidgetSelector<W extends Widget> extends WidgetSelector<W> {
     super.children,
     super.mapElementToWidget,
   }) : super(expectedQuantity: ExpectedQuantity.multi);
+
+  MultiWidgetSelector.fromWidgetSelector(WidgetSelector<W> selector)
+      : super(
+          props: selector.props,
+          parents: selector.parents,
+          children: selector.children,
+          mapElementToWidget: selector.mapElementToWidget,
+          expectedQuantity: ExpectedQuantity.multi,
+        );
 
   MultiWidgetSnapshot<W> snapshot() {
     TestAsyncUtils.guardSync();
@@ -1110,6 +1128,21 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
   }
 }
 
+extension SelectorToSnapshot<W extends Widget> on WidgetSelector<W> {
+  MultiWidgetSnapshot<W> snapshot() {
+    TestAsyncUtils.guardSync();
+    return snapshot_file.snapshot(this);
+  }
+
+  MultiWidgetSelector<W> get multi {
+    return MultiWidgetSelector<W>.fromWidgetSelector(this);
+  }
+
+  SingleWidgetSelector<W> get single {
+    return SingleWidgetSelector<W>.fromWidgetSelector(this);
+  }
+}
+
 /// A collection of [discovered] elements that match [selector]
 class MultiWidgetSnapshot<W extends Widget> {
   MultiWidgetSnapshot({
@@ -1238,68 +1271,40 @@ class SingleWidgetSnapshot<W extends Widget> implements WidgetMatcher<W> {
   W get widget => _widget! as W;
 }
 
-extension SelectorToSnapshot<W extends Widget> on WidgetSelector<W> {
-  SingleWidgetSelector<W> get single {
-    return SingleWidgetSelector<W>(
-      props: props,
-      parents: parents,
-      children: children,
-    );
-  }
-
-  MultiWidgetSnapshot<W> snapshot() {
-    TestAsyncUtils.guardSync();
-    return snapshot_file.snapshot(this);
-  }
-
+extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   MultiWidgetSnapshot<W> existsAtLeastOnce() {
     TestAsyncUtils.guardSync();
-    return snapshot().existsAtLeastOnce();
+    return snapshot(this).existsAtLeastOnce();
   }
 
   MultiWidgetSnapshot<W> existsAtMostOnce() {
     TestAsyncUtils.guardSync();
-    return snapshot().existsAtMostOnce();
+    return snapshot(this).existsAtMostOnce();
   }
 
   void doesNotExist() {
     TestAsyncUtils.guardSync();
-    snapshot().doesNotExist();
+    snapshot(this).doesNotExist();
   }
 
   SingleWidgetSnapshot<W> existsOnce() {
     TestAsyncUtils.guardSync();
-    return snapshot().existsOnce();
+    return snapshot(this).existsOnce();
   }
 
   MultiWidgetSnapshot<W> existsExactlyNTimes(int n) {
     TestAsyncUtils.guardSync();
-    return snapshot().existsExactlyNTimes(n);
+    return snapshot(this).existsExactlyNTimes(n);
   }
 
   MultiWidgetSnapshot<W> existsAtLeastNTimes(int n) {
     TestAsyncUtils.guardSync();
-    return snapshot().existsAtLeastNTimes(n);
+    return snapshot(this).existsAtLeastNTimes(n);
   }
 
   MultiWidgetSnapshot<W> existsAtMostNTimes(int n) {
     TestAsyncUtils.guardSync();
-    return snapshot().existsAtMostNTimes(n);
-  }
-}
-
-extension SingleSnapshotSelector<W extends Widget> on SingleWidgetSelector<W> {
-  MultiWidgetSelector<W> get multi {
-    return MultiWidgetSelector<W>(
-      props: props,
-      parents: parents,
-      children: children,
-    );
-  }
-
-  SingleWidgetSnapshot<W> snapshot() {
-    TestAsyncUtils.guardSync();
-    return snapshot_file.snapshot(this).single;
+    return snapshot(this).existsAtMostNTimes(n);
   }
 }
 
