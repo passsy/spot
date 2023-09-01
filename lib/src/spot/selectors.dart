@@ -1308,6 +1308,18 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   }
 }
 
+extension SingleQuantityMatcher<W extends Widget> on SingleWidgetSelector<W> {
+  SingleWidgetSelector<W> withParent(WidgetSelector parent) {
+    final addedParent = copyWith(parents: [...parents, parent]);
+    return SingleWidgetSelector.fromWidgetSelector(addedParent);
+  }
+
+  SingleWidgetSelector<W> withChild(WidgetSelector child) {
+    final addedChild = copyWith(children: [...children, child]);
+    return SingleWidgetSelector.fromWidgetSelector(addedChild);
+  }
+}
+
 extension AssertionMatcher<W extends Widget> on MultiWidgetSnapshot<W> {
   SingleWidgetSnapshot<W> single() {
     return SingleWidgetSnapshot(
