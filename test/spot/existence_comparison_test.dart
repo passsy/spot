@@ -18,10 +18,13 @@ void main() {
       expect(() => spotter.doesNotExist(), returnsNormally);
       expect(() => spotter.existsOnce(), throwsTestFailure);
       expect(() => spotter.existsAtLeastOnce(), throwsTestFailure);
+      expect(() => spotter.existsAtMostOnce(), returnsNormally);
       expect(() => spotter.existsExactlyNTimes(1), throwsTestFailure);
       expect(() => spotter.existsExactlyNTimes(2), throwsTestFailure);
       expect(() => spotter.existsAtLeastNTimes(1), throwsTestFailure);
       expect(() => spotter.existsAtLeastNTimes(2), throwsTestFailure);
+      expect(() => spotter.existsAtMostNTimes(1), returnsNormally);
+      expect(() => spotter.existsAtMostNTimes(2), returnsNormally);
     });
 
     testWidgets('1 match', (tester) async {
@@ -32,10 +35,13 @@ void main() {
       expect(() => spotter.doesNotExist(), throwsTestFailure);
       expect(() => spotter.existsOnce(), returnsNormally);
       expect(() => spotter.existsAtLeastOnce(), returnsNormally);
+      expect(() => spotter.existsAtMostOnce(), returnsNormally);
       expect(() => spotter.existsExactlyNTimes(1), returnsNormally);
       expect(() => spotter.existsExactlyNTimes(2), throwsTestFailure);
       expect(() => spotter.existsAtLeastNTimes(1), returnsNormally);
       expect(() => spotter.existsAtLeastNTimes(2), throwsTestFailure);
+      expect(() => spotter.existsAtMostNTimes(1), returnsNormally);
+      expect(() => spotter.existsAtMostNTimes(2), returnsNormally);
     });
 
     testWidgets('2 matches ', (tester) async {
@@ -46,10 +52,13 @@ void main() {
       expect(() => spotter.doesNotExist(), throwsTestFailure);
       expect(() => spotter.existsOnce(), throwsTestFailure);
       expect(() => spotter.existsAtLeastOnce(), returnsNormally);
+      expect(() => spotter.existsAtMostOnce(), throwsTestFailure);
       expect(() => spotter.existsExactlyNTimes(1), throwsTestFailure);
       expect(() => spotter.existsExactlyNTimes(2), returnsNormally);
       expect(() => spotter.existsAtLeastNTimes(1), returnsNormally);
       expect(() => spotter.existsAtLeastNTimes(2), returnsNormally);
+      expect(() => spotter.existsAtMostNTimes(1), throwsTestFailure);
+      expect(() => spotter.existsAtMostNTimes(2), returnsNormally);
     });
   });
 
@@ -71,10 +80,13 @@ void main() {
       expect(() => spotter.doesNotExist(), throwsTestFailure);
       expect(() => spotter.existsOnce(), returnsNormally);
       expect(() => spotter.existsAtLeastOnce(), returnsNormally);
+      expect(() => spotter.existsAtMostOnce(), returnsNormally);
       expect(() => spotter.existsExactlyNTimes(1), returnsNormally);
       expect(() => spotter.existsExactlyNTimes(2), throwsTestFailure);
       expect(() => spotter.existsAtLeastNTimes(1), returnsNormally);
       expect(() => spotter.existsAtLeastNTimes(2), throwsTestFailure);
+      expect(() => spotter.existsAtMostNTimes(1), returnsNormally);
+      expect(() => spotter.existsAtMostNTimes(2), returnsNormally);
     });
 
     testWidgets('parent does not exist, item exists', (tester) async {
@@ -94,10 +106,13 @@ void main() {
       expect(() => spotter.doesNotExist(), returnsNormally);
       expect(() => spotter.existsOnce(), throwsTestFailure);
       expect(() => spotter.existsAtLeastOnce(), throwsTestFailure);
+      expect(() => spotter.existsAtMostOnce(), returnsNormally);
       expect(() => spotter.existsExactlyNTimes(1), throwsTestFailure);
       expect(() => spotter.existsExactlyNTimes(2), throwsTestFailure);
       expect(() => spotter.existsAtLeastNTimes(1), throwsTestFailure);
       expect(() => spotter.existsAtLeastNTimes(2), throwsTestFailure);
+      expect(() => spotter.existsAtMostNTimes(1), returnsNormally);
+      expect(() => spotter.existsAtMostNTimes(2), returnsNormally);
     });
 
     testWidgets('parent exists, item does not exist', (tester) async {
@@ -121,10 +136,13 @@ void main() {
       expect(() => spotter.doesNotExist(), returnsNormally);
       expect(() => spotter.existsOnce(), throwsFailureWithMessage);
       expect(() => spotter.existsAtLeastOnce(), throwsFailureWithMessage);
+      expect(() => spotter.existsAtMostOnce(), returnsNormally);
       expect(() => spotter.existsExactlyNTimes(1), throwsFailureWithMessage);
       expect(() => spotter.existsExactlyNTimes(2), throwsFailureWithMessage);
       expect(() => spotter.existsAtLeastNTimes(1), throwsFailureWithMessage);
       expect(() => spotter.existsAtLeastNTimes(2), throwsFailureWithMessage);
+      expect(() => spotter.existsAtMostNTimes(1), returnsNormally);
+      expect(() => spotter.existsAtMostNTimes(2), returnsNormally);
     });
 
     testWidgets('error shows alternative item', (tester) async {
@@ -152,10 +170,13 @@ void main() {
       expect(() => spotter.doesNotExist(), returnsNormally);
       expect(() => spotter.existsOnce(), throwsFailureWithMessage);
       expect(() => spotter.existsAtLeastOnce(), throwsFailureWithMessage);
+      expect(() => spotter.existsAtMostOnce(), returnsNormally);
       expect(() => spotter.existsExactlyNTimes(1), throwsFailureWithMessage);
       expect(() => spotter.existsExactlyNTimes(2), throwsFailureWithMessage);
       expect(() => spotter.existsAtLeastNTimes(1), throwsFailureWithMessage);
       expect(() => spotter.existsAtLeastNTimes(2), throwsFailureWithMessage);
+      expect(() => spotter.existsAtMostNTimes(1), returnsNormally);
+      expect(() => spotter.existsAtMostNTimes(2), returnsNormally);
     });
   });
 
@@ -177,10 +198,13 @@ void main() {
       expect(() => spotter.doesNotExist(), throwsTestFailure);
       expect(() => spotter.existsOnce(), returnsNormally);
       expect(() => spotter.existsAtLeastOnce(), returnsNormally);
+      expect(() => spotter.existsAtMostOnce(), returnsNormally);
       expect(() => spotter.existsExactlyNTimes(1), returnsNormally);
       expect(() => spotter.existsExactlyNTimes(2), throwsTestFailure);
       expect(() => spotter.existsAtLeastNTimes(1), returnsNormally);
       expect(() => spotter.existsAtLeastNTimes(2), throwsTestFailure);
+      expect(() => spotter.existsAtMostNTimes(1), returnsNormally);
+      expect(() => spotter.existsAtMostNTimes(2), returnsNormally);
     });
 
     testWidgets('item exists, child does not exist', (tester) async {
@@ -200,10 +224,13 @@ void main() {
       expect(() => spotter.doesNotExist(), returnsNormally);
       expect(() => spotter.existsOnce(), throwsTestFailure);
       expect(() => spotter.existsAtLeastOnce(), throwsTestFailure);
+      expect(() => spotter.existsAtMostOnce(), returnsNormally);
       expect(() => spotter.existsExactlyNTimes(1), throwsTestFailure);
       expect(() => spotter.existsExactlyNTimes(2), throwsTestFailure);
       expect(() => spotter.existsAtLeastNTimes(1), throwsTestFailure);
       expect(() => spotter.existsAtLeastNTimes(2), throwsTestFailure);
+      expect(() => spotter.existsAtMostNTimes(1), returnsNormally);
+      expect(() => spotter.existsAtMostNTimes(2), returnsNormally);
     });
   });
 

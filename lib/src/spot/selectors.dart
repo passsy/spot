@@ -1277,6 +1277,11 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
     return snapshot(this).existsAtLeastOnce();
   }
 
+  MultiWidgetSnapshot<W> existsAtMostOnce() {
+    TestAsyncUtils.guardSync();
+    return snapshot(this).existsAtMostOnce();
+  }
+
   void doesNotExist() {
     TestAsyncUtils.guardSync();
     snapshot(this).doesNotExist();
@@ -1295,6 +1300,11 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   MultiWidgetSnapshot<W> existsAtLeastNTimes(int n) {
     TestAsyncUtils.guardSync();
     return snapshot(this).existsAtLeastNTimes(n);
+  }
+
+  MultiWidgetSnapshot<W> existsAtMostNTimes(int n) {
+    TestAsyncUtils.guardSync();
+    return snapshot(this).existsAtMostNTimes(n);
   }
 }
 
