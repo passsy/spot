@@ -40,6 +40,7 @@ export 'package:spot/src/spot/selectors.dart'
         QuantityMatchers,
         SelectorQueries,
         SelectorToSnapshot,
+        SingleQuantityMatcher,
         SingleWidgetSelector,
         SingleWidgetSnapshot,
         WidgetMatcher,
