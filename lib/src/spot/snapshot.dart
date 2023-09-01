@@ -206,9 +206,13 @@ extension MultiWidgetSelectorMatcher<W extends Widget>
 
   MultiWidgetSnapshot<W> existsAtLeastOnce() => _exists(min: 1);
 
+  MultiWidgetSnapshot<W> existsAtMostOnce() => _exists(max: 1);
+
   MultiWidgetSnapshot<W> existsExactlyNTimes(int n) => _exists(min: n, max: n);
 
   MultiWidgetSnapshot<W> existsAtLeastNTimes(int n) => _exists(min: n);
+
+  MultiWidgetSnapshot<W> existsAtMostNTimes(int n) => _exists(max: n);
 
   MultiWidgetSnapshot<W> _exists({int? min, int? max}) {
     assert(min != null || max != null);

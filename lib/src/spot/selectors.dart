@@ -1257,6 +1257,11 @@ extension SelectorToSnapshot<W extends Widget> on WidgetSelector<W> {
     return snapshot().existsAtLeastOnce();
   }
 
+  MultiWidgetSnapshot<W> existsAtMostOnce() {
+    TestAsyncUtils.guardSync();
+    return snapshot().existsAtMostOnce();
+  }
+
   void doesNotExist() {
     TestAsyncUtils.guardSync();
     snapshot().doesNotExist();
@@ -1275,6 +1280,11 @@ extension SelectorToSnapshot<W extends Widget> on WidgetSelector<W> {
   MultiWidgetSnapshot<W> existsAtLeastNTimes(int n) {
     TestAsyncUtils.guardSync();
     return snapshot().existsAtLeastNTimes(n);
+  }
+
+  MultiWidgetSnapshot<W> existsAtMostNTimes(int n) {
+    TestAsyncUtils.guardSync();
+    return snapshot().existsAtMostNTimes(n);
   }
 }
 
