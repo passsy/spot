@@ -38,6 +38,7 @@ export 'package:spot/src/spot/selectors.dart'
         MultiWidgetSnapshot,
         MutliMatchers,
         QuantityMatchers,
+        RelativeSelectors,
         SelectorQueries,
         SelectorToSnapshot,
         SingleWidgetSelector,

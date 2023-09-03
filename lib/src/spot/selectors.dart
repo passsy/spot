@@ -1308,6 +1308,33 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   }
 }
 
+/// Extensions that control the parent/children widgets of a [WidgetSelector]
+extension RelativeSelectors<W extends Widget> on WidgetSelector<W> {
+  /// Returns a [WidgetSelector] that requires [parent] to be a parent of
+  /// the to be matched widget
+  WidgetSelector<W> withParent(WidgetSelector parent) {
+    return copyWith(parents: [...parents, parent]);
+  }
+
+  /// Returns a [WidgetSelector] that requires [parents] to be parents of
+  /// the to be matched widget
+  WidgetSelector<W> withParents(List<WidgetSelector> parents) {
+    return copyWith(parents: [...this.parents, ...parents]);
+  }
+
+  /// Returns a [WidgetSelector] that requires [child] to be a child of the to
+  /// be matched widget
+  WidgetSelector<W> withChild(WidgetSelector child) {
+    return copyWith(children: [...children, child]);
+  }
+
+  /// Returns a [WidgetSelector] that requires [children] to be children of the
+  /// to be matched widget
+  WidgetSelector<W> withChildren(List<WidgetSelector> children) {
+    return copyWith(children: [...this.children, ...children]);
+  }
+}
+
 extension AssertionMatcher<W extends Widget> on MultiWidgetSnapshot<W> {
   SingleWidgetSnapshot<W> single() {
     return SingleWidgetSnapshot(
