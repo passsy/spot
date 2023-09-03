@@ -1308,15 +1308,30 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   }
 }
 
-extension SingleQuantityMatcher<W extends Widget> on SingleWidgetSelector<W> {
-  SingleWidgetSelector<W> withParent(WidgetSelector parent) {
-    final addedParent = copyWith(parents: [...parents, parent]);
-    return SingleWidgetSelector.fromWidgetSelector(addedParent);
+/// Extensions that control the parent/children widgets of a [WidgetSelector]
+extension RelativeSelectors<W extends Widget> on WidgetSelector<W> {
+  /// Returns a [WidgetSelector] that requires [parent] to be a parent of
+  /// the to be matched widget
+  WidgetSelector<W> withParent(WidgetSelector parent) {
+    return copyWith(parents: [...parents, parent]);
   }
 
-  SingleWidgetSelector<W> withChild(WidgetSelector child) {
-    final addedChild = copyWith(children: [...children, child]);
-    return SingleWidgetSelector.fromWidgetSelector(addedChild);
+  /// Returns a [WidgetSelector] that requires [parents] to be parents of
+  /// the to be matched widget
+  WidgetSelector<W> withParents(List<WidgetSelector> parents) {
+    return copyWith(parents: [...this.parents, ...parents]);
+  }
+
+  /// Returns a [WidgetSelector] that requires [child] to be a child of the to
+  /// be matched widget
+  WidgetSelector<W> withChild(WidgetSelector child) {
+    return copyWith(children: [...children, child]);
+  }
+
+  /// Returns a [WidgetSelector] that requires [children] to be children of the
+  /// to be matched widget
+  WidgetSelector<W> withChildren(List<WidgetSelector> children) {
+    return copyWith(children: [...this.children, ...children]);
   }
 }
 

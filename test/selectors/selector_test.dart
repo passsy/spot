@@ -43,7 +43,6 @@ void main() {
   });
 
   testWidgets('dont lose mapElementToWidget', (tester) async {
-    TestWidgetsFlutterBinding.instance.clock;
     final singleSelector = spotText('home');
     final multiSelector = singleSelector.multi;
 

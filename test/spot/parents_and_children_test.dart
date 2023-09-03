@@ -97,4 +97,40 @@ void main() {
 
     scaffold.spot<Container>(children: [iconButton]).existsOnce();
   });
+
+  testWidgets('withChild', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Row(
+          children: [
+            Container(),
+            Container(),
+            Container(child: Wrap()),
+          ],
+        ),
+      ),
+    );
+    final containers = spot<Container>();
+    containers.existsExactlyNTimes(3);
+    containers.withChild(spot<Wrap>()).existsOnce();
+    containers.withChildren([spot<Wrap>()]).existsOnce();
+  });
+
+  testWidgets('withParent', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Row(
+          children: [
+            Container(),
+            Container(),
+            Wrap(children: [Container()]),
+          ],
+        ),
+      ),
+    );
+    final containers = spot<Container>();
+    containers.existsExactlyNTimes(3);
+    containers.withParent(spot<Wrap>()).existsOnce();
+    containers.withParents([spot<Wrap>()]).existsOnce();
+  });
 }
