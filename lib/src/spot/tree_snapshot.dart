@@ -6,6 +6,8 @@ import 'package:spot/src/spot/element_extensions.dart';
 WidgetTreeSnapshot? _cachedTree;
 
 /// Creates a snapshot of the currently pumped widget via [WidgetTester.pumpWidget].
+///
+/// This snapshot is only made once per frame and cached for further use.
 WidgetTreeSnapshot currentWidgetTreeSnapshot() {
   if (_cachedTree != null && _cachedTree!.isFromThisFrame) {
     return _cachedTree!;
@@ -193,5 +195,9 @@ class ScopedWidgetTreeSnapshot {
   @override
   String toString() {
     return 'ScopedWidgetTreeSnapshot{origin: ${origin.element.widget.runtimeType}}';
+  }
+
+  String toStringDeep() {
+    return origin.element.toStringDeep();
   }
 }

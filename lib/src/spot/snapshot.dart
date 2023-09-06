@@ -2,10 +2,14 @@ import 'package:collection/collection.dart';
 import 'package:dartx/dartx.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:spot/spot.dart';
 import 'package:spot/src/spot/selectors.dart';
 import 'package:spot/src/spot/tree_snapshot.dart';
 
-MultiWidgetSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
+MultiWidgetSnapshot<W> snapshot<W extends Widget>(
+  WidgetSelector<W> selector, {
+  bool validateQuantity = true,
+}) {
   TestAsyncUtils.guardSync();
   final treeSnapshot = currentWidgetTreeSnapshot();
 
@@ -13,7 +17,8 @@ MultiWidgetSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
     final MultiWidgetSnapshot<W> snapshot =
         findWithinScope(treeSnapshot, selector);
 
-    if (selector.expectedQuantity == ExpectedQuantity.single) {
+    if (validateQuantity &&
+        selector.expectedQuantity == ExpectedQuantity.single) {
       if (snapshot.discovered.length > 1) {
         throw TestFailure(
           'Found ${snapshot.discovered.length} elements matching $selector in widget tree, '
@@ -38,7 +43,8 @@ MultiWidgetSnapshot<W> snapshot<W extends Widget>(WidgetSelector<W> selector) {
     return filter.filter(list);
   }).toList();
 
-  if (selector.expectedQuantity == ExpectedQuantity.single) {
+  if (validateQuantity &&
+      selector.expectedQuantity == ExpectedQuantity.single) {
     if (discovered.length > 1) {
       throw TestFailure(
         'Found ${discovered.length} elements matching $selector in widget tree, '
@@ -289,12 +295,12 @@ void _tryMatchingLessSpecificCriteria<W extends Widget>(
       );
       errorBuilder.writeln(
           'Please check the ${lessSpecificSnapshot.discoveredElements.length} '
-          'matches for ${lessSpecificSelector.toStringBreadcrumb()} and adjust the constraints of the selector $selector accordingly:');
+          'matches for ${lessSpecificSelector.toStringBreadcrumb()} and adjust the constraints of the selector $selector accordingly:\n');
       int index = 0;
       for (final Element match in lessSpecificSnapshot.discoveredElements) {
         index++;
         errorBuilder
-            .writeln('Possible match #$index: ${match.widget.toStringDeep()}');
+            .writeln('Possible match #$index:\n${match.toStringDeep()}');
       }
       fail(errorBuilder.toString());
     }

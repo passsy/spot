@@ -802,36 +802,46 @@ class PropFilter implements ElementFilter {
   }
 }
 
+/// Keeps all [WidgetTreeNode] that have child elements that match the [childSelectors] selectors
 class ChildFilter implements ElementFilter {
-  final List<WidgetSelector> children;
+  final List<WidgetSelector> childSelectors;
 
-  ChildFilter(this.children);
+  ChildFilter(this.childSelectors);
 
   @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
     final tree = currentWidgetTreeSnapshot();
     final List<WidgetTreeNode> matchingChildNodes = [];
+
     // Then check for every queryMatch if the children and props match
     for (final WidgetTreeNode candidate in candidates) {
       final Map<WidgetSelector, List<WidgetTreeNode>> matchesPerChild = {};
 
-      final subtree = tree.scope(candidate);
+      final ScopedWidgetTreeSnapshot subtree = tree.scope(candidate);
       final List<WidgetTreeNode> subtreeNodes = subtree.allNodes;
-      for (final WidgetSelector<Widget> childSelector in children) {
+      for (final WidgetSelector<Widget> childSelector in childSelectors) {
         matchesPerChild[childSelector] = [];
         // TODO instead of searching the children, starting from the root widget, find a way to reverse the search and
         //  start form the subtree.
         //  Keep in mind, each child selector might be defined with parents which are outside of the subtree
-        final MultiWidgetSnapshot ss = snapshot(childSelector);
-        final discoveredInSubtree = ss.discovered
-            .where((element) => subtreeNodes.contains(element))
-            .toList();
+        final MultiWidgetSnapshot ss =
+            snapshot(childSelector, validateQuantity: false);
+        final discoveredInSubtree =
+            ss.discovered.where((node) => subtreeNodes.contains(node)).toList();
 
-        if (discoveredInSubtree.isNotEmpty) {
-          matchesPerChild[childSelector] = discoveredInSubtree;
-        } else {
+        if (childSelector.expectedQuantity == ExpectedQuantity.single &&
+            discoveredInSubtree.length > 1) {
+          // not a match because the child selector expects a single widget
           continue;
         }
+
+        if (discoveredInSubtree.isEmpty) {
+          // did not find any matching child
+          continue;
+        }
+
+        // consider it as a match
+        matchesPerChild[childSelector] = discoveredInSubtree;
       }
       if (matchesPerChild.values.any((list) => list.isEmpty)) {
         // not all children match
@@ -844,8 +854,8 @@ class ChildFilter implements ElementFilter {
 
   @override
   String toString() {
-    final children = this.children.isNotEmpty
-        ? 'with children: [${this.children.map((e) => e.toStringBreadcrumb()).join(', ')}]'
+    final children = childSelectors.isNotEmpty
+        ? 'with children: [${childSelectors.map((e) => e.toStringBreadcrumb()).join(', ')}]'
         : null;
 
     return 'PropFilter of $children';
