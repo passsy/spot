@@ -98,6 +98,63 @@ void main() {
     scaffold.spot<Container>(children: [iconButton]).existsOnce();
   });
 
+  testWidgets('children scope checks quantity only in subtree', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Row(
+          children: [
+            Wrap(),
+            Container(),
+            Container(),
+            Container(child: Wrap()),
+          ],
+        ),
+      ),
+    );
+    final containers = spot<Container>();
+    containers.existsExactlyNTimes(3);
+    final wraps = spot<Wrap>();
+    wraps.existsExactlyNTimes(2);
+
+    // spotSingle can be used matching only a single Wrap despite multiple Wraps being in the widget tree.
+    // There is only a single Wrap in the subtree of the last Container, so this test passes.
+    containers.withChild(spotSingle<Wrap>()).existsOnce();
+
+    // The child matcher can reach outside of the subtree. MaterialApp (parent) is defined outside.
+    // Still both Wraps match, but only the one in the subtree is counted
+    containers.withChild(spot<MaterialApp>().spotSingle<Wrap>()).existsOnce();
+  });
+
+  testWidgets('children scope does not throw when quantity does not match',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Row(
+          children: [
+            Wrap(),
+            Container(),
+            Container(),
+            Container(
+              child: Wrap(
+                children: const [Wrap()],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+    final containers = spot<Container>();
+    containers.existsExactlyNTimes(3);
+    final wraps = spot<Wrap>();
+    wraps.existsExactlyNTimes(3);
+
+    // child query expects one or more Wraps, which can be found
+    containers.withChild(spot<Wrap>()).existsOnce();
+    // Enforcing a single Wrap fails because the subtree of Container has two Wraps
+    containers.withChild(spotSingle<Wrap>()).doesNotExist();
+    // It does not throw though! The child constraints are filter and do not enforce that every Container must have a single Wrap
+  });
+
   testWidgets('withChild', (tester) async {
     await tester.pumpWidget(
       MaterialApp(

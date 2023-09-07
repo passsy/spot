@@ -155,28 +155,28 @@ void main() {
         ),
       );
 
-      final spotter = spotSingle<Center>(
+      final selector = spotSingle<Center>(
         children: [spotSingle<SizedBox>()],
         parents: [spotSingle<Material>()], // <-- does not exist
       );
 
-      expect(spotter.snapshot().discovered, isNull);
+      expect(selector.snapshot().discovered, isNull);
 
       final throwsFailureWithMessage = throwsSpotErrorContaining([
         "but found 1 matches when searching for 'Center",
-        "Possible match #1: Center(alignment: Alignment.center)",
+        "Possible match #1:\nCenter(alignment: Alignment.center",
       ]);
 
-      expect(() => spotter.doesNotExist(), returnsNormally);
-      expect(() => spotter.existsOnce(), throwsFailureWithMessage);
-      expect(() => spotter.existsAtLeastOnce(), throwsFailureWithMessage);
-      expect(() => spotter.existsAtMostOnce(), returnsNormally);
-      expect(() => spotter.existsExactlyNTimes(1), throwsFailureWithMessage);
-      expect(() => spotter.existsExactlyNTimes(2), throwsFailureWithMessage);
-      expect(() => spotter.existsAtLeastNTimes(1), throwsFailureWithMessage);
-      expect(() => spotter.existsAtLeastNTimes(2), throwsFailureWithMessage);
-      expect(() => spotter.existsAtMostNTimes(1), returnsNormally);
-      expect(() => spotter.existsAtMostNTimes(2), returnsNormally);
+      expect(() => selector.doesNotExist(), returnsNormally);
+      expect(() => selector.existsOnce(), throwsFailureWithMessage);
+      expect(() => selector.existsAtLeastOnce(), throwsFailureWithMessage);
+      expect(() => selector.existsAtMostOnce(), returnsNormally);
+      expect(() => selector.existsExactlyNTimes(1), throwsFailureWithMessage);
+      expect(() => selector.existsExactlyNTimes(2), throwsFailureWithMessage);
+      expect(() => selector.existsAtLeastNTimes(1), throwsFailureWithMessage);
+      expect(() => selector.existsAtLeastNTimes(2), throwsFailureWithMessage);
+      expect(() => selector.existsAtMostNTimes(1), returnsNormally);
+      expect(() => selector.existsAtMostNTimes(2), returnsNormally);
     });
   });
 
@@ -256,9 +256,9 @@ void main() {
           [
             "Could not find at least 2 matches for Row > Text in widget tree, but found 3 matches when searching for 'Text'",
             "Please check the 3 matches for Text and adjust the constraints of the selector 'Text with parents: ['Row']' accordingly",
-            'Possible match #1: Text("a")',
-            'Possible match #2: Text("b")',
-            'Possible match #3: Text("c")',
+            'Possible match #1:\nText("a"',
+            'Possible match #2:\nText("b"',
+            'Possible match #3:\nText("c"',
           ],
           not: ['#4'],
         ),
