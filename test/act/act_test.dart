@@ -74,6 +74,33 @@ void actTests() {
     );
   });
 
+  testWidgets('tap throws when selector matches multiple widgets',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Row(
+          children: [
+            ElevatedButton(
+              onPressed: () {},
+              child: null,
+            ),
+            ElevatedButton(
+              onPressed: () {},
+              child: null,
+            ),
+          ],
+        ),
+      ),
+    );
+    final button = spot<ElevatedButton>()..existsExactlyNTimes(2);
+    await expectLater(
+      () => act.tap(button),
+      throwsSpotErrorContaining([
+        "Found 2 elements matching 'ElevatedButton' in widget tree",
+      ]),
+    );
+  });
+
   testWidgets('tap throws if widget not in viewport', (tester) async {
     await tester.pumpWidget(
       MaterialApp(

@@ -19,11 +19,9 @@ class Act {
   const Act._();
 
   /// Triggers a tap event on a given widget.
-  Future<void> tap(SingleWidgetSelector selector) async {
-    final snapshot = selector.snapshot();
-
+  Future<void> tap(WidgetSelector selector) async {
     // Check if widget is in the widget tree. Throws if not.
-    selector.existsOnce();
+    final snapshot = selector.existsOnce();
 
     return TestAsyncUtils.guard<void>(() async {
       return _alwaysPropagateDevicePointerEvents(() async {
@@ -72,7 +70,7 @@ class Act {
   // Validates that the widget is at least partially visible in the viewport.
   void _validateViewBounds(
     RenderBox renderBox, {
-    required SingleWidgetSelector selector,
+    required WidgetSelector selector,
   }) {
     final Rect viewport =
         Offset.zero & WidgetsBinding.instance.renderView.configuration.size;
