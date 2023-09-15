@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.0
+- Add matchers `.existsAtMostOnce()` and `.existsAtMostNTimes(x)` #19
+- Add selector `.withParent(parent)`/`.withParents([...])` #21
+- Add selector `.withChild(child)`/`.withChildren([...])` #21
+- Child selectors now only match children #22
+- You can call `act.tap()` now with any `WidgetSelector` that returns a single widget #23
+
 ## 0.5.0
 - **Breaking** `act.tap` is now async, use `await act.tap()` #17
 - New: `spotText('foo')` finds any text on screen using "contains". The new `AnyText` widget combines `Text`, `SelectableText`, `RichText` and `EditableText` #18
