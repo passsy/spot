@@ -663,6 +663,83 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
     }
     return this;
   }
+
+  WidgetMatcher<W> hasWidgetProp<T>({
+    required String name,
+    required T Function(W) prop,
+    required MatchProp<T> match,
+  }) {
+    final ConditionSubject<Element> conditionSubject = it<Element>();
+    final Subject<T> subject = conditionSubject.context.nest<T>(
+      () => ['$W', "with prop '$name'"],
+      (element) {
+        final widget = selector.mapElementToWidget(element);
+        return Extracted.value(prop.call(widget));
+      },
+    );
+
+    match(subject);
+    final failure = softCheck(element, conditionSubject);
+    if (failure != null) {
+      final errorParts =
+          describe(conditionSubject).map((it) => it.trim()).toList();
+      // workaround allowing to use
+      // hasPropertyXWhere((subject)=> subject.equals(X));
+      // instead of
+      // hasPropertyXWhere((subject)=> subject.isNotNull().equals(X));
+      //
+      // when Subject is Subject<T> but the value can actually be null (should be Subject<T?>).
+      final errorMessage = errorParts.join(' ');
+      if (errorParts.last == 'is null' &&
+          failure.rejection.actual.firstOrNull == '<null>') {
+        // property is null and isNull() was called
+        // not error because null == null
+        return this;
+      }
+      throw PropertyCheckFailure(
+        'Failed to match widget: $errorMessage, actual: ${failure.rejection.actual.joinToString()}',
+        matcherDescription: errorParts.skip(1).join(' ').removePrefix('with '),
+      );
+    }
+    return this;
+  }
+
+  WidgetMatcher<W> hasElementProp<T>({
+    required String name,
+    required T Function(Element) prop,
+    required MatchProp<T> match,
+  }) {
+    final ConditionSubject<Element> conditionSubject = it<Element>();
+    final Subject<T> subject = conditionSubject.context.nest<T>(
+      () => ['Element of $W', "with prop '$name'"],
+      (element) => Extracted.value(prop.call(element)),
+    );
+
+    match(subject);
+    final failure = softCheck(element, conditionSubject);
+    if (failure != null) {
+      final errorParts =
+          describe(conditionSubject).map((it) => it.trim()).toList();
+      // workaround allowing to use
+      // hasPropertyXWhere((subject)=> subject.equals(X));
+      // instead of
+      // hasPropertyXWhere((subject)=> subject.isNotNull().equals(X));
+      //
+      // when Subject is Subject<T> but the value can actually be null (should be Subject<T?>).
+      final errorMessage = errorParts.join(' ');
+      if (errorParts.last == 'is null' &&
+          failure.rejection.actual.firstOrNull == '<null>') {
+        // property is null and isNull() was called
+        // not error because null == null
+        return this;
+      }
+      throw PropertyCheckFailure(
+        'Failed to match widget: $errorMessage, actual: ${failure.rejection.actual.joinToString()}',
+        matcherDescription: errorParts.skip(1).join(' ').removePrefix('with '),
+      );
+    }
+    return this;
+  }
 }
 
 class PropertyCheckFailure extends TestFailure {
