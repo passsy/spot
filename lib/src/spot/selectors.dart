@@ -813,12 +813,19 @@ class ChildFilter implements ElementFilter {
     final tree = currentWidgetTreeSnapshot();
     final List<WidgetTreeNode> matchingChildNodes = [];
 
+    final childSelectors =
+        this.childSelectors.where((it) => it.negate == false);
+    final childDeselectors =
+        this.childSelectors.where((it) => it.negate == true);
+
     // Then check for every queryMatch if the children and props match
+    candidateLoop:
     for (final WidgetTreeNode candidate in candidates) {
       final Map<WidgetSelector, List<WidgetTreeNode>> matchesPerChild = {};
 
       final ScopedWidgetTreeSnapshot subtree = tree.scope(candidate);
       final List<WidgetTreeNode> subtreeNodes = subtree.allNodes;
+
       for (final WidgetSelector<Widget> childSelector in childSelectors) {
         matchesPerChild[childSelector] = [];
         // TODO instead of searching the children, starting from the root widget, find a way to reverse the search and
@@ -837,7 +844,8 @@ class ChildFilter implements ElementFilter {
 
         if (discoveredInSubtree.isEmpty) {
           // did not find any matching child
-          continue;
+          // all childSelector must match to be a match
+          continue candidateLoop;
         }
 
         // consider it as a match
@@ -845,8 +853,20 @@ class ChildFilter implements ElementFilter {
       }
       if (matchesPerChild.values.any((list) => list.isEmpty)) {
         // not all children match
-        continue;
+        throw 'should never be called';
+        continue candidateLoop;
       }
+
+      for (final deselector in childDeselectors) {
+        final ss = snapshot(deselector, validateQuantity: false);
+        final discoveredInSubtree =
+            ss.discovered.where((node) => subtreeNodes.contains(node)).toList();
+        if (discoveredInSubtree.isNotEmpty) {
+          // found a child that should not be there
+          continue candidateLoop;
+        }
+      }
+
       matchingChildNodes.add(candidate);
     }
     return matchingChildNodes;
@@ -892,10 +912,12 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
     List<WidgetSelector>? children,
     required this.expectedQuantity,
     W Function(Element element)? mapElementToWidget,
+    bool? negate,
   })  : props = List.unmodifiable(props ?? []),
         parents = List.unmodifiable(parents?.toSet().toList() ?? []),
         children = List.unmodifiable(children ?? []),
-        mapElementToWidget = mapElementToWidget ?? defaultMapElementToWidget<W>;
+        mapElementToWidget = mapElementToWidget ?? defaultMapElementToWidget<W>,
+        negate = negate ?? false;
 
   final List<PredicateWithDescription> props;
 
@@ -905,6 +927,9 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
 
   /// Whether this selector expects to find a single or multiple widgets
   final ExpectedQuantity expectedQuantity;
+
+  /// When `true`, the selector will match all widgets that do not match the criteria
+  final bool negate;
 
   static W defaultMapElementToWidget<W>(Element element) {
     return element.widget as W;
@@ -921,12 +946,16 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
   /// filters that are not covered by this base implementation.
   List<ElementFilter> createElementFilters() {
     return [
+      // if (negate == true) ParentFilter(),
       if (props.isNotEmpty) PropFilter(props),
       if (children.isNotEmpty) ChildFilter(children),
     ];
   }
 
   CandidateGenerator<W> createCandidateGenerator() {
+    if (negate == true) {
+      throw "Can't use a negated selector to start a snapshot";
+    }
     return CandidateGeneratorFromParents(this);
   }
 
@@ -946,6 +975,9 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
     if (constraints.isEmpty) {
       return '';
     }
+    if (negate) {
+      return "not(${constraints.join(' ')})";
+    }
     return "'${constraints.join(' ')}'";
   }
 
@@ -958,6 +990,10 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
         : null;
 
     final constraints = [props, children].where((e) => e != null);
+
+    if (negate) {
+      return "not(${constraints.join(' ')})";
+    }
     return constraints.join(' ');
   }
 
@@ -969,10 +1005,18 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
     }
 
     final parentBreadcrumbs = parents.map((e) => e.toStringBreadcrumb());
-    if (parentBreadcrumbs.length == 1) {
-      return '${parentBreadcrumbs.first} > ${toStringWithoutParents()}';
+    if (negate) {
+      if (parentBreadcrumbs.length == 1) {
+        return 'not(${parentBreadcrumbs.first} > ${toStringWithoutParents()})';
+      } else {
+        return 'not([${parentBreadcrumbs.join(' && ')}] > ${toStringWithoutParents()})';
+      }
     } else {
-      return '[${parentBreadcrumbs.join(' && ')}] > ${toStringWithoutParents()}';
+      if (parentBreadcrumbs.length == 1) {
+        return '${parentBreadcrumbs.first} > ${toStringWithoutParents()}';
+      } else {
+        return '[${parentBreadcrumbs.join(' && ')}] > ${toStringWithoutParents()}';
+      }
     }
   }
 
@@ -985,6 +1029,7 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
     List<WidgetSelector>? children,
     ExpectedQuantity? expectedQuantity,
     W Function(Element element)? mapElementToWidget,
+    bool? negate,
   }) {
     return WidgetSelector<W>(
       props: props ?? this.props,
@@ -992,6 +1037,7 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
       children: children ?? this.children,
       expectedQuantity: expectedQuantity ?? this.expectedQuantity,
       mapElementToWidget: mapElementToWidget ?? this.mapElementToWidget,
+      negate: negate ?? this.negate,
     );
   }
 
@@ -1318,8 +1364,24 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   }
 }
 
+extension NegateWidgetSelector<W extends Widget> on WidgetSelector<W> {
+  WidgetSelector<W> not() {
+    return copyWith(negate: true);
+  }
+}
+
 /// Extensions that control the parent/children widgets of a [WidgetSelector]
 extension RelativeSelectors<W extends Widget> on WidgetSelector<W> {
+  /// Returns a [WidgetSelector] that requires [parent] to **not** be a parent
+  /// of the to be matched widget
+  WidgetSelector<W> withoutParent(WidgetSelector parent) {
+    return copyWith(parents: [...parents, parent.not()]);
+  }
+
+  WidgetSelector<W> withoutChild(WidgetSelector child) {
+    return copyWith(children: [...children, child.not()]);
+  }
+
   /// Returns a [WidgetSelector] that requires [parent] to be a parent of
   /// the to be matched widget
   WidgetSelector<W> withParent(WidgetSelector parent) {

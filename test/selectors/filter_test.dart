@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
+import 'package:spot/src/spot/selectors.dart';
 
 void main() {
   group('first', () {
@@ -74,6 +75,34 @@ void main() {
       // TODO find better way assert children
       final topMostCenter = spot<Center>().last();
       topMostCenter.spot<Text>().existsOnce().hasText('c');
+    });
+  });
+
+  group('not parent', () {
+    testWidgets('negate child', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          // materialActions
+          home: Row(
+            children: [
+              RotatedBox(
+                quarterTurns: 0,
+                child: Text('a'),
+              ),
+              RotatedBox(
+                quarterTurns: 0,
+                child: Placeholder(),
+              ),
+              RotatedBox(
+                quarterTurns: 0,
+                child: ClipRRect(),
+              ),
+            ],
+          ),
+        ),
+      );
+
+      spot<RotatedBox>().withoutChild(spot<Text>()).existsExactlyNTimes(2);
     });
   });
 }
