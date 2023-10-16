@@ -26,6 +26,28 @@ void main() {
     );
     final checkbox = spotSingle<Checkbox>();
 
+    testWidgets('hasProp selector', (widgetTester) async {
+      await widgetTester.pumpWidget(checkedCheckbox);
+      checkbox.existsOnce().hasProp(
+            // ignore: deprecated_member_use_from_same_package
+            selector: (e) => e.context.nest(
+              () => ['Checkbox', 'value'],
+              (e) => Extracted.value((e.widget as Checkbox).value),
+            ),
+            match: (it) => it.equals(true),
+          );
+
+      await widgetTester.pumpWidget(uncheckedCheckbox);
+      checkbox.existsOnce().hasProp(
+            // ignore: deprecated_member_use_from_same_package
+            selector: (e) => e.context.nest(
+              () => ['Checkbox', 'value'],
+              (e) => Extracted.value((e.widget as Checkbox).value),
+            ),
+            match: (it) => it.equals(false),
+          );
+    });
+
     testWidgets('hasProp elementSelector', (widgetTester) async {
       await widgetTester.pumpWidget(checkedCheckbox);
       checkbox.existsOnce().hasProp(
@@ -45,6 +67,7 @@ void main() {
             match: (it) => it.equals(false),
           );
     });
+
     testWidgets('hasProp widgetSelector', (widgetTester) async {
       await widgetTester.pumpWidget(checkedCheckbox);
       checkbox.existsOnce().hasProp(
@@ -63,6 +86,7 @@ void main() {
             match: (it) => it.equals(false),
           );
     });
+
     testWidgets('hasElementProp', (widgetTester) async {
       await widgetTester.pumpWidget(checkedCheckbox);
       checkbox.existsOnce().hasElementProp(
@@ -77,6 +101,7 @@ void main() {
             match: (it) => it.equals(false),
           );
     });
+
     testWidgets('hasWidgetProp', (widgetTester) async {
       await widgetTester.pumpWidget(checkedCheckbox);
       checkbox.existsOnce().hasWidgetProp(
@@ -91,12 +116,14 @@ void main() {
             match: (it) => it.equals(false),
           );
     });
+
     testWidgets('extracted isChecked', (widgetTester) async {
       await widgetTester.pumpWidget(checkedCheckbox);
       checkbox.existsOnce().isChecked(true);
       await widgetTester.pumpWidget(uncheckedCheckbox);
       checkbox.existsOnce().isChecked(false);
     });
+
     testWidgets('extracted isCheckedWhere', (widgetTester) async {
       await widgetTester.pumpWidget(checkedCheckbox);
       checkbox.existsOnce().isCheckedWhere((it) => it.isTrue());
