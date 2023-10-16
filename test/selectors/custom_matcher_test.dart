@@ -117,6 +117,18 @@ void main() {
           );
     });
 
+    testWidgets('whereWidget', (widgetTester) async {
+      // TODO make hasWidgetProp as short as whereWidget
+      await widgetTester.pumpWidget(checkedCheckbox);
+      checkbox
+          .whereWidget((widget) => widget.value == true, description: 'value')
+          .existsOnce();
+      await widgetTester.pumpWidget(uncheckedCheckbox);
+      checkbox
+          .whereWidget((widget) => widget.value == false, description: 'value')
+          .existsOnce();
+    });
+
     testWidgets('extracted isChecked', (widgetTester) async {
       await widgetTester.pumpWidget(checkedCheckbox);
       checkbox.existsOnce().isChecked(true);
