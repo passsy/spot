@@ -172,6 +172,31 @@ void main() {
         spotText('foo${obj}bar').existsOnce(); // WidgetSpan becomes whitespace
       });
     });
+
+    testWidgets('chain with parents', (tester) async {
+      await tester.pumpWidget(
+        _stage(
+          children: [
+            ColoredBox(
+              color: Colors.red,
+              child: Text('a'),
+            ),
+            RotatedBox(
+              quarterTurns: 2,
+              child: Text('b'),
+            ),
+            Text('a'),
+            Text('b'),
+          ],
+        ),
+      );
+
+      spot<ColoredBox>().spotText('a').existsOnce();
+      spot<RotatedBox>().spotText('b').existsOnce();
+
+      spot<ColoredBox>().spotText('b').doesNotExist();
+      spot<RotatedBox>().spotText('a').doesNotExist();
+    });
   });
 
   group('spotTextWhere', () {
