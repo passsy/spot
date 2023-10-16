@@ -53,11 +53,13 @@ void main() {
             anyOf(
               // Flutter 3.13
               contains(
-                  'Could not find widget with text "nope" which is an ancestor of type "Directionality" in widget tree'),
+                'Could not find widget with text "nope" which is an ancestor of type "Directionality" in widget tree',
+              ),
 
               // Flutter 3.15
               contains(
-                  'Could not find widget with widgets with text "nope" that are ancestors of widgets with type "Directionality" in widget tree'),
+                'Could not find widget with widgets with text "nope" that are ancestors of widgets with type "Directionality" in widget tree',
+              ),
             ),
           ),
         ),
