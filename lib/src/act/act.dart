@@ -73,6 +73,7 @@ class Act {
     required WidgetSelector selector,
   }) {
     final Rect viewport =
+        // ignore: deprecated_member_use
         Offset.zero & WidgetsBinding.instance.renderView.configuration.size;
     final Rect location =
         renderBox.localToGlobal(Offset.zero) & renderBox.paintBounds.size;

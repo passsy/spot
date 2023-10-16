@@ -49,6 +49,7 @@ class _FinderSelector<W extends Widget> extends MultiWidgetSelector<W> {
   @override
   String toString() {
     final overridden = super.toString();
+    // ignore: deprecated_member_use
     return 'widget with ${finder.description}'
         '${overridden.isNotEmpty ? ' $overridden' : ''}';
   }
@@ -56,6 +57,7 @@ class _FinderSelector<W extends Widget> extends MultiWidgetSelector<W> {
   @override
   String toStringWithoutParents() {
     final overridden = super.toStringWithoutParents();
+    // ignore: deprecated_member_use
     return 'widget with ${finder.description}'
         '${overridden.isNotEmpty ? ' $overridden' : ''}';
   }
@@ -68,6 +70,7 @@ class _FinderFilter extends ElementFilter {
 
   @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
+    // ignore: deprecated_member_use
     return candidates.filter((it) => finder.apply([it.element]).isNotEmpty);
   }
 }
