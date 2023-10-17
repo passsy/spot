@@ -64,6 +64,8 @@ MultiWidgetSnapshot<W> snapshot<W extends Widget>(
   );
 }
 
+/// Snapshots all [WidgetSelector.parents] of [selector] and searches their subtrees for matches of [selector].
+/// Only nodes that match all parents are returned
 class CandidateGeneratorFromParents<W extends Widget>
     implements CandidateGenerator<W> {
   final WidgetSelector<W> selector;
@@ -73,6 +75,8 @@ class CandidateGeneratorFromParents<W extends Widget>
   @override
   Iterable<WidgetTreeNode> generateCandidates() {
     final tree = currentWidgetTreeSnapshot();
+
+    // Snapshot the parents, each parent may have multiple matches
     final List<MultiWidgetSnapshot<Widget>> parentSnapshots =
         selector.parents.map((selector) {
       final MultiWidgetSnapshot<Widget> widgetSnapshot = snapshot(selector);
@@ -104,6 +108,7 @@ class CandidateGeneratorFromParents<W extends Widget>
         return groups;
       }
 
+      // search the children of each parent match to match the selector
       for (final WidgetTreeNode node in parentSnapshot.discovered) {
         final MultiWidgetSnapshot<W> group =
             findWithinScope(tree.scope(node), selectorWithoutParents);
@@ -126,6 +131,8 @@ class CandidateGeneratorFromParents<W extends Widget>
 
     final List<Element> distinctElements =
         allDiscoveredNodes.map((e) => e.element).toSet().toList();
+
+    // TODO optimize: search parents one after the other and only search widgets of the previous search, reducing the number of elements rapidly
 
     // find nodes that exist in all parents
     final List<Element> elementsInAllParents =
