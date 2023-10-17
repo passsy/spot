@@ -954,7 +954,7 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
 
   CandidateGenerator<W> createCandidateGenerator() {
     if (negate == true) {
-      throw "Can't use a negated selector to start a snapshot";
+      // throw "Can't use a negated selector to start a snapshot";
     }
     return CandidateGeneratorFromParents(this);
   }
@@ -1005,18 +1005,11 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
     }
 
     final parentBreadcrumbs = parents.map((e) => e.toStringBreadcrumb());
-    if (negate) {
-      if (parentBreadcrumbs.length == 1) {
-        return 'not(${parentBreadcrumbs.first} > ${toStringWithoutParents()})';
-      } else {
-        return 'not([${parentBreadcrumbs.join(' && ')}] > ${toStringWithoutParents()})';
-      }
+
+    if (parentBreadcrumbs.length == 1) {
+      return '${parentBreadcrumbs.first} > ${toStringWithoutParents()}';
     } else {
-      if (parentBreadcrumbs.length == 1) {
-        return '${parentBreadcrumbs.first} > ${toStringWithoutParents()}';
-      } else {
-        return '[${parentBreadcrumbs.join(' && ')}] > ${toStringWithoutParents()}';
-      }
+      return '[${parentBreadcrumbs.join(' && ')}] > ${toStringWithoutParents()}';
     }
   }
 
