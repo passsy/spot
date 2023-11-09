@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/spot/selectors.dart';
@@ -104,28 +105,50 @@ void main() {
 
     testWidgets('hasWidgetProp', (widgetTester) async {
       await widgetTester.pumpWidget(checkedCheckbox);
-      checkbox.existsOnce().hasWidgetProp(
-            name: 'value',
-            prop: (it) => it.value,
+      checkbox.existsOnce().hasProp2(
+            prop: widgetProp('value', (it) => it.value),
             match: (it) => it.equals(true),
           );
+      checkbox.existsOnce().hasProp2(
+            prop: elementProp('mounted', (it) => it.mounted),
+            match: (it) => it.isTrue(),
+          );
+
+      // TODO make this syntax work
+      checkbox
+          .existsOnce()
+          .has(elementProp('mounted', (it) => it.mounted).isTrue());
+
+      checkbox.existsOnce().hasProp2(
+            prop: renderObject<RenderProxyBox>()
+                .prop('constraints', (it) => it.constraints),
+            match: (it) => it.has((it) => it.minWidth, 'minWidth').equals(0.0),
+          );
+      checkbox.existsOnce().hasProp2(
+            prop: NamedRenderObjectProp<Checkbox, RenderProxyBox, bool>(
+                name: 'hasSize', prop: (it) => it.hasSize),
+            match: (it) => it.isTrue(),
+          );
+
       await widgetTester.pumpWidget(uncheckedCheckbox);
+
       checkbox.existsOnce().hasWidgetProp(
+            prop: (widget) => widget.value,
             name: 'value',
-            prop: (it) => it.value,
-            match: (it) => it.equals(false),
+            match: (value) => value.equals(false),
           );
     });
 
     testWidgets('whereWidget', (widgetTester) async {
-      // TODO make hasWidgetProp as short as whereWidget
       await widgetTester.pumpWidget(checkedCheckbox);
       checkbox
-          .whereWidget((widget) => widget.value == true, description: 'value')
+          .whereWidget((widget) => widget.value == true,
+              description: 'isChecked')
           .existsOnce();
       await widgetTester.pumpWidget(uncheckedCheckbox);
       checkbox
-          .whereWidget((widget) => widget.value == false, description: 'value')
+          .whereWidget((widget) => widget.value == false,
+              description: 'isChecked')
           .existsOnce();
     });
 
