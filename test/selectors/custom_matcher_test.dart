@@ -87,21 +87,6 @@ void main() {
           );
     });
 
-    testWidgets('hasElementProp', (widgetTester) async {
-      await widgetTester.pumpWidget(checkedCheckbox);
-      checkbox.existsOnce().hasElementProp(
-            name: 'value',
-            prop: (it) => (it.widget as Checkbox).value,
-            match: (it) => it.equals(true),
-          );
-      await widgetTester.pumpWidget(uncheckedCheckbox);
-      checkbox.existsOnce().hasElementProp(
-            name: 'value',
-            prop: (it) => (it.widget as Checkbox).value,
-            match: (it) => it.equals(false),
-          );
-    });
-
     testWidgets('hasWidgetProp', (widgetTester) async {
       await widgetTester.pumpWidget(checkedCheckbox);
 
@@ -119,6 +104,21 @@ void main() {
           );
     });
 
+    testWidgets('hasElementProp', (widgetTester) async {
+      await widgetTester.pumpWidget(checkedCheckbox);
+      checkbox.existsOnce().hasElementProp(
+            name: 'value',
+            prop: (it) => (it.widget as Checkbox).value,
+            match: (it) => it.equals(true),
+          );
+      await widgetTester.pumpWidget(uncheckedCheckbox);
+      checkbox.existsOnce().hasElementProp(
+            name: 'value',
+            prop: (it) => (it.widget as Checkbox).value,
+            match: (it) => it.equals(false),
+          );
+    });
+
     testWidgets('whereWidget', (widgetTester) async {
       await widgetTester.pumpWidget(checkedCheckbox);
       checkbox
@@ -132,6 +132,23 @@ void main() {
           .whereWidget(
             (widget) => widget.value == false,
             description: 'isChecked',
+          )
+          .existsOnce();
+    });
+
+    testWidgets('whereElement', (widgetTester) async {
+      await widgetTester.pumpWidget(checkedCheckbox);
+      checkbox
+          .whereElement(
+            (el) => (el.widget as Checkbox).value == true,
+            description: 'is checked',
+          )
+          .existsOnce();
+      await widgetTester.pumpWidget(uncheckedCheckbox);
+      checkbox
+          .whereElement(
+            (el) => (el.widget as Checkbox).value == false,
+            description: 'is not checked',
           )
           .existsOnce();
     });

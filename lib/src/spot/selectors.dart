@@ -467,6 +467,8 @@ class LastElement extends ElementFilter {
 extension SelectorQueries<W extends Widget> on Selectors<W> {
   /// Creates a filter for the discovered elements which is applied when the
   /// [Selector] is snapshotted
+  ///
+  /// The [description] is required to make error messages understandable
   WidgetSelector<W> whereElement(
     bool Function(Element element) predicate, {
     required String description,
@@ -484,6 +486,17 @@ extension SelectorQueries<W extends Widget> on Selectors<W> {
 
   /// Creates a filter for the widgets of the discovered elements which is
   /// applied when the [Selector] is snapshotted
+  ///
+  /// The [description] is required to make error messages understandable
+  ///
+  /// ```dart
+  /// spotSingle<Checkbox>()
+  ///    .whereWidget(
+  ///      (widget) => widget.value == true,
+  ///      description: 'isChecked',
+  ///    )
+  ///    .existsOnce();
+  /// ```
   WidgetSelector<W> whereWidget(
     bool Function(W widget) predicate, {
     required String description,
