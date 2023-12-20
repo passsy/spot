@@ -120,6 +120,17 @@ extension IconMatcher on WidgetMatcher<Icon> {
     return hasDiagnosticProp<TextDirection>('textDirection',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
+
+  /// Expects that applyTextScaling of [Icon] matches the condition in [match]
+  WidgetMatcher<Icon> hasApplyTextScalingWhere(MatchProp<bool> match) {
+    return hasDiagnosticProp<bool>('applyTextScaling', match);
+  }
+
+  /// Expects that applyTextScaling of [Icon] equals (==) [value]
+  WidgetMatcher<Icon> hasApplyTextScaling(bool? value) {
+    return hasDiagnosticProp<bool>('applyTextScaling',
+        (it) => value == null ? it.isNull() : it.equals(value));
+  }
 }
 
 /// Allows filtering [Icon] by the properties provided via [Diagnosticable.debugFillProperties]
@@ -231,6 +242,17 @@ extension IconSelector on WidgetSelector<Icon> {
   /// Creates a [WidgetSelector] that finds all [Icon] where textDirection equals (==) [value]
   WidgetSelector<Icon> withTextDirection(TextDirection? value) {
     return withDiagnosticProp<TextDirection>('textDirection',
+        (it) => value == null ? it.isNull() : it.equals(value));
+  }
+
+  /// Creates a [WidgetSelector] that finds all [Icon] where applyTextScaling matches the condition
+  WidgetSelector<Icon> whereApplyTextScaling(MatchProp<bool> match) {
+    return withDiagnosticProp<bool>('applyTextScaling', match);
+  }
+
+  /// Creates a [WidgetSelector] that finds all [Icon] where applyTextScaling equals (==) [value]
+  WidgetSelector<Icon> withApplyTextScaling(bool? value) {
+    return withDiagnosticProp<bool>('applyTextScaling',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 }

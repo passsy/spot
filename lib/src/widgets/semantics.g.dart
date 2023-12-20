@@ -58,6 +58,17 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
         'mixed', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Expects that expanded of [Semantics] matches the condition in [match]
+  WidgetMatcher<Semantics> hasExpandedWhere(MatchProp<bool> match) {
+    return hasDiagnosticProp<bool>('expanded', match);
+  }
+
+  /// Expects that expanded of [Semantics] equals (==) [value]
+  WidgetMatcher<Semantics> hasExpanded(bool? value) {
+    return hasDiagnosticProp<bool>(
+        'expanded', (it) => value == null ? it.isNull() : it.equals(value));
+  }
+
   /// Expects that selected of [Semantics] matches the condition in [match]
   WidgetMatcher<Semantics> hasSelectedWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('selected', match);
@@ -285,6 +296,17 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   WidgetSelector<Semantics> withMixed(bool? value) {
     return withDiagnosticProp<bool>(
         'mixed', (it) => value == null ? it.isNull() : it.equals(value));
+  }
+
+  /// Creates a [WidgetSelector] that finds all [Semantics] where expanded matches the condition
+  WidgetSelector<Semantics> whereExpanded(MatchProp<bool> match) {
+    return withDiagnosticProp<bool>('expanded', match);
+  }
+
+  /// Creates a [WidgetSelector] that finds all [Semantics] where expanded equals (==) [value]
+  WidgetSelector<Semantics> withExpanded(bool? value) {
+    return withDiagnosticProp<bool>(
+        'expanded', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where selected matches the condition
