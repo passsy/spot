@@ -467,6 +467,8 @@ class LastElement extends ElementFilter {
 extension SelectorQueries<W extends Widget> on Selectors<W> {
   /// Creates a filter for the discovered elements which is applied when the
   /// [Selector] is snapshotted
+  ///
+  /// The [description] is required to make error messages understandable
   WidgetSelector<W> whereElement(
     bool Function(Element element) predicate, {
     required String description,
@@ -484,6 +486,17 @@ extension SelectorQueries<W extends Widget> on Selectors<W> {
 
   /// Creates a filter for the widgets of the discovered elements which is
   /// applied when the [Selector] is snapshotted
+  ///
+  /// The [description] is required to make error messages understandable
+  ///
+  /// ```dart
+  /// spotSingle<Checkbox>()
+  ///    .whereWidget(
+  ///      (widget) => widget.value == true,
+  ///      description: 'isChecked',
+  ///    )
+  ///    .existsOnce();
+  /// ```
   WidgetSelector<W> whereWidget(
     bool Function(W widget) predicate, {
     required String description,
@@ -517,9 +530,11 @@ extension MatchPropNullable<T> on MatchProp<T> {
 }
 
 class WidgetMatcher<W extends Widget> {
-  W get widget => element.widget as W;
   final Element element;
   final WidgetSelector<W> selector;
+
+  /// Returns the Widget that is associated with [element]
+  W get widget => selector.mapElementToWidget(element);
 
   WidgetMatcher({
     required this.element,
@@ -663,6 +678,83 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
     }
     return this;
   }
+
+  WidgetMatcher<W> hasWidgetProp<T>({
+    required String name,
+    required T Function(W) prop,
+    required MatchProp<T> match,
+  }) {
+    final ConditionSubject<Element> conditionSubject = it<Element>();
+    final Subject<T> subject = conditionSubject.context.nest<T>(
+      () => ['$W', "with prop '$name'"],
+      (element) {
+        final widget = selector.mapElementToWidget(element);
+        return Extracted.value(prop.call(widget));
+      },
+    );
+
+    match(subject);
+    final failure = softCheck(element, conditionSubject);
+    if (failure != null) {
+      final errorParts =
+          describe(conditionSubject).map((it) => it.trim()).toList();
+      // workaround allowing to use
+      // hasPropertyXWhere((subject)=> subject.equals(X));
+      // instead of
+      // hasPropertyXWhere((subject)=> subject.isNotNull().equals(X));
+      //
+      // when Subject is Subject<T> but the value can actually be null (should be Subject<T?>).
+      final errorMessage = errorParts.join(' ');
+      if (errorParts.last == 'is null' &&
+          failure.rejection.actual.firstOrNull == '<null>') {
+        // property is null and isNull() was called
+        // not error because null == null
+        return this;
+      }
+      throw PropertyCheckFailure(
+        'Failed to match widget: $errorMessage, actual: ${failure.rejection.actual.joinToString()}',
+        matcherDescription: errorParts.skip(1).join(' ').removePrefix('with '),
+      );
+    }
+    return this;
+  }
+
+  WidgetMatcher<W> hasElementProp<T>({
+    required String name,
+    required T Function(Element) prop,
+    required MatchProp<T> match,
+  }) {
+    final ConditionSubject<Element> conditionSubject = it<Element>();
+    final Subject<T> subject = conditionSubject.context.nest<T>(
+      () => ['Element of $W', "with prop '$name'"],
+      (element) => Extracted.value(prop.call(element)),
+    );
+
+    match(subject);
+    final failure = softCheck(element, conditionSubject);
+    if (failure != null) {
+      final errorParts =
+          describe(conditionSubject).map((it) => it.trim()).toList();
+      // workaround allowing to use
+      // hasPropertyXWhere((subject)=> subject.equals(X));
+      // instead of
+      // hasPropertyXWhere((subject)=> subject.isNotNull().equals(X));
+      //
+      // when Subject is Subject<T> but the value can actually be null (should be Subject<T?>).
+      final errorMessage = errorParts.join(' ');
+      if (errorParts.last == 'is null' &&
+          failure.rejection.actual.firstOrNull == '<null>') {
+        // property is null and isNull() was called
+        // not error because null == null
+        return this;
+      }
+      throw PropertyCheckFailure(
+        'Failed to match widget: $errorMessage, actual: ${failure.rejection.actual.joinToString()}',
+        matcherDescription: errorParts.skip(1).join(' ').removePrefix('with '),
+      );
+    }
+    return this;
+  }
 }
 
 class PropertyCheckFailure extends TestFailure {
@@ -721,6 +813,26 @@ class SingleWidgetSelector<W extends Widget> extends WidgetSelector<W> {
   SingleWidgetSnapshot<W> snapshot() {
     TestAsyncUtils.guardSync();
     return snapshot_file.snapshot(this).single;
+  }
+
+  /// Convenience getter to access the [Widget] when evaluating the [WidgetSelector]
+  W snapshotWidget() {
+    TestAsyncUtils.guardSync();
+    return snapshot_file.snapshot(this).single.widget;
+  }
+
+  /// Convenience getter to access the [Element] when evaluating the [WidgetSelector]
+  Element snapshotElement() {
+    TestAsyncUtils.guardSync();
+    return snapshot_file.snapshot(this).single.element;
+  }
+
+  /// Convenience getter to access the [RenderObject] when evaluating the [WidgetSelector]
+  RenderObject snapshotRenderObject() {
+    TestAsyncUtils.guardSync();
+    // There is not a single Element in the Flutter SDK that returns null for `renderObject`.
+    // So we can safely assume that this cast never fails.
+    return snapshot_file.snapshot(this).single.element.renderObject!;
   }
 }
 
@@ -1235,7 +1347,9 @@ class SingleWidgetSnapshot<W extends Widget> implements WidgetMatcher<W> {
     required this.selector,
     required this.discovered,
     required this.debugCandidates,
-  }) : _widget = discovered?.element.widget;
+  }) : _widget = discovered?.element == null
+            ? null
+            : selector.mapElementToWidget(discovered!.element);
 
   /// The widget at the point when the snapshot was taken
   ///
@@ -1243,7 +1357,7 @@ class SingleWidgetSnapshot<W extends Widget> implements WidgetMatcher<W> {
   /// was taken. This is a reference to the widget that was found at the time
   /// the snapshot was taken. This allows to compare the widget with the current
   /// widget in the tree.
-  final Widget? _widget;
+  final W? _widget;
 
   @override
   final WidgetSelector<W> selector;
@@ -1278,7 +1392,7 @@ class SingleWidgetSnapshot<W extends Widget> implements WidgetMatcher<W> {
   Element? get discoveredElement => element;
 
   @override
-  W get widget => _widget! as W;
+  W get widget => _widget!;
 }
 
 extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
