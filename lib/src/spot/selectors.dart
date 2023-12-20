@@ -1,3 +1,5 @@
+// ignore_for_file: require_trailing_commas
+
 import 'dart:io';
 
 import 'package:checks/checks.dart';
@@ -514,6 +516,76 @@ extension SelectorQueries<W extends Widget> on Selectors<W> {
       ],
     );
   }
+
+  /// Creates a filter for the widgets of the discovered elements which is
+  /// applied when the [Selector] is snapshotted
+  ///
+  /// ```dart
+  /// spotSingle<Checkbox>()
+  ///   .whereWidgetProp(
+  ///     prop: widgetProp('isChecked', (widget) => widget.value),
+  ///     match: (value) => value == true,
+  ///   )
+  ///   .existsOnce();
+  ///   ```
+  WidgetSelector<W> whereWidgetProp<T>({
+    required NamedWidgetProp<W, T> prop,
+    required bool Function(T value) match,
+  }) {
+    return self!.copyWith(
+      props: [
+        ...self!.props,
+        PredicateWithDescription(
+          (Element element) {
+            final widget = self!.mapElementToWidget(element);
+            final value = prop.get(widget);
+            return match(value);
+          },
+          description: prop.name,
+        ),
+      ],
+    );
+  }
+
+  WidgetSelector<W> whereElementProp<T>({
+    required NamedElementProp<T> prop,
+    required bool Function(T value) match,
+  }) {
+    return self!.copyWith(
+      props: [
+        ...self!.props,
+        PredicateWithDescription(
+          (Element element) {
+            final value = prop.get(element);
+            return match(value);
+          },
+          description: prop.name,
+        ),
+      ],
+    );
+  }
+
+  WidgetSelector<W> whereRenderObjectProp<T, R extends RenderObject>({
+    required NamedRenderObjectProp<R, T> prop,
+    required bool Function(T value) match,
+  }) {
+    return self!.copyWith(
+      props: [
+        ...self!.props,
+        PredicateWithDescription(
+          (Element element) {
+            final renderObject = element.renderObject;
+            if (renderObject is R) {
+              final value = prop.get(renderObject);
+              return match(value);
+            }
+            return false;
+          },
+          description: prop.name,
+        ),
+      ],
+    );
+  }
 }
 
 /// A Function that fires checks against [T] using the [Subject] API
@@ -679,18 +751,19 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
     return this;
   }
 
+  T getWidgetProp<T>(NamedWidgetProp<W, T> prop) {
+    final widget = selector.mapElementToWidget(element);
+    return prop.get(widget);
+  }
+
   WidgetMatcher<W> hasWidgetProp<T>({
-    required String name,
-    required T Function(W) prop,
+    required NamedWidgetProp<W, T> prop,
     required MatchProp<T> match,
   }) {
     final ConditionSubject<Element> conditionSubject = it<Element>();
     final Subject<T> subject = conditionSubject.context.nest<T>(
-      () => ['$W', "with prop '$name'"],
-      (element) {
-        final widget = selector.mapElementToWidget(element);
-        return Extracted.value(prop.call(widget));
-      },
+      () => ['$W', "with prop '${prop.name}'"],
+      (element) => Extracted.value(getWidgetProp(prop)),
     );
 
     match(subject);
@@ -719,15 +792,60 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
     return this;
   }
 
+  T getElementProp<T>(NamedElementProp<T> prop) {
+    return prop.get(element);
+  }
+
   WidgetMatcher<W> hasElementProp<T>({
-    required String name,
-    required T Function(Element) prop,
+    required NamedElementProp<T> prop,
     required MatchProp<T> match,
   }) {
     final ConditionSubject<Element> conditionSubject = it<Element>();
     final Subject<T> subject = conditionSubject.context.nest<T>(
-      () => ['Element of $W', "with prop '$name'"],
-      (element) => Extracted.value(prop.call(element)),
+      () => ['Element of $W', "with prop '${prop.name}'"],
+      (element) => Extracted.value(prop.get(element)),
+    );
+
+    match(subject);
+    final failure = softCheck(element, conditionSubject);
+    if (failure != null) {
+      final errorParts =
+          describe(conditionSubject).map((it) => it.trim()).toList();
+      // workaround allowing to use
+      // hasPropertyXWhere((subject)=> subject.equals(X));
+      // instead of
+      // hasPropertyXWhere((subject)=> subject.isNotNull().equals(X));
+      //
+      // when Subject is Subject<T> but the value can actually be null (should be Subject<T?>).
+      final errorMessage = errorParts.join(' ');
+      if (errorParts.last == 'is null' &&
+          failure.rejection.actual.firstOrNull == '<null>') {
+        // property is null and isNull() was called
+        // not error because null == null
+        return this;
+      }
+      throw PropertyCheckFailure(
+        'Failed to match widget: $errorMessage, actual: ${failure.rejection.actual.joinToString()}',
+        matcherDescription: errorParts.skip(1).join(' ').removePrefix('with '),
+      );
+    }
+    return this;
+  }
+
+  T getRenderObjectProp<T, R extends RenderObject>(
+      NamedRenderObjectProp<R, T> prop) {
+    final renderObject = element.renderObject! as R;
+    return prop.get(renderObject);
+  }
+
+  WidgetMatcher<W> hasRenderObjectProp<T, R extends RenderObject>({
+    required NamedRenderObjectProp<R, T> prop,
+    required MatchProp<T> match,
+  }) {
+    final ConditionSubject<Element> conditionSubject = it<Element>();
+    final Subject<T> subject = conditionSubject.context.nest<T>(
+      () => ['RenderObject of $W', "with prop '${prop.name}'"],
+      (element) => Extracted.value(getRenderObjectProp(prop)),
     );
 
     match(subject);

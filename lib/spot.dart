@@ -28,6 +28,7 @@ export 'package:spot/src/screenshot/screenshot.dart';
 export 'package:spot/src/spot/default_selectors.dart';
 export 'package:spot/src/spot/effective/effective_text.dart';
 export 'package:spot/src/spot/finder_interop.dart';
+export 'package:spot/src/spot/props.dart';
 export 'package:spot/src/spot/selectors.dart'
     show
         CreateMatchers,
