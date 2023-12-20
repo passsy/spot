@@ -1,5 +1,3 @@
-// ignore_for_file: require_trailing_commas
-
 import 'dart:io';
 
 import 'package:checks/checks.dart';
@@ -833,7 +831,8 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
   }
 
   T getRenderObjectProp<T, R extends RenderObject>(
-      NamedRenderObjectProp<R, T> prop) {
+    NamedRenderObjectProp<R, T> prop,
+  ) {
     final renderObject = element.renderObject! as R;
     return prop.get(renderObject);
   }
