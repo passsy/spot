@@ -517,9 +517,11 @@ extension MatchPropNullable<T> on MatchProp<T> {
 }
 
 class WidgetMatcher<W extends Widget> {
-  W get widget => element.widget as W;
   final Element element;
   final WidgetSelector<W> selector;
+
+  /// Returns the Widget that is associated with [element]
+  W get widget => selector.mapElementToWidget(element);
 
   WidgetMatcher({
     required this.element,
@@ -1453,7 +1455,9 @@ class SingleWidgetSnapshot<W extends Widget> implements WidgetMatcher<W> {
     required this.selector,
     required this.discovered,
     required this.debugCandidates,
-  }) : _widget = discovered?.element.widget;
+  }) : _widget = discovered?.element == null
+            ? null
+            : selector.mapElementToWidget(discovered!.element);
 
   /// The widget at the point when the snapshot was taken
   ///
@@ -1461,7 +1465,7 @@ class SingleWidgetSnapshot<W extends Widget> implements WidgetMatcher<W> {
   /// was taken. This is a reference to the widget that was found at the time
   /// the snapshot was taken. This allows to compare the widget with the current
   /// widget in the tree.
-  final Widget? _widget;
+  final W? _widget;
 
   @override
   final WidgetSelector<W> selector;
@@ -1496,7 +1500,7 @@ class SingleWidgetSnapshot<W extends Widget> implements WidgetMatcher<W> {
   Element? get discoveredElement => element;
 
   @override
-  W get widget => _widget! as W;
+  W get widget => _widget!;
 }
 
 extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
