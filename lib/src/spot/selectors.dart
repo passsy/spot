@@ -942,6 +942,26 @@ class SingleWidgetSelector<W extends Widget> extends WidgetSelector<W> {
     TestAsyncUtils.guardSync();
     return snapshot_file.snapshot(this).single;
   }
+
+  /// Convenience getter to access the [Widget] when evaluating the [WidgetSelector]
+  W snapshotWidget() {
+    TestAsyncUtils.guardSync();
+    return snapshot_file.snapshot(this).single.widget;
+  }
+
+  /// Convenience getter to access the [Element] when evaluating the [WidgetSelector]
+  Element snapshotElement() {
+    TestAsyncUtils.guardSync();
+    return snapshot_file.snapshot(this).single.element;
+  }
+
+  /// Convenience getter to access the [RenderObject] when evaluating the [WidgetSelector]
+  RenderObject snapshotRenderObject() {
+    TestAsyncUtils.guardSync();
+    // There is not a single Element in the Flutter SDK that returns null for `renderObject`.
+    // So we can safely assume that this cast never fails.
+    return snapshot_file.snapshot(this).single.element.renderObject!;
+  }
 }
 
 /// A [WidgetSelector] that to 0..N widgets
