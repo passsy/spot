@@ -105,19 +105,58 @@ void main() {
 
     testWidgets('hasWidgetProp', (widgetTester) async {
       await widgetTester.pumpWidget(checkedCheckbox);
-      checkbox.existsOnce().hasProp2(
-            prop: widgetProp('value', (it) => it.value),
-            match: (it) => it.equals(true),
+
+      checkbox.existsOnce().hasWidgetProp(
+            prop: (widget) => widget.value,
+            name: 'value',
+            match: (value) => value.equals(false),
           );
+
+      final CheckBox$value = widgetProp<bool?, Checkbox, RenderObject, Element>(
+        'value',
+        (it) => it.value,
+      );
       checkbox.existsOnce().hasProp2(
-            prop: elementProp('mounted', (it) => it.mounted),
+            prop: CheckBox$value,
+            match: (it) => it.isNotNull(),
+          );
+
+      final NamedElementProp<bool, Widget, RenderObject, Element>
+          Element$isMounted =
+          elementCurry<Element>().prop('mounted', (it) => it.mounted);
+
+      // TODO don't use generics unless we get `out T` in Dart
+      checkbox.existsOnce().hasProp2(
+            prop: Element$isMounted,
             match: (it) => it.isTrue(),
           );
 
-      // TODO make this syntax work
-      checkbox
-          .existsOnce()
-          .has(elementProp('mounted', (it) => it.mounted).isTrue());
+      checkbox.existsOnce().hasProp2(
+            prop: widgetProp('value', (it) => it.value),
+            match: (it) => it.isNotNull(),
+          );
+
+      checkbox.existsOnce().hasProp2(
+            prop: elementProp('mounted', (it) => it.mounted),
+            match: (it) => it
+              ..isNotNull()
+              ..isTrue()
+              ..equals(true),
+          );
+
+      checkbox.existsOnce().hasProp2(
+            prop: renderObject<RenderProxyBox>()
+                .prop('constraints', (it) => it.constraints),
+            match: (it) => it.has((it) => it.minWidth, 'minWidth').equals(0.0),
+          );
+
+      checkbox.existsOnce().hasWidgetProp(
+            name: 'value',
+            prop: (widget) => widget.value,
+            match: (value) => value
+              ..equals(false)
+              ..isNull(),
+          );
 
       checkbox.existsOnce().hasProp2(
             prop: renderObject<RenderProxyBox>()
@@ -125,8 +164,9 @@ void main() {
             match: (it) => it.has((it) => it.minWidth, 'minWidth').equals(0.0),
           );
       checkbox.existsOnce().hasProp2(
-            prop: NamedRenderObjectProp<Checkbox, RenderProxyBox, bool>(
-                name: 'hasSize', prop: (it) => it.hasSize),
+            prop:
+                NamedRenderObjectProp<bool, Checkbox, RenderProxyBox, Element>(
+                    name: 'hasSize', prop: (it) => it.hasSize),
             match: (it) => it.isTrue(),
           );
 
@@ -135,6 +175,12 @@ void main() {
       checkbox.existsOnce().hasWidgetProp(
             prop: (widget) => widget.value,
             name: 'value',
+            match: (value) => value.equals(false),
+          );
+
+      checkbox.existsOnce().hasElementProp(
+            prop: (e) => e.mounted,
+            name: 'isMounted',
             match: (value) => value.equals(false),
           );
     });
