@@ -253,7 +253,7 @@ void _generateWidget<W extends Widget>({
     name = name.substring(0, name.indexOf('<'));
   }
   return testWidgets(name, (tester) async {
-    tester.pumpWidget(
+    await tester.pumpWidget(
       MaterialApp(
         home: Material(
           child: Center(
