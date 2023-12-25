@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
+import 'package:spot/src/checks/checks_nullability.dart';
 import 'package:spot/src/spot/selectors.dart';
 
 void main() {
@@ -21,6 +22,17 @@ void main() {
       home: Scaffold(
         body: Checkbox(
           value: false,
+          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          onChanged: (_) {},
+        ),
+      ),
+    );
+
+    final uncheckedPaddedCheckbox = MaterialApp(
+      home: Scaffold(
+        body: Checkbox(
+          value: false,
+          materialTapTargetSize: MaterialTapTargetSize.padded,
           onChanged: (_) {},
         ),
       ),
@@ -93,13 +105,17 @@ void main() {
 
       checkbox.existsOnce().hasWidgetProp(
             prop: widgetProp('value', (widget) => widget.value),
-            match: (value) => value.equals(true),
+            match: (value) => value.isTrue(),
+          );
+      checkbox.existsOnce().hasWidgetProp(
+            prop: widgetProp('value', (widget) => widget.value),
+            match: (value) => value.isTrue(),
           );
       await widgetTester.pumpWidget(uncheckedCheckbox);
 
       checkbox.existsOnce().hasWidgetProp(
             prop: widgetProp('value', (widget) => widget.value),
-            match: (value) => value.equals(false),
+            match: (value) => value.isFalse(),
           );
     });
 
@@ -112,20 +128,33 @@ void main() {
       await widgetTester.pumpWidget(uncheckedCheckbox);
       checkbox.existsOnce().hasElementProp(
             prop: elementProp('value', (e) => (e.widget as Checkbox).value),
-            match: (it) => it.equals(false),
+            match: (it) => it.isFalse(),
           );
     });
 
     testWidgets('hasRenderObjectProp', (widgetTester) async {
       await widgetTester.pumpWidget(checkedCheckbox);
-      final isComplexProp = renderObjectProp<bool, RenderCustomPaint>(
+      final isComplexProp = renderObjectProp<bool?, RenderCustomPaint>(
         'isComplex',
         (r) => r.isComplex,
       );
       checkbox.spot<CustomPaint>().existsOnce().hasRenderObjectProp(
             prop: isComplexProp,
-            match: (it) => it.equals(false),
+            match: (it) => it.isFalse(),
           );
+    });
+
+    testWidgets('whereRenderObjectProp', (widgetTester) async {
+      await widgetTester.pumpWidget(uncheckedCheckbox);
+      final height =
+          renderObjectProp<double, RenderBox>('height', (r) => r.size.height);
+      checkbox
+          .whereRenderObjectProp(height, (value) => value == 40.0)
+          .existsOnce();
+      await widgetTester.pumpWidget(uncheckedPaddedCheckbox);
+      checkbox
+          .whereRenderObjectProp(height, (value) => value == 48.0)
+          .existsOnce();
     });
 
     testWidgets('whereWidget', (widgetTester) async {
@@ -149,15 +178,15 @@ void main() {
       await widgetTester.pumpWidget(checkedCheckbox);
       checkbox
           .whereWidgetProp(
-            prop: widgetProp('isChecked', (widget) => widget.value),
-            match: (value) => value == true,
+            widgetProp('isChecked', (widget) => widget.value),
+            (value) => value == true,
           )
           .existsOnce();
       await widgetTester.pumpWidget(uncheckedCheckbox);
       checkbox
           .whereWidgetProp(
-            prop: widgetProp('isChecked', (widget) => widget.value),
-            match: (value) => value == false,
+            widgetProp('isChecked', (widget) => widget.value),
+            (value) => value == false,
           )
           .existsOnce();
     });
@@ -176,6 +205,19 @@ void main() {
             (el) => (el.widget as Checkbox).value == false,
             description: 'is not checked',
           )
+          .existsOnce();
+    });
+
+    testWidgets('whereElementProp', (widgetTester) async {
+      final isChecked =
+          elementProp('isChecked', (e) => (e.widget as Checkbox).value);
+      await widgetTester.pumpWidget(checkedCheckbox);
+      checkbox
+          .whereElementProp(isChecked, (checked) => checked == true)
+          .existsOnce();
+      await widgetTester.pumpWidget(uncheckedCheckbox);
+      checkbox
+          .whereElementProp(isChecked, (checked) => checked == false)
           .existsOnce();
     });
 
@@ -201,7 +243,7 @@ extension on WidgetMatcher<Checkbox> {
   WidgetMatcher<Checkbox> hasCheckedValue(bool? checked) {
     return hasWidgetProp(
       prop: widgetProp('value', (w) => w.value),
-      match: (it) => it.equals(checked),
+      match: (it) => it.revealNullability().equals(checked),
     );
   }
 

@@ -526,10 +526,10 @@ extension SelectorQueries<W extends Widget> on Selectors<W> {
   ///   )
   ///   .existsOnce();
   ///   ```
-  WidgetSelector<W> whereWidgetProp<T>({
-    required NamedWidgetProp<W, T> prop,
-    required bool Function(T value) match,
-  }) {
+  WidgetSelector<W> whereWidgetProp<T>(
+    NamedWidgetProp<W, T> prop,
+    bool Function(T value) match,
+  ) {
     return self!.copyWith(
       props: [
         ...self!.props,
@@ -545,10 +545,10 @@ extension SelectorQueries<W extends Widget> on Selectors<W> {
     );
   }
 
-  WidgetSelector<W> whereElementProp<T>({
-    required NamedElementProp<T> prop,
-    required bool Function(T value) match,
-  }) {
+  WidgetSelector<W> whereElementProp<T>(
+    NamedElementProp<T> prop,
+    bool Function(T value) match,
+  ) {
     return self!.copyWith(
       props: [
         ...self!.props,
@@ -563,10 +563,10 @@ extension SelectorQueries<W extends Widget> on Selectors<W> {
     );
   }
 
-  WidgetSelector<W> whereRenderObjectProp<T, R extends RenderObject>({
-    required NamedRenderObjectProp<R, T> prop,
-    required bool Function(T value) match,
-  }) {
+  WidgetSelector<W> whereRenderObjectProp<T, R extends RenderObject>(
+    NamedRenderObjectProp<R, T> prop,
+    bool Function(T value) match,
+  ) {
     return self!.copyWith(
       props: [
         ...self!.props,
@@ -595,6 +595,14 @@ extension MatchPropNullable<T> on MatchProp<T> {
   MatchProp<T?> hideNullability() {
     return (Subject<T?> subject) {
       this.call(subject.hideNullability());
+    };
+  }
+}
+
+extension MatchPropNonNullable<T> on MatchProp<T?> {
+  MatchProp<T> revealNullability() {
+    return (Subject<T> subject) {
+      this.call(subject.revealNullability());
     };
   }
 }
@@ -755,16 +763,21 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
   }
 
   WidgetMatcher<W> hasWidgetProp<T>({
-    required NamedWidgetProp<W, T> prop,
+    required NamedWidgetProp<W, T?> prop,
     required MatchProp<T> match,
   }) {
     final ConditionSubject<Element> conditionSubject = it<Element>();
     final Subject<T> subject = conditionSubject.context.nest<T>(
       () => ['$W', "with prop '${prop.name}'"],
-      (element) => Extracted.value(getWidgetProp(prop)),
+      (element) {
+        final nonNullable =
+            widgetProp<W, T>(prop.name, (widget) => prop.get(widget)!);
+        final value = getWidgetProp(nonNullable);
+        return Extracted.value(value);
+      },
     );
 
-    match(subject);
+    match(subject.hideNullability());
     final failure = softCheck(element, conditionSubject);
     if (failure != null) {
       final errorParts =
@@ -795,13 +808,18 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
   }
 
   WidgetMatcher<W> hasElementProp<T>({
-    required NamedElementProp<T> prop,
+    required NamedElementProp<T?> prop,
     required MatchProp<T> match,
   }) {
     final ConditionSubject<Element> conditionSubject = it<Element>();
     final Subject<T> subject = conditionSubject.context.nest<T>(
       () => ['Element of $W', "with prop '${prop.name}'"],
-      (element) => Extracted.value(prop.get(element)),
+      (element) {
+        final nonNullable =
+            elementProp<T>(prop.name, (element) => prop.get(element)!);
+        final value = getElementProp(nonNullable);
+        return Extracted.value(value);
+      },
     );
 
     match(subject);
@@ -838,13 +856,18 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
   }
 
   WidgetMatcher<W> hasRenderObjectProp<T, R extends RenderObject>({
-    required NamedRenderObjectProp<R, T> prop,
+    required NamedRenderObjectProp<R, T?> prop,
     required MatchProp<T> match,
   }) {
     final ConditionSubject<Element> conditionSubject = it<Element>();
     final Subject<T> subject = conditionSubject.context.nest<T>(
       () => ['RenderObject of $W', "with prop '${prop.name}'"],
-      (element) => Extracted.value(getRenderObjectProp(prop)),
+      (element) {
+        final nonNullable =
+            renderObjectProp<T, R>(prop.name, (element) => prop.get(element)!);
+        final value = getRenderObjectProp(nonNullable);
+        return Extracted.value(value);
+      },
     );
 
     match(subject);

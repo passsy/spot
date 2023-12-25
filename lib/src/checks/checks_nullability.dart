@@ -14,4 +14,14 @@ extension HideNullableSubject<T> on Subject<T?> {
       atSameLevel: true,
     );
   }
+
+  Subject<T?> revealNullability() {
+    return context.nest<T?>(
+      () => [], // no label, this is synthetic
+      (actual) {
+        return Extracted.value(actual);
+      },
+      atSameLevel: true,
+    );
+  }
 }
