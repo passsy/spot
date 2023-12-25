@@ -1,9 +1,5 @@
-import 'dart:io';
-
 import 'package:checks/checks.dart';
-import 'package:checks/context.dart';
 import 'package:dartx/dartx.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -514,6 +510,76 @@ extension SelectorQueries<W extends Widget> on Selectors<W> {
       ],
     );
   }
+
+  /// Creates a filter for the widgets of the discovered elements which is
+  /// applied when the [Selector] is snapshotted
+  ///
+  /// ```dart
+  /// spotSingle<Checkbox>()
+  ///   .whereWidgetProp(
+  ///     prop: widgetProp('isChecked', (widget) => widget.value),
+  ///     match: (value) => value == true,
+  ///   )
+  ///   .existsOnce();
+  ///   ```
+  WidgetSelector<W> whereWidgetProp<T>(
+    NamedWidgetProp<W, T> prop,
+    bool Function(T value) match,
+  ) {
+    return self!.copyWith(
+      props: [
+        ...self!.props,
+        PredicateWithDescription(
+          (Element element) {
+            final widget = self!.mapElementToWidget(element);
+            final value = prop.get(widget);
+            return match(value);
+          },
+          description: prop.name,
+        ),
+      ],
+    );
+  }
+
+  WidgetSelector<W> whereElementProp<T>(
+    NamedElementProp<T> prop,
+    bool Function(T value) match,
+  ) {
+    return self!.copyWith(
+      props: [
+        ...self!.props,
+        PredicateWithDescription(
+          (Element element) {
+            final value = prop.get(element);
+            return match(value);
+          },
+          description: prop.name,
+        ),
+      ],
+    );
+  }
+
+  WidgetSelector<W> whereRenderObjectProp<T, R extends RenderObject>(
+    NamedRenderObjectProp<R, T> prop,
+    bool Function(T value) match,
+  ) {
+    return self!.copyWith(
+      props: [
+        ...self!.props,
+        PredicateWithDescription(
+          (Element element) {
+            final renderObject = element.renderObject;
+            if (renderObject is R) {
+              final value = prop.get(renderObject);
+              return match(value);
+            }
+            return false;
+          },
+          description: prop.name,
+        ),
+      ],
+    );
+  }
 }
 
 /// A Function that fires checks against [T] using the [Subject] API
@@ -525,6 +591,14 @@ extension MatchPropNullable<T> on MatchProp<T> {
   MatchProp<T?> hideNullability() {
     return (Subject<T?> subject) {
       this.call(subject.hideNullability());
+    };
+  }
+}
+
+extension MatchPropNonNullable<T> on MatchProp<T?> {
+  MatchProp<T> revealNullability() {
+    return (Subject<T> subject) {
+      this.call(subject.revealNullability());
     };
   }
 }
@@ -573,28 +647,8 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
       },
     );
     match(subject);
-    final failure = softCheck(actual, conditionSubject);
-    if (failure != null) {
-      final errorParts =
-          describe(conditionSubject).map((it) => it.trim()).toList();
-      // workaround allowing to use
-      // hasPropertyXWhere((subject)=> subject.equals(X));
-      // instead of
-      // hasPropertyXWhere((subject)=> subject.isNotNull().equals(X));
-      //
-      // when Subject is Subject<T> but the value can actually be null (should be Subject<T?>).
-      final errorMessage = errorParts.join(' ');
-      if (errorParts.last == 'is null' &&
-          failure.rejection.actual.firstOrNull == '<null>') {
-        // property is null and isNull() was called
-        // not error because null == null
-        return this;
-      }
-      throw PropertyCheckFailure(
-        'Failed to match widget: $errorMessage, actual: ${literal(actual).joinToString()}',
-        matcherDescription: errorParts.skip(1).join(' ').removePrefix('with '),
-      );
-    }
+    final failure = softCheckHideNull(actual, conditionSubject);
+    failure.throwPropertyCheckFailure(conditionSubject, element);
     return this;
   }
 
@@ -654,106 +708,106 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
     }();
 
     match(subject);
-    final failure = softCheck(element, conditionSubject);
-    if (failure != null) {
-      final errorParts =
-          describe(conditionSubject).map((it) => it.trim()).toList();
-      // workaround allowing to use
-      // hasPropertyXWhere((subject)=> subject.equals(X));
-      // instead of
-      // hasPropertyXWhere((subject)=> subject.isNotNull().equals(X));
-      //
-      // when Subject is Subject<T> but the value can actually be null (should be Subject<T?>).
-      final errorMessage = errorParts.join(' ');
-      if (errorParts.last == 'is null' &&
-          failure.rejection.actual.firstOrNull == '<null>') {
-        // property is null and isNull() was called
-        // not error because null == null
-        return this;
-      }
-      throw PropertyCheckFailure(
-        'Failed to match widget: $errorMessage, actual: ${failure.rejection.actual.joinToString()}',
-        matcherDescription: errorParts.skip(1).join(' ').removePrefix('with '),
-      );
-    }
+    final failure = softCheckHideNull(element, conditionSubject);
+    failure.throwPropertyCheckFailure(conditionSubject, element);
     return this;
   }
 
+  T getWidgetProp<T>(NamedWidgetProp<W, T> prop) {
+    final widget = selector.mapElementToWidget(element);
+    return prop.get(widget);
+  }
+
   WidgetMatcher<W> hasWidgetProp<T>({
-    required String name,
-    required T Function(W) prop,
+    required NamedWidgetProp<W, T?> prop,
     required MatchProp<T> match,
   }) {
     final ConditionSubject<Element> conditionSubject = it<Element>();
     final Subject<T> subject = conditionSubject.context.nest<T>(
-      () => ['$W', "with prop '$name'"],
+      () => ['$W', "with prop '${prop.name}'"],
       (element) {
-        final widget = selector.mapElementToWidget(element);
-        return Extracted.value(prop.call(widget));
+        final nonNullable =
+            widgetProp<W, T>(prop.name, (widget) => prop.get(widget)!);
+        final value = getWidgetProp(nonNullable);
+        return Extracted.value(value);
       },
     );
 
     match(subject);
-    final failure = softCheck(element, conditionSubject);
-    if (failure != null) {
-      final errorParts =
-          describe(conditionSubject).map((it) => it.trim()).toList();
-      // workaround allowing to use
-      // hasPropertyXWhere((subject)=> subject.equals(X));
-      // instead of
-      // hasPropertyXWhere((subject)=> subject.isNotNull().equals(X));
-      //
-      // when Subject is Subject<T> but the value can actually be null (should be Subject<T?>).
-      final errorMessage = errorParts.join(' ');
-      if (errorParts.last == 'is null' &&
-          failure.rejection.actual.firstOrNull == '<null>') {
-        // property is null and isNull() was called
-        // not error because null == null
-        return this;
-      }
-      throw PropertyCheckFailure(
-        'Failed to match widget: $errorMessage, actual: ${failure.rejection.actual.joinToString()}',
-        matcherDescription: errorParts.skip(1).join(' ').removePrefix('with '),
-      );
-    }
+    final failure = softCheckHideNull(element, conditionSubject);
+    failure.throwPropertyCheckFailure(conditionSubject, element);
     return this;
   }
 
+  T getElementProp<T>(NamedElementProp<T> prop) {
+    return prop.get(element);
+  }
+
   WidgetMatcher<W> hasElementProp<T>({
-    required String name,
-    required T Function(Element) prop,
+    required NamedElementProp<T?> prop,
     required MatchProp<T> match,
   }) {
     final ConditionSubject<Element> conditionSubject = it<Element>();
     final Subject<T> subject = conditionSubject.context.nest<T>(
-      () => ['Element of $W', "with prop '$name'"],
-      (element) => Extracted.value(prop.call(element)),
+      () => ['Element of $W', "with prop '${prop.name}'"],
+      (element) {
+        final nonNullable =
+            elementProp<T>(prop.name, (element) => prop.get(element)!);
+        final value = getElementProp(nonNullable);
+        return Extracted.value(value);
+      },
     );
 
     match(subject);
-    final failure = softCheck(element, conditionSubject);
-    if (failure != null) {
-      final errorParts =
-          describe(conditionSubject).map((it) => it.trim()).toList();
-      // workaround allowing to use
-      // hasPropertyXWhere((subject)=> subject.equals(X));
-      // instead of
-      // hasPropertyXWhere((subject)=> subject.isNotNull().equals(X));
-      //
-      // when Subject is Subject<T> but the value can actually be null (should be Subject<T?>).
-      final errorMessage = errorParts.join(' ');
-      if (errorParts.last == 'is null' &&
-          failure.rejection.actual.firstOrNull == '<null>') {
-        // property is null and isNull() was called
-        // not error because null == null
-        return this;
-      }
-      throw PropertyCheckFailure(
-        'Failed to match widget: $errorMessage, actual: ${failure.rejection.actual.joinToString()}',
-        matcherDescription: errorParts.skip(1).join(' ').removePrefix('with '),
-      );
-    }
+    final failure = softCheckHideNull(element, conditionSubject);
+    failure.throwPropertyCheckFailure(conditionSubject, element);
     return this;
+  }
+
+  T getRenderObjectProp<T, R extends RenderObject>(
+    NamedRenderObjectProp<R, T> prop,
+  ) {
+    final renderObject = element.renderObject! as R;
+    return prop.get(renderObject);
+  }
+
+  WidgetMatcher<W> hasRenderObjectProp<T, R extends RenderObject>({
+    required NamedRenderObjectProp<R, T?> prop,
+    required MatchProp<T> match,
+  }) {
+    final ConditionSubject<Element> conditionSubject = it<Element>();
+    final Subject<T> subject = conditionSubject.context.nest<T>(
+      () => ['RenderObject of $W', "with prop '${prop.name}'"],
+      (element) {
+        final nonNullable =
+            renderObjectProp<T, R>(prop.name, (element) => prop.get(element)!);
+        final value = getRenderObjectProp(nonNullable);
+        return Extracted.value(value);
+      },
+    );
+
+    match(subject);
+    final failure = softCheckHideNull(element, conditionSubject);
+    failure.throwPropertyCheckFailure(conditionSubject, element);
+    return this;
+  }
+}
+
+extension on CheckFailure? {
+  void throwPropertyCheckFailure<T>(
+    ConditionSubject<T> conditionSubject,
+    Object? actual,
+  ) {
+    if (this == null) {
+      return;
+    }
+    final errorParts =
+        describe(conditionSubject).map((it) => it.trim()).toList();
+    final errorMessage = errorParts.join(' ');
+    throw PropertyCheckFailure(
+      'Failed to match widget: $errorMessage, actual: ${this!.rejection.actual.joinToString()}',
+      matcherDescription: errorParts.skip(1).join(' ').removePrefix('with '),
+    );
   }
 }
 
@@ -870,6 +924,8 @@ abstract class ElementFilter {
 abstract class CandidateGenerator<W extends Widget> {
   Iterable<WidgetTreeNode> generateCandidates();
 }
+
+Type _typeOf<T>() => T;
 
 /// Filters candidates by widget type [W] comparing the runtime type.
 ///
@@ -1157,22 +1213,8 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
 
     return whereElement(
       (element) {
-        final failure = softCheck(element, elementSubject);
+        final failure = softCheckHideNull(element, elementSubject);
         if (failure != null) {
-          final errorParts =
-              describe(elementSubject).map((it) => it.trim()).toList();
-          // workaround allowing to use
-          // hasPropertyXWhere((subject)=> subject.equals(X));
-          // instead of
-          // hasPropertyXWhere((subject)=> subject.isNotNull().equals(X));
-          //
-          // when Subject is Subject<T> but the value can actually be null (should be Subject<T?>).
-          if (errorParts.last == 'is null' &&
-              failure.rejection.actual.firstOrNull == '<null>') {
-            // property is null and isNull() was called
-            // not error because null == null
-            return true;
-          }
           return false;
         }
         return true;
@@ -1224,22 +1266,8 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
           },
         );
         match(subject);
-        final failure = softCheck(actual, conditionSubject);
+        final failure = softCheckHideNull(actual, conditionSubject);
         if (failure != null) {
-          final errorParts =
-              describe(conditionSubject).map((it) => it.trim()).toList();
-          // workaround allowing to use
-          // hasPropertyXWhere((subject)=> subject.equals(X));
-          // instead of
-          // hasPropertyXWhere((subject)=> subject.isNotNull().equals(X));
-          //
-          // when Subject is Subject<T> but the value can actually be null (should be Subject<T?>).
-          if (errorParts.last == 'is null' &&
-              failure.rejection.actual.firstOrNull == '<null>') {
-            // property is null and isNull() was called
-            // not error because null == null
-            return true;
-          }
           return false;
         }
 
@@ -1528,274 +1556,6 @@ extension MutliMatchers<W extends Widget> on MultiWidgetSnapshot<W> {
     throw TestFailure(
         "Expected that all candidates fulfill matcher '$matcherDescription', but only ${discovered.length - missMatches.length} of ${discovered.length} did.\n"
         'Mismatches: ${missMatches.map((e) => e.element.toStringDeep()).join(', ')}');
-  }
-}
-
-Type _typeOf<T>() => T;
-
-extension CreateMatchers<W extends Widget> on WidgetSelector<W> {
-  void printMatchers({
-    Map<String, String> propNameOverrides = const {},
-  }) {
-    final value = createMatcherString(
-      propNameOverrides: propNameOverrides,
-    );
-    if (value == null) {
-      return;
-    }
-
-    // ignore: avoid_print
-    print(value);
-  }
-
-  void writeMatchersToFile({
-    required String path,
-    Map<String, String> propNameOverrides = const {},
-    String? imports,
-    bool Function(DiagnosticsNode node)? filter,
-  }) {
-    final content = createMatcherString(
-      propNameOverrides: propNameOverrides,
-      imports: imports,
-      filter: filter,
-    );
-    final file = File(path);
-    if (content == null) {
-      if (file.existsSync()) {
-        file.deleteSync();
-      }
-    } else {
-      file
-        ..createSync(recursive: true)
-        ..writeAsStringSync(content);
-    }
-  }
-
-  String? createMatcherString({
-    Map<String, String> propNameOverrides = const {},
-    String? imports,
-    bool Function(DiagnosticsNode node)? filter,
-  }) {
-    final snapshot = existsAtLeastOnce();
-    final anyElement = snapshot.discoveredElements.first;
-
-    final elementProps = anyElement.toDiagnosticsNode().getProperties();
-    final widgetProps =
-        mapElementToWidget(anyElement).toDiagnosticsNode().getProperties();
-
-    String widgetType = _typeOf<W>().toString().capitalize();
-    if (widgetType.contains('<')) {
-      widgetType = widgetType.substring(0, widgetType.indexOf('<'));
-    }
-    bool addedMethods = false;
-
-    final matcherSb = StringBuffer();
-    matcherSb.writeln('''
-/// Matchers for the properties of [$widgetType] provided via [Diagnosticable.debugFillProperties]
-extension ${widgetType}Matcher on WidgetMatcher<$widgetType> {
-''');
-
-    final selectorSb = StringBuffer();
-    selectorSb.writeln(
-      '''
-/// Allows filtering [$widgetType] by the properties provided via [Diagnosticable.debugFillProperties]
-extension ${widgetType}Selector on WidgetSelector<$widgetType> {
-''',
-    );
-
-    final distinctProps =
-        [...widgetProps, ...elementProps].distinctBy((it) => it.name).toList();
-    for (final DiagnosticsNode prop in distinctProps) {
-      if (filter != null && !filter(prop)) {
-        continue;
-      }
-      final String diagnosticPropName = prop.name!;
-      final String methodPropName = () {
-        final String name = prop.name!;
-        final parts = name.split(RegExp('[^a-zA-Z]'));
-        if (parts.length == 1) {
-          return name;
-        }
-
-        // camel case
-        return parts
-            .mapIndexed((index, it) => index == 0 ? it : it.capitalize())
-            .join();
-      }();
-      final humanPropName = propNameOverrides[methodPropName] ?? methodPropName;
-      String propType = prop.getType();
-      if (prop is ObjectFlagProperty &&
-          (propType == 'Widget' || propType == 'Widget?')) {
-        // matchers on widgets are not supported, use .spot() to check the tree further down
-        continue;
-      }
-      if (prop is FlagProperty && methodPropName == 'dirty') {
-        // dirty flags are irrelevant for assertions (and always false)
-        continue;
-      }
-      if (propType.contains('=>')) {
-        // ignore lambda properties
-        continue;
-      }
-      if (prop.name == 'depth' || prop.name == 'key') {
-        // ignore default properties that are covered by general Wiget selectors
-        continue;
-      }
-      if (prop.name == 'dependencies') {
-        if (propType == 'List<DiagnosticsNode>' ||
-            propType == 'Set<InheritedElement>') {
-          // Widget dependencies are only indirect properties
-          continue;
-        }
-      }
-      if (prop.name == 'renderObject' && propType == 'RenderObject') {
-        final propValueRuntimeType = prop.value.runtimeType.toString();
-        if (!propValueRuntimeType.startsWith('_')) {
-          propType = propValueRuntimeType;
-        }
-      }
-
-      if (prop.name == 'state' && propType.contains('State<StatefulWidget>')) {
-        final propValueRuntimeType = prop.value.runtimeType.toString();
-        if (propValueRuntimeType.startsWith('_')) {
-          // this is not useful without type
-          continue;
-        }
-        propType = propValueRuntimeType;
-        continue;
-      }
-      final propTypeNullable = propType.endsWith('?') ? propType : '$propType?';
-
-      String matcherVerb = 'has';
-      if (humanPropName == 'enabled') {
-        matcherVerb = 'is';
-      }
-
-      addedMethods = true;
-      matcherSb.writeln('''
-  /// Expects that $humanPropName of [$widgetType] matches the condition in [match]    
-  WidgetMatcher<$widgetType> $matcherVerb${humanPropName.capitalize()}Where(MatchProp<$propType> match) {
-    return hasDiagnosticProp<$propType>('$diagnosticPropName', match);
-  }
-  
-  /// Expects that $humanPropName of [$widgetType] equals (==) [value]
-  WidgetMatcher<$widgetType> $matcherVerb${humanPropName.capitalize()}($propTypeNullable value) {
-    return hasDiagnosticProp<$propType>('$diagnosticPropName', (it) => value == null ? it.isNull() : it.equals(value));
-  }
-''');
-
-      selectorSb.writeln('''
-  /// Creates a [WidgetSelector] that finds all [$widgetType] where $humanPropName matches the condition   
-  WidgetSelector<$widgetType> where${humanPropName.capitalize()}(MatchProp<$propType> match) {
-    return withDiagnosticProp<$propType>('$diagnosticPropName', match);
-  }
-  
-  /// Creates a [WidgetSelector] that finds all [$widgetType] where $humanPropName equals (==) [value]
-  WidgetSelector<$widgetType> with${humanPropName.capitalize()}($propTypeNullable value) {
-    return withDiagnosticProp<$propType>('$diagnosticPropName', (it) => value == null ? it.isNull() : it.equals(value));
-  }
-''');
-    }
-
-    matcherSb.writeln('}');
-    selectorSb.writeln('}');
-
-    if (addedMethods == false) {
-      // nothing added, don't generate the file at all
-      return null;
-    }
-
-    final overridesParam = propNameOverrides.isEmpty
-        ? ''
-        : () {
-            final map = propNameOverrides
-                .mapEntries((it) => MapEntry("'${it.key}'", "'${it.value}'"))
-                .map((it) => '${it.key}: ${it.value}')
-                .joinToString(separator: ', ', prefix: '{', postfix: '}');
-            return 'propNameOverrides: $map';
-          }();
-
-    return '''
-// ignore_for_file: require_trailing_commas
-// coverage:ignore-file
-
-${imports ?? "import 'package:flutter/widgets.dart';"}
-import 'package:spot/spot.dart';
-
-/// Matchers for [$widgetType] auto-generated by spot
-///
-/// ```dart
-/// spot<$widgetType>().printMatchers($overridesParam);
-/// ```
-$matcherSb
-$selectorSb    
-    ''';
-  }
-}
-
-extension ReadType on DiagnosticsNode {
-  String getType() {
-    if (this is StringProperty) {
-      return 'String';
-    }
-
-    if (this is FlagProperty) {
-      return 'bool';
-    }
-
-    if (this is DoubleProperty) {
-      return 'double';
-    }
-
-    if (this is IntProperty) {
-      return 'int';
-    }
-    if (this is IconDataProperty) {
-      return 'IconData';
-    }
-    if (this is ColorProperty) {
-      return 'Color';
-    }
-
-    if (this is AttributedStringProperty) {
-      return 'String';
-    }
-
-    if (this is EnumProperty) {
-      // "EnumProperty<TextAlign>"
-      final Type runtimeType = this.runtimeType;
-      // "TextAlign"
-      final String? genericType = () {
-        try {
-          final regex = RegExp('<(.*)>');
-          return regex.firstMatch(runtimeType.toString())?.group(1);
-        } catch (_) {
-          return null;
-        }
-      }();
-
-      if (genericType != null) {
-        return genericType;
-      }
-    }
-
-    if (this is DiagnosticsProperty) {
-      final Type runtimeType = this.runtimeType;
-      final String? genericType = () {
-        try {
-          final regex = RegExp('<(.*)>');
-          return regex.firstMatch(runtimeType.toString())?.group(1);
-        } catch (_) {
-          return null;
-        }
-      }();
-
-      if (genericType != null) {
-        return genericType;
-      }
-    }
-
-    return 'Object?';
   }
 }
 

@@ -345,6 +345,17 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
         'cursorColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Expects that cursorErrorColor of [TextField] matches the condition in [match]
+  WidgetMatcher<TextField> hasCursorErrorColorWhere(MatchProp<Color> match) {
+    return hasDiagnosticProp<Color>('cursorErrorColor', match);
+  }
+
+  /// Expects that cursorErrorColor of [TextField] equals (==) [value]
+  WidgetMatcher<TextField> hasCursorErrorColor(Color? value) {
+    return hasDiagnosticProp<Color>('cursorErrorColor',
+        (it) => value == null ? it.isNull() : it.equals(value));
+  }
+
   /// Expects that keyboardAppearance of [TextField] matches the condition in [match]
   WidgetMatcher<TextField> hasKeyboardAppearanceWhere(
       MatchProp<Brightness> match) {
@@ -806,6 +817,17 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   WidgetSelector<TextField> withCursorColor(Color? value) {
     return withDiagnosticProp<Color>(
         'cursorColor', (it) => value == null ? it.isNull() : it.equals(value));
+  }
+
+  /// Creates a [WidgetSelector] that finds all [TextField] where cursorErrorColor matches the condition
+  WidgetSelector<TextField> whereCursorErrorColor(MatchProp<Color> match) {
+    return withDiagnosticProp<Color>('cursorErrorColor', match);
+  }
+
+  /// Creates a [WidgetSelector] that finds all [TextField] where cursorErrorColor equals (==) [value]
+  WidgetSelector<TextField> withCursorErrorColor(Color? value) {
+    return withDiagnosticProp<Color>('cursorErrorColor',
+        (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where keyboardAppearance matches the condition

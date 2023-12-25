@@ -22,15 +22,15 @@ export 'package:checks/context.dart'
         Extracted,
         Rejection,
         Subject;
-
 export 'package:spot/src/act/act.dart';
 export 'package:spot/src/screenshot/screenshot.dart';
 export 'package:spot/src/spot/default_selectors.dart';
 export 'package:spot/src/spot/effective/effective_text.dart';
 export 'package:spot/src/spot/finder_interop.dart';
+export 'package:spot/src/spot/matcher_generator.dart' show CreateMatchers;
+export 'package:spot/src/spot/props.dart';
 export 'package:spot/src/spot/selectors.dart'
     show
-        CreateMatchers,
         ElementFilter,
         ExpectedQuantity,
         MatchProp,
@@ -50,7 +50,6 @@ export 'package:spot/src/spot/snapshot.dart'
     show MultiWidgetSelectorMatcher, SingleWidgetSelectorMatcher;
 export 'package:spot/src/spot/text/any_text.dart' show AnyText;
 export 'package:spot/src/spot/tree_snapshot.dart' show WidgetTreeNode;
-
 export 'package:spot/src/widgets/align.g.dart';
 export 'package:spot/src/widgets/anytext.g.dart';
 export 'package:spot/src/widgets/circularprogressindicator.g.dart';
