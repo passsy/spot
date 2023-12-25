@@ -1,4 +1,6 @@
-import 'package:spot/spot.dart';
+import 'package:checks/context.dart';
+
+export 'package:checks/context.dart';
 
 extension HideNullableSubject<T> on Subject<T?> {
   /// Converts a Subject<T?> to Subject<T> by hiding the nullable type
@@ -23,5 +25,28 @@ extension HideNullableSubject<T> on Subject<T?> {
       },
       atSameLevel: true,
     );
+  }
+}
+
+/// Workaround allowing to use
+/// `hasProp((subject)=> subject.equals(X));`
+/// instead of
+/// `hasProp((subject)=> subject.isNotNull().equals(X));`
+///
+/// when Subject is Subject<T> but the value can actually be null (should be Subject<T?>).
+CheckFailure? softCheckHideNull<T>(T value, Condition<T> condition) {
+  final failure = softCheck(value, condition);
+  if (failure == null) {
+    return null;
+  } else {
+    final errorParts = describe(condition).map((it) => it.trim()).toList();
+    final errorMessage = errorParts.join(' ');
+    if (errorParts.last == 'is null' &&
+        failure.rejection.actual.firstOrNull == '<null>') {
+      // property is null and isNull() was called
+      // not error because null == null
+      return null;
+    }
+    return failure;
   }
 }
