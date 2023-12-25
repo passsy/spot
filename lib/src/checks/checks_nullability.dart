@@ -28,6 +28,8 @@ extension HideNullableSubject<T> on Subject<T?> {
   }
 }
 
+/// Like [softCheck] but ignores isNotNull() errors when the actual value is null
+///
 /// Workaround allowing to use
 /// `hasProp((subject)=> subject.equals(X));`
 /// instead of
@@ -38,15 +40,14 @@ CheckFailure? softCheckHideNull<T>(T value, Condition<T> condition) {
   final failure = softCheck(value, condition);
   if (failure == null) {
     return null;
-  } else {
-    final errorParts = describe(condition).map((it) => it.trim()).toList();
-    final errorMessage = errorParts.join(' ');
-    if (errorParts.last == 'is null' &&
-        failure.rejection.actual.firstOrNull == '<null>') {
-      // property is null and isNull() was called
-      // not error because null == null
-      return null;
-    }
-    return failure;
   }
+  final errorParts = describe(condition).map((it) => it.trim()).toList();
+  final errorMessage = errorParts.join(' ');
+  if (errorParts.last == 'is null' &&
+      failure.rejection.actual.firstOrNull == '<null>') {
+    // property is null and isNull() was called
+    // not error because null == null
+    return null;
+  }
+  return failure;
 }
