@@ -1,5 +1,72 @@
 # Changelog
 
+## 0.7.0
+
+- New prop API with `hasWidgetProp()` makes it easy to filter and assert properties of Widgets.
+  This replaces the old `hasProp()` method which was based on way to complicated package:checks context. 
+  ```dart
+  // Old ⛈️
+  spotSingle<Checkbox>().existsOnce().hasProp(
+      selector: (e) => e.context.nest(
+        () => ['Checkbox', 'value'],
+        (e) => Extracted.value((e.widget as Checkbox).value),
+      ),
+      match: (it) => it.equals(true),
+    );
+  ```
+  ```dart
+  // New ✨
+  spotSingle<Checkbox>().existsOnce().hasWidgetProp(
+      prop: widgetProp('value', (widget) => widget.value),
+      match: (value) => value.isTrue(),
+    );
+  ```
+
+  The prop API is also available for `Element` and `RenderObject`. 
+  <summary>
+    <details>
+  
+  ```
+  ├── Interface "NamedWidgetProp" added 
+  ├── Interface "NamedElementProp" added 
+  ├── Interface "NamedRenderObjectProp" added 
+  ├── Function "widgetProp" added 
+  ├── Function "elementProp" added 
+  ├── Function "renderObjectProp" added 
+  ├─┬ Class SelectorQueries
+  │ ├── Method "whereWidgetProp" added 
+  │ ├── Method "whereElementProp" added 
+  │ └── Method "whereRenderObjectProp" added 
+  └─┬ Class WidgetMatcherExtensions
+  ├── Method "getWidgetProp" added 
+  ├── Method "hasWidgetProp" added 
+  ├── Method "getElementProp" added 
+  ├── Method "hasElementProp" added 
+  ├── Method "getRenderObjectProp" added 
+  └── Method "hasRenderObjectProp" added 
+  ```
+    </details>
+  </summary>
+  
+- Never miss asserting your `WidgetSelector`.
+  All methods returning a `WidgetSelector` are now annotated with `@useResult`.
+  This will cause a lint warning when you only define a `WidgetSelector` without asserting it.
+  ```dart
+  spot<FloatingActionButton>().withChild(spotIcon(Icons.add)); // warning, no assertion
+  
+  final plusFab = spot<FloatingActionButton>().withChild(spotIcon(Icons.add)); // ok, assigned
+  spot<FloatingActionButton>().withChild(spotIcon(Icons.add)).existsOnce(); // ok, asserted
+  ```
+  
+- It is now easy to directly access the Widget of a `SingleWidgetSelector` with `snapshotWidget()`. 
+  It also works for the associated `Element` and `RenderObject`. Use `snapshotElement()` and `snapshotRenderObject()`.
+
+  ```diff
+  -final checkbox = spotSingle<Checkbox>().snapshot().widget;
+  +final checkbox = spotSingle<Checkbox>().snapshotWidget();
+  print(checkbox.checkColor);
+  ```
+
 ## 0.6.0
 - Add matchers `.existsAtMostOnce()` and `.existsAtMostNTimes(x)` #19
 - Add selector `.withParent(parent)`/`.withParents([...])` #21
