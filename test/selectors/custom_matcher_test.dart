@@ -221,6 +221,32 @@ void main() {
           .existsOnce();
     });
 
+    testWidgets('withProp selector', (widgetTester) async {
+      await widgetTester.pumpWidget(checkedCheckbox);
+      checkbox
+          .withProp(
+            // ignore: deprecated_member_use_from_same_package
+            selector: (e) => e.context.nest(
+              () => ['Checkbox', 'value'],
+              (e) => Extracted.value((e.widget as Checkbox).value),
+            ),
+            match: (it) => it.equals(true),
+          )
+          .existsOnce();
+
+      await widgetTester.pumpWidget(uncheckedCheckbox);
+      checkbox
+          .withProp(
+            // ignore: deprecated_member_use_from_same_package
+            selector: (e) => e.context.nest(
+              () => ['Checkbox', 'value'],
+              (e) => Extracted.value((e.widget as Checkbox).value),
+            ),
+            match: (it) => it.equals(false),
+          )
+          .existsOnce();
+    });
+
     testWidgets('extracted hasCheckedValue', (widgetTester) async {
       await widgetTester.pumpWidget(checkedCheckbox);
       checkbox.existsOnce().hasCheckedValue(true);
