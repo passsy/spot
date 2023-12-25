@@ -214,6 +214,6 @@ void main() {
         // only finds the single SizedBox in Wrap, not the SizedBox below Center
         wrap.spotSingle<SizedBox>(),
       ],
-    );
+    ).existsOnce();
   });
 }

@@ -29,14 +29,17 @@ extension DefaultWidgetMatchers<W extends Widget> on WidgetMatcher<W> {
 }
 
 extension DefaultWidgetSelectors<W extends Widget> on WidgetSelector<W> {
+  @useResult
   WidgetSelector<W> whereDepth(MatchProp<int> match) {
     return withDiagnosticProp<int>('depth', match);
   }
 
+  @useResult
   WidgetSelector<W> withDepth(int value) {
     return withDiagnosticProp<int>('depth', (it) => it.equals(value));
   }
 
+  @useResult
   WidgetSelector<W> whereKey(MatchProp<Key> match) {
     return withProp(
       widgetSelector: (subject) => subject.context.nest<Key?>(
@@ -47,6 +50,7 @@ extension DefaultWidgetSelectors<W extends Widget> on WidgetSelector<W> {
     );
   }
 
+  @useResult
   WidgetSelector<W> withKey(Key? value) {
     return whereKey((it) => value == null ? it.isNull() : it.equals(value));
   }

@@ -47,6 +47,7 @@ mixin Selectors<T extends Widget> {
   ///    .spotSingle<Scaffold>()
   ///    .spotSingle<AppBar>()
   /// ```
+  @useResult
   SingleWidgetSelector<W> spotSingle<W extends Widget>({
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
@@ -64,6 +65,7 @@ mixin Selectors<T extends Widget> {
   /// ```dart
   /// final appbar = spot<MaterialApp>().spot<Scaffold>().spot<AppBar>()
   /// ```
+  @useResult
   MultiWidgetSelector<W> spot<W extends Widget>({
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
@@ -83,6 +85,7 @@ mixin Selectors<T extends Widget> {
   /// only that widget
   ///
   /// The comparison happens by identity (===)
+  @useResult
   SingleWidgetSelector<W> spotSingleWidget<W extends Widget>(
     W widget, {
     List<WidgetSelector> parents = const [],
@@ -98,6 +101,7 @@ mixin Selectors<T extends Widget> {
   /// Creates a [WidgetSelector] that finds all [widget] by identity
   ///
   /// The comparison happens by identity (===)
+  @useResult
   MultiWidgetSelector<W> spotWidgets<W extends Widget>(
     W widget, {
     List<WidgetSelector> parents = const [],
@@ -120,6 +124,7 @@ mixin Selectors<T extends Widget> {
   /// [element]
   ///
   /// The comparison happens by identity (===)
+  @useResult
   SingleWidgetSelector<W> spotElement<W extends Widget>(
     Element element, {
     List<WidgetSelector> parents = const [],
@@ -153,6 +158,7 @@ mixin Selectors<T extends Widget> {
   /// final welcome = spot<Text>().whereText((it) => it.equals("Hello"));
   /// welcome.first().snapshot().hasMaxLines(1).hasTextAlign(TextAlign.center);
   /// ```
+  @useResult
   SingleWidgetSelector<AnyText> spotText(
     Pattern text, {
     List<WidgetSelector> parents = const [],
@@ -194,6 +200,7 @@ mixin Selectors<T extends Widget> {
   /// spotTextWhere((it) => it.contains('Wo'));
   /// spotText('Wo');
   /// ```
+  @useResult
   SingleWidgetSelector<AnyText> spotTextWhere(
     void Function(Subject<String>) match, {
     List<WidgetSelector> parents = const [],
@@ -224,6 +231,7 @@ mixin Selectors<T extends Widget> {
     'Use spotText("Hello") or '
     'spot<Text>().whereText((it) => it.equals("Hello")).first() instead',
   )
+  @useResult
   SingleWidgetSelector<W> spotSingleText<W extends Widget>(
     String text, {
     List<WidgetSelector> parents = const [],
@@ -244,6 +252,7 @@ mixin Selectors<T extends Widget> {
     'Use spotText("Hello") or '
     'spot<Text>().whereText((it) => it.equals("Hello")) instead',
   )
+  @useResult
   MultiWidgetSelector<W> spotTexts<W extends Widget>(
     String text, {
     List<WidgetSelector> parents = const [],
@@ -282,6 +291,7 @@ mixin Selectors<T extends Widget> {
   }
 
   /// Creates a [WidgetSelector] that finds a single [Icon] based on the [icon]
+  @useResult
   SingleWidgetSelector<Icon> spotSingleIcon(
     IconData icon, {
     bool skipOffstage = true,
@@ -296,6 +306,7 @@ mixin Selectors<T extends Widget> {
   }
 
   /// Creates a [WidgetSelector] that finds all [Icon] widgets based on the [icon]
+  @useResult
   MultiWidgetSelector<Icon> spotIcons(
     IconData icon, {
     bool skipOffstage = true,
@@ -321,6 +332,7 @@ mixin Selectors<T extends Widget> {
   }
 
   /// Creates a [WidgetSelector] that finds a single widget with the given [key]
+  @useResult
   SingleWidgetSelector<W> spotSingleKey<W extends Widget>(
     Key key, {
     List<WidgetSelector> parents = const [],
@@ -334,6 +346,7 @@ mixin Selectors<T extends Widget> {
   }
 
   /// Creates a [WidgetSelector] that finds all widgets with the given [key]
+  @useResult
   MultiWidgetSelector<W> spotKeys<W extends Widget>(
     Key key, {
     List<WidgetSelector> parents = const [],
@@ -352,6 +365,7 @@ mixin Selectors<T extends Widget> {
     );
   }
 
+  @useResult
   WidgetSelector<W> cast<W extends Widget>() {
     return WidgetSelector<W>(
       props: self!.props,
@@ -366,6 +380,7 @@ mixin Selectors<T extends Widget> {
   /// "first" is neither the top-most or the bottom-most widget. Instead, it is
   /// the widget that was found first during a depth-first search of the widget
   /// tree
+  @useResult
   SingleWidgetSelector<T> first() {
     return FirstWidgetSelector<T>(
       props: self!.props,
@@ -379,6 +394,7 @@ mixin Selectors<T extends Widget> {
   /// "last" is neither the top-most or the bottom-most widget. Instead, it is
   /// the widget that was found last during a depth-first search of the widget
   /// tree
+  @useResult
   SingleWidgetSelector<T> last() {
     return LastWidgetSelector<T>(
       props: self!.props,
@@ -465,6 +481,7 @@ extension SelectorQueries<W extends Widget> on Selectors<W> {
   /// [Selector] is snapshotted
   ///
   /// The [description] is required to make error messages understandable
+  @useResult
   WidgetSelector<W> whereElement(
     bool Function(Element element) predicate, {
     required String description,
@@ -493,6 +510,7 @@ extension SelectorQueries<W extends Widget> on Selectors<W> {
   ///    )
   ///    .existsOnce();
   /// ```
+  @useResult
   WidgetSelector<W> whereWidget(
     bool Function(W widget) predicate, {
     required String description,
@@ -522,6 +540,7 @@ extension SelectorQueries<W extends Widget> on Selectors<W> {
   ///   )
   ///   .existsOnce();
   ///   ```
+  @useResult
   WidgetSelector<W> whereWidgetProp<T>(
     NamedWidgetProp<W, T> prop,
     bool Function(T value) match,
@@ -541,6 +560,7 @@ extension SelectorQueries<W extends Widget> on Selectors<W> {
     );
   }
 
+  @useResult
   WidgetSelector<W> whereElementProp<T>(
     NamedElementProp<T> prop,
     bool Function(T value) match,
@@ -559,6 +579,7 @@ extension SelectorQueries<W extends Widget> on Selectors<W> {
     );
   }
 
+  @useResult
   WidgetSelector<W> whereRenderObjectProp<T, R extends RenderObject>(
     NamedRenderObjectProp<R, T> prop,
     bool Function(T value) match,
@@ -1147,6 +1168,7 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
   @override
   WidgetSelector<W> get self => this;
 
+  @useResult
   WidgetSelector<W> copyWith({
     List<PredicateWithDescription>? props,
     List<WidgetSelector>? parents,
@@ -1174,6 +1196,7 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
   ///   match: (maxLines) => maxLines.equals(1),
   /// );
   /// ```
+  @useResult
   WidgetSelector<W> withProp<T>({
     @Deprecated('use elementSelector instead')
     Subject<T> Function(ConditionSubject<Element>)? selector,
@@ -1225,6 +1248,7 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
 
   /// Finds the diagnostic property (from [Element.toDiagnosticsNode]) with
   /// [propName] and returns the value as type [T]
+  @useResult
   WidgetSelector<W> withDiagnosticProp<T>(
     String propName,
     MatchProp<T> match,
@@ -1284,10 +1308,12 @@ extension SelectorToSnapshot<W extends Widget> on WidgetSelector<W> {
     return snapshot_file.snapshot(this);
   }
 
+  @useResult
   MultiWidgetSelector<W> get multi {
     return MultiWidgetSelector<W>.fromWidgetSelector(this);
   }
 
+  @useResult
   SingleWidgetSelector<W> get single {
     return SingleWidgetSelector<W>.fromWidgetSelector(this);
   }
@@ -1339,6 +1365,7 @@ class MultiWidgetSnapshot<W extends Widget> {
     return 'SpotSnapshot of $selector (${discoveredElements.length} matches)}';
   }
 
+  @useResult
   SingleWidgetSnapshot<W> get single {
     if (discovered.length > 1) {
       final errorBuilder = StringBuffer();
@@ -1464,24 +1491,28 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
 extension RelativeSelectors<W extends Widget> on WidgetSelector<W> {
   /// Returns a [WidgetSelector] that requires [parent] to be a parent of
   /// the to be matched widget
+  @useResult
   WidgetSelector<W> withParent(WidgetSelector parent) {
     return copyWith(parents: [...parents, parent]);
   }
 
   /// Returns a [WidgetSelector] that requires [parents] to be parents of
   /// the to be matched widget
+  @useResult
   WidgetSelector<W> withParents(List<WidgetSelector> parents) {
     return copyWith(parents: [...this.parents, ...parents]);
   }
 
   /// Returns a [WidgetSelector] that requires [child] to be a child of the to
   /// be matched widget
+  @useResult
   WidgetSelector<W> withChild(WidgetSelector child) {
     return copyWith(children: [...children, child]);
   }
 
   /// Returns a [WidgetSelector] that requires [children] to be children of the
   /// to be matched widget
+  @useResult
   WidgetSelector<W> withChildren(List<WidgetSelector> children) {
     return copyWith(children: [...this.children, ...children]);
   }
