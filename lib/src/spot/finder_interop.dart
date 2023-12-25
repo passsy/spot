@@ -11,6 +11,7 @@ extension FinderToSpot on Finder {
   /// concrete type is [MultiWidgetSelector]. Use [SelectorToSnapshot.single] to
   /// convert the [Finder] to a [SingleWidgetSelector] when the intention is to
   /// only match a single [Widget].
+  @useResult
   MultiWidgetSelector<W> spot<W extends Widget>() {
     return _FinderSelector<W>(this);
   }
@@ -28,6 +29,7 @@ extension SpotToFinder<W extends Widget> on WidgetSelector<W> {
   /// Finds all elements that match [finder] and converts them to a [WidgetSelector].
   ///
   /// Use [T] to specify the type of [Widget] to match.
+  @useResult
   WidgetSelector<T> spotFinder<T extends Widget>(Finder finder) {
     return _FinderSelector<T>(finder, parent: this);
   }

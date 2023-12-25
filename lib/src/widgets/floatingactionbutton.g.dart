@@ -207,180 +207,211 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
 /// Allows filtering [FloatingActionButton] by the properties provided via [Diagnosticable.debugFillProperties]
 extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where tooltip matches the condition
+  @useResult
   WidgetSelector<FloatingActionButton> whereTooltip(MatchProp<String> match) {
     return withDiagnosticProp<String>('tooltip', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where tooltip equals (==) [value]
+  @useResult
   WidgetSelector<FloatingActionButton> withTooltip(String? value) {
     return withDiagnosticProp<String>(
         'tooltip', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where foregroundColor matches the condition
+  @useResult
   WidgetSelector<FloatingActionButton> whereForegroundColor(
       MatchProp<Color> match) {
     return withDiagnosticProp<Color>('foregroundColor', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where foregroundColor equals (==) [value]
+  @useResult
   WidgetSelector<FloatingActionButton> withForegroundColor(Color? value) {
     return withDiagnosticProp<Color>('foregroundColor',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where backgroundColor matches the condition
+  @useResult
   WidgetSelector<FloatingActionButton> whereBackgroundColor(
       MatchProp<Color> match) {
     return withDiagnosticProp<Color>('backgroundColor', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where backgroundColor equals (==) [value]
+  @useResult
   WidgetSelector<FloatingActionButton> withBackgroundColor(Color? value) {
     return withDiagnosticProp<Color>('backgroundColor',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where focusColor matches the condition
+  @useResult
   WidgetSelector<FloatingActionButton> whereFocusColor(MatchProp<Color> match) {
     return withDiagnosticProp<Color>('focusColor', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where focusColor equals (==) [value]
+  @useResult
   WidgetSelector<FloatingActionButton> withFocusColor(Color? value) {
     return withDiagnosticProp<Color>(
         'focusColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where hoverColor matches the condition
+  @useResult
   WidgetSelector<FloatingActionButton> whereHoverColor(MatchProp<Color> match) {
     return withDiagnosticProp<Color>('hoverColor', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where hoverColor equals (==) [value]
+  @useResult
   WidgetSelector<FloatingActionButton> withHoverColor(Color? value) {
     return withDiagnosticProp<Color>(
         'hoverColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where splashColor matches the condition
+  @useResult
   WidgetSelector<FloatingActionButton> whereSplashColor(
       MatchProp<Color> match) {
     return withDiagnosticProp<Color>('splashColor', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where splashColor equals (==) [value]
+  @useResult
   WidgetSelector<FloatingActionButton> withSplashColor(Color? value) {
     return withDiagnosticProp<Color>(
         'splashColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where heroTag matches the condition
+  @useResult
   WidgetSelector<FloatingActionButton> whereHeroTag(MatchProp<Object> match) {
     return withDiagnosticProp<Object>('heroTag', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where heroTag equals (==) [value]
+  @useResult
   WidgetSelector<FloatingActionButton> withHeroTag(Object? value) {
     return withDiagnosticProp<Object>(
         'heroTag', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where elevation matches the condition
+  @useResult
   WidgetSelector<FloatingActionButton> whereElevation(MatchProp<double> match) {
     return withDiagnosticProp<double>('elevation', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where elevation equals (==) [value]
+  @useResult
   WidgetSelector<FloatingActionButton> withElevation(double? value) {
     return withDiagnosticProp<double>(
         'elevation', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where focusElevation matches the condition
+  @useResult
   WidgetSelector<FloatingActionButton> whereFocusElevation(
       MatchProp<double> match) {
     return withDiagnosticProp<double>('focusElevation', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where focusElevation equals (==) [value]
+  @useResult
   WidgetSelector<FloatingActionButton> withFocusElevation(double? value) {
     return withDiagnosticProp<double>('focusElevation',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where hoverElevation matches the condition
+  @useResult
   WidgetSelector<FloatingActionButton> whereHoverElevation(
       MatchProp<double> match) {
     return withDiagnosticProp<double>('hoverElevation', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where hoverElevation equals (==) [value]
+  @useResult
   WidgetSelector<FloatingActionButton> withHoverElevation(double? value) {
     return withDiagnosticProp<double>('hoverElevation',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where highlightElevation matches the condition
+  @useResult
   WidgetSelector<FloatingActionButton> whereHighlightElevation(
       MatchProp<double> match) {
     return withDiagnosticProp<double>('highlightElevation', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where highlightElevation equals (==) [value]
+  @useResult
   WidgetSelector<FloatingActionButton> withHighlightElevation(double? value) {
     return withDiagnosticProp<double>('highlightElevation',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where disabledElevation matches the condition
+  @useResult
   WidgetSelector<FloatingActionButton> whereDisabledElevation(
       MatchProp<double> match) {
     return withDiagnosticProp<double>('disabledElevation', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where disabledElevation equals (==) [value]
+  @useResult
   WidgetSelector<FloatingActionButton> withDisabledElevation(double? value) {
     return withDiagnosticProp<double>('disabledElevation',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where shape matches the condition
+  @useResult
   WidgetSelector<FloatingActionButton> whereShape(
       MatchProp<ShapeBorder> match) {
     return withDiagnosticProp<ShapeBorder>('shape', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where shape equals (==) [value]
+  @useResult
   WidgetSelector<FloatingActionButton> withShape(ShapeBorder? value) {
     return withDiagnosticProp<ShapeBorder>(
         'shape', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where focusNode matches the condition
+  @useResult
   WidgetSelector<FloatingActionButton> whereFocusNode(
       MatchProp<FocusNode> match) {
     return withDiagnosticProp<FocusNode>('focusNode', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where focusNode equals (==) [value]
+  @useResult
   WidgetSelector<FloatingActionButton> withFocusNode(FocusNode? value) {
     return withDiagnosticProp<FocusNode>(
         'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where isExtended matches the condition
+  @useResult
   WidgetSelector<FloatingActionButton> whereIsExtended(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('isExtended', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where isExtended equals (==) [value]
+  @useResult
   WidgetSelector<FloatingActionButton> withIsExtended(bool? value) {
     return withDiagnosticProp<bool>(
         'isExtended', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where materialTapTargetSize matches the condition
+  @useResult
   WidgetSelector<FloatingActionButton> whereMaterialTapTargetSize(
       MatchProp<MaterialTapTargetSize> match) {
     return withDiagnosticProp<MaterialTapTargetSize>(
@@ -388,6 +419,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where materialTapTargetSize equals (==) [value]
+  @useResult
   WidgetSelector<FloatingActionButton> withMaterialTapTargetSize(
       MaterialTapTargetSize? value) {
     return withDiagnosticProp<MaterialTapTargetSize>('materialTapTargetSize',

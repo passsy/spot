@@ -305,226 +305,267 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
 /// Allows filtering [AnyText] by the properties provided via [Diagnosticable.debugFillProperties]
 extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where text matches the condition
+  @useResult
   WidgetSelector<AnyText> whereText(MatchProp<String> match) {
     return withDiagnosticProp<String>('text', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where text equals (==) [value]
+  @useResult
   WidgetSelector<AnyText> withText(String? value) {
     return withDiagnosticProp<String>(
         'text', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where textDirection matches the condition
+  @useResult
   WidgetSelector<AnyText> whereTextDirection(MatchProp<TextDirection> match) {
     return withDiagnosticProp<TextDirection>('textDirection', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where textDirection equals (==) [value]
+  @useResult
   WidgetSelector<AnyText> withTextDirection(TextDirection? value) {
     return withDiagnosticProp<TextDirection>('textDirection',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where textAlign matches the condition
+  @useResult
   WidgetSelector<AnyText> whereTextAlign(MatchProp<TextAlign> match) {
     return withDiagnosticProp<TextAlign>('textAlign', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where textAlign equals (==) [value]
+  @useResult
   WidgetSelector<AnyText> withTextAlign(TextAlign? value) {
     return withDiagnosticProp<TextAlign>(
         'textAlign', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where selectionColor matches the condition
+  @useResult
   WidgetSelector<AnyText> whereSelectionColor(MatchProp<Color> match) {
     return withDiagnosticProp<Color>('selectionColor', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where selectionColor equals (==) [value]
+  @useResult
   WidgetSelector<AnyText> withSelectionColor(Color? value) {
     return withDiagnosticProp<Color>('selectionColor',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where softWrap matches the condition
+  @useResult
   WidgetSelector<AnyText> whereSoftWrap(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('softWrap', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where softWrap equals (==) [value]
+  @useResult
   WidgetSelector<AnyText> withSoftWrap(bool? value) {
     return withDiagnosticProp<bool>(
         'softWrap', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where overflow matches the condition
+  @useResult
   WidgetSelector<AnyText> whereOverflow(MatchProp<TextOverflow> match) {
     return withDiagnosticProp<TextOverflow>('overflow', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where overflow equals (==) [value]
+  @useResult
   WidgetSelector<AnyText> withOverflow(TextOverflow? value) {
     return withDiagnosticProp<TextOverflow>(
         'overflow', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where maxLines matches the condition
+  @useResult
   WidgetSelector<AnyText> whereMaxLines(MatchProp<int> match) {
     return withDiagnosticProp<int>('maxLines', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where maxLines equals (==) [value]
+  @useResult
   WidgetSelector<AnyText> withMaxLines(int? value) {
     return withDiagnosticProp<int>(
         'maxLines', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where locale matches the condition
+  @useResult
   WidgetSelector<AnyText> whereLocale(MatchProp<Locale> match) {
     return withDiagnosticProp<Locale>('locale', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where locale equals (==) [value]
+  @useResult
   WidgetSelector<AnyText> withLocale(Locale? value) {
     return withDiagnosticProp<Locale>(
         'locale', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where minLines matches the condition
+  @useResult
   WidgetSelector<AnyText> whereMinLines(MatchProp<int> match) {
     return withDiagnosticProp<int>('minLines', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where minLines equals (==) [value]
+  @useResult
   WidgetSelector<AnyText> withMinLines(int? value) {
     return withDiagnosticProp<int>(
         'minLines', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontInherit matches the condition
+  @useResult
   WidgetSelector<AnyText> whereFontInherit(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('font_inherit', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontInherit equals (==) [value]
+  @useResult
   WidgetSelector<AnyText> withFontInherit(bool? value) {
     return withDiagnosticProp<bool>(
         'font_inherit', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontColor matches the condition
+  @useResult
   WidgetSelector<AnyText> whereFontColor(MatchProp<Color> match) {
     return withDiagnosticProp<Color>('font_color', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontColor equals (==) [value]
+  @useResult
   WidgetSelector<AnyText> withFontColor(Color? value) {
     return withDiagnosticProp<Color>(
         'font_color', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontBackgroundColor matches the condition
+  @useResult
   WidgetSelector<AnyText> whereFontBackgroundColor(MatchProp<Color> match) {
     return withDiagnosticProp<Color>('font_backgroundColor', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontBackgroundColor equals (==) [value]
+  @useResult
   WidgetSelector<AnyText> withFontBackgroundColor(Color? value) {
     return withDiagnosticProp<Color>('font_backgroundColor',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontFamily matches the condition
+  @useResult
   WidgetSelector<AnyText> whereFontFamily(MatchProp<String> match) {
     return withDiagnosticProp<String>('font_family', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontFamily equals (==) [value]
+  @useResult
   WidgetSelector<AnyText> withFontFamily(String? value) {
     return withDiagnosticProp<String>(
         'font_family', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontFamilyFallback matches the condition
+  @useResult
   WidgetSelector<AnyText> whereFontFamilyFallback(MatchProp<String> match) {
     return withDiagnosticProp<String>('font_familyFallback', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontFamilyFallback equals (==) [value]
+  @useResult
   WidgetSelector<AnyText> withFontFamilyFallback(String? value) {
     return withDiagnosticProp<String>('font_familyFallback',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontWeight matches the condition
+  @useResult
   WidgetSelector<AnyText> whereFontWeight(MatchProp<FontWeight> match) {
     return withDiagnosticProp<FontWeight>('font_weight', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontWeight equals (==) [value]
+  @useResult
   WidgetSelector<AnyText> withFontWeight(FontWeight? value) {
     return withDiagnosticProp<FontWeight>(
         'font_weight', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontStyle matches the condition
+  @useResult
   WidgetSelector<AnyText> whereFontStyle(MatchProp<FontStyle> match) {
     return withDiagnosticProp<FontStyle>('font_style', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontStyle equals (==) [value]
+  @useResult
   WidgetSelector<AnyText> withFontStyle(FontStyle? value) {
     return withDiagnosticProp<FontStyle>(
         'font_style', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontLetterSpacing matches the condition
+  @useResult
   WidgetSelector<AnyText> whereFontLetterSpacing(MatchProp<double> match) {
     return withDiagnosticProp<double>('font_letterSpacing', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontLetterSpacing equals (==) [value]
+  @useResult
   WidgetSelector<AnyText> withFontLetterSpacing(double? value) {
     return withDiagnosticProp<double>('font_letterSpacing',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontWordSpacing matches the condition
+  @useResult
   WidgetSelector<AnyText> whereFontWordSpacing(MatchProp<double> match) {
     return withDiagnosticProp<double>('font_wordSpacing', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontWordSpacing equals (==) [value]
+  @useResult
   WidgetSelector<AnyText> withFontWordSpacing(double? value) {
     return withDiagnosticProp<double>('font_wordSpacing',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontBaseline matches the condition
+  @useResult
   WidgetSelector<AnyText> whereFontBaseline(MatchProp<TextBaseline> match) {
     return withDiagnosticProp<TextBaseline>('font_baseline', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontBaseline equals (==) [value]
+  @useResult
   WidgetSelector<AnyText> withFontBaseline(TextBaseline? value) {
     return withDiagnosticProp<TextBaseline>('font_baseline',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontHeight matches the condition
+  @useResult
   WidgetSelector<AnyText> whereFontHeight(MatchProp<double> match) {
     return withDiagnosticProp<double>('font_height', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontHeight equals (==) [value]
+  @useResult
   WidgetSelector<AnyText> withFontHeight(double? value) {
     return withDiagnosticProp<double>(
         'font_height', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontLeadingDistribution matches the condition
+  @useResult
   WidgetSelector<AnyText> whereFontLeadingDistribution(
       MatchProp<TextLeadingDistribution> match) {
     return withDiagnosticProp<TextLeadingDistribution>(
@@ -532,6 +573,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontLeadingDistribution equals (==) [value]
+  @useResult
   WidgetSelector<AnyText> withFontLeadingDistribution(
       TextLeadingDistribution? value) {
     return withDiagnosticProp<TextLeadingDistribution>(
@@ -540,55 +582,65 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontLocale matches the condition
+  @useResult
   WidgetSelector<AnyText> whereFontLocale(MatchProp<Locale> match) {
     return withDiagnosticProp<Locale>('font_locale', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontLocale equals (==) [value]
+  @useResult
   WidgetSelector<AnyText> withFontLocale(Locale? value) {
     return withDiagnosticProp<Locale>(
         'font_locale', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontForeground matches the condition
+  @useResult
   WidgetSelector<AnyText> whereFontForeground(MatchProp<Paint> match) {
     return withDiagnosticProp<Paint>('font_foreground', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontForeground equals (==) [value]
+  @useResult
   WidgetSelector<AnyText> withFontForeground(Paint? value) {
     return withDiagnosticProp<Paint>('font_foreground',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontBackground matches the condition
+  @useResult
   WidgetSelector<AnyText> whereFontBackground(MatchProp<Paint> match) {
     return withDiagnosticProp<Paint>('font_background', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontBackground equals (==) [value]
+  @useResult
   WidgetSelector<AnyText> withFontBackground(Paint? value) {
     return withDiagnosticProp<Paint>('font_background',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where inherit matches the condition
+  @useResult
   WidgetSelector<AnyText> whereInherit(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('inherit', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where inherit equals (==) [value]
+  @useResult
   WidgetSelector<AnyText> withInherit(bool? value) {
     return withDiagnosticProp<bool>(
         'inherit', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontSize matches the condition
+  @useResult
   WidgetSelector<AnyText> whereFontSize(MatchProp<double> match) {
     return withDiagnosticProp<double>('font_size', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontSize equals (==) [value]
+  @useResult
   WidgetSelector<AnyText> withFontSize(double? value) {
     return withDiagnosticProp<double>(
         'font_size', (it) => value == null ? it.isNull() : it.equals(value));

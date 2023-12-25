@@ -345,17 +345,6 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
         'cursorColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that cursorErrorColor of [TextField] matches the condition in [match]
-  WidgetMatcher<TextField> hasCursorErrorColorWhere(MatchProp<Color> match) {
-    return hasDiagnosticProp<Color>('cursorErrorColor', match);
-  }
-
-  /// Expects that cursorErrorColor of [TextField] equals (==) [value]
-  WidgetMatcher<TextField> hasCursorErrorColor(Color? value) {
-    return hasDiagnosticProp<Color>('cursorErrorColor',
-        (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
   /// Expects that keyboardAppearance of [TextField] matches the condition in [match]
   WidgetMatcher<TextField> hasKeyboardAppearanceWhere(
       MatchProp<Brightness> match) {
@@ -491,208 +480,245 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
 /// Allows filtering [TextField] by the properties provided via [Diagnosticable.debugFillProperties]
 extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where controller matches the condition
+  @useResult
   WidgetSelector<TextField> whereController(
       MatchProp<TextEditingController> match) {
     return withDiagnosticProp<TextEditingController>('controller', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where controller equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withController(TextEditingController? value) {
     return withDiagnosticProp<TextEditingController>(
         'controller', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where focusNode matches the condition
+  @useResult
   WidgetSelector<TextField> whereFocusNode(MatchProp<FocusNode> match) {
     return withDiagnosticProp<FocusNode>('focusNode', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where focusNode equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withFocusNode(FocusNode? value) {
     return withDiagnosticProp<FocusNode>(
         'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where undoController matches the condition
+  @useResult
   WidgetSelector<TextField> whereUndoController(
       MatchProp<UndoHistoryController> match) {
     return withDiagnosticProp<UndoHistoryController>('undoController', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where undoController equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withUndoController(UndoHistoryController? value) {
     return withDiagnosticProp<UndoHistoryController>('undoController',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where enabled matches the condition
+  @useResult
   WidgetSelector<TextField> whereEnabled(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('enabled', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where enabled equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withEnabled(bool? value) {
     return withDiagnosticProp<bool>(
         'enabled', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where decoration matches the condition
+  @useResult
   WidgetSelector<TextField> whereDecoration(MatchProp<InputDecoration> match) {
     return withDiagnosticProp<InputDecoration>('decoration', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where decoration equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withDecoration(InputDecoration? value) {
     return withDiagnosticProp<InputDecoration>(
         'decoration', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where keyboardType matches the condition
+  @useResult
   WidgetSelector<TextField> whereKeyboardType(MatchProp<TextInputType> match) {
     return withDiagnosticProp<TextInputType>('keyboardType', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where keyboardType equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withKeyboardType(TextInputType? value) {
     return withDiagnosticProp<TextInputType>(
         'keyboardType', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where style matches the condition
+  @useResult
   WidgetSelector<TextField> whereStyle(MatchProp<TextStyle> match) {
     return withDiagnosticProp<TextStyle>('style', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where style equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withStyle(TextStyle? value) {
     return withDiagnosticProp<TextStyle>(
         'style', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where autofocus matches the condition
+  @useResult
   WidgetSelector<TextField> whereAutofocus(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('autofocus', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where autofocus equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withAutofocus(bool? value) {
     return withDiagnosticProp<bool>(
         'autofocus', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where obscuringCharacter matches the condition
+  @useResult
   WidgetSelector<TextField> whereObscuringCharacter(MatchProp<String> match) {
     return withDiagnosticProp<String>('obscuringCharacter', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where obscuringCharacter equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withObscuringCharacter(String? value) {
     return withDiagnosticProp<String>('obscuringCharacter',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where obscureText matches the condition
+  @useResult
   WidgetSelector<TextField> whereObscureText(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('obscureText', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where obscureText equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withObscureText(bool? value) {
     return withDiagnosticProp<bool>(
         'obscureText', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where autocorrect matches the condition
+  @useResult
   WidgetSelector<TextField> whereAutocorrect(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('autocorrect', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where autocorrect equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withAutocorrect(bool? value) {
     return withDiagnosticProp<bool>(
         'autocorrect', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where smartDashesType matches the condition
+  @useResult
   WidgetSelector<TextField> whereSmartDashesType(
       MatchProp<SmartDashesType> match) {
     return withDiagnosticProp<SmartDashesType>('smartDashesType', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where smartDashesType equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withSmartDashesType(SmartDashesType? value) {
     return withDiagnosticProp<SmartDashesType>('smartDashesType',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where smartQuotesType matches the condition
+  @useResult
   WidgetSelector<TextField> whereSmartQuotesType(
       MatchProp<SmartQuotesType> match) {
     return withDiagnosticProp<SmartQuotesType>('smartQuotesType', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where smartQuotesType equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withSmartQuotesType(SmartQuotesType? value) {
     return withDiagnosticProp<SmartQuotesType>('smartQuotesType',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where enableSuggestions matches the condition
+  @useResult
   WidgetSelector<TextField> whereEnableSuggestions(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('enableSuggestions', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where enableSuggestions equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withEnableSuggestions(bool? value) {
     return withDiagnosticProp<bool>('enableSuggestions',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where maxLines matches the condition
+  @useResult
   WidgetSelector<TextField> whereMaxLines(MatchProp<int> match) {
     return withDiagnosticProp<int>('maxLines', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where maxLines equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withMaxLines(int? value) {
     return withDiagnosticProp<int>(
         'maxLines', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where minLines matches the condition
+  @useResult
   WidgetSelector<TextField> whereMinLines(MatchProp<int> match) {
     return withDiagnosticProp<int>('minLines', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where minLines equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withMinLines(int? value) {
     return withDiagnosticProp<int>(
         'minLines', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where expands matches the condition
+  @useResult
   WidgetSelector<TextField> whereExpands(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('expands', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where expands equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withExpands(bool? value) {
     return withDiagnosticProp<bool>(
         'expands', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where maxLength matches the condition
+  @useResult
   WidgetSelector<TextField> whereMaxLength(MatchProp<int> match) {
     return withDiagnosticProp<int>('maxLength', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where maxLength equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withMaxLength(int? value) {
     return withDiagnosticProp<int>(
         'maxLength', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where maxLengthEnforcement matches the condition
+  @useResult
   WidgetSelector<TextField> whereMaxLengthEnforcement(
       MatchProp<MaxLengthEnforcement> match) {
     return withDiagnosticProp<MaxLengthEnforcement>(
@@ -700,6 +726,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where maxLengthEnforcement equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withMaxLengthEnforcement(
       MaxLengthEnforcement? value) {
     return withDiagnosticProp<MaxLengthEnforcement>('maxLengthEnforcement',
@@ -707,165 +734,181 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where textInputAction matches the condition
+  @useResult
   WidgetSelector<TextField> whereTextInputAction(
       MatchProp<TextInputAction> match) {
     return withDiagnosticProp<TextInputAction>('textInputAction', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where textInputAction equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withTextInputAction(TextInputAction? value) {
     return withDiagnosticProp<TextInputAction>('textInputAction',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where textCapitalization matches the condition
+  @useResult
   WidgetSelector<TextField> whereTextCapitalization(
       MatchProp<TextCapitalization> match) {
     return withDiagnosticProp<TextCapitalization>('textCapitalization', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where textCapitalization equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withTextCapitalization(TextCapitalization? value) {
     return withDiagnosticProp<TextCapitalization>('textCapitalization',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where textAlign matches the condition
+  @useResult
   WidgetSelector<TextField> whereTextAlign(MatchProp<TextAlign> match) {
     return withDiagnosticProp<TextAlign>('textAlign', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where textAlign equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withTextAlign(TextAlign? value) {
     return withDiagnosticProp<TextAlign>(
         'textAlign', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where textAlignVertical matches the condition
+  @useResult
   WidgetSelector<TextField> whereTextAlignVertical(
       MatchProp<TextAlignVertical> match) {
     return withDiagnosticProp<TextAlignVertical>('textAlignVertical', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where textAlignVertical equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withTextAlignVertical(TextAlignVertical? value) {
     return withDiagnosticProp<TextAlignVertical>('textAlignVertical',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where textDirection matches the condition
+  @useResult
   WidgetSelector<TextField> whereTextDirection(MatchProp<TextDirection> match) {
     return withDiagnosticProp<TextDirection>('textDirection', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where textDirection equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withTextDirection(TextDirection? value) {
     return withDiagnosticProp<TextDirection>('textDirection',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where cursorWidth matches the condition
+  @useResult
   WidgetSelector<TextField> whereCursorWidth(MatchProp<double> match) {
     return withDiagnosticProp<double>('cursorWidth', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where cursorWidth equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withCursorWidth(double? value) {
     return withDiagnosticProp<double>(
         'cursorWidth', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where cursorHeight matches the condition
+  @useResult
   WidgetSelector<TextField> whereCursorHeight(MatchProp<double> match) {
     return withDiagnosticProp<double>('cursorHeight', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where cursorHeight equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withCursorHeight(double? value) {
     return withDiagnosticProp<double>(
         'cursorHeight', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where cursorRadius matches the condition
+  @useResult
   WidgetSelector<TextField> whereCursorRadius(MatchProp<Radius> match) {
     return withDiagnosticProp<Radius>('cursorRadius', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where cursorRadius equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withCursorRadius(Radius? value) {
     return withDiagnosticProp<Radius>(
         'cursorRadius', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where cursorOpacityAnimates matches the condition
+  @useResult
   WidgetSelector<TextField> whereCursorOpacityAnimates(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('cursorOpacityAnimates', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where cursorOpacityAnimates equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withCursorOpacityAnimates(bool? value) {
     return withDiagnosticProp<bool>('cursorOpacityAnimates',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where cursorColor matches the condition
+  @useResult
   WidgetSelector<TextField> whereCursorColor(MatchProp<Color> match) {
     return withDiagnosticProp<Color>('cursorColor', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where cursorColor equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withCursorColor(Color? value) {
     return withDiagnosticProp<Color>(
         'cursorColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [TextField] where cursorErrorColor matches the condition
-  WidgetSelector<TextField> whereCursorErrorColor(MatchProp<Color> match) {
-    return withDiagnosticProp<Color>('cursorErrorColor', match);
-  }
-
-  /// Creates a [WidgetSelector] that finds all [TextField] where cursorErrorColor equals (==) [value]
-  WidgetSelector<TextField> withCursorErrorColor(Color? value) {
-    return withDiagnosticProp<Color>('cursorErrorColor',
-        (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
   /// Creates a [WidgetSelector] that finds all [TextField] where keyboardAppearance matches the condition
+  @useResult
   WidgetSelector<TextField> whereKeyboardAppearance(
       MatchProp<Brightness> match) {
     return withDiagnosticProp<Brightness>('keyboardAppearance', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where keyboardAppearance equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withKeyboardAppearance(Brightness? value) {
     return withDiagnosticProp<Brightness>('keyboardAppearance',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where scrollPadding matches the condition
+  @useResult
   WidgetSelector<TextField> whereScrollPadding(
       MatchProp<EdgeInsetsGeometry> match) {
     return withDiagnosticProp<EdgeInsetsGeometry>('scrollPadding', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where scrollPadding equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withScrollPadding(EdgeInsetsGeometry? value) {
     return withDiagnosticProp<EdgeInsetsGeometry>('scrollPadding',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where selectionEnabled matches the condition
+  @useResult
   WidgetSelector<TextField> whereSelectionEnabled(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('selectionEnabled', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where selectionEnabled equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withSelectionEnabled(bool? value) {
     return withDiagnosticProp<bool>('selectionEnabled',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where selectionControls matches the condition
+  @useResult
   WidgetSelector<TextField> whereSelectionControls(
       MatchProp<TextSelectionControls> match) {
     return withDiagnosticProp<TextSelectionControls>(
@@ -873,6 +916,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where selectionControls equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withSelectionControls(
       TextSelectionControls? value) {
     return withDiagnosticProp<TextSelectionControls>('selectionControls',
@@ -880,63 +924,74 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where scrollController matches the condition
+  @useResult
   WidgetSelector<TextField> whereScrollController(
       MatchProp<ScrollController> match) {
     return withDiagnosticProp<ScrollController>('scrollController', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where scrollController equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withScrollController(ScrollController? value) {
     return withDiagnosticProp<ScrollController>('scrollController',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where scrollPhysics matches the condition
+  @useResult
   WidgetSelector<TextField> whereScrollPhysics(MatchProp<ScrollPhysics> match) {
     return withDiagnosticProp<ScrollPhysics>('scrollPhysics', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where scrollPhysics equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withScrollPhysics(ScrollPhysics? value) {
     return withDiagnosticProp<ScrollPhysics>('scrollPhysics',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where clipBehavior matches the condition
+  @useResult
   WidgetSelector<TextField> whereClipBehavior(MatchProp<Clip> match) {
     return withDiagnosticProp<Clip>('clipBehavior', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where clipBehavior equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withClipBehavior(Clip? value) {
     return withDiagnosticProp<Clip>(
         'clipBehavior', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where scribbleEnabled matches the condition
+  @useResult
   WidgetSelector<TextField> whereScribbleEnabled(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('scribbleEnabled', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where scribbleEnabled equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withScribbleEnabled(bool? value) {
     return withDiagnosticProp<bool>('scribbleEnabled',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where enableIMEPersonalizedLearning matches the condition
+  @useResult
   WidgetSelector<TextField> whereEnableIMEPersonalizedLearning(
       MatchProp<bool> match) {
     return withDiagnosticProp<bool>('enableIMEPersonalizedLearning', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where enableIMEPersonalizedLearning equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withEnableIMEPersonalizedLearning(bool? value) {
     return withDiagnosticProp<bool>('enableIMEPersonalizedLearning',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where spellCheckConfiguration matches the condition
+  @useResult
   WidgetSelector<TextField> whereSpellCheckConfiguration(
       MatchProp<SpellCheckConfiguration> match) {
     return withDiagnosticProp<SpellCheckConfiguration>(
@@ -944,6 +999,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where spellCheckConfiguration equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withSpellCheckConfiguration(
       SpellCheckConfiguration? value) {
     return withDiagnosticProp<SpellCheckConfiguration>(
@@ -952,12 +1008,14 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where contentCommitMimeTypes matches the condition
+  @useResult
   WidgetSelector<TextField> whereContentCommitMimeTypes(
       MatchProp<List<String>> match) {
     return withDiagnosticProp<List<String>>('contentCommitMimeTypes', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where contentCommitMimeTypes equals (==) [value]
+  @useResult
   WidgetSelector<TextField> withContentCommitMimeTypes(List<String>? value) {
     return withDiagnosticProp<List<String>>('contentCommitMimeTypes',
         (it) => value == null ? it.isNull() : it.equals(value));

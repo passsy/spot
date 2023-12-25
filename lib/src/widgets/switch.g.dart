@@ -26,11 +26,13 @@ extension SwitchMatcher on WidgetMatcher<Switch> {
 /// Allows filtering [Switch] by the properties provided via [Diagnosticable.debugFillProperties]
 extension SwitchSelector on WidgetSelector<Switch> {
   /// Creates a [WidgetSelector] that finds all [Switch] where value matches the condition
+  @useResult
   WidgetSelector<Switch> whereValue(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('value', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Switch] where value equals (==) [value]
+  @useResult
   WidgetSelector<Switch> withValue(bool? value) {
     return withDiagnosticProp<bool>(
         'value', (it) => value == null ? it.isNull() : it.equals(value));

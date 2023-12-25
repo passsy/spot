@@ -49,33 +49,39 @@ extension OpacityMatcher on WidgetMatcher<Opacity> {
 /// Allows filtering [Opacity] by the properties provided via [Diagnosticable.debugFillProperties]
 extension OpacitySelector on WidgetSelector<Opacity> {
   /// Creates a [WidgetSelector] that finds all [Opacity] where opacity matches the condition
+  @useResult
   WidgetSelector<Opacity> whereOpacity(MatchProp<double> match) {
     return withDiagnosticProp<double>('opacity', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Opacity] where opacity equals (==) [value]
+  @useResult
   WidgetSelector<Opacity> withOpacity(double? value) {
     return withDiagnosticProp<double>(
         'opacity', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Opacity] where alwaysIncludeSemantics matches the condition
+  @useResult
   WidgetSelector<Opacity> whereAlwaysIncludeSemantics(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('alwaysIncludeSemantics', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Opacity] where alwaysIncludeSemantics equals (==) [value]
+  @useResult
   WidgetSelector<Opacity> withAlwaysIncludeSemantics(bool? value) {
     return withDiagnosticProp<bool>('alwaysIncludeSemantics',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Opacity] where renderObject matches the condition
+  @useResult
   WidgetSelector<Opacity> whereRenderObject(MatchProp<RenderOpacity> match) {
     return withDiagnosticProp<RenderOpacity>('renderObject', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Opacity] where renderObject equals (==) [value]
+  @useResult
   WidgetSelector<Opacity> withRenderObject(RenderOpacity? value) {
     return withDiagnosticProp<RenderOpacity>(
         'renderObject', (it) => value == null ? it.isNull() : it.equals(value));

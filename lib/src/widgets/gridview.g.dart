@@ -93,77 +93,91 @@ extension GridViewMatcher on WidgetMatcher<GridView> {
 /// Allows filtering [GridView] by the properties provided via [Diagnosticable.debugFillProperties]
 extension GridViewSelector on WidgetSelector<GridView> {
   /// Creates a [WidgetSelector] that finds all [GridView] where scrollDirection matches the condition
+  @useResult
   WidgetSelector<GridView> whereScrollDirection(MatchProp<Axis> match) {
     return withDiagnosticProp<Axis>('scrollDirection', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [GridView] where scrollDirection equals (==) [value]
+  @useResult
   WidgetSelector<GridView> withScrollDirection(Axis? value) {
     return withDiagnosticProp<Axis>('scrollDirection',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [GridView] where reverse matches the condition
+  @useResult
   WidgetSelector<GridView> whereReverse(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('reverse', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [GridView] where reverse equals (==) [value]
+  @useResult
   WidgetSelector<GridView> withReverse(bool? value) {
     return withDiagnosticProp<bool>(
         'reverse', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [GridView] where controller matches the condition
+  @useResult
   WidgetSelector<GridView> whereController(MatchProp<ScrollController> match) {
     return withDiagnosticProp<ScrollController>('controller', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [GridView] where controller equals (==) [value]
+  @useResult
   WidgetSelector<GridView> withController(ScrollController? value) {
     return withDiagnosticProp<ScrollController>(
         'controller', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [GridView] where primary matches the condition
+  @useResult
   WidgetSelector<GridView> wherePrimary(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('primary', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [GridView] where primary equals (==) [value]
+  @useResult
   WidgetSelector<GridView> withPrimary(bool? value) {
     return withDiagnosticProp<bool>(
         'primary', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [GridView] where physics matches the condition
+  @useResult
   WidgetSelector<GridView> wherePhysics(MatchProp<ScrollPhysics> match) {
     return withDiagnosticProp<ScrollPhysics>('physics', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [GridView] where physics equals (==) [value]
+  @useResult
   WidgetSelector<GridView> withPhysics(ScrollPhysics? value) {
     return withDiagnosticProp<ScrollPhysics>(
         'physics', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [GridView] where shrinkWrap matches the condition
+  @useResult
   WidgetSelector<GridView> whereShrinkWrap(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('shrinkWrap', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [GridView] where shrinkWrap equals (==) [value]
+  @useResult
   WidgetSelector<GridView> withShrinkWrap(bool? value) {
     return withDiagnosticProp<bool>(
         'shrinkWrap', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [GridView] where padding matches the condition
+  @useResult
   WidgetSelector<GridView> wherePadding(MatchProp<EdgeInsetsGeometry> match) {
     return withDiagnosticProp<EdgeInsetsGeometry>('padding', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [GridView] where padding equals (==) [value]
+  @useResult
   WidgetSelector<GridView> withPadding(EdgeInsetsGeometry? value) {
     return withDiagnosticProp<EdgeInsetsGeometry>(
         'padding', (it) => value == null ? it.isNull() : it.equals(value));

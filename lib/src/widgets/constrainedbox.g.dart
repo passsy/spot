@@ -40,24 +40,28 @@ extension ConstrainedBoxMatcher on WidgetMatcher<ConstrainedBox> {
 /// Allows filtering [ConstrainedBox] by the properties provided via [Diagnosticable.debugFillProperties]
 extension ConstrainedBoxSelector on WidgetSelector<ConstrainedBox> {
   /// Creates a [WidgetSelector] that finds all [ConstrainedBox] where constraints matches the condition
+  @useResult
   WidgetSelector<ConstrainedBox> whereConstraints(
       MatchProp<BoxConstraints> match) {
     return withDiagnosticProp<BoxConstraints>('constraints', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ConstrainedBox] where constraints equals (==) [value]
+  @useResult
   WidgetSelector<ConstrainedBox> withConstraints(BoxConstraints? value) {
     return withDiagnosticProp<BoxConstraints>(
         'constraints', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [ConstrainedBox] where renderObject matches the condition
+  @useResult
   WidgetSelector<ConstrainedBox> whereRenderObject(
       MatchProp<RenderConstrainedBox> match) {
     return withDiagnosticProp<RenderConstrainedBox>('renderObject', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ConstrainedBox] where renderObject equals (==) [value]
+  @useResult
   WidgetSelector<ConstrainedBox> withRenderObject(RenderConstrainedBox? value) {
     return withDiagnosticProp<RenderConstrainedBox>(
         'renderObject', (it) => value == null ? it.isNull() : it.equals(value));

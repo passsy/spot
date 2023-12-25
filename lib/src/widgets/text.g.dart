@@ -126,111 +126,131 @@ extension TextMatcher on WidgetMatcher<Text> {
 /// Allows filtering [Text] by the properties provided via [Diagnosticable.debugFillProperties]
 extension TextSelector on WidgetSelector<Text> {
   /// Creates a [WidgetSelector] that finds all [Text] where text matches the condition
+  @useResult
   WidgetSelector<Text> whereText(MatchProp<String> match) {
     return withDiagnosticProp<String>('data', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Text] where text equals (==) [value]
+  @useResult
   WidgetSelector<Text> withText(String? value) {
     return withDiagnosticProp<String>(
         'data', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Text] where textAlign matches the condition
+  @useResult
   WidgetSelector<Text> whereTextAlign(MatchProp<TextAlign> match) {
     return withDiagnosticProp<TextAlign>('textAlign', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Text] where textAlign equals (==) [value]
+  @useResult
   WidgetSelector<Text> withTextAlign(TextAlign? value) {
     return withDiagnosticProp<TextAlign>(
         'textAlign', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Text] where textDirection matches the condition
+  @useResult
   WidgetSelector<Text> whereTextDirection(MatchProp<TextDirection> match) {
     return withDiagnosticProp<TextDirection>('textDirection', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Text] where textDirection equals (==) [value]
+  @useResult
   WidgetSelector<Text> withTextDirection(TextDirection? value) {
     return withDiagnosticProp<TextDirection>('textDirection',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Text] where locale matches the condition
+  @useResult
   WidgetSelector<Text> whereLocale(MatchProp<Locale> match) {
     return withDiagnosticProp<Locale>('locale', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Text] where locale equals (==) [value]
+  @useResult
   WidgetSelector<Text> withLocale(Locale? value) {
     return withDiagnosticProp<Locale>(
         'locale', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Text] where softWrap matches the condition
+  @useResult
   WidgetSelector<Text> whereSoftWrap(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('softWrap', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Text] where softWrap equals (==) [value]
+  @useResult
   WidgetSelector<Text> withSoftWrap(bool? value) {
     return withDiagnosticProp<bool>(
         'softWrap', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Text] where overflow matches the condition
+  @useResult
   WidgetSelector<Text> whereOverflow(MatchProp<TextOverflow> match) {
     return withDiagnosticProp<TextOverflow>('overflow', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Text] where overflow equals (==) [value]
+  @useResult
   WidgetSelector<Text> withOverflow(TextOverflow? value) {
     return withDiagnosticProp<TextOverflow>(
         'overflow', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Text] where textScaleFactor matches the condition
+  @useResult
   WidgetSelector<Text> whereTextScaleFactor(MatchProp<double> match) {
     return withDiagnosticProp<double>('textScaleFactor', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Text] where textScaleFactor equals (==) [value]
+  @useResult
   WidgetSelector<Text> withTextScaleFactor(double? value) {
     return withDiagnosticProp<double>('textScaleFactor',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Text] where maxLines matches the condition
+  @useResult
   WidgetSelector<Text> whereMaxLines(MatchProp<int> match) {
     return withDiagnosticProp<int>('maxLines', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Text] where maxLines equals (==) [value]
+  @useResult
   WidgetSelector<Text> withMaxLines(int? value) {
     return withDiagnosticProp<int>(
         'maxLines', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Text] where textWidthBasis matches the condition
+  @useResult
   WidgetSelector<Text> whereTextWidthBasis(MatchProp<TextWidthBasis> match) {
     return withDiagnosticProp<TextWidthBasis>('textWidthBasis', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Text] where textWidthBasis equals (==) [value]
+  @useResult
   WidgetSelector<Text> withTextWidthBasis(TextWidthBasis? value) {
     return withDiagnosticProp<TextWidthBasis>('textWidthBasis',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Text] where textHeightBehavior matches the condition
+  @useResult
   WidgetSelector<Text> whereTextHeightBehavior(
       MatchProp<TextHeightBehavior> match) {
     return withDiagnosticProp<TextHeightBehavior>('textHeightBehavior', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Text] where textHeightBehavior equals (==) [value]
+  @useResult
   WidgetSelector<Text> withTextHeightBehavior(TextHeightBehavior? value) {
     return withDiagnosticProp<TextHeightBehavior>('textHeightBehavior',
         (it) => value == null ? it.isNull() : it.equals(value));

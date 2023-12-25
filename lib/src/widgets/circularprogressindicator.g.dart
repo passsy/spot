@@ -29,12 +29,14 @@ extension CircularProgressIndicatorMatcher
 extension CircularProgressIndicatorSelector
     on WidgetSelector<CircularProgressIndicator> {
   /// Creates a [WidgetSelector] that finds all [CircularProgressIndicator] where value matches the condition
+  @useResult
   WidgetSelector<CircularProgressIndicator> whereValue(
       MatchProp<double> match) {
     return withDiagnosticProp<double>('value', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [CircularProgressIndicator] where value equals (==) [value]
+  @useResult
   WidgetSelector<CircularProgressIndicator> withValue(double? value) {
     return withDiagnosticProp<double>(
         'value', (it) => value == null ? it.isNull() : it.equals(value));

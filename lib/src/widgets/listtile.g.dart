@@ -372,355 +372,419 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
 /// Allows filtering [ListTile] by the properties provided via [Diagnosticable.debugFillProperties]
 extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where leading matches the condition
+  @useResult
   WidgetSelector<ListTile> whereLeading(MatchProp<Widget> match) {
     return withDiagnosticProp<Widget>('leading', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where leading equals (==) [value]
+  @useResult
   WidgetSelector<ListTile> withLeading(Widget? value) {
     return withDiagnosticProp<Widget>(
         'leading', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where title matches the condition
+  @useResult
   WidgetSelector<ListTile> whereTitle(MatchProp<Widget> match) {
     return withDiagnosticProp<Widget>('title', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where title equals (==) [value]
+  @useResult
   WidgetSelector<ListTile> withTitle(Widget? value) {
     return withDiagnosticProp<Widget>(
         'title', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where subtitle matches the condition
+  @useResult
   WidgetSelector<ListTile> whereSubtitle(MatchProp<Widget> match) {
     return withDiagnosticProp<Widget>('subtitle', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where subtitle equals (==) [value]
+  @useResult
   WidgetSelector<ListTile> withSubtitle(Widget? value) {
     return withDiagnosticProp<Widget>(
         'subtitle', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where trailing matches the condition
+  @useResult
   WidgetSelector<ListTile> whereTrailing(MatchProp<Widget> match) {
     return withDiagnosticProp<Widget>('trailing', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where trailing equals (==) [value]
+  @useResult
   WidgetSelector<ListTile> withTrailing(Widget? value) {
     return withDiagnosticProp<Widget>(
         'trailing', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where isThreeLine matches the condition
+  @useResult
   WidgetSelector<ListTile> whereIsThreeLine(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('isThreeLine', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where isThreeLine equals (==) [value]
+  @useResult
   WidgetSelector<ListTile> withIsThreeLine(bool? value) {
     return withDiagnosticProp<bool>(
         'isThreeLine', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where dense matches the condition
+  @useResult
   WidgetSelector<ListTile> whereDense(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('dense', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where dense equals (==) [value]
+  @useResult
   WidgetSelector<ListTile> withDense(bool? value) {
     return withDiagnosticProp<bool>(
         'dense', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where visualDensity matches the condition
+  @useResult
   WidgetSelector<ListTile> whereVisualDensity(MatchProp<VisualDensity> match) {
     return withDiagnosticProp<VisualDensity>('visualDensity', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where visualDensity equals (==) [value]
+  @useResult
   WidgetSelector<ListTile> withVisualDensity(VisualDensity? value) {
     return withDiagnosticProp<VisualDensity>('visualDensity',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where shape matches the condition
+  @useResult
   WidgetSelector<ListTile> whereShape(MatchProp<ShapeBorder> match) {
     return withDiagnosticProp<ShapeBorder>('shape', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where shape equals (==) [value]
+  @useResult
   WidgetSelector<ListTile> withShape(ShapeBorder? value) {
     return withDiagnosticProp<ShapeBorder>(
         'shape', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where style matches the condition
+  @useResult
   WidgetSelector<ListTile> whereStyle(MatchProp<ListTileStyle> match) {
     return withDiagnosticProp<ListTileStyle>('style', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where style equals (==) [value]
+  @useResult
   WidgetSelector<ListTile> withStyle(ListTileStyle? value) {
     return withDiagnosticProp<ListTileStyle>(
         'style', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where selectedColor matches the condition
+  @useResult
   WidgetSelector<ListTile> whereSelectedColor(MatchProp<Color> match) {
     return withDiagnosticProp<Color>('selectedColor', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where selectedColor equals (==) [value]
+  @useResult
   WidgetSelector<ListTile> withSelectedColor(Color? value) {
     return withDiagnosticProp<Color>('selectedColor',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where iconColor matches the condition
+  @useResult
   WidgetSelector<ListTile> whereIconColor(MatchProp<Color> match) {
     return withDiagnosticProp<Color>('iconColor', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where iconColor equals (==) [value]
+  @useResult
   WidgetSelector<ListTile> withIconColor(Color? value) {
     return withDiagnosticProp<Color>(
         'iconColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where textColor matches the condition
+  @useResult
   WidgetSelector<ListTile> whereTextColor(MatchProp<Color> match) {
     return withDiagnosticProp<Color>('textColor', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where textColor equals (==) [value]
+  @useResult
   WidgetSelector<ListTile> withTextColor(Color? value) {
     return withDiagnosticProp<Color>(
         'textColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where titleTextStyle matches the condition
+  @useResult
   WidgetSelector<ListTile> whereTitleTextStyle(MatchProp<TextStyle> match) {
     return withDiagnosticProp<TextStyle>('titleTextStyle', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where titleTextStyle equals (==) [value]
+  @useResult
   WidgetSelector<ListTile> withTitleTextStyle(TextStyle? value) {
     return withDiagnosticProp<TextStyle>('titleTextStyle',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where subtitleTextStyle matches the condition
+  @useResult
   WidgetSelector<ListTile> whereSubtitleTextStyle(MatchProp<TextStyle> match) {
     return withDiagnosticProp<TextStyle>('subtitleTextStyle', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where subtitleTextStyle equals (==) [value]
+  @useResult
   WidgetSelector<ListTile> withSubtitleTextStyle(TextStyle? value) {
     return withDiagnosticProp<TextStyle>('subtitleTextStyle',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where leadingAndTrailingTextStyle matches the condition
+  @useResult
   WidgetSelector<ListTile> whereLeadingAndTrailingTextStyle(
       MatchProp<TextStyle> match) {
     return withDiagnosticProp<TextStyle>('leadingAndTrailingTextStyle', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where leadingAndTrailingTextStyle equals (==) [value]
+  @useResult
   WidgetSelector<ListTile> withLeadingAndTrailingTextStyle(TextStyle? value) {
     return withDiagnosticProp<TextStyle>('leadingAndTrailingTextStyle',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where contentPadding matches the condition
+  @useResult
   WidgetSelector<ListTile> whereContentPadding(
       MatchProp<EdgeInsetsGeometry> match) {
     return withDiagnosticProp<EdgeInsetsGeometry>('contentPadding', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where contentPadding equals (==) [value]
+  @useResult
   WidgetSelector<ListTile> withContentPadding(EdgeInsetsGeometry? value) {
     return withDiagnosticProp<EdgeInsetsGeometry>('contentPadding',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where enabled matches the condition
+  @useResult
   WidgetSelector<ListTile> whereEnabled(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('enabled', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where enabled equals (==) [value]
+  @useResult
   WidgetSelector<ListTile> withEnabled(bool? value) {
     return withDiagnosticProp<bool>(
         'enabled', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where onTap matches the condition
+  @useResult
   WidgetSelector<ListTile> whereOnTap(MatchProp<Function> match) {
     return withDiagnosticProp<Function>('onTap', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where onTap equals (==) [value]
+  @useResult
   WidgetSelector<ListTile> withOnTap(Function? value) {
     return withDiagnosticProp<Function>(
         'onTap', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where onLongPress matches the condition
+  @useResult
   WidgetSelector<ListTile> whereOnLongPress(MatchProp<Function> match) {
     return withDiagnosticProp<Function>('onLongPress', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where onLongPress equals (==) [value]
+  @useResult
   WidgetSelector<ListTile> withOnLongPress(Function? value) {
     return withDiagnosticProp<Function>(
         'onLongPress', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where mouseCursor matches the condition
+  @useResult
   WidgetSelector<ListTile> whereMouseCursor(MatchProp<MouseCursor> match) {
     return withDiagnosticProp<MouseCursor>('mouseCursor', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where mouseCursor equals (==) [value]
+  @useResult
   WidgetSelector<ListTile> withMouseCursor(MouseCursor? value) {
     return withDiagnosticProp<MouseCursor>(
         'mouseCursor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where selected matches the condition
+  @useResult
   WidgetSelector<ListTile> whereSelected(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('selected', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where selected equals (==) [value]
+  @useResult
   WidgetSelector<ListTile> withSelected(bool? value) {
     return withDiagnosticProp<bool>(
         'selected', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where focusColor matches the condition
+  @useResult
   WidgetSelector<ListTile> whereFocusColor(MatchProp<Color> match) {
     return withDiagnosticProp<Color>('focusColor', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where focusColor equals (==) [value]
+  @useResult
   WidgetSelector<ListTile> withFocusColor(Color? value) {
     return withDiagnosticProp<Color>(
         'focusColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where hoverColor matches the condition
+  @useResult
   WidgetSelector<ListTile> whereHoverColor(MatchProp<Color> match) {
     return withDiagnosticProp<Color>('hoverColor', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where hoverColor equals (==) [value]
+  @useResult
   WidgetSelector<ListTile> withHoverColor(Color? value) {
     return withDiagnosticProp<Color>(
         'hoverColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where focusNode matches the condition
+  @useResult
   WidgetSelector<ListTile> whereFocusNode(MatchProp<FocusNode> match) {
     return withDiagnosticProp<FocusNode>('focusNode', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where focusNode equals (==) [value]
+  @useResult
   WidgetSelector<ListTile> withFocusNode(FocusNode? value) {
     return withDiagnosticProp<FocusNode>(
         'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where autofocus matches the condition
+  @useResult
   WidgetSelector<ListTile> whereAutofocus(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('autofocus', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where autofocus equals (==) [value]
+  @useResult
   WidgetSelector<ListTile> withAutofocus(bool? value) {
     return withDiagnosticProp<bool>(
         'autofocus', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where tileColor matches the condition
+  @useResult
   WidgetSelector<ListTile> whereTileColor(MatchProp<Color> match) {
     return withDiagnosticProp<Color>('tileColor', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where tileColor equals (==) [value]
+  @useResult
   WidgetSelector<ListTile> withTileColor(Color? value) {
     return withDiagnosticProp<Color>(
         'tileColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where selectedTileColor matches the condition
+  @useResult
   WidgetSelector<ListTile> whereSelectedTileColor(MatchProp<Color> match) {
     return withDiagnosticProp<Color>('selectedTileColor', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where selectedTileColor equals (==) [value]
+  @useResult
   WidgetSelector<ListTile> withSelectedTileColor(Color? value) {
     return withDiagnosticProp<Color>('selectedTileColor',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where enableFeedback matches the condition
+  @useResult
   WidgetSelector<ListTile> whereEnableFeedback(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('enableFeedback', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where enableFeedback equals (==) [value]
+  @useResult
   WidgetSelector<ListTile> withEnableFeedback(bool? value) {
     return withDiagnosticProp<bool>('enableFeedback',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where horizontalTitleGap matches the condition
+  @useResult
   WidgetSelector<ListTile> whereHorizontalTitleGap(MatchProp<double> match) {
     return withDiagnosticProp<double>('horizontalTitleGap', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where horizontalTitleGap equals (==) [value]
+  @useResult
   WidgetSelector<ListTile> withHorizontalTitleGap(double? value) {
     return withDiagnosticProp<double>('horizontalTitleGap',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where minVerticalPadding matches the condition
+  @useResult
   WidgetSelector<ListTile> whereMinVerticalPadding(MatchProp<double> match) {
     return withDiagnosticProp<double>('minVerticalPadding', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where minVerticalPadding equals (==) [value]
+  @useResult
   WidgetSelector<ListTile> withMinVerticalPadding(double? value) {
     return withDiagnosticProp<double>('minVerticalPadding',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where minLeadingWidth matches the condition
+  @useResult
   WidgetSelector<ListTile> whereMinLeadingWidth(MatchProp<double> match) {
     return withDiagnosticProp<double>('minLeadingWidth', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where minLeadingWidth equals (==) [value]
+  @useResult
   WidgetSelector<ListTile> withMinLeadingWidth(double? value) {
     return withDiagnosticProp<double>('minLeadingWidth',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where titleAlignment matches the condition
+  @useResult
   WidgetSelector<ListTile> whereTitleAlignment(
       MatchProp<ListTileTitleAlignment> match) {
     return withDiagnosticProp<ListTileTitleAlignment>('titleAlignment', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where titleAlignment equals (==) [value]
+  @useResult
   WidgetSelector<ListTile> withTitleAlignment(ListTileTitleAlignment? value) {
     return withDiagnosticProp<ListTileTitleAlignment>('titleAlignment',
         (it) => value == null ? it.isNull() : it.equals(value));
