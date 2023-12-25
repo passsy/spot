@@ -150,7 +150,7 @@ extension ${widgetType}Selector on WidgetSelector<$widgetType> {
 
       addedMethods = true;
       matcherSb.writeln('''
-  /// Expects that $humanPropName of [$widgetType] matches the condition in [match]    
+  /// Expects that $humanPropName of [$widgetType] matches the condition in [match]
   WidgetMatcher<$widgetType> $matcherVerb${humanPropName.capitalize()}Where(MatchProp<$propType> match) {
     return hasDiagnosticProp<$propType>('$diagnosticPropName', match);
   }
@@ -162,12 +162,14 @@ extension ${widgetType}Selector on WidgetSelector<$widgetType> {
 ''');
 
       selectorSb.writeln('''
-  /// Creates a [WidgetSelector] that finds all [$widgetType] where $humanPropName matches the condition   
+  /// Creates a [WidgetSelector] that finds all [$widgetType] where $humanPropName matches the condition
+  @useResult
   WidgetSelector<$widgetType> where${humanPropName.capitalize()}(MatchProp<$propType> match) {
     return withDiagnosticProp<$propType>('$diagnosticPropName', match);
   }
   
   /// Creates a [WidgetSelector] that finds all [$widgetType] where $humanPropName equals (==) [value]
+  @useResult
   WidgetSelector<$widgetType> with${humanPropName.capitalize()}($propTypeNullable value) {
     return withDiagnosticProp<$propType>('$diagnosticPropName', (it) => value == null ? it.isNull() : it.equals(value));
   }

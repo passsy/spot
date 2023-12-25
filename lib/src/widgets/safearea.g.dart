@@ -59,44 +59,52 @@ extension SafeAreaMatcher on WidgetMatcher<SafeArea> {
 /// Allows filtering [SafeArea] by the properties provided via [Diagnosticable.debugFillProperties]
 extension SafeAreaSelector on WidgetSelector<SafeArea> {
   /// Creates a [WidgetSelector] that finds all [SafeArea] where left matches the condition
+  @useResult
   WidgetSelector<SafeArea> whereLeft(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('left', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [SafeArea] where left equals (==) [value]
+  @useResult
   WidgetSelector<SafeArea> withLeft(bool? value) {
     return withDiagnosticProp<bool>(
         'left', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [SafeArea] where top matches the condition
+  @useResult
   WidgetSelector<SafeArea> whereTop(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('top', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [SafeArea] where top equals (==) [value]
+  @useResult
   WidgetSelector<SafeArea> withTop(bool? value) {
     return withDiagnosticProp<bool>(
         'top', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [SafeArea] where right matches the condition
+  @useResult
   WidgetSelector<SafeArea> whereRight(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('right', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [SafeArea] where right equals (==) [value]
+  @useResult
   WidgetSelector<SafeArea> withRight(bool? value) {
     return withDiagnosticProp<bool>(
         'right', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [SafeArea] where bottom matches the condition
+  @useResult
   WidgetSelector<SafeArea> whereBottom(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('bottom', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [SafeArea] where bottom equals (==) [value]
+  @useResult
   WidgetSelector<SafeArea> withBottom(bool? value) {
     return withDiagnosticProp<bool>(
         'bottom', (it) => value == null ? it.isNull() : it.equals(value));

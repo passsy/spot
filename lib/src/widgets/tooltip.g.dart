@@ -159,144 +159,170 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
 /// Allows filtering [Tooltip] by the properties provided via [Diagnosticable.debugFillProperties]
 extension TooltipSelector on WidgetSelector<Tooltip> {
   /// Creates a [WidgetSelector] that finds all [Tooltip] where message matches the condition
+  @useResult
   WidgetSelector<Tooltip> whereMessage(MatchProp<String> match) {
     return withDiagnosticProp<String>('message', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where message equals (==) [value]
+  @useResult
   WidgetSelector<Tooltip> withMessage(String? value) {
     return withDiagnosticProp<String>(
         'message', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where richMessage matches the condition
+  @useResult
   WidgetSelector<Tooltip> whereRichMessage(MatchProp<String> match) {
     return withDiagnosticProp<String>('richMessage', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where richMessage equals (==) [value]
+  @useResult
   WidgetSelector<Tooltip> withRichMessage(String? value) {
     return withDiagnosticProp<String>(
         'richMessage', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where height matches the condition
+  @useResult
   WidgetSelector<Tooltip> whereHeight(MatchProp<double> match) {
     return withDiagnosticProp<double>('height', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where height equals (==) [value]
+  @useResult
   WidgetSelector<Tooltip> withHeight(double? value) {
     return withDiagnosticProp<double>(
         'height', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where padding matches the condition
+  @useResult
   WidgetSelector<Tooltip> wherePadding(MatchProp<EdgeInsetsGeometry> match) {
     return withDiagnosticProp<EdgeInsetsGeometry>('padding', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where padding equals (==) [value]
+  @useResult
   WidgetSelector<Tooltip> withPadding(EdgeInsetsGeometry? value) {
     return withDiagnosticProp<EdgeInsetsGeometry>(
         'padding', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where margin matches the condition
+  @useResult
   WidgetSelector<Tooltip> whereMargin(MatchProp<EdgeInsetsGeometry> match) {
     return withDiagnosticProp<EdgeInsetsGeometry>('margin', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where margin equals (==) [value]
+  @useResult
   WidgetSelector<Tooltip> withMargin(EdgeInsetsGeometry? value) {
     return withDiagnosticProp<EdgeInsetsGeometry>(
         'margin', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where verticalOffset matches the condition
+  @useResult
   WidgetSelector<Tooltip> whereVerticalOffset(MatchProp<double> match) {
     return withDiagnosticProp<double>('vertical offset', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where verticalOffset equals (==) [value]
+  @useResult
   WidgetSelector<Tooltip> withVerticalOffset(double? value) {
     return withDiagnosticProp<double>('vertical offset',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where position matches the condition
+  @useResult
   WidgetSelector<Tooltip> wherePosition(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('position', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where position equals (==) [value]
+  @useResult
   WidgetSelector<Tooltip> withPosition(bool? value) {
     return withDiagnosticProp<bool>(
         'position', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where semantics matches the condition
+  @useResult
   WidgetSelector<Tooltip> whereSemantics(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('semantics', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where semantics equals (==) [value]
+  @useResult
   WidgetSelector<Tooltip> withSemantics(bool? value) {
     return withDiagnosticProp<bool>(
         'semantics', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where waitDuration matches the condition
+  @useResult
   WidgetSelector<Tooltip> whereWaitDuration(MatchProp<Duration> match) {
     return withDiagnosticProp<Duration>('wait duration', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where waitDuration equals (==) [value]
+  @useResult
   WidgetSelector<Tooltip> withWaitDuration(Duration? value) {
     return withDiagnosticProp<Duration>('wait duration',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where showDuration matches the condition
+  @useResult
   WidgetSelector<Tooltip> whereShowDuration(MatchProp<Duration> match) {
     return withDiagnosticProp<Duration>('show duration', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where showDuration equals (==) [value]
+  @useResult
   WidgetSelector<Tooltip> withShowDuration(Duration? value) {
     return withDiagnosticProp<Duration>('show duration',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where triggerMode matches the condition
+  @useResult
   WidgetSelector<Tooltip> whereTriggerMode(
       MatchProp<TooltipTriggerMode> match) {
     return withDiagnosticProp<TooltipTriggerMode>('triggerMode', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where triggerMode equals (==) [value]
+  @useResult
   WidgetSelector<Tooltip> withTriggerMode(TooltipTriggerMode? value) {
     return withDiagnosticProp<TooltipTriggerMode>(
         'triggerMode', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where enableFeedback matches the condition
+  @useResult
   WidgetSelector<Tooltip> whereEnableFeedback(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('enableFeedback', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where enableFeedback equals (==) [value]
+  @useResult
   WidgetSelector<Tooltip> withEnableFeedback(bool? value) {
     return withDiagnosticProp<bool>('enableFeedback',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where textAlign matches the condition
+  @useResult
   WidgetSelector<Tooltip> whereTextAlign(MatchProp<TextAlign> match) {
     return withDiagnosticProp<TextAlign>('textAlign', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where textAlign equals (==) [value]
+  @useResult
   WidgetSelector<Tooltip> withTextAlign(TextAlign? value) {
     return withDiagnosticProp<TextAlign>(
         'textAlign', (it) => value == null ? it.isNull() : it.equals(value));

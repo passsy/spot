@@ -233,183 +233,216 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
 /// Allows filtering [SelectableText] by the properties provided via [Diagnosticable.debugFillProperties]
 extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where text matches the condition
+  @useResult
   WidgetSelector<SelectableText> whereText(MatchProp<String> match) {
     return withDiagnosticProp<String>('data', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where text equals (==) [value]
+  @useResult
   WidgetSelector<SelectableText> withText(String? value) {
     return withDiagnosticProp<String>(
         'data', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where semanticsLabel matches the condition
+  @useResult
   WidgetSelector<SelectableText> whereSemanticsLabel(MatchProp<String> match) {
     return withDiagnosticProp<String>('semanticsLabel', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where semanticsLabel equals (==) [value]
+  @useResult
   WidgetSelector<SelectableText> withSemanticsLabel(String? value) {
     return withDiagnosticProp<String>('semanticsLabel',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where focusNode matches the condition
+  @useResult
   WidgetSelector<SelectableText> whereFocusNode(MatchProp<FocusNode> match) {
     return withDiagnosticProp<FocusNode>('focusNode', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where focusNode equals (==) [value]
+  @useResult
   WidgetSelector<SelectableText> withFocusNode(FocusNode? value) {
     return withDiagnosticProp<FocusNode>(
         'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where style matches the condition
+  @useResult
   WidgetSelector<SelectableText> whereStyle(MatchProp<TextStyle> match) {
     return withDiagnosticProp<TextStyle>('style', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where style equals (==) [value]
+  @useResult
   WidgetSelector<SelectableText> withStyle(TextStyle? value) {
     return withDiagnosticProp<TextStyle>(
         'style', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where autofocus matches the condition
+  @useResult
   WidgetSelector<SelectableText> whereAutofocus(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('autofocus', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where autofocus equals (==) [value]
+  @useResult
   WidgetSelector<SelectableText> withAutofocus(bool? value) {
     return withDiagnosticProp<bool>(
         'autofocus', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where showCursor matches the condition
+  @useResult
   WidgetSelector<SelectableText> whereShowCursor(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('showCursor', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where showCursor equals (==) [value]
+  @useResult
   WidgetSelector<SelectableText> withShowCursor(bool? value) {
     return withDiagnosticProp<bool>(
         'showCursor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where minLines matches the condition
+  @useResult
   WidgetSelector<SelectableText> whereMinLines(MatchProp<int> match) {
     return withDiagnosticProp<int>('minLines', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where minLines equals (==) [value]
+  @useResult
   WidgetSelector<SelectableText> withMinLines(int? value) {
     return withDiagnosticProp<int>(
         'minLines', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where maxLines matches the condition
+  @useResult
   WidgetSelector<SelectableText> whereMaxLines(MatchProp<int> match) {
     return withDiagnosticProp<int>('maxLines', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where maxLines equals (==) [value]
+  @useResult
   WidgetSelector<SelectableText> withMaxLines(int? value) {
     return withDiagnosticProp<int>(
         'maxLines', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where textAlign matches the condition
+  @useResult
   WidgetSelector<SelectableText> whereTextAlign(MatchProp<TextAlign> match) {
     return withDiagnosticProp<TextAlign>('textAlign', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where textAlign equals (==) [value]
+  @useResult
   WidgetSelector<SelectableText> withTextAlign(TextAlign? value) {
     return withDiagnosticProp<TextAlign>(
         'textAlign', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where textDirection matches the condition
+  @useResult
   WidgetSelector<SelectableText> whereTextDirection(
       MatchProp<TextDirection> match) {
     return withDiagnosticProp<TextDirection>('textDirection', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where textDirection equals (==) [value]
+  @useResult
   WidgetSelector<SelectableText> withTextDirection(TextDirection? value) {
     return withDiagnosticProp<TextDirection>('textDirection',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where textScaleFactor matches the condition
+  @useResult
   WidgetSelector<SelectableText> whereTextScaleFactor(MatchProp<double> match) {
     return withDiagnosticProp<double>('textScaleFactor', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where textScaleFactor equals (==) [value]
+  @useResult
   WidgetSelector<SelectableText> withTextScaleFactor(double? value) {
     return withDiagnosticProp<double>('textScaleFactor',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where cursorWidth matches the condition
+  @useResult
   WidgetSelector<SelectableText> whereCursorWidth(MatchProp<double> match) {
     return withDiagnosticProp<double>('cursorWidth', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where cursorWidth equals (==) [value]
+  @useResult
   WidgetSelector<SelectableText> withCursorWidth(double? value) {
     return withDiagnosticProp<double>(
         'cursorWidth', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where cursorHeight matches the condition
+  @useResult
   WidgetSelector<SelectableText> whereCursorHeight(MatchProp<double> match) {
     return withDiagnosticProp<double>('cursorHeight', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where cursorHeight equals (==) [value]
+  @useResult
   WidgetSelector<SelectableText> withCursorHeight(double? value) {
     return withDiagnosticProp<double>(
         'cursorHeight', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where cursorRadius matches the condition
+  @useResult
   WidgetSelector<SelectableText> whereCursorRadius(MatchProp<Radius> match) {
     return withDiagnosticProp<Radius>('cursorRadius', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where cursorRadius equals (==) [value]
+  @useResult
   WidgetSelector<SelectableText> withCursorRadius(Radius? value) {
     return withDiagnosticProp<Radius>(
         'cursorRadius', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where cursorColor matches the condition
+  @useResult
   WidgetSelector<SelectableText> whereCursorColor(MatchProp<Color> match) {
     return withDiagnosticProp<Color>('cursorColor', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where cursorColor equals (==) [value]
+  @useResult
   WidgetSelector<SelectableText> withCursorColor(Color? value) {
     return withDiagnosticProp<Color>(
         'cursorColor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where selectionEnabled matches the condition
+  @useResult
   WidgetSelector<SelectableText> whereSelectionEnabled(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('selectionEnabled', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where selectionEnabled equals (==) [value]
+  @useResult
   WidgetSelector<SelectableText> withSelectionEnabled(bool? value) {
     return withDiagnosticProp<bool>('selectionEnabled',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where selectionControls matches the condition
+  @useResult
   WidgetSelector<SelectableText> whereSelectionControls(
       MatchProp<TextSelectionControls> match) {
     return withDiagnosticProp<TextSelectionControls>(
@@ -417,6 +450,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where selectionControls equals (==) [value]
+  @useResult
   WidgetSelector<SelectableText> withSelectionControls(
       TextSelectionControls? value) {
     return withDiagnosticProp<TextSelectionControls>('selectionControls',
@@ -424,24 +458,28 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where scrollPhysics matches the condition
+  @useResult
   WidgetSelector<SelectableText> whereScrollPhysics(
       MatchProp<ScrollPhysics> match) {
     return withDiagnosticProp<ScrollPhysics>('scrollPhysics', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where scrollPhysics equals (==) [value]
+  @useResult
   WidgetSelector<SelectableText> withScrollPhysics(ScrollPhysics? value) {
     return withDiagnosticProp<ScrollPhysics>('scrollPhysics',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where textHeightBehavior matches the condition
+  @useResult
   WidgetSelector<SelectableText> whereTextHeightBehavior(
       MatchProp<TextHeightBehavior> match) {
     return withDiagnosticProp<TextHeightBehavior>('textHeightBehavior', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where textHeightBehavior equals (==) [value]
+  @useResult
   WidgetSelector<SelectableText> withTextHeightBehavior(
       TextHeightBehavior? value) {
     return withDiagnosticProp<TextHeightBehavior>('textHeightBehavior',

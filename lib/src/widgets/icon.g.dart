@@ -120,139 +120,137 @@ extension IconMatcher on WidgetMatcher<Icon> {
     return hasDiagnosticProp<TextDirection>('textDirection',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
-
-  /// Expects that applyTextScaling of [Icon] matches the condition in [match]
-  WidgetMatcher<Icon> hasApplyTextScalingWhere(MatchProp<bool> match) {
-    return hasDiagnosticProp<bool>('applyTextScaling', match);
-  }
-
-  /// Expects that applyTextScaling of [Icon] equals (==) [value]
-  WidgetMatcher<Icon> hasApplyTextScaling(bool? value) {
-    return hasDiagnosticProp<bool>('applyTextScaling',
-        (it) => value == null ? it.isNull() : it.equals(value));
-  }
 }
 
 /// Allows filtering [Icon] by the properties provided via [Diagnosticable.debugFillProperties]
 extension IconSelector on WidgetSelector<Icon> {
   /// Creates a [WidgetSelector] that finds all [Icon] where icon matches the condition
+  @useResult
   WidgetSelector<Icon> whereIcon(MatchProp<IconData> match) {
     return withDiagnosticProp<IconData>('icon', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Icon] where icon equals (==) [value]
+  @useResult
   WidgetSelector<Icon> withIcon(IconData? value) {
     return withDiagnosticProp<IconData>(
         'icon', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Icon] where size matches the condition
+  @useResult
   WidgetSelector<Icon> whereSize(MatchProp<double> match) {
     return withDiagnosticProp<double>('size', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Icon] where size equals (==) [value]
+  @useResult
   WidgetSelector<Icon> withSize(double? value) {
     return withDiagnosticProp<double>(
         'size', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Icon] where fill matches the condition
+  @useResult
   WidgetSelector<Icon> whereFill(MatchProp<double> match) {
     return withDiagnosticProp<double>('fill', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Icon] where fill equals (==) [value]
+  @useResult
   WidgetSelector<Icon> withFill(double? value) {
     return withDiagnosticProp<double>(
         'fill', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Icon] where weight matches the condition
+  @useResult
   WidgetSelector<Icon> whereWeight(MatchProp<double> match) {
     return withDiagnosticProp<double>('weight', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Icon] where weight equals (==) [value]
+  @useResult
   WidgetSelector<Icon> withWeight(double? value) {
     return withDiagnosticProp<double>(
         'weight', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Icon] where grade matches the condition
+  @useResult
   WidgetSelector<Icon> whereGrade(MatchProp<double> match) {
     return withDiagnosticProp<double>('grade', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Icon] where grade equals (==) [value]
+  @useResult
   WidgetSelector<Icon> withGrade(double? value) {
     return withDiagnosticProp<double>(
         'grade', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Icon] where opticalSize matches the condition
+  @useResult
   WidgetSelector<Icon> whereOpticalSize(MatchProp<double> match) {
     return withDiagnosticProp<double>('opticalSize', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Icon] where opticalSize equals (==) [value]
+  @useResult
   WidgetSelector<Icon> withOpticalSize(double? value) {
     return withDiagnosticProp<double>(
         'opticalSize', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Icon] where color matches the condition
+  @useResult
   WidgetSelector<Icon> whereColor(MatchProp<Color> match) {
     return withDiagnosticProp<Color>('color', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Icon] where color equals (==) [value]
+  @useResult
   WidgetSelector<Icon> withColor(Color? value) {
     return withDiagnosticProp<Color>(
         'color', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Icon] where shadows matches the condition
+  @useResult
   WidgetSelector<Icon> whereShadows(MatchProp<Shadow> match) {
     return withDiagnosticProp<Shadow>('shadows', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Icon] where shadows equals (==) [value]
+  @useResult
   WidgetSelector<Icon> withShadows(Shadow? value) {
     return withDiagnosticProp<Shadow>(
         'shadows', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Icon] where semanticLabel matches the condition
+  @useResult
   WidgetSelector<Icon> whereSemanticLabel(MatchProp<String> match) {
     return withDiagnosticProp<String>('semanticLabel', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Icon] where semanticLabel equals (==) [value]
+  @useResult
   WidgetSelector<Icon> withSemanticLabel(String? value) {
     return withDiagnosticProp<String>('semanticLabel',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Icon] where textDirection matches the condition
+  @useResult
   WidgetSelector<Icon> whereTextDirection(MatchProp<TextDirection> match) {
     return withDiagnosticProp<TextDirection>('textDirection', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Icon] where textDirection equals (==) [value]
+  @useResult
   WidgetSelector<Icon> withTextDirection(TextDirection? value) {
     return withDiagnosticProp<TextDirection>('textDirection',
-        (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
-  /// Creates a [WidgetSelector] that finds all [Icon] where applyTextScaling matches the condition
-  WidgetSelector<Icon> whereApplyTextScaling(MatchProp<bool> match) {
-    return withDiagnosticProp<bool>('applyTextScaling', match);
-  }
-
-  /// Creates a [WidgetSelector] that finds all [Icon] where applyTextScaling equals (==) [value]
-  WidgetSelector<Icon> withApplyTextScaling(bool? value) {
-    return withDiagnosticProp<bool>('applyTextScaling',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 }

@@ -61,45 +61,53 @@ extension AlignMatcher on WidgetMatcher<Align> {
 /// Allows filtering [Align] by the properties provided via [Diagnosticable.debugFillProperties]
 extension AlignSelector on WidgetSelector<Align> {
   /// Creates a [WidgetSelector] that finds all [Align] where alignment matches the condition
+  @useResult
   WidgetSelector<Align> whereAlignment(MatchProp<AlignmentGeometry> match) {
     return withDiagnosticProp<AlignmentGeometry>('alignment', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Align] where alignment equals (==) [value]
+  @useResult
   WidgetSelector<Align> withAlignment(AlignmentGeometry? value) {
     return withDiagnosticProp<AlignmentGeometry>(
         'alignment', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Align] where widthFactor matches the condition
+  @useResult
   WidgetSelector<Align> whereWidthFactor(MatchProp<double> match) {
     return withDiagnosticProp<double>('widthFactor', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Align] where widthFactor equals (==) [value]
+  @useResult
   WidgetSelector<Align> withWidthFactor(double? value) {
     return withDiagnosticProp<double>(
         'widthFactor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Align] where heightFactor matches the condition
+  @useResult
   WidgetSelector<Align> whereHeightFactor(MatchProp<double> match) {
     return withDiagnosticProp<double>('heightFactor', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Align] where heightFactor equals (==) [value]
+  @useResult
   WidgetSelector<Align> withHeightFactor(double? value) {
     return withDiagnosticProp<double>(
         'heightFactor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Align] where renderObject matches the condition
+  @useResult
   WidgetSelector<Align> whereRenderObject(
       MatchProp<RenderPositionedBox> match) {
     return withDiagnosticProp<RenderPositionedBox>('renderObject', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Align] where renderObject equals (==) [value]
+  @useResult
   WidgetSelector<Align> withRenderObject(RenderPositionedBox? value) {
     return withDiagnosticProp<RenderPositionedBox>(
         'renderObject', (it) => value == null ? it.isNull() : it.equals(value));

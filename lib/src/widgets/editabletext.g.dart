@@ -496,229 +496,270 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
 /// Allows filtering [EditableText] by the properties provided via [Diagnosticable.debugFillProperties]
 extension EditableTextSelector on WidgetSelector<EditableText> {
   /// Creates a [WidgetSelector] that finds all [EditableText] where controller matches the condition
+  @useResult
   WidgetSelector<EditableText> whereController(
       MatchProp<TextEditingController> match) {
     return withDiagnosticProp<TextEditingController>('controller', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where controller equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withController(TextEditingController? value) {
     return withDiagnosticProp<TextEditingController>(
         'controller', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where focusNode matches the condition
+  @useResult
   WidgetSelector<EditableText> whereFocusNode(MatchProp<FocusNode> match) {
     return withDiagnosticProp<FocusNode>('focusNode', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where focusNode equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withFocusNode(FocusNode? value) {
     return withDiagnosticProp<FocusNode>(
         'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where obscureText matches the condition
+  @useResult
   WidgetSelector<EditableText> whereObscureText(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('obscureText', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where obscureText equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withObscureText(bool? value) {
     return withDiagnosticProp<bool>(
         'obscureText', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where readOnly matches the condition
+  @useResult
   WidgetSelector<EditableText> whereReadOnly(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('readOnly', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where readOnly equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withReadOnly(bool? value) {
     return withDiagnosticProp<bool>(
         'readOnly', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where autocorrect matches the condition
+  @useResult
   WidgetSelector<EditableText> whereAutocorrect(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('autocorrect', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where autocorrect equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withAutocorrect(bool? value) {
     return withDiagnosticProp<bool>(
         'autocorrect', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where smartDashesType matches the condition
+  @useResult
   WidgetSelector<EditableText> whereSmartDashesType(
       MatchProp<SmartDashesType> match) {
     return withDiagnosticProp<SmartDashesType>('smartDashesType', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where smartDashesType equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withSmartDashesType(SmartDashesType? value) {
     return withDiagnosticProp<SmartDashesType>('smartDashesType',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where smartQuotesType matches the condition
+  @useResult
   WidgetSelector<EditableText> whereSmartQuotesType(
       MatchProp<SmartQuotesType> match) {
     return withDiagnosticProp<SmartQuotesType>('smartQuotesType', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where smartQuotesType equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withSmartQuotesType(SmartQuotesType? value) {
     return withDiagnosticProp<SmartQuotesType>('smartQuotesType',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where enableSuggestions matches the condition
+  @useResult
   WidgetSelector<EditableText> whereEnableSuggestions(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('enableSuggestions', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where enableSuggestions equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withEnableSuggestions(bool? value) {
     return withDiagnosticProp<bool>('enableSuggestions',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where inherit matches the condition
+  @useResult
   WidgetSelector<EditableText> whereInherit(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('inherit', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where inherit equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withInherit(bool? value) {
     return withDiagnosticProp<bool>(
         'inherit', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where color matches the condition
+  @useResult
   WidgetSelector<EditableText> whereColor(MatchProp<Color> match) {
     return withDiagnosticProp<Color>('color', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where color equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withColor(Color? value) {
     return withDiagnosticProp<Color>(
         'color', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where backgroundColor matches the condition
+  @useResult
   WidgetSelector<EditableText> whereBackgroundColor(MatchProp<Color> match) {
     return withDiagnosticProp<Color>('backgroundColor', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where backgroundColor equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withBackgroundColor(Color? value) {
     return withDiagnosticProp<Color>('backgroundColor',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where family matches the condition
+  @useResult
   WidgetSelector<EditableText> whereFamily(MatchProp<String> match) {
     return withDiagnosticProp<String>('family', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where family equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withFamily(String? value) {
     return withDiagnosticProp<String>(
         'family', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where familyFallback matches the condition
+  @useResult
   WidgetSelector<EditableText> whereFamilyFallback(MatchProp<String> match) {
     return withDiagnosticProp<String>('familyFallback', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where familyFallback equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withFamilyFallback(String? value) {
     return withDiagnosticProp<String>('familyFallback',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where size matches the condition
+  @useResult
   WidgetSelector<EditableText> whereSize(MatchProp<double> match) {
     return withDiagnosticProp<double>('size', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where size equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withSize(double? value) {
     return withDiagnosticProp<double>(
         'size', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where weight matches the condition
+  @useResult
   WidgetSelector<EditableText> whereWeight(MatchProp<FontWeight> match) {
     return withDiagnosticProp<FontWeight>('weight', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where weight equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withWeight(FontWeight? value) {
     return withDiagnosticProp<FontWeight>(
         'weight', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where style matches the condition
+  @useResult
   WidgetSelector<EditableText> whereStyle(MatchProp<FontStyle> match) {
     return withDiagnosticProp<FontStyle>('style', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where style equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withStyle(FontStyle? value) {
     return withDiagnosticProp<FontStyle>(
         'style', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where letterSpacing matches the condition
+  @useResult
   WidgetSelector<EditableText> whereLetterSpacing(MatchProp<double> match) {
     return withDiagnosticProp<double>('letterSpacing', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where letterSpacing equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withLetterSpacing(double? value) {
     return withDiagnosticProp<double>('letterSpacing',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where wordSpacing matches the condition
+  @useResult
   WidgetSelector<EditableText> whereWordSpacing(MatchProp<double> match) {
     return withDiagnosticProp<double>('wordSpacing', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where wordSpacing equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withWordSpacing(double? value) {
     return withDiagnosticProp<double>(
         'wordSpacing', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where baseline matches the condition
+  @useResult
   WidgetSelector<EditableText> whereBaseline(MatchProp<TextBaseline> match) {
     return withDiagnosticProp<TextBaseline>('baseline', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where baseline equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withBaseline(TextBaseline? value) {
     return withDiagnosticProp<TextBaseline>(
         'baseline', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where height matches the condition
+  @useResult
   WidgetSelector<EditableText> whereHeight(MatchProp<double> match) {
     return withDiagnosticProp<double>('height', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where height equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withHeight(double? value) {
     return withDiagnosticProp<double>(
         'height', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where leadingDistribution matches the condition
+  @useResult
   WidgetSelector<EditableText> whereLeadingDistribution(
       MatchProp<TextLeadingDistribution> match) {
     return withDiagnosticProp<TextLeadingDistribution>(
@@ -726,6 +767,7 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where leadingDistribution equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withLeadingDistribution(
       TextLeadingDistribution? value) {
     return withDiagnosticProp<TextLeadingDistribution>('leadingDistribution',
@@ -733,171 +775,201 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where locale matches the condition
+  @useResult
   WidgetSelector<EditableText> whereLocale(MatchProp<Locale> match) {
     return withDiagnosticProp<Locale>('locale', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where locale equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withLocale(Locale? value) {
     return withDiagnosticProp<Locale>(
         'locale', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where foreground matches the condition
+  @useResult
   WidgetSelector<EditableText> whereForeground(MatchProp<Paint> match) {
     return withDiagnosticProp<Paint>('foreground', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where foreground equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withForeground(Paint? value) {
     return withDiagnosticProp<Paint>(
         'foreground', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where background matches the condition
+  @useResult
   WidgetSelector<EditableText> whereBackground(MatchProp<Paint> match) {
     return withDiagnosticProp<Paint>('background', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where background equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withBackground(Paint? value) {
     return withDiagnosticProp<Paint>(
         'background', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where textAlign matches the condition
+  @useResult
   WidgetSelector<EditableText> whereTextAlign(MatchProp<TextAlign> match) {
     return withDiagnosticProp<TextAlign>('textAlign', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where textAlign equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withTextAlign(TextAlign? value) {
     return withDiagnosticProp<TextAlign>(
         'textAlign', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where textDirection matches the condition
+  @useResult
   WidgetSelector<EditableText> whereTextDirection(
       MatchProp<TextDirection> match) {
     return withDiagnosticProp<TextDirection>('textDirection', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where textDirection equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withTextDirection(TextDirection? value) {
     return withDiagnosticProp<TextDirection>('textDirection',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where textScaleFactor matches the condition
+  @useResult
   WidgetSelector<EditableText> whereTextScaleFactor(MatchProp<double> match) {
     return withDiagnosticProp<double>('textScaleFactor', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where textScaleFactor equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withTextScaleFactor(double? value) {
     return withDiagnosticProp<double>('textScaleFactor',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where maxLines matches the condition
+  @useResult
   WidgetSelector<EditableText> whereMaxLines(MatchProp<int> match) {
     return withDiagnosticProp<int>('maxLines', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where maxLines equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withMaxLines(int? value) {
     return withDiagnosticProp<int>(
         'maxLines', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where minLines matches the condition
+  @useResult
   WidgetSelector<EditableText> whereMinLines(MatchProp<int> match) {
     return withDiagnosticProp<int>('minLines', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where minLines equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withMinLines(int? value) {
     return withDiagnosticProp<int>(
         'minLines', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where expands matches the condition
+  @useResult
   WidgetSelector<EditableText> whereExpands(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('expands', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where expands equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withExpands(bool? value) {
     return withDiagnosticProp<bool>(
         'expands', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where autofocus matches the condition
+  @useResult
   WidgetSelector<EditableText> whereAutofocus(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('autofocus', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where autofocus equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withAutofocus(bool? value) {
     return withDiagnosticProp<bool>(
         'autofocus', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where keyboardType matches the condition
+  @useResult
   WidgetSelector<EditableText> whereKeyboardType(
       MatchProp<TextInputType> match) {
     return withDiagnosticProp<TextInputType>('keyboardType', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where keyboardType equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withKeyboardType(TextInputType? value) {
     return withDiagnosticProp<TextInputType>(
         'keyboardType', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where scrollController matches the condition
+  @useResult
   WidgetSelector<EditableText> whereScrollController(
       MatchProp<ScrollController> match) {
     return withDiagnosticProp<ScrollController>('scrollController', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where scrollController equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withScrollController(ScrollController? value) {
     return withDiagnosticProp<ScrollController>('scrollController',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where scrollPhysics matches the condition
+  @useResult
   WidgetSelector<EditableText> whereScrollPhysics(
       MatchProp<ScrollPhysics> match) {
     return withDiagnosticProp<ScrollPhysics>('scrollPhysics', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where scrollPhysics equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withScrollPhysics(ScrollPhysics? value) {
     return withDiagnosticProp<ScrollPhysics>('scrollPhysics',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where autofillHints matches the condition
+  @useResult
   WidgetSelector<EditableText> whereAutofillHints(
       MatchProp<Iterable<String>> match) {
     return withDiagnosticProp<Iterable<String>>('autofillHints', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where autofillHints equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withAutofillHints(Iterable<String>? value) {
     return withDiagnosticProp<Iterable<String>>('autofillHints',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where textHeightBehavior matches the condition
+  @useResult
   WidgetSelector<EditableText> whereTextHeightBehavior(
       MatchProp<TextHeightBehavior> match) {
     return withDiagnosticProp<TextHeightBehavior>('textHeightBehavior', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where textHeightBehavior equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withTextHeightBehavior(
       TextHeightBehavior? value) {
     return withDiagnosticProp<TextHeightBehavior>('textHeightBehavior',
@@ -905,47 +977,55 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where scribbleEnabled matches the condition
+  @useResult
   WidgetSelector<EditableText> whereScribbleEnabled(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('scribbleEnabled', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where scribbleEnabled equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withScribbleEnabled(bool? value) {
     return withDiagnosticProp<bool>('scribbleEnabled',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where enableIMEPersonalizedLearning matches the condition
+  @useResult
   WidgetSelector<EditableText> whereEnableIMEPersonalizedLearning(
       MatchProp<bool> match) {
     return withDiagnosticProp<bool>('enableIMEPersonalizedLearning', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where enableIMEPersonalizedLearning equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withEnableIMEPersonalizedLearning(bool? value) {
     return withDiagnosticProp<bool>('enableIMEPersonalizedLearning',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where enableInteractiveSelection matches the condition
+  @useResult
   WidgetSelector<EditableText> whereEnableInteractiveSelection(
       MatchProp<bool> match) {
     return withDiagnosticProp<bool>('enableInteractiveSelection', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where enableInteractiveSelection equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withEnableInteractiveSelection(bool? value) {
     return withDiagnosticProp<bool>('enableInteractiveSelection',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where undoController matches the condition
+  @useResult
   WidgetSelector<EditableText> whereUndoController(
       MatchProp<UndoHistoryController> match) {
     return withDiagnosticProp<UndoHistoryController>('undoController', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where undoController equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withUndoController(
       UndoHistoryController? value) {
     return withDiagnosticProp<UndoHistoryController>('undoController',
@@ -953,6 +1033,7 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where spellCheckConfiguration matches the condition
+  @useResult
   WidgetSelector<EditableText> whereSpellCheckConfiguration(
       MatchProp<SpellCheckConfiguration> match) {
     return withDiagnosticProp<SpellCheckConfiguration>(
@@ -960,6 +1041,7 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where spellCheckConfiguration equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withSpellCheckConfiguration(
       SpellCheckConfiguration? value) {
     return withDiagnosticProp<SpellCheckConfiguration>(
@@ -968,12 +1050,14 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where contentCommitMimeTypes matches the condition
+  @useResult
   WidgetSelector<EditableText> whereContentCommitMimeTypes(
       MatchProp<List<String>> match) {
     return withDiagnosticProp<List<String>>('contentCommitMimeTypes', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where contentCommitMimeTypes equals (==) [value]
+  @useResult
   WidgetSelector<EditableText> withContentCommitMimeTypes(List<String>? value) {
     return withDiagnosticProp<List<String>>('contentCommitMimeTypes',
         (it) => value == null ? it.isNull() : it.equals(value));

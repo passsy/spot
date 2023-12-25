@@ -58,17 +58,6 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
         'mixed', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that expanded of [Semantics] matches the condition in [match]
-  WidgetMatcher<Semantics> hasExpandedWhere(MatchProp<bool> match) {
-    return hasDiagnosticProp<bool>('expanded', match);
-  }
-
-  /// Expects that expanded of [Semantics] equals (==) [value]
-  WidgetMatcher<Semantics> hasExpanded(bool? value) {
-    return hasDiagnosticProp<bool>(
-        'expanded', (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
   /// Expects that selected of [Semantics] matches the condition in [match]
   WidgetMatcher<Semantics> hasSelectedWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('selected', match);
@@ -254,230 +243,258 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
 /// Allows filtering [Semantics] by the properties provided via [Diagnosticable.debugFillProperties]
 extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where container matches the condition
+  @useResult
   WidgetSelector<Semantics> whereContainer(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('container', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where container equals (==) [value]
+  @useResult
   WidgetSelector<Semantics> withContainer(bool? value) {
     return withDiagnosticProp<bool>(
         'container', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where properties matches the condition
+  @useResult
   WidgetSelector<Semantics> whereProperties(
       MatchProp<SemanticsProperties> match) {
     return withDiagnosticProp<SemanticsProperties>('properties', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where properties equals (==) [value]
+  @useResult
   WidgetSelector<Semantics> withProperties(SemanticsProperties? value) {
     return withDiagnosticProp<SemanticsProperties>(
         'properties', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where checked matches the condition
+  @useResult
   WidgetSelector<Semantics> whereChecked(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('checked', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where checked equals (==) [value]
+  @useResult
   WidgetSelector<Semantics> withChecked(bool? value) {
     return withDiagnosticProp<bool>(
         'checked', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where mixed matches the condition
+  @useResult
   WidgetSelector<Semantics> whereMixed(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('mixed', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where mixed equals (==) [value]
+  @useResult
   WidgetSelector<Semantics> withMixed(bool? value) {
     return withDiagnosticProp<bool>(
         'mixed', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [Semantics] where expanded matches the condition
-  WidgetSelector<Semantics> whereExpanded(MatchProp<bool> match) {
-    return withDiagnosticProp<bool>('expanded', match);
-  }
-
-  /// Creates a [WidgetSelector] that finds all [Semantics] where expanded equals (==) [value]
-  WidgetSelector<Semantics> withExpanded(bool? value) {
-    return withDiagnosticProp<bool>(
-        'expanded', (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
   /// Creates a [WidgetSelector] that finds all [Semantics] where selected matches the condition
+  @useResult
   WidgetSelector<Semantics> whereSelected(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('selected', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where selected equals (==) [value]
+  @useResult
   WidgetSelector<Semantics> withSelected(bool? value) {
     return withDiagnosticProp<bool>(
         'selected', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where label matches the condition
+  @useResult
   WidgetSelector<Semantics> whereLabel(MatchProp<String> match) {
     return withDiagnosticProp<String>('label', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where label equals (==) [value]
+  @useResult
   WidgetSelector<Semantics> withLabel(String? value) {
     return withDiagnosticProp<String>(
         'label', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where attributedLabel matches the condition
+  @useResult
   WidgetSelector<Semantics> whereAttributedLabel(MatchProp<String> match) {
     return withDiagnosticProp<String>('attributedLabel', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where attributedLabel equals (==) [value]
+  @useResult
   WidgetSelector<Semantics> withAttributedLabel(String? value) {
     return withDiagnosticProp<String>('attributedLabel',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where value matches the condition
+  @useResult
   WidgetSelector<Semantics> whereValue(MatchProp<String> match) {
     return withDiagnosticProp<String>('value', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where value equals (==) [value]
+  @useResult
   WidgetSelector<Semantics> withValue(String? value) {
     return withDiagnosticProp<String>(
         'value', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where attributedValue matches the condition
+  @useResult
   WidgetSelector<Semantics> whereAttributedValue(MatchProp<String> match) {
     return withDiagnosticProp<String>('attributedValue', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where attributedValue equals (==) [value]
+  @useResult
   WidgetSelector<Semantics> withAttributedValue(String? value) {
     return withDiagnosticProp<String>('attributedValue',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where increasedValue matches the condition
+  @useResult
   WidgetSelector<Semantics> whereIncreasedValue(MatchProp<String> match) {
     return withDiagnosticProp<String>('increasedValue', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where increasedValue equals (==) [value]
+  @useResult
   WidgetSelector<Semantics> withIncreasedValue(String? value) {
     return withDiagnosticProp<String>('increasedValue',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where attributedIncreasedValue matches the condition
+  @useResult
   WidgetSelector<Semantics> whereAttributedIncreasedValue(
       MatchProp<String> match) {
     return withDiagnosticProp<String>('attributedIncreasedValue', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where attributedIncreasedValue equals (==) [value]
+  @useResult
   WidgetSelector<Semantics> withAttributedIncreasedValue(String? value) {
     return withDiagnosticProp<String>('attributedIncreasedValue',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where decreasedValue matches the condition
+  @useResult
   WidgetSelector<Semantics> whereDecreasedValue(MatchProp<String> match) {
     return withDiagnosticProp<String>('decreasedValue', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where decreasedValue equals (==) [value]
+  @useResult
   WidgetSelector<Semantics> withDecreasedValue(String? value) {
     return withDiagnosticProp<String>('decreasedValue',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where attributedDecreasedValue matches the condition
+  @useResult
   WidgetSelector<Semantics> whereAttributedDecreasedValue(
       MatchProp<String> match) {
     return withDiagnosticProp<String>('attributedDecreasedValue', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where attributedDecreasedValue equals (==) [value]
+  @useResult
   WidgetSelector<Semantics> withAttributedDecreasedValue(String? value) {
     return withDiagnosticProp<String>('attributedDecreasedValue',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where hint matches the condition
+  @useResult
   WidgetSelector<Semantics> whereHint(MatchProp<String> match) {
     return withDiagnosticProp<String>('hint', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where hint equals (==) [value]
+  @useResult
   WidgetSelector<Semantics> withHint(String? value) {
     return withDiagnosticProp<String>(
         'hint', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where attributedHint matches the condition
+  @useResult
   WidgetSelector<Semantics> whereAttributedHint(MatchProp<String> match) {
     return withDiagnosticProp<String>('attributedHint', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where attributedHint equals (==) [value]
+  @useResult
   WidgetSelector<Semantics> withAttributedHint(String? value) {
     return withDiagnosticProp<String>('attributedHint',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where tooltip matches the condition
+  @useResult
   WidgetSelector<Semantics> whereTooltip(MatchProp<String> match) {
     return withDiagnosticProp<String>('tooltip', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where tooltip equals (==) [value]
+  @useResult
   WidgetSelector<Semantics> withTooltip(String? value) {
     return withDiagnosticProp<String>(
         'tooltip', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where textDirection matches the condition
+  @useResult
   WidgetSelector<Semantics> whereTextDirection(MatchProp<TextDirection> match) {
     return withDiagnosticProp<TextDirection>('textDirection', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where textDirection equals (==) [value]
+  @useResult
   WidgetSelector<Semantics> withTextDirection(TextDirection? value) {
     return withDiagnosticProp<TextDirection>('textDirection',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where sortKey matches the condition
+  @useResult
   WidgetSelector<Semantics> whereSortKey(MatchProp<SemanticsSortKey> match) {
     return withDiagnosticProp<SemanticsSortKey>('sortKey', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where sortKey equals (==) [value]
+  @useResult
   WidgetSelector<Semantics> withSortKey(SemanticsSortKey? value) {
     return withDiagnosticProp<SemanticsSortKey>(
         'sortKey', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where hintOverrides matches the condition
+  @useResult
   WidgetSelector<Semantics> whereHintOverrides(
       MatchProp<SemanticsHintOverrides> match) {
     return withDiagnosticProp<SemanticsHintOverrides>('hintOverrides', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where hintOverrides equals (==) [value]
+  @useResult
   WidgetSelector<Semantics> withHintOverrides(SemanticsHintOverrides? value) {
     return withDiagnosticProp<SemanticsHintOverrides>('hintOverrides',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where renderObject matches the condition
+  @useResult
   WidgetSelector<Semantics> whereRenderObject(
       MatchProp<RenderSemanticsAnnotations> match) {
     return withDiagnosticProp<RenderSemanticsAnnotations>(
@@ -485,6 +502,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where renderObject equals (==) [value]
+  @useResult
   WidgetSelector<Semantics> withRenderObject(
       RenderSemanticsAnnotations? value) {
     return withDiagnosticProp<RenderSemanticsAnnotations>(

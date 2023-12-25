@@ -191,176 +191,208 @@ extension ImageMatcher on WidgetMatcher<Image> {
 /// Allows filtering [Image] by the properties provided via [Diagnosticable.debugFillProperties]
 extension ImageSelector on WidgetSelector<Image> {
   /// Creates a [WidgetSelector] that finds all [Image] where image matches the condition
+  @useResult
   WidgetSelector<Image> whereImage(MatchProp<ImageProvider<Object>> match) {
     return withDiagnosticProp<ImageProvider<Object>>('image', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where image equals (==) [value]
+  @useResult
   WidgetSelector<Image> withImage(ImageProvider<Object>? value) {
     return withDiagnosticProp<ImageProvider<Object>>(
         'image', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where frameBuilder matches the condition
+  @useResult
   WidgetSelector<Image> whereFrameBuilder(MatchProp<Function> match) {
     return withDiagnosticProp<Function>('frameBuilder', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where frameBuilder equals (==) [value]
+  @useResult
   WidgetSelector<Image> withFrameBuilder(Function? value) {
     return withDiagnosticProp<Function>(
         'frameBuilder', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where loadingBuilder matches the condition
+  @useResult
   WidgetSelector<Image> whereLoadingBuilder(MatchProp<Function> match) {
     return withDiagnosticProp<Function>('loadingBuilder', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where loadingBuilder equals (==) [value]
+  @useResult
   WidgetSelector<Image> withLoadingBuilder(Function? value) {
     return withDiagnosticProp<Function>('loadingBuilder',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where width matches the condition
+  @useResult
   WidgetSelector<Image> whereWidth(MatchProp<double> match) {
     return withDiagnosticProp<double>('width', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where width equals (==) [value]
+  @useResult
   WidgetSelector<Image> withWidth(double? value) {
     return withDiagnosticProp<double>(
         'width', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where height matches the condition
+  @useResult
   WidgetSelector<Image> whereHeight(MatchProp<double> match) {
     return withDiagnosticProp<double>('height', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where height equals (==) [value]
+  @useResult
   WidgetSelector<Image> withHeight(double? value) {
     return withDiagnosticProp<double>(
         'height', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where color matches the condition
+  @useResult
   WidgetSelector<Image> whereColor(MatchProp<Color> match) {
     return withDiagnosticProp<Color>('color', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where color equals (==) [value]
+  @useResult
   WidgetSelector<Image> withColor(Color? value) {
     return withDiagnosticProp<Color>(
         'color', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where opacity matches the condition
+  @useResult
   WidgetSelector<Image> whereOpacity(MatchProp<Animation<double>?> match) {
     return withDiagnosticProp<Animation<double>?>('opacity', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where opacity equals (==) [value]
+  @useResult
   WidgetSelector<Image> withOpacity(Animation<double>? value) {
     return withDiagnosticProp<Animation<double>?>(
         'opacity', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where colorBlendMode matches the condition
+  @useResult
   WidgetSelector<Image> whereColorBlendMode(MatchProp<BlendMode> match) {
     return withDiagnosticProp<BlendMode>('colorBlendMode', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where colorBlendMode equals (==) [value]
+  @useResult
   WidgetSelector<Image> withColorBlendMode(BlendMode? value) {
     return withDiagnosticProp<BlendMode>('colorBlendMode',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where fit matches the condition
+  @useResult
   WidgetSelector<Image> whereFit(MatchProp<BoxFit> match) {
     return withDiagnosticProp<BoxFit>('fit', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where fit equals (==) [value]
+  @useResult
   WidgetSelector<Image> withFit(BoxFit? value) {
     return withDiagnosticProp<BoxFit>(
         'fit', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where alignment matches the condition
+  @useResult
   WidgetSelector<Image> whereAlignment(MatchProp<AlignmentGeometry> match) {
     return withDiagnosticProp<AlignmentGeometry>('alignment', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where alignment equals (==) [value]
+  @useResult
   WidgetSelector<Image> withAlignment(AlignmentGeometry? value) {
     return withDiagnosticProp<AlignmentGeometry>(
         'alignment', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where repeat matches the condition
+  @useResult
   WidgetSelector<Image> whereRepeat(MatchProp<ImageRepeat> match) {
     return withDiagnosticProp<ImageRepeat>('repeat', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where repeat equals (==) [value]
+  @useResult
   WidgetSelector<Image> withRepeat(ImageRepeat? value) {
     return withDiagnosticProp<ImageRepeat>(
         'repeat', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where centerSlice matches the condition
+  @useResult
   WidgetSelector<Image> whereCenterSlice(MatchProp<Rect> match) {
     return withDiagnosticProp<Rect>('centerSlice', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where centerSlice equals (==) [value]
+  @useResult
   WidgetSelector<Image> withCenterSlice(Rect? value) {
     return withDiagnosticProp<Rect>(
         'centerSlice', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where matchTextDirection matches the condition
+  @useResult
   WidgetSelector<Image> whereMatchTextDirection(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('matchTextDirection', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where matchTextDirection equals (==) [value]
+  @useResult
   WidgetSelector<Image> withMatchTextDirection(bool? value) {
     return withDiagnosticProp<bool>('matchTextDirection',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where semanticLabel matches the condition
+  @useResult
   WidgetSelector<Image> whereSemanticLabel(MatchProp<String> match) {
     return withDiagnosticProp<String>('semanticLabel', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where semanticLabel equals (==) [value]
+  @useResult
   WidgetSelector<Image> withSemanticLabel(String? value) {
     return withDiagnosticProp<String>('semanticLabel',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where excludeFromSemantics matches the condition
+  @useResult
   WidgetSelector<Image> whereExcludeFromSemantics(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('this.excludeFromSemantics', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where excludeFromSemantics equals (==) [value]
+  @useResult
   WidgetSelector<Image> withExcludeFromSemantics(bool? value) {
     return withDiagnosticProp<bool>('this.excludeFromSemantics',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where filterQuality matches the condition
+  @useResult
   WidgetSelector<Image> whereFilterQuality(MatchProp<FilterQuality> match) {
     return withDiagnosticProp<FilterQuality>('filterQuality', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where filterQuality equals (==) [value]
+  @useResult
   WidgetSelector<Image> withFilterQuality(FilterQuality? value) {
     return withDiagnosticProp<FilterQuality>('filterQuality',
         (it) => value == null ? it.isNull() : it.equals(value));

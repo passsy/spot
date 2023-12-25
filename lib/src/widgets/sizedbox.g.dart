@@ -50,34 +50,40 @@ extension SizedBoxMatcher on WidgetMatcher<SizedBox> {
 /// Allows filtering [SizedBox] by the properties provided via [Diagnosticable.debugFillProperties]
 extension SizedBoxSelector on WidgetSelector<SizedBox> {
   /// Creates a [WidgetSelector] that finds all [SizedBox] where width matches the condition
+  @useResult
   WidgetSelector<SizedBox> whereWidth(MatchProp<double> match) {
     return withDiagnosticProp<double>('width', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [SizedBox] where width equals (==) [value]
+  @useResult
   WidgetSelector<SizedBox> withWidth(double? value) {
     return withDiagnosticProp<double>(
         'width', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [SizedBox] where height matches the condition
+  @useResult
   WidgetSelector<SizedBox> whereHeight(MatchProp<double> match) {
     return withDiagnosticProp<double>('height', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [SizedBox] where height equals (==) [value]
+  @useResult
   WidgetSelector<SizedBox> withHeight(double? value) {
     return withDiagnosticProp<double>(
         'height', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [SizedBox] where renderObject matches the condition
+  @useResult
   WidgetSelector<SizedBox> whereRenderObject(
       MatchProp<RenderConstrainedBox> match) {
     return withDiagnosticProp<RenderConstrainedBox>('renderObject', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [SizedBox] where renderObject equals (==) [value]
+  @useResult
   WidgetSelector<SizedBox> withRenderObject(RenderConstrainedBox? value) {
     return withDiagnosticProp<RenderConstrainedBox>(
         'renderObject', (it) => value == null ? it.isNull() : it.equals(value));

@@ -48,33 +48,39 @@ extension OutlinedButtonMatcher on WidgetMatcher<OutlinedButton> {
 /// Allows filtering [OutlinedButton] by the properties provided via [Diagnosticable.debugFillProperties]
 extension OutlinedButtonSelector on WidgetSelector<OutlinedButton> {
   /// Creates a [WidgetSelector] that finds all [OutlinedButton] where enabled matches the condition
+  @useResult
   WidgetSelector<OutlinedButton> whereEnabled(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('enabled', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [OutlinedButton] where enabled equals (==) [value]
+  @useResult
   WidgetSelector<OutlinedButton> withEnabled(bool? value) {
     return withDiagnosticProp<bool>(
         'enabled', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [OutlinedButton] where style matches the condition
+  @useResult
   WidgetSelector<OutlinedButton> whereStyle(MatchProp<ButtonStyle> match) {
     return withDiagnosticProp<ButtonStyle>('style', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [OutlinedButton] where style equals (==) [value]
+  @useResult
   WidgetSelector<OutlinedButton> withStyle(ButtonStyle? value) {
     return withDiagnosticProp<ButtonStyle>(
         'style', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [OutlinedButton] where focusNode matches the condition
+  @useResult
   WidgetSelector<OutlinedButton> whereFocusNode(MatchProp<FocusNode> match) {
     return withDiagnosticProp<FocusNode>('focusNode', match);
   }
 
   /// Creates a [WidgetSelector] that finds all [OutlinedButton] where focusNode equals (==) [value]
+  @useResult
   WidgetSelector<OutlinedButton> withFocusNode(FocusNode? value) {
     return withDiagnosticProp<FocusNode>(
         'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
