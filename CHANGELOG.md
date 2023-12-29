@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.2
+
+- Switch to `renderView.size` to get the window size 
+
 ## 0.4.1
 - Added screenshot methods #14
   ```dart
