@@ -71,8 +71,9 @@ class Act {
     RenderBox renderBox, {
     required SingleWidgetSelector selector,
   }) {
-    final Rect viewport =
-        Offset.zero & WidgetsBinding.instance.renderView.configuration.size;
+    // ignore: deprecated_member_use
+    final view = WidgetsBinding.instance.renderView;
+    final Rect viewport = Offset.zero & view.size;
     final Rect location =
         renderBox.localToGlobal(Offset.zero) & renderBox.paintBounds.size;
 

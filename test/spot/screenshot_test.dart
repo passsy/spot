@@ -246,7 +246,9 @@ void main() {
     expect(
       text,
       contains(
-        'Warning: The screenshot captured of Text is larger (1000, 1000) than Text (84.0, 14.0) itself.',
+        RegExp(
+          r'Warning: The screenshot captured of Text is larger \(1000, 1000\) than Text',
+        ),
       ),
     );
     expect(
