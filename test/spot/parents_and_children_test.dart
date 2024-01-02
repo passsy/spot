@@ -152,6 +152,9 @@ void main() {
     containers.withChild(spot<Wrap>()).existsOnce();
     // Enforcing a single Wrap fails because the subtree of Container has two Wraps
     containers.withChild(spotSingle<Wrap>()).doesNotExist();
+    containers.withChild(spot<Wrap>().amount(1)).doesNotExist();
+    containers.withChild(spot<Wrap>().atLeast(1)).existsOnce();
+    containers.withChild(spot<Wrap>().atMost(1)).doesNotExist();
     // It does not throw though! The child constraints are filter and do not enforce that every Container must have a single Wrap
   });
 
