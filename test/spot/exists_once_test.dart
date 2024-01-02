@@ -82,7 +82,7 @@ void main() {
       throwsSpotErrorContaining(
         [
           'Found 2 elements',
-          'expected only one\nWrap(',
+          'expected at most 1\nWrap(',
           'Text("World"',
           'Text("Hello"',
         ],
@@ -95,7 +95,7 @@ void main() {
         [
           "parents: ['Wrap']",
           'Found 2 elements',
-          'expected only one\nWrap(',
+          'expected at most 1\nWrap(',
           'Text("World"',
           'Text("Hello"',
         ],

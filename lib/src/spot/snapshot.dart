@@ -16,26 +16,14 @@ MultiWidgetSnapshot<W> snapshot<W extends Widget>(
   if (selector.parents.isEmpty) {
     final MultiWidgetSnapshot<W> snapshot =
         findWithinScope(treeSnapshot, selector);
-
-    if (validateQuantity &&
-        selector.expectedQuantity == ExpectedQuantity.single) {
-      if (snapshot.discovered.length > 1) {
-        throw TestFailure(
-          'Found ${snapshot.discovered.length} elements matching $selector in widget tree, '
-          'expected only one\n'
-          '${findCommonAncestor(snapshot.discovered.map((e) => e.element)).toStringDeep()}'
-          'Found ${snapshot.discovered.length} elements matching $selector in widget tree, '
-          'expected only one',
-        );
-      }
+    if (validateQuantity) {
+      snapshot.validateQuantity();
     }
     return snapshot;
   }
 
   final List<WidgetTreeNode> candidates =
       selector.createCandidateGenerator().generateCandidates().toList();
-  final distinctCandidateElements =
-      candidates.map((e) => e.element).toSet().toList();
 
   final filters = selector.createElementFilters();
   final discovered =
@@ -43,25 +31,18 @@ MultiWidgetSnapshot<W> snapshot<W extends Widget>(
     return filter.filter(list);
   }).toList();
 
-  if (validateQuantity &&
-      selector.expectedQuantity == ExpectedQuantity.single) {
-    if (discovered.length > 1) {
-      throw TestFailure(
-        'Found ${discovered.length} elements matching $selector in widget tree, '
-        'expected only one\n'
-        '${findCommonAncestor(distinctCandidateElements).toStringDeep()} '
-        'Found ${discovered.length} elements matching $selector in widget tree, '
-        'expected only one',
-      );
-    }
-  }
-
-  return MultiWidgetSnapshot<W>(
+  final snapshot = MultiWidgetSnapshot<W>(
     selector: selector,
     discovered: discovered,
     scope: treeSnapshot,
     debugCandidates: candidates.map((element) => element.element).toList(),
   );
+
+  if (validateQuantity) {
+    snapshot.validateQuantity();
+  }
+
+  return snapshot;
 }
 
 class CandidateGeneratorFromParents<W extends Widget>
@@ -76,19 +57,7 @@ class CandidateGeneratorFromParents<W extends Widget>
     final List<MultiWidgetSnapshot<Widget>> parentSnapshots =
         selector.parents.map((selector) {
       final MultiWidgetSnapshot<Widget> widgetSnapshot = snapshot(selector);
-
-      if (selector.expectedQuantity == ExpectedQuantity.single) {
-        if (widgetSnapshot.discovered.length > 1) {
-          throw TestFailure(
-            'Found ${widgetSnapshot.discovered.length} elements matching $selector in widget tree, '
-            'expected only one\n'
-            '${findCommonAncestor(widgetSnapshot.discovered.map((e) => e.element)).toStringDeep()}'
-            'Found ${widgetSnapshot.discovered.length} elements matching $selector in widget tree, '
-            'expected only one',
-          );
-        }
-      }
-
+      widgetSnapshot.validateQuantity();
       return widgetSnapshot;
     }).toList();
 
@@ -200,6 +169,39 @@ extension SingleWidgetSelectorMatcher<W extends Widget>
       errorBuilder.writeln(discovered!.element.toStringDeep());
       errorBuilder.writeln('Found $selector in widget tree, expected none');
       fail(errorBuilder.toString());
+    }
+  }
+}
+
+extension _ValidateQuantity<W extends Widget> on MultiWidgetSnapshot<W> {
+  void validateQuantity() {
+    final count = discovered.length;
+    final minimumConstraint = selector.quantityConstraint.min;
+    final maximumConstraint = selector.quantityConstraint.max;
+
+    String significantWidgetTree() {
+      final set = discoveredElements.toSet();
+      return findCommonAncestor(set).toStringDeep();
+    }
+
+    if (minimumConstraint != null && minimumConstraint > count) {
+      throw TestFailure(
+        'Found $count elements matching $selector in widget tree, '
+        'expected at least $minimumConstraint\n'
+        '${significantWidgetTree()}'
+        'Found $count elements matching $selector in widget tree, '
+        'expected at least $minimumConstraint',
+      );
+    }
+
+    if (maximumConstraint != null && maximumConstraint < count) {
+      throw TestFailure(
+        'Found $count elements matching $selector in widget tree, '
+        'expected at most $maximumConstraint\n'
+        '${significantWidgetTree()}'
+        'Found $count elements matching $selector in widget tree, '
+        'expected at most $maximumConstraint',
+      );
     }
   }
 }

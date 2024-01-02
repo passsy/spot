@@ -35,13 +35,16 @@ export 'package:spot/src/spot/selectors.dart'
         ElementFilter,
         ExpectedQuantity,
         MatchProp,
+        // ignore: deprecated_member_use_from_same_package
         MultiWidgetSelector,
         MultiWidgetSnapshot,
         MutliMatchers,
         QuantityMatchers,
+        QuantitySelectors,
         RelativeSelectors,
         SelectorQueries,
         SelectorToSnapshot,
+        // ignore: deprecated_member_use_from_same_package
         SingleWidgetSelector,
         SingleWidgetSnapshot,
         WidgetMatcher,
@@ -111,6 +114,7 @@ WidgetSelector<Widget> get allWidgets => WidgetSelector.all;
 ///
 /// If multiple Widgets of type [W] are expected, use [spot] instead.
 @useResult
+@Deprecated('Use spot<W>()')
 SingleWidgetSelector<W> spotSingle<W extends Widget>({
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
@@ -124,11 +128,7 @@ SingleWidgetSelector<W> spotSingle<W extends Widget>({
 /// Creates a chainable [WidgetSelector] that matches a all Widgets of
 /// type [W] in widget tree.
 ///
-/// `spot<SomeWidget>()` is the most common way to chain of selectors. For
-/// performance reasons and better error messages, it can be useful to use
-/// [spotSingle]. Use [spotSingle] in cases where only ever one Widget is
-/// expected. This allows the framework to stop when 100 instead of a
-/// 1 widget is found.
+/// `spot<SomeWidget>()` is the most common way to chain selectors.
 ///
 /// This selector compares the Widgets by runtimeType rather than by super
 /// type (see [WidgetTypeFilter]). This makes sure that e.g. `spot<Align>()`
@@ -144,9 +144,26 @@ WidgetSelector<W> spot<W extends Widget>({
   );
 }
 
+/// Creates a [WidgetSelector] that finds [widget] by identity and returns all
+/// occurrences of it in the widget tree
+///
+/// The comparison happens by identity (===)
+WidgetSelector<W> spotWidget<W extends Widget>(
+  W widget, {
+  List<WidgetSelector> parents = const [],
+  List<WidgetSelector> children = const [],
+}) {
+  return _global.spotWidget<W>(
+    widget,
+    parents: parents,
+    children: children,
+  );
+}
+
 /// Creates a chainable [WidgetSelector] that matches a single [Widget] by
 /// identity
 @useResult
+@Deprecated('Use spotWidget<W>()')
 SingleWidgetSelector<W> spotSingleWidget<W extends Widget>(
   W widget, {
   List<WidgetSelector> parents = const [],
@@ -161,6 +178,7 @@ SingleWidgetSelector<W> spotSingleWidget<W extends Widget>(
 
 /// Creates a chainable [WidgetSelector] that finds all [widget] by identity
 @useResult
+@Deprecated('Use spotWidget<W>()')
 WidgetSelector<W> spotWidgets<W extends Widget>(
   W widget, {
   List<WidgetSelector> parents = const [],
@@ -176,7 +194,7 @@ WidgetSelector<W> spotWidgets<W extends Widget>(
 /// Creates a chainable [WidgetSelector] that finds the widget that is currently
 /// associated to the given [element].
 @useResult
-SingleWidgetSelector<W> spotElement<W extends Widget>(
+WidgetSelector<W> spotElement<W extends Widget>(
   Element element, {
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
@@ -200,7 +218,7 @@ SingleWidgetSelector<W> spotElement<W extends Widget>(
 /// welcome.first().snapshot().hasMaxLines(1).hasTextAlign(TextAlign.center);
 /// ```
 @useResult
-SingleWidgetSelector<AnyText> spotText(
+WidgetSelector<AnyText> spotText(
   Pattern text, {
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
@@ -229,7 +247,7 @@ SingleWidgetSelector<AnyText> spotText(
 /// spotText('Wo');
 /// ```
 @useResult
-SingleWidgetSelector<AnyText> spotTextWhere(
+WidgetSelector<AnyText> spotTextWhere(
   void Function(Subject<String>) match, {
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
@@ -294,6 +312,7 @@ WidgetSelector<W> spotTexts<W extends Widget>(
 /// Creates a chainable [WidgetSelector] that finds a [Icon] based on [IconData]
 /// [icon]
 @useResult
+@Deprecated('Use spotIcon<W>()')
 SingleWidgetSelector<Icon> spotSingleIcon(
   IconData icon, {
   bool skipOffstage = true,
@@ -307,9 +326,25 @@ SingleWidgetSelector<Icon> spotSingleIcon(
   );
 }
 
+/// Creates a chainable [WidgetSelector] that finds a [Icon] based on [IconData]
+/// [icon]
+@useResult
+WidgetSelector<Icon> spotIcon(
+  IconData icon, {
+  List<WidgetSelector> parents = const [],
+  List<WidgetSelector> children = const [],
+}) {
+  return _global.spotIcon(
+    icon,
+    parents: parents,
+    children: children,
+  );
+}
+
 /// Creates a chainable [WidgetSelector] that finds all widgets of type [Icon]
 /// that have [icon] as [IconData]
 @useResult
+@Deprecated('Use spotIcon()')
 WidgetSelector<Icon> spotIcons(
   IconData icon, {
   bool skipOffstage = true,
@@ -325,6 +360,7 @@ WidgetSelector<Icon> spotIcons(
 
 /// Creates a chainable [WidgetSelector] that finds a widget with the given [key].
 @useResult
+@Deprecated('Use spotKey()')
 SingleWidgetSelector<W> spotSingleKey<W extends Widget>(
   Key key, {
   List<WidgetSelector> parents = const [],
@@ -337,9 +373,24 @@ SingleWidgetSelector<W> spotSingleKey<W extends Widget>(
   );
 }
 
+/// Creates a chainable [WidgetSelector] that finds a widget with the given [key].
+@useResult
+WidgetSelector<W> spotKey<W extends Widget>(
+  Key key, {
+  List<WidgetSelector> parents = const [],
+  List<WidgetSelector> children = const [],
+}) {
+  return _global.spotKey<W>(
+    key,
+    parents: parents,
+    children: children,
+  );
+}
+
 /// Creates a chainable [WidgetSelector] that finds all widgets with the given
 /// [key].
 @useResult
+@Deprecated('Use spotKey()')
 MultiWidgetSelector<W> spotKeys<W extends Widget>(
   Key key, {
   List<WidgetSelector> parents = const [],

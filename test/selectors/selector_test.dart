@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
+import 'package:spot/src/spot/selectors.dart';
 
 void main() {
   testWidgets('.single keeps all information', (tester) async {
@@ -42,12 +43,52 @@ void main() {
     expect(multiMap.runtimeType, singleMap.runtimeType);
   });
 
-  testWidgets('dont lose mapElementToWidget', (tester) async {
-    final singleSelector = spotText('home');
+  testWidgets('WidgetSelector API', (tester) async {
+    await tester.pumpWidget(const Center());
+    final WidgetSelector<Center> selector = spot<Center>();
+    final List<PredicateWithDescription> props = selector.props;
+    expect(props, isNotNull);
+    final List<WidgetSelector<Widget>> parents = selector.parents;
+    expect(parents, isNotNull);
+    final List<WidgetSelector<Widget>> children = selector.children;
+    expect(children, isNotNull);
+    final Type type = selector.type;
+    expect(type, isNotNull);
+    final ExpectedQuantity expectedQuantity = selector.expectedQuantity;
+    expect(expectedQuantity, isNotNull);
+    final MultiWidgetSnapshot<Center> snapshot = selector.snapshot();
+    expect(snapshot, isNotNull);
+    final Center Function(Element element) mapElementToWidget =
+        selector.mapElementToWidget;
+    expect(mapElementToWidget, isNotNull);
+    final List<ElementFilter> createElementFilters =
+        selector.createElementFilters();
+    expect(createElementFilters, isNotNull);
+    final CandidateGenerator<Center> createCandidateGenerator =
+        selector.createCandidateGenerator();
+    expect(createCandidateGenerator, isNotNull);
+    final String stringWithoutParents = selector.toStringWithoutParents();
+    expect(stringWithoutParents, isNotNull);
+    final String stringBreadcrumb = selector.toStringBreadcrumb();
+    expect(stringBreadcrumb, isNotNull);
+    final WidgetSelector<Center> self = selector.self;
+    expect(self, isNotNull);
+    final WidgetSelector<Center> copyWith = selector.copyWith();
+    expect(copyWith, isNotNull);
+    final WidgetSelector<Center> withProp =
+        selector.withProp(match: (it) => it, widgetSelector: (it) => it);
+    expect(withProp, isNotNull);
+    final WidgetSelector<Center> withDiagnosticProp =
+        selector.withDiagnosticProp('a', (it) => it);
+    expect(withDiagnosticProp, isNotNull);
+  });
+
+  testWidgets("don't lose mapElementToWidget", (tester) async {
+    final singleSelector = spotText("home");
     final multiSelector = singleSelector.multi;
 
     await tester.pumpWidget(const MaterialApp(home: Text('home')));
-    final centerElement = spotText('home').snapshot().element;
+    final centerElement = spotText('home').snapshot().single.element;
 
     final AnyText multiMap = multiSelector.mapElementToWidget(centerElement);
     final AnyText singleMap = singleSelector.mapElementToWidget(centerElement);

@@ -7,12 +7,9 @@ import 'package:spot/spot.dart';
 extension FinderToSpot on Finder {
   /// Converts the [Finder] to a [WidgetSelector]
   ///
-  /// By default, [Finder] matches List<[Element]>, thus the [WidgetSelector]s
-  /// concrete type is [MultiWidgetSelector]. Use [SelectorToSnapshot.single] to
-  /// convert the [Finder] to a [SingleWidgetSelector] when the intention is to
-  /// only match a single [Widget].
+  /// Like a [Finder], [WidgetSelector] can return 0, 1, or N widgets
   @useResult
-  MultiWidgetSelector<W> spot<W extends Widget>() {
+  WidgetSelector<W> spot<W extends Widget>() {
     return _FinderSelector<W>(this);
   }
 }
@@ -35,7 +32,7 @@ extension SpotToFinder<W extends Widget> on WidgetSelector<W> {
   }
 }
 
-class _FinderSelector<W extends Widget> extends MultiWidgetSelector<W> {
+class _FinderSelector<W extends Widget> extends WidgetSelector<W> {
   final Finder finder;
 
   _FinderSelector(

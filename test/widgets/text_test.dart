@@ -47,80 +47,84 @@ void main() {
     for (final tree in trees.entries) {
       final widgetType = tree.key;
 
-      testWidgets('$widgetType finds', (tester) async {
-        await tester.pumpWidget(tree.value);
+      group(widgetType, () {
+        testWidgets('$widgetType finds', (tester) async {
+          await tester.pumpWidget(tree.value);
 
-        spotText('foo').existsOnce();
-        spotText('foo').existsOnce().hasMaxLines(null);
-      });
+          spotText('foo').existsOnce();
+          spotText('foo').existsOnce().hasMaxLines(null);
+        });
 
-      testWidgets('$widgetType contains', (tester) async {
-        await tester.pumpWidget(tree.value);
+        testWidgets('$widgetType contains', (tester) async {
+          await tester.pumpWidget(tree.value);
 
-        spotText('oo').existsOnce();
-        spotText('oo').existsOnce().hasMaxLines(null);
-      });
+          spotText('oo').existsOnce();
+          spotText('oo').existsOnce().hasMaxLines(null);
+        });
 
-      testWidgets('$widgetType whereWidget', (tester) async {
-        await tester.pumpWidget(tree.value);
-        final checked = [];
-        spotText('foo').whereWidget(
-          (AnyText widget) {
-            checked.add(widget);
-            return widget.maxLines == 3;
-          },
-          description: 'maxlines 3',
-        ).doesNotExist();
-        // found one item, but nothing matched maxlines 3
-        expect(checked, hasLength(1));
-      });
+        testWidgets('$widgetType whereWidget', (tester) async {
+          await tester.pumpWidget(tree.value);
+          final checked = [];
+          spotText('foo').whereWidget(
+            (AnyText widget) {
+              checked.add(widget);
+              return widget.maxLines == 3;
+            },
+            description: 'maxlines 3',
+          ).doesNotExist();
+          // found one item, but nothing matched maxlines 3
+          expect(checked, hasLength(1));
+        });
 
-      testWidgets('$widgetType with filter', (tester) async {
-        await tester.pumpWidget(tree.value);
-        spotText('foo')
-            .whereMaxLines((it) => it.isNull())
-            .whereText((it) => it.equals('foo'))
-            .whereFontColor((it) => it.isNotNull())
-            .existsOnce();
-      });
+        testWidgets('$widgetType with filter', (tester) async {
+          await tester.pumpWidget(tree.value);
+          spotText('foo')
+              .whereMaxLines((it) => it.isNull())
+              .whereText((it) => it.equals('foo'))
+              .whereFontColor((it) => it.isNotNull())
+              .existsOnce();
+        });
 
-      testWidgets('$widgetType matches', (tester) async {
-        await tester.pumpWidget(tree.value);
-        spotText('foo')
-            .existsOnce()
-            .hasTextWhere((it) => it.equals('foo'))
-            .hasMaxLinesWhere((it) => it.isNull())
-            .hasFontColor(Colors.red)
-            .hasFontSize(14)
-            .hasFontStyleWhere((it) => it.isNull());
-      });
+        testWidgets('$widgetType matches', (tester) async {
+          await tester.pumpWidget(tree.value);
+          spotText('foo')
+              .existsOnce()
+              .hasTextWhere((it) => it.equals('foo'))
+              .hasMaxLinesWhere((it) => it.isNull())
+              .hasFontColor(Colors.red)
+              .hasFontSize(14)
+              .hasFontStyleWhere((it) => it.isNull());
+        });
 
-      testWidgets('$widgetType exact', (tester) async {
-        await tester.pumpWidget(tree.value);
-        spotText('foo', exact: true).existsOnce();
-        spotText('oo', exact: true).doesNotExist();
-      });
+        testWidgets('$widgetType exact', (tester) async {
+          await tester.pumpWidget(tree.value);
+          spotText('foo', exact: true).existsOnce();
+          spotText('oo', exact: true).doesNotExist();
+        });
 
-      testWidgets('$widgetType RegEx', (tester) async {
-        await tester.pumpWidget(tree.value);
+        testWidgets('$widgetType RegEx', (tester) async {
+          await tester.pumpWidget(tree.value);
 
-        spotText(RegExp('f.*o')).existsOnce();
-        spotText(RegExp('f.*o')).existsOnce().hasMaxLines(null);
-      });
+          spotText(RegExp('f.*o')).existsOnce();
+          spotText(RegExp('f.*o')).existsOnce().hasMaxLines(null);
+        });
 
-      testWidgets('snapshot', (tester) async {
-        await tester.pumpWidget(tree.value);
-        final foundSnapshot = spotText('foo').snapshot();
-        check(foundSnapshot.discovered).isA<WidgetTreeNode>();
-        check(foundSnapshot.discoveredElement).isA<Element>();
-        check(foundSnapshot.discoveredWidget).isA<AnyText>();
-        check(foundSnapshot.element).isA<Element>();
+        testWidgets('snapshot', (tester) async {
+          await tester.pumpWidget(tree.value);
+          final foundSnapshot = spotText('foo').snapshot();
+          check(foundSnapshot.discovered).length.equals(1);
+          check(foundSnapshot.single.discovered).isA<WidgetTreeNode>();
+          check(foundSnapshot.single.discoveredElement).isA<Element>();
+          check(foundSnapshot.single.discoveredWidget).isA<AnyText>();
+          check(foundSnapshot.single.element).isA<Element>();
 
-        final notFound = spotText('bar').snapshot();
-        check(notFound.discovered).isNull();
-        check(notFound.discoveredWidget).isNull();
-        check(() => notFound.element).throws<StateError>();
-        check(() => notFound.discoveredElement).throws<StateError>();
+          final notFound = spotText('bar').snapshot();
+          check(notFound.discovered).length.equals(0);
+          check(notFound.single.discovered).isNull();
+          check(notFound.single.discoveredWidget).isNull();
+          check(() => notFound.single.element).throws<StateError>();
+          check(() => notFound.single.discoveredElement).throws<StateError>();
+        });
       });
     }
 

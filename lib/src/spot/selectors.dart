@@ -1,4 +1,5 @@
 import 'package:checks/checks.dart';
+import 'package:collection/collection.dart' show ListEquality;
 import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -16,10 +17,12 @@ export 'package:checks/context.dart';
 ///
 /// Do not use this class directly, instead use the top-level entrypoints like
 /// - [spot]
-/// - [spotSingle]
+/// - [spotKey]
 /// - [spotText]
-/// - [spotWidgets]
-/// - [spotKeys]
+/// - [spotTextWhere]
+/// - [spotIcon]
+/// - [spotWidget]
+/// - [spotElement]
 class Spot with Selectors<Widget> {
   /// Creates a starting point for a [WidgetSelector] chain.
   const Spot();
@@ -48,6 +51,7 @@ mixin Selectors<T extends Widget> {
   ///    .spotSingle<AppBar>()
   /// ```
   @useResult
+  @Deprecated('Use spot<W>()')
   SingleWidgetSelector<W> spotSingle<W extends Widget>({
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
@@ -66,11 +70,11 @@ mixin Selectors<T extends Widget> {
   /// final appbar = spot<MaterialApp>().spot<Scaffold>().spot<AppBar>()
   /// ```
   @useResult
-  MultiWidgetSelector<W> spot<W extends Widget>({
+  WidgetSelector<W> spot<W extends Widget>({
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    final selector = MultiWidgetSelector<W>(
+    final selector = WidgetSelector<W>(
       props: [
         WidgetTypePredicate<W>(),
       ],
@@ -81,11 +85,35 @@ mixin Selectors<T extends Widget> {
     return selector;
   }
 
+  /// Creates a [WidgetSelector] that finds [widget] by identity and returns all
+  /// occurrences of it in the widget tree
+  ///
+  /// The comparison happens by identity (===)
+  @useResult
+  WidgetSelector<W> spotWidget<W extends Widget>(
+    W widget, {
+    List<WidgetSelector> parents = const [],
+    List<WidgetSelector> children = const [],
+  }) {
+    return WidgetSelector<W>(
+      props: [
+        WidgetTypePredicate<W>(),
+        PredicateWithDescription(
+          (Element e) => identical(e.widget, widget),
+          description: 'Widget === $widget',
+        ),
+      ],
+      parents: [if (self != null) self!, ...parents],
+      children: children,
+    );
+  }
+
   /// Creates a [WidgetSelector] that finds [widget] by identity and returns
   /// only that widget
   ///
   /// The comparison happens by identity (===)
   @useResult
+  @Deprecated('Use spotWidget()')
   SingleWidgetSelector<W> spotSingleWidget<W extends Widget>(
     W widget, {
     List<WidgetSelector> parents = const [],
@@ -102,6 +130,7 @@ mixin Selectors<T extends Widget> {
   ///
   /// The comparison happens by identity (===)
   @useResult
+  @Deprecated('Use spotWidget()')
   MultiWidgetSelector<W> spotWidgets<W extends Widget>(
     W widget, {
     List<WidgetSelector> parents = const [],
@@ -125,12 +154,12 @@ mixin Selectors<T extends Widget> {
   ///
   /// The comparison happens by identity (===)
   @useResult
-  SingleWidgetSelector<W> spotElement<W extends Widget>(
+  WidgetSelector<W> spotElement<W extends Widget>(
     Element element, {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    return SingleWidgetSelector<W>(
+    return WidgetSelector<W>(
       props: [
         WidgetTypePredicate<W>(),
         PredicateWithDescription(
@@ -159,7 +188,7 @@ mixin Selectors<T extends Widget> {
   /// welcome.first().snapshot().hasMaxLines(1).hasTextAlign(TextAlign.center);
   /// ```
   @useResult
-  SingleWidgetSelector<AnyText> spotText(
+  WidgetSelector<AnyText> spotText(
     Pattern text, {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
@@ -201,7 +230,7 @@ mixin Selectors<T extends Widget> {
   /// spotText('Wo');
   /// ```
   @useResult
-  SingleWidgetSelector<AnyText> spotTextWhere(
+  WidgetSelector<AnyText> spotTextWhere(
     void Function(Subject<String>) match, {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
@@ -213,7 +242,7 @@ mixin Selectors<T extends Widget> {
           match(subject);
           return describe(subject).map((it) => it.trim()).toList().join(' ');
         }();
-    return SingleAnyTextWidgetSelector(
+    return AnyTextWidgetSelector(
       props: [
         MatchTextPredicate(
           match: (it) => match(it),
@@ -290,8 +319,35 @@ mixin Selectors<T extends Widget> {
     );
   }
 
+  /// Creates a [WidgetSelector] that finds all [Icon] widgets showing [icon]
+  @useResult
+  WidgetSelector<Icon> spotIcon(
+    IconData icon, {
+    bool skipOffstage = true,
+    List<WidgetSelector> parents = const [],
+    List<WidgetSelector> children = const [],
+  }) {
+    return WidgetSelector(
+      props: [
+        WidgetTypePredicate<Icon>(),
+        PredicateWithDescription(
+          (Element e) {
+            if (e.widget is Icon) {
+              return (e.widget as Icon).icon == icon;
+            }
+            return false;
+          },
+          description: 'Widget with icon: "$icon"',
+        ),
+      ],
+      parents: [if (self != null) self!, ...parents],
+      children: children,
+    );
+  }
+
   /// Creates a [WidgetSelector] that finds a single [Icon] based on the [icon]
   @useResult
+  @Deprecated('Use spotIcon()')
   SingleWidgetSelector<Icon> spotSingleIcon(
     IconData icon, {
     bool skipOffstage = true,
@@ -307,6 +363,7 @@ mixin Selectors<T extends Widget> {
 
   /// Creates a [WidgetSelector] that finds all [Icon] widgets based on the [icon]
   @useResult
+  @Deprecated('Use spotIcon()')
   MultiWidgetSelector<Icon> spotIcons(
     IconData icon, {
     bool skipOffstage = true,
@@ -331,8 +388,29 @@ mixin Selectors<T extends Widget> {
     );
   }
 
+  /// Creates a [WidgetSelector] that finds widgets with the given [key]
+  @useResult
+  WidgetSelector<W> spotKey<W extends Widget>(
+    Key key, {
+    List<WidgetSelector> parents = const [],
+    List<WidgetSelector> children = const [],
+  }) {
+    return WidgetSelector(
+      props: [
+        WidgetTypePredicate<W>(),
+        PredicateWithDescription(
+          (element) => element.widget.key == key,
+          description: 'with key: "$key"',
+        ),
+      ],
+      parents: [if (self != null) self!, ...parents],
+      children: children,
+    );
+  }
+
   /// Creates a [WidgetSelector] that finds a single widget with the given [key]
   @useResult
+  @Deprecated('Use spotKey()')
   SingleWidgetSelector<W> spotSingleKey<W extends Widget>(
     Key key, {
     List<WidgetSelector> parents = const [],
@@ -347,6 +425,7 @@ mixin Selectors<T extends Widget> {
 
   /// Creates a [WidgetSelector] that finds all widgets with the given [key]
   @useResult
+  @Deprecated('Use spotKey()')
   MultiWidgetSelector<W> spotKeys<W extends Widget>(
     Key key, {
     List<WidgetSelector> parents = const [],
@@ -371,7 +450,6 @@ mixin Selectors<T extends Widget> {
       props: self!.props,
       parents: self!.parents,
       children: self!.children,
-      expectedQuantity: self!.expectedQuantity,
     );
   }
 
@@ -381,7 +459,7 @@ mixin Selectors<T extends Widget> {
   /// the widget that was found first during a depth-first search of the widget
   /// tree
   @useResult
-  SingleWidgetSelector<T> first() {
+  WidgetSelector<T> first() {
     return FirstWidgetSelector<T>(
       props: self!.props,
       parents: self!.parents,
@@ -395,7 +473,7 @@ mixin Selectors<T extends Widget> {
   /// the widget that was found last during a depth-first search of the widget
   /// tree
   @useResult
-  SingleWidgetSelector<T> last() {
+  WidgetSelector<T> last() {
     return LastWidgetSelector<T>(
       props: self!.props,
       parents: self!.parents,
@@ -404,7 +482,7 @@ mixin Selectors<T extends Widget> {
   }
 }
 
-class FirstWidgetSelector<W extends Widget> extends SingleWidgetSelector<W> {
+class FirstWidgetSelector<W extends Widget> extends WidgetSelector<W> {
   FirstWidgetSelector({
     required super.props,
     required super.parents,
@@ -440,7 +518,7 @@ class FirstElement extends ElementFilter {
   }
 }
 
-class LastWidgetSelector<W extends Widget> extends SingleWidgetSelector<W> {
+class LastWidgetSelector<W extends Widget> extends WidgetSelector<W> {
   LastWidgetSelector({
     required super.props,
     required super.parents,
@@ -868,21 +946,24 @@ class WidgetTypePredicate<W extends Widget> extends PredicateWithDescription {
 }
 
 /// A [WidgetSelector] that intends to resolve to a single widget
+@Deprecated('Use WidgetSelector')
 class SingleWidgetSelector<W extends Widget> extends WidgetSelector<W> {
+  @Deprecated('Use WidgetSelector')
   SingleWidgetSelector({
     required super.props,
     super.parents,
     super.children,
     super.mapElementToWidget,
-  }) : super(expectedQuantity: ExpectedQuantity.single);
+  });
 
+  @Deprecated('Use WidgetSelector')
   SingleWidgetSelector.fromWidgetSelector(WidgetSelector<W> selector)
       : super(
           props: selector.props,
           parents: selector.parents,
           children: selector.children,
           mapElementToWidget: selector.mapElementToWidget,
-          expectedQuantity: ExpectedQuantity.single,
+          quantityConstraint: QuantityConstraint.single,
         );
 
   SingleWidgetSnapshot<W> snapshot() {
@@ -912,21 +993,24 @@ class SingleWidgetSelector<W extends Widget> extends WidgetSelector<W> {
 }
 
 /// A [WidgetSelector] that to 0..N widgets
+@Deprecated('Use WidgetSelector')
 class MultiWidgetSelector<W extends Widget> extends WidgetSelector<W> {
+  @Deprecated('Use WidgetSelector')
   MultiWidgetSelector({
     super.props,
     super.parents,
     super.children,
     super.mapElementToWidget,
-  }) : super(expectedQuantity: ExpectedQuantity.multi);
+  });
 
+  @Deprecated('Use WidgetSelector')
   MultiWidgetSelector.fromWidgetSelector(WidgetSelector<W> selector)
       : super(
           props: selector.props,
           parents: selector.parents,
           children: selector.children,
           mapElementToWidget: selector.mapElementToWidget,
-          expectedQuantity: ExpectedQuantity.multi,
+          quantityConstraint: QuantityConstraint.none,
         );
 
   MultiWidgetSnapshot<W> snapshot() {
@@ -1018,20 +1102,31 @@ class ChildFilter implements ElementFilter {
         final discoveredInSubtree =
             ss.discovered.where((node) => subtreeNodes.contains(node)).toList();
 
-        if (childSelector.expectedQuantity == ExpectedQuantity.single &&
-            discoveredInSubtree.length > 1) {
-          // not a match because the child selector expects a single widget
+        final minConstraint = childSelector.quantityConstraint.min;
+        final maxConstraint = childSelector.quantityConstraint.max;
+
+        if (minConstraint == null &&
+            maxConstraint == null &&
+            discoveredInSubtree.isEmpty) {
+          // This childSelector doesn't match any child
           continue;
         }
 
-        if (discoveredInSubtree.isEmpty) {
-          // did not find any matching child
+        if (minConstraint != null &&
+            minConstraint > discoveredInSubtree.length) {
+          // not a match found less than the minimum required
+          continue;
+        }
+        if (maxConstraint != null &&
+            maxConstraint < discoveredInSubtree.length) {
+          // not a match because found more than the maximum allowed
           continue;
         }
 
         // consider it as a match
         matchesPerChild[childSelector] = discoveredInSubtree;
       }
+      // TODO early exist the loop above instead of adding an empty list to the map
       if (matchesPerChild.values.any((list) => list.isEmpty)) {
         // not all children match
         continue;
@@ -1051,6 +1146,7 @@ class ChildFilter implements ElementFilter {
   }
 }
 
+@Deprecated('Use QuantityConstraint instead')
 enum ExpectedQuantity {
   /// A selector that matches a single widget
   single,
@@ -1064,7 +1160,7 @@ enum ExpectedQuantity {
 /// Compared to normal [Finder], this gives great error messages along the chain
 class WidgetSelector<W extends Widget> with Selectors<W> {
   /// Matches any widget currently mounted
-  static final WidgetSelector all = MultiWidgetSelector(
+  static final WidgetSelector all = WidgetSelector(
     props: [
       PredicateWithDescription(
         (e) => true,
@@ -1079,11 +1175,17 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
     List<PredicateWithDescription>? props,
     List<WidgetSelector>? parents,
     List<WidgetSelector>? children,
-    required this.expectedQuantity,
+    @Deprecated('Use quantityConstraint instead')
+    ExpectedQuantity expectedQuantity = ExpectedQuantity.multi,
+    QuantityConstraint? quantityConstraint,
     W Function(Element element)? mapElementToWidget,
   })  : props = List.unmodifiable(props ?? []),
         parents = List.unmodifiable(parents?.toSet().toList() ?? []),
         children = List.unmodifiable(children ?? []),
+        quantityConstraint = quantityConstraint ??
+            (expectedQuantity == ExpectedQuantity.single
+                ? QuantityConstraint.single
+                : QuantityConstraint.unconstrained),
         mapElementToWidget = mapElementToWidget ?? defaultMapElementToWidget<W>;
 
   final List<PredicateWithDescription> props;
@@ -1093,7 +1195,13 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
   final List<WidgetSelector> children;
 
   /// Whether this selector expects to find a single or multiple widgets
-  final ExpectedQuantity expectedQuantity;
+  @Deprecated('Use quantityConstraint instead')
+  ExpectedQuantity get expectedQuantity => quantityConstraint.max == 1
+      ? ExpectedQuantity.single
+      : ExpectedQuantity.multi;
+
+  /// The number of widgets that this selector expects to find
+  final QuantityConstraint quantityConstraint;
 
   static W defaultMapElementToWidget<W>(Element element) {
     return element.widget as W;
@@ -1174,18 +1282,26 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
     List<WidgetSelector>? parents,
     List<WidgetSelector>? children,
     ExpectedQuantity? expectedQuantity,
+    QuantityConstraint? quantityConstraint,
     W Function(Element element)? mapElementToWidget,
   }) {
     return WidgetSelector<W>(
       props: props ?? this.props,
       parents: parents ?? this.parents,
       children: children ?? this.children,
+      // ignore: deprecated_member_use_from_same_package
       expectedQuantity: expectedQuantity ?? this.expectedQuantity,
+      quantityConstraint: quantityConstraint ?? this.quantityConstraint,
       mapElementToWidget: mapElementToWidget ?? this.mapElementToWidget,
     );
   }
 
   /// Filters all elements that match the selector
+  ///
+  /// Not yet deprecated, but it is recommend to use `whereWidgetProp()` instead.
+  /// - [SelectorQueries.whereWidgetProp]
+  /// - [SelectorQueries.whereElementProp]
+  /// - [SelectorQueries.whereRenderObjectProp]
   ///
   /// ```dart
   /// withProp(
@@ -1212,8 +1328,6 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
       if (elementSelector != null) {
         return elementSelector(elementSubject);
       }
-      assert(widgetSelector != null);
-
       if (widgetSelector != null) {
         final Subject<W> widgetSubject = elementSubject.context.nest<W>(
           () => [],
@@ -1245,6 +1359,8 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
       description: name,
     );
   }
+
+  // TODO add getDiagnosticProp()
 
   /// Finds the diagnostic property (from [Element.toDiagnosticsNode]) with
   /// [propName] and returns the value as type [T]
@@ -1302,6 +1418,52 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
   }
 }
 
+/// The number of widgets that are expected to be found
+class QuantityConstraint {
+  static const QuantityConstraint unconstrained = QuantityConstraint();
+  static const QuantityConstraint none = QuantityConstraint.exactly(0);
+  static const QuantityConstraint single = QuantityConstraint.atMost(1);
+
+  const QuantityConstraint({this.min, this.max});
+
+  const QuantityConstraint.exactly(int n)
+      : min = n,
+        max = n;
+
+  const QuantityConstraint.atLeast(int n)
+      : min = n,
+        max = null;
+
+  const QuantityConstraint.atMost(int n)
+      : min = null,
+        max = n;
+
+  final int? min;
+  final int? max;
+
+  @override
+  String toString() {
+    if (min == null && max == null) {
+      return 'QuantityConstraint.unconstrained';
+    }
+    if (min == 0 && max == 0) {
+      return 'QuantityConstraint.none';
+    }
+    return 'QuantityConstraint{min: $min, max: $max}';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is QuantityConstraint &&
+          runtimeType == other.runtimeType &&
+          min == other.min &&
+          max == other.max;
+
+  @override
+  int get hashCode => min.hashCode ^ max.hashCode;
+}
+
 extension SelectorToSnapshot<W extends Widget> on WidgetSelector<W> {
   MultiWidgetSnapshot<W> snapshot() {
     TestAsyncUtils.guardSync();
@@ -1309,8 +1471,10 @@ extension SelectorToSnapshot<W extends Widget> on WidgetSelector<W> {
   }
 
   @useResult
-  MultiWidgetSelector<W> get multi {
-    return MultiWidgetSelector<W>.fromWidgetSelector(this);
+  WidgetSelector<W> get multi {
+    return copyWith(
+      quantityConstraint: QuantityConstraint.none,
+    );
   }
 
   @useResult
@@ -1448,6 +1612,26 @@ class SingleWidgetSnapshot<W extends Widget> implements WidgetMatcher<W> {
 
   @override
   W get widget => _widget!;
+}
+
+extension QuantitySelectors<W extends Widget> on WidgetSelector<W> {
+  WidgetSelector<W> amount(int n) {
+    return self.copyWith(
+      quantityConstraint: QuantityConstraint.exactly(n),
+    );
+  }
+
+  WidgetSelector<W> atLeast(int n) {
+    return self.copyWith(
+      quantityConstraint: QuantityConstraint.atLeast(n),
+    );
+  }
+
+  WidgetSelector<W> atMost(int n) {
+    return self.copyWith(
+      quantityConstraint: QuantityConstraint.atMost(n),
+    );
+  }
 }
 
 extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {

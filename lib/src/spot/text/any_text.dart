@@ -189,8 +189,8 @@ class AnyText extends LeafRenderObjectWidget {
 /// - [SelectableText]
 /// - [RichText]
 /// - [EditableText]
-class SingleAnyTextWidgetSelector extends SingleWidgetSelector<AnyText> {
-  SingleAnyTextWidgetSelector({
+class AnyTextWidgetSelector extends WidgetSelector<AnyText> {
+  AnyTextWidgetSelector({
     required super.props,
     super.children,
     super.parents,

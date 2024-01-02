@@ -46,7 +46,7 @@ class Screenshot {
 Future<Screenshot> takeScreenshot({
   Element? element,
   SingleWidgetSnapshot? snapshot,
-  SingleWidgetSelector? selector,
+  WidgetSelector? selector,
   String? name,
 }) async {
   final TestWidgetsFlutterBinding binding = TestWidgetsFlutterBinding.instance;
@@ -143,9 +143,8 @@ Future<Screenshot> takeScreenshot({
   return Screenshot(file: file, initiator: frame);
 }
 
-/// Provides the ability to create screenshots of a [SingleWidgetSelector]
-extension SelectorScreenshotExtension<W extends Widget>
-    on SingleWidgetSelector<W> {
+/// Provides the ability to create screenshots of a [WidgetSelector]
+extension SelectorScreenshotExtension<W extends Widget> on WidgetSelector<W> {
   /// Takes as screenshot of the widget that can be found by this selector.
   Future<Screenshot> takeScreenshot({String? name}) {
     return self.takeScreenshot(selector: this, name: name);
