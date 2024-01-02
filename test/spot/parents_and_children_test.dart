@@ -1,8 +1,11 @@
 // ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
+
+import '../util/assert_error.dart';
 
 void main() {
   testWidgets('parents can have parents too', (tester) async {
@@ -156,6 +159,48 @@ void main() {
     containers.withChild(spot<Wrap>().atLeast(1)).existsOnce();
     containers.withChild(spot<Wrap>().atMost(1)).doesNotExist();
     // It does not throw though! The child constraints are filter and do not enforce that every Container must have a single Wrap
+  });
+
+  testWidgets('quantity matching amount throws during snapshot',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Row(
+          children: [
+            Wrap(),
+            Container(),
+            Container(),
+            Container(
+              child: Wrap(
+                children: const [Wrap()],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    spotSingle<CupertinoApp>().doesNotExist();
+    spot<CupertinoApp>().atMost(1).doesNotExist();
+    spot<CupertinoApp>().atLeast(1).doesNotExist();
+    spot<CupertinoApp>().amount(1).doesNotExist();
+
+    final containers = spot<Container>();
+    containers.existsExactlyNTimes(3);
+    final wraps = spot<Wrap>();
+    wraps.existsExactlyNTimes(3);
+
+    // just taking a snapshot doesn't throw
+    spot<Wrap>().amount(2).snapshot();
+    spot<Wrap>().amount(3).snapshot();
+    spot<Wrap>().amount(4).snapshot();
+    // TODO create a method that actually does validate the amount. evaluate()?
+
+    // Check for no matches when amount does not match
+    spot<Wrap>().amount(2).existsExactlyNTimes(
+        3); // TODO does this make sense that amount(2) is ignored?
+    spot<Wrap>().amount(3).existsExactlyNTimes(3);
+    spot<Wrap>().amount(4).existsExactlyNTimes(3);
   });
 
   testWidgets('withChild', (tester) async {

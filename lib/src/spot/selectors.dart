@@ -1467,7 +1467,7 @@ class QuantityConstraint {
 extension SelectorToSnapshot<W extends Widget> on WidgetSelector<W> {
   MultiWidgetSnapshot<W> snapshot() {
     TestAsyncUtils.guardSync();
-    return snapshot_file.snapshot(this);
+    return snapshot_file.snapshot(this, validateQuantity: false);
   }
 
   @useResult
@@ -1637,37 +1637,37 @@ extension QuantitySelectors<W extends Widget> on WidgetSelector<W> {
 extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   MultiWidgetSnapshot<W> existsAtLeastOnce() {
     TestAsyncUtils.guardSync();
-    return snapshot(this).existsAtLeastOnce();
+    return snapshot(this, validateQuantity: false).existsAtLeastOnce();
   }
 
   MultiWidgetSnapshot<W> existsAtMostOnce() {
     TestAsyncUtils.guardSync();
-    return snapshot(this).existsAtMostOnce();
+    return snapshot(this, validateQuantity: false).existsAtMostOnce();
   }
 
   void doesNotExist() {
     TestAsyncUtils.guardSync();
-    snapshot(this).doesNotExist();
+    snapshot(this, validateQuantity: false).doesNotExist();
   }
 
   SingleWidgetSnapshot<W> existsOnce() {
     TestAsyncUtils.guardSync();
-    return snapshot(this).existsOnce();
+    return snapshot(this, validateQuantity: false).existsOnce();
   }
 
   MultiWidgetSnapshot<W> existsExactlyNTimes(int n) {
     TestAsyncUtils.guardSync();
-    return snapshot(this).existsExactlyNTimes(n);
+    return snapshot(this, validateQuantity: false).existsExactlyNTimes(n);
   }
 
   MultiWidgetSnapshot<W> existsAtLeastNTimes(int n) {
     TestAsyncUtils.guardSync();
-    return snapshot(this).existsAtLeastNTimes(n);
+    return snapshot(this, validateQuantity: false).existsAtLeastNTimes(n);
   }
 
   MultiWidgetSnapshot<W> existsAtMostNTimes(int n) {
     TestAsyncUtils.guardSync();
-    return snapshot(this).existsAtMostNTimes(n);
+    return snapshot(this, validateQuantity: false).existsAtMostNTimes(n);
   }
 }
 

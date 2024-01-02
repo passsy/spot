@@ -184,24 +184,51 @@ extension _ValidateQuantity<W extends Widget> on MultiWidgetSnapshot<W> {
       return findCommonAncestor(set).toStringDeep();
     }
 
-    if (minimumConstraint != null && minimumConstraint > count) {
-      throw TestFailure(
-        'Found $count elements matching $selector in widget tree, '
-        'expected at least $minimumConstraint\n'
-        '${significantWidgetTree()}'
-        'Found $count elements matching $selector in widget tree, '
-        'expected at least $minimumConstraint',
-      );
+    if (minimumConstraint != null && maximumConstraint == null) {
+      if (minimumConstraint > count) {
+        throw TestFailure(
+          'Found $count elements matching $selector in widget tree, '
+          'expected at least $minimumConstraint\n'
+          '${significantWidgetTree()}'
+          'Found $count elements matching $selector in widget tree, '
+          'expected at least $minimumConstraint',
+        );
+      }
     }
 
-    if (maximumConstraint != null && maximumConstraint < count) {
-      throw TestFailure(
-        'Found $count elements matching $selector in widget tree, '
-        'expected at most $maximumConstraint\n'
-        '${significantWidgetTree()}'
-        'Found $count elements matching $selector in widget tree, '
-        'expected at most $maximumConstraint',
-      );
+    if (maximumConstraint != null && minimumConstraint == null) {
+      if (maximumConstraint < count) {
+        throw TestFailure(
+          'Found $count elements matching $selector in widget tree, '
+          'expected at most $maximumConstraint\n'
+          '${significantWidgetTree()}'
+          'Found $count elements matching $selector in widget tree, '
+          'expected at most $maximumConstraint',
+        );
+      }
+    }
+
+    if (minimumConstraint != null && maximumConstraint != null) {
+      if (minimumConstraint == maximumConstraint) {
+        final exactCount = minimumConstraint;
+        if (count != exactCount) {
+          throw TestFailure(
+            'Found $count elements matching $selector in widget tree, '
+            'expected exactly $exactCount\n'
+            '${significantWidgetTree()}'
+            'Found $count elements matching $selector in widget tree, '
+            'expected exactly $exactCount',
+          );
+        }
+      } else {
+        throw TestFailure(
+          'Found $count elements matching $selector in widget tree, '
+          'expected between $minimumConstraint and $maximumConstraint\n'
+          '${significantWidgetTree()}'
+          'Found $count elements matching $selector in widget tree, '
+          'expected between $minimumConstraint and $maximumConstraint',
+        );
+      }
     }
   }
 }
@@ -258,6 +285,9 @@ extension MultiWidgetSelectorMatcher<W extends Widget>
           errorBuilder.writeln("Possible match #$index:");
           errorBuilder.writeln(candidate.element.widget.toStringDeep());
         });
+
+        errorBuilder
+            .writeln(findCommonAncestor(discoveredElements).toStringDeep());
 
         errorBuilder.writeln(
           'Found ${discovered.length} elements matching $selector in widget tree, '

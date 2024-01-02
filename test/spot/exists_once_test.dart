@@ -82,7 +82,8 @@ void main() {
       throwsSpotErrorContaining(
         [
           'Found 2 elements',
-          'expected at most 1\nWrap(',
+          'expected at most 1',
+          '\nWrap(', // at the beginning of the line, common ancestor
           'Text("World"',
           'Text("Hello"',
         ],
@@ -95,7 +96,8 @@ void main() {
         [
           "parents: ['Wrap']",
           'Found 2 elements',
-          'expected at most 1\nWrap(',
+          'expected at most 1',
+          '\nWrap(', // at the beginning of the line, common ancestor
           'Text("World"',
           'Text("Hello"',
         ],
