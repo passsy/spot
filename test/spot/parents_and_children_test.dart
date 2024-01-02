@@ -173,6 +173,30 @@ void main() {
     containers.withChildren([spot<Wrap>()]).existsOnce();
   });
 
+  testWidgets('withChild(a).withChild(b) == withChildren(a,b)', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Row(
+          children: [
+            Container(),
+            Container(),
+            Container(child: Wrap(children: const [Center()])),
+          ],
+        ),
+      ),
+    );
+    final withChildTwice = spot<Container>()
+        .withChild(spot<Center>())
+        .withChild(spot<Wrap>())
+      ..existsOnce();
+    final withChildren = spot<Container>()
+        .withChildren([spot<Center>(), spot<Wrap>()])
+      ..existsOnce();
+
+    expect(withChildTwice.children.length, 2);
+    expect(withChildren.children.length, 2);
+  });
+
   testWidgets('withParent', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
@@ -189,5 +213,37 @@ void main() {
     containers.existsExactlyNTimes(3);
     containers.withParent(spot<Wrap>()).existsOnce();
     containers.withParents([spot<Wrap>()]).existsOnce();
+  });
+
+  testWidgets('withParent(a).withParent(b) == withParents(a,b)',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          appBar: AppBar(
+            title: Text('Test'),
+            actions: [
+              Wrap(
+                children: [
+                  Center(
+                    child: Container(),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    final withParentTwice = spot<Container>()
+        .withParent(spot<Center>())
+        .withParent(spot<Wrap>())
+      ..existsOnce();
+    final withParents = spot<Container>()
+        .withParents([spot<Center>(), spot<Wrap>()])
+      ..existsOnce();
+
+    expect(withParentTwice.parents.length, 2);
+    expect(withParents.parents.length, 2);
   });
 }
