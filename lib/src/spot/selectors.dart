@@ -460,11 +460,8 @@ mixin Selectors<T extends Widget> {
   /// tree
   @useResult
   WidgetSelector<T> first() {
-    return FirstWidgetSelector<T>(
-      props: self!.props,
-      parents: self!.parents,
-      children: self!.children,
-    );
+    // TODO add names to the elementFilters, for a better WidgetSelector.toString()
+    return self!.copyWith(elementFilters: [FirstElement()]);
   }
 
   /// Selects the last of n widgets
@@ -474,34 +471,7 @@ mixin Selectors<T extends Widget> {
   /// tree
   @useResult
   WidgetSelector<T> last() {
-    return LastWidgetSelector<T>(
-      props: self!.props,
-      parents: self!.parents,
-      children: self!.children,
-    );
-  }
-}
-
-class FirstWidgetSelector<W extends Widget> extends WidgetSelector<W> {
-  FirstWidgetSelector({
-    required super.props,
-    required super.parents,
-    required super.children,
-  });
-
-  @override
-  List<ElementFilter> createElementFilters() {
-    return [...super.createElementFilters(), FirstElement()];
-  }
-
-  @override
-  String toString() {
-    return 'first Widget ${super.toString()}';
-  }
-
-  @override
-  String toStringWithoutParents() {
-    return ':first';
+    return self!.copyWith(elementFilters: [LastElement()]);
   }
 }
 
@@ -515,29 +485,6 @@ class FirstElement extends ElementFilter {
       return [];
     }
     return [first];
-  }
-}
-
-class LastWidgetSelector<W extends Widget> extends WidgetSelector<W> {
-  LastWidgetSelector({
-    required super.props,
-    required super.parents,
-    required super.children,
-  });
-
-  @override
-  List<ElementFilter> createElementFilters() {
-    return [...super.createElementFilters(), LastElement()];
-  }
-
-  @override
-  String toString() {
-    return 'last Widget ${super.toString()}';
-  }
-
-  @override
-  String toStringWithoutParents() {
-    return ':last';
   }
 }
 
@@ -1175,6 +1122,7 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
     List<PredicateWithDescription>? props,
     List<WidgetSelector>? parents,
     List<WidgetSelector>? children,
+    List<ElementFilter>? elementFilters,
     @Deprecated('Use quantityConstraint instead')
     ExpectedQuantity expectedQuantity = ExpectedQuantity.multi,
     QuantityConstraint? quantityConstraint,
@@ -1182,6 +1130,7 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
   })  : props = List.unmodifiable(props ?? []),
         parents = List.unmodifiable(parents?.toSet().toList() ?? []),
         children = List.unmodifiable(children ?? []),
+        elementFilters = List.unmodifiable(elementFilters ?? []),
         quantityConstraint = quantityConstraint ??
             (expectedQuantity == ExpectedQuantity.single
                 ? QuantityConstraint.single
@@ -1193,6 +1142,8 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
   final List<WidgetSelector> parents;
 
   final List<WidgetSelector> children;
+
+  final List<ElementFilter> elementFilters;
 
   /// Whether this selector expects to find a single or multiple widgets
   @Deprecated('Use quantityConstraint instead')
@@ -1220,6 +1171,7 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
     return [
       if (props.isNotEmpty) PropFilter(props),
       if (children.isNotEmpty) ChildFilter(children),
+      ...elementFilters,
     ];
   }
 
@@ -1281,6 +1233,7 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
     List<PredicateWithDescription>? props,
     List<WidgetSelector>? parents,
     List<WidgetSelector>? children,
+    List<ElementFilter>? elementFilters,
     ExpectedQuantity? expectedQuantity,
     QuantityConstraint? quantityConstraint,
     W Function(Element element)? mapElementToWidget,
@@ -1289,6 +1242,7 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
       props: props ?? this.props,
       parents: parents ?? this.parents,
       children: children ?? this.children,
+      elementFilters: elementFilters ?? this.elementFilters,
       // ignore: deprecated_member_use_from_same_package
       expectedQuantity: expectedQuantity ?? this.expectedQuantity,
       quantityConstraint: quantityConstraint ?? this.quantityConstraint,
