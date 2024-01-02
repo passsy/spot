@@ -39,6 +39,24 @@ void main() {
       final topMostCenter = spot<Center>().first();
       topMostCenter.spot<Row>().existsOnce();
     });
+
+    testWidgets('first().copyWith() returns a single item', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Row(
+            children: [
+              Text('a'),
+              Text('b'),
+              Text('c'),
+            ],
+          ),
+        ),
+      );
+      final first = spot<Text>().first();
+      first.existsOnce().hasText('a');
+      final copy = first.copyWith();
+      copy.existsOnce().hasText('a');
+    });
   });
 
   group('last', () {
