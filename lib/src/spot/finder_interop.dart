@@ -10,7 +10,9 @@ extension FinderToSpot on Finder {
   /// Like a [Finder], [WidgetSelector] can return 0, 1, or N widgets
   @useResult
   WidgetSelector<W> spot<W extends Widget>() {
-    return _FinderSelector<W>(this);
+    return WidgetSelector<W>(
+      elementFilters: [_FinderFilter(this)],
+    );
   }
 }
 
@@ -28,37 +30,10 @@ extension SpotToFinder<W extends Widget> on WidgetSelector<W> {
   /// Use [T] to specify the type of [Widget] to match.
   @useResult
   WidgetSelector<T> spotFinder<T extends Widget>(Finder finder) {
-    return _FinderSelector<T>(finder, parent: this);
-  }
-}
-
-class _FinderSelector<W extends Widget> extends WidgetSelector<W> {
-  final Finder finder;
-
-  _FinderSelector(
-    this.finder, {
-    WidgetSelector? parent,
-  }) : super(parents: parent != null ? [parent] : []);
-
-  @override
-  List<ElementFilter> createElementFilters() {
-    return [...super.createElementFilters(), _FinderFilter(finder)];
-  }
-
-  @override
-  String toString() {
-    final overridden = super.toString();
-    // ignore: deprecated_member_use
-    return 'widget with ${finder.description}'
-        '${overridden.isNotEmpty ? ' $overridden' : ''}';
-  }
-
-  @override
-  String toStringWithoutParents() {
-    final overridden = super.toStringWithoutParents();
-    // ignore: deprecated_member_use
-    return 'widget with ${finder.description}'
-        '${overridden.isNotEmpty ? ' $overridden' : ''}';
+    return WidgetSelector<T>(
+      parents: [this],
+      elementFilters: [_FinderFilter(finder)],
+    );
   }
 }
 
@@ -71,6 +46,12 @@ class _FinderFilter extends ElementFilter {
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
     // ignore: deprecated_member_use
     return candidates.filter((it) => finder.apply([it.element]).isNotEmpty);
+  }
+
+  @override
+  String get description {
+    // ignore: deprecated_member_use
+    return finder.description;
   }
 }
 

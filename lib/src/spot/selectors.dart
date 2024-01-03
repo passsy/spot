@@ -486,6 +486,9 @@ class FirstElement extends ElementFilter {
     }
     return [first];
   }
+
+  @override
+  String get description => ':first';
 }
 
 class LastElement extends ElementFilter {
@@ -499,6 +502,9 @@ class LastElement extends ElementFilter {
     }
     return [last];
   }
+
+  @override
+  String get description => ':last';
 }
 
 extension SelectorQueries<W extends Widget> on Selectors<W> {
@@ -970,7 +976,8 @@ abstract class ElementFilter {
   /// Filters all candidates, retuning only a subset that matches
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates);
 
-// TODO add description
+  /// A description to describe the filter
+  String get description;
 }
 
 abstract class CandidateGenerator<W extends Widget> {
@@ -993,6 +1000,9 @@ class WidgetTypeFilter<W extends Widget> implements ElementFilter {
   }
 
   @override
+  String get description => '$W';
+
+  @override
   String toString() {
     return 'WidgetTypeFilter of $W';
   }
@@ -1013,12 +1023,16 @@ class PropFilter implements ElementFilter {
   }
 
   @override
-  String toString() {
+  String get description {
     final props = this.props.isNotEmpty
         ? this.props.map((e) => e.description).join(' ')
         : null;
+    return props ?? 'any Widget';
+  }
 
-    return 'PropFilter of $props';
+  @override
+  String toString() {
+    return 'PropFilter of $description';
   }
 }
 
@@ -1083,13 +1097,16 @@ class ChildFilter implements ElementFilter {
     return matchingChildNodes;
   }
 
-  @override
-  String toString() {
+  String get description {
     final children = childSelectors.isNotEmpty
         ? 'with children: [${childSelectors.map((e) => e.toStringBreadcrumb()).join(', ')}]'
         : null;
+    return children ?? 'any Widget';
+  }
 
-    return 'PropFilter of $children';
+  @override
+  String toString() {
+    return 'PropFilter of $description';
   }
 }
 
@@ -1190,8 +1207,12 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
     final props = this.props.isNotEmpty
         ? this.props.map((e) => e.description).join(' ')
         : null;
+    final filters = elementFilters.isNotEmpty
+        ? elementFilters.map((e) => e.description).join(' ')
+        : null;
 
-    final constraints = [props, children, parents].where((e) => e != null);
+    final constraints =
+        [props, filters, children, parents].where((e) => e != null);
     if (constraints.isEmpty) {
       return '';
     }
@@ -1205,8 +1226,11 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
     final props = this.props.isNotEmpty
         ? this.props.map((e) => e.description).join(' ')
         : null;
+    final filters = elementFilters.isNotEmpty
+        ? elementFilters.map((e) => e.description).join(' ')
+        : null;
 
-    final constraints = [props, children].where((e) => e != null);
+    final constraints = [props, filters, children].where((e) => e != null);
     return constraints.join(' ');
   }
 

@@ -60,6 +60,11 @@ void main() {
               contains(
                 'Could not find widget with widgets with text "nope" that are ancestors of widgets with type "Directionality" in widget tree',
               ),
+
+              // Flutter 3.16
+              contains(
+                'Could not find widgets with text "nope" that are ancestors of widgets with type "Directionality" in widget tree',
+              ),
             ),
           ),
         ),
@@ -120,8 +125,7 @@ void main() {
             (e) => e.message,
             'message',
             contains(
-              'Could not find widget with text "nope" '
-              "'with parents: ['Directionality']' in widget tree",
+              'Could not find Directionality > text "nope" in widget tree',
             ),
           ),
         ),
