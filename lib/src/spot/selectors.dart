@@ -1212,7 +1212,7 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
         : null;
 
     final constraints =
-        [props, filters, children, parents].where((e) => e != null);
+        [props, children, parents, filters].where((e) => e != null);
     if (constraints.isEmpty) {
       return '';
     }
@@ -1230,7 +1230,7 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
         ? elementFilters.map((e) => e.description).join(' ')
         : null;
 
-    final constraints = [props, filters, children].where((e) => e != null);
+    final constraints = [props, children, filters].where((e) => e != null);
     return constraints.join(' ');
   }
 
