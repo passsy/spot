@@ -69,7 +69,7 @@ void actTests() {
     await expectLater(
       () => act.tap(button),
       throwsSpotErrorContaining([
-        "Could not find 'ElevatedButton' in widget tree",
+        "Could not find ElevatedButton in widget tree",
       ]),
     );
   });
@@ -96,7 +96,7 @@ void actTests() {
     await expectLater(
       () => act.tap(button),
       throwsSpotErrorContaining([
-        "Found 2 elements matching 'ElevatedButton' in widget tree",
+        "Found 2 elements matching ElevatedButton in widget tree",
       ]),
     );
   });
