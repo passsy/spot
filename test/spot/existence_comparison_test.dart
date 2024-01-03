@@ -128,7 +128,7 @@ void main() {
       final spotter = spotSingle<Material>(parents: [spot<SizedBox>()]);
 
       final throwsFailureWithMessage = throwsSpotErrorContaining(
-        ["Could not find 'Material with parents: ['SizedBox']' in widget tree"],
+        ["Could not find SizedBox > Material in widget tree"],
       );
 
       expect(spotter.snapshot().discovered, isNull);
@@ -163,7 +163,10 @@ void main() {
       expect(selector.snapshot().discovered, isNull);
 
       final throwsFailureWithMessage = throwsSpotErrorContaining([
-        "but found 1 matches when searching for 'Center",
+        "Could not find Material > Center with children: ['SizedBox'] in widget tree, expected",
+        RegExp(r"(?:exactly|at most|at least) \d+"),
+        RegExp(
+            r"A less specific search 'Center with children: \['SizedBox'\]' discovered \d+ matches"),
         "Possible match #1:\nCenter(alignment: Alignment.center",
       ]);
 
@@ -254,8 +257,9 @@ void main() {
         () => spot<Text>(parents: [spotSingle<Row>()]).existsAtLeastNTimes(2),
         throwsSpotErrorContaining(
           [
-            "Could not find at least 2 matches for Row > Text in widget tree, but found 3 matches when searching for 'Text'",
-            "Please check the 3 matches for Text and adjust the constraints of the selector 'Text with parents: ['Row']' accordingly",
+            "Found 1 elements matching Row > Text in widget tree, expected at least 2",
+            "A less specific search 'Text' discovered 3 matches!",
+            "Maybe you have to adjust your WidgetSelector ('Text with parents: ['Row']') to cover those missing elements.",
             'Possible match #1:\nText("a"',
             'Possible match #2:\nText("b"',
             'Possible match #3:\nText("c"',
@@ -281,17 +285,16 @@ void main() {
           ),
         ),
       );
-
       expect(
         () => spot<Text>()
             .whereText((text) => text.startsWith('a'))
             .existsExactlyNTimes(3),
         throwsSpotErrorContaining([
-          "Found 4 elements matching 'Text with prop \"data\" starts with 'a'' in widget tree, expected at most 3",
-          'Text("aa")',
-          'Text("ab")',
-          'Text("ac")',
-          'Text("ad")',
+          'Found 4 elements matching Text with prop "data" starts with \'a\' in widget tree, expected exactly 3',
+          'Text("aa"',
+          'Text("ab"',
+          'Text("ac"',
+          'Text("ad"',
         ]),
       );
     });

@@ -82,7 +82,7 @@ void main() {
       throwsSpotErrorContaining(
         [
           'Found 2 elements',
-          'expected at most 1',
+          'expected exactly 1',
           '\nWrap(', // at the beginning of the line, common ancestor
           'Text("World"',
           'Text("Hello"',
@@ -91,12 +91,25 @@ void main() {
       ),
     );
     expect(
-      () => spotSingle<Text>(parents: [spotSingle<Wrap>()]).existsOnce(),
+      () => spot<Text>().amount(1).existsOnce(),
       throwsSpotErrorContaining(
         [
-          "parents: ['Wrap']",
           'Found 2 elements',
-          'expected at most 1',
+          'expected exactly 1',
+          '\nWrap(', // at the beginning of the line, common ancestor
+          'Text("World"',
+          'Text("Hello"',
+        ],
+        not: ['root'],
+      ),
+    );
+    expect(
+      () => spot<Text>(parents: [spot<Wrap>()]).amount(1).existsOnce(),
+      throwsSpotErrorContaining(
+        [
+          'Found 2 elements',
+          "Wrap > Text",
+          'expected exactly 1',
           '\nWrap(', // at the beginning of the line, common ancestor
           'Text("World"',
           'Text("Hello"',

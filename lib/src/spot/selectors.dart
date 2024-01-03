@@ -1510,6 +1510,7 @@ class MultiWidgetSnapshot<W extends Widget> {
       selector: selector,
       discovered: discovered.firstOrNull,
       debugCandidates: debugCandidates,
+      scope: scope,
     );
   }
 }
@@ -1520,6 +1521,7 @@ class SingleWidgetSnapshot<W extends Widget> implements WidgetMatcher<W> {
     required this.selector,
     required this.discovered,
     required this.debugCandidates,
+    required this.scope,
   }) : _widget = discovered?.element == null
             ? null
             : selector.mapElementToWidget(discovered!.element);
@@ -1531,6 +1533,8 @@ class SingleWidgetSnapshot<W extends Widget> implements WidgetMatcher<W> {
   /// the snapshot was taken. This allows to compare the widget with the current
   /// widget in the tree.
   final W? _widget;
+
+  final ScopedWidgetTreeSnapshot scope;
 
   @override
   final WidgetSelector<W> selector;
@@ -1566,6 +1570,16 @@ class SingleWidgetSnapshot<W extends Widget> implements WidgetMatcher<W> {
 
   @override
   W get widget => _widget!;
+
+  @useResult
+  MultiWidgetSnapshot<W> get multi {
+    return MultiWidgetSnapshot(
+      selector: selector,
+      discovered: [if (discovered != null) discovered!],
+      debugCandidates: debugCandidates,
+      scope: scope,
+    );
+  }
 }
 
 extension QuantitySelectors<W extends Widget> on WidgetSelector<W> {
@@ -1591,37 +1605,47 @@ extension QuantitySelectors<W extends Widget> on WidgetSelector<W> {
 extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   MultiWidgetSnapshot<W> existsAtLeastOnce() {
     TestAsyncUtils.guardSync();
-    return snapshot(this, validateQuantity: false).existsAtLeastOnce();
+    final atLeastOne =
+        copyWith(quantityConstraint: const QuantityConstraint.atLeast(1));
+    return snapshot(atLeastOne);
   }
 
   MultiWidgetSnapshot<W> existsAtMostOnce() {
     TestAsyncUtils.guardSync();
-    return snapshot(this, validateQuantity: false).existsAtMostOnce();
+    final atMostOne = copyWith(quantityConstraint: QuantityConstraint.single);
+    return snapshot(atMostOne);
   }
 
   void doesNotExist() {
     TestAsyncUtils.guardSync();
-    snapshot(this, validateQuantity: false).doesNotExist();
+    final none = copyWith(quantityConstraint: QuantityConstraint.none);
+    snapshot(none);
   }
 
   SingleWidgetSnapshot<W> existsOnce() {
     TestAsyncUtils.guardSync();
-    return snapshot(this, validateQuantity: false).existsOnce();
+    final one =
+        copyWith(quantityConstraint: const QuantityConstraint.exactly(1));
+    return snapshot(one).single;
   }
 
   MultiWidgetSnapshot<W> existsExactlyNTimes(int n) {
     TestAsyncUtils.guardSync();
-    return snapshot(this, validateQuantity: false).existsExactlyNTimes(n);
+    final exactlyNTimes =
+        copyWith(quantityConstraint: QuantityConstraint.exactly(n));
+    return snapshot(exactlyNTimes);
   }
 
   MultiWidgetSnapshot<W> existsAtLeastNTimes(int n) {
     TestAsyncUtils.guardSync();
-    return snapshot(this, validateQuantity: false).existsAtLeastNTimes(n);
+    final atLeast = copyWith(quantityConstraint: QuantityConstraint.atLeast(n));
+    return snapshot(atLeast);
   }
 
   MultiWidgetSnapshot<W> existsAtMostNTimes(int n) {
     TestAsyncUtils.guardSync();
-    return snapshot(this, validateQuantity: false).existsAtMostNTimes(n);
+    final atMostN = copyWith(quantityConstraint: QuantityConstraint.atMost(n));
+    return snapshot(atMostN);
   }
 }
 
@@ -1662,6 +1686,7 @@ extension AssertionMatcher<W extends Widget> on MultiWidgetSnapshot<W> {
       selector: selector,
       discovered: discovered.firstOrNull,
       debugCandidates: debugCandidates,
+      scope: scope,
     );
   }
 }

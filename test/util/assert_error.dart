@@ -1,15 +1,15 @@
 import 'package:flutter_test/flutter_test.dart';
 
 Matcher throwsSpotErrorContaining(
-  List<String> errorMessageParts, {
-  List<String> not = const [],
+  List<Pattern> errorMessageParts, {
+  List<Pattern> not = const [],
 }) {
   return throwsErrorContaining<TestFailure>(errorMessageParts);
 }
 
 Matcher throwsErrorContaining<E>(
-  List<String> errorMessageParts, {
-  List<String> not = const [],
+  List<Pattern> errorMessageParts, {
+  List<Pattern> not = const [],
 }) {
   final List<TypeMatcher<E>> failures = [];
   for (final part in errorMessageParts) {

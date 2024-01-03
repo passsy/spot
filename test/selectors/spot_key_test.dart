@@ -24,7 +24,7 @@ void main() {
       expect(
         () => spotSingleKey(const ValueKey('key')).existsOnce(),
         throwsSpotErrorContaining([
-          "Could not find 'Widget with key: \"[<'key'>]\"' in widget tree",
+          "Could not find Widget with key: \"[<'key'>]\" in widget tree",
         ]),
       );
     });
@@ -140,7 +140,7 @@ void main() {
         expect(
           () => spotSingleKey(key1).existsOnce(),
           throwsSpotErrorContaining([
-            "Found 2 elements matching 'Widget with key: \"[<1>]\"'",
+            'Found 2 elements matching Widget with key: "[<1>]"',
             'Text-[<1>]("a"',
             'Text-[<1>]("x"',
           ]),

@@ -38,7 +38,7 @@ void main() {
       expect(
         () => spotSingle<Text>(parents: [spotSingle<Container>()]).existsOnce(),
         throwsSpotErrorContaining([
-          "Found 3 elements matching 'Container' in widget tree, expected at most 1",
+          "Found 3 elements matching Container in widget tree, expected at most 1",
         ]),
       );
     });
@@ -63,11 +63,10 @@ void main() {
       );
 
       final appBar = spotSingle<AppBar>();
-
       expect(
         () => appBar.spotSingle<Text>().existsOnce(),
         throwsSpotErrorContaining([
-          "Found 2 elements matching 'AppBar' in widget tree, expected at most 1",
+          "Found 2 elements matching AppBar in widget tree, expected at most 1",
         ]),
       );
     });
