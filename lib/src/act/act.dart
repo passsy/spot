@@ -21,12 +21,12 @@ class Act {
   /// Triggers a tap event on a given widget.
   Future<void> tap(WidgetSelector selector) async {
     // Check if widget is in the widget tree. Throws if not.
-    final snapshot = selector.existsOnce();
+    final snapshot = selector.snapshot()..existsOnce();
 
     return TestAsyncUtils.guard<void>(() async {
       return _alwaysPropagateDevicePointerEvents(() async {
         // Find the associated RenderObject to get the position of the element on the screen
-        final element = snapshot.element;
+        final element = snapshot.element!;
         final renderObject = element.renderObject;
         if (renderObject == null) {
           throw TestFailure(
@@ -94,7 +94,7 @@ class Act {
   void _pokeRenderObject({
     required Offset position,
     required RenderObject target,
-    required SingleWidgetSnapshot snapshot,
+    required WidgetSnapshot snapshot,
   }) {
     final binding = WidgetsBinding.instance;
 
@@ -133,7 +133,7 @@ class Act {
   /// the taps and doesn't forward them to the child
   void _detectAbsorbPointer(
     Element hitTarget,
-    SingleWidgetSnapshot<Widget> snapshot,
+    WidgetSnapshot<Widget> snapshot,
   ) {
     final childElement = hitTarget.children.firstOrNull;
     if (childElement?.widget is AbsorbPointer) {
@@ -153,7 +153,7 @@ class Act {
   /// Throws if the widget is wrapped in an IgnorePointer that is not forwarding events
   void _detectIgnorePointer(
     RenderObject target,
-    SingleWidgetSnapshot<Widget> snapshot,
+    WidgetSnapshot<Widget> snapshot,
   ) {
     final targetElement = (target.debugCreator as DebugCreator?)!.element;
     // sorted from root to target

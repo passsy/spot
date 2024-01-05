@@ -9,22 +9,19 @@ void main() {
   testWidgets('MultiWidgetSnapshot keeps reference to old Widget',
       (tester) async {
     await tester.pumpWidget(Center(child: SizedBox(height: 200)));
-    final MultiWidgetSnapshot<SizedBox> oldTree = snapshot(spot<SizedBox>());
+    final WidgetSnapshot<SizedBox> oldTree = snapshot(spot<SizedBox>());
     await tester.pumpWidget(Center(child: SizedBox(height: 100)));
-    final MultiWidgetSnapshot<SizedBox> newTree = snapshot(spot<SizedBox>());
+    final WidgetSnapshot<SizedBox> newTree = snapshot(spot<SizedBox>());
     expect(oldTree.discoveredWidgets.first.height, 200);
     expect(newTree.discoveredWidgets.first.height, 100);
   });
 
-  testWidgets('SingleWidgetSnapshot keeps reference to old Widget',
-      (tester) async {
+  testWidgets('WidgetSnapshot keeps reference to old Widget', (tester) async {
     await tester.pumpWidget(Center(child: SizedBox(height: 200)));
-    final SingleWidgetSnapshot<SizedBox> oldTree =
-        snapshot(spot<SizedBox>()).single;
+    final WidgetSnapshot<SizedBox> oldTree = snapshot(spot<SizedBox>());
     await tester.pumpWidget(Center(child: SizedBox(height: 100)));
-    final SingleWidgetSnapshot<SizedBox> newTree =
-        snapshot(spot<SizedBox>()).single;
-    expect(oldTree.widget.height, 200);
-    expect(newTree.widget.height, 100);
+    final WidgetSnapshot<SizedBox> newTree = snapshot(spot<SizedBox>());
+    expect(oldTree.widget!.height, 200);
+    expect(newTree.widget!.height, 100);
   });
 }

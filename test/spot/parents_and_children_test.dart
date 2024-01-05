@@ -151,8 +151,9 @@ void main() {
 
     // child query expects one or more Wraps, which can be found
     containers.withChild(spot<Wrap>()).existsOnce();
+    // exactly two child Wraps can be found
+    containers.withChild(spot<Wrap>().amount(2)).existsOnce();
     // Enforcing a single Wrap fails because the subtree of Container has two Wraps
-    containers.withChild(spot<Wrap>()).doesNotExist();
     containers.withChild(spot<Wrap>().amount(1)).doesNotExist();
     containers.withChild(spot<Wrap>().atLeast(1)).existsOnce();
     containers.withChild(spot<Wrap>().atMost(1)).doesNotExist();
@@ -195,8 +196,7 @@ void main() {
     // TODO create a method that actually does validate the amount. evaluate()?
 
     // Check for no matches when amount does not match
-    spot<Wrap>().amount(2).existsExactlyNTimes(
-        3); // TODO does this make sense that amount(2) is ignored?
+    spot<Wrap>().amount(2).existsExactlyNTimes(3);
     spot<Wrap>().amount(3).existsExactlyNTimes(3);
     spot<Wrap>().amount(4).existsExactlyNTimes(3);
   });

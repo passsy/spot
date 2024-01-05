@@ -101,7 +101,7 @@ void main() {
 
       final spotter = spot<SizedBox>(parents: [spot<Material>()]);
 
-      expect(spotter.snapshot().discovered, isNull);
+      expect(spotter.snapshot().discovered, isEmpty);
 
       expect(() => spotter.doesNotExist(), returnsNormally);
       expect(() => spotter.existsOnce(), throwsTestFailure);
@@ -131,7 +131,7 @@ void main() {
         ["Could not find SizedBox > Material in widget tree"],
       );
 
-      expect(spotter.snapshot().discovered, isNull);
+      expect(spotter.snapshot().discovered, isEmpty);
 
       expect(() => spotter.doesNotExist(), returnsNormally);
       expect(() => spotter.existsOnce(), throwsFailureWithMessage);
@@ -160,13 +160,13 @@ void main() {
         parents: [spot<Material>()], // <-- does not exist
       );
 
-      expect(selector.snapshot().discovered, isNull);
+      expect(selector.snapshot().discovered, isEmpty);
 
       final throwsFailureWithMessage = throwsSpotErrorContaining([
-        "Could not find Material > Center with children: ['SizedBox'] in widget tree, expected",
+        "Could not find Material > Center with children: [SizedBox] in widget tree, expected",
         RegExp(r"(?:exactly|at most|at least) \d+"),
         RegExp(
-          r"A less specific search 'Center with children: \['SizedBox'\]' discovered \d+ matches",
+          r"A less specific search \(Center with children: \[SizedBox\]\) discovered \d+ matches",
         ),
         "Possible match #1:\nCenter(alignment: Alignment.center",
       ]);
@@ -223,7 +223,7 @@ void main() {
 
       final spotter = spot<SizedBox>(children: [spot<Material>()]);
 
-      expect(spotter.snapshot().discovered, isNull);
+      expect(spotter.snapshot().discovered, isEmpty);
 
       expect(() => spotter.doesNotExist(), returnsNormally);
       expect(() => spotter.existsOnce(), throwsTestFailure);
@@ -259,8 +259,8 @@ void main() {
         throwsSpotErrorContaining(
           [
             "Found 1 elements matching Row > Text in widget tree, expected at least 2",
-            "A less specific search 'Text' discovered 3 matches!",
-            "Maybe you have to adjust your WidgetSelector ('Text with parents: ['Row']') to cover those missing elements.",
+            "A less specific search (Text) discovered 3 matches!",
+            "Maybe you have to adjust your WidgetSelector (Text with parents: [Row]) to cover those missing elements.",
             'Possible match #1:\nText("a"',
             'Possible match #2:\nText("b"',
             'Possible match #3:\nText("c"',

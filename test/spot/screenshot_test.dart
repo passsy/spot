@@ -41,7 +41,7 @@ void main() {
       ),
     );
 
-    final container = await takeScreenshot(selector: spotSingle<Container>());
+    final container = await takeScreenshot(selector: spot<Container>());
     expect(container.file.existsSync(), isTrue);
 
     final redPixelCoverage =
@@ -60,7 +60,7 @@ void main() {
         ),
       ),
     );
-    final containerSnapshot = spotSingle<Container>().snapshot();
+    final containerSnapshot = spot<Container>().snapshot();
 
     final container = await takeScreenshot(snapshot: containerSnapshot);
     expect(container.file.existsSync(), isTrue);
@@ -83,11 +83,11 @@ void main() {
         ),
       ),
     );
-    final containerSnapshot = spotSingle<Container>().snapshot();
+    final containerSnapshot = spot<Container>().snapshot();
 
     // Remove element that is captured in the snapshot
     await tester.pumpWidget(Container());
-    expect(containerSnapshot.element.mounted, isFalse);
+    expect(containerSnapshot.element!.mounted, isFalse);
 
     await expectLater(
       takeScreenshot(snapshot: containerSnapshot),
@@ -110,7 +110,7 @@ void main() {
         ),
       ),
     );
-    final containerElement = spotSingle<Container>().snapshot().element;
+    final containerElement = spot<Container>().snapshot().element;
 
     final container = await takeScreenshot(element: containerElement);
     expect(container.file.existsSync(), isTrue);
@@ -132,11 +132,11 @@ void main() {
         ),
       ),
     );
-    final containerElement = spotSingle<Container>().snapshot().element;
+    final containerElement = spot<Container>().snapshot().element;
 
     // Remove containerElement
     await tester.pumpWidget(Container());
-    expect(containerElement.mounted, isFalse);
+    expect(containerElement!.mounted, isFalse);
 
     await expectLater(
       takeScreenshot(element: containerElement),
@@ -159,15 +159,14 @@ void main() {
         ),
       ),
     );
-    final screenshot1 = await spotSingle<Container>().takeScreenshot();
+    final screenshot1 = await spot<Container>().takeScreenshot();
     expect(screenshot1.file.existsSync(), isTrue);
 
-    final screenshot2 =
-        await spotSingle<Container>().snapshot().takeScreenshot();
+    final screenshot2 = await spot<Container>().snapshot().takeScreenshot();
     expect(screenshot2.file.existsSync(), isTrue);
 
     final screenshot3 =
-        await spotSingle<Container>().snapshot().element.takeScreenshot();
+        await spot<Container>().snapshot().element!.takeScreenshot();
     expect(screenshot3.file.existsSync(), isTrue);
   });
 

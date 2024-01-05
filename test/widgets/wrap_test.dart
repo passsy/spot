@@ -11,11 +11,10 @@ void main() {
     testWidgets('filter', (widgetTester) async {
       await widgetTester.pumpWidget(MaterialApp(home: Wrap()));
 
-      final verticalWrapSpot = spotSingle<Wrap>().withDirection(Axis.vertical);
+      final verticalWrapSpot = spot<Wrap>().withDirection(Axis.vertical);
       verticalWrapSpot.doesNotExist();
 
-      final horizontalWrapSpot =
-          spotSingle<Wrap>().withDirection(Axis.horizontal);
+      final horizontalWrapSpot = spot<Wrap>().withDirection(Axis.horizontal);
       horizontalWrapSpot.existsOnce();
     });
 
@@ -23,11 +22,11 @@ void main() {
       await widgetTester.pumpWidget(MaterialApp(home: Wrap()));
 
       final verticalWrapSpot =
-          spotSingle<Wrap>().whereDirection((it) => it.equals(Axis.vertical));
+          spot<Wrap>().whereDirection((it) => it.equals(Axis.vertical));
       verticalWrapSpot.doesNotExist();
 
       final horizontalWrapSpot =
-          spotSingle<Wrap>().whereDirection((it) => it.equals(Axis.horizontal));
+          spot<Wrap>().whereDirection((it) => it.equals(Axis.horizontal));
       horizontalWrapSpot.existsOnce();
     });
 

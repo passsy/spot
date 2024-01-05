@@ -32,9 +32,13 @@ export 'package:spot/src/spot/matcher_generator.dart' show CreateMatchers;
 export 'package:spot/src/spot/props.dart';
 export 'package:spot/src/spot/selectors.dart'
     show
+        CreateWidgetMatcher,
+        // ignore: deprecated_member_use_from_same_package
+        DeprecatedSingleWidgetSnapshot,
         ElementFilter,
         // ignore: deprecated_member_use_from_same_package
         ExpectedQuantity,
+        // ignore: deprecated_member_use_from_same_package
         MatchProp,
         // ignore: deprecated_member_use_from_same_package
         MultiWidgetSelector,
@@ -46,18 +50,17 @@ export 'package:spot/src/spot/selectors.dart'
         QuantitySelectors,
         RelativeSelectors,
         SelectorQueries,
+        // ignore: deprecated_member_use_from_same_package
         SelectorToSnapshot,
         // ignore: deprecated_member_use_from_same_package
         SingleWidgetSelector,
         // ignore: deprecated_member_use_from_same_package
         SingleWidgetSnapshot,
-        DeprecatedSingleWidgetSnapshot,
         WidgetMatcher,
         WidgetMatcherExtensions,
         WidgetSelector,
         WidgetSnapshot;
-export 'package:spot/src/spot/snapshot.dart'
-    show MultiWidgetSelectorMatcher, SingleWidgetSelectorMatcher;
+export 'package:spot/src/spot/snapshot.dart' show MultiWidgetSelectorMatcher;
 export 'package:spot/src/spot/text/any_text.dart' show AnyText;
 export 'package:spot/src/spot/tree_snapshot.dart' show WidgetTreeNode;
 export 'package:spot/src/widgets/align.g.dart';
