@@ -13,7 +13,7 @@ void main() {
     testWidgets('no match', (tester) async {
       await tester.pumpWidget(Placeholder());
 
-      final spotter = spotSingle<SizedBox>();
+      final spotter = spot<SizedBox>();
 
       expect(() => spotter.doesNotExist(), returnsNormally);
       expect(() => spotter.existsOnce(), throwsTestFailure);
@@ -30,7 +30,7 @@ void main() {
     testWidgets('1 match', (tester) async {
       await tester.pumpWidget(SizedBox());
 
-      final spotter = spotSingle<SizedBox>();
+      final spotter = spot<SizedBox>();
 
       expect(() => spotter.doesNotExist(), throwsTestFailure);
       expect(() => spotter.existsOnce(), returnsNormally);
@@ -73,7 +73,7 @@ void main() {
         ),
       );
 
-      final spotter = spotSingle<SizedBox>(parents: [spotSingle<Center>()]);
+      final spotter = spot<SizedBox>(parents: [spot<Center>()]);
 
       expect(spotter.snapshot().discovered, isNotNull);
 
@@ -99,7 +99,7 @@ void main() {
         ),
       );
 
-      final spotter = spotSingle<SizedBox>(parents: [spotSingle<Material>()]);
+      final spotter = spot<SizedBox>(parents: [spot<Material>()]);
 
       expect(spotter.snapshot().discovered, isNull);
 
@@ -125,7 +125,7 @@ void main() {
         ),
       );
 
-      final spotter = spotSingle<Material>(parents: [spot<SizedBox>()]);
+      final spotter = spot<Material>(parents: [spot<SizedBox>()]);
 
       final throwsFailureWithMessage = throwsSpotErrorContaining(
         ["Could not find SizedBox > Material in widget tree"],
@@ -155,9 +155,9 @@ void main() {
         ),
       );
 
-      final selector = spotSingle<Center>(
-        children: [spotSingle<SizedBox>()],
-        parents: [spotSingle<Material>()], // <-- does not exist
+      final selector = spot<Center>(
+        children: [spot<SizedBox>()],
+        parents: [spot<Material>()], // <-- does not exist
       );
 
       expect(selector.snapshot().discovered, isNull);
@@ -166,7 +166,8 @@ void main() {
         "Could not find Material > Center with children: ['SizedBox'] in widget tree, expected",
         RegExp(r"(?:exactly|at most|at least) \d+"),
         RegExp(
-            r"A less specific search 'Center with children: \['SizedBox'\]' discovered \d+ matches"),
+          r"A less specific search 'Center with children: \['SizedBox'\]' discovered \d+ matches",
+        ),
         "Possible match #1:\nCenter(alignment: Alignment.center",
       ]);
 
@@ -194,7 +195,7 @@ void main() {
         ),
       );
 
-      final spotter = spotSingle<SizedBox>(children: [spotSingle<Center>()]);
+      final spotter = spot<SizedBox>(children: [spot<Center>()]);
 
       expect(spotter.snapshot().discovered, isNotNull);
 
@@ -220,7 +221,7 @@ void main() {
         ),
       );
 
-      final spotter = spotSingle<SizedBox>(children: [spotSingle<Material>()]);
+      final spotter = spot<SizedBox>(children: [spot<Material>()]);
 
       expect(spotter.snapshot().discovered, isNull);
 
@@ -254,7 +255,7 @@ void main() {
         ),
       );
       expect(
-        () => spot<Text>(parents: [spotSingle<Row>()]).existsAtLeastNTimes(2),
+        () => spot<Text>(parents: [spot<Row>()]).existsAtLeastNTimes(2),
         throwsSpotErrorContaining(
           [
             "Found 1 elements matching Row > Text in widget tree, expected at least 2",

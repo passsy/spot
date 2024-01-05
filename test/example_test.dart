@@ -44,21 +44,21 @@ void main() {
     spot<Text>().first().existsOnce().hasText('Pepe');
 
     final WidgetSelector<Scaffold> scaffold =
-        spotSingle<MaterialApp>().spotSingle<Scaffold>();
-    final appBar = scaffold.spotSingle<AppBar>();
+        spot<MaterialApp>().spot<Scaffold>();
+    final appBar = scaffold.spot<AppBar>();
 
-    final container = scaffold.spotSingle<Container>()..existsOnce();
+    final container = scaffold.spot<Container>()..existsOnce();
 
-    appBar.spotSingleIcon(
+    appBar.spotIcon(
       Icons.home,
       parents: [spot<IconButton>(), container],
     ).existsOnce();
 
-    appBar.spotSingle<IconButton>(
-      children: [spotSingleIcon(Icons.settings)],
+    appBar.spot<IconButton>(
+      children: [spotIcon(Icons.settings)],
     ).doesNotExist();
 
-    appBar.spotSingleIcon(
+    appBar.spotIcon(
       Icons.settings,
       parents: [spot<IconButton>()],
     ).doesNotExist();

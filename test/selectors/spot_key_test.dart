@@ -16,13 +16,13 @@ void main() {
           ),
         ),
       );
-      spotSingleKey(const ValueKey('key')).existsOnce();
+      spotKey(const ValueKey('key')).existsOnce();
     });
 
     testWidgets('spotKey errors', (tester) async {
       await tester.pumpWidget(Center());
       expect(
-        () => spotSingleKey(const ValueKey('key')).existsOnce(),
+        () => spotKey(const ValueKey('key')).existsOnce(),
         throwsSpotErrorContaining([
           "Could not find Widget with key: \"[<'key'>]\" in widget tree",
         ]),
@@ -39,13 +39,13 @@ void main() {
           ),
         ),
       );
-      spot<Center>().spotSingleKey(const ValueKey('key')).existsOnce();
+      spot<Center>().spotKey(const ValueKey('key')).existsOnce();
     });
 
     testWidgets('spotKey errors', (tester) async {
       await tester.pumpWidget(Center(child: SizedBox()));
       expect(
-        () => spot<Center>().spotSingleKey(const ValueKey('key')).existsOnce(),
+        () => spot<Center>().spotKey(const ValueKey('key')).existsOnce(),
         throwsSpotErrorContaining([
           "Could not find Center > Widget with key: \"[<'key'>]\" in widget tree",
         ]),
@@ -107,8 +107,8 @@ void main() {
           ),
         ),
       );
-      spotKeys(key1).existsExactlyNTimes(2);
-      spotKeys(key2).existsExactlyNTimes(2);
+      spotKey(key1).existsExactlyNTimes(2);
+      spotKey(key2).existsExactlyNTimes(2);
     });
 
     testWidgets(
@@ -138,7 +138,7 @@ void main() {
           ),
         );
         expect(
-          () => spotSingleKey(key1).existsOnce(),
+          () => spotKey(key1).existsOnce(),
           throwsSpotErrorContaining([
             'Found 2 elements matching Widget with key: "[<1>]"',
             'Text-[<1>]("a"',

@@ -1,5 +1,4 @@
 import 'package:checks/checks.dart';
-import 'package:collection/collection.dart' show ListEquality;
 import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -655,17 +654,50 @@ extension MatchPropNonNullable<T> on MatchProp<T?> {
   }
 }
 
-class WidgetMatcher<W extends Widget> {
-  final Element element;
-  final WidgetSelector<W> selector;
+abstract class WidgetMatcher<W extends Widget> {
+  Element get element;
 
-  /// Returns the Widget that is associated with [element]
-  W get widget => selector.mapElementToWidget(element);
+  WidgetSelector<W> get selector;
 
-  WidgetMatcher({
+  W get widget;
+
+  factory WidgetMatcher({
+    required Element element,
+    required WidgetSelector<W> selector,
+  }) = _WidgetMatcherImpl;
+
+  factory WidgetMatcher.fromSnapshot(WidgetSnapshot<W> snapshot) =
+      _WidgetMatcherFromSnapshot;
+}
+
+class _WidgetMatcherImpl<W extends Widget> implements WidgetMatcher<W> {
+  _WidgetMatcherImpl({
     required this.element,
     required this.selector,
-  }) : assert(element.widget is W);
+  });
+
+  @override
+  final Element element;
+  @override
+  final WidgetSelector<W> selector;
+
+  @override
+  W get widget => selector.mapElementToWidget(element);
+}
+
+class _WidgetMatcherFromSnapshot<W extends Widget> implements WidgetMatcher<W> {
+  _WidgetMatcherFromSnapshot(this.snapshot);
+
+  final WidgetSnapshot<W> snapshot;
+
+  @override
+  W get widget => snapshot.widget;
+
+  @override
+  Element get element => snapshot.element;
+
+  @override
+  WidgetSelector<W> get selector => snapshot.selector;
 }
 
 extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
@@ -673,8 +705,7 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
     String propName,
     MatchProp<T> match,
   ) {
-    final mappedElement = selector.mapElementToWidget(element);
-    final diagnosticsNode = mappedElement.toDiagnosticsNode();
+    final diagnosticsNode = widget.toDiagnosticsNode();
     final DiagnosticsNode? prop = diagnosticsNode
         .getProperties()
         .firstOrNullWhere((e) => e.name == propName);
@@ -900,50 +931,7 @@ class WidgetTypePredicate<W extends Widget> extends PredicateWithDescription {
 
 /// A [WidgetSelector] that intends to resolve to a single widget
 @Deprecated('Use WidgetSelector')
-class SingleWidgetSelector<W extends Widget> extends WidgetSelector<W> {
-  @Deprecated('Use WidgetSelector')
-  SingleWidgetSelector({
-    required super.props,
-    super.parents,
-    super.children,
-    super.mapElementToWidget,
-  });
-
-  @Deprecated('Use WidgetSelector')
-  SingleWidgetSelector.fromWidgetSelector(WidgetSelector<W> selector)
-      : super(
-          props: selector.props,
-          parents: selector.parents,
-          children: selector.children,
-          mapElementToWidget: selector.mapElementToWidget,
-          quantityConstraint: QuantityConstraint.single,
-        );
-
-  SingleWidgetSnapshot<W> snapshot() {
-    TestAsyncUtils.guardSync();
-    return snapshot_file.snapshot(this).single;
-  }
-
-  /// Convenience getter to access the [Widget] when evaluating the [WidgetSelector]
-  W snapshotWidget() {
-    TestAsyncUtils.guardSync();
-    return snapshot_file.snapshot(this).single.widget;
-  }
-
-  /// Convenience getter to access the [Element] when evaluating the [WidgetSelector]
-  Element snapshotElement() {
-    TestAsyncUtils.guardSync();
-    return snapshot_file.snapshot(this).single.element;
-  }
-
-  /// Convenience getter to access the [RenderObject] when evaluating the [WidgetSelector]
-  RenderObject snapshotRenderObject() {
-    TestAsyncUtils.guardSync();
-    // There is not a single Element in the Flutter SDK that returns null for `renderObject`.
-    // So we can safely assume that this cast never fails.
-    return snapshot_file.snapshot(this).single.element.renderObject!;
-  }
-}
+typedef SingleWidgetSelector<W extends Widget> = WidgetSelector<W>;
 
 /// A [WidgetSelector] that to 0..N widgets
 @Deprecated('Use WidgetSelector')
@@ -1058,7 +1046,7 @@ class ChildFilter implements ElementFilter {
         // TODO instead of searching the children, starting from the root widget, find a way to reverse the search and
         //  start form the subtree.
         //  Keep in mind, each child selector might be defined with parents which are outside of the subtree
-        final MultiWidgetSnapshot ss =
+        final WidgetSnapshot ss =
             snapshot(childSelector, validateQuantity: false);
         final discoveredInSubtree =
             ss.discovered.where((node) => subtreeNodes.contains(node)).toList();
@@ -1097,6 +1085,7 @@ class ChildFilter implements ElementFilter {
     return matchingChildNodes;
   }
 
+  @override
   String get description {
     final children = childSelectors.isNotEmpty
         ? 'with children: [${childSelectors.map((e) => e.toStringBreadcrumb()).join(', ')}]'
@@ -1149,6 +1138,7 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
         children = List.unmodifiable(children ?? []),
         elementFilters = List.unmodifiable(elementFilters ?? []),
         quantityConstraint = quantityConstraint ??
+            // ignore: deprecated_member_use_from_same_package
             (expectedQuantity == ExpectedQuantity.single
                 ? QuantityConstraint.single
                 : QuantityConstraint.unconstrained),
@@ -1258,6 +1248,7 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
     List<WidgetSelector>? parents,
     List<WidgetSelector>? children,
     List<ElementFilter>? elementFilters,
+    // ignore: deprecated_member_use_from_same_package
     ExpectedQuantity? expectedQuantity,
     QuantityConstraint? quantityConstraint,
     W Function(Element element)? mapElementToWidget,
@@ -1445,7 +1436,7 @@ class QuantityConstraint {
 extension SelectorToSnapshot<W extends Widget> on WidgetSelector<W> {
   MultiWidgetSnapshot<W> snapshot() {
     TestAsyncUtils.guardSync();
-    return snapshot_file.snapshot(this, validateQuantity: false);
+    return snapshot_file.snapshot(this);
   }
 
   @useResult
@@ -1455,15 +1446,50 @@ extension SelectorToSnapshot<W extends Widget> on WidgetSelector<W> {
     );
   }
 
+  @Deprecated('Use .atMost(1) or .amount(1)')
   @useResult
   SingleWidgetSelector<W> get single {
-    return SingleWidgetSelector<W>.fromWidgetSelector(this);
+    return atMost(1);
   }
 }
 
+extension ReadSingleSnapshot<W extends Widget> on WidgetSelector<W> {
+  /// Convenience getter to access the [Widget] when evaluating the [WidgetSelector]
+  W snapshotWidget() {
+    TestAsyncUtils.guardSync();
+    return snapshot_file.snapshot(this).single.widget;
+  }
+
+  /// Convenience getter to access the [Element] when evaluating the [WidgetSelector]
+  Element snapshotElement() {
+    TestAsyncUtils.guardSync();
+    return snapshot_file.snapshot(this).single.element;
+  }
+
+  /// Convenience getter to access the [RenderObject] when evaluating the [WidgetSelector]
+  RenderObject snapshotRenderObject() {
+    TestAsyncUtils.guardSync();
+    // There is not a single Element in the Flutter SDK that returns null for `renderObject`.
+    // So we can safely assume that this cast never fails.
+    return snapshot_file.snapshot(this).single.element.renderObject!;
+  }
+}
+
+@Deprecated('Use WidgetSnapshot')
+typedef MultiWidgetSnapshot<W extends Widget> = WidgetSnapshot<W>;
+@Deprecated('Use WidgetSnapshot')
+typedef SingleWidgetSnapshot<W extends Widget> = WidgetSnapshot<W>;
+
+extension DeprecatedSingleWidgetSnapshot<W extends Widget>
+    on SingleWidgetSnapshot<W> {
+  Element get discoveredElement => element;
+
+  W get discoveredWidget => widget;
+}
+
 /// A collection of [discovered] elements that match [selector]
-class MultiWidgetSnapshot<W extends Widget> {
-  MultiWidgetSnapshot({
+class WidgetSnapshot<W extends Widget> implements WidgetMatcher<W> {
+  WidgetSnapshot({
     required this.selector,
     required this.discovered,
     required this.debugCandidates,
@@ -1480,15 +1506,18 @@ class MultiWidgetSnapshot<W extends Widget> {
   /// widget in the tree.
   final Map<WidgetTreeNode, Widget> _widgets;
 
+  @override
   final WidgetSelector<W> selector;
 
+  /// A widget tree (not necessarily the whole tree) that was used to match elements with [selector]
   final ScopedWidgetTreeSnapshot scope;
 
-  /// All widgets that were checked by [selector]
+  /// All widgets from [scope] that were checked by [selector]
   ///
   /// Only ever use this for debugging purposes, the number of candidates can vary
   final List<Element> debugCandidates;
 
+  /// All elements in [scope] that match [selector]
   final List<WidgetTreeNode> discovered;
 
   /// Shorthand to get the widgets of all discovered elements
@@ -1499,6 +1528,14 @@ class MultiWidgetSnapshot<W extends Widget> {
   /// To check the number of discovered elements, always use [discovered] or [discoveredElements]. Use [discoveredWidgets] only when you need to access any properties of the widgets.
   List<W> get discoveredWidgets => _widgets.values.whereType<W>().toList();
 
+  /// Shorthand to access the [Element] of snapshots of single elements
+  // TODO make the single exception for multiple elements more explicit
+  @override
+  Element get element => discovered.single.element;
+
+  @override
+  W get widget => selector.mapElementToWidget(element);
+
   List<Element> get discoveredElements =>
       discovered.map((e) => e.element).toList();
 
@@ -1507,6 +1544,9 @@ class MultiWidgetSnapshot<W extends Widget> {
     return 'SpotSnapshot of $selector (${discoveredElements.length} matches)}';
   }
 
+  @Deprecated(
+    'Call is unnecessary, WidgetSnapshot itself offers everything SingleWidgetSnapshot did in the past',
+  )
   @useResult
   SingleWidgetSnapshot<W> get single {
     if (discovered.length > 1) {
@@ -1530,76 +1570,9 @@ class MultiWidgetSnapshot<W extends Widget> {
     }
 
     assert(discovered.length <= 1);
-    return SingleWidgetSnapshot(
+    return WidgetSnapshot(
       selector: selector,
-      discovered: discovered.firstOrNull,
-      debugCandidates: debugCandidates,
-      scope: scope,
-    );
-  }
-}
-
-/// A snapshot of a single [discovered] element that matches [selector]
-class SingleWidgetSnapshot<W extends Widget> implements WidgetMatcher<W> {
-  SingleWidgetSnapshot({
-    required this.selector,
-    required this.discovered,
-    required this.debugCandidates,
-    required this.scope,
-  }) : _widget = discovered?.element == null
-            ? null
-            : selector.mapElementToWidget(discovered!.element);
-
-  /// The widget at the point when the snapshot was taken
-  ///
-  /// [Element] is a mutable object that might have changed since the snapshot
-  /// was taken. This is a reference to the widget that was found at the time
-  /// the snapshot was taken. This allows to compare the widget with the current
-  /// widget in the tree.
-  final W? _widget;
-
-  final ScopedWidgetTreeSnapshot scope;
-
-  @override
-  final WidgetSelector<W> selector;
-
-  /// All widgets that were checked by [selector]
-  ///
-  /// Only ever use this for debugging purposes, the number of candidates can vary
-  final List<Element> debugCandidates;
-
-  /// The node in the widget tree that was found by [selector]
-  final WidgetTreeNode? discovered;
-
-  @override
-  String toString() {
-    return 'SingleSpotSnapshot{widget: $_widget, selector: $selector, element: ${discovered?.element}}';
-  }
-
-  @override
-  Element get element {
-    if (discovered == null) {
-      throw StateError(
-        "WidgetSelector does not match any widget, can not access the shorthand 'element'. "
-        "Instead check if 'discovered' is null.",
-      );
-    }
-    return discovered!.element;
-  }
-
-  W? get discoveredWidget =>
-      discovered == null ? null : selector.mapElementToWidget(element);
-
-  Element? get discoveredElement => element;
-
-  @override
-  W get widget => _widget!;
-
-  @useResult
-  MultiWidgetSnapshot<W> get multi {
-    return MultiWidgetSnapshot(
-      selector: selector,
-      discovered: [if (discovered != null) discovered!],
+      discovered: discovered,
       debugCandidates: debugCandidates,
       scope: scope,
     );
@@ -1608,21 +1581,19 @@ class SingleWidgetSnapshot<W extends Widget> implements WidgetMatcher<W> {
 
 extension QuantitySelectors<W extends Widget> on WidgetSelector<W> {
   WidgetSelector<W> amount(int n) {
-    return self.copyWith(
-      quantityConstraint: QuantityConstraint.exactly(n),
-    );
+    return self.overrideQuantityConstraint(QuantityConstraint.exactly(n));
   }
 
   WidgetSelector<W> atLeast(int n) {
-    return self.copyWith(
-      quantityConstraint: QuantityConstraint.atLeast(n),
-    );
+    return self.overrideQuantityConstraint(QuantityConstraint.atLeast(n));
   }
 
   WidgetSelector<W> atMost(int n) {
-    return self.copyWith(
-      quantityConstraint: QuantityConstraint.atMost(n),
-    );
+    return self.overrideQuantityConstraint(QuantityConstraint.atMost(n));
+  }
+
+  WidgetSelector<W> overrideQuantityConstraint(QuantityConstraint constraint) {
+    return self.copyWith(quantityConstraint: constraint);
   }
 }
 
@@ -1708,7 +1679,7 @@ extension AssertionMatcher<W extends Widget> on MultiWidgetSnapshot<W> {
   SingleWidgetSnapshot<W> single() {
     return SingleWidgetSnapshot(
       selector: selector,
-      discovered: discovered.firstOrNull,
+      discovered: discovered,
       debugCandidates: debugCandidates,
       scope: scope,
     );
@@ -1723,6 +1694,7 @@ extension MutliMatchers<W extends Widget> on MultiWidgetSnapshot<W> {
     }
 
     late String matcherDescription;
+    // TODO return Iterable<WidgetMatcher> from WidgetSnapshot
     final found = discovered.any((element) {
       final wm = WidgetMatcher(
         element: element.element,

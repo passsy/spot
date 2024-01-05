@@ -45,16 +45,16 @@ void main() {
       findsOneWidget,
     );
 
-    spotSingle<MaterialApp>().spotSingle<Center>().existsOnce();
-    spotSingle<Center>(
-      parents: [spotSingle<MaterialApp>()],
-      children: [spotSingle<Padding>()],
+    spot<MaterialApp>().spot<Center>().existsOnce();
+    spot<Center>(
+      parents: [spot<MaterialApp>()],
+      children: [spot<Padding>()],
     ).existsOnce();
-    spotSingle<Padding>().existsOnce();
-    spotSingle<Wrap>().existsOnce();
-    spotSingle<Wrap>().spot<Text>().existsAtLeastOnce();
-    spotSingle<Wrap>().spot<Text>().existsAtLeastOnce();
-    spotSingle<GestureDetector>().existsOnce();
+    spot<Padding>().existsOnce();
+    spot<Wrap>().existsOnce();
+    spot<Wrap>().spot<Text>().existsAtLeastOnce();
+    spot<Wrap>().spot<Text>().existsAtLeastOnce();
+    spot<GestureDetector>().existsOnce();
   });
 
   testWidgets('existsOnce() fails when multiple widgets exist', (tester) async {
@@ -78,7 +78,7 @@ void main() {
       ),
     );
     expect(
-      () => spotSingle<Text>().existsOnce(),
+      () => spot<Text>().existsOnce(),
       throwsSpotErrorContaining(
         [
           'Found 2 elements',
@@ -144,46 +144,46 @@ void main() {
         ),
       ),
     );
-    final appBar = spotSingle<AppBar>();
-    appBar.spotSingle<Text>().existsOnce().hasText('App Title').hasMaxLines(2);
+    final appBar = spot<AppBar>();
+    appBar.spot<Text>().existsOnce().hasText('App Title').hasMaxLines(2);
 
     // Error message only show that it could not be found
-    spotSingle<Wrap>().withDirection(Axis.horizontal).withDiagnosticProp<Axis>(
+    spot<Wrap>().withDirection(Axis.horizontal).withDiagnosticProp<Axis>(
       'direction',
       (Subject<Axis> it) {
         it.equals(Axis.horizontal);
       },
     ).existsAtLeastOnce();
 
-    spotSingle<Wrap>().withDirection(Axis.horizontal).existsAtLeastOnce();
+    spot<Wrap>().withDirection(Axis.horizontal).existsAtLeastOnce();
 
     // Error message can show the actual value of the direction
     spot<Wrap>()
         .existsAtLeastOnce()
         .any((wrap) => wrap.hasDirection(Axis.horizontal));
-    spotSingle<Wrap>().existsOnce().hasDirection(Axis.horizontal);
+    spot<Wrap>().existsOnce().hasDirection(Axis.horizontal);
 
     final WidgetSelector<Text> selector =
-        spotSingle<Wrap>().spotSingle<Text>().withMaxLines(2);
+        spot<Wrap>().spot<Text>().withMaxLines(2);
     selector.existsOnce().hasText('Hello');
 
-    spotSingle<Wrap>()
-        .spotSingle<Text>(parents: [spotSingle<GestureDetector>()])
+    spot<Wrap>()
+        .spot<Text>(parents: [spot<GestureDetector>()])
         .existsOnce()
         .hasText('Hello');
 
-    final textSpot = spotSingle<Wrap>()
-        .spotSingle<Text>(parents: [spotSingle<GestureDetector>()]);
+    final textSpot = spot<Wrap>()
+        .spot<Text>(parents: [spot<GestureDetector>()]);
     textSpot.existsOnce().hasText('Hello');
 
-    spotSingle<Text>(parents: [spotSingle<Wrap>()])
+    spot<Text>(parents: [spot<Wrap>()])
         .withMaxLines(2)
         .existsOnce()
         .hasText('Hello');
     selector.existsOnce().hasText('Hello');
 
-    spotSingle<Wrap>()
-        .spotSingle<Text>()
+    spot<Wrap>()
+        .spot<Text>()
         .withMaxLines(1)
         .existsOnce()
         .hasText('World');
@@ -215,9 +215,9 @@ void main() {
     final textSnapshot = spot<Text>().snapshot();
     expect(textSnapshot.discoveredElements.length, 2);
 
-    final wrap = spotSingle<Wrap>()..snapshot().existsOnce();
+    final wrap = spot<Wrap>()..snapshot().existsOnce();
     // only find the single sizedBox below Wrap
-    wrap.spotSingle<SizedBox>().existsOnce();
+    wrap.spot<SizedBox>().existsOnce();
 
     final multipleSpotter = spot<Text>();
     expect(snapshot(multipleSpotter).discovered.length, 2);
@@ -227,7 +227,7 @@ void main() {
     multipleSpotter.copyWith(
       parents: [
         // only finds the single SizedBox in Wrap, not the SizedBox below Center
-        wrap.spotSingle<SizedBox>(),
+        wrap.spot<SizedBox>(),
       ],
     ).existsOnce();
   });

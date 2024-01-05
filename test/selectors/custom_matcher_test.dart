@@ -37,7 +37,7 @@ void main() {
         ),
       ),
     );
-    final checkbox = spotSingle<Checkbox>();
+    final checkbox = spot<Checkbox>();
 
     testWidgets('hasProp selector', (widgetTester) async {
       await widgetTester.pumpWidget(checkedCheckbox);
