@@ -28,7 +28,7 @@ void actTests() {
       ),
     );
 
-    final button = spotSingle<ElevatedButton>()..existsOnce();
+    final button = spot<ElevatedButton>()..existsOnce();
 
     expect(i, 0);
     await act.tap(button);
@@ -48,7 +48,7 @@ void actTests() {
         ),
       ),
     );
-    final future = act.tap(spotSingle<ElevatedButton>());
+    final future = act.tap(spot<ElevatedButton>());
 
     try {
       TestAsyncUtils.guardSync();
@@ -64,7 +64,7 @@ void actTests() {
 
   testWidgets('tap throws if widget not in widget tree', (tester) async {
     await tester.pumpWidget(const MaterialApp());
-    final button = spotSingle<ElevatedButton>()..doesNotExist();
+    final button = spot<ElevatedButton>()..doesNotExist();
 
     await expectLater(
       () => act.tap(button),
@@ -118,7 +118,7 @@ void actTests() {
       ),
     );
 
-    final button = spotSingle<ElevatedButton>()..existsOnce();
+    final button = spot<ElevatedButton>()..existsOnce();
 
     await expectLater(
       () => act.tap(button),
@@ -151,7 +151,7 @@ void actTests() {
       ),
     );
 
-    final button = spotSingle<ElevatedButton>()..existsOnce();
+    final button = spot<ElevatedButton>()..existsOnce();
     await expectLater(
       () => act.tap(button),
       throwsSpotErrorContaining([
@@ -176,7 +176,7 @@ void actTests() {
       ),
     );
 
-    final button = spotSingle<ElevatedButton>()..existsOnce();
+    final button = spot<ElevatedButton>()..existsOnce();
     await expectLater(
       () => act.tap(button),
       throwsSpotErrorContaining([
@@ -204,7 +204,7 @@ void actTests() {
       ),
     );
 
-    final button = spotSingle<ElevatedButton>()..existsOnce();
+    final button = spot<ElevatedButton>()..existsOnce();
     await expectLater(
       () => act.tap(button),
       throwsSpotErrorContaining([
@@ -217,7 +217,7 @@ void actTests() {
 
   testWidgets('tapping throws for non cartesian widgets', (tester) async {
     await tester.pumpWidget(_NonCartesianWidget());
-    final button = spotSingle<_NonCartesianWidget>()..existsOnce();
+    final button = spot<_NonCartesianWidget>()..existsOnce();
     await expectLater(
       () => act.tap(button),
       throwsSpotErrorContaining([
@@ -231,7 +231,7 @@ void actTests() {
   testWidgets('tapping throws for widgets without a RenderObject',
       (tester) async {
     await tester.pumpWidget(_NoRenderObjectWidget());
-    final button = spotSingle<_NoRenderObjectWidget>()..existsOnce();
+    final button = spot<_NoRenderObjectWidget>()..existsOnce();
     await expectLater(
       () => act.tap(button),
       throwsSpotErrorContaining([

@@ -45,7 +45,7 @@ class Screenshot {
 /// line number.
 Future<Screenshot> takeScreenshot({
   Element? element,
-  SingleWidgetSnapshot? snapshot,
+  WidgetSnapshot? snapshot,
   WidgetSelector? selector,
   String? name,
 }) async {
@@ -62,19 +62,28 @@ Future<Screenshot> takeScreenshot({
     }
 
     if (snapshot != null) {
-      if (!snapshot.element.mounted) {
+      final elements = snapshot.discovered;
+      if (elements.length > 1) {
+        throw StateError(
+          'Screenshots can only be taken of a single elements. '
+          'The snapshot of ${snapshot.selector} contains ${elements.length} elements. '
+          'Use a more specific selector to narrow down the scope of the screenshot.',
+        );
+      }
+      final element = elements.first.element;
+      if (!element.mounted) {
         throw StateError(
           'Can not take a screenshot of snapshot $snapshot, because it is not mounted anymore. '
           'Only Elements that are currently mounted can be screenshotted.',
         );
       }
-      if (snapshot.widget != snapshot.element.widget) {
+      if (snapshot.discoveredWidgets.first != element.widget) {
         throw StateError(
           'Can not take a screenshot of snapshot $snapshot, because the Element has been updated since the snapshot was taken. '
           'This happens when the widget tree is rebuilt.',
         );
       }
-      return snapshot.element;
+      return element;
     }
 
     if (element != null) {
@@ -152,8 +161,7 @@ extension SelectorScreenshotExtension<W extends Widget> on WidgetSelector<W> {
 }
 
 /// Provides the ability to create screenshots of a [SingleWidgetSnapshot]
-extension SnapshotScreenshotExtension<W extends Widget>
-    on SingleWidgetSnapshot<W> {
+extension SnapshotScreenshotExtension<W extends Widget> on WidgetSnapshot<W> {
   /// Takes as screenshot of the widget that was captured in this snapshot.
   ///
   /// The snapshot must have been taken at the same frame

@@ -30,7 +30,7 @@ void main() {
 
     final scaffold = spot<MaterialApp>().spot<Scaffold>();
     final appBar = scaffold.spot<AppBar>();
-    spot<AppBar>().spotSingleIcon(Icons.settings).existsOnce();
+    spot<AppBar>().spotIcon(Icons.settings).existsOnce();
 
     spot<Icon>(parents: [appBar, spot<IconButton>()])
         .existsExactlyNTimes(2)
@@ -63,7 +63,7 @@ void main() {
 
     final scaffold = spot<MaterialApp>().spot<Scaffold>();
     final appBar = scaffold.spot<AppBar>();
-    spot<AppBar>().spotSingleIcon(Icons.settings).existsOnce();
+    spot<AppBar>().spotIcon(Icons.settings).existsOnce();
 
     spot<Icon>(parents: [appBar, spot<IconButton>()])
         .existsExactlyNTimes(2)
@@ -93,7 +93,7 @@ void main() {
 
     final scaffold = spot<MaterialApp>().spot<Scaffold>();
     final appBar = scaffold.spot<AppBar>();
-    spot<AppBar>().spotSingleIcon(Icons.settings).existsOnce();
+    spot<AppBar>().spotIcon(Icons.settings).existsOnce();
 
     expect(
       () => spot<Icon>(parents: [appBar, spot<IconButton>()])
@@ -130,7 +130,7 @@ void main() {
 
     final scaffold = spot<MaterialApp>().spot<Scaffold>();
     final appBar = scaffold.spot<AppBar>();
-    spot<AppBar>().spotSingleIcon(Icons.settings).existsOnce();
+    spot<AppBar>().spotIcon(Icons.settings).existsOnce();
 
     expect(
       () => spot<Icon>(parents: [appBar, spot<IconButton>()])

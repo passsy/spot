@@ -113,7 +113,7 @@ void main() {
           await tester.pumpWidget(tree.value);
           final foundSnapshot = spotText('foo').snapshot();
           check(foundSnapshot.discovered).length.equals(1);
-          check(foundSnapshot.single.discovered).isA<WidgetTreeNode>();
+          check(foundSnapshot.single.discovered).isA<List<WidgetTreeNode>>();
           check(foundSnapshot.single.discoveredElement).isA<Element>();
           check(foundSnapshot.single.discoveredWidget).isA<AnyText>();
           check(foundSnapshot.single.element).isA<Element>();

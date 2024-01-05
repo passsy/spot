@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 
-import '../util/assert_error.dart';
-
 void main() {
   testWidgets('parents can have parents too', (tester) async {
     await tester.pumpWidget(
@@ -46,9 +44,9 @@ void main() {
       ),
     );
 
-    final materialApp = spotSingle<MaterialApp>();
-    final scaffold = materialApp.spotSingle<Scaffold>();
-    final wrap = scaffold.spotSingle<Wrap>();
+    final materialApp = spot<MaterialApp>();
+    final scaffold = materialApp.spot<Scaffold>();
+    final wrap = scaffold.spot<Wrap>();
 
     // IconButton has parents with a different scope
     // and search is not limited to scope of IconButton
@@ -92,11 +90,11 @@ void main() {
       ),
     );
 
-    final materialApp = spotSingle<MaterialApp>();
-    final scaffold = materialApp.spotSingle<Scaffold>();
-    final wrap = scaffold.spotSingle<Wrap>();
+    final materialApp = spot<MaterialApp>();
+    final scaffold = materialApp.spot<Scaffold>();
+    final wrap = scaffold.spot<Wrap>();
 
-    final iconButton = wrap.spotSingle<IconButton>();
+    final iconButton = wrap.spot<IconButton>();
 
     scaffold.spot<Container>(children: [iconButton]).existsOnce();
   });
@@ -119,13 +117,13 @@ void main() {
     final wraps = spot<Wrap>();
     wraps.existsExactlyNTimes(2);
 
-    // spotSingle can be used matching only a single Wrap despite multiple Wraps being in the widget tree.
+    // spot can be used matching only a single Wrap despite multiple Wraps being in the widget tree.
     // There is only a single Wrap in the subtree of the last Container, so this test passes.
-    containers.withChild(spotSingle<Wrap>()).existsOnce();
+    containers.withChild(spot<Wrap>()).existsOnce();
 
     // The child matcher can reach outside of the subtree. MaterialApp (parent) is defined outside.
     // Still both Wraps match, but only the one in the subtree is counted
-    containers.withChild(spot<MaterialApp>().spotSingle<Wrap>()).existsOnce();
+    containers.withChild(spot<MaterialApp>().spot<Wrap>()).existsOnce();
   });
 
   testWidgets('children scope does not throw when quantity does not match',
@@ -154,7 +152,7 @@ void main() {
     // child query expects one or more Wraps, which can be found
     containers.withChild(spot<Wrap>()).existsOnce();
     // Enforcing a single Wrap fails because the subtree of Container has two Wraps
-    containers.withChild(spotSingle<Wrap>()).doesNotExist();
+    containers.withChild(spot<Wrap>()).doesNotExist();
     containers.withChild(spot<Wrap>().amount(1)).doesNotExist();
     containers.withChild(spot<Wrap>().atLeast(1)).existsOnce();
     containers.withChild(spot<Wrap>().atMost(1)).doesNotExist();
@@ -180,7 +178,7 @@ void main() {
       ),
     );
 
-    spotSingle<CupertinoApp>().doesNotExist();
+    spot<CupertinoApp>().doesNotExist();
     spot<CupertinoApp>().atMost(1).doesNotExist();
     spot<CupertinoApp>().atLeast(1).doesNotExist();
     spot<CupertinoApp>().amount(1).doesNotExist();

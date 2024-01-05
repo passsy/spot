@@ -14,8 +14,7 @@ MultiWidgetSnapshot<W> snapshot<W extends Widget>(
   final treeSnapshot = currentWidgetTreeSnapshot();
 
   if (selector.parents.isEmpty) {
-    final MultiWidgetSnapshot<W> snapshot =
-        findWithinScope(treeSnapshot, selector);
+    final WidgetSnapshot<W> snapshot = findWithinScope(treeSnapshot, selector);
     if (validateQuantity) {
       snapshot.validateQuantity();
     }
@@ -31,7 +30,7 @@ MultiWidgetSnapshot<W> snapshot<W extends Widget>(
     return filter.filter(list);
   }).toList();
 
-  final snapshot = MultiWidgetSnapshot<W>(
+  final snapshot = WidgetSnapshot<W>(
     selector: selector,
     discovered: discovered,
     scope: treeSnapshot,
@@ -61,8 +60,8 @@ class CandidateGeneratorFromParents<W extends Widget>
       return widgetSnapshot;
     }).toList();
 
-    final WidgetSelector<W> selectorWithoutParents = selector
-        .copyWith(parents: [], expectedQuantity: ExpectedQuantity.multi);
+    final WidgetSelector<W> selectorWithoutParents =
+        selector.copyWith(parents: []);
 
     // Take a snapshot from each parent and get the snapshots of all nodes that match
     final List<Map<WidgetTreeNode, List<MultiWidgetSnapshot<W>>>>
@@ -141,36 +140,6 @@ MultiWidgetSnapshot<W> findWithinScope<W extends Widget>(
     scope: scope,
     debugCandidates: candidates.map((it) => it.element).toList(),
   );
-}
-
-extension SingleWidgetSelectorMatcher<W extends Widget>
-    on SingleWidgetSnapshot<W> {
-  SingleWidgetSnapshot<W> existsOnce() {
-    if (discovered == null) {
-      // try finding similar selectors (less specific)
-      // if one is found, fail with a more specific error message
-      _tryMatchingLessSpecificCriteria(multi);
-
-      // else fail with default message
-      final errorBuilder = StringBuffer();
-      errorBuilder.writeln('Could not find $selector in widget tree');
-      _dumpWidgetTree(errorBuilder);
-      errorBuilder.writeln('Could not find $selector in widget tree');
-      fail(errorBuilder.toString());
-    }
-
-    return this;
-  }
-
-  void doesNotExist() {
-    if (discovered != null) {
-      final errorBuilder = StringBuffer();
-      errorBuilder.writeln('Found $selector in widget tree, expected none');
-      errorBuilder.writeln(discovered!.element.toStringDeep());
-      errorBuilder.writeln('Found $selector in widget tree, expected none');
-      fail(errorBuilder.toString());
-    }
-  }
 }
 
 extension _ValidateQuantity<W extends Widget> on MultiWidgetSnapshot<W> {
@@ -333,14 +302,12 @@ extension MultiWidgetSelectorMatcher<W extends Widget>
 /// Throws when an elements are found which match less specific criteria
 ///
 /// Uses all permutations of the criteria (props/parents/children)
-void _tryMatchingLessSpecificCriteria(
-  MultiWidgetSnapshot snapshot,
-) {
+void _tryMatchingLessSpecificCriteria(WidgetSnapshot snapshot) {
   final selector = snapshot.selector;
   final count = snapshot.discovered.length;
   final errorBuilder = StringBuffer();
   for (final lessSpecificSelector in selector._lessSpecificSelectors()) {
-    late final MultiWidgetSnapshot lessSpecificSnapshot;
+    late final WidgetSnapshot lessSpecificSnapshot;
     try {
       lessSpecificSnapshot = lessSpecificSelector.snapshot();
     } catch (e) {
@@ -403,7 +370,8 @@ void _tryMatchingLessSpecificCriteria(
       for (final Element match in lessSpecificSnapshot.discoveredElements) {
         index++;
         errorBuilder.writeln(
-            'Possible match #$index:\n${match.toStringDeep(minLevel: DiagnosticLevel.info)}');
+          'Possible match #$index:\n${match.toStringDeep(minLevel: DiagnosticLevel.info)}',
+        );
       }
       final significantTree =
           findCommonAncestor(lessSpecificSnapshot.discoveredElements.toSet())

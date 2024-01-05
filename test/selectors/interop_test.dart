@@ -80,8 +80,7 @@ void main() {
         ),
       );
 
-      final text = spot<MaterialApp>().spotSingle<Text>()
-        ..existsOnce().hasText('a');
+      final text = spot<MaterialApp>().spot<Text>()..existsOnce().hasText('a');
       expect(text.finder, findsOneWidget);
     });
   });
