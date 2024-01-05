@@ -124,7 +124,7 @@ WidgetSelector<Widget> get allWidgets => WidgetSelector.all;
 /// If multiple Widgets of type [W] are expected, use [spot] instead.
 @useResult
 @Deprecated('Use spot<W>().atMost(1)')
-SingleWidgetSelector<W> spotSingle<W extends Widget>({
+WidgetSelector<W> spotSingle<W extends Widget>({
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {
@@ -173,7 +173,7 @@ WidgetSelector<W> spotWidget<W extends Widget>(
 /// identity
 @useResult
 @Deprecated('Use spotWidget<W>().atMost(1)')
-SingleWidgetSelector<W> spotSingleWidget<W extends Widget>(
+WidgetSelector<W> spotSingleWidget<W extends Widget>(
   W widget, {
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
@@ -279,7 +279,7 @@ WidgetSelector<AnyText> spotTextWhere(
   'spot<Text>().whereText((it) => it.equals("Hello")).first() instead',
 )
 @useResult
-SingleWidgetSelector<W> spotSingleText<W extends Widget>(
+WidgetSelector<W> spotSingleText<W extends Widget>(
   String text, {
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
@@ -322,7 +322,7 @@ WidgetSelector<W> spotTexts<W extends Widget>(
 /// [icon]
 @useResult
 @Deprecated('Use spotIcon<W>().atMost(1)')
-SingleWidgetSelector<Icon> spotSingleIcon(
+WidgetSelector<Icon> spotSingleIcon(
   IconData icon, {
   bool skipOffstage = true,
   List<WidgetSelector> parents = const [],
@@ -370,7 +370,7 @@ WidgetSelector<Icon> spotIcons(
 /// Creates a chainable [WidgetSelector] that finds a widget with the given [key].
 @useResult
 @Deprecated('Use spotKey().atMost(1)')
-SingleWidgetSelector<W> spotSingleKey<W extends Widget>(
+WidgetSelector<W> spotSingleKey<W extends Widget>(
   Key key, {
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
@@ -400,7 +400,7 @@ WidgetSelector<W> spotKey<W extends Widget>(
 /// [key].
 @useResult
 @Deprecated('Use spotKey()')
-MultiWidgetSelector<W> spotKeys<W extends Widget>(
+WidgetSelector<W> spotKeys<W extends Widget>(
   Key key, {
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],

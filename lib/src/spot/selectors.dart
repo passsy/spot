@@ -37,27 +37,6 @@ mixin Selectors<T extends Widget> {
   /// This is `null` for the root of the chain.
   WidgetSelector<T>? get self;
 
-  /// Creates a [WidgetSelector] that matches a single Widgets of
-  /// type [W] that is in the scope of the parent [WidgetSelector].
-  ///
-  /// This selector compares the Widgets by runtimeType rather than by super
-  /// type (see [WidgetTypeFilter]). This makes sure that e.g. `spot<Align>()`
-  /// does not accidentally match a [Center] Widget, that extends [Align].
-  ///
-  /// ```dart
-  /// final appbar = spotSingle<MaterialApp>()
-  ///    .spotSingle<Scaffold>()
-  ///    .spotSingle<AppBar>()
-  /// ```
-  @useResult
-  @Deprecated('Use spot<W>().atMost(1)')
-  SingleWidgetSelector<W> spotSingle<W extends Widget>({
-    List<WidgetSelector> parents = const [],
-    List<WidgetSelector> children = const [],
-  }) {
-    return spot<W>(parents: parents, children: children).atMost(1);
-  }
-
   /// Creates a [WidgetSelector] that matches a all Widgets of
   /// type [W] that are in the scope of the parent [WidgetSelector].
   ///
@@ -82,6 +61,27 @@ mixin Selectors<T extends Widget> {
     );
 
     return selector;
+  }
+
+  /// Creates a [WidgetSelector] that matches a single Widgets of
+  /// type [W] that is in the scope of the parent [WidgetSelector].
+  ///
+  /// This selector compares the Widgets by runtimeType rather than by super
+  /// type (see [WidgetTypeFilter]). This makes sure that e.g. `spot<Align>()`
+  /// does not accidentally match a [Center] Widget, that extends [Align].
+  ///
+  /// ```dart
+  /// final appbar = spotSingle<MaterialApp>()
+  ///    .spotSingle<Scaffold>()
+  ///    .spotSingle<AppBar>()
+  /// ```
+  @useResult
+  @Deprecated('Use spot<W>().atMost(1)')
+  WidgetSelector<W> spotSingle<W extends Widget>({
+    List<WidgetSelector> parents = const [],
+    List<WidgetSelector> children = const [],
+  }) {
+    return spot<W>(parents: parents, children: children).atMost(1);
   }
 
   /// Creates a [WidgetSelector] that finds [widget] by identity and returns all
@@ -113,16 +113,13 @@ mixin Selectors<T extends Widget> {
   /// The comparison happens by identity (===)
   @useResult
   @Deprecated('Use spotWidget().atMost(1)')
-  SingleWidgetSelector<W> spotSingleWidget<W extends Widget>(
+  WidgetSelector<W> spotSingleWidget<W extends Widget>(
     W widget, {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    return spotWidgets<W>(
-      widget,
-      parents: [if (self != null) self!, ...parents],
-      children: children,
-    ).atMost(1);
+    return spotWidgets<W>(widget, parents: parents, children: children)
+        .atMost(1);
   }
 
   /// Creates a [WidgetSelector] that finds all [widget] by identity
@@ -130,22 +127,12 @@ mixin Selectors<T extends Widget> {
   /// The comparison happens by identity (===)
   @useResult
   @Deprecated('Use spotWidget().atMost(1)')
-  MultiWidgetSelector<W> spotWidgets<W extends Widget>(
+  WidgetSelector<W> spotWidgets<W extends Widget>(
     W widget, {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    return MultiWidgetSelector<W>(
-      props: [
-        WidgetTypePredicate<W>(),
-        PredicateWithDescription(
-          (Element e) => identical(e.widget, widget),
-          description: 'Widget === $widget',
-        ),
-      ],
-      parents: [if (self != null) self!, ...parents],
-      children: children,
-    );
+    return spotWidget<W>(widget, parents: parents, children: children);
   }
 
   /// Creates a [WidgetSelector] that finds the widget that is associated with
@@ -260,7 +247,7 @@ mixin Selectors<T extends Widget> {
     'spot<Text>().whereText((it) => it.equals("Hello")).first() instead',
   )
   @useResult
-  SingleWidgetSelector<W> spotSingleText<W extends Widget>(
+  WidgetSelector<W> spotSingleText<W extends Widget>(
     String text, {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
@@ -268,7 +255,7 @@ mixin Selectors<T extends Widget> {
   }) {
     return spotTexts<W>(
       text,
-      parents: [if (self != null) self!, ...parents],
+      parents: parents,
       children: children,
       findRichText: findRichText,
     ).atMost(1);
@@ -281,13 +268,13 @@ mixin Selectors<T extends Widget> {
     'spot<Text>().whereText((it) => it.equals("Hello")) instead',
   )
   @useResult
-  MultiWidgetSelector<W> spotTexts<W extends Widget>(
+  WidgetSelector<W> spotTexts<W extends Widget>(
     String text, {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
     bool findRichText = false,
   }) {
-    return MultiWidgetSelector<W>(
+    return WidgetSelector<W>(
       props: [
         WidgetTypePredicate<W>(),
         PredicateWithDescription(
@@ -347,15 +334,16 @@ mixin Selectors<T extends Widget> {
   /// Creates a [WidgetSelector] that finds a single [Icon] based on the [icon]
   @useResult
   @Deprecated('Use spotIcon().atMost(1)')
-  SingleWidgetSelector<Icon> spotSingleIcon(
+  WidgetSelector<Icon> spotSingleIcon(
     IconData icon, {
     bool skipOffstage = true,
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    return spotIcons(
+    return spotIcon(
       icon,
-      parents: [if (self != null) self!, ...parents],
+      skipOffstage: skipOffstage,
+      parents: parents,
       children: children,
     ).atMost(1);
   }
@@ -363,26 +351,16 @@ mixin Selectors<T extends Widget> {
   /// Creates a [WidgetSelector] that finds all [Icon] widgets based on the [icon]
   @useResult
   @Deprecated('Use spotIcon()')
-  MultiWidgetSelector<Icon> spotIcons(
+  WidgetSelector<Icon> spotIcons(
     IconData icon, {
     bool skipOffstage = true,
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    return MultiWidgetSelector(
-      props: [
-        WidgetTypePredicate<Icon>(),
-        PredicateWithDescription(
-          (Element e) {
-            if (e.widget is Icon) {
-              return (e.widget as Icon).icon == icon;
-            }
-            return false;
-          },
-          description: 'Widget with icon: "$icon"',
-        ),
-      ],
-      parents: [if (self != null) self!, ...parents],
+    return spotIcon(
+      icon,
+      skipOffstage: skipOffstage,
+      parents: parents,
       children: children,
     );
   }
@@ -410,14 +388,14 @@ mixin Selectors<T extends Widget> {
   /// Creates a [WidgetSelector] that finds a single widget with the given [key]
   @useResult
   @Deprecated('Use spotKey().atMost(1)')
-  SingleWidgetSelector<W> spotSingleKey<W extends Widget>(
+  WidgetSelector<W> spotSingleKey<W extends Widget>(
     Key key, {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    return spotKeys<W>(
+    return spotKey<W>(
       key,
-      parents: [if (self != null) self!, ...parents],
+      parents: parents,
       children: children,
     ).atMost(1);
   }
@@ -425,20 +403,14 @@ mixin Selectors<T extends Widget> {
   /// Creates a [WidgetSelector] that finds all widgets with the given [key]
   @useResult
   @Deprecated('Use spotKey()')
-  MultiWidgetSelector<W> spotKeys<W extends Widget>(
+  WidgetSelector<W> spotKeys<W extends Widget>(
     Key key, {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    return MultiWidgetSelector(
-      props: [
-        WidgetTypePredicate<W>(),
-        PredicateWithDescription(
-          (element) => element.widget.key == key,
-          description: 'with key: "$key"',
-        ),
-      ],
-      parents: [if (self != null) self!, ...parents],
+    return spotKey<W>(
+      key,
+      parents: parents,
       children: children,
     );
   }
@@ -1453,7 +1425,7 @@ extension SelectorToSnapshot<W extends Widget> on WidgetSelector<W> {
 
   @Deprecated('Use .atMost(1) or .amount(1)')
   @useResult
-  SingleWidgetSelector<W> get single {
+  WidgetSelector<W> get single {
     return atMost(1);
   }
 }
