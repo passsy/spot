@@ -53,8 +53,8 @@ extension CreateMatchers<W extends Widget> on WidgetSelector<W> {
     String? imports,
     bool Function(DiagnosticsNode node)? filter,
   }) {
-    final snapshot = existsAtLeastOnce();
-    final anyElement = snapshot.discoveredElements.first;
+    final s = snapshot()..existsAtLeastOnce();
+    final anyElement = s.discoveredElements.first;
 
     final elementProps = anyElement.toDiagnosticsNode().getProperties();
     final widgetProps =

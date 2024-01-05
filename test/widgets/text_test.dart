@@ -112,18 +112,18 @@ void main() {
         testWidgets('snapshot', (tester) async {
           await tester.pumpWidget(tree.value);
           final foundSnapshot = spotText('foo').snapshot();
+          check(foundSnapshot.discovered).isA<List<WidgetTreeNode>>();
           check(foundSnapshot.discovered).length.equals(1);
-          check(foundSnapshot.single.discovered).isA<List<WidgetTreeNode>>();
-          check(foundSnapshot.single.discoveredElement).isA<Element>();
-          check(foundSnapshot.single.discoveredWidget).isA<AnyText>();
-          check(foundSnapshot.single.element).isA<Element>();
+          check(foundSnapshot.element).isA<Element>();
+          check(foundSnapshot.widget).isA<AnyText>();
+          check(foundSnapshot.discoveredElement).isA<Element>();
 
           final notFound = spotText('bar').snapshot();
           check(notFound.discovered).length.equals(0);
-          check(notFound.single.discovered).isNull();
-          check(notFound.single.discoveredWidget).isNull();
-          check(() => notFound.single.element).throws<StateError>();
-          check(() => notFound.single.discoveredElement).throws<StateError>();
+          check(notFound.discovered).isEmpty();
+          check(notFound.widget).isNull();
+          check(notFound.element).isNull();
+          check(notFound.discoveredElement).isNull();
         });
       });
     }

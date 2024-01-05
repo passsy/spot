@@ -58,7 +58,7 @@ Future<Screenshot> takeScreenshot({
       // taking a fresh snapshot guarantees an element that is currently in the
       // tree and can be screenshotted
       final snapshot = selector.snapshot().existsOnce();
-      return snapshot.element;
+      return snapshot.element!;
     }
 
     if (snapshot != null) {
@@ -160,7 +160,7 @@ extension SelectorScreenshotExtension<W extends Widget> on WidgetSelector<W> {
   }
 }
 
-/// Provides the ability to create screenshots of a [SingleWidgetSnapshot]
+/// Provides the ability to create screenshots of a [WidgetSnapshot]
 extension SnapshotScreenshotExtension<W extends Widget> on WidgetSnapshot<W> {
   /// Takes as screenshot of the widget that was captured in this snapshot.
   ///

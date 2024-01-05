@@ -6,7 +6,7 @@ import 'package:spot/spot.dart';
 import 'package:spot/src/spot/selectors.dart';
 import 'package:spot/src/spot/tree_snapshot.dart';
 
-MultiWidgetSnapshot<W> snapshot<W extends Widget>(
+WidgetSnapshot<W> snapshot<W extends Widget>(
   WidgetSelector<W> selector, {
   bool validateQuantity = true,
 }) {
@@ -53,9 +53,9 @@ class CandidateGeneratorFromParents<W extends Widget>
   @override
   Iterable<WidgetTreeNode> generateCandidates() {
     final tree = currentWidgetTreeSnapshot();
-    final List<MultiWidgetSnapshot<Widget>> parentSnapshots =
+    final List<WidgetSnapshot<Widget>> parentSnapshots =
         selector.parents.map((selector) {
-      final MultiWidgetSnapshot<Widget> widgetSnapshot = snapshot(selector);
+      final WidgetSnapshot<Widget> widgetSnapshot = snapshot(selector);
       widgetSnapshot.validateQuantity();
       return widgetSnapshot;
     }).toList();
@@ -64,16 +64,15 @@ class CandidateGeneratorFromParents<W extends Widget>
         selector.copyWith(parents: []);
 
     // Take a snapshot from each parent and get the snapshots of all nodes that match
-    final List<Map<WidgetTreeNode, List<MultiWidgetSnapshot<W>>>>
-        discoveryByParent =
-        parentSnapshots.map((MultiWidgetSnapshot<Widget> parentSnapshot) {
-      final Map<WidgetTreeNode, List<MultiWidgetSnapshot<W>>> groups = {};
+    final List<Map<WidgetTreeNode, List<WidgetSnapshot<W>>>> discoveryByParent =
+        parentSnapshots.map((WidgetSnapshot<Widget> parentSnapshot) {
+      final Map<WidgetTreeNode, List<WidgetSnapshot<W>>> groups = {};
       if (parentSnapshot.discovered.isEmpty) {
         return groups;
       }
 
       for (final WidgetTreeNode node in parentSnapshot.discovered) {
-        final MultiWidgetSnapshot<W> group =
+        final WidgetSnapshot<W> group =
             findWithinScope(tree.scope(node), selectorWithoutParents);
         final list = groups[node];
         if (list == null) {
@@ -86,7 +85,7 @@ class CandidateGeneratorFromParents<W extends Widget>
       return groups;
     }).toList();
 
-    final List<MultiWidgetSnapshot<W>> discoveredSnapshots =
+    final List<WidgetSnapshot<W>> discoveredSnapshots =
         discoveryByParent.map((it) => it.values).flatten().flatten().toList();
 
     final List<WidgetTreeNode> allDiscoveredNodes =
@@ -99,9 +98,9 @@ class CandidateGeneratorFromParents<W extends Widget>
     final List<Element> elementsInAllParents =
         distinctElements.where((element) {
       return discoveryByParent.all((
-        Map<WidgetTreeNode, List<MultiWidgetSnapshot<W>>> discovered,
+        Map<WidgetTreeNode, List<WidgetSnapshot<W>>> discovered,
       ) {
-        return discovered.values.any((List<MultiWidgetSnapshot<W>> list) {
+        return discovered.values.any((List<WidgetSnapshot<W>> list) {
           return list.any((node) {
             return node.discovered.map((e) => e.element).contains(element);
           });
@@ -117,7 +116,7 @@ class CandidateGeneratorFromParents<W extends Widget>
 }
 
 /// Finds elements inside scope, completely ignores parents
-MultiWidgetSnapshot<W> findWithinScope<W extends Widget>(
+WidgetSnapshot<W> findWithinScope<W extends Widget>(
   ScopedWidgetTreeSnapshot scope,
   WidgetSelector<W> selector,
 ) {
@@ -134,7 +133,7 @@ MultiWidgetSnapshot<W> findWithinScope<W extends Widget>(
     return result;
   }).toList();
 
-  return MultiWidgetSnapshot<W>(
+  return WidgetSnapshot<W>(
     selector: selector,
     discovered: discovered,
     scope: scope,
@@ -142,7 +141,7 @@ MultiWidgetSnapshot<W> findWithinScope<W extends Widget>(
   );
 }
 
-extension _ValidateQuantity<W extends Widget> on MultiWidgetSnapshot<W> {
+extension _ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
   void validateQuantity() {
     final count = discovered.length;
     final minimumConstraint = selector.quantityConstraint.min;
@@ -230,23 +229,22 @@ extension _ValidateQuantity<W extends Widget> on MultiWidgetSnapshot<W> {
   }
 }
 
-extension MultiWidgetSelectorMatcher<W extends Widget>
-    on MultiWidgetSnapshot<W> {
+extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
   void doesNotExist() => _exists(max: 0);
 
-  SingleWidgetSnapshot<W> existsOnce() => _exists(min: 1, max: 1).single;
+  WidgetSnapshot<W> existsOnce() => _exists(min: 1, max: 1);
 
-  MultiWidgetSnapshot<W> existsAtLeastOnce() => _exists(min: 1);
+  WidgetSnapshot<W> existsAtLeastOnce() => _exists(min: 1);
 
-  MultiWidgetSnapshot<W> existsAtMostOnce() => _exists(max: 1);
+  WidgetSnapshot<W> existsAtMostOnce() => _exists(max: 1);
 
-  MultiWidgetSnapshot<W> existsExactlyNTimes(int n) => _exists(min: n, max: n);
+  WidgetSnapshot<W> existsExactlyNTimes(int n) => _exists(min: n, max: n);
 
-  MultiWidgetSnapshot<W> existsAtLeastNTimes(int n) => _exists(min: n);
+  WidgetSnapshot<W> existsAtLeastNTimes(int n) => _exists(min: n);
 
-  MultiWidgetSnapshot<W> existsAtMostNTimes(int n) => _exists(max: n);
+  WidgetSnapshot<W> existsAtMostNTimes(int n) => _exists(max: n);
 
-  MultiWidgetSnapshot<W> _exists({int? min, int? max}) {
+  WidgetSnapshot<W> _exists({int? min, int? max}) {
     assert(min != null || max != null);
     assert(min == null || min > 0);
     assert(max == null || max >= 0);
@@ -306,7 +304,10 @@ void _tryMatchingLessSpecificCriteria(WidgetSnapshot snapshot) {
   final selector = snapshot.selector;
   final count = snapshot.discovered.length;
   final errorBuilder = StringBuffer();
-  for (final lessSpecificSelector in selector._lessSpecificSelectors()) {
+  final unconstrainedSelector =
+      selector.overrideQuantityConstraint(QuantityConstraint.unconstrained);
+  for (final lessSpecificSelector
+      in unconstrainedSelector._lessSpecificSelectors()) {
     late final WidgetSnapshot lessSpecificSnapshot;
     try {
       lessSpecificSnapshot = lessSpecificSelector.snapshot();
@@ -361,7 +362,7 @@ void _tryMatchingLessSpecificCriteria(WidgetSnapshot snapshot) {
       }
 
       errorBuilder.writeln(
-        'A less specific search $lessSpecificSelector discovered $lessSpecificCount matches!',
+        "A less specific search ($lessSpecificSelector) discovered $lessSpecificCount matches!",
       );
       errorBuilder.writeln(
         'Maybe you have to adjust your WidgetSelector ($selector) to cover those missing elements.\n',
@@ -440,8 +441,7 @@ extension _LessSpecificSelectors<W extends Widget> on WidgetSelector<W> {
       // do not yield selectors which match any widgets
       if (selector.children.isNotEmpty ||
           selector.parents.isNotEmpty ||
-          selector.props.isNotEmpty ||
-          selector.type != Widget) {
+          selector.props.isNotEmpty) {
         yield selector;
       }
     }
@@ -451,7 +451,7 @@ extension _LessSpecificSelectors<W extends Widget> on WidgetSelector<W> {
     List<WidgetSelector<W> Function(WidgetSelector<W>)> criteria,
   ) {
     WidgetSelector<W> s = copyWith(
-      props: props,
+      props: [],
       parents: [],
       children: [],
       quantityConstraint: QuantityConstraint.none,
