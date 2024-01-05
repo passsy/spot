@@ -172,8 +172,8 @@ void main() {
         .existsOnce()
         .hasText('Hello');
 
-    final textSpot = spot<Wrap>()
-        .spot<Text>(parents: [spot<GestureDetector>()]);
+    final textSpot =
+        spot<Wrap>().spot<Text>(parents: [spot<GestureDetector>()]);
     textSpot.existsOnce().hasText('Hello');
 
     spot<Text>(parents: [spot<Wrap>()])
@@ -182,11 +182,7 @@ void main() {
         .hasText('Hello');
     selector.existsOnce().hasText('Hello');
 
-    spot<Wrap>()
-        .spot<Text>()
-        .withMaxLines(1)
-        .existsOnce()
-        .hasText('World');
+    spot<Wrap>().spot<Text>().withMaxLines(1).existsOnce().hasText('World');
   });
 
   testWidgets('narrow down scope', (tester) async {
