@@ -30,7 +30,8 @@ void main() {
           .hasDiagnosticProp<String>('data', (it) => it.equals('a'));
     });
 
-    testWidgets('readable error messages', (tester) async {
+    testWidgets('readable error messages when ancestor could not be found',
+        (tester) async {
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
@@ -51,6 +52,10 @@ void main() {
             (e) => e.message,
             'message',
             anyOf(
+              // Flutter 3.10
+              contains(
+                'Could not find text "nope" which is an ancestor of type "Directionality" in widget tree, expected exactly 1',
+              ),
               // Flutter 3.13
               contains(
                 'Could not find widget with text "nope" which is an ancestor of type "Directionality" in widget tree',
@@ -109,7 +114,7 @@ void main() {
           .hasText('a');
     });
 
-    testWidgets('readable error messages', (tester) async {
+    testWidgets('spotFinder has readable error messages', (tester) async {
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
