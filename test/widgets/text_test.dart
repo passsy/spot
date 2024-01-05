@@ -19,7 +19,8 @@ void main() {
         controller: TextEditingController(text: 'foo'),
         focusNode: FocusNode(),
         maxLines: null,
-        style: testTextStyle, // not inherited from DefaultTextStyle
+        style: testTextStyle,
+        // not inherited from DefaultTextStyle
         cursorColor: Colors.black,
         backgroundCursorColor: Colors.black,
       ),

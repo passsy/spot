@@ -44,6 +44,7 @@ class AnyText extends LeafRenderObjectWidget {
       selectionColor: widget.selectionColor,
     );
   }
+
   factory AnyText.fromRichText(RichText widget) {
     return AnyText._(
       widget: widget,
