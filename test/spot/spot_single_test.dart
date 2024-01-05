@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors, prefer_const_literals_to_create_immutables, deprecated_member_use_from_same_package
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
