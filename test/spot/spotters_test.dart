@@ -7,17 +7,25 @@ import 'package:spot/spot.dart';
 void main() {
   test('top level spotters match chained spotters', () {
     spot<Center>().spot<Center>();
-    spotSingle<Center>().spotSingle<Center>();
-    spot<Center>().spot<Center>();
-    spotSingleText('hello').spotSingleText('hello');
-    spotTexts('hello').spotTexts('hello');
+    spotSingle<Center>().spotSingle<Center>(); // deprecated
+
     spotText('hello').spotText('hello');
-    spotSingleIcon(Icons.add).spotSingleIcon(Icons.add);
-    spotIcons(Icons.add).spotIcons(Icons.add);
-    spotSingleWidget(_anyWidget).spotSingleWidget(_anyWidget);
-    spotWidgets(_anyWidget).spotWidgets(_anyWidget);
+    spotTexts('hello').spotTexts('hello'); // deprecated
+    spotSingleText('hello').spotSingleText('hello'); // deprecated
+
+    spotIcon(Icons.add).spotIcon(Icons.add);
+    spotIcons(Icons.add).spotIcons(Icons.add); // deprecated
+    spotSingleIcon(Icons.add).spotSingleIcon(Icons.add); // deprecated
+
+    spotWidget(_anyWidget).spotWidget(_anyWidget);
+    spotWidgets(_anyWidget).spotWidgets(_anyWidget); // deprecated
+    spotSingleWidget(_anyWidget).spotSingleWidget(_anyWidget); // deprecated
+
     spotElement(_anyElement).spotElement(_anyElement);
-    spotSingleKey(_key).spotSingleKey(_key);
+
+    spotKey(_key).spotKey(_key);
+    spotKeys(_key).spotKeys(_key); // deprecated
+    spotSingleKey(_key).spotSingleKey(_key); // deprecated
   });
 }
 
