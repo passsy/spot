@@ -204,6 +204,20 @@ void main() {
     });
   });
 
+  testWidgets('spotText finds multiple text', (tester) async {
+    await tester.pumpWidget(
+      _stage(
+        children: [
+          Text('a'),
+          Text('b'),
+          Text('a'),
+        ],
+      ),
+    );
+
+    spotText('a').existsExactlyNTimes(2);
+  });
+
   group('spotTextWhere', () {
     for (final tree in trees.entries) {
       final widgetType = tree.key;
