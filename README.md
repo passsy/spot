@@ -279,11 +279,12 @@ Could not find 'icon "IconData(U+0E57F)"' as child of [type "MaterialApp" > 'typ
 ## Project state
 
 Spot is used in production by many apps already.
+The current plan is to merge spot somehow with [patrol](https://pub.dev/packages/patrol), the next big milestone.
 
-The public `spot<X>()` API at this point is well-thought-out and stable.
+The public `spot<X>()` API just received a rework in `0.10.0` which cleans up and simplifies the API. (Awaiting feedback)
+The `act` API is still experimental and has known issues. (WIP)
 
-The `act` API is waiting for more methods, but without breaking changes
-
+Even though things are still fluid, `spot` today already provides a lot of value over the traditional `finder` API.
 
 ## License
 
