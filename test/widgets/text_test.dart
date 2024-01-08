@@ -19,8 +19,8 @@ void main() {
         controller: TextEditingController(text: 'foo'),
         focusNode: FocusNode(),
         maxLines: null,
-        style: testTextStyle,
         // not inherited from DefaultTextStyle
+        style: testTextStyle,
         cursorColor: Colors.black,
         backgroundCursorColor: Colors.black,
       ),
@@ -32,7 +32,8 @@ void main() {
       RichText(
         text: TextSpan(
           text: 'foo',
-          style: testTextStyle, // not inherited from DefaultTextStyle
+          // not inherited from DefaultTextStyle
+          style: testTextStyle,
         ),
       ),
     ],

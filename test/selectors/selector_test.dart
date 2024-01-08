@@ -54,6 +54,8 @@ void main() {
     expect(parents, isNotNull);
     final List<WidgetSelector<Widget>> children = selector.children;
     expect(children, isNotNull);
+    final List<ElementFilter> filters = selector.elementFilters;
+    expect(filters, isNotNull);
     final Type type = selector.type;
     expect(type, isNotNull);
     final ExpectedQuantity expectedQuantity = selector.expectedQuantity;
@@ -86,11 +88,11 @@ void main() {
   });
 
   testWidgets("don't lose mapElementToWidget", (tester) async {
-    final singleSelector = spotText("home");
+    final singleSelector = spotText("home").single;
     final multiSelector = singleSelector.multi;
 
     await tester.pumpWidget(const MaterialApp(home: Text('home')));
-    final centerElement = spotText('home').snapshot().single.element;
+    final centerElement = spotText('home').existsOnce().element;
 
     final AnyText multiMap = multiSelector.mapElementToWidget(centerElement);
     final AnyText singleMap = singleSelector.mapElementToWidget(centerElement);
