@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.10.0-beta.1
+
+Eventually **Breaking**, but only the class names. The end user API stays the same.
+
+- `spotSingle<W>()` is now deprecated. Use `spot<W>()` instead, or `spot<W>().atMost(1)` to indicate that only a single widget is expected.
+- `WidgetSelector` replaces `SingleWidgetSelector` and `MultiWidgetSelector`
+- `WidgetSelector` now has a `quantityConstraint` property (deprecates `expectedQuantity`) that allows setting the `min` and `max` number of expected widgets.
+- New: `.atIndex(n)` allows to get the widget at a specific index (when multiple are found)
+- Fix: `.first()` and `.last()` now work after calling `.copyWith()`
+- **Breaking** Quantity assertions like `.doesNotExist()` or `.existsOnce()` now return `WidgetMatcher`/`MultiWidgetMatcher` instead of `WidgetSnapshot`. To get the `WidgetSnapshot` use `snapshot()` instead.
+- `spotText('a')` can now return multiple widgets
+
+
 ## 0.7.0
 
 - New prop API with `hasWidgetProp()` makes it easy to filter and assert properties of Widgets.
