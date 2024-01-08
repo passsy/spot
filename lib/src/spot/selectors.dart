@@ -705,11 +705,16 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
         .getProperties()
         .firstOrNullWhere((e) => e.name == propName);
 
+    final unconstrainedSelector =
+        selector.overrideQuantityConstraint(QuantityConstraint.unconstrained);
     final actual = prop?.value as T? ?? prop?.getDefaultValue<T>();
 
     final ConditionSubject<T?> conditionSubject = it<T?>();
     final Subject<T> subject = conditionSubject.context.nest<T>(
-      () => [selector.toStringBreadcrumb(), 'with property $propName'],
+      () => [
+        unconstrainedSelector.toStringBreadcrumb(),
+        'with property $propName',
+      ],
       (value) {
         if (prop == null) {
           return Extracted.rejection(which: ['Has no prop "$propName"']);
@@ -920,8 +925,20 @@ class PredicateWithDescription {
   }
 }
 
-class WidgetTypePredicate<W extends Widget> extends PredicateWithDescription {
-  WidgetTypePredicate() : super((e) => e.widget is W, description: '$W');
+class WidgetTypePredicate<W extends Widget>
+    implements PredicateWithDescription {
+  WidgetTypePredicate();
+
+  @override
+  String get description => '$W';
+
+  @override
+  bool Function(Element e) get predicate => (e) => e.widget is W;
+
+  @override
+  String toString() {
+    return 'WidgetTypePredicate<$W>()';
+  }
 }
 
 /// A [WidgetSelector] that intends to resolve to a single widget
@@ -1005,6 +1022,17 @@ class ChildFilter implements ElementFilter {
   @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
     final tree = currentWidgetTreeSnapshot();
+
+    // First check all negate selectors (where maxQuantity == 0)
+    final negates = childSelectors.where((e) => e.quantityConstraint.max == 0);
+    for (final negate in negates) {
+      final s = snapshot(negate, validateQuantity: false);
+      if (s.discovered.isNotEmpty) {
+        // this negate selector matches, which it shouldn't
+        return [];
+      }
+    }
+
     final List<WidgetTreeNode> matchingChildNodes = [];
 
     // Then check for every queryMatch if the children and props match
@@ -1013,18 +1041,20 @@ class ChildFilter implements ElementFilter {
 
       final ScopedWidgetTreeSnapshot subtree = tree.scope(candidate);
       final List<WidgetTreeNode> subtreeNodes = subtree.allNodes;
-      for (final WidgetSelector<Widget> childSelector in childSelectors) {
+      for (final WidgetSelector<Widget> childSelector
+          in childSelectors - negates) {
         matchesPerChild[childSelector] = [];
         // TODO instead of searching the children, starting from the root widget, find a way to reverse the search and
         //  start form the subtree.
         //  Keep in mind, each child selector might be defined with parents which are outside of the subtree
         final WidgetSnapshot ss =
             snapshot(childSelector, validateQuantity: false);
-        final discoveredInSubtree =
-            ss.discovered.where((node) => subtreeNodes.contains(node)).toList();
 
         final minConstraint = childSelector.quantityConstraint.min;
         final maxConstraint = childSelector.quantityConstraint.max;
+
+        final discoveredInSubtree =
+            ss.discovered.where((node) => subtreeNodes.contains(node)).toList();
 
         if (minConstraint == null &&
             maxConstraint == null &&
@@ -1172,9 +1202,31 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
     final filters = elementFilters.isNotEmpty
         ? elementFilters.map((e) => e.description).join(' ')
         : null;
+    final quantity = () {
+      if (quantityConstraint.min == null && quantityConstraint.max == 0) {
+        return '(amount: 0)';
+      }
+      if (quantityConstraint.min == 0 && quantityConstraint.max == 0) {
+        return '(amount: 0)';
+      }
+      if (quantityConstraint.min != null &&
+          quantityConstraint.min == quantityConstraint.max) {
+        return '(amount: ${quantityConstraint.min})';
+      }
+      if (quantityConstraint.min != null && quantityConstraint.max != null) {
+        return '(amount: ${quantityConstraint.min}...${quantityConstraint.max})';
+      }
+      if (quantityConstraint.min != null) {
+        return '(amount: >=${quantityConstraint.min})';
+      }
+      if (quantityConstraint.max != null) {
+        return '(amount: <=${quantityConstraint.max})';
+      }
+      return null;
+    }();
 
     final constraints =
-        [props, children, parents, filters].where((e) => e != null);
+        [props, quantity, children, parents, filters].where((e) => e != null);
     if (constraints.isEmpty) {
       return '';
     }
@@ -1191,8 +1243,31 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
     final filters = elementFilters.isNotEmpty
         ? elementFilters.map((e) => e.description).join(' ')
         : null;
+    final quantity = () {
+      if (quantityConstraint.min == null && quantityConstraint.max == 0) {
+        return '(amount: 0)';
+      }
+      if (quantityConstraint.min == 0 && quantityConstraint.max == 0) {
+        return '(amount: 0)';
+      }
+      if (quantityConstraint.min != null &&
+          quantityConstraint.min == quantityConstraint.max) {
+        return '(amount: ${quantityConstraint.min})';
+      }
+      if (quantityConstraint.min != null && quantityConstraint.max != null) {
+        return '(amount: ${quantityConstraint.min}...${quantityConstraint.max})';
+      }
+      if (quantityConstraint.min != null) {
+        return '(amount: >=${quantityConstraint.min})';
+      }
+      if (quantityConstraint.max != null) {
+        return '(amount: <=${quantityConstraint.max})';
+      }
+      return null;
+    }();
 
-    final constraints = [props, children, filters].where((e) => e != null);
+    final constraints =
+        [props, quantity, children, filters].where((e) => e != null);
     return constraints.join(' ');
   }
 
@@ -1326,11 +1401,16 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
             .getProperties()
             .firstOrNullWhere((e) => e.name == propName);
 
+        final unconstrainedSelector =
+            overrideQuantityConstraint(QuantityConstraint.unconstrained);
         final actual = prop?.value as T? ?? prop?.getDefaultValue<T>();
 
         final ConditionSubject<T?> conditionSubject = it<T?>();
         final Subject<T> subject = conditionSubject.context.nest<T>(
-          () => [toStringBreadcrumb(), 'with prop "$propName"'],
+          () => [
+            unconstrainedSelector.toStringBreadcrumb(),
+            'with prop "$propName"',
+          ],
           (value) {
             if (prop == null) {
               return Extracted.rejection(which: ['Has no prop "$propName"']);
@@ -1369,10 +1449,11 @@ extension CreateWidgetMatcher<W extends Widget> on WidgetSnapshot<W> {
 /// The number of widgets that are expected to be found
 class QuantityConstraint {
   static const QuantityConstraint unconstrained = QuantityConstraint();
-  static const QuantityConstraint none = QuantityConstraint.exactly(0);
+  static const QuantityConstraint zero = QuantityConstraint.atMost(0);
   static const QuantityConstraint single = QuantityConstraint.atMost(1);
 
-  const QuantityConstraint({this.min, this.max});
+  const QuantityConstraint({this.min, this.max})
+      : assert(min == null || max == null || min <= max);
 
   const QuantityConstraint.exactly(int n)
       : min = n,
@@ -1394,8 +1475,8 @@ class QuantityConstraint {
     if (min == null && max == null) {
       return 'QuantityConstraint.unconstrained';
     }
-    if (min == 0 && max == 0) {
-      return 'QuantityConstraint.none';
+    if (max == 0) {
+      return 'QuantityConstraint.zero';
     }
     return 'QuantityConstraint{min: $min, max: $max}';
   }
@@ -1420,7 +1501,7 @@ extension SelectorToSnapshot<W extends Widget> on WidgetSelector<W> {
 
   @useResult
   WidgetSelector<W> get multi {
-    return overrideQuantityConstraint(QuantityConstraint.none);
+    return overrideQuantityConstraint(QuantityConstraint.unconstrained);
   }
 
   @Deprecated('Use .atMost(1) or .amount(1)')
@@ -1563,7 +1644,7 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
 
   void doesNotExist() {
     TestAsyncUtils.guardSync();
-    final none = copyWith(quantityConstraint: QuantityConstraint.none);
+    final none = copyWith(quantityConstraint: QuantityConstraint.zero);
     snapshot(none);
   }
 
