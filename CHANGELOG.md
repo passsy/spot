@@ -11,6 +11,7 @@ Eventually **Breaking**, but only the class names. The end user API stays the sa
 - Fix: `.first()` and `.last()` now work after calling `.copyWith()`
 - **Breaking** Quantity assertions like `.doesNotExist()` or `.existsOnce()` now return `WidgetMatcher`/`MultiWidgetMatcher` instead of `WidgetSnapshot`. To get the `WidgetSnapshot` use `snapshot()` instead.
 - `spotText('a')` can now return multiple widgets
+- **Breaking** remove `WidgetSelector.cast` because it lost information and was untested
 
 
 ## 0.7.0
