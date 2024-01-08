@@ -27,7 +27,7 @@ void main() {
     
     // Find widgets based on child widgets
     appBar
-        .spot<IconButton>(children: [spotSingleIcon(Icons.home)])
+        .spot<IconButton>(children: [spotIcon(Icons.home)])
         .existsOnce()
         .hasTooltip('home');
 
@@ -39,7 +39,7 @@ void main() {
     });
 
     // Interact with widgets using `act`
-    final button = spotSingle<FloatingActionButton>();
+    final button = spot<FloatingActionButton>();
     await act.tap(button);
   });
 }
@@ -76,13 +76,13 @@ Selectors can be rather complex, it is therefore recommended to **reuse** them.
 You can even save them top-level and reuse them across multiple tests.
 
 ```dart
-spotSingle<ElevatedButton>();
+spot<ElevatedButton>();
 
 final MultiWidgetSelector<TextField> textFields = 
     spot<LoginScreen>().spot<LoginForm>().spot<TextField>();
 
-final SingleWidgetSelector<TextField> usernameTextField =
-    spotSingle<TextField>(
+final WidgetSelector<TextField> usernameTextField =
+    spot<TextField>(
       parents: [
         spot<TextWithLabel>(
           children: [
@@ -93,15 +93,13 @@ final SingleWidgetSelector<TextField> usernameTextField =
     );
 ```
 
-Not that there are two kind of selectors, `SingleWidgetSelector` and `MultiWidgetSelector`. 
-Depending on how many widgets you expect to find, you should use the correct one as it allows you to use different matchers.
+A `WidgetSelector` may return 0, 1 or N widgets.
+Depending on how many widgets you expect to find, you should use the corresponding matchers.
 
 ### Matchers
 
 After creating a selector, you want to assert the widgets it found. 
-The `snapshot()` method creates a `MultiWidgetSnapshot` of the widget tree at that point in time and finds all widgets that match the selector
-
-You rarely have to use `snapshot()` directly, because the quantity matchers do it for you.
+The `snapshot()` method creates a `WidgetSnapshot` of the widget tree at that point in time and finds all widgets that match the selector.
 
 #### Quantity matchers
 
@@ -115,11 +113,11 @@ The easiest matchers are the quantity matchers. They allow checking how many wid
 
 ```dart
 
-final selector = spotSingle<ElevatedButton>();
+final selector = spot<ElevatedButton>();
 
 // calls snapshot() internally
-final snapshot = selector.existsOnce(); 
-final snapshot5 = selector.existsExactlyNTimes(5);
+final matchOne = selector.existsOnce(); 
+final matchMultiple = selector.existsExactlyNTimes(5);
 
 selector.doesNotExist(); // end, nothing to match on 
 ```
@@ -130,7 +128,7 @@ The property matchers allow asserting on the properties of the widgets.
 You don't have to use `execpt()`, instead you can use the `has*`/`is*` matchers directly.
 
 ```dart
-spotSingle<Tooltip>()
+spot<Tooltip>()
     .existsOnce() // takes snapshot and asserts quantity
     // start your chain of matchers
     .hasMessage('Favorite')
@@ -145,9 +143,7 @@ To match multiple widgets use `all()` or `any()`
 ```dart
 spot<AppBar>().spot<Tooltip>().existsAtLeastOnce()
     .all((tooltip) => tooltip
-      .hasShowDurationWhere(
-         (it) => it.isGreaterOrEqual(Duration(seconds: 1000)),
-      )
+      .hasShowDurationWhere((it) => it.isGreaterOrEqual(Duration(seconds: 1000)))
       .hasTriggerMode(TooltipTriggerMode.longPress)
     );
 ```
@@ -192,7 +188,7 @@ That's much more helpful!
 In the future, spot will only print the widget tree from the last node found node (`spot<AppBar>`).
 
 ```
-spot<AppBar>().spotSingleIcon(Icons.settings).existsOnce();
+spot<AppBar>().spotIcon(Icons.settings).existsOnce();
 
 Could not find 'icon "IconData(U+0E57F)"' as child of #2 type "IconButton"
 There are 1 possible parents for 'icon "IconData(U+0E57F)"' matching #2 type "IconButton". But non matched. The widget trees starting at #2 type "IconButton" are:
@@ -243,6 +239,10 @@ Could not find 'icon "IconData(U+0E57F)"' as child of [type "MaterialApp" > 'typ
 - ✅ Allow generating code for properties of 3rd party widgets
 - ✅ Interact with widgets (`act`)
 - ✅ Allow manually printing a screenshot at certain points
+- ✅ Negate child matchers
+- ✅ Simplify `WidgetSelector` API
+- ⬜️ Become the de facto Widget selector API for [patrol](https://pub.dev/packages/patrol) 
+- ⬜️ Combine multiple WidgetSelectors with `and`
 - ⬜️ More `act` features
 - ⬜️ Print only widget tree of the parent scope when test fails
 - ⬜️ Create screenshot when test fails
