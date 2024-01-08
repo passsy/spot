@@ -235,17 +235,20 @@ extension _ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
 extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
   void doesNotExist() => _exists(max: 0);
 
-  WidgetSnapshot<W> existsOnce() => _exists(min: 1, max: 1);
+  WidgetMatcher<W> existsOnce() =>
+      WidgetMatcher.fromSnapshot(_exists(min: 1, max: 1));
 
-  WidgetSnapshot<W> existsAtLeastOnce() => _exists(min: 1);
+  MultiWidgetMatcher<W> existsAtLeastOnce() => _exists(min: 1).multi;
 
-  WidgetSnapshot<W> existsAtMostOnce() => _exists(max: 1);
+  WidgetMatcher<W> existsAtMostOnce() =>
+      WidgetMatcher.fromSnapshot(_exists(max: 1));
 
-  WidgetSnapshot<W> existsExactlyNTimes(int n) => _exists(min: n, max: n);
+  MultiWidgetMatcher<W> existsExactlyNTimes(int n) =>
+      _exists(min: n, max: n).multi;
 
-  WidgetSnapshot<W> existsAtLeastNTimes(int n) => _exists(min: n);
+  MultiWidgetMatcher<W> existsAtLeastNTimes(int n) => _exists(min: n).multi;
 
-  WidgetSnapshot<W> existsAtMostNTimes(int n) => _exists(max: n);
+  MultiWidgetMatcher<W> existsAtMostNTimes(int n) => _exists(max: n).multi;
 
   WidgetSnapshot<W> _exists({int? min, int? max}) {
     assert(min != null || max != null);
