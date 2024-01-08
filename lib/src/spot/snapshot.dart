@@ -450,7 +450,8 @@ extension _LessSpecificSelectors<W extends Widget> on WidgetSelector<W> {
       // do not yield selectors which match any widgets
       if (selector.children.isNotEmpty ||
           selector.parents.isNotEmpty ||
-          selector.props.isNotEmpty) {
+          selector.props.isNotEmpty ||
+          selector.type != Widget) {
         yield selector;
       }
     }
