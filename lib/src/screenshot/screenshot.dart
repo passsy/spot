@@ -77,7 +77,7 @@ Future<Screenshot> takeScreenshot({
           'Only Elements that are currently mounted can be screenshotted.',
         );
       }
-      if (snapshot.discoveredWidgets.first != element.widget) {
+      if (snapshot.discoveredWidget != element.widget) {
         throw StateError(
           'Can not take a screenshot of snapshot $snapshot, because the Element has been updated since the snapshot was taken. '
           'This happens when the widget tree is rebuilt.',
