@@ -147,6 +147,9 @@ extension _ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
     final minimumConstraint = selector.quantityConstraint.min;
     final maximumConstraint = selector.quantityConstraint.max;
 
+    final unconstrainedSelector =
+        selector.overrideQuantityConstraint(QuantityConstraint.unconstrained);
+
     String significantWidgetTree() {
       final set = discoveredElements.toSet();
       return findCommonAncestor(set).toStringDeep();
@@ -156,10 +159,10 @@ extension _ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
       if (count == 0) {
         _tryMatchingLessSpecificCriteria(this);
         throw TestFailure(
-          'Could not find ${selector.toStringBreadcrumb()} in widget tree, '
+          'Could not find ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
           'expected at least $minimumConstraint\n'
           '${significantWidgetTree()}'
-          'Could not find ${selector.toStringBreadcrumb()} in widget tree, '
+          'Could not find ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
           'expected at least $minimumConstraint',
         );
       }
@@ -167,10 +170,10 @@ extension _ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
       if (minimumConstraint > count) {
         _tryMatchingLessSpecificCriteria(this);
         throw TestFailure(
-          'Found $count elements matching ${selector.toStringBreadcrumb()} in widget tree, '
+          'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
           'expected at least $minimumConstraint\n'
           '${significantWidgetTree()}'
-          'Found $count elements matching ${selector.toStringBreadcrumb()} in widget tree, '
+          'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
           'expected at least $minimumConstraint',
         );
       }
@@ -179,10 +182,10 @@ extension _ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
     if (maximumConstraint != null && minimumConstraint == null) {
       if (maximumConstraint < count) {
         throw TestFailure(
-          'Found $count elements matching ${selector.toStringBreadcrumb()} in widget tree, '
+          'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
           'expected at most $maximumConstraint\n'
           '${significantWidgetTree()}'
-          'Found $count elements matching ${selector.toStringBreadcrumb()} in widget tree, '
+          'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
           'expected at most $maximumConstraint',
         );
       }
@@ -198,19 +201,19 @@ extension _ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
           if (count == 0) {
             _tryMatchingLessSpecificCriteria(this);
             throw TestFailure(
-              'Could not find ${selector.toStringBreadcrumb()} in widget tree, '
+              'Could not find ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
               'expected exactly $exactCount\n'
               '${significantWidgetTree()}'
-              'Could not find ${selector.toStringBreadcrumb()} in widget tree, '
+              'Could not find ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
               'expected exactly $exactCount',
             );
           } else {
             _tryMatchingLessSpecificCriteria(this);
             throw TestFailure(
-              'Found $count elements matching ${selector.toStringBreadcrumb()} in widget tree, '
+              'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
               'expected exactly $exactCount\n'
               '${significantWidgetTree()}'
-              'Found $count elements matching ${selector.toStringBreadcrumb()} in widget tree, '
+              'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
               'expected exactly $exactCount',
             );
           }
@@ -218,10 +221,10 @@ extension _ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
       } else {
         // out of range
         throw TestFailure(
-          'Found $count elements matching ${selector.toStringBreadcrumb()} in widget tree, '
+          'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
           'expected between $minimumConstraint and $maximumConstraint\n'
           '${significantWidgetTree()}'
-          'Found $count elements matching ${selector.toStringBreadcrumb()} in widget tree, '
+          'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
           'expected between $minimumConstraint and $maximumConstraint',
         );
       }
@@ -317,18 +320,21 @@ void _tryMatchingLessSpecificCriteria(WidgetSnapshot snapshot) {
     final lessSpecificCount = lessSpecificSnapshot.discovered.length;
     final minimumConstraint = selector.quantityConstraint.min;
     final maximumConstraint = selector.quantityConstraint.max;
+    final unconstrainedSelector =
+        selector.overrideQuantityConstraint(QuantityConstraint.unconstrained);
+
     // error that selector could not be found, but instead spot detected lessSpecificSnapshot, which might be useful
     if (lessSpecificCount > count) {
       if (minimumConstraint != null && maximumConstraint == null) {
         if (count == 0) {
           errorBuilder.writeln(
-              'Could not find ${selector.toStringBreadcrumb()} in widget tree, '
+              'Could not find ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
               'expected at least $minimumConstraint');
         }
 
         if (minimumConstraint > count) {
           errorBuilder.writeln(
-              'Found $count elements matching ${selector.toStringBreadcrumb()} in widget tree, '
+              'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
               'expected at least $minimumConstraint');
         }
       }
@@ -336,7 +342,7 @@ void _tryMatchingLessSpecificCriteria(WidgetSnapshot snapshot) {
       if (maximumConstraint != null && minimumConstraint == null) {
         if (maximumConstraint < count) {
           errorBuilder.writeln(
-              'Found $count elements matching ${selector.toStringBreadcrumb()} in widget tree, '
+              'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
               'expected at most $maximumConstraint');
         }
       }
@@ -346,17 +352,17 @@ void _tryMatchingLessSpecificCriteria(WidgetSnapshot snapshot) {
           final exactCount = minimumConstraint;
           if (count == 0) {
             errorBuilder.writeln(
-                'Could not find ${selector.toStringBreadcrumb()} in widget tree, '
+                'Could not find ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
                 'expected exactly $exactCount');
           } else {
             errorBuilder.writeln(
-                'Found $count elements matching ${selector.toStringBreadcrumb()} in widget tree, '
+                'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
                 'expected exactly $exactCount');
           }
         } else {
           // out of range
           errorBuilder.writeln(
-              'Found $count elements matching ${selector.toStringBreadcrumb()} in widget tree, '
+              'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
               'expected between $minimumConstraint and $maximumConstraint');
         }
       }
@@ -365,7 +371,7 @@ void _tryMatchingLessSpecificCriteria(WidgetSnapshot snapshot) {
         "A less specific search ($lessSpecificSelector) discovered $lessSpecificCount matches!",
       );
       errorBuilder.writeln(
-        'Maybe you have to adjust your WidgetSelector ($selector) to cover those missing elements.\n',
+        'Maybe you have to adjust your WidgetSelector ($unconstrainedSelector) to cover those missing elements.\n',
       );
       int index = 0;
       for (final Element match in lessSpecificSnapshot.discoveredElements) {
@@ -454,7 +460,7 @@ extension _LessSpecificSelectors<W extends Widget> on WidgetSelector<W> {
       props: [],
       parents: [],
       children: [],
-      quantityConstraint: QuantityConstraint.none,
+      quantityConstraint: QuantityConstraint.unconstrained,
     );
     for (final criteria in criteria) {
       s = criteria(s);
