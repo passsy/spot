@@ -432,7 +432,7 @@ mixin Selectors<T extends Widget> {
   @useResult
   WidgetSelector<T> first() {
     // TODO add names to the elementFilters, for a better WidgetSelector.toString()
-    return self!.copyWith(elementFilters: [FirstElement()]);
+    return self!.copyWith(elementFilters: [_FirstElement()]);
   }
 
   /// Selects the last of n widgets
@@ -442,16 +442,16 @@ mixin Selectors<T extends Widget> {
   /// tree
   @useResult
   WidgetSelector<T> last() {
-    return self!.copyWith(elementFilters: [LastElement()]);
+    return self!.copyWith(elementFilters: [_LastElement()]);
   }
 
   WidgetSelector<T> atIndex(int index) {
-    return self!.copyWith(elementFilters: [ElementAtIndex(index)]);
+    return self!.copyWith(elementFilters: [_ElementAtIndex(index)]);
   }
 }
 
-class FirstElement extends ElementFilter {
-  FirstElement();
+class _FirstElement extends ElementFilter {
+  _FirstElement();
 
   @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
@@ -466,8 +466,8 @@ class FirstElement extends ElementFilter {
   String get description => ':first';
 }
 
-class LastElement extends ElementFilter {
-  LastElement();
+class _LastElement extends ElementFilter {
+  _LastElement();
 
   @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
@@ -482,8 +482,8 @@ class LastElement extends ElementFilter {
   String get description => ':last';
 }
 
-class ElementAtIndex extends ElementFilter {
-  ElementAtIndex(this.index);
+class _ElementAtIndex extends ElementFilter {
+  _ElementAtIndex(this.index);
 
   final int index;
 
