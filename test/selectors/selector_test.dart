@@ -38,7 +38,7 @@ void main() {
     expect(singleSelector.expectedQuantity, ExpectedQuantity.single);
 
     await tester.pumpWidget(const Center());
-    final centerElement = spotSingle<Center>().snapshot().single.element;
+    final centerElement = spotSingle<Center>().snapshot().element!;
 
     final multiMap = multiSelector.mapElementToWidget(centerElement);
     final singleMap = singleSelector.mapElementToWidget(centerElement);
