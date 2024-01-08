@@ -1603,10 +1603,8 @@ class WidgetSnapshot<W extends Widget> {
   // TODO make WidgetSnapshot implement WidgetMatcher and MultiWidgetMatcher
   @useResult
   WidgetMatcher<W> get single {
-    existsAtMostOnce();
-
     assert(discovered.length <= 1);
-    return WidgetMatcher.fromSnapshot(this);
+    return existsAtMostOnce();
   }
 }
 
