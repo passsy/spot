@@ -58,7 +58,7 @@ Future<Screenshot> takeScreenshot({
       // taking a fresh snapshot guarantees an element that is currently in the
       // tree and can be screenshotted
       final snapshot = selector.snapshot().existsOnce();
-      return snapshot.element!;
+      return snapshot.element;
     }
 
     if (snapshot != null) {

@@ -87,7 +87,7 @@ void main() {
 
     // Remove element that is captured in the snapshot
     await tester.pumpWidget(Container());
-    expect(containerSnapshot.element!.mounted, isFalse);
+    expect(containerSnapshot.discoveredElement!.mounted, isFalse);
 
     await expectLater(
       takeScreenshot(snapshot: containerSnapshot),
@@ -110,7 +110,7 @@ void main() {
         ),
       ),
     );
-    final containerElement = spot<Container>().snapshot().element;
+    final containerElement = spot<Container>().snapshot().discoveredElement;
 
     final container = await takeScreenshot(element: containerElement);
     expect(container.file.existsSync(), isTrue);
@@ -132,7 +132,7 @@ void main() {
         ),
       ),
     );
-    final containerElement = spot<Container>().snapshot().element;
+    final containerElement = spot<Container>().snapshot().discoveredElement;
 
     // Remove containerElement
     await tester.pumpWidget(Container());
@@ -166,7 +166,7 @@ void main() {
     expect(screenshot2.file.existsSync(), isTrue);
 
     final screenshot3 =
-        await spot<Container>().snapshot().element!.takeScreenshot();
+        await spot<Container>().snapshot().discoveredElement!.takeScreenshot();
     expect(screenshot3.file.existsSync(), isTrue);
   });
 

@@ -33,6 +33,7 @@ export 'package:spot/src/spot/props.dart';
 export 'package:spot/src/spot/selectors.dart'
     show
         ElementFilter,
+        // ignore: deprecated_member_use_from_same_package
         ExpectedQuantity,
         // ignore: deprecated_member_use_from_same_package
         MatchProp,
