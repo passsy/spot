@@ -415,15 +415,6 @@ mixin Selectors<T extends Widget> {
     );
   }
 
-  @useResult
-  WidgetSelector<W> cast<W extends Widget>() {
-    return WidgetSelector<W>(
-      props: self!.props,
-      parents: self!.parents,
-      children: self!.children,
-    );
-  }
-
   /// Selects the first of n widgets
   ///
   /// "first" is neither the top-most or the bottom-most widget. Instead, it is
