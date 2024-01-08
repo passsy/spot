@@ -26,7 +26,7 @@ class Act {
     return TestAsyncUtils.guard<void>(() async {
       return _alwaysPropagateDevicePointerEvents(() async {
         // Find the associated RenderObject to get the position of the element on the screen
-        final element = snapshot.element!;
+        final element = snapshot.discoveredElement!;
         final renderObject = element.renderObject;
         if (renderObject == null) {
           throw TestFailure(

@@ -1439,13 +1439,6 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
   }
 }
 
-// TODO move into WidgetSnapshot? Rename?
-extension CreateWidgetMatcher<W extends Widget> on WidgetSnapshot<W> {
-  W? get widget => discoveredWidgets.firstOrNull;
-
-  Element? get element => discoveredElements.firstOrNull;
-}
-
 /// The number of widgets that are expected to be found
 class QuantityConstraint {
   static const QuantityConstraint unconstrained = QuantityConstraint();
@@ -1538,13 +1531,6 @@ typedef MultiWidgetSnapshot<W extends Widget> = WidgetSnapshot<W>;
 @Deprecated('Use WidgetSnapshot')
 typedef SingleWidgetSnapshot<W extends Widget> = WidgetSnapshot<W>;
 
-extension DeprecatedSingleWidgetSnapshot<W extends Widget>
-    on WidgetSnapshot<W> {
-  Element? get discoveredElement => discoveredElements.firstOrNull;
-
-  W? get discoveredWidget => discoveredWidgets.firstOrNull;
-}
-
 /// A collection of [discovered] elements that match [selector]
 class WidgetSnapshot<W extends Widget> {
   WidgetSnapshot({
@@ -1579,6 +1565,37 @@ class WidgetSnapshot<W extends Widget> {
   /// All elements in [scope] that match [selector]
   final List<WidgetTreeNode> discovered;
 
+  @override
+  String toString() {
+    return 'SpotSnapshot of $selector (${discoveredElements.length} matches)}';
+  }
+}
+
+// TODO make WidgetSnapshot implement WidgetMatcher and MultiWidgetMatcher
+extension ToWidgetMatcher<W extends Widget> on WidgetSnapshot<W> {
+  @useResult
+  MultiWidgetMatcher<W> get multi {
+    return MultiWidgetMatcher.fromSnapshot(this);
+  }
+
+  @useResult
+  WidgetMatcher<W> get single {
+    assert(discovered.length <= 1);
+    return existsAtMostOnce();
+  }
+}
+
+extension WidgetSnapshotShorthands<W extends Widget> on WidgetSnapshot<W> {
+  W? get discoveredWidget => discoveredWidgets.firstOrNull;
+
+  @Deprecated('Use discoveredWidget')
+  W? get widget => discoveredWidget;
+
+  Element? get discoveredElement => discoveredElements.firstOrNull;
+
+  @Deprecated('Use discoveredElement')
+  Element? get element => discoveredElement;
+
   /// Shorthand to get the widgets of all discovered elements
   /// (see [discovered] or [discoveredElements])
   ///
@@ -1589,23 +1606,6 @@ class WidgetSnapshot<W extends Widget> {
 
   List<Element> get discoveredElements =>
       discovered.map((e) => e.element).toList();
-
-  @override
-  String toString() {
-    return 'SpotSnapshot of $selector (${discoveredElements.length} matches)}';
-  }
-
-  @useResult
-  MultiWidgetMatcher<W> get multi {
-    return MultiWidgetMatcher.fromSnapshot(this);
-  }
-
-  // TODO make WidgetSnapshot implement WidgetMatcher and MultiWidgetMatcher
-  @useResult
-  WidgetMatcher<W> get single {
-    assert(discovered.length <= 1);
-    return existsAtMostOnce();
-  }
 }
 
 extension QuantitySelectors<W extends Widget> on WidgetSelector<W> {
@@ -1701,17 +1701,6 @@ extension RelativeSelectors<W extends Widget> on WidgetSelector<W> {
   @useResult
   WidgetSelector<W> withChildren(List<WidgetSelector> children) {
     return copyWith(children: [...this.children, ...children]);
-  }
-}
-
-extension AssertionMatcher<W extends Widget> on WidgetSnapshot<W> {
-  WidgetSnapshot<W> single() {
-    return WidgetSnapshot(
-      selector: selector,
-      discovered: discovered,
-      debugCandidates: debugCandidates,
-      scope: scope,
-    );
   }
 }
 
