@@ -46,6 +46,33 @@ void main() {
 
 ```
 
+Take screenshots of your entire screen or single widgets to see what's going on.
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:spot/spot.dart';
+
+void main() {
+  testWidgets('Take screenshots', (tester) async {
+    tester.pumpWidget(MyApp());
+    
+    // Take a screenshot of the entire screen
+    await takeScreenshot();
+    // console:
+    // Screenshot file:///var/folders/0j/p0s0zrv91tgd33zrxb88c0440000gn/T/spot/screenshot_test:10-s83dv.png
+    //   taken at main.<fn> file:///Users/pascalwelsch/Projects/passsy/spot/test/spot/screenshot_test.dart:10:10
+    
+    // Take a screenshot of a single widget
+    await spot<AppBar>().takeScreenshot();
+    // console:
+    // Screenshot file:///var/folders/0j/p0s0zrv91tgd33zrxb88c0440000gn/T/spot/screenshot_test:16-w8UPv.png
+    //   taken at main.<fn> file:///Users/pascalwelsch/Projects/passsy/spot/test/spot/screenshot_test.dart:16:24
+  });
+}
+```
+
+
 ### Chain selectors
 
 You know exactly where your widgets are. 
