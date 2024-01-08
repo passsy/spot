@@ -105,7 +105,7 @@ You can even save them top-level and reuse them across multiple tests.
 ```dart
 spot<ElevatedButton>();
 
-final MultiWidgetSelector<TextField> textFields = 
+final WidgetSelector<TextField> textFields = 
     spot<LoginScreen>().spot<LoginForm>().spot<TextField>();
 
 final WidgetSelector<TextField> usernameTextField =
