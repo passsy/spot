@@ -8,7 +8,7 @@ extension EffectiveTextMatcher on WidgetMatcher<Text> {
   ///
   /// ```dart
   /// spot<Text>().withText('foo').existsOnce()
-  /// .hasEffectiveMaxLinesWhere((it) => it.equals(1));
+  ///   .hasEffectiveMaxLinesWhere((it) => it.equals(1));
   /// ```
   WidgetMatcher<Text> hasEffectiveMaxLinesWhere(MatchProp<int> match) {
     return hasProp(
