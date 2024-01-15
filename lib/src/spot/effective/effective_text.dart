@@ -40,7 +40,7 @@ extension EffectiveTextMatcher on WidgetMatcher<Text> {
     );
   }
 
-  /// Matches the [Text] against a [TextStyle].
+  /// Matches the style of a [Text] against a given [TextStyle].
   WidgetMatcher<Text> hasEffectiveTextStyle(TextStyle? value) {
     return hasEffectiveTextStyleWhere((it) {
       if (value == null) {
