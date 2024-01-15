@@ -4,10 +4,11 @@ import 'package:spot/src/spot/element_extensions.dart';
 import 'package:spot/src/spot/selectors.dart';
 
 extension EffectiveTextMatcher on WidgetMatcher<Text> {
-  /// Matches the [Text] widget when it has the given [maxLines]
+  /// Matches the [Text] widget when it has the given [maxLines].
   ///
   /// ```dart
-  /// spotTexts('foo').hasEffectiveMaxLinesWhere((it)=> it.equals(1));
+  /// spot<Text>().withText('foo').existsOnce()
+  ///   .hasEffectiveMaxLinesWhere((it) => it.equals(1));
   /// ```
   WidgetMatcher<Text> hasEffectiveMaxLinesWhere(MatchProp<int> match) {
     return hasProp(
