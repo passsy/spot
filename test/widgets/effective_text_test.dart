@@ -172,5 +172,56 @@ void main() {
         ]),
       );
     });
+
+    testWidgets('Match against complete TextStyle', (widgetTester) async {
+      final style = TextStyle(
+        fontSize: 20,
+        fontStyle: FontStyle.italic,
+        fontWeight: FontWeight.bold,
+        letterSpacing: 2,
+      );
+      await widgetTester.pumpWidget(
+        MaterialApp(
+          home: DefaultTextStyle(
+            style: style,
+            child: Text(''),
+          ),
+        ),
+      );
+      spot<Text>().existsOnce().hasEffectiveTextStyle(style);
+    });
+
+    testWidgets(
+        'Failed matching against complete TextStyle shows current values',
+        (widgetTester) async {
+      final style = TextStyle(
+        fontSize: 20,
+        fontStyle: FontStyle.italic,
+        fontWeight: FontWeight.bold,
+        letterSpacing: 2,
+      );
+      await widgetTester.pumpWidget(
+        MaterialApp(
+          home: DefaultTextStyle(
+            style: style,
+            child: Text(''),
+          ),
+        ),
+      );
+
+      expect(
+        () => spot<Text>().existsOnce().hasEffectiveTextStyle(
+              style.copyWith(
+                fontSize: 16,
+                fontStyle: FontStyle.normal,
+                fontWeight: FontWeight.normal,
+                letterSpacing: 1,
+              ),
+            ),
+        throwsSpotErrorContaining([
+          'has "textStyle" that: equals <TextStyle(inherit: true, size: 16.0, weight: 400, style: normal, letterSpacing: 1.0)>, actual: <TextStyle(inherit: true, size: 20.0, weight: 700, style: italic, letterSpacing: 2.0)>',
+        ]),
+      );
+    });
   });
 }

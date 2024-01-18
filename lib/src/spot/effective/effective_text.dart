@@ -39,6 +39,17 @@ extension EffectiveTextMatcher on WidgetMatcher<Text> {
       match: match.hideNullability(),
     );
   }
+
+  /// Matches the style of a [Text] against a given [TextStyle].
+  WidgetMatcher<Text> hasEffectiveTextStyle(TextStyle? value) {
+    return hasEffectiveTextStyleWhere((it) {
+      if (value == null) {
+        it.isNull();
+      } else {
+        it.equals(value);
+      }
+    });
+  }
 }
 
 extension TextStyleSubject on Subject<TextStyle> {
