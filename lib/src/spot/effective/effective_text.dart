@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
 import 'package:spot/spot.dart';
-import 'package:spot/src/checks/checks_nullability.dart';
 import 'package:spot/src/spot/element_extensions.dart';
 import 'package:spot/src/spot/selectors.dart';
 
