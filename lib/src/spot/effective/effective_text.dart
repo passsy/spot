@@ -1,8 +1,12 @@
 import 'package:flutter/widgets.dart';
 import 'package:spot/spot.dart';
+import 'package:spot/src/checks/checks_nullability.dart';
 import 'package:spot/src/spot/element_extensions.dart';
 import 'package:spot/src/spot/selectors.dart';
 
+/// Matchers for the [Text] widget to make assertions about:
+/// - [Text.maxLines]
+/// - [Text.textStyle]
 extension EffectiveTextMatcher on WidgetMatcher<Text> {
   /// Matches the [Text] widget when it has the given [maxLines].
   ///
@@ -20,6 +24,7 @@ extension EffectiveTextMatcher on WidgetMatcher<Text> {
     );
   }
 
+  /// Matches the [Text] widget for given maxLines.
   WidgetMatcher<Text> hasEffectiveMaxLines(int? value) {
     return hasEffectiveMaxLinesWhere((it) {
       if (value == null) {
@@ -30,6 +35,7 @@ extension EffectiveTextMatcher on WidgetMatcher<Text> {
     });
   }
 
+  /// Matches the [Text] widget when it has the given [TextStyle].
   WidgetMatcher<Text> hasEffectiveTextStyleWhere(MatchProp<TextStyle> match) {
     return hasProp(
       elementSelector: (subject) => subject.context.nest<TextStyle?>(
@@ -86,7 +92,7 @@ extension TextStyleSubject on Subject<TextStyle> {
 /// - [Text.maxLines]
 /// - [Text.textStyle]
 extension EffectiveTextSelector on WidgetSelector<Text> {
-  /// Selects the [Text] widget where given maxLine properties match.
+  /// Selects the [Text] widget where given `maxLines` properties match.
   WidgetSelector<Text> withEffectiveMaxLinesMatching(MatchProp<int?> match) {
     return withProp(
       elementSelector: (subject) => subject.context.nest<int?>(
