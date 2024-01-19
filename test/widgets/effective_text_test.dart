@@ -254,11 +254,10 @@ void main() {
         // Select with single props
         spot<Text>().withText('Great Text').withEffectiveTextStyleMatching(
           (style) {
-            final subject = style.isNotNull();
-            subject.fontSize.equals(20);
-            subject.fontStyle.equals(FontStyle.italic);
-            subject.fontWeight.equals(FontWeight.bold);
-            subject.letterSpacing.equals(2);
+            style.fontSize.equals(20);
+            style.fontStyle.equals(FontStyle.italic);
+            style.fontWeight.equals(FontWeight.bold);
+            style.letterSpacing.equals(2);
           },
         ).existsOnce();
 
