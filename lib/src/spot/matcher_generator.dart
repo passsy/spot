@@ -10,7 +10,10 @@ import 'package:spot/spot.dart';
 
 Type _typeOf<T>() => T;
 
+/// Extension on [WidgetSelector] that allows to generate matchers for
+/// the properties of a widget.
 extension CreateMatchers<W extends Widget> on WidgetSelector<W> {
+  /// Prints the generated matchers for the properties of [W] to the console.
   void printMatchers({
     Map<String, String> propNameOverrides = const {},
   }) {
@@ -25,6 +28,7 @@ extension CreateMatchers<W extends Widget> on WidgetSelector<W> {
     print(value);
   }
 
+  /// Writes the generated matchers for the properties of [W] to a file.
   void writeMatchersToFile({
     required String path,
     Map<String, String> propNameOverrides = const {},
@@ -48,6 +52,7 @@ extension CreateMatchers<W extends Widget> on WidgetSelector<W> {
     }
   }
 
+  /// Generates matchers for the properties of [W].
   String? createMatcherString({
     Map<String, String> propNameOverrides = const {},
     String? imports,
@@ -212,7 +217,10 @@ $selectorSb
   }
 }
 
+/// Extension on [DiagnosticsNode] with helper methods to
+/// extract the type of a property.
 extension ReadType on DiagnosticsNode {
+  /// Returns the type of the property.
   String getType() {
     if (this is StringProperty) {
       return 'String';
