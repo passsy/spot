@@ -223,5 +223,94 @@ void main() {
         ]),
       );
     });
+
+    testWidgets(
+      'Select with TextStyle',
+      (widgetTester) async {
+        final style = TextStyle(
+          fontSize: 20,
+          fontStyle: FontStyle.italic,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 2,
+        );
+
+        await widgetTester.pumpWidget(
+          MaterialApp(
+            home: Column(
+              children: [
+                Text(
+                  'Great Text',
+                  style: TextStyle(fontSize: 20),
+                ),
+                DefaultTextStyle(
+                  style: style,
+                  child: Text('Great Text'),
+                ),
+              ],
+            ),
+          ),
+        );
+
+        // Select with single props
+        spot<Text>().withText('Great Text').withEffectiveTextStyleMatching(
+          (style) {
+            style.fontSize.equals(20);
+            style.fontStyle.equals(FontStyle.italic);
+            style.fontWeight.equals(FontWeight.bold);
+            style.letterSpacing.equals(2);
+          },
+        ).existsOnce();
+
+        // Select with complete TextStyle
+        spot<Text>()
+            .withText('Great Text')
+            .withEffectiveTextStyle(style)
+            .existsOnce();
+      },
+    );
+
+    testWidgets('Failed selection with TextStyle shows missing values',
+        (widgetTester) async {
+      final style = TextStyle(
+        fontSize: 20,
+        fontStyle: FontStyle.italic,
+        fontWeight: FontWeight.bold,
+        letterSpacing: 2,
+      );
+
+      await widgetTester.pumpWidget(
+        MaterialApp(
+          home: DefaultTextStyle(
+            style: style,
+            child: Text('Great Text'),
+          ),
+        ),
+      );
+
+      expect(
+        () =>
+            spot<Text>().withText('Great Text').withEffectiveTextStyleMatching(
+          (style) {
+            style.fontSize.equals(20);
+            style.fontStyle.equals(FontStyle.normal);
+            style.fontWeight.equals(FontWeight.bold);
+            style.letterSpacing.equals(2);
+          },
+        ).existsOnce(),
+        throwsSpotErrorContaining([
+          'with "textStyle" that: has fontSize that: equals <20.0> has fontStyle that: equals <FontStyle.normal> has fontWeight that: equals <FontWeight.w700> has letterSpacing that: equals <2.0>',
+        ]),
+      );
+
+      expect(
+        () => spot<Text>()
+            .withText('Great Text')
+            .withEffectiveTextStyle(style.copyWith(fontStyle: FontStyle.normal))
+            .existsOnce(),
+        throwsSpotErrorContaining([
+          'with "textStyle" that: equals <TextStyle(inherit: true, size: 20.0, weight: 700, style: normal, letterSpacing: 2.0)>',
+        ]),
+      );
+    });
   });
 }
