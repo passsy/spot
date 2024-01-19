@@ -15,7 +15,10 @@ NamedWidgetProp<W, T> widgetProp<W extends Widget, T>(
 ///
 /// Use [widgetProp] to create a [NamedWidgetProp].
 class NamedWidgetProp<W extends Widget, T> {
+  /// The name of the widget property.
   final String name;
+
+  /// The function that extracts the property from a widget.
   final T Function(W widget) get;
 
   NamedWidgetProp._({
@@ -38,7 +41,10 @@ NamedElementProp<T> elementProp<T>(
 ///
 /// Use [elementProp] to create a [NamedElementProp].
 class NamedElementProp<T> {
+  /// The name of the element property.
   final String name;
+
+  /// The function that extracts the property from an element.
   final T Function(Element element) get;
 
   NamedElementProp._({
@@ -61,7 +67,10 @@ NamedRenderObjectProp<R, T> renderObjectProp<T, R extends RenderObject>(
 ///
 /// Use [renderObjectProp] to create a [NamedRenderObjectProp].
 class NamedRenderObjectProp<R extends RenderObject, T> {
+  /// The name of the render object property.
   final String name;
+
+  /// The function that extracts the property from a render object.
   final T Function(R renderObject) get;
 
   NamedRenderObjectProp._({
