@@ -3,6 +3,8 @@ import 'package:spot/spot.dart';
 import 'package:spot/src/spot/element_extensions.dart';
 import 'package:spot/src/spot/selectors.dart';
 
+/// Matchers for the [Text] widget like
+/// [hasMaxLines], [hasTextStyle], [hasText].
 extension EffectiveTextMatcher on WidgetMatcher<Text> {
   /// Matches the [Text] widget when it has the given [maxLines].
   ///
@@ -20,6 +22,7 @@ extension EffectiveTextMatcher on WidgetMatcher<Text> {
     );
   }
 
+  /// Matches the [Text] widget against given [maxLines].
   WidgetMatcher<Text> hasEffectiveMaxLines(int? value) {
     return hasEffectiveMaxLinesWhere((it) {
       if (value == null) {
@@ -30,6 +33,7 @@ extension EffectiveTextMatcher on WidgetMatcher<Text> {
     });
   }
 
+  /// Matches the [Text] widget's [TextStyle] properties.
   WidgetMatcher<Text> hasEffectiveTextStyleWhere(MatchProp<TextStyle> match) {
     return hasProp(
       elementSelector: (subject) => subject.context.nest<TextStyle?>(
@@ -52,7 +56,10 @@ extension EffectiveTextMatcher on WidgetMatcher<Text> {
   }
 }
 
+/// Allows accessing various properties of [TextStyle].
 extension TextStyleSubject on Subject<TextStyle> {
+  /// A [Subject<double>] representing the `fontSize` of the [TextStyle].
+  /// If the `fontSize` is not explicitly set, it defaults to 14.
   Subject<double> get fontSize {
     return context.nest(
       () => ['has fontSize'],
@@ -60,6 +67,9 @@ extension TextStyleSubject on Subject<TextStyle> {
     );
   }
 
+  /// A [Subject<FontWeight>] representing the `fontWeight`
+  /// of the [TextStyle]. If the `fontWeight` is not
+  /// explicitly set, it defaults to [FontWeight.normal].
   Subject<FontWeight> get fontWeight {
     return context.nest(
       () => ['has fontWeight'],
@@ -67,6 +77,9 @@ extension TextStyleSubject on Subject<TextStyle> {
     );
   }
 
+  /// A [Subject<FontStyle>] representing the `fontStyle`
+  /// of the [TextStyle]. If the `fontStyle` is not explicitly set,
+  /// it defaults to [FontStyle.normal].
   Subject<FontStyle> get fontStyle {
     return context.nest(
       () => ['has fontStyle'],
@@ -74,6 +87,9 @@ extension TextStyleSubject on Subject<TextStyle> {
     );
   }
 
+  /// Gets a [Subject<double>] representing the `letterSpacing`
+  /// of the [TextStyle]. If the `letterSpacing` is not explicitly set,
+  /// it defaults to 0.
   Subject<double> get letterSpacing {
     return context.nest(
       () => ['has letterSpacing'],
