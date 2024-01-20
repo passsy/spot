@@ -3,8 +3,9 @@ import 'package:spot/spot.dart';
 import 'package:spot/src/spot/element_extensions.dart';
 import 'package:spot/src/spot/selectors.dart';
 
-/// Matchers for the [Text] widget like
-/// [hasMaxLines], [hasTextStyle], [hasText].
+/// Matchers for the [Text] widget to make assertions about:
+/// - [Text.maxLines]
+/// - [Text.textStyle]
 extension EffectiveTextMatcher on WidgetMatcher<Text> {
   /// Matches the [Text] widget when it has the given [maxLines].
   ///
@@ -98,7 +99,11 @@ extension TextStyleSubject on Subject<TextStyle> {
   }
 }
 
+/// Selectors for the [Text] widget like
+/// - [Text.maxLines]
+/// - [Text.textStyle]
 extension EffectiveTextSelector on WidgetSelector<Text> {
+  /// Selects the [Text] widget where given `maxLines` properties match.
   WidgetSelector<Text> withEffectiveMaxLinesMatching(MatchProp<int?> match) {
     return withProp(
       elementSelector: (subject) => subject.context.nest<int?>(
@@ -109,8 +114,33 @@ extension EffectiveTextSelector on WidgetSelector<Text> {
     );
   }
 
+  /// Selects a [Text] widget with given `maxLines`.
   WidgetSelector<Text> withEffectiveMaxLines(int? value) {
     return withEffectiveMaxLinesMatching((it) => it.equals(value));
+  }
+
+  /// Selects the [Text] widget where given [TextStyle] properties match.
+  WidgetSelector<Text> withEffectiveTextStyleMatching(
+    MatchProp<TextStyle> match,
+  ) {
+    return withProp(
+      elementSelector: (subject) => subject.context.nest<TextStyle>(
+        () => ['with "textStyle"'],
+        (Element element) => Extracted.value(_extractTextStyle(element)),
+      ),
+      match: match,
+    );
+  }
+
+  /// Selects a [Text] widget with a given [TextStyle].
+  WidgetSelector<Text> withEffectiveTextStyle(TextStyle? value) {
+    return withEffectiveTextStyleMatching((it) {
+      if (value == null) {
+        it.isNull();
+      } else {
+        it.equals(value);
+      }
+    });
   }
 }
 
