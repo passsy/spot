@@ -436,6 +436,12 @@ mixin Selectors<T extends Widget> {
     return self!.copyWith(elementFilters: [_LastElement()]);
   }
 
+  /// Selects the widget at a specified [index] in the list of found widgets.
+  /// Example:
+  ///   ```
+  ///   spot<YourWidgetType>().atIndex(2) // Selects the third widget
+  ///   ```
+  @useResult
   WidgetSelector<T> atIndex(int index) {
     return self!.copyWith(elementFilters: [_ElementAtIndex(index)]);
   }
@@ -491,6 +497,21 @@ class _ElementAtIndex extends ElementFilter {
   String get description => ':first';
 }
 
+/// Extension on [Selectors<W>] for advanced widget querying.
+///
+/// Adds methods to refine widget selections based on elements, widgets,
+/// and their properties. Filters are applied during the snapshotting
+/// of the selector, enabling precise widget selection.
+///
+/// Methods:
+///   - [whereElement]: Filter on [Element] properties.
+///   - [whereWidget]: Filter based on widget properties.
+///   - [whereWidgetProp]: Filter widgets by a specific property.
+///   - [whereElementProp]: Filter elements by a specific property.
+///   - [whereRenderObjectProp]: Filter by render object properties.
+///
+/// Each method requires a predicate and a description for clear
+/// error messages and precise selection.
 extension SelectorQueries<W extends Widget> on Selectors<W> {
   /// Creates a filter for the discovered elements which is applied when the
   /// [Selector] is snapshotted
@@ -575,6 +596,19 @@ extension SelectorQueries<W extends Widget> on Selectors<W> {
     );
   }
 
+  /// Creates a filter for the elements of the discovered widgets based on
+  /// a specified property. The filter is applied when the [Selector] is
+  /// snapshotted.
+  ///
+  /// Example:
+  ///   ```
+  ///   spotSingle<Checkbox>()
+  ///     .whereElementProp<bool>(
+  ///       prop: elementProp('isFocused', (element) => element.isFocused),
+  ///       match: (isFocused) => isFocused == true,
+  ///     )
+  ///     .existsOnce();
+  ///   ```
   @useResult
   WidgetSelector<W> whereElementProp<T>(
     NamedElementProp<T> prop,
@@ -594,6 +628,22 @@ extension SelectorQueries<W extends Widget> on Selectors<W> {
     );
   }
 
+  /// Creates a filter for the render objects of the discovered widgets based on
+  /// a specified property. This filter is applied when the [Selector] is
+  /// snapshotted.
+  ///
+  /// Useful for selecting widgets based on specific properties of their render
+  /// objects. Provide a [NamedRenderObjectProp] and a matching function.
+  ///
+  /// Example:
+  ///   ```
+  ///   spotSingle<Checkbox>()
+  ///     .whereRenderObjectProp<double, RenderBox>(
+  ///       prop: renderObjectProp('opacity', (ro) => ro.opacity),
+  ///       match: (opacity) => opacity > 0.5,
+  ///     )
+  ///     .existsOnce();
+  ///   ```
   @useResult
   WidgetSelector<W> whereRenderObjectProp<T, R extends RenderObject>(
     NamedRenderObjectProp<R, T> prop,
@@ -623,7 +673,13 @@ extension SelectorQueries<W extends Widget> on Selectors<W> {
 /// The [Subject] keeps the error states and is further processed
 typedef MatchProp<T> = void Function(Subject<T>);
 
+/// Extension on [MatchProp<T>] to handle nullable types.
+///
+/// Provides methods to convert a matcher of nullable types to a matcher of
+/// non-nullable types, ensuring nullability is appropriately handled in
+/// matchers.
 extension MatchPropNullable<T> on MatchProp<T> {
+  /// Converts a [MatchProp<T>] to [MatchProp<T?>], hiding its nullability.
   MatchProp<T?> hideNullability() {
     return (Subject<T?> subject) {
       this.call(subject.hideNullability());
@@ -631,7 +687,12 @@ extension MatchPropNullable<T> on MatchProp<T> {
   }
 }
 
+/// Extension on [MatchProp<T?>] to handle non-nullable types.
+///
+/// Provides methods to convert a matcher of non-nullable types to a matcher of
+/// nullable types, ensuring nullability is appropriately handled in matchers.
 extension MatchPropNonNullable<T> on MatchProp<T?> {
+  /// Converts a [MatchProp<T?>] to [MatchProp<T>], revealing its nullability.
   MatchProp<T> revealNullability() {
     return (Subject<T> subject) {
       this.call(subject.revealNullability());
@@ -639,18 +700,28 @@ extension MatchPropNonNullable<T> on MatchProp<T?> {
   }
 }
 
+/// Abstract class representing a matcher for a widget of type [W].
+///
+/// Provides access to the underlying [Element], [WidgetSelector], and the
+/// widget instance itself for more detailed assertions and manipulations.
 abstract class WidgetMatcher<W extends Widget> {
+  /// The [Element] associated with the matched widget.
   Element get element;
 
+  /// The [WidgetSelector<W>] that was used to find this widget.
   WidgetSelector<W> get selector;
 
+  /// The actual widget instance of type [W] that was matched.
   W get widget;
 
+  /// Factory constructor to create a [WidgetMatcher] from an [Element] and a
+  /// [WidgetSelector].
   factory WidgetMatcher({
     required Element element,
     required WidgetSelector<W> selector,
   }) = _WidgetMatcherImpl;
 
+  /// Factory constructor to create a [WidgetMatcher] from a [WidgetSnapshot].
   factory WidgetMatcher.fromSnapshot(WidgetSnapshot<W> snapshot) =
       _WidgetMatcherFromSnapshot;
 }
