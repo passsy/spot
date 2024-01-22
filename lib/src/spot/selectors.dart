@@ -1159,11 +1159,19 @@ class PropFilter implements ElementFilter {
   }
 }
 
-/// Keeps all [WidgetTreeNode] that have child elements that match the [childSelectors] selectors
+/// Keeps all [WidgetTreeNode] that have child elements that match
+/// the [childSelectors] selectors
 class ChildFilter implements ElementFilter {
-  final List<WidgetSelector> childSelectors;
-
+  /// Constructs a [ChildFilter] with a list of
+  /// [WidgetSelector]s for matching child elements.
   ChildFilter(this.childSelectors);
+
+  /// A list of [WidgetSelector]s used to match child elements of the widget
+  /// tree nodes.
+  ///
+  /// The filter checks each candidate node to see if its children satisfy the
+  /// conditions defined in these selectors.
+  final List<WidgetSelector> childSelectors;
 
   @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
