@@ -1815,13 +1815,27 @@ class WidgetSnapshot<W extends Widget> {
   }
 }
 
+/// Extension on [WidgetSnapshot<W>] to convert it to [WidgetMatcher] types.
+///
+/// Provides convenience methods to transform a widget snapshot into matchers
+/// for single or multiple widgets.
 // TODO make WidgetSnapshot implement WidgetMatcher and MultiWidgetMatcher
 extension ToWidgetMatcher<W extends Widget> on WidgetSnapshot<W> {
+  /// Converts the snapshot to a [MultiWidgetMatcher],
+  /// which can match multiple widgets.
+  ///
+  /// This method is used when you want to perform assertions or operations
+  /// on multiple widgets discovered by the snapshot.
   @useResult
   MultiWidgetMatcher<W> get multi {
     return MultiWidgetMatcher.fromSnapshot(this);
   }
 
+  /// Converts the snapshot to a [WidgetMatcher],
+  /// ensuring it matches at most one widget.
+  ///
+  /// This method is used for assertions or operations on a single widget.
+  /// It asserts that the snapshot contains at most one widget.
   @useResult
   WidgetMatcher<W> get single {
     assert(discovered.length <= 1);
@@ -1829,25 +1843,41 @@ extension ToWidgetMatcher<W extends Widget> on WidgetSnapshot<W> {
   }
 }
 
+/// Extension on [WidgetSnapshot]<W> providing shorthand accessors
+/// to the discovered widgets and elements.
+///
+/// Offers convenient methods to retrieve single widgets or elements
+/// and lists of discovered widgets and elements.
 extension WidgetSnapshotShorthands<W extends Widget> on WidgetSnapshot<W> {
+  /// Gets the first discovered widget of type [W], if any.
+  /// Returns `null` if no such widget was discovered.
   W? get discoveredWidget => discoveredWidgets.firstOrNull;
 
+  /// Deprecated: Use [discoveredWidget] instead.
   @Deprecated('Use discoveredWidget')
   W? get widget => discoveredWidget;
 
+  /// Gets the first discovered [Element], if any.
+  /// Returns `null` if no element was discovered.
   Element? get discoveredElement => discoveredElements.firstOrNull;
 
+  /// Deprecated: Use [discoveredElement] instead.
   @Deprecated('Use discoveredElement')
   Element? get element => discoveredElement;
 
   /// Shorthand to get the widgets of all discovered elements
   /// (see [discovered] or [discoveredElements])
   ///
-  /// This list may be incomplete for synthetic widgets like [AnyText], when the widgets are not of type [W].
+  /// This list may be incomplete for synthetic widgets like [AnyText],
+  /// when the widgets are not of type [W].
   ///
-  /// To check the number of discovered elements, always use [discovered] or [discoveredElements]. Use [discoveredWidgets] only when you need to access any properties of the widgets.
+  /// To check the number of discovered elements, always use [discovered]
+  /// or [discoveredElements]. Use [discoveredWidgets] only when you need
+  /// to access any properties of the widgets.
   List<W> get discoveredWidgets => _widgets.values.whereType<W>().toList();
 
+  /// A list of all elements that were discovered.
+  /// Use this list to access elements corresponding to the discovered widgets.
   List<Element> get discoveredElements =>
       discovered.map((e) => e.element).toList();
 }
