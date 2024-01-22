@@ -1014,13 +1014,30 @@ class PropMatcher<W extends Widget> {
     this.matcher, {
     required this.description,
   });
+
+  /// Function that applies the matcher to a [WidgetMatcher].
+  final void Function(WidgetMatcher<W>) matcher;
+
+  /// Description of what this matcher is checking.
+  final String description;
 }
 
+/// Represents a predicate with an associated description.
+///
+/// Used to create readable and descriptive predicates in widget testing.
 class PredicateWithDescription {
-  final bool Function(Element) predicate;
-  final String description;
+  /// Constructs a [PredicateWithDescription] with a predicate function and
+  /// a description.
+  PredicateWithDescription(
+    this.predicate, {
+    required this.description,
+  });
 
-  PredicateWithDescription(this.predicate, {required this.description});
+  /// The predicate function to evaluate.
+  final bool Function(Element) predicate;
+
+  /// Description of what this predicate checks.
+  final String description;
 
   @override
   String toString() {
