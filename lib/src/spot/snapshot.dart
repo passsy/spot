@@ -44,11 +44,20 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
   return snapshot;
 }
 
+/// Generates candidate widget tree nodes based on parent selectors for a
+/// given widget type [W].
+///
+/// This class is used to create a set of candidates by considering the
+/// hierarchical context defined by parent selectors in a [WidgetSelector].
 class CandidateGeneratorFromParents<W extends Widget>
     implements CandidateGenerator<W> {
-  final WidgetSelector<W> selector;
-
+  /// Constructs a [CandidateGeneratorFromParents] using the
+  /// provided [selector].
   CandidateGeneratorFromParents(this.selector);
+
+  /// The [WidgetSelector] whose parent selectors are used to generat
+  /// candidates.
+  final WidgetSelector<W> selector;
 
   @override
   Iterable<WidgetTreeNode> generateCandidates() {
