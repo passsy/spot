@@ -1761,13 +1761,21 @@ extension ReadSingleSnapshot<W extends Widget> on WidgetSelector<W> {
   }
 }
 
+/// A type alias for a snapshot that can contain multiple widgets.
 @Deprecated('Use WidgetSnapshot')
 typedef MultiWidgetSnapshot<W extends Widget> = WidgetSnapshot<W>;
+
+/// A type alias for a snapshot that contains a single widget.
 @Deprecated('Use WidgetSnapshot')
 typedef SingleWidgetSnapshot<W extends Widget> = WidgetSnapshot<W>;
 
-/// A collection of [discovered] elements that match [selector]
+/// Represents a snapshot of widgets that have been discovered
+/// by a [WidgetSelector].
+///
+/// This class encapsulates the result of a widget selection process, containing
+/// information about the widgets that matched the selector's criteria.
 class WidgetSnapshot<W extends Widget> {
+  /// Constructs a [WidgetSnapshot].
   WidgetSnapshot({
     required this.selector,
     required this.discovered,
@@ -1789,7 +1797,8 @@ class WidgetSnapshot<W extends Widget> {
   /// The [WidgetSelector] that was used to search/filter elements in [scope]
   final WidgetSelector<W> selector;
 
-  /// A widget tree (not necessarily the whole tree) that was used to match elements with [selector]
+  /// A widget tree (not necessarily the whole tree) that was used to
+  /// match elements with [selector]
   final ScopedWidgetTreeSnapshot scope;
 
   /// All widgets from [scope] that were checked by [selector]
