@@ -1255,6 +1255,7 @@ class ChildFilter implements ElementFilter {
   }
 }
 
+/// Represents the expected quantity of widgets a selector should match.
 @Deprecated('Use QuantityConstraint instead')
 enum ExpectedQuantity {
   /// A selector that matches a single widget
@@ -1278,8 +1279,12 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
     ],
   );
 
+  /// The runtime type of the widget this selector is intended for.
   Type get type => W;
 
+  /// Constructor for creating a [WidgetSelector].
+  ///
+  /// Allows specifying various parameters for customizing the selection criteria.
   WidgetSelector({
     List<PredicateWithDescription>? props,
     List<WidgetSelector>? parents,
@@ -1300,12 +1305,29 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
                 : QuantityConstraint.unconstrained),
         mapElementToWidget = mapElementToWidget ?? defaultMapElementToWidget<W>;
 
+  /// A list of predicates with descriptions used to filter the widget tree nodes.
+  ///
+  /// These predicates define various conditions that the nodes must satisfy
+  /// to be included in the filtered set.
   final List<PredicateWithDescription> props;
 
+  /// A list of parent selectors used to define a hierarchical
+  /// context for the selection.
+  ///
+  /// These selectors specify the parent widgets in the tree that the current
+  /// selector's widget must be a descendant of.
   final List<WidgetSelector> parents;
 
+  /// A list of child selectors used to filter widgets based on their children.
+  ///
+  /// These selectors are applied to the children of the widget being matched,
+  /// allowing for selection based on child widget properties.
   final List<WidgetSelector> children;
 
+  /// A list of element filters used to apply additional custom filtering logic.
+  ///
+  /// These filters enable advanced selection criteria beyond the standard
+  /// widget properties and hierarchy.
   final List<ElementFilter> elementFilters;
 
   /// Whether this selector expects to find a single or multiple widgets
@@ -1317,6 +1339,9 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
   /// The number of widgets that this selector expects to find
   final QuantityConstraint quantityConstraint;
 
+  /// Default mapping function to convert an [Element] to a widget of type [W].
+  ///
+  /// This function is used when no custom mapping is provided in the constructor.
   static W defaultMapElementToWidget<W>(Element element) {
     return element.widget as W;
   }
@@ -1338,6 +1363,10 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
     ];
   }
 
+  /// Generates a candidate generator for this selector.
+  ///
+  /// Used to produce sets of candidate widget tree nodes that match
+  /// this selector.
   CandidateGenerator<W> createCandidateGenerator() {
     return CandidateGeneratorFromParents(this);
   }
@@ -1387,6 +1416,9 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
     return constraints.join(' ');
   }
 
+  /// Generates a string representation of this selector, excluding parents.
+  ///
+  /// This method is used internally for creating a more concise string output.
   String toStringWithoutParents() {
     final children = this.children.isNotEmpty
         ? 'with children: [${this.children.map((e) => e.toString()).join(', ')}]'
@@ -1425,6 +1457,10 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
     return constraints.join(' ');
   }
 
+  /// Generates a breadcrumb-like string representation of this selector.
+  ///
+  /// This method includes parent selectors in the output, showing the full
+  /// hierarchy of the selection.
   String toStringBreadcrumb() {
     final parents = this.parents;
 
@@ -1443,6 +1479,11 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
   @override
   WidgetSelector<W> get self => this;
 
+  /// Returns a new instance of [WidgetSelector] with some properties replaced
+  /// with new values.
+  ///
+  /// This method is used for creating a new selector based on the current one
+  /// but with some modified parameters.
   @useResult
   WidgetSelector<W> copyWith({
     List<PredicateWithDescription>? props,
