@@ -1882,24 +1882,40 @@ extension WidgetSnapshotShorthands<W extends Widget> on WidgetSnapshot<W> {
       discovered.map((e) => e.element).toList();
 }
 
+/// Extension on [WidgetSelector<W>] providing methods to specify the
+/// quantity of widgets to select.
+/// These methods allow setting specific quantity constraints for the
+/// selection of widgets.
 extension QuantitySelectors<W extends Widget> on WidgetSelector<W> {
+  /// Sets the selector to match exactly [n] widgets.
   WidgetSelector<W> amount(int n) {
     return self.overrideQuantityConstraint(QuantityConstraint.exactly(n));
   }
 
+  /// Sets the selector to match at least [n] widgets.
   WidgetSelector<W> atLeast(int n) {
     return self.overrideQuantityConstraint(QuantityConstraint.atLeast(n));
   }
 
+  /// Sets the selector to match at most [n] widgets.
   WidgetSelector<W> atMost(int n) {
     return self.overrideQuantityConstraint(QuantityConstraint.atMost(n));
   }
 
+  /// Overrides the current quantity constraint with a new [constraint].
+  ///
+  /// This method allows for more flexible control over the number of widgets
+  /// the selector should match.
   WidgetSelector<W> overrideQuantityConstraint(QuantityConstraint constraint) {
     return self.copyWith(quantityConstraint: constraint);
   }
 }
 
+/// Extension on [WidgetSelector<W>] providing matchers to assert on the
+/// quantity of selected widgets.
+///
+/// These matchers enable assertions on whether a certain number
+/// of widgets exist.
 extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   MultiWidgetMatcher<W> existsAtLeastOnce() {
     TestAsyncUtils.guardSync();
