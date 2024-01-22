@@ -1074,6 +1074,10 @@ typedef SingleWidgetSelector<W extends Widget> = WidgetSelector<W>;
 @Deprecated('Use WidgetSelector')
 typedef MultiWidgetSelector<W extends Widget> = WidgetSelector<W>;
 
+/// Base class for defining filters on widget tree nodes.
+///
+/// Filters are used to narrow down the set of widget tree nodes based on
+/// specific criteria.
 abstract class ElementFilter {
   /// Filters all candidates, retuning only a subset that matches
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates);
@@ -1082,7 +1086,12 @@ abstract class ElementFilter {
   String get description;
 }
 
+/// Base class for generating candidate widget tree nodes for a given widget type.
+///
+/// Implementations of this class are used to produce sets of candidates
+/// that match a certain widget type [W].
 abstract class CandidateGenerator<W extends Widget> {
+  /// Generates a set of candidate widget tree nodes.
   Iterable<WidgetTreeNode> generateCandidates();
 }
 
