@@ -2010,11 +2010,29 @@ extension RelativeSelectors<W extends Widget> on WidgetSelector<W> {
   }
 }
 
+/// Represents a matcher for multiple widgets of type [W].
+///
+/// This class is used to handle multiple widgets that have been matched
+/// by a [WidgetSnapshot], allowing for further assertions or operations
+/// on each matched widget.
 class MultiWidgetMatcher<W extends Widget> {
-  final WidgetSnapshot<W> snapshot;
-
+  /// Constructs a [MultiWidgetMatcher] from a [WidgetSnapshot].
+  ///
+  /// This constructor takes a snapshot of matched widgets and creates a matcher
+  /// for handling multiple widgets.
   const MultiWidgetMatcher.fromSnapshot(this.snapshot);
 
+  /// The snapshot of widgets that this matcher is based on.
+  ///
+  /// [snapshot] contains the result of a widget selection process,
+  /// encapsulating information about the widgets that matched the selector's criteria.
+  final WidgetSnapshot<W> snapshot;
+
+  /// Gets a list of [WidgetMatcher]s for each widget discovered in the
+  /// snapshot.
+  ///
+  /// This list allows for individual assertions or operations on each matched
+  /// widget. The items in the list are immutable to ensure consistent state.
   List<WidgetMatcher<W>> get discovered {
     final items = snapshot.discovered.mapIndexed((index, element) {
       return WidgetMatcher(
@@ -2026,7 +2044,18 @@ class MultiWidgetMatcher<W extends Widget> {
   }
 }
 
+/// Extension on [MultiWidgetMatcher]<W> providing matchers for assertions
+/// on multiple widgets.
+///
+/// These matchers allow performing assertions on each widget in the set of
+/// matched widgets.
 extension MutliMatchers<W extends Widget> on MultiWidgetMatcher<W> {
+  /// Asserts that at least one of the matched widgets
+  /// fulfills the provided [matcher].
+  ///
+  /// If none of the matched widgets fulfill the [matcher],
+  /// a [TestFailure] is thrown. This method is useful for cases when at least
+  /// one widget is expected to meet a certain condition.
   MultiWidgetMatcher<W> any(void Function(WidgetMatcher<W>) matcher) {
     TestAsyncUtils.guardSync();
     if (discovered.isEmpty) {
@@ -2053,6 +2082,10 @@ extension MutliMatchers<W extends Widget> on MultiWidgetMatcher<W> {
     );
   }
 
+  /// Asserts that all widgets in the matched set fulfill the provided [matcher].
+  ///
+  /// Applies [matcher] to each widget. If any fail, throws a [TestFailure]
+  /// with details of the mismatches.
   MultiWidgetMatcher<W> all(void Function(WidgetMatcher<W>) matcher) {
     TestAsyncUtils.guardSync();
     if (discovered.isEmpty) {
