@@ -1734,6 +1734,11 @@ extension SelectorToSnapshot<W extends Widget> on WidgetSelector<W> {
   }
 }
 
+/// Extension on [WidgetSelector<W>] to provide easy access to the single
+/// widget, element, or render object in the current selection.
+///
+/// These convenience methods are intended for use with selectors that are
+/// expected to match exactly one widget.
 extension ReadSingleSnapshot<W extends Widget> on WidgetSelector<W> {
   /// Convenience getter to access the [Widget] when evaluating the [WidgetSelector]
   W snapshotWidget() {
