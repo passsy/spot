@@ -1634,28 +1634,49 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
   }
 }
 
-/// The number of widgets that are expected to be found
+/// Defines the quantity constraints for the number of widgets
+/// expected to be found.
+///
+/// This class specifies the minimum and maximum number of widgets that a
+/// selector should match, enabling precise control over the selection criteria.
 class QuantityConstraint {
-  static const QuantityConstraint unconstrained = QuantityConstraint();
-  static const QuantityConstraint zero = QuantityConstraint.atMost(0);
-  static const QuantityConstraint single = QuantityConstraint.atMost(1);
-
+  /// Constructs a [QuantityConstraint] with optional minimum and maximum values.
+  ///
+  /// The [min] value specifies the minimum number of widgets to match, and
+  /// the [max] value specifies the maximum number of widgets to match.
+  /// If both are provided, [min] must be less than or equal to [max].
   const QuantityConstraint({this.min, this.max})
       : assert(min == null || max == null || min <= max);
 
+  /// Constructs a [QuantityConstraint] where exactly [n] widgets should match.
   const QuantityConstraint.exactly(int n)
       : min = n,
         max = n;
 
+  /// Constructs a [QuantityConstraint] where at least [n] widgets should match.
   const QuantityConstraint.atLeast(int n)
       : min = n,
         max = null;
 
+  /// Constructs a [QuantityConstraint] where at most [n] widgets should match.
   const QuantityConstraint.atMost(int n)
       : min = null,
         max = n;
 
+  /// Represents an unconstrained quantity, allowing any number of widgets
+  /// to match.
+  static const QuantityConstraint unconstrained = QuantityConstraint();
+
+  /// Represents a constraint where no widgets should match.
+  static const QuantityConstraint zero = QuantityConstraint.atMost(0);
+
+  /// Represents a constraint where exactly one widget should match.
+  static const QuantityConstraint single = QuantityConstraint.atMost(1);
+
+  /// The minimum number of widgets that should match. `null` for no minimum.
   final int? min;
+
+  /// The maximum number of widgets that should match. `null` for no maximum.
   final int? max;
 
   @override
