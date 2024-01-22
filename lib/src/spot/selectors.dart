@@ -1045,8 +1045,13 @@ class PredicateWithDescription {
   }
 }
 
+/// A predicate that checks if an element's widget is of a specific type [W].
+///
+/// This class is a specialized version of [PredicateWithDescription] that
+/// is used to filter widgets by their type.
 class WidgetTypePredicate<W extends Widget>
     implements PredicateWithDescription {
+  /// Constructs a [WidgetTypePredicate] for the widget type [W].
   WidgetTypePredicate();
 
   @override
