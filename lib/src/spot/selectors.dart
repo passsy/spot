@@ -757,7 +757,15 @@ class _WidgetMatcherFromSnapshot<W extends Widget> implements WidgetMatcher<W> {
   WidgetSelector<W> get selector => snapshot.selector;
 }
 
+/// Extension on [WidgetMatcher]<W> providing additional matchers for
+/// widgets of type [W].
+///
+/// These matchers facilitate more specific assertions on widget properties,
+/// element properties, and render object properties.
 extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
+  /// Asserts that a widget has a specific diagnostic property.
+  ///
+  /// Useful for testing properties that are part of a widget's diagnostics.
   WidgetMatcher<W> hasDiagnosticProp<T>(
     String propName,
     MatchProp<T> match,
