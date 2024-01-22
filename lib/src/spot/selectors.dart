@@ -1702,17 +1702,31 @@ class QuantityConstraint {
   int get hashCode => min.hashCode ^ max.hashCode;
 }
 
+/// Extension on [WidgetSelector<W>] to create snapshots of the current
+/// widget selection.
+///
+/// Provides methods to create a snapshot of the widgets currently selected by
+/// the selector, which can then be used for further analysis or assertions.
 extension SelectorToSnapshot<W extends Widget> on WidgetSelector<W> {
+  /// Creates a snapshot of the currently selected widgets.
+  ///
+  /// This method captures the current state of the widgets selected by the
+  /// selector for further analysis or assertions.
   WidgetSnapshot<W> snapshot() {
     TestAsyncUtils.guardSync();
     return snapshot_file.snapshot(this, validateQuantity: false);
   }
 
+  /// Modifies the selector to match an unconstrained number of widgets.
+  ///
+  /// This method returns a new selector that does not impose any constraints
+  /// on the number of widgets it can match.
   @useResult
   WidgetSelector<W> get multi {
     return overrideQuantityConstraint(QuantityConstraint.unconstrained);
   }
 
+  /// Modifies the selector to match at most one widget.
   @Deprecated('Use .atMost(1) or .amount(1)')
   @useResult
   WidgetSelector<W> get single {
