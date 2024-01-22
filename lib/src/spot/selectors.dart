@@ -866,11 +866,19 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
     return this;
   }
 
+  /// Retrieves a specific property from the matched widget.
+  ///
+  /// Use this method to get a property value directly from the widget for
+  /// further processing or assertions.
   T getWidgetProp<T>(NamedWidgetProp<W, T> prop) {
     final widget = selector.mapElementToWidget(element);
     return prop.get(widget);
   }
 
+  /// Asserts that a widget's property meets a specific condition.
+  ///
+  /// This method is useful for making assertions on properties directly
+  /// within the widget.
   WidgetMatcher<W> hasWidgetProp<T>({
     required NamedWidgetProp<W, T?> prop,
     required MatchProp<T> match,
@@ -892,10 +900,18 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
     return this;
   }
 
+  /// Retrieves a specific property from the matched widget's element.
+  ///
+  /// Use this method to get a property value directly from the element of
+  /// the widget for further processing or assertions.
   T getElementProp<T>(NamedElementProp<T> prop) {
     return prop.get(element);
   }
 
+  /// Asserts that an element's property meets a specific condition.
+  ///
+  /// This method is useful for making assertions on properties within the
+  /// element of the widget.
   WidgetMatcher<W> hasElementProp<T>({
     required NamedElementProp<T?> prop,
     required MatchProp<T> match,
@@ -917,6 +933,10 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
     return this;
   }
 
+  /// Retrieves a specific property from the matched widget's render object.
+  ///
+  /// Use this method to get a property value directly from the render object
+  /// of the widget for further processing or assertions.
   T getRenderObjectProp<T, R extends RenderObject>(
     NamedRenderObjectProp<R, T> prop,
   ) {
@@ -924,6 +944,10 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
     return prop.get(renderObject);
   }
 
+  /// Asserts that a render object's property meets a specific condition.
+  ///
+  /// This method is useful for making assertions on properties within the
+  /// render object of the widget.
   WidgetMatcher<W> hasRenderObjectProp<T, R extends RenderObject>({
     required NamedRenderObjectProp<R, T?> prop,
     required MatchProp<T> match,
