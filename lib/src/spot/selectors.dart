@@ -988,19 +988,28 @@ extension on CheckFailure? {
   }
 }
 
+/// Represents a failure in a property check within widget testing.
+///
+/// This exception is thrown when a property of a widget does not meet
+/// the expected criteria defined in a matcher.
 class PropertyCheckFailure extends TestFailure {
+  /// Constructs a [PropertyCheckFailure] with a custom message and
+  /// a description of the matcher that caused the failure.
   PropertyCheckFailure(
     super.message, {
     required this.matcherDescription,
   });
 
+  /// Description of the matcher that led to this failure.
   final String matcherDescription;
 }
 
+/// Defines a matcher for properties of a widget.
+///
+/// This class is used to create custom matchers that assert specific
+/// properties on widgets.
 class PropMatcher<W extends Widget> {
-  final void Function(WidgetMatcher<W>) matcher;
-  final String description;
-
+  /// Constructs a [PropMatcher] with a matcher function and a description.
   const PropMatcher(
     this.matcher, {
     required this.description,
