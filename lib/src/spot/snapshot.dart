@@ -448,7 +448,9 @@ void _dumpWidgetTree(StringBuffer buffer) {
   }
 }
 
+/// Extension on [Element] providing access to parent and child elements.
 extension ElementParent on Element {
+  /// Gets the immediate parent of this element.
   Element? get parent {
     Element? parent;
     visitAncestorElements((element) {
@@ -458,6 +460,7 @@ extension ElementParent on Element {
     return parent;
   }
 
+  /// Gets all parent elements of this element.
   Iterable<Element> get parents sync* {
     Element? element = this;
     while (element != null) {
@@ -466,6 +469,7 @@ extension ElementParent on Element {
     }
   }
 
+  /// Gets all immediate child elements of this element.
   Iterable<Element> get children sync* {
     final List<Element> found = [];
     visitChildren(found.add);
@@ -519,6 +523,7 @@ extension _LessSpecificSelectors<W extends Widget> on WidgetSelector<W> {
   }
 }
 
+/// Generates all subsets of a given list.
 @visibleForTesting
 List<List<T>> getAllSubsets<T>(List<T> list) {
   final List<List<T>> result = [[]];
@@ -533,6 +538,7 @@ List<List<T>> getAllSubsets<T>(List<T> list) {
   return result.sortedByDescending((element) => element.length).toList();
 }
 
+/// Finds the common ancestor of a set of elements.
 Element findCommonAncestor(Iterable<Element> elements) {
   // ignore: deprecated_member_use
   final rootElement = WidgetsBinding.instance.renderViewElement!;
