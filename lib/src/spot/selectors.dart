@@ -2058,29 +2058,65 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
 
 /// Extensions that control the parent/children widgets of a [WidgetSelector]
 extension RelativeSelectors<W extends Widget> on WidgetSelector<W> {
-  /// Returns a [WidgetSelector] that requires [parent] to be a parent of
-  /// the to be matched widget
+  /// Returns a [WidgetSelector] that requires [parent] to be a parent of the
+  /// widget to match.
+  /// #### Example:
+  /// ```dart
+  ///  final containers = spot<Container>();
+  ///  containers.withParent(spot<Wrap>()).existsOnce()
+  /// ```
+  /// #### See also:
+  /// - [withParents] requires [parents] to be parents of the widget to match.
+  /// - [withChild] requires [child] to be a child of the widget to match.
+  /// - [withChildren] requires [children] to be children of the widget to match.
   @useResult
   WidgetSelector<W> withParent(WidgetSelector parent) {
     return copyWith(parents: [...parents, parent]);
   }
 
-  /// Returns a [WidgetSelector] that requires [parents] to be parents of
-  /// the to be matched widget
+  /// Returns a [WidgetSelector] that requires [parents] to be parents of the
+  /// widget to match.
+  /// #### Example:
+  /// ```dart
+  ///  final containers = spot<Container>();
+  ///  containers.withParents([spot<Wrap>()]).existsOnce();
+  /// ```
+  /// #### See also:
+  /// - [withParent] requires [parent] to be a parent of the widget to match.
+  /// - [withChild] requires [child] to be a child of the widget to match.
+  /// - [withChildren] requires [children] to be children of the widget to match.
   @useResult
   WidgetSelector<W> withParents(List<WidgetSelector> parents) {
     return copyWith(parents: [...this.parents, ...parents]);
   }
 
-  /// Returns a [WidgetSelector] that requires [child] to be a child of the to
-  /// be matched widget
+  /// Returns a [WidgetSelector] that requires [child] to be a child of the
+  /// widget to match.
+  /// #### Example:
+  /// ```dart
+  ///  final containers = spot<Container>();
+  ///  containers.witchChild(spot<Wrap>()).existsOnce()
+  /// ```
+  /// #### See also:
+  /// - [withParent] requires [parent] to be a parent of the widget to match.
+  /// - [withParents] requires [parents] to be parents of the widget to match.
+  /// - [withChildren] requires [children] to be children of the widget to match.
   @useResult
   WidgetSelector<W> withChild(WidgetSelector child) {
     return copyWith(children: [...children, child]);
   }
 
   /// Returns a [WidgetSelector] that requires [children] to be children of the
-  /// to be matched widget
+  /// widget to match.
+  /// #### Example:
+  /// ```dart
+  ///  final containers = spot<Container>();
+  /// containers.withChildren([spot<Wrap>()]).existsOnce();
+  /// ```
+  /// #### See also:
+  /// - [withParent] requires [parent] to be a parent of the widget to match.
+  /// - [withParents] requires [parents] to be parents of the widget to match.
+  /// - [withChild] requires [child] to be a child of the widget to match.
   @useResult
   WidgetSelector<W> withChildren(List<WidgetSelector> children) {
     return copyWith(children: [...this.children, ...children]);
