@@ -7,12 +7,21 @@ import 'package:spot/src/spot/selectors.dart';
 /// - [Text.maxLines]
 /// - [Text.textStyle]
 extension EffectiveTextMatcher on WidgetMatcher<Text> {
-  /// Matches the [Text] widget when it has the given [maxLines].
+  /// A [WidgetMatcher] for [Text] widgets that performs specific assertions by
+  /// applying a custom matcher function to the `maxLines` property.
   ///
+  /// This method allows for broader assertions on the `maxLines` property
+  /// by using a custom matcher function. This is useful in a scenario in which
+  /// more complex conditions than a simple equality check is needed.
+  ///
+  /// Example:
   /// ```dart
   /// spot<Text>().withText('foo').existsOnce()
-  ///   .hasEffectiveMaxLinesWhere((it) => it.equals(1));
+  ///   .hasEffectiveMaxLinesWhere((it) => it.isNotNull().isGreaterThan(1));
   /// ```
+  /// See also:
+  /// - [hasEffectiveMaxLines], a [WidgetMatcher] for [Text] widgets that
+  /// performs a singular assertion against a fixed `maxLines` value.
   WidgetMatcher<Text> hasEffectiveMaxLinesWhere(MatchProp<int> match) {
     return hasProp(
       elementSelector: (subject) => subject.context.nest<int?>(
@@ -23,7 +32,19 @@ extension EffectiveTextMatcher on WidgetMatcher<Text> {
     );
   }
 
-  /// Matches the [Text] widget against given [maxLines].
+  /// A [WidgetMatcher] for [Text] widgets that performs a singular assertion
+  /// against a fixed `maxLines` value.
+  ///
+  /// Example:
+  /// ```dart
+  /// spot<Text>().withText('foo').existsOnce()
+  ///   .hasEffectiveMaxLines(1);
+  /// ```
+  ///
+  /// See also:
+  /// - [hasEffectiveMaxLinesWhere], a [WidgetMatcher] for [Text] widgets that
+  ///performs specific assertions by applying a custom matcher function to
+  ///the `maxLines` property.
   WidgetMatcher<Text> hasEffectiveMaxLines(int? value) {
     return hasEffectiveMaxLinesWhere((it) {
       if (value == null) {
@@ -34,7 +55,26 @@ extension EffectiveTextMatcher on WidgetMatcher<Text> {
     });
   }
 
-  /// Matches the [Text] widget's [TextStyle] properties.
+  /// Matches the [Text] widget's [TextStyle] properties based on custom
+  /// conditions.
+  ///
+  /// This method allows for broader assertions on the [TextStyle] properties
+  /// by using a custom matcher function. This is useful in a scenario in which
+  /// more complex conditions than a simple equality check is needed.
+  ///
+  /// Example:
+  /// ```dart
+  /// spot<Text>().withText('foo').existsOnce()
+  ///   .hasEffectiveTextStyleWhere(
+  ///             (style) => style
+  ///               ..fontSize.isGreaterOrEqual(14)
+  ///               ..letterSpacing.isNotNull()
+  ///               ..fontStyle.equals(FontStyle.italic),
+  ///           );
+  /// ```
+  /// See also:
+  /// - [hasEffectiveTextStyle], which is used for direct comparisons against
+  ///   a given [TextStyle].
   WidgetMatcher<Text> hasEffectiveTextStyleWhere(MatchProp<TextStyle> match) {
     return hasProp(
       elementSelector: (subject) => subject.context.nest<TextStyle?>(
@@ -46,6 +86,26 @@ extension EffectiveTextMatcher on WidgetMatcher<Text> {
   }
 
   /// Matches the style of a [Text] against a given [TextStyle].
+  ///
+  /// This method provides a straightforward way to assert if the `TextStyle`
+  /// of the [Text] widget matches a specified [TextStyle] object. It's suited
+  /// for scenarios where you need to verify the `TextStyle` against a known
+  /// fixed value.
+  ///
+  /// Example:
+  /// ```dart
+  /// final style = TextStyle(
+  ///  fontSize: 20,
+  ///  fontStyle: FontStyle.italic,
+  ///  fontWeight: FontWeight.bold,
+  ///  letterSpacing: 2,
+  /// );
+  /// spot<Text>().withText('foo').existsOnce().hasEffectiveTextStyle(style);
+  /// ```
+  /// See also:
+  /// - [hasEffectiveTextStyleWhere], which allows for broader assertions on the
+  ///   [TextStyle] properties using a custom matcher function. This is useful
+  ///   when more checks than simple equality are needed.
   WidgetMatcher<Text> hasEffectiveTextStyle(TextStyle? value) {
     return hasEffectiveTextStyleWhere((it) {
       if (value == null) {
@@ -99,11 +159,22 @@ extension TextStyleSubject on Subject<TextStyle> {
   }
 }
 
-/// Selectors for the [Text] widget like
+/// Selectors for the [Text] widget based on properties like
 /// - [Text.maxLines]
 /// - [Text.textStyle]
 extension EffectiveTextSelector on WidgetSelector<Text> {
-  /// Selects the [Text] widget where given `maxLines` properties match.
+  /// A selector for [Text] widgets that meet specified `maxLines` conditions,
+  /// as defined by a custom matcher function.
+  ///
+  /// #### Example:
+  /// ```dart
+  /// spot<Text>().withEffectiveMaxLinesMatching(
+  ///             (it) => it.isNotNull().isGreaterThan(1)).existsOnce();
+  /// ```
+  ///
+  /// #### See also:
+  /// - [withEffectiveMaxLines], for selecting [Text] widgets that have a fixed
+  ///   `maxLines` value.
   WidgetSelector<Text> withEffectiveMaxLinesMatching(MatchProp<int?> match) {
     return withProp(
       elementSelector: (subject) => subject.context.nest<int?>(
@@ -114,12 +185,38 @@ extension EffectiveTextSelector on WidgetSelector<Text> {
     );
   }
 
-  /// Selects a [Text] widget with given `maxLines`.
+  /// A selector for [Text] widgets with a fixed `maxLines` value.
+  ///
+  /// #### Example:
+  /// ```dart
+  /// spot<Text>().withEffectiveMaxLines(2).existsOnce();
+  /// ```
+  ///
+  /// #### See also:
+  /// - [withEffectiveMaxLinesMatching], for selecting [Text] widgets that meet
+  ///   specified `maxLines` conditions, as defined by a custom matcher
+  ///   function.
   WidgetSelector<Text> withEffectiveMaxLines(int? value) {
     return withEffectiveMaxLinesMatching((it) => it.equals(value));
   }
 
-  /// Selects the [Text] widget where given [TextStyle] properties match.
+  /// A selector for [Text] widgets that meet specified [TextStyle] conditions,
+  /// as defined by a custom matcher function.
+  ///
+  /// #### Example:
+  /// ```dart
+  /// spot<Text>().withText('foo').withEffectiveTextStyleMatching(
+  /// (style) {
+  /// style.fontSize.isGreaterOrEqual(20);
+  /// style.fontStyle.isNotNull();
+  /// style.fontWeight.equals(FontWeight.bold);
+  /// },
+  /// ).existsOnce();
+  /// ```
+  ///
+  /// #### See also:
+  /// - [withEffectiveTextStyle], for selecting [Text] widgets widgets that have
+  ///   a fixed [TextStyle] value.
   WidgetSelector<Text> withEffectiveTextStyleMatching(
     MatchProp<TextStyle> match,
   ) {
@@ -132,7 +229,23 @@ extension EffectiveTextSelector on WidgetSelector<Text> {
     );
   }
 
-  /// Selects a [Text] widget with a given [TextStyle].
+  /// A selector for [Text] widgets widgets that have a fixed [TextStyle] value.
+  ///
+  /// #### Example:
+  /// ```dart
+  /// final style = TextStyle(
+  ///  fontSize: 20,
+  ///  fontStyle: FontStyle.italic,
+  ///  fontWeight: FontWeight.bold,
+  ///  letterSpacing: 2,
+  /// );
+  /// spot<Text>().withText('foo').withEffectiveTextStyle(style).existsOnce();
+  /// ```
+  ///
+  /// #### See also:
+  /// - [withEffectiveTextStyleMatching], for selecting [Text] widgets that meet
+  ///   specified [TextStyle] conditions, as defined by a custom matcher
+  ///   function.
   WidgetSelector<Text> withEffectiveTextStyle(TextStyle? value) {
     return withEffectiveTextStyleMatching((it) {
       if (value == null) {
