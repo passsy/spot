@@ -1921,6 +1921,17 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   ///
   /// This matcher is used when the expectation is to have one or more
   /// widgets of type [W] present in the widget tree.
+  /// #### Example:
+  /// ```dart
+  /// spot<ElevatedButton>().existsAtLeastOnce();
+  /// ```
+  /// #### See also:
+  /// - [doesNotExist] asserts that no widgets of type [W] exist.
+  /// - [existsOnce] asserts that exactly one widget of type [W] exists.
+  /// - [existsExactlyNTimes] asserts that exactly [n] widgets of type [W] exist.
+  /// - [existsAtLeastNTimes] asserts that at least [n] widgets of type [W] exist.
+  /// - [existsAtMostOnce] asserts that at most one widget exists.
+  /// - [existsAtMostNTimes] asserts that at most [n] widgets of type [W] exist.
   MultiWidgetMatcher<W> existsAtLeastOnce() {
     TestAsyncUtils.guardSync();
     final atLeastOne =
@@ -1932,6 +1943,17 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   ///
   /// This matcher is useful for scenarios where either one or no widget
   /// of type [W] should be present.
+  /// #### Example:
+  /// ```dart
+  /// spot<ElevatedButton>().existsAtMostOnce();
+  /// ```
+  /// #### See also:
+  /// - [doesNotExist] asserts that no widgets of type [W] exist.
+  /// - [existsOnce] asserts that exactly one widget of type [W] exists.
+  /// - [existsExactlyNTimes] asserts that exactly [n] widgets of type [W] exist.
+  /// - [existsAtLeastOnce] asserts that at least one widget of type [W] exists.
+  /// - [existsAtLeastNTimes] asserts that at least [n] widgets of type [W] exist.
+  /// - [existsAtMostNTimes] asserts that at most [n] widgets of type [W] exist.
   WidgetMatcher<W> existsAtMostOnce() {
     TestAsyncUtils.guardSync();
     final atMostOne = copyWith(quantityConstraint: QuantityConstraint.single);
@@ -1942,6 +1964,17 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   ///
   /// This method does not return a matcher but directly verifies that
   /// no widgets are found.
+  /// #### Example:
+  /// ```dart
+  /// spot<ElevatedButton>().doesNotExist();
+  /// ```
+  /// #### See also:
+  /// - [existsOnce] asserts that exactly one widget of type [W] exists.
+  /// - [existsExactlyNTimes] asserts that exactly [n] widgets of type [W] exist.
+  /// - [existsAtLeastOnce] asserts that at least one widget of type [W] exists.
+  /// - [existsAtLeastNTimes] asserts that at least [n] widgets of type [W] exist.
+  /// - [existsAtMostOnce] asserts that at most one widget exists.
+  /// - [existsAtMostNTimes] asserts that at most [n] widgets of type [W] exist.
   void doesNotExist() {
     TestAsyncUtils.guardSync();
     final none = copyWith(quantityConstraint: QuantityConstraint.zero);
@@ -1949,6 +1982,17 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   }
 
   /// Asserts that exactly one widget of type [W] exists.
+  /// #### Example:
+  /// ```dart
+  /// spot<ElevatedButton>().existsOnce();
+  /// ```
+  /// #### See also:
+  /// - [doesNotExist] asserts that no widgets of type [W] exist.
+  /// - [existsExactlyNTimes] asserts that exactly [n] widgets of type [W] exist.
+  /// - [existsAtLeastOnce] asserts that at least one widget of type [W] exists.
+  /// - [existsAtLeastNTimes] asserts that at least [n] widgets of type [W] exist.
+  /// - [existsAtMostOnce] asserts that at most one widget exists.
+  /// - [existsAtMostNTimes] asserts that at most [n] widgets of type [W] exist.
   WidgetMatcher<W> existsOnce() {
     TestAsyncUtils.guardSync();
     final one =
@@ -1957,6 +2001,17 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   }
 
   /// Asserts that exactly [n] widgets of type [W] exist.
+  /// #### Example:
+  /// ```dart
+  /// spot<ElevatedButton>().existsExactlyNTimes(2);
+  /// ```
+  /// #### See also:
+  /// - [doesNotExist] asserts that no widgets of type [W] exist.
+  /// - [existsOnce] asserts that exactly one widget of type [W] exists.
+  /// - [existsAtLeastOnce] asserts that at least one widget of type [W] exists.
+  /// - [existsAtLeastNTimes] asserts that at least [n] widgets of type [W] exist.
+  /// - [existsAtMostOnce] asserts that at most one widget exists.
+  /// - [existsAtMostNTimes] asserts that at most [n] widgets of type [W] exist.
   MultiWidgetMatcher<W> existsExactlyNTimes(int n) {
     TestAsyncUtils.guardSync();
     final exactlyNTimes =
@@ -1965,6 +2020,17 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   }
 
   /// Asserts that at least [n] widgets of type [W] exist.
+  /// #### Example:
+  /// ```dart
+  /// spot<ElevatedButton>().existsAtLeastNTimes(2);
+  /// ```
+  /// #### See also:
+  /// - [doesNotExist] asserts that no widgets of type [W] exist.
+  /// - [existsOnce] asserts that exactly one widget of type [W] exists.
+  /// - [existsExactlyNTimes] asserts that exactly [n] widgets of type [W] exist.
+  /// - [existsAtLeastOnce] asserts that at least one widget of type [W] exists.
+  /// - [existsAtMostOnce] asserts that at most one widget exists.
+  /// - [existsAtMostNTimes] asserts that at most [n] widgets of type [W] exist.
   MultiWidgetMatcher<W> existsAtLeastNTimes(int n) {
     TestAsyncUtils.guardSync();
     final atLeast = copyWith(quantityConstraint: QuantityConstraint.atLeast(n));
@@ -1972,6 +2038,17 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   }
 
   /// Asserts that at most [n] widgets of type [W] exist.
+  /// #### Example:
+  /// ```dart
+  /// spot<ElevatedButton>().existsAtMostNTimes(2);
+  /// ```
+  /// #### See also:
+  /// - [doesNotExist] asserts that no widgets of type [W] exist.
+  /// - [existsOnce] asserts that exactly one widget of type [W] exists.
+  /// - [existsExactlyNTimes] asserts that exactly [n] widgets of type [W] exist.
+  /// - [existsAtLeastOnce] asserts that at least one widget of type [W] exists.
+  /// - [existsAtLeastNTimes] asserts that at least [n] widgets of type [W] exist.
+  /// - [existsAtMostOnce] asserts that at most one widget exists.
   MultiWidgetMatcher<W> existsAtMostNTimes(int n) {
     TestAsyncUtils.guardSync();
     final atMostN = copyWith(quantityConstraint: QuantityConstraint.atMost(n));
