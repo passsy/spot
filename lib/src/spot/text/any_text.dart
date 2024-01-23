@@ -12,6 +12,17 @@ import 'package:spot/src/spot/selectors.dart';
 /// - [RichText]
 /// - [EditableText]
 ///
+/// Consolidated attributes may, depending on the text widget type, include:
+/// - [maxLines],
+/// - [minLines],
+/// - [textStyle],
+/// - [text],
+/// - [overflow],
+/// - [softWrap],
+/// - [textDirection],
+/// - [textAlign],
+/// - [locale],
+/// - [selectionColor]
 class AnyText extends LeafRenderObjectWidget {
   const AnyText._({
     required this.widget,
@@ -27,6 +38,11 @@ class AnyText extends LeafRenderObjectWidget {
     this.selectionColor,
   });
 
+  /// Factory constructor to create an [AnyText] instance from an [EditableText].
+  ///
+  /// This constructor is used to create an [AnyText] widget from the state of
+  /// an [EditableText] widget. It extracts and consolidates various
+  /// text-related properties from the [EditableText] for use in [AnyText].
   factory AnyText.fromEditableText(EditableTextState state) {
     final widget = state.widget;
     final InlineSpan text = state.renderEditable.text!;
@@ -45,6 +61,12 @@ class AnyText extends LeafRenderObjectWidget {
     );
   }
 
+  /// Factory constructor to create an [AnyText] instance from a
+  /// [RichText] widget.
+  ///
+  /// This constructor is used to create an [AnyText] widget from a [RichText]
+  /// widget. It extracts and consolidates various text-related properties from
+  /// the [RichText] for use in [AnyText].
   factory AnyText.fromRichText(RichText widget) {
     return AnyText._(
       widget: widget,
@@ -91,11 +113,24 @@ class AnyText extends LeafRenderObjectWidget {
   /// edge of the box.
   final int? maxLines;
 
+  /// The minimum number of lines for the text to span.
+  ///
+  /// When set, this ensures that the text takes up at least a certain number
+  /// of lines, even if there's not enough text to fill them up.
+  ///
+  /// A value of `null` means there is no minimum constraint on the number of
+  /// lines. This allows the text to naturally take up as much space as it
+  /// needs, based on its content.
+  ///
+  /// When combined with [maxLines], it provides a range within which the text
+  /// can vary in length. For example, setting both `minLines` and `maxLines`
+  /// to the same value would enforce a fixed number of lines.
   final int? minLines;
 
   /// Whether the text should break at soft line breaks.
   ///
-  /// If false, the glyphs in the text will be positioned as if there was unlimited horizontal space.
+  /// If false, the glyphs in the text will be positioned as if there was
+  /// unlimited horizontal space.
   final bool? softWrap;
 
   /// The TextStyle applied to to this widget
@@ -190,7 +225,17 @@ class AnyText extends LeafRenderObjectWidget {
 /// - [SelectableText]
 /// - [RichText]
 /// - [EditableText]
+///
+/// It uses a custom mapping function to convert an [Element] into an [AnyText]
+/// widget, accommodating different types of text widgets.
+///
+/// This selector removes the [WidgetTypeFilter] during element filtering
+/// as it matches multiple widget types.
 class AnyTextWidgetSelector extends WidgetSelector<AnyText> {
+  /// Constructs a [AnyTextWidgetSelector] with the following parameters:
+  /// - `props`: Properties to match widgets.
+  /// - `children`: Child selectors to include in the match.
+  /// - `parents`: Parent selectors to include in the match.
   AnyTextWidgetSelector({
     required super.props,
     super.children,
@@ -220,13 +265,25 @@ class AnyTextWidgetSelector extends WidgetSelector<AnyText> {
   }
 }
 
-/// Matches text widgets ([EditableText] and [RichText]) on screen
+/// Matches text widgets ([EditableText] and [RichText]) on screen.
+///
+/// This predicate is used to verify the presence and properties of text within
+/// widgets. It extracts text data from the relevant widget and uses the
+/// provided [match] function to assert the text content.
 class MatchTextPredicate implements PredicateWithDescription {
+  /// Constructs a [MatchTextPredicate].
+  ///
+  /// The [match] function is used to assert the text content found in the
+  /// relevant widget. The [description] provides a human-readable explanation
+  /// of what this predicate checks.
   MatchTextPredicate({
     required this.match,
     required this.description,
   });
 
+  /// The function that asserts the text content.
+  ///
+  /// It receives a `Subject<String>` which contains the text to be asserted.
   void Function(Subject<String> it) match;
 
   @override
