@@ -514,7 +514,7 @@ class _ElementAtIndex extends ElementFilter {
 /// error messages and precise selection.
 extension SelectorQueries<W extends Widget> on Selectors<W> {
   /// Creates a filter for the discovered elements which is applied when the
-  /// [Selector] is snapshotted
+  /// [WidgetSelector] is snapshotted.
   ///
   /// The [description] is required to make error messages understandable
   @useResult
@@ -534,7 +534,7 @@ extension SelectorQueries<W extends Widget> on Selectors<W> {
   }
 
   /// Creates a filter for the widgets of the discovered elements which is
-  /// applied when the [Selector] is snapshotted
+  /// applied when the [WidgetSelector] is snapshotted.
   ///
   /// The [description] is required to make error messages understandable
   ///
@@ -566,7 +566,7 @@ extension SelectorQueries<W extends Widget> on Selectors<W> {
   }
 
   /// Creates a filter for the widgets of the discovered elements which is
-  /// applied when the [Selector] is snapshotted
+  /// applied when the [WidgetSelector] is snapshotted.
   ///
   /// ```dart
   /// spotSingle<Checkbox>()
@@ -597,7 +597,7 @@ extension SelectorQueries<W extends Widget> on Selectors<W> {
   }
 
   /// Creates a filter for the elements of the discovered widgets based on
-  /// a specified property. The filter is applied when the [Selector] is
+  /// a specified property. The filter is applied when the [WidgetSelector] is
   /// snapshotted.
   ///
   /// Example:
@@ -629,7 +629,7 @@ extension SelectorQueries<W extends Widget> on Selectors<W> {
   }
 
   /// Creates a filter for the render objects of the discovered widgets based on
-  /// a specified property. This filter is applied when the [Selector] is
+  /// a specified property. This filter is applied when the [WidgetSelector] is
   /// snapshotted.
   ///
   /// Useful for selecting widgets based on specific properties of their render
