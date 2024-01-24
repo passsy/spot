@@ -46,7 +46,7 @@ WidgetTreeSnapshot createWidgetTreeSnapshot() {
 /// A node in [WidgetTreeSnapshot] holding a single [element] and knows about
 /// parent and children.
 class WidgetTreeNode {
-  /// The actual element in the element tree holding the widget of type [W]
+  /// The actual element in the element tree holding the widget of type `W`.
   final Element element;
 
   List<WidgetTreeNode> _children = const [];

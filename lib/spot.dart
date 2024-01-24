@@ -1,9 +1,9 @@
 /// Spot is a library for testing the Widget tree of Flutter apps.
 library spot;
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:spot/spot.dart';
-import 'package:spot/src/spot/selectors.dart' show Spot;
+import 'package:spot/src/spot/selectors.dart' show Spot, WidgetTypeFilter;
 
 export 'package:checks/checks.dart'
     hide
@@ -112,16 +112,16 @@ const Spot _global = Spot();
 WidgetSelector<Widget> get allWidgets => WidgetSelector.all;
 
 /// Creates a chainable [WidgetSelector] that matches a single [Widget] of
-/// type [W].
+/// type `W`.
 ///
 /// When executed this [WidgetSelector] will fail when it finds multiple
-/// [Widget]s of type [W] in widget tree.
+/// [Widget]s of type `W` in widget tree.
 ///
 /// This selector compares the Widgets by runtimeType rather than by super
 /// type (see [WidgetTypeFilter]). This makes sure that e.g. `spotSingle<Align>()`
 /// does not accidentally match a [Center] Widget, that extends [Align].
 ///
-/// If multiple Widgets of type [W] are expected, use [spot] instead.
+/// If multiple Widgets of type `W` are expected, use [spot] instead.
 @useResult
 @Deprecated('Use spot<W>().atMost(1)')
 WidgetSelector<W> spotSingle<W extends Widget>({
@@ -135,7 +135,7 @@ WidgetSelector<W> spotSingle<W extends Widget>({
 }
 
 /// Creates a chainable [WidgetSelector] that matches a all Widgets of
-/// type [W] in widget tree.
+/// type `W` in widget tree.
 ///
 /// `spot<SomeWidget>()` is the most common way to chain selectors.
 ///
@@ -293,12 +293,14 @@ WidgetSelector<W> spotSingleText<W extends Widget>(
   );
 }
 
-/// Either finds [Text] or [EditableText] Widgets (set [W] accordingly).
+/// Either finds [Text] or [EditableText] Widgets (set `W` accordingly).
 ///
 /// Set [findRichText] to true to also find [RichText] Widgets.
 ///
-/// To find [SelectableText] Widgets, use `spotSingle<SelectableText>(children: [spotTexts('foo')])`
-/// which finds a [SelectableText] Widget that contains an [EditableText] with 'foo'.
+/// To find [SelectableText] Widgets, use
+/// `spotSingle<SelectableText>(children: [spotTexts('foo')])`
+/// which finds a [SelectableText] Widget that contains an [EditableText]
+/// with 'foo'.
 @Deprecated(
   'Use spotText("Hello") or '
   'spot<Text>().whereText((it) => it.equals("Hello")) instead',
@@ -318,7 +320,7 @@ WidgetSelector<W> spotTexts<W extends Widget>(
   );
 }
 
-/// Creates a chainable [WidgetSelector] that finds a [Icon] based on [IconData]
+/// Creates a chainable [WidgetSelector] that finds an [Icon] based on [IconData]
 /// [icon]
 @useResult
 @Deprecated('Use spotIcon<W>().atMost(1)')
