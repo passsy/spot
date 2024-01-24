@@ -12,13 +12,21 @@ import 'package:spot/spot.dart';
 /// Matchers for the properties of [CircularProgressIndicator] provided via [Diagnosticable.debugFillProperties]
 extension CircularProgressIndicatorMatcher
     on WidgetMatcher<CircularProgressIndicator> {
-  /// Expects that value of [CircularProgressIndicator] matches the condition in [match]
+  /// Expects that value of [CircularProgressIndicator] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<CircularProgressIndicator>().existsOnce().hasValueWhere((it) => it.isGreaterThan(10.5));
+  /// ```
   WidgetMatcher<CircularProgressIndicator> hasValueWhere(
       MatchProp<double> match) {
     return hasDiagnosticProp<double>('value', match);
   }
 
-  /// Expects that value of [CircularProgressIndicator] equals (==) [value]
+  /// Expects that value of [CircularProgressIndicator] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<CircularProgressIndicator>().existsOnce().hasValue(10.5);
+  /// ```
   WidgetMatcher<CircularProgressIndicator> hasValue(double? value) {
     return hasDiagnosticProp<double>(
         'value', (it) => value == null ? it.isNull() : it.equals(value));
@@ -28,14 +36,22 @@ extension CircularProgressIndicatorMatcher
 /// Allows filtering [CircularProgressIndicator] by the properties provided via [Diagnosticable.debugFillProperties]
 extension CircularProgressIndicatorSelector
     on WidgetSelector<CircularProgressIndicator> {
-  /// Creates a [WidgetSelector] that finds all [CircularProgressIndicator] where value matches the condition
+  /// Creates a [WidgetSelector] that finds all [CircularProgressIndicator] where value matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<CircularProgressIndicator>().whereValue((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<CircularProgressIndicator> whereValue(
       MatchProp<double> match) {
     return withDiagnosticProp<double>('value', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [CircularProgressIndicator] where value equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [CircularProgressIndicator] where value equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<CircularProgressIndicator>().withValue(10.5).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<CircularProgressIndicator> withValue(double? value) {
     return withDiagnosticProp<double>(

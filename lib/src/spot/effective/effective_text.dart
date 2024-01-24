@@ -5,7 +5,7 @@ import 'package:spot/src/spot/selectors.dart';
 
 /// Matchers for the [Text] widget to make assertions about:
 /// - [Text.maxLines]
-/// - [Text.textStyle]
+/// - [Text.style]
 extension EffectiveTextMatcher on WidgetMatcher<Text> {
   /// A [WidgetMatcher] for [Text] widgets that performs specific assertions by
   /// applying a custom matcher function to the `maxLines` property.
@@ -148,7 +148,7 @@ extension TextStyleSubject on Subject<TextStyle> {
 
 /// Selectors for the [Text] widget based on properties like
 /// - [Text.maxLines]
-/// - [Text.textStyle]
+/// - [Text.style]
 extension EffectiveTextSelector on WidgetSelector<Text> {
   /// A [WidgetSelector] for [Text] widgets that meet specified `maxLines`
   /// conditions, as defined by a custom matcher function.

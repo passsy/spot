@@ -11,482 +11,818 @@ import 'package:spot/spot.dart';
 /// ```
 /// Matchers for the properties of [EditableText] provided via [Diagnosticable.debugFillProperties]
 extension EditableTextMatcher on WidgetMatcher<EditableText> {
-  /// Expects that controller of [EditableText] matches the condition in [match]
+  /// Expects that controller of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasControllerWhere((it) => it.equals(TextEditingController()));
+  /// ```
   WidgetMatcher<EditableText> hasControllerWhere(
       MatchProp<TextEditingController> match) {
     return hasDiagnosticProp<TextEditingController>('controller', match);
   }
 
-  /// Expects that controller of [EditableText] equals (==) [value]
+  /// Expects that controller of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasController(TextEditingController());
+  /// ```
   WidgetMatcher<EditableText> hasController(TextEditingController? value) {
     return hasDiagnosticProp<TextEditingController>(
         'controller', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that focusNode of [EditableText] matches the condition in [match]
+  /// Expects that focusNode of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasFocusNodeWhere((it) => it.equals(FocusNode()));
+  /// ```
   WidgetMatcher<EditableText> hasFocusNodeWhere(MatchProp<FocusNode> match) {
     return hasDiagnosticProp<FocusNode>('focusNode', match);
   }
 
-  /// Expects that focusNode of [EditableText] equals (==) [value]
+  /// Expects that focusNode of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasFocusNode(FocusNode());
+  /// ```
   WidgetMatcher<EditableText> hasFocusNode(FocusNode? value) {
     return hasDiagnosticProp<FocusNode>(
         'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that obscureText of [EditableText] matches the condition in [match]
+  /// Expects that obscureText of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasObscureTextWhere((it) => it.isTrue());
+  /// ```
   WidgetMatcher<EditableText> hasObscureTextWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('obscureText', match);
   }
 
-  /// Expects that obscureText of [EditableText] equals (==) [value]
+  /// Expects that obscureText of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasObscureText(true);
+  /// ```
   WidgetMatcher<EditableText> hasObscureText(bool? value) {
     return hasDiagnosticProp<bool>(
         'obscureText', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that readOnly of [EditableText] matches the condition in [match]
+  /// Expects that readOnly of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasReadOnlyWhere((it) => it.isTrue());
+  /// ```
   WidgetMatcher<EditableText> hasReadOnlyWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('readOnly', match);
   }
 
-  /// Expects that readOnly of [EditableText] equals (==) [value]
+  /// Expects that readOnly of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasReadOnly(true);
+  /// ```
   WidgetMatcher<EditableText> hasReadOnly(bool? value) {
     return hasDiagnosticProp<bool>(
         'readOnly', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that autocorrect of [EditableText] matches the condition in [match]
+  /// Expects that autocorrect of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasAutocorrectWhere((it) => it.isTrue());
+  /// ```
   WidgetMatcher<EditableText> hasAutocorrectWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('autocorrect', match);
   }
 
-  /// Expects that autocorrect of [EditableText] equals (==) [value]
+  /// Expects that autocorrect of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasAutocorrect(true);
+  /// ```
   WidgetMatcher<EditableText> hasAutocorrect(bool? value) {
     return hasDiagnosticProp<bool>(
         'autocorrect', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that smartDashesType of [EditableText] matches the condition in [match]
+  /// Expects that smartDashesType of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasSmartDashesTypeWhere((it) => it.equals(SmartDashesType.values.first));
+  /// ```
   WidgetMatcher<EditableText> hasSmartDashesTypeWhere(
       MatchProp<SmartDashesType> match) {
     return hasDiagnosticProp<SmartDashesType>('smartDashesType', match);
   }
 
-  /// Expects that smartDashesType of [EditableText] equals (==) [value]
+  /// Expects that smartDashesType of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasSmartDashesType(SmartDashesType.values.first);
+  /// ```
   WidgetMatcher<EditableText> hasSmartDashesType(SmartDashesType? value) {
     return hasDiagnosticProp<SmartDashesType>('smartDashesType',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that smartQuotesType of [EditableText] matches the condition in [match]
+  /// Expects that smartQuotesType of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasSmartQuotesTypeWhere((it) => it.equals(SmartQuotesType.values.first));
+  /// ```
   WidgetMatcher<EditableText> hasSmartQuotesTypeWhere(
       MatchProp<SmartQuotesType> match) {
     return hasDiagnosticProp<SmartQuotesType>('smartQuotesType', match);
   }
 
-  /// Expects that smartQuotesType of [EditableText] equals (==) [value]
+  /// Expects that smartQuotesType of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasSmartQuotesType(SmartQuotesType.values.first);
+  /// ```
   WidgetMatcher<EditableText> hasSmartQuotesType(SmartQuotesType? value) {
     return hasDiagnosticProp<SmartQuotesType>('smartQuotesType',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that enableSuggestions of [EditableText] matches the condition in [match]
+  /// Expects that enableSuggestions of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasEnableSuggestionsWhere((it) => it.isTrue());
+  /// ```
   WidgetMatcher<EditableText> hasEnableSuggestionsWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('enableSuggestions', match);
   }
 
-  /// Expects that enableSuggestions of [EditableText] equals (==) [value]
+  /// Expects that enableSuggestions of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasEnableSuggestions(true);
+  /// ```
   WidgetMatcher<EditableText> hasEnableSuggestions(bool? value) {
     return hasDiagnosticProp<bool>('enableSuggestions',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that inherit of [EditableText] matches the condition in [match]
+  /// Expects that inherit of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasInheritWhere((it) => it.isTrue());
+  /// ```
   WidgetMatcher<EditableText> hasInheritWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('inherit', match);
   }
 
-  /// Expects that inherit of [EditableText] equals (==) [value]
+  /// Expects that inherit of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasInherit(true);
+  /// ```
   WidgetMatcher<EditableText> hasInherit(bool? value) {
     return hasDiagnosticProp<bool>(
         'inherit', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that color of [EditableText] matches the condition in [match]
+  /// Expects that color of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasColorWhere((it) => it.equals(Colors.red));
+  /// ```
   WidgetMatcher<EditableText> hasColorWhere(MatchProp<Color> match) {
     return hasDiagnosticProp<Color>('color', match);
   }
 
-  /// Expects that color of [EditableText] equals (==) [value]
+  /// Expects that color of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasColor(Colors.red);
+  /// ```
   WidgetMatcher<EditableText> hasColor(Color? value) {
     return hasDiagnosticProp<Color>(
         'color', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that backgroundColor of [EditableText] matches the condition in [match]
+  /// Expects that backgroundColor of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasBackgroundColorWhere((it) => it.equals(Colors.red));
+  /// ```
   WidgetMatcher<EditableText> hasBackgroundColorWhere(MatchProp<Color> match) {
     return hasDiagnosticProp<Color>('backgroundColor', match);
   }
 
-  /// Expects that backgroundColor of [EditableText] equals (==) [value]
+  /// Expects that backgroundColor of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasBackgroundColor(Colors.red);
+  /// ```
   WidgetMatcher<EditableText> hasBackgroundColor(Color? value) {
     return hasDiagnosticProp<Color>('backgroundColor',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that family of [EditableText] matches the condition in [match]
+  /// Expects that family of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasFamilyWhere((it) => it.equals('foo'));
+  /// ```
   WidgetMatcher<EditableText> hasFamilyWhere(MatchProp<String> match) {
     return hasDiagnosticProp<String>('family', match);
   }
 
-  /// Expects that family of [EditableText] equals (==) [value]
+  /// Expects that family of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasFamily('foo');
+  /// ```
   WidgetMatcher<EditableText> hasFamily(String? value) {
     return hasDiagnosticProp<String>(
         'family', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that familyFallback of [EditableText] matches the condition in [match]
+  /// Expects that familyFallback of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasFamilyFallbackWhere((it) => it.equals('foo'));
+  /// ```
   WidgetMatcher<EditableText> hasFamilyFallbackWhere(MatchProp<String> match) {
     return hasDiagnosticProp<String>('familyFallback', match);
   }
 
-  /// Expects that familyFallback of [EditableText] equals (==) [value]
+  /// Expects that familyFallback of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasFamilyFallback('foo');
+  /// ```
   WidgetMatcher<EditableText> hasFamilyFallback(String? value) {
     return hasDiagnosticProp<String>('familyFallback',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that size of [EditableText] matches the condition in [match]
+  /// Expects that size of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasSizeWhere((it) => it.isGreaterThan(10.5));
+  /// ```
   WidgetMatcher<EditableText> hasSizeWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('size', match);
   }
 
-  /// Expects that size of [EditableText] equals (==) [value]
+  /// Expects that size of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasSize(10.5);
+  /// ```
   WidgetMatcher<EditableText> hasSize(double? value) {
     return hasDiagnosticProp<double>(
         'size', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that weight of [EditableText] matches the condition in [match]
+  /// Expects that weight of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasWeightWhere((it) => it.equals(FontWeight.bold));
+  /// ```
   WidgetMatcher<EditableText> hasWeightWhere(MatchProp<FontWeight> match) {
     return hasDiagnosticProp<FontWeight>('weight', match);
   }
 
-  /// Expects that weight of [EditableText] equals (==) [value]
+  /// Expects that weight of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasWeight(FontWeight.bold);
+  /// ```
   WidgetMatcher<EditableText> hasWeight(FontWeight? value) {
     return hasDiagnosticProp<FontWeight>(
         'weight', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that style of [EditableText] matches the condition in [match]
+  /// Expects that style of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasStyleWhere((it) => it.equals(FontStyle.values.first));
+  /// ```
   WidgetMatcher<EditableText> hasStyleWhere(MatchProp<FontStyle> match) {
     return hasDiagnosticProp<FontStyle>('style', match);
   }
 
-  /// Expects that style of [EditableText] equals (==) [value]
+  /// Expects that style of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasStyle(FontStyle.values.first);
+  /// ```
   WidgetMatcher<EditableText> hasStyle(FontStyle? value) {
     return hasDiagnosticProp<FontStyle>(
         'style', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that letterSpacing of [EditableText] matches the condition in [match]
+  /// Expects that letterSpacing of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasLetterSpacingWhere((it) => it.isGreaterThan(10.5));
+  /// ```
   WidgetMatcher<EditableText> hasLetterSpacingWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('letterSpacing', match);
   }
 
-  /// Expects that letterSpacing of [EditableText] equals (==) [value]
+  /// Expects that letterSpacing of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasLetterSpacing(10.5);
+  /// ```
   WidgetMatcher<EditableText> hasLetterSpacing(double? value) {
     return hasDiagnosticProp<double>('letterSpacing',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that wordSpacing of [EditableText] matches the condition in [match]
+  /// Expects that wordSpacing of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasWordSpacingWhere((it) => it.isGreaterThan(10.5));
+  /// ```
   WidgetMatcher<EditableText> hasWordSpacingWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('wordSpacing', match);
   }
 
-  /// Expects that wordSpacing of [EditableText] equals (==) [value]
+  /// Expects that wordSpacing of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasWordSpacing(10.5);
+  /// ```
   WidgetMatcher<EditableText> hasWordSpacing(double? value) {
     return hasDiagnosticProp<double>(
         'wordSpacing', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that baseline of [EditableText] matches the condition in [match]
+  /// Expects that baseline of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasBaselineWhere((it) => it.equals(TextBaseline.values.first));
+  /// ```
   WidgetMatcher<EditableText> hasBaselineWhere(MatchProp<TextBaseline> match) {
     return hasDiagnosticProp<TextBaseline>('baseline', match);
   }
 
-  /// Expects that baseline of [EditableText] equals (==) [value]
+  /// Expects that baseline of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasBaseline(TextBaseline.values.first);
+  /// ```
   WidgetMatcher<EditableText> hasBaseline(TextBaseline? value) {
     return hasDiagnosticProp<TextBaseline>(
         'baseline', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that height of [EditableText] matches the condition in [match]
+  /// Expects that height of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasHeightWhere((it) => it.isGreaterThan(10.5));
+  /// ```
   WidgetMatcher<EditableText> hasHeightWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('height', match);
   }
 
-  /// Expects that height of [EditableText] equals (==) [value]
+  /// Expects that height of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasHeight(10.5);
+  /// ```
   WidgetMatcher<EditableText> hasHeight(double? value) {
     return hasDiagnosticProp<double>(
         'height', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that leadingDistribution of [EditableText] matches the condition in [match]
+  /// Expects that leadingDistribution of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasLeadingDistributionWhere((it) => it.equals(TextLeadingDistribution.values.first));
+  /// ```
   WidgetMatcher<EditableText> hasLeadingDistributionWhere(
       MatchProp<TextLeadingDistribution> match) {
     return hasDiagnosticProp<TextLeadingDistribution>(
         'leadingDistribution', match);
   }
 
-  /// Expects that leadingDistribution of [EditableText] equals (==) [value]
+  /// Expects that leadingDistribution of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasLeadingDistribution(TextLeadingDistribution.values.first);
+  /// ```
   WidgetMatcher<EditableText> hasLeadingDistribution(
       TextLeadingDistribution? value) {
     return hasDiagnosticProp<TextLeadingDistribution>('leadingDistribution',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that locale of [EditableText] matches the condition in [match]
+  /// Expects that locale of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasLocaleWhere((it) => it.equals(Locale('en', 'US')));
+  /// ```
   WidgetMatcher<EditableText> hasLocaleWhere(MatchProp<Locale> match) {
     return hasDiagnosticProp<Locale>('locale', match);
   }
 
-  /// Expects that locale of [EditableText] equals (==) [value]
+  /// Expects that locale of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasLocale(Locale('en', 'US'));
+  /// ```
   WidgetMatcher<EditableText> hasLocale(Locale? value) {
     return hasDiagnosticProp<Locale>(
         'locale', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that foreground of [EditableText] matches the condition in [match]
+  /// Expects that foreground of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasForegroundWhere((it) => it.equals(Paint()));
+  /// ```
   WidgetMatcher<EditableText> hasForegroundWhere(MatchProp<Paint> match) {
     return hasDiagnosticProp<Paint>('foreground', match);
   }
 
-  /// Expects that foreground of [EditableText] equals (==) [value]
+  /// Expects that foreground of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasForeground(Paint());
+  /// ```
   WidgetMatcher<EditableText> hasForeground(Paint? value) {
     return hasDiagnosticProp<Paint>(
         'foreground', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that background of [EditableText] matches the condition in [match]
+  /// Expects that background of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasBackgroundWhere((it) => it.equals(Paint()));
+  /// ```
   WidgetMatcher<EditableText> hasBackgroundWhere(MatchProp<Paint> match) {
     return hasDiagnosticProp<Paint>('background', match);
   }
 
-  /// Expects that background of [EditableText] equals (==) [value]
+  /// Expects that background of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasBackground(Paint());
+  /// ```
   WidgetMatcher<EditableText> hasBackground(Paint? value) {
     return hasDiagnosticProp<Paint>(
         'background', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that textAlign of [EditableText] matches the condition in [match]
+  /// Expects that textAlign of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasTextAlignWhere((it) => it.equals(TextAlign.values.first));
+  /// ```
   WidgetMatcher<EditableText> hasTextAlignWhere(MatchProp<TextAlign> match) {
     return hasDiagnosticProp<TextAlign>('textAlign', match);
   }
 
-  /// Expects that textAlign of [EditableText] equals (==) [value]
+  /// Expects that textAlign of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasTextAlign(TextAlign.values.first);
+  /// ```
   WidgetMatcher<EditableText> hasTextAlign(TextAlign? value) {
     return hasDiagnosticProp<TextAlign>(
         'textAlign', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that textDirection of [EditableText] matches the condition in [match]
+  /// Expects that textDirection of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasTextDirectionWhere((it) => it.equals(TextDirection.values.first));
+  /// ```
   WidgetMatcher<EditableText> hasTextDirectionWhere(
       MatchProp<TextDirection> match) {
     return hasDiagnosticProp<TextDirection>('textDirection', match);
   }
 
-  /// Expects that textDirection of [EditableText] equals (==) [value]
+  /// Expects that textDirection of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasTextDirection(TextDirection.values.first);
+  /// ```
   WidgetMatcher<EditableText> hasTextDirection(TextDirection? value) {
     return hasDiagnosticProp<TextDirection>('textDirection',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that textScaleFactor of [EditableText] matches the condition in [match]
+  /// Expects that textScaleFactor of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasTextScaleFactorWhere((it) => it.isGreaterThan(10.5));
+  /// ```
   WidgetMatcher<EditableText> hasTextScaleFactorWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('textScaleFactor', match);
   }
 
-  /// Expects that textScaleFactor of [EditableText] equals (==) [value]
+  /// Expects that textScaleFactor of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasTextScaleFactor(10.5);
+  /// ```
   WidgetMatcher<EditableText> hasTextScaleFactor(double? value) {
     return hasDiagnosticProp<double>('textScaleFactor',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that maxLines of [EditableText] matches the condition in [match]
+  /// Expects that maxLines of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasMaxLinesWhere((it) => it.isGreaterThan(10));
+  /// ```
   WidgetMatcher<EditableText> hasMaxLinesWhere(MatchProp<int> match) {
     return hasDiagnosticProp<int>('maxLines', match);
   }
 
-  /// Expects that maxLines of [EditableText] equals (==) [value]
+  /// Expects that maxLines of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasMaxLines(10);
+  /// ```
   WidgetMatcher<EditableText> hasMaxLines(int? value) {
     return hasDiagnosticProp<int>(
         'maxLines', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that minLines of [EditableText] matches the condition in [match]
+  /// Expects that minLines of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasMinLinesWhere((it) => it.isGreaterThan(10));
+  /// ```
   WidgetMatcher<EditableText> hasMinLinesWhere(MatchProp<int> match) {
     return hasDiagnosticProp<int>('minLines', match);
   }
 
-  /// Expects that minLines of [EditableText] equals (==) [value]
+  /// Expects that minLines of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasMinLines(10);
+  /// ```
   WidgetMatcher<EditableText> hasMinLines(int? value) {
     return hasDiagnosticProp<int>(
         'minLines', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that expands of [EditableText] matches the condition in [match]
+  /// Expects that expands of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasExpandsWhere((it) => it.isTrue());
+  /// ```
   WidgetMatcher<EditableText> hasExpandsWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('expands', match);
   }
 
-  /// Expects that expands of [EditableText] equals (==) [value]
+  /// Expects that expands of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasExpands(true);
+  /// ```
   WidgetMatcher<EditableText> hasExpands(bool? value) {
     return hasDiagnosticProp<bool>(
         'expands', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that autofocus of [EditableText] matches the condition in [match]
+  /// Expects that autofocus of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasAutofocusWhere((it) => it.isTrue());
+  /// ```
   WidgetMatcher<EditableText> hasAutofocusWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('autofocus', match);
   }
 
-  /// Expects that autofocus of [EditableText] equals (==) [value]
+  /// Expects that autofocus of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasAutofocus(true);
+  /// ```
   WidgetMatcher<EditableText> hasAutofocus(bool? value) {
     return hasDiagnosticProp<bool>(
         'autofocus', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that keyboardType of [EditableText] matches the condition in [match]
+  /// Expects that keyboardType of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasKeyboardTypeWhere((it) => it.equals(TextInputType.text));
+  /// ```
   WidgetMatcher<EditableText> hasKeyboardTypeWhere(
       MatchProp<TextInputType> match) {
     return hasDiagnosticProp<TextInputType>('keyboardType', match);
   }
 
-  /// Expects that keyboardType of [EditableText] equals (==) [value]
+  /// Expects that keyboardType of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasKeyboardType(TextInputType.text);
+  /// ```
   WidgetMatcher<EditableText> hasKeyboardType(TextInputType? value) {
     return hasDiagnosticProp<TextInputType>(
         'keyboardType', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that scrollController of [EditableText] matches the condition in [match]
+  /// Expects that scrollController of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasScrollControllerWhere((it) => it.equals(ScrollController()));
+  /// ```
   WidgetMatcher<EditableText> hasScrollControllerWhere(
       MatchProp<ScrollController> match) {
     return hasDiagnosticProp<ScrollController>('scrollController', match);
   }
 
-  /// Expects that scrollController of [EditableText] equals (==) [value]
+  /// Expects that scrollController of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasScrollController(ScrollController());
+  /// ```
   WidgetMatcher<EditableText> hasScrollController(ScrollController? value) {
     return hasDiagnosticProp<ScrollController>('scrollController',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that scrollPhysics of [EditableText] matches the condition in [match]
+  /// Expects that scrollPhysics of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasScrollPhysicsWhere((it) => it.equals(BouncingScrollPhysics()));
+  /// ```
   WidgetMatcher<EditableText> hasScrollPhysicsWhere(
       MatchProp<ScrollPhysics> match) {
     return hasDiagnosticProp<ScrollPhysics>('scrollPhysics', match);
   }
 
-  /// Expects that scrollPhysics of [EditableText] equals (==) [value]
+  /// Expects that scrollPhysics of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasScrollPhysics(BouncingScrollPhysics());
+  /// ```
   WidgetMatcher<EditableText> hasScrollPhysics(ScrollPhysics? value) {
     return hasDiagnosticProp<ScrollPhysics>('scrollPhysics',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that autofillHints of [EditableText] matches the condition in [match]
+  /// Expects that autofillHints of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasAutofillHintsWhere((it) => it.equals(['foo', 'bar']));
+  /// ```
   WidgetMatcher<EditableText> hasAutofillHintsWhere(
       MatchProp<Iterable<String>> match) {
     return hasDiagnosticProp<Iterable<String>>('autofillHints', match);
   }
 
-  /// Expects that autofillHints of [EditableText] equals (==) [value]
+  /// Expects that autofillHints of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasAutofillHints(['foo', 'bar']);
+  /// ```
   WidgetMatcher<EditableText> hasAutofillHints(Iterable<String>? value) {
     return hasDiagnosticProp<Iterable<String>>('autofillHints',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that textHeightBehavior of [EditableText] matches the condition in [match]
+  /// Expects that textHeightBehavior of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasTextHeightBehaviorWhere((it) => it.equals(TextHeightBehavior(applyHeightToFirstAscent: true, applyHeightToLastDescent: false)));
+  /// ```
   WidgetMatcher<EditableText> hasTextHeightBehaviorWhere(
       MatchProp<TextHeightBehavior> match) {
     return hasDiagnosticProp<TextHeightBehavior>('textHeightBehavior', match);
   }
 
-  /// Expects that textHeightBehavior of [EditableText] equals (==) [value]
+  /// Expects that textHeightBehavior of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasTextHeightBehavior(TextHeightBehavior(applyHeightToFirstAscent: true, applyHeightToLastDescent: false));
+  /// ```
   WidgetMatcher<EditableText> hasTextHeightBehavior(TextHeightBehavior? value) {
     return hasDiagnosticProp<TextHeightBehavior>('textHeightBehavior',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that scribbleEnabled of [EditableText] matches the condition in [match]
+  /// Expects that scribbleEnabled of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasScribbleEnabledWhere((it) => it.isTrue());
+  /// ```
   WidgetMatcher<EditableText> hasScribbleEnabledWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('scribbleEnabled', match);
   }
 
-  /// Expects that scribbleEnabled of [EditableText] equals (==) [value]
+  /// Expects that scribbleEnabled of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasScribbleEnabled(true);
+  /// ```
   WidgetMatcher<EditableText> hasScribbleEnabled(bool? value) {
     return hasDiagnosticProp<bool>('scribbleEnabled',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that enableIMEPersonalizedLearning of [EditableText] matches the condition in [match]
+  /// Expects that enableIMEPersonalizedLearning of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasEnableIMEPersonalizedLearningWhere((it) => it.isTrue());
+  /// ```
   WidgetMatcher<EditableText> hasEnableIMEPersonalizedLearningWhere(
       MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('enableIMEPersonalizedLearning', match);
   }
 
-  /// Expects that enableIMEPersonalizedLearning of [EditableText] equals (==) [value]
+  /// Expects that enableIMEPersonalizedLearning of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasEnableIMEPersonalizedLearning(true);
+  /// ```
   WidgetMatcher<EditableText> hasEnableIMEPersonalizedLearning(bool? value) {
     return hasDiagnosticProp<bool>('enableIMEPersonalizedLearning',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that enableInteractiveSelection of [EditableText] matches the condition in [match]
+  /// Expects that enableInteractiveSelection of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasEnableInteractiveSelectionWhere((it) => it.isTrue());
+  /// ```
   WidgetMatcher<EditableText> hasEnableInteractiveSelectionWhere(
       MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('enableInteractiveSelection', match);
   }
 
-  /// Expects that enableInteractiveSelection of [EditableText] equals (==) [value]
+  /// Expects that enableInteractiveSelection of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasEnableInteractiveSelection(true);
+  /// ```
   WidgetMatcher<EditableText> hasEnableInteractiveSelection(bool? value) {
     return hasDiagnosticProp<bool>('enableInteractiveSelection',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that undoController of [EditableText] matches the condition in [match]
+  /// Expects that undoController of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasUndoControllerWhere((it) => it.equals(UndoHistoryController()));
+  /// ```
   WidgetMatcher<EditableText> hasUndoControllerWhere(
       MatchProp<UndoHistoryController> match) {
     return hasDiagnosticProp<UndoHistoryController>('undoController', match);
   }
 
-  /// Expects that undoController of [EditableText] equals (==) [value]
+  /// Expects that undoController of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasUndoController(UndoHistoryController());
+  /// ```
   WidgetMatcher<EditableText> hasUndoController(UndoHistoryController? value) {
     return hasDiagnosticProp<UndoHistoryController>('undoController',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that spellCheckConfiguration of [EditableText] matches the condition in [match]
+  /// Expects that spellCheckConfiguration of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasSpellCheckConfigurationWhere((it) => it.equals(SpellCheckConfiguration()));
+  /// ```
   WidgetMatcher<EditableText> hasSpellCheckConfigurationWhere(
       MatchProp<SpellCheckConfiguration> match) {
     return hasDiagnosticProp<SpellCheckConfiguration>(
         'spellCheckConfiguration', match);
   }
 
-  /// Expects that spellCheckConfiguration of [EditableText] equals (==) [value]
+  /// Expects that spellCheckConfiguration of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasSpellCheckConfiguration(SpellCheckConfiguration());
+  /// ```
   WidgetMatcher<EditableText> hasSpellCheckConfiguration(
       SpellCheckConfiguration? value) {
     return hasDiagnosticProp<SpellCheckConfiguration>('spellCheckConfiguration',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that contentCommitMimeTypes of [EditableText] matches the condition in [match]
+  /// Expects that contentCommitMimeTypes of [EditableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasContentCommitMimeTypesWhere((it) => it.equals(['foo', 'bar']));
+  /// ```
   WidgetMatcher<EditableText> hasContentCommitMimeTypesWhere(
       MatchProp<List<String>> match) {
     return hasDiagnosticProp<List<String>>('contentCommitMimeTypes', match);
   }
 
-  /// Expects that contentCommitMimeTypes of [EditableText] equals (==) [value]
+  /// Expects that contentCommitMimeTypes of [EditableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().existsOnce().hasContentCommitMimeTypes(['foo', 'bar']);
+  /// ```
   WidgetMatcher<EditableText> hasContentCommitMimeTypes(List<String>? value) {
     return hasDiagnosticProp<List<String>>('contentCommitMimeTypes',
         (it) => value == null ? it.isNull() : it.equals(value));
@@ -495,270 +831,434 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
 
 /// Allows filtering [EditableText] by the properties provided via [Diagnosticable.debugFillProperties]
 extension EditableTextSelector on WidgetSelector<EditableText> {
-  /// Creates a [WidgetSelector] that finds all [EditableText] where controller matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where controller matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereController((it) => it.equals(TextEditingController())).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereController(
       MatchProp<TextEditingController> match) {
     return withDiagnosticProp<TextEditingController>('controller', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where controller equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where controller equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withController(TextEditingController()).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withController(TextEditingController? value) {
     return withDiagnosticProp<TextEditingController>(
         'controller', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where focusNode matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where focusNode matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereFocusNode((it) => it.equals(FocusNode())).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereFocusNode(MatchProp<FocusNode> match) {
     return withDiagnosticProp<FocusNode>('focusNode', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where focusNode equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where focusNode equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withFocusNode(FocusNode()).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withFocusNode(FocusNode? value) {
     return withDiagnosticProp<FocusNode>(
         'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where obscureText matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where obscureText matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereObscureText((it) => it.isTrue()).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereObscureText(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('obscureText', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where obscureText equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where obscureText equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withObscureText(true).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withObscureText(bool? value) {
     return withDiagnosticProp<bool>(
         'obscureText', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where readOnly matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where readOnly matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereReadOnly((it) => it.isTrue()).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereReadOnly(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('readOnly', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where readOnly equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where readOnly equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withReadOnly(true).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withReadOnly(bool? value) {
     return withDiagnosticProp<bool>(
         'readOnly', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where autocorrect matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where autocorrect matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereAutocorrect((it) => it.isTrue()).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereAutocorrect(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('autocorrect', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where autocorrect equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where autocorrect equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withAutocorrect(true).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withAutocorrect(bool? value) {
     return withDiagnosticProp<bool>(
         'autocorrect', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where smartDashesType matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where smartDashesType matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereSmartDashesType((it) => it.equals(SmartDashesType.values.first)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereSmartDashesType(
       MatchProp<SmartDashesType> match) {
     return withDiagnosticProp<SmartDashesType>('smartDashesType', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where smartDashesType equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where smartDashesType equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withSmartDashesType(SmartDashesType.values.first).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withSmartDashesType(SmartDashesType? value) {
     return withDiagnosticProp<SmartDashesType>('smartDashesType',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where smartQuotesType matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where smartQuotesType matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereSmartQuotesType((it) => it.equals(SmartQuotesType.values.first)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereSmartQuotesType(
       MatchProp<SmartQuotesType> match) {
     return withDiagnosticProp<SmartQuotesType>('smartQuotesType', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where smartQuotesType equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where smartQuotesType equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withSmartQuotesType(SmartQuotesType.values.first).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withSmartQuotesType(SmartQuotesType? value) {
     return withDiagnosticProp<SmartQuotesType>('smartQuotesType',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where enableSuggestions matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where enableSuggestions matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereEnableSuggestions((it) => it.isTrue()).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereEnableSuggestions(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('enableSuggestions', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where enableSuggestions equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where enableSuggestions equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withEnableSuggestions(true).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withEnableSuggestions(bool? value) {
     return withDiagnosticProp<bool>('enableSuggestions',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where inherit matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where inherit matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereInherit((it) => it.isTrue()).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereInherit(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('inherit', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where inherit equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where inherit equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withInherit(true).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withInherit(bool? value) {
     return withDiagnosticProp<bool>(
         'inherit', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where color matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where color matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereColor((it) => it.equals(Colors.red)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereColor(MatchProp<Color> match) {
     return withDiagnosticProp<Color>('color', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where color equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where color equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withColor(Colors.red).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withColor(Color? value) {
     return withDiagnosticProp<Color>(
         'color', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where backgroundColor matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where backgroundColor matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereBackgroundColor((it) => it.equals(Colors.red)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereBackgroundColor(MatchProp<Color> match) {
     return withDiagnosticProp<Color>('backgroundColor', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where backgroundColor equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where backgroundColor equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withBackgroundColor(Colors.red).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withBackgroundColor(Color? value) {
     return withDiagnosticProp<Color>('backgroundColor',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where family matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where family matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereFamily((it) => it.equals('foo')).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereFamily(MatchProp<String> match) {
     return withDiagnosticProp<String>('family', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where family equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where family equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withFamily('foo').existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withFamily(String? value) {
     return withDiagnosticProp<String>(
         'family', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where familyFallback matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where familyFallback matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereFamilyFallback((it) => it.equals('foo')).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereFamilyFallback(MatchProp<String> match) {
     return withDiagnosticProp<String>('familyFallback', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where familyFallback equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where familyFallback equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withFamilyFallback('foo').existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withFamilyFallback(String? value) {
     return withDiagnosticProp<String>('familyFallback',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where size matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where size matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereSize((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereSize(MatchProp<double> match) {
     return withDiagnosticProp<double>('size', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where size equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where size equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withSize(10.5).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withSize(double? value) {
     return withDiagnosticProp<double>(
         'size', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where weight matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where weight matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereWeight((it) => it.equals(FontWeight.bold)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereWeight(MatchProp<FontWeight> match) {
     return withDiagnosticProp<FontWeight>('weight', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where weight equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where weight equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withWeight(FontWeight.bold).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withWeight(FontWeight? value) {
     return withDiagnosticProp<FontWeight>(
         'weight', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where style matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where style matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereStyle((it) => it.equals(FontStyle.values.first)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereStyle(MatchProp<FontStyle> match) {
     return withDiagnosticProp<FontStyle>('style', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where style equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where style equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withStyle(FontStyle.values.first).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withStyle(FontStyle? value) {
     return withDiagnosticProp<FontStyle>(
         'style', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where letterSpacing matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where letterSpacing matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereLetterSpacing((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereLetterSpacing(MatchProp<double> match) {
     return withDiagnosticProp<double>('letterSpacing', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where letterSpacing equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where letterSpacing equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withLetterSpacing(10.5).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withLetterSpacing(double? value) {
     return withDiagnosticProp<double>('letterSpacing',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where wordSpacing matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where wordSpacing matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereWordSpacing((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereWordSpacing(MatchProp<double> match) {
     return withDiagnosticProp<double>('wordSpacing', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where wordSpacing equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where wordSpacing equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withWordSpacing(10.5).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withWordSpacing(double? value) {
     return withDiagnosticProp<double>(
         'wordSpacing', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where baseline matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where baseline matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereBaseline((it) => it.equals(TextBaseline.values.first)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereBaseline(MatchProp<TextBaseline> match) {
     return withDiagnosticProp<TextBaseline>('baseline', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where baseline equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where baseline equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withBaseline(TextBaseline.values.first).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withBaseline(TextBaseline? value) {
     return withDiagnosticProp<TextBaseline>(
         'baseline', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where height matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where height matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereHeight((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereHeight(MatchProp<double> match) {
     return withDiagnosticProp<double>('height', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where height equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where height equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withHeight(10.5).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withHeight(double? value) {
     return withDiagnosticProp<double>(
         'height', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where leadingDistribution matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where leadingDistribution matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereLeadingDistribution((it) => it.equals(TextLeadingDistribution.values.first)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereLeadingDistribution(
       MatchProp<TextLeadingDistribution> match) {
@@ -766,7 +1266,11 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
         'leadingDistribution', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where leadingDistribution equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where leadingDistribution equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withLeadingDistribution(TextLeadingDistribution.values.first).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withLeadingDistribution(
       TextLeadingDistribution? value) {
@@ -774,201 +1278,321 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where locale matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where locale matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereLocale((it) => it.equals(Locale('en', 'US'))).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereLocale(MatchProp<Locale> match) {
     return withDiagnosticProp<Locale>('locale', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where locale equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where locale equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withLocale(Locale('en', 'US')).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withLocale(Locale? value) {
     return withDiagnosticProp<Locale>(
         'locale', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where foreground matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where foreground matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereForeground((it) => it.equals(Paint())).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereForeground(MatchProp<Paint> match) {
     return withDiagnosticProp<Paint>('foreground', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where foreground equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where foreground equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withForeground(Paint()).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withForeground(Paint? value) {
     return withDiagnosticProp<Paint>(
         'foreground', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where background matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where background matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereBackground((it) => it.equals(Paint())).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereBackground(MatchProp<Paint> match) {
     return withDiagnosticProp<Paint>('background', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where background equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where background equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withBackground(Paint()).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withBackground(Paint? value) {
     return withDiagnosticProp<Paint>(
         'background', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where textAlign matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where textAlign matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereTextAlign((it) => it.equals(TextAlign.values.first)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereTextAlign(MatchProp<TextAlign> match) {
     return withDiagnosticProp<TextAlign>('textAlign', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where textAlign equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where textAlign equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withTextAlign(TextAlign.values.first).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withTextAlign(TextAlign? value) {
     return withDiagnosticProp<TextAlign>(
         'textAlign', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where textDirection matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where textDirection matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereTextDirection((it) => it.equals(TextDirection.values.first)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereTextDirection(
       MatchProp<TextDirection> match) {
     return withDiagnosticProp<TextDirection>('textDirection', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where textDirection equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where textDirection equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withTextDirection(TextDirection.values.first).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withTextDirection(TextDirection? value) {
     return withDiagnosticProp<TextDirection>('textDirection',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where textScaleFactor matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where textScaleFactor matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereTextScaleFactor((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereTextScaleFactor(MatchProp<double> match) {
     return withDiagnosticProp<double>('textScaleFactor', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where textScaleFactor equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where textScaleFactor equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withTextScaleFactor(10.5).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withTextScaleFactor(double? value) {
     return withDiagnosticProp<double>('textScaleFactor',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where maxLines matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where maxLines matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereMaxLines((it) => it.isGreaterThan(10)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereMaxLines(MatchProp<int> match) {
     return withDiagnosticProp<int>('maxLines', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where maxLines equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where maxLines equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withMaxLines(10).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withMaxLines(int? value) {
     return withDiagnosticProp<int>(
         'maxLines', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where minLines matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where minLines matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereMinLines((it) => it.isGreaterThan(10)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereMinLines(MatchProp<int> match) {
     return withDiagnosticProp<int>('minLines', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where minLines equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where minLines equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withMinLines(10).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withMinLines(int? value) {
     return withDiagnosticProp<int>(
         'minLines', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where expands matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where expands matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereExpands((it) => it.isTrue()).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereExpands(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('expands', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where expands equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where expands equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withExpands(true).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withExpands(bool? value) {
     return withDiagnosticProp<bool>(
         'expands', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where autofocus matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where autofocus matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereAutofocus((it) => it.isTrue()).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereAutofocus(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('autofocus', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where autofocus equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where autofocus equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withAutofocus(true).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withAutofocus(bool? value) {
     return withDiagnosticProp<bool>(
         'autofocus', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where keyboardType matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where keyboardType matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereKeyboardType((it) => it.equals(TextInputType.text)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereKeyboardType(
       MatchProp<TextInputType> match) {
     return withDiagnosticProp<TextInputType>('keyboardType', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where keyboardType equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where keyboardType equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withKeyboardType(TextInputType.text).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withKeyboardType(TextInputType? value) {
     return withDiagnosticProp<TextInputType>(
         'keyboardType', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where scrollController matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where scrollController matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereScrollController((it) => it.equals(ScrollController())).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereScrollController(
       MatchProp<ScrollController> match) {
     return withDiagnosticProp<ScrollController>('scrollController', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where scrollController equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where scrollController equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withScrollController(ScrollController()).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withScrollController(ScrollController? value) {
     return withDiagnosticProp<ScrollController>('scrollController',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where scrollPhysics matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where scrollPhysics matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereScrollPhysics((it) => it.equals(BouncingScrollPhysics())).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereScrollPhysics(
       MatchProp<ScrollPhysics> match) {
     return withDiagnosticProp<ScrollPhysics>('scrollPhysics', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where scrollPhysics equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where scrollPhysics equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withScrollPhysics(BouncingScrollPhysics()).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withScrollPhysics(ScrollPhysics? value) {
     return withDiagnosticProp<ScrollPhysics>('scrollPhysics',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where autofillHints matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where autofillHints matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereAutofillHints((it) => it.equals(['foo', 'bar'])).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereAutofillHints(
       MatchProp<Iterable<String>> match) {
     return withDiagnosticProp<Iterable<String>>('autofillHints', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where autofillHints equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where autofillHints equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withAutofillHints(['foo', 'bar']).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withAutofillHints(Iterable<String>? value) {
     return withDiagnosticProp<Iterable<String>>('autofillHints',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where textHeightBehavior matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where textHeightBehavior matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereTextHeightBehavior((it) => it.equals(TextHeightBehavior(applyHeightToFirstAscent: true, applyHeightToLastDescent: false))).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereTextHeightBehavior(
       MatchProp<TextHeightBehavior> match) {
     return withDiagnosticProp<TextHeightBehavior>('textHeightBehavior', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where textHeightBehavior equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where textHeightBehavior equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withTextHeightBehavior(TextHeightBehavior(applyHeightToFirstAscent: true, applyHeightToLastDescent: false)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withTextHeightBehavior(
       TextHeightBehavior? value) {
@@ -976,55 +1600,87 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where scribbleEnabled matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where scribbleEnabled matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereScribbleEnabled((it) => it.isTrue()).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereScribbleEnabled(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('scribbleEnabled', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where scribbleEnabled equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where scribbleEnabled equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withScribbleEnabled(true).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withScribbleEnabled(bool? value) {
     return withDiagnosticProp<bool>('scribbleEnabled',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where enableIMEPersonalizedLearning matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where enableIMEPersonalizedLearning matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereEnableIMEPersonalizedLearning((it) => it.isTrue()).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereEnableIMEPersonalizedLearning(
       MatchProp<bool> match) {
     return withDiagnosticProp<bool>('enableIMEPersonalizedLearning', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where enableIMEPersonalizedLearning equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where enableIMEPersonalizedLearning equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withEnableIMEPersonalizedLearning(true).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withEnableIMEPersonalizedLearning(bool? value) {
     return withDiagnosticProp<bool>('enableIMEPersonalizedLearning',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where enableInteractiveSelection matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where enableInteractiveSelection matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereEnableInteractiveSelection((it) => it.isTrue()).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereEnableInteractiveSelection(
       MatchProp<bool> match) {
     return withDiagnosticProp<bool>('enableInteractiveSelection', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where enableInteractiveSelection equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where enableInteractiveSelection equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withEnableInteractiveSelection(true).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withEnableInteractiveSelection(bool? value) {
     return withDiagnosticProp<bool>('enableInteractiveSelection',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where undoController matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where undoController matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereUndoController((it) => it.equals(UndoHistoryController())).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereUndoController(
       MatchProp<UndoHistoryController> match) {
     return withDiagnosticProp<UndoHistoryController>('undoController', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where undoController equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where undoController equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withUndoController(UndoHistoryController()).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withUndoController(
       UndoHistoryController? value) {
@@ -1032,7 +1688,11 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where spellCheckConfiguration matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where spellCheckConfiguration matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereSpellCheckConfiguration((it) => it.equals(SpellCheckConfiguration())).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereSpellCheckConfiguration(
       MatchProp<SpellCheckConfiguration> match) {
@@ -1040,7 +1700,11 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
         'spellCheckConfiguration', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where spellCheckConfiguration equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where spellCheckConfiguration equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withSpellCheckConfiguration(SpellCheckConfiguration()).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withSpellCheckConfiguration(
       SpellCheckConfiguration? value) {
@@ -1049,14 +1713,22 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where contentCommitMimeTypes matches the condition
+  /// Creates a [WidgetSelector] that finds all [EditableText] where contentCommitMimeTypes matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().whereContentCommitMimeTypes((it) => it.equals(['foo', 'bar'])).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> whereContentCommitMimeTypes(
       MatchProp<List<String>> match) {
     return withDiagnosticProp<List<String>>('contentCommitMimeTypes', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where contentCommitMimeTypes equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [EditableText] where contentCommitMimeTypes equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<EditableText>().withContentCommitMimeTypes(['foo', 'bar']).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<EditableText> withContentCommitMimeTypes(List<String>? value) {
     return withDiagnosticProp<List<String>>('contentCommitMimeTypes',

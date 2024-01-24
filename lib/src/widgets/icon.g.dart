@@ -11,111 +11,191 @@ import 'package:spot/spot.dart';
 /// ```
 /// Matchers for the properties of [Icon] provided via [Diagnosticable.debugFillProperties]
 extension IconMatcher on WidgetMatcher<Icon> {
-  /// Expects that icon of [Icon] matches the condition in [match]
+  /// Expects that icon of [Icon] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().existsOnce().hasIconWhere((it) => it.equals(Icons.home));
+  /// ```
   WidgetMatcher<Icon> hasIconWhere(MatchProp<IconData> match) {
     return hasDiagnosticProp<IconData>('icon', match);
   }
 
-  /// Expects that icon of [Icon] equals (==) [value]
+  /// Expects that icon of [Icon] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().existsOnce().hasIcon(Icons.home);
+  /// ```
   WidgetMatcher<Icon> hasIcon(IconData? value) {
     return hasDiagnosticProp<IconData>(
         'icon', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that size of [Icon] matches the condition in [match]
+  /// Expects that size of [Icon] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().existsOnce().hasSizeWhere((it) => it.isGreaterThan(10.5));
+  /// ```
   WidgetMatcher<Icon> hasSizeWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('size', match);
   }
 
-  /// Expects that size of [Icon] equals (==) [value]
+  /// Expects that size of [Icon] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().existsOnce().hasSize(10.5);
+  /// ```
   WidgetMatcher<Icon> hasSize(double? value) {
     return hasDiagnosticProp<double>(
         'size', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that fill of [Icon] matches the condition in [match]
+  /// Expects that fill of [Icon] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().existsOnce().hasFillWhere((it) => it.isGreaterThan(10.5));
+  /// ```
   WidgetMatcher<Icon> hasFillWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('fill', match);
   }
 
-  /// Expects that fill of [Icon] equals (==) [value]
+  /// Expects that fill of [Icon] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().existsOnce().hasFill(10.5);
+  /// ```
   WidgetMatcher<Icon> hasFill(double? value) {
     return hasDiagnosticProp<double>(
         'fill', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that weight of [Icon] matches the condition in [match]
+  /// Expects that weight of [Icon] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().existsOnce().hasWeightWhere((it) => it.isGreaterThan(10.5));
+  /// ```
   WidgetMatcher<Icon> hasWeightWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('weight', match);
   }
 
-  /// Expects that weight of [Icon] equals (==) [value]
+  /// Expects that weight of [Icon] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().existsOnce().hasWeight(10.5);
+  /// ```
   WidgetMatcher<Icon> hasWeight(double? value) {
     return hasDiagnosticProp<double>(
         'weight', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that grade of [Icon] matches the condition in [match]
+  /// Expects that grade of [Icon] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().existsOnce().hasGradeWhere((it) => it.isGreaterThan(10.5));
+  /// ```
   WidgetMatcher<Icon> hasGradeWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('grade', match);
   }
 
-  /// Expects that grade of [Icon] equals (==) [value]
+  /// Expects that grade of [Icon] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().existsOnce().hasGrade(10.5);
+  /// ```
   WidgetMatcher<Icon> hasGrade(double? value) {
     return hasDiagnosticProp<double>(
         'grade', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that opticalSize of [Icon] matches the condition in [match]
+  /// Expects that opticalSize of [Icon] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().existsOnce().hasOpticalSizeWhere((it) => it.isGreaterThan(10.5));
+  /// ```
   WidgetMatcher<Icon> hasOpticalSizeWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('opticalSize', match);
   }
 
-  /// Expects that opticalSize of [Icon] equals (==) [value]
+  /// Expects that opticalSize of [Icon] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().existsOnce().hasOpticalSize(10.5);
+  /// ```
   WidgetMatcher<Icon> hasOpticalSize(double? value) {
     return hasDiagnosticProp<double>(
         'opticalSize', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that color of [Icon] matches the condition in [match]
+  /// Expects that color of [Icon] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().existsOnce().hasColorWhere((it) => it.equals(Colors.red));
+  /// ```
   WidgetMatcher<Icon> hasColorWhere(MatchProp<Color> match) {
     return hasDiagnosticProp<Color>('color', match);
   }
 
-  /// Expects that color of [Icon] equals (==) [value]
+  /// Expects that color of [Icon] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().existsOnce().hasColor(Colors.red);
+  /// ```
   WidgetMatcher<Icon> hasColor(Color? value) {
     return hasDiagnosticProp<Color>(
         'color', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that shadows of [Icon] matches the condition in [match]
+  /// Expects that shadows of [Icon] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().existsOnce().hasShadowsWhere((it) => it.equals(Shadow(color: Colors.black, blurRadius: 10.0)));
+  /// ```
   WidgetMatcher<Icon> hasShadowsWhere(MatchProp<Shadow> match) {
     return hasDiagnosticProp<Shadow>('shadows', match);
   }
 
-  /// Expects that shadows of [Icon] equals (==) [value]
+  /// Expects that shadows of [Icon] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().existsOnce().hasShadows(Shadow(color: Colors.black, blurRadius: 10.0));
+  /// ```
   WidgetMatcher<Icon> hasShadows(Shadow? value) {
     return hasDiagnosticProp<Shadow>(
         'shadows', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that semanticLabel of [Icon] matches the condition in [match]
+  /// Expects that semanticLabel of [Icon] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().existsOnce().hasSemanticLabelWhere((it) => it.equals('foo'));
+  /// ```
   WidgetMatcher<Icon> hasSemanticLabelWhere(MatchProp<String> match) {
     return hasDiagnosticProp<String>('semanticLabel', match);
   }
 
-  /// Expects that semanticLabel of [Icon] equals (==) [value]
+  /// Expects that semanticLabel of [Icon] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().existsOnce().hasSemanticLabel('foo');
+  /// ```
   WidgetMatcher<Icon> hasSemanticLabel(String? value) {
     return hasDiagnosticProp<String>('semanticLabel',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that textDirection of [Icon] matches the condition in [match]
+  /// Expects that textDirection of [Icon] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().existsOnce().hasTextDirectionWhere((it) => it.equals(TextDirection.values.first));
+  /// ```
   WidgetMatcher<Icon> hasTextDirectionWhere(MatchProp<TextDirection> match) {
     return hasDiagnosticProp<TextDirection>('textDirection', match);
   }
 
-  /// Expects that textDirection of [Icon] equals (==) [value]
+  /// Expects that textDirection of [Icon] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().existsOnce().hasTextDirection(TextDirection.values.first);
+  /// ```
   WidgetMatcher<Icon> hasTextDirection(TextDirection? value) {
     return hasDiagnosticProp<TextDirection>('textDirection',
         (it) => value == null ? it.isNull() : it.equals(value));
@@ -124,130 +204,210 @@ extension IconMatcher on WidgetMatcher<Icon> {
 
 /// Allows filtering [Icon] by the properties provided via [Diagnosticable.debugFillProperties]
 extension IconSelector on WidgetSelector<Icon> {
-  /// Creates a [WidgetSelector] that finds all [Icon] where icon matches the condition
+  /// Creates a [WidgetSelector] that finds all [Icon] where icon matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().whereIcon((it) => it.equals(Icons.home)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Icon> whereIcon(MatchProp<IconData> match) {
     return withDiagnosticProp<IconData>('icon', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [Icon] where icon equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [Icon] where icon equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().withIcon(Icons.home).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Icon> withIcon(IconData? value) {
     return withDiagnosticProp<IconData>(
         'icon', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [Icon] where size matches the condition
+  /// Creates a [WidgetSelector] that finds all [Icon] where size matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().whereSize((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Icon> whereSize(MatchProp<double> match) {
     return withDiagnosticProp<double>('size', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [Icon] where size equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [Icon] where size equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().withSize(10.5).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Icon> withSize(double? value) {
     return withDiagnosticProp<double>(
         'size', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [Icon] where fill matches the condition
+  /// Creates a [WidgetSelector] that finds all [Icon] where fill matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().whereFill((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Icon> whereFill(MatchProp<double> match) {
     return withDiagnosticProp<double>('fill', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [Icon] where fill equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [Icon] where fill equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().withFill(10.5).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Icon> withFill(double? value) {
     return withDiagnosticProp<double>(
         'fill', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [Icon] where weight matches the condition
+  /// Creates a [WidgetSelector] that finds all [Icon] where weight matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().whereWeight((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Icon> whereWeight(MatchProp<double> match) {
     return withDiagnosticProp<double>('weight', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [Icon] where weight equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [Icon] where weight equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().withWeight(10.5).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Icon> withWeight(double? value) {
     return withDiagnosticProp<double>(
         'weight', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [Icon] where grade matches the condition
+  /// Creates a [WidgetSelector] that finds all [Icon] where grade matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().whereGrade((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Icon> whereGrade(MatchProp<double> match) {
     return withDiagnosticProp<double>('grade', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [Icon] where grade equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [Icon] where grade equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().withGrade(10.5).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Icon> withGrade(double? value) {
     return withDiagnosticProp<double>(
         'grade', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [Icon] where opticalSize matches the condition
+  /// Creates a [WidgetSelector] that finds all [Icon] where opticalSize matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().whereOpticalSize((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Icon> whereOpticalSize(MatchProp<double> match) {
     return withDiagnosticProp<double>('opticalSize', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [Icon] where opticalSize equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [Icon] where opticalSize equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().withOpticalSize(10.5).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Icon> withOpticalSize(double? value) {
     return withDiagnosticProp<double>(
         'opticalSize', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [Icon] where color matches the condition
+  /// Creates a [WidgetSelector] that finds all [Icon] where color matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().whereColor((it) => it.equals(Colors.red)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Icon> whereColor(MatchProp<Color> match) {
     return withDiagnosticProp<Color>('color', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [Icon] where color equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [Icon] where color equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().withColor(Colors.red).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Icon> withColor(Color? value) {
     return withDiagnosticProp<Color>(
         'color', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [Icon] where shadows matches the condition
+  /// Creates a [WidgetSelector] that finds all [Icon] where shadows matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().whereShadows((it) => it.equals(Shadow(color: Colors.black, blurRadius: 10.0))).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Icon> whereShadows(MatchProp<Shadow> match) {
     return withDiagnosticProp<Shadow>('shadows', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [Icon] where shadows equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [Icon] where shadows equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().withShadows(Shadow(color: Colors.black, blurRadius: 10.0)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Icon> withShadows(Shadow? value) {
     return withDiagnosticProp<Shadow>(
         'shadows', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [Icon] where semanticLabel matches the condition
+  /// Creates a [WidgetSelector] that finds all [Icon] where semanticLabel matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().whereSemanticLabel((it) => it.equals('foo')).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Icon> whereSemanticLabel(MatchProp<String> match) {
     return withDiagnosticProp<String>('semanticLabel', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [Icon] where semanticLabel equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [Icon] where semanticLabel equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().withSemanticLabel('foo').existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Icon> withSemanticLabel(String? value) {
     return withDiagnosticProp<String>('semanticLabel',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [Icon] where textDirection matches the condition
+  /// Creates a [WidgetSelector] that finds all [Icon] where textDirection matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().whereTextDirection((it) => it.equals(TextDirection.values.first)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Icon> whereTextDirection(MatchProp<TextDirection> match) {
     return withDiagnosticProp<TextDirection>('textDirection', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [Icon] where textDirection equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [Icon] where textDirection equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Icon>().withTextDirection(TextDirection.values.first).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Icon> withTextDirection(TextDirection? value) {
     return withDiagnosticProp<TextDirection>('textDirection',

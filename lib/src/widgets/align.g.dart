@@ -12,46 +12,78 @@ import 'package:spot/spot.dart';
 /// ```
 /// Matchers for the properties of [Align] provided via [Diagnosticable.debugFillProperties]
 extension AlignMatcher on WidgetMatcher<Align> {
-  /// Expects that alignment of [Align] matches the condition in [match]
+  /// Expects that alignment of [Align] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Align>().existsOnce().hasAlignmentWhere((it) => it.equals(Alignment.center));
+  /// ```
   WidgetMatcher<Align> hasAlignmentWhere(MatchProp<AlignmentGeometry> match) {
     return hasDiagnosticProp<AlignmentGeometry>('alignment', match);
   }
 
-  /// Expects that alignment of [Align] equals (==) [value]
+  /// Expects that alignment of [Align] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Align>().existsOnce().hasAlignment(Alignment.center);
+  /// ```
   WidgetMatcher<Align> hasAlignment(AlignmentGeometry? value) {
     return hasDiagnosticProp<AlignmentGeometry>(
         'alignment', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that widthFactor of [Align] matches the condition in [match]
+  /// Expects that widthFactor of [Align] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Align>().existsOnce().hasWidthFactorWhere((it) => it.isGreaterThan(10.5));
+  /// ```
   WidgetMatcher<Align> hasWidthFactorWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('widthFactor', match);
   }
 
-  /// Expects that widthFactor of [Align] equals (==) [value]
+  /// Expects that widthFactor of [Align] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Align>().existsOnce().hasWidthFactor(10.5);
+  /// ```
   WidgetMatcher<Align> hasWidthFactor(double? value) {
     return hasDiagnosticProp<double>(
         'widthFactor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that heightFactor of [Align] matches the condition in [match]
+  /// Expects that heightFactor of [Align] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Align>().existsOnce().hasHeightFactorWhere((it) => it.isGreaterThan(10.5));
+  /// ```
   WidgetMatcher<Align> hasHeightFactorWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('heightFactor', match);
   }
 
-  /// Expects that heightFactor of [Align] equals (==) [value]
+  /// Expects that heightFactor of [Align] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Align>().existsOnce().hasHeightFactor(10.5);
+  /// ```
   WidgetMatcher<Align> hasHeightFactor(double? value) {
     return hasDiagnosticProp<double>(
         'heightFactor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that renderObject of [Align] matches the condition in [match]
+  /// Expects that renderObject of [Align] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Align>().existsOnce().hasRenderObjectWhere((it) => it.equals(RenderBox()));
+  /// ```
   WidgetMatcher<Align> hasRenderObjectWhere(
       MatchProp<RenderPositionedBox> match) {
     return hasDiagnosticProp<RenderPositionedBox>('renderObject', match);
   }
 
-  /// Expects that renderObject of [Align] equals (==) [value]
+  /// Expects that renderObject of [Align] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Align>().existsOnce().hasRenderObject(RenderBox());
+  /// ```
   WidgetMatcher<Align> hasRenderObject(RenderPositionedBox? value) {
     return hasDiagnosticProp<RenderPositionedBox>(
         'renderObject', (it) => value == null ? it.isNull() : it.equals(value));
@@ -60,53 +92,85 @@ extension AlignMatcher on WidgetMatcher<Align> {
 
 /// Allows filtering [Align] by the properties provided via [Diagnosticable.debugFillProperties]
 extension AlignSelector on WidgetSelector<Align> {
-  /// Creates a [WidgetSelector] that finds all [Align] where alignment matches the condition
+  /// Creates a [WidgetSelector] that finds all [Align] where alignment matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Align>().whereAlignment((it) => it.equals(Alignment.center)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Align> whereAlignment(MatchProp<AlignmentGeometry> match) {
     return withDiagnosticProp<AlignmentGeometry>('alignment', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [Align] where alignment equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [Align] where alignment equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Align>().withAlignment(Alignment.center).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Align> withAlignment(AlignmentGeometry? value) {
     return withDiagnosticProp<AlignmentGeometry>(
         'alignment', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [Align] where widthFactor matches the condition
+  /// Creates a [WidgetSelector] that finds all [Align] where widthFactor matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Align>().whereWidthFactor((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Align> whereWidthFactor(MatchProp<double> match) {
     return withDiagnosticProp<double>('widthFactor', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [Align] where widthFactor equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [Align] where widthFactor equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Align>().withWidthFactor(10.5).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Align> withWidthFactor(double? value) {
     return withDiagnosticProp<double>(
         'widthFactor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [Align] where heightFactor matches the condition
+  /// Creates a [WidgetSelector] that finds all [Align] where heightFactor matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Align>().whereHeightFactor((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Align> whereHeightFactor(MatchProp<double> match) {
     return withDiagnosticProp<double>('heightFactor', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [Align] where heightFactor equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [Align] where heightFactor equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Align>().withHeightFactor(10.5).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Align> withHeightFactor(double? value) {
     return withDiagnosticProp<double>(
         'heightFactor', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [Align] where renderObject matches the condition
+  /// Creates a [WidgetSelector] that finds all [Align] where renderObject matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Align>().whereRenderObject((it) => it.equals(RenderBox())).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Align> whereRenderObject(
       MatchProp<RenderPositionedBox> match) {
     return withDiagnosticProp<RenderPositionedBox>('renderObject', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [Align] where renderObject equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [Align] where renderObject equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Align>().withRenderObject(RenderBox()).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Align> withRenderObject(RenderPositionedBox? value) {
     return withDiagnosticProp<RenderPositionedBox>(

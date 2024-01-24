@@ -12,13 +12,21 @@ import 'package:spot/spot.dart';
 /// Matchers for the properties of [LinearProgressIndicator] provided via [Diagnosticable.debugFillProperties]
 extension LinearProgressIndicatorMatcher
     on WidgetMatcher<LinearProgressIndicator> {
-  /// Expects that value of [LinearProgressIndicator] matches the condition in [match]
+  /// Expects that value of [LinearProgressIndicator] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<LinearProgressIndicator>().existsOnce().hasValueWhere((it) => it.isGreaterThan(10.5));
+  /// ```
   WidgetMatcher<LinearProgressIndicator> hasValueWhere(
       MatchProp<double> match) {
     return hasDiagnosticProp<double>('value', match);
   }
 
-  /// Expects that value of [LinearProgressIndicator] equals (==) [value]
+  /// Expects that value of [LinearProgressIndicator] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<LinearProgressIndicator>().existsOnce().hasValue(10.5);
+  /// ```
   WidgetMatcher<LinearProgressIndicator> hasValue(double? value) {
     return hasDiagnosticProp<double>(
         'value', (it) => value == null ? it.isNull() : it.equals(value));
@@ -28,13 +36,21 @@ extension LinearProgressIndicatorMatcher
 /// Allows filtering [LinearProgressIndicator] by the properties provided via [Diagnosticable.debugFillProperties]
 extension LinearProgressIndicatorSelector
     on WidgetSelector<LinearProgressIndicator> {
-  /// Creates a [WidgetSelector] that finds all [LinearProgressIndicator] where value matches the condition
+  /// Creates a [WidgetSelector] that finds all [LinearProgressIndicator] where value matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<LinearProgressIndicator>().whereValue((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<LinearProgressIndicator> whereValue(MatchProp<double> match) {
     return withDiagnosticProp<double>('value', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [LinearProgressIndicator] where value equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [LinearProgressIndicator] where value equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<LinearProgressIndicator>().withValue(10.5).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<LinearProgressIndicator> withValue(double? value) {
     return withDiagnosticProp<double>(

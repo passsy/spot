@@ -12,25 +12,41 @@ import 'package:spot/spot.dart';
 /// ```
 /// Matchers for the properties of [ConstrainedBox] provided via [Diagnosticable.debugFillProperties]
 extension ConstrainedBoxMatcher on WidgetMatcher<ConstrainedBox> {
-  /// Expects that constraints of [ConstrainedBox] matches the condition in [match]
+  /// Expects that constraints of [ConstrainedBox] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<ConstrainedBox>().existsOnce().hasConstraintsWhere((it) => it.equals(BoxConstraints.tight(Size(100, 100))));
+  /// ```
   WidgetMatcher<ConstrainedBox> hasConstraintsWhere(
       MatchProp<BoxConstraints> match) {
     return hasDiagnosticProp<BoxConstraints>('constraints', match);
   }
 
-  /// Expects that constraints of [ConstrainedBox] equals (==) [value]
+  /// Expects that constraints of [ConstrainedBox] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<ConstrainedBox>().existsOnce().hasConstraints(BoxConstraints.tight(Size(100, 100)));
+  /// ```
   WidgetMatcher<ConstrainedBox> hasConstraints(BoxConstraints? value) {
     return hasDiagnosticProp<BoxConstraints>(
         'constraints', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that renderObject of [ConstrainedBox] matches the condition in [match]
+  /// Expects that renderObject of [ConstrainedBox] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<ConstrainedBox>().existsOnce().hasRenderObjectWhere((it) => it.equals(RenderBox()));
+  /// ```
   WidgetMatcher<ConstrainedBox> hasRenderObjectWhere(
       MatchProp<RenderConstrainedBox> match) {
     return hasDiagnosticProp<RenderConstrainedBox>('renderObject', match);
   }
 
-  /// Expects that renderObject of [ConstrainedBox] equals (==) [value]
+  /// Expects that renderObject of [ConstrainedBox] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<ConstrainedBox>().existsOnce().hasRenderObject(RenderBox());
+  /// ```
   WidgetMatcher<ConstrainedBox> hasRenderObject(RenderConstrainedBox? value) {
     return hasDiagnosticProp<RenderConstrainedBox>(
         'renderObject', (it) => value == null ? it.isNull() : it.equals(value));
@@ -39,28 +55,44 @@ extension ConstrainedBoxMatcher on WidgetMatcher<ConstrainedBox> {
 
 /// Allows filtering [ConstrainedBox] by the properties provided via [Diagnosticable.debugFillProperties]
 extension ConstrainedBoxSelector on WidgetSelector<ConstrainedBox> {
-  /// Creates a [WidgetSelector] that finds all [ConstrainedBox] where constraints matches the condition
+  /// Creates a [WidgetSelector] that finds all [ConstrainedBox] where constraints matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<ConstrainedBox>().whereConstraints((it) => it.equals(BoxConstraints.tight(Size(100, 100)))).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<ConstrainedBox> whereConstraints(
       MatchProp<BoxConstraints> match) {
     return withDiagnosticProp<BoxConstraints>('constraints', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [ConstrainedBox] where constraints equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [ConstrainedBox] where constraints equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<ConstrainedBox>().withConstraints(BoxConstraints.tight(Size(100, 100))).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<ConstrainedBox> withConstraints(BoxConstraints? value) {
     return withDiagnosticProp<BoxConstraints>(
         'constraints', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [ConstrainedBox] where renderObject matches the condition
+  /// Creates a [WidgetSelector] that finds all [ConstrainedBox] where renderObject matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<ConstrainedBox>().whereRenderObject((it) => it.equals(RenderBox())).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<ConstrainedBox> whereRenderObject(
       MatchProp<RenderConstrainedBox> match) {
     return withDiagnosticProp<RenderConstrainedBox>('renderObject', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [ConstrainedBox] where renderObject equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [ConstrainedBox] where renderObject equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<ConstrainedBox>().withRenderObject(RenderBox()).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<ConstrainedBox> withRenderObject(RenderConstrainedBox? value) {
     return withDiagnosticProp<RenderConstrainedBox>(

@@ -154,28 +154,53 @@ extension ${widgetType}Selector on WidgetSelector<$widgetType> {
       }
 
       addedMethods = true;
+      final widgetMatcherWithValueName =
+          '$matcherVerb${humanPropName.capitalize()}';
+      final widgetMatcherWithPropName = '${widgetMatcherWithValueName}Where';
+
+      final String valueExample = _getExampleValue(node: prop);
+      final String matcherExample = _getExampleValue(node: prop, matcher: true);
+
       matcherSb.writeln('''
-  /// Expects that $humanPropName of [$widgetType] matches the condition in [match]
-  WidgetMatcher<$widgetType> $matcherVerb${humanPropName.capitalize()}Where(MatchProp<$propType> match) {
+  /// Expects that $humanPropName of [$widgetType] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart     
+  ///   spot<$widgetType>().existsOnce().$widgetMatcherWithPropName($matcherExample);
+  /// ```
+  WidgetMatcher<$widgetType> $widgetMatcherWithPropName(MatchProp<$propType> match) {
     return hasDiagnosticProp<$propType>('$diagnosticPropName', match);
   }
   
-  /// Expects that $humanPropName of [$widgetType] equals (==) [value]
-  WidgetMatcher<$widgetType> $matcherVerb${humanPropName.capitalize()}($propTypeNullable value) {
+  /// Expects that $humanPropName of [$widgetType] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart     
+  ///   spot<$widgetType>().existsOnce().$widgetMatcherWithValueName($valueExample);
+  /// ```
+  WidgetMatcher<$widgetType> $widgetMatcherWithValueName($propTypeNullable value) {
     return hasDiagnosticProp<$propType>('$diagnosticPropName', (it) => value == null ? it.isNull() : it.equals(value));
   }
 ''');
 
+      final propPart = humanPropName.capitalize();
+
       selectorSb.writeln('''
-  /// Creates a [WidgetSelector] that finds all [$widgetType] where $humanPropName matches the condition
+  /// Creates a [WidgetSelector] that finds all [$widgetType] where $humanPropName matches the condition.
+  /// #### Example usage:
+  /// ```dart     
+  ///   spot<$widgetType>().where$propPart($matcherExample).existsOnce();
+  /// ```
   @useResult
-  WidgetSelector<$widgetType> where${humanPropName.capitalize()}(MatchProp<$propType> match) {
+  WidgetSelector<$widgetType> where$propPart(MatchProp<$propType> match) {
     return withDiagnosticProp<$propType>('$diagnosticPropName', match);
   }
   
-  /// Creates a [WidgetSelector] that finds all [$widgetType] where $humanPropName equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [$widgetType] where $humanPropName equals (==) [value].
+  /// #### Example usage:
+  /// ```dart     
+  ///   spot<$widgetType>().with$propPart($valueExample).existsOnce();
+  /// ```
   @useResult
-  WidgetSelector<$widgetType> with${humanPropName.capitalize()}($propTypeNullable value) {
+  WidgetSelector<$widgetType> with$propPart($propTypeNullable value) {
     return withDiagnosticProp<$propType>('$diagnosticPropName', (it) => value == null ? it.isNull() : it.equals(value));
   }
 ''');
@@ -276,7 +301,6 @@ extension ReadType on DiagnosticsNode {
           return null;
         }
       }();
-
       if (genericType != null) {
         return genericType;
       }
@@ -284,4 +308,218 @@ extension ReadType on DiagnosticsNode {
 
     return 'Object?';
   }
+}
+
+String _getExampleValue({
+  required DiagnosticsNode node,
+  bool matcher = false,
+}) {
+  if (node is StringProperty || node is DiagnosticsProperty<String>) {
+    if (matcher) {
+      return '''(it) => it.equals('foo')''';
+    }
+    return "'foo'";
+  }
+
+  if (node is FlagProperty || node is DiagnosticsProperty<bool>) {
+    if (matcher) {
+      return '''(it) => it.isTrue()''';
+    }
+    return 'true';
+  }
+
+  if (node is DoubleProperty || node is DiagnosticsProperty<double>) {
+    if (matcher) {
+      return '''(it) => it.isGreaterThan(10.5)''';
+    }
+    return '10.5';
+  }
+
+  if (node is IntProperty || node is DiagnosticsProperty<int>) {
+    if (matcher) {
+      return '''(it) => it.isGreaterThan(10)''';
+    }
+    return '10';
+  }
+
+  if (node is IconDataProperty || node is DiagnosticsProperty<IconData>) {
+    if (matcher) {
+      return '''(it) => it.equals(Icons.home)''';
+    }
+    return 'Icons.home';
+  }
+
+  if (node is ColorProperty || node is DiagnosticsProperty<Color>) {
+    if (matcher) {
+      return '''(it) => it.equals(Colors.red)''';
+    }
+    return 'Colors.red';
+  }
+
+  if (node is AttributedStringProperty) {
+    if (matcher) {
+      return '''(it) => it.equals('foo')''';
+    }
+    return "'foo'";
+  }
+
+  if (node is EnumProperty || node is DiagnosticsProperty<Enum>) {
+    final Type runtimeType = node.runtimeType;
+    final String? genericType = () {
+      try {
+        final regex = RegExp('<(.*)>');
+        return regex.firstMatch(runtimeType.toString())?.group(1);
+      } catch (_) {
+        if (matcher) {
+          return '''(it) => it.equals(value to match)''';
+        }
+        return "value to match";
+      }
+    }();
+
+    if (genericType != null) {
+      if (matcher) {
+        return '''(it) => it.equals($genericType.values.first)''';
+      }
+      return '$genericType.values.first';
+    }
+  }
+
+  if (node is DiagnosticsProperty) {
+    final Type runtimeType = node.runtimeType;
+    final String? genericType = () {
+      try {
+        final regex = RegExp('<(.*)>');
+        return regex.firstMatch(runtimeType.toString())?.group(1);
+      } catch (_) {
+        if (matcher) {
+          return '''(it) => it.equals(value to match)''';
+        }
+        return "value to match";
+      }
+    }();
+
+    if (genericType != null) {
+      final value = _examplesFromGenericType(genericType) ??
+          '### your $genericType value to match';
+      if (matcher) {
+        return '''(it) => it.equals($value)''';
+      }
+      return value;
+    }
+  }
+
+  if (matcher) {
+    return '''(it) => it.equals(value to match)''';
+  }
+  return "value to match";
+}
+
+String? _examplesFromGenericType(String genericType) {
+  String? example;
+  if (genericType.endsWith('?')) {
+    return 'null';
+  }
+  if (genericType == 'String') {
+    example = "'foo'";
+  } else if (genericType == 'Locale') {
+    example = "Locale('en', 'US')";
+  } else if (genericType == 'TextHeightBehavior') {
+    example =
+        "TextHeightBehavior(applyHeightToFirstAscent: true, applyHeightToLastDescent: false)";
+  } else if (genericType == 'Widget') {
+    example = "Container()";
+  } else if (genericType == 'Key') {
+    example = "ValueKey('key')";
+  } else if (genericType == 'Set') {
+    example = "{}";
+  } else if (genericType == 'Set<InheritedElement>') {
+    example = "<InheritedElement>{}";
+  } else if (genericType == 'TextEditingController') {
+    example = "TextEditingController()";
+  } else if (genericType == 'FocusNode') {
+    example = "FocusNode()";
+  } else if (genericType == 'FontWeight') {
+    example = "FontWeight.bold";
+  } else if (genericType == 'Paint') {
+    example = "Paint()";
+  } else if (genericType == 'TextInputType') {
+    example = "TextInputType.text";
+  } else if (genericType == 'TextStyle') {
+    example = "TextStyle()";
+  } else if (genericType == 'ScrollController') {
+    example = "ScrollController()";
+  } else if (genericType == 'ScrollPhysics') {
+    example = "BouncingScrollPhysics()";
+  } else if (genericType == 'Iterable') {
+    example = "<Iterable>[]";
+  } else if (genericType == 'UndoHistoryController') {
+    example = "UndoHistoryController()";
+  } else if (genericType == 'SpellCheckConfiguration') {
+    example = "SpellCheckConfiguration()";
+  } else if (genericType == 'List') {
+    example = "[]";
+  } else if (genericType == 'List<String>' ||
+      genericType == 'Iterable<String>') {
+    example = "['foo', 'bar']";
+  } else if (genericType == 'State<StatefulWidget>') {
+    example = "State<StatefulWidget>()";
+  } else if (genericType == 'AlignmentGeometry') {
+    example = "Alignment.center";
+  } else if (genericType == 'EdgeInsetsGeometry') {
+    example = "EdgeInsets.all(8.0)";
+  } else if (genericType == 'Decoration') {
+    example = "BoxDecoration(color: Colors.blue)";
+  } else if (genericType == 'BoxConstraints') {
+    example = "BoxConstraints.tight(Size(100, 100))";
+  } else if (genericType == 'Matrix4') {
+    example = "Matrix4.identity()";
+  } else if (genericType == 'RenderObject') {
+    example = "RenderBox()";
+  } else if (genericType == 'Shadow') {
+    example = "Shadow(color: Colors.black, blurRadius: 10.0)";
+  } else if (genericType == 'Radius') {
+    example = "Radius.circular(10.0)";
+  } else if (genericType == 'ImageProvider' ||
+      genericType == 'ImageProvider<Object>') {
+    example = "NetworkImage('https://example.com/image.png')";
+  } else if (genericType == 'Function' || genericType == '() => void') {
+    example = "() {}";
+  } else if (genericType == 'Animation' || genericType == 'Animation<double>') {
+    example = "AnimationController(vsync: this)";
+  } else if (genericType == 'Rect') {
+    example = "Rect.fromLTWH(0, 0, 100, 100)";
+  } else if (genericType == 'SemanticsProperties') {
+    example = "SemanticsProperties()";
+  } else if (genericType == 'SemanticsSortKey') {
+    example = "OrdinalSortKey(1.0)";
+  } else if (genericType == 'SemanticsHintOverrides') {
+    example = "SemanticsHintOverrides()";
+  } else if (genericType == 'bool') {
+    example = "true";
+  } else if (genericType == 'TextSelectionControls') {
+    example = "MaterialTextSelectionControls()";
+  } else if (genericType == 'TextAlignVertical') {
+    example = "TextAlignVertical.center";
+  } else if (genericType == 'Duration') {
+    example = "Duration(seconds: 30)";
+  } else if (genericType == 'InputDecoration') {
+    example = "InputDecoration()";
+  } else if (genericType == 'VisualDensity') {
+    example = "VisualDensity(horizontal: 1.0,vertical: 1.0)";
+  } else if (genericType == 'Object') {
+    example = "Object()";
+  } else if (genericType == 'ShapeBorder') {
+    example = "RoundedRectangleBorder()";
+  } else if (genericType == 'MouseCursor') {
+    example = "SystemMouseCursors.click";
+  } else if (genericType == 'ButtonStyle') {
+    example =
+        "ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue))";
+  } else if (genericType == '(bool) => void' ||
+      genericType == '(double) => void') {
+    example = "(value) {}";
+  }
+
+  return example;
 }

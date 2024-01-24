@@ -12,92 +12,156 @@ import 'package:spot/spot.dart';
 /// ```
 /// Matchers for the properties of [Column] provided via [Diagnosticable.debugFillProperties]
 extension ColumnMatcher on WidgetMatcher<Column> {
-  /// Expects that direction of [Column] matches the condition in [match]
+  /// Expects that direction of [Column] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Column>().existsOnce().hasDirectionWhere((it) => it.equals(Axis.values.first));
+  /// ```
   WidgetMatcher<Column> hasDirectionWhere(MatchProp<Axis> match) {
     return hasDiagnosticProp<Axis>('direction', match);
   }
 
-  /// Expects that direction of [Column] equals (==) [value]
+  /// Expects that direction of [Column] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Column>().existsOnce().hasDirection(Axis.values.first);
+  /// ```
   WidgetMatcher<Column> hasDirection(Axis? value) {
     return hasDiagnosticProp<Axis>(
         'direction', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that mainAxisAlignment of [Column] matches the condition in [match]
+  /// Expects that mainAxisAlignment of [Column] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Column>().existsOnce().hasMainAxisAlignmentWhere((it) => it.equals(MainAxisAlignment.values.first));
+  /// ```
   WidgetMatcher<Column> hasMainAxisAlignmentWhere(
       MatchProp<MainAxisAlignment> match) {
     return hasDiagnosticProp<MainAxisAlignment>('mainAxisAlignment', match);
   }
 
-  /// Expects that mainAxisAlignment of [Column] equals (==) [value]
+  /// Expects that mainAxisAlignment of [Column] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Column>().existsOnce().hasMainAxisAlignment(MainAxisAlignment.values.first);
+  /// ```
   WidgetMatcher<Column> hasMainAxisAlignment(MainAxisAlignment? value) {
     return hasDiagnosticProp<MainAxisAlignment>('mainAxisAlignment',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that mainAxisSize of [Column] matches the condition in [match]
+  /// Expects that mainAxisSize of [Column] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Column>().existsOnce().hasMainAxisSizeWhere((it) => it.equals(MainAxisSize.values.first));
+  /// ```
   WidgetMatcher<Column> hasMainAxisSizeWhere(MatchProp<MainAxisSize> match) {
     return hasDiagnosticProp<MainAxisSize>('mainAxisSize', match);
   }
 
-  /// Expects that mainAxisSize of [Column] equals (==) [value]
+  /// Expects that mainAxisSize of [Column] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Column>().existsOnce().hasMainAxisSize(MainAxisSize.values.first);
+  /// ```
   WidgetMatcher<Column> hasMainAxisSize(MainAxisSize? value) {
     return hasDiagnosticProp<MainAxisSize>(
         'mainAxisSize', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that crossAxisAlignment of [Column] matches the condition in [match]
+  /// Expects that crossAxisAlignment of [Column] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Column>().existsOnce().hasCrossAxisAlignmentWhere((it) => it.equals(CrossAxisAlignment.values.first));
+  /// ```
   WidgetMatcher<Column> hasCrossAxisAlignmentWhere(
       MatchProp<CrossAxisAlignment> match) {
     return hasDiagnosticProp<CrossAxisAlignment>('crossAxisAlignment', match);
   }
 
-  /// Expects that crossAxisAlignment of [Column] equals (==) [value]
+  /// Expects that crossAxisAlignment of [Column] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Column>().existsOnce().hasCrossAxisAlignment(CrossAxisAlignment.values.first);
+  /// ```
   WidgetMatcher<Column> hasCrossAxisAlignment(CrossAxisAlignment? value) {
     return hasDiagnosticProp<CrossAxisAlignment>('crossAxisAlignment',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that textDirection of [Column] matches the condition in [match]
+  /// Expects that textDirection of [Column] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Column>().existsOnce().hasTextDirectionWhere((it) => it.equals(TextDirection.values.first));
+  /// ```
   WidgetMatcher<Column> hasTextDirectionWhere(MatchProp<TextDirection> match) {
     return hasDiagnosticProp<TextDirection>('textDirection', match);
   }
 
-  /// Expects that textDirection of [Column] equals (==) [value]
+  /// Expects that textDirection of [Column] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Column>().existsOnce().hasTextDirection(TextDirection.values.first);
+  /// ```
   WidgetMatcher<Column> hasTextDirection(TextDirection? value) {
     return hasDiagnosticProp<TextDirection>('textDirection',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that verticalDirection of [Column] matches the condition in [match]
+  /// Expects that verticalDirection of [Column] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Column>().existsOnce().hasVerticalDirectionWhere((it) => it.equals(VerticalDirection.values.first));
+  /// ```
   WidgetMatcher<Column> hasVerticalDirectionWhere(
       MatchProp<VerticalDirection> match) {
     return hasDiagnosticProp<VerticalDirection>('verticalDirection', match);
   }
 
-  /// Expects that verticalDirection of [Column] equals (==) [value]
+  /// Expects that verticalDirection of [Column] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Column>().existsOnce().hasVerticalDirection(VerticalDirection.values.first);
+  /// ```
   WidgetMatcher<Column> hasVerticalDirection(VerticalDirection? value) {
     return hasDiagnosticProp<VerticalDirection>('verticalDirection',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that textBaseline of [Column] matches the condition in [match]
+  /// Expects that textBaseline of [Column] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Column>().existsOnce().hasTextBaselineWhere((it) => it.equals(TextBaseline.values.first));
+  /// ```
   WidgetMatcher<Column> hasTextBaselineWhere(MatchProp<TextBaseline> match) {
     return hasDiagnosticProp<TextBaseline>('textBaseline', match);
   }
 
-  /// Expects that textBaseline of [Column] equals (==) [value]
+  /// Expects that textBaseline of [Column] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Column>().existsOnce().hasTextBaseline(TextBaseline.values.first);
+  /// ```
   WidgetMatcher<Column> hasTextBaseline(TextBaseline? value) {
     return hasDiagnosticProp<TextBaseline>(
         'textBaseline', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that renderObject of [Column] matches the condition in [match]
+  /// Expects that renderObject of [Column] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Column>().existsOnce().hasRenderObjectWhere((it) => it.equals(RenderBox()));
+  /// ```
   WidgetMatcher<Column> hasRenderObjectWhere(MatchProp<RenderFlex> match) {
     return hasDiagnosticProp<RenderFlex>('renderObject', match);
   }
 
-  /// Expects that renderObject of [Column] equals (==) [value]
+  /// Expects that renderObject of [Column] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Column>().existsOnce().hasRenderObject(RenderBox());
+  /// ```
   WidgetMatcher<Column> hasRenderObject(RenderFlex? value) {
     return hasDiagnosticProp<RenderFlex>(
         'renderObject', (it) => value == null ? it.isNull() : it.equals(value));
@@ -106,107 +170,171 @@ extension ColumnMatcher on WidgetMatcher<Column> {
 
 /// Allows filtering [Column] by the properties provided via [Diagnosticable.debugFillProperties]
 extension ColumnSelector on WidgetSelector<Column> {
-  /// Creates a [WidgetSelector] that finds all [Column] where direction matches the condition
+  /// Creates a [WidgetSelector] that finds all [Column] where direction matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Column>().whereDirection((it) => it.equals(Axis.values.first)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Column> whereDirection(MatchProp<Axis> match) {
     return withDiagnosticProp<Axis>('direction', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [Column] where direction equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [Column] where direction equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Column>().withDirection(Axis.values.first).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Column> withDirection(Axis? value) {
     return withDiagnosticProp<Axis>(
         'direction', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [Column] where mainAxisAlignment matches the condition
+  /// Creates a [WidgetSelector] that finds all [Column] where mainAxisAlignment matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Column>().whereMainAxisAlignment((it) => it.equals(MainAxisAlignment.values.first)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Column> whereMainAxisAlignment(
       MatchProp<MainAxisAlignment> match) {
     return withDiagnosticProp<MainAxisAlignment>('mainAxisAlignment', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [Column] where mainAxisAlignment equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [Column] where mainAxisAlignment equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Column>().withMainAxisAlignment(MainAxisAlignment.values.first).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Column> withMainAxisAlignment(MainAxisAlignment? value) {
     return withDiagnosticProp<MainAxisAlignment>('mainAxisAlignment',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [Column] where mainAxisSize matches the condition
+  /// Creates a [WidgetSelector] that finds all [Column] where mainAxisSize matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Column>().whereMainAxisSize((it) => it.equals(MainAxisSize.values.first)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Column> whereMainAxisSize(MatchProp<MainAxisSize> match) {
     return withDiagnosticProp<MainAxisSize>('mainAxisSize', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [Column] where mainAxisSize equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [Column] where mainAxisSize equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Column>().withMainAxisSize(MainAxisSize.values.first).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Column> withMainAxisSize(MainAxisSize? value) {
     return withDiagnosticProp<MainAxisSize>(
         'mainAxisSize', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [Column] where crossAxisAlignment matches the condition
+  /// Creates a [WidgetSelector] that finds all [Column] where crossAxisAlignment matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Column>().whereCrossAxisAlignment((it) => it.equals(CrossAxisAlignment.values.first)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Column> whereCrossAxisAlignment(
       MatchProp<CrossAxisAlignment> match) {
     return withDiagnosticProp<CrossAxisAlignment>('crossAxisAlignment', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [Column] where crossAxisAlignment equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [Column] where crossAxisAlignment equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Column>().withCrossAxisAlignment(CrossAxisAlignment.values.first).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Column> withCrossAxisAlignment(CrossAxisAlignment? value) {
     return withDiagnosticProp<CrossAxisAlignment>('crossAxisAlignment',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [Column] where textDirection matches the condition
+  /// Creates a [WidgetSelector] that finds all [Column] where textDirection matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Column>().whereTextDirection((it) => it.equals(TextDirection.values.first)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Column> whereTextDirection(MatchProp<TextDirection> match) {
     return withDiagnosticProp<TextDirection>('textDirection', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [Column] where textDirection equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [Column] where textDirection equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Column>().withTextDirection(TextDirection.values.first).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Column> withTextDirection(TextDirection? value) {
     return withDiagnosticProp<TextDirection>('textDirection',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [Column] where verticalDirection matches the condition
+  /// Creates a [WidgetSelector] that finds all [Column] where verticalDirection matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Column>().whereVerticalDirection((it) => it.equals(VerticalDirection.values.first)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Column> whereVerticalDirection(
       MatchProp<VerticalDirection> match) {
     return withDiagnosticProp<VerticalDirection>('verticalDirection', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [Column] where verticalDirection equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [Column] where verticalDirection equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Column>().withVerticalDirection(VerticalDirection.values.first).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Column> withVerticalDirection(VerticalDirection? value) {
     return withDiagnosticProp<VerticalDirection>('verticalDirection',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [Column] where textBaseline matches the condition
+  /// Creates a [WidgetSelector] that finds all [Column] where textBaseline matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Column>().whereTextBaseline((it) => it.equals(TextBaseline.values.first)).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Column> whereTextBaseline(MatchProp<TextBaseline> match) {
     return withDiagnosticProp<TextBaseline>('textBaseline', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [Column] where textBaseline equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [Column] where textBaseline equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Column>().withTextBaseline(TextBaseline.values.first).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Column> withTextBaseline(TextBaseline? value) {
     return withDiagnosticProp<TextBaseline>(
         'textBaseline', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [Column] where renderObject matches the condition
+  /// Creates a [WidgetSelector] that finds all [Column] where renderObject matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Column>().whereRenderObject((it) => it.equals(RenderBox())).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Column> whereRenderObject(MatchProp<RenderFlex> match) {
     return withDiagnosticProp<RenderFlex>('renderObject', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [Column] where renderObject equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [Column] where renderObject equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Column>().withRenderObject(RenderBox()).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Column> withRenderObject(RenderFlex? value) {
     return withDiagnosticProp<RenderFlex>(

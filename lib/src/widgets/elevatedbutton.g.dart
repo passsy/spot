@@ -11,34 +11,58 @@ import 'package:spot/spot.dart';
 /// ```
 /// Matchers for the properties of [ElevatedButton] provided via [Diagnosticable.debugFillProperties]
 extension ElevatedButtonMatcher on WidgetMatcher<ElevatedButton> {
-  /// Expects that enabled of [ElevatedButton] matches the condition in [match]
+  /// Expects that enabled of [ElevatedButton] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<ElevatedButton>().existsOnce().isEnabledWhere((it) => it.isTrue());
+  /// ```
   WidgetMatcher<ElevatedButton> isEnabledWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('enabled', match);
   }
 
-  /// Expects that enabled of [ElevatedButton] equals (==) [value]
+  /// Expects that enabled of [ElevatedButton] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<ElevatedButton>().existsOnce().isEnabled(true);
+  /// ```
   WidgetMatcher<ElevatedButton> isEnabled(bool? value) {
     return hasDiagnosticProp<bool>(
         'enabled', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that style of [ElevatedButton] matches the condition in [match]
+  /// Expects that style of [ElevatedButton] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<ElevatedButton>().existsOnce().hasStyleWhere((it) => it.equals(ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue))));
+  /// ```
   WidgetMatcher<ElevatedButton> hasStyleWhere(MatchProp<ButtonStyle> match) {
     return hasDiagnosticProp<ButtonStyle>('style', match);
   }
 
-  /// Expects that style of [ElevatedButton] equals (==) [value]
+  /// Expects that style of [ElevatedButton] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<ElevatedButton>().existsOnce().hasStyle(ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue)));
+  /// ```
   WidgetMatcher<ElevatedButton> hasStyle(ButtonStyle? value) {
     return hasDiagnosticProp<ButtonStyle>(
         'style', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that focusNode of [ElevatedButton] matches the condition in [match]
+  /// Expects that focusNode of [ElevatedButton] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<ElevatedButton>().existsOnce().hasFocusNodeWhere((it) => it.equals(FocusNode()));
+  /// ```
   WidgetMatcher<ElevatedButton> hasFocusNodeWhere(MatchProp<FocusNode> match) {
     return hasDiagnosticProp<FocusNode>('focusNode', match);
   }
 
-  /// Expects that focusNode of [ElevatedButton] equals (==) [value]
+  /// Expects that focusNode of [ElevatedButton] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<ElevatedButton>().existsOnce().hasFocusNode(FocusNode());
+  /// ```
   WidgetMatcher<ElevatedButton> hasFocusNode(FocusNode? value) {
     return hasDiagnosticProp<FocusNode>(
         'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
@@ -47,39 +71,63 @@ extension ElevatedButtonMatcher on WidgetMatcher<ElevatedButton> {
 
 /// Allows filtering [ElevatedButton] by the properties provided via [Diagnosticable.debugFillProperties]
 extension ElevatedButtonSelector on WidgetSelector<ElevatedButton> {
-  /// Creates a [WidgetSelector] that finds all [ElevatedButton] where enabled matches the condition
+  /// Creates a [WidgetSelector] that finds all [ElevatedButton] where enabled matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<ElevatedButton>().whereEnabled((it) => it.isTrue()).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<ElevatedButton> whereEnabled(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('enabled', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [ElevatedButton] where enabled equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [ElevatedButton] where enabled equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<ElevatedButton>().withEnabled(true).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<ElevatedButton> withEnabled(bool? value) {
     return withDiagnosticProp<bool>(
         'enabled', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [ElevatedButton] where style matches the condition
+  /// Creates a [WidgetSelector] that finds all [ElevatedButton] where style matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<ElevatedButton>().whereStyle((it) => it.equals(ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue)))).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<ElevatedButton> whereStyle(MatchProp<ButtonStyle> match) {
     return withDiagnosticProp<ButtonStyle>('style', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [ElevatedButton] where style equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [ElevatedButton] where style equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<ElevatedButton>().withStyle(ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue))).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<ElevatedButton> withStyle(ButtonStyle? value) {
     return withDiagnosticProp<ButtonStyle>(
         'style', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [ElevatedButton] where focusNode matches the condition
+  /// Creates a [WidgetSelector] that finds all [ElevatedButton] where focusNode matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<ElevatedButton>().whereFocusNode((it) => it.equals(FocusNode())).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<ElevatedButton> whereFocusNode(MatchProp<FocusNode> match) {
     return withDiagnosticProp<FocusNode>('focusNode', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [ElevatedButton] where focusNode equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [ElevatedButton] where focusNode equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<ElevatedButton>().withFocusNode(FocusNode()).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<ElevatedButton> withFocusNode(FocusNode? value) {
     return withDiagnosticProp<FocusNode>(

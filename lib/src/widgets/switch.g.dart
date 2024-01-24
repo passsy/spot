@@ -11,12 +11,20 @@ import 'package:spot/spot.dart';
 /// ```
 /// Matchers for the properties of [Switch] provided via [Diagnosticable.debugFillProperties]
 extension SwitchMatcher on WidgetMatcher<Switch> {
-  /// Expects that value of [Switch] matches the condition in [match]
+  /// Expects that value of [Switch] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Switch>().existsOnce().hasValueWhere((it) => it.isTrue());
+  /// ```
   WidgetMatcher<Switch> hasValueWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('value', match);
   }
 
-  /// Expects that value of [Switch] equals (==) [value]
+  /// Expects that value of [Switch] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Switch>().existsOnce().hasValue(true);
+  /// ```
   WidgetMatcher<Switch> hasValue(bool? value) {
     return hasDiagnosticProp<bool>(
         'value', (it) => value == null ? it.isNull() : it.equals(value));
@@ -25,13 +33,21 @@ extension SwitchMatcher on WidgetMatcher<Switch> {
 
 /// Allows filtering [Switch] by the properties provided via [Diagnosticable.debugFillProperties]
 extension SwitchSelector on WidgetSelector<Switch> {
-  /// Creates a [WidgetSelector] that finds all [Switch] where value matches the condition
+  /// Creates a [WidgetSelector] that finds all [Switch] where value matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Switch>().whereValue((it) => it.isTrue()).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Switch> whereValue(MatchProp<bool> match) {
     return withDiagnosticProp<bool>('value', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [Switch] where value equals (==) [value]
+  /// Creates a [WidgetSelector] that finds all [Switch] where value equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  ///   spot<Switch>().withValue(true).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<Switch> withValue(bool? value) {
     return withDiagnosticProp<bool>(
