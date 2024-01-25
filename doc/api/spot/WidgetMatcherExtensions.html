@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the WidgetMatcherExtensions extension from the spot library, for the Dart programming language.">
+  <title>WidgetMatcherExtensions extension - spot library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">spot</a></li>
+    <li><a href="../spot/spot-library.html">spot</a></li>
+    <li class="self-crumb">WidgetMatcherExtensions extension</li>
+  </ol>
+  <div class="self-name">WidgetMatcherExtensions</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span id="dark-theme-button" class="material-symbols-outlined">
+        brightness_4
+      </span>
+      <span id="light-theme-button" class="material-symbols-outlined">
+        brightness_5
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="spot&#47;spot-library-sidebar.html"
+    data-below-sidebar="spot&#47;WidgetMatcherExtensions-extension-sidebar.html">
+    <div>
+<h1><span class="kind-class">WidgetMatcherExtensions&lt;<wbr><span class="type-parameter">W extends Widget</span>&gt;</span> extension 
+ 
+</h1></div>
+
+    
+<section class="desc markdown">
+  <p>Extension on <a href="../spot/WidgetMatcher-class.html">WidgetMatcher</a><w> providing additional matchers for
+widgets of type <code>W</code>.</w></p>
+<p>These matchers facilitate more specific assertions on widget properties,
+element properties, and render object properties.</p>
+</section>
+
+    <section>
+      <dl class="dl-horizontal">
+        <dt>on</dt>
+        <dd>
+          <ul class="comma-separated clazz-relationships">
+              <li><a href="../spot/WidgetMatcher-class.html">WidgetMatcher</a><span class="signature">&lt;<wbr><span class="type-parameter">W</span>&gt;</span></li>
+          </ul>
+        </dd>
+      </dl>
+      
+
+
+    </section>
+
+
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-methods">
+    <h2>Methods</h2>
+    <dl class="callables">
+        <dt id="getElementProp" class="callable">
+  <span class="name"><a href="../spot/WidgetMatcherExtensions/getElementProp.html">getElementProp</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="getElementProp-param-prop"><span class="type-annotation"><a href="../spot/NamedElementProp-class.html">NamedElementProp</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">prop</span></span>)
+    <span class="returntype parameter">&#8594; T</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Retrieves a specific property from the matched widget's element.
+  
+
+</dd>
+
+        <dt id="getRenderObjectProp" class="callable">
+  <span class="name"><a href="../spot/WidgetMatcherExtensions/getRenderObjectProp.html">getRenderObjectProp</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>, <span class="type-parameter">R extends <a href="https://api.flutter.dev/flutter/rendering/RenderObject-class.html">RenderObject</a></span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="getRenderObjectProp-param-prop"><span class="type-annotation"><a href="../spot/NamedRenderObjectProp-class.html">NamedRenderObjectProp</a><span class="signature">&lt;<wbr><span class="type-parameter">R</span>, <span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">prop</span></span>)
+    <span class="returntype parameter">&#8594; T</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Retrieves a specific property from the matched widget's render object.
+  
+
+</dd>
+
+        <dt id="getWidgetProp" class="callable">
+  <span class="name"><a href="../spot/WidgetMatcherExtensions/getWidgetProp.html">getWidgetProp</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="getWidgetProp-param-prop"><span class="type-annotation"><a href="../spot/NamedWidgetProp-class.html">NamedWidgetProp</a><span class="signature">&lt;<wbr><span class="type-parameter">W</span>, <span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">prop</span></span>)
+    <span class="returntype parameter">&#8594; T</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Retrieves a specific property from the matched widget.
+  
+
+</dd>
+
+        <dt id="hasDiagnosticProp" class="callable">
+  <span class="name"><a href="../spot/WidgetMatcherExtensions/hasDiagnosticProp.html">hasDiagnosticProp</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="hasDiagnosticProp-param-propName"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span> <span class="parameter-name">propName</span>, </span><span class="parameter" id="hasDiagnosticProp-param-match"><span class="type-annotation"><a href="../spot/MatchProp.html">MatchProp</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">match</span></span>)
+    <span class="returntype parameter">&#8594; <a href="../spot/WidgetMatcher-class.html">WidgetMatcher</a><span class="signature">&lt;<wbr><span class="type-parameter">W</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Asserts that a widget has a specific diagnostic property.
+  
+
+</dd>
+
+        <dt id="hasElementProp" class="callable">
+  <span class="name"><a href="../spot/WidgetMatcherExtensions/hasElementProp.html">hasElementProp</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="hasElementProp-param-prop">{<span>required</span> <span class="type-annotation"><a href="../spot/NamedElementProp-class.html">NamedElementProp</a><span class="signature">&lt;<wbr><span class="type-parameter">T?</span>&gt;</span></span> <span class="parameter-name">prop</span>, </span><span class="parameter" id="hasElementProp-param-match"><span>required</span> <span class="type-annotation"><a href="../spot/MatchProp.html">MatchProp</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">match</span>}</span>)
+    <span class="returntype parameter">&#8594; <a href="../spot/WidgetMatcher-class.html">WidgetMatcher</a><span class="signature">&lt;<wbr><span class="type-parameter">W</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Asserts that an element's property meets a specific condition.
+  
+
+</dd>
+
+        <dt id="hasProp" class="callable">
+  <span class="name"><a href="../spot/WidgetMatcherExtensions/hasProp.html">hasProp</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="hasProp-param-selector">{<span class="type-annotation"><a href="https://pub.dev/documentation/checks/0.2.2/context/Subject-class.html">Subject</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">selector</span>(<span class="parameter" id="param-"><span class="type-annotation"><a href="https://pub.dev/documentation/checks/0.2.2/context/ConditionSubject-class.html">ConditionSubject</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/widgets/Element-class.html">Element</a></span>&gt;</span></span></span>)?, </span><span class="parameter" id="hasProp-param-elementSelector"><span class="type-annotation"><a href="https://pub.dev/documentation/checks/0.2.2/context/Subject-class.html">Subject</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">elementSelector</span>(<span class="parameter" id="param-"><span class="type-annotation"><a href="https://pub.dev/documentation/checks/0.2.2/context/ConditionSubject-class.html">ConditionSubject</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/widgets/Element-class.html">Element</a></span>&gt;</span></span></span>)?, </span><span class="parameter" id="hasProp-param-widgetSelector"><span class="type-annotation"><a href="https://pub.dev/documentation/checks/0.2.2/context/Subject-class.html">Subject</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">widgetSelector</span>(<span class="parameter" id="param-"><span class="type-annotation"><a href="https://pub.dev/documentation/checks/0.2.2/context/Subject-class.html">Subject</a><span class="signature">&lt;<wbr><span class="type-parameter">W</span>&gt;</span></span></span>)?, </span><span class="parameter" id="hasProp-param-match"><span>required</span> <span class="type-annotation"><a href="../spot/MatchProp.html">MatchProp</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">match</span>}</span>)
+    <span class="returntype parameter">&#8594; <a href="../spot/WidgetMatcher-class.html">WidgetMatcher</a><span class="signature">&lt;<wbr><span class="type-parameter">W</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Allows checking for properties of <a href="https://api.flutter.dev/flutter/widgets/Element-class.html">Element</a> that are stored in child
+<a href="https://api.flutter.dev/flutter/widgets/Widget-class.html">Widget</a>s or in the state.
+Use <code>selector</code> to extract the actual value and validate it with <code>match</code>.
+  
+
+</dd>
+
+        <dt id="hasRenderObjectProp" class="callable">
+  <span class="name"><a href="../spot/WidgetMatcherExtensions/hasRenderObjectProp.html">hasRenderObjectProp</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>, <span class="type-parameter">R extends <a href="https://api.flutter.dev/flutter/rendering/RenderObject-class.html">RenderObject</a></span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="hasRenderObjectProp-param-prop">{<span>required</span> <span class="type-annotation"><a href="../spot/NamedRenderObjectProp-class.html">NamedRenderObjectProp</a><span class="signature">&lt;<wbr><span class="type-parameter">R</span>, <span class="type-parameter">T?</span>&gt;</span></span> <span class="parameter-name">prop</span>, </span><span class="parameter" id="hasRenderObjectProp-param-match"><span>required</span> <span class="type-annotation"><a href="../spot/MatchProp.html">MatchProp</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">match</span>}</span>)
+    <span class="returntype parameter">&#8594; <a href="../spot/WidgetMatcher-class.html">WidgetMatcher</a><span class="signature">&lt;<wbr><span class="type-parameter">W</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Asserts that a render object's property meets a specific condition.
+  
+
+</dd>
+
+        <dt id="hasWidgetProp" class="callable">
+  <span class="name"><a href="../spot/WidgetMatcherExtensions/hasWidgetProp.html">hasWidgetProp</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="hasWidgetProp-param-prop">{<span>required</span> <span class="type-annotation"><a href="../spot/NamedWidgetProp-class.html">NamedWidgetProp</a><span class="signature">&lt;<wbr><span class="type-parameter">W</span>, <span class="type-parameter">T?</span>&gt;</span></span> <span class="parameter-name">prop</span>, </span><span class="parameter" id="hasWidgetProp-param-match"><span>required</span> <span class="type-annotation"><a href="../spot/MatchProp.html">MatchProp</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span> <span class="parameter-name">match</span>}</span>)
+    <span class="returntype parameter">&#8594; <a href="../spot/WidgetMatcher-class.html">WidgetMatcher</a><span class="signature">&lt;<wbr><span class="type-parameter">W</span>&gt;</span></span>
+  </span>
+  
+
+</dt>
+<dd>
+  Asserts that a widget's property meets a specific condition.
+  
+
+</dd>
+
+    </dl>
+  </section>
+    
+    
+    
+    
+
+
+</div> <!-- /.main-content -->
+
+<div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../index.html">spot</a></li>
+    <li><a href="../spot/spot-library.html">spot</a></li>
+    <li class="self-crumb">WidgetMatcherExtensions extension</li>
+</ol>
+
+
+    <h5>spot library</h5>
+  <div id="dartdoc-sidebar-left-content"></div>
+</div>
+
+<div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    spot
+      0.10.0-beta.1
+  </span>
+
+  
+</footer>
+
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+
+
+</body>
+
+</html>
+
+

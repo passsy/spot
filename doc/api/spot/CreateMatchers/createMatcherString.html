@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the createMatcherString method from the CreateMatchers extension, for the Dart programming language.">
+  <title>createMatcherString method - CreateMatchers extension - spot library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">spot</a></li>
+    <li><a href="../../spot/spot-library.html">spot</a></li>
+    <li><a href="../../spot/CreateMatchers.html">CreateMatchers<span class="signature">&lt;<wbr><span class="type-parameter">W extends Widget</span>&gt;</span></a></li>
+    <li class="self-crumb">createMatcherString method</li>
+  </ol>
+  <div class="self-name">createMatcherString</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span id="dark-theme-button" class="material-symbols-outlined">
+        brightness_4
+      </span>
+      <span id="light-theme-button" class="material-symbols-outlined">
+        brightness_5
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+
+  <div
+      id="dartdoc-main-content"
+      class="main-content"
+      data-above-sidebar="spot&#47;CreateMatchers-extension-sidebar.html"
+      data-below-sidebar="">
+      <div>
+<h1><span class="kind-method">createMatcherString</span> method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span>
+<span class="name ">createMatcherString</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="createMatcherString-param-propNameOverrides">{<span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>, <span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>&gt;</span></span> <span class="parameter-name">propNameOverrides</span> = <span class="default-value">const {}</span>, </span></li>
+<li><span class="parameter" id="createMatcherString-param-imports"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a>?</span> <span class="parameter-name">imports</span>, </span></li>
+<li><span class="parameter" id="createMatcherString-param-filter"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">filter</span>(<ol class="parameter-list"><li><span class="parameter" id="param-node"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/foundation/DiagnosticsNode-class.html">DiagnosticsNode</a></span> <span class="parameter-name">node</span></span></li>
+</ol>
+)?}</span></li>
+</ol>)
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Generates matchers for the properties of <code>W</code>.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">String? createMatcherString({
+  Map&lt;String, String&gt; propNameOverrides = const {},
+  String? imports,
+  bool Function(DiagnosticsNode node)? filter,
+}) {
+  final s = snapshot()..existsAtLeastOnce();
+  final anyElement = s.discoveredElements.first;
+
+  final elementProps = anyElement.toDiagnosticsNode().getProperties();
+  final widgetProps =
+      mapElementToWidget(anyElement).toDiagnosticsNode().getProperties();
+
+  String widgetType = _typeOf&lt;W&gt;().toString().capitalize();
+  if (widgetType.contains(&#39;&lt;&#39;)) {
+    widgetType = widgetType.substring(0, widgetType.indexOf(&#39;&lt;&#39;));
+  }
+  bool addedMethods = false;
+
+  final matcherSb = StringBuffer();
+  matcherSb.writeln(&#39;&#39;&#39;
+&#47;&#47;&#47; Matchers for the properties of [$widgetType] provided via [Diagnosticable.debugFillProperties]
+extension ${widgetType}Matcher on WidgetMatcher&lt;$widgetType&gt; {
+&#39;&#39;&#39;);
+
+  final selectorSb = StringBuffer();
+  selectorSb.writeln(
+    &#39;&#39;&#39;
+&#47;&#47;&#47; Allows filtering [$widgetType] by the properties provided via [Diagnosticable.debugFillProperties]
+extension ${widgetType}Selector on WidgetSelector&lt;$widgetType&gt; {
+&#39;&#39;&#39;,
+  );
+
+  final distinctProps =
+      [...widgetProps, ...elementProps].distinctBy((it) =&gt; it.name).toList();
+  for (final DiagnosticsNode prop in distinctProps) {
+    if (filter != null &amp;&amp; !filter(prop)) {
+      continue;
+    }
+    final String diagnosticPropName = prop.name!;
+    final String methodPropName = () {
+      final String name = prop.name!;
+      final parts = name.split(RegExp(&#39;[^a-zA-Z]&#39;));
+      if (parts.length == 1) {
+        return name;
+      }
+
+      &#47;&#47; camel case
+      return parts
+          .mapIndexed((index, it) =&gt; index == 0 ? it : it.capitalize())
+          .join();
+    }();
+    final humanPropName = propNameOverrides[methodPropName] ?? methodPropName;
+    String propType = prop.getType();
+    if (prop is ObjectFlagProperty &amp;&amp;
+        (propType == &#39;Widget&#39; || propType == &#39;Widget?&#39;)) {
+      &#47;&#47; matchers on widgets are not supported, use .spot() to check the tree further down
+      continue;
+    }
+    if (prop is FlagProperty &amp;&amp; methodPropName == &#39;dirty&#39;) {
+      &#47;&#47; dirty flags are irrelevant for assertions (and always false)
+      continue;
+    }
+    if (propType.contains(&#39;=&gt;&#39;)) {
+      &#47;&#47; ignore lambda properties
+      continue;
+    }
+    if (prop.name == &#39;depth&#39; || prop.name == &#39;key&#39;) {
+      &#47;&#47; ignore default properties that are covered by general Wiget selectors
+      continue;
+    }
+    if (prop.name == &#39;dependencies&#39;) {
+      if (propType == &#39;List&lt;DiagnosticsNode&gt;&#39; ||
+          propType == &#39;Set&lt;InheritedElement&gt;&#39;) {
+        &#47;&#47; Widget dependencies are only indirect properties
+        continue;
+      }
+    }
+    if (prop.name == &#39;renderObject&#39; &amp;&amp; propType == &#39;RenderObject&#39;) {
+      final propValueRuntimeType = prop.value.runtimeType.toString();
+      if (!propValueRuntimeType.startsWith(&#39;_&#39;)) {
+        propType = propValueRuntimeType;
+      }
+    }
+
+    if (prop.name == &#39;state&#39; &amp;&amp; propType.contains(&#39;State&lt;StatefulWidget&gt;&#39;)) {
+      final propValueRuntimeType = prop.value.runtimeType.toString();
+      if (propValueRuntimeType.startsWith(&#39;_&#39;)) {
+        &#47;&#47; this is not useful without type
+        continue;
+      }
+      propType = propValueRuntimeType;
+      continue;
+    }
+    final propTypeNullable = propType.endsWith(&#39;?&#39;) ? propType : &#39;$propType?&#39;;
+
+    String matcherVerb = &#39;has&#39;;
+    if (humanPropName == &#39;enabled&#39;) {
+      matcherVerb = &#39;is&#39;;
+    }
+
+    addedMethods = true;
+    final widgetMatcherWithValueName =
+        &#39;$matcherVerb${humanPropName.capitalize()}&#39;;
+    final widgetMatcherWithPropName = &#39;${widgetMatcherWithValueName}Where&#39;;
+
+    final String valueExample = _getExampleValue(node: prop);
+    final String matcherExample = _getExampleValue(node: prop, matcher: true);
+
+    matcherSb.writeln(&#39;&#39;&#39;
+&#47;&#47;&#47; Expects that $humanPropName of [$widgetType] matches the condition in [match].
+&#47;&#47;&#47; #### Example usage:
+&#47;&#47;&#47; ```dart
+&#47;&#47;&#47; spot&lt;$widgetType&gt;().existsOnce().$widgetMatcherWithPropName($matcherExample);
+&#47;&#47;&#47; ```
+WidgetMatcher&lt;$widgetType&gt; $widgetMatcherWithPropName(MatchProp&lt;$propType&gt; match) {
+  return hasDiagnosticProp&lt;$propType&gt;(&#39;$diagnosticPropName&#39;, match);
+}
+
+&#47;&#47;&#47; Expects that $humanPropName of [$widgetType] equals (==) [value].
+&#47;&#47;&#47; #### Example usage:
+&#47;&#47;&#47; ```dart
+&#47;&#47;&#47; spot&lt;$widgetType&gt;().existsOnce().$widgetMatcherWithValueName($valueExample);
+&#47;&#47;&#47; ```
+WidgetMatcher&lt;$widgetType&gt; $widgetMatcherWithValueName($propTypeNullable value) {
+  return hasDiagnosticProp&lt;$propType&gt;(&#39;$diagnosticPropName&#39;, (it) =&gt; value == null ? it.isNull() : it.equals(value));
+}
+&#39;&#39;&#39;);
+
+    final propPart = humanPropName.capitalize();
+
+    selectorSb.writeln(&#39;&#39;&#39;
+&#47;&#47;&#47; Creates a [WidgetSelector] that finds all [$widgetType] where $humanPropName matches the condition.
+&#47;&#47;&#47; #### Example usage:
+&#47;&#47;&#47; ```dart
+&#47;&#47;&#47; spot&lt;$widgetType&gt;().where$propPart($matcherExample).existsOnce();
+&#47;&#47;&#47; ```
+@useResult
+WidgetSelector&lt;$widgetType&gt; where$propPart(MatchProp&lt;$propType&gt; match) {
+  return withDiagnosticProp&lt;$propType&gt;(&#39;$diagnosticPropName&#39;, match);
+}
+
+&#47;&#47;&#47; Creates a [WidgetSelector] that finds all [$widgetType] where $humanPropName equals (==) [value].
+&#47;&#47;&#47; #### Example usage:
+&#47;&#47;&#47; ```dart
+&#47;&#47;&#47; spot&lt;$widgetType&gt;().with$propPart($valueExample).existsOnce();
+&#47;&#47;&#47; ```
+@useResult
+WidgetSelector&lt;$widgetType&gt; with$propPart($propTypeNullable value) {
+  return withDiagnosticProp&lt;$propType&gt;(&#39;$diagnosticPropName&#39;, (it) =&gt; value == null ? it.isNull() : it.equals(value));
+}
+&#39;&#39;&#39;);
+  }
+
+  matcherSb.writeln(&#39;}&#39;);
+  selectorSb.writeln(&#39;}&#39;);
+
+  if (addedMethods == false) {
+    &#47;&#47; nothing added, don&#39;t generate the file at all
+    return null;
+  }
+
+  final overridesParam = propNameOverrides.isEmpty
+      ? &#39;&#39;
+      : () {
+          final map = propNameOverrides
+              .mapEntries((it) =&gt; MapEntry(&quot;&#39;${it.key}&#39;&quot;, &quot;&#39;${it.value}&#39;&quot;))
+              .map((it) =&gt; &#39;${it.key}: ${it.value}&#39;)
+              .joinToString(separator: &#39;, &#39;, prefix: &#39;{&#39;, postfix: &#39;}&#39;);
+          return &#39;propNameOverrides: $map&#39;;
+        }();
+
+  return &#39;&#39;&#39;
+&#47;&#47; ignore_for_file: require_trailing_commas
+\&#47;\&#47; coverage:ignore-file
+
+${imports ?? &quot;import &#39;package:flutter&#47;widgets.dart&#39;;&quot;}
+import &#39;package:spot&#47;spot.dart&#39;;
+
+&#47;&#47;&#47; Matchers for [$widgetType] auto-generated by spot
+&#47;&#47;&#47;
+&#47;&#47;&#47; ```dart
+&#47;&#47;&#47; spot&lt;$widgetType&gt;().printMatchers($overridesParam);
+&#47;&#47;&#47; ```
+$matcherSb
+$selectorSb
+  &#39;&#39;&#39;;
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">spot</a></li>
+    <li><a href="../../spot/spot-library.html">spot</a></li>
+    <li><a href="../../spot/CreateMatchers.html">CreateMatchers<span class="signature">&lt;<wbr><span class="type-parameter">W extends Widget</span>&gt;</span></a></li>
+    <li class="self-crumb">createMatcherString method</li>
+</ol>
+
+
+    <h5>CreateMatchers extension</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    spot
+      0.10.0-beta.1
+  </span>
+
+  
+</footer>
+
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+
+
+</body>
+
+</html>
+
