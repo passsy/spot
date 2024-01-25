@@ -14,7 +14,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that text of [AnyText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasTextWhere((it) => it.equals('foo'));
+  /// spot<AnyText>().existsOnce().hasTextWhere((it) => it.equals('foo'));
   /// ```
   WidgetMatcher<AnyText> hasTextWhere(MatchProp<String> match) {
     return hasDiagnosticProp<String>('text', match);
@@ -23,7 +23,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that text of [AnyText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasText('foo');
+  /// spot<AnyText>().existsOnce().hasText('foo');
   /// ```
   WidgetMatcher<AnyText> hasText(String? value) {
     return hasDiagnosticProp<String>(
@@ -33,7 +33,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that textDirection of [AnyText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasTextDirectionWhere((it) => it.equals(TextDirection.values.first));
+  /// spot<AnyText>().existsOnce().hasTextDirectionWhere((it) => it.equals(TextDirection.values.first));
   /// ```
   WidgetMatcher<AnyText> hasTextDirectionWhere(MatchProp<TextDirection> match) {
     return hasDiagnosticProp<TextDirection>('textDirection', match);
@@ -42,7 +42,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that textDirection of [AnyText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasTextDirection(TextDirection.values.first);
+  /// spot<AnyText>().existsOnce().hasTextDirection(TextDirection.values.first);
   /// ```
   WidgetMatcher<AnyText> hasTextDirection(TextDirection? value) {
     return hasDiagnosticProp<TextDirection>('textDirection',
@@ -52,7 +52,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that textAlign of [AnyText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasTextAlignWhere((it) => it.equals(TextAlign.values.first));
+  /// spot<AnyText>().existsOnce().hasTextAlignWhere((it) => it.equals(TextAlign.values.first));
   /// ```
   WidgetMatcher<AnyText> hasTextAlignWhere(MatchProp<TextAlign> match) {
     return hasDiagnosticProp<TextAlign>('textAlign', match);
@@ -61,7 +61,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that textAlign of [AnyText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasTextAlign(TextAlign.values.first);
+  /// spot<AnyText>().existsOnce().hasTextAlign(TextAlign.values.first);
   /// ```
   WidgetMatcher<AnyText> hasTextAlign(TextAlign? value) {
     return hasDiagnosticProp<TextAlign>(
@@ -71,7 +71,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that selectionColor of [AnyText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasSelectionColorWhere((it) => it.equals(Colors.red));
+  /// spot<AnyText>().existsOnce().hasSelectionColorWhere((it) => it.equals(Colors.red));
   /// ```
   WidgetMatcher<AnyText> hasSelectionColorWhere(MatchProp<Color> match) {
     return hasDiagnosticProp<Color>('selectionColor', match);
@@ -80,7 +80,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that selectionColor of [AnyText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasSelectionColor(Colors.red);
+  /// spot<AnyText>().existsOnce().hasSelectionColor(Colors.red);
   /// ```
   WidgetMatcher<AnyText> hasSelectionColor(Color? value) {
     return hasDiagnosticProp<Color>('selectionColor',
@@ -90,7 +90,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that softWrap of [AnyText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasSoftWrapWhere((it) => it.isTrue());
+  /// spot<AnyText>().existsOnce().hasSoftWrapWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<AnyText> hasSoftWrapWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('softWrap', match);
@@ -99,7 +99,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that softWrap of [AnyText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasSoftWrap(true);
+  /// spot<AnyText>().existsOnce().hasSoftWrap(true);
   /// ```
   WidgetMatcher<AnyText> hasSoftWrap(bool? value) {
     return hasDiagnosticProp<bool>(
@@ -109,7 +109,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that overflow of [AnyText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasOverflowWhere((it) => it.equals(TextOverflow.values.first));
+  /// spot<AnyText>().existsOnce().hasOverflowWhere((it) => it.equals(TextOverflow.values.first));
   /// ```
   WidgetMatcher<AnyText> hasOverflowWhere(MatchProp<TextOverflow> match) {
     return hasDiagnosticProp<TextOverflow>('overflow', match);
@@ -118,7 +118,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that overflow of [AnyText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasOverflow(TextOverflow.values.first);
+  /// spot<AnyText>().existsOnce().hasOverflow(TextOverflow.values.first);
   /// ```
   WidgetMatcher<AnyText> hasOverflow(TextOverflow? value) {
     return hasDiagnosticProp<TextOverflow>(
@@ -128,7 +128,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that maxLines of [AnyText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasMaxLinesWhere((it) => it.isGreaterThan(10));
+  /// spot<AnyText>().existsOnce().hasMaxLinesWhere((it) => it.isGreaterThan(10));
   /// ```
   WidgetMatcher<AnyText> hasMaxLinesWhere(MatchProp<int> match) {
     return hasDiagnosticProp<int>('maxLines', match);
@@ -137,7 +137,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that maxLines of [AnyText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasMaxLines(10);
+  /// spot<AnyText>().existsOnce().hasMaxLines(10);
   /// ```
   WidgetMatcher<AnyText> hasMaxLines(int? value) {
     return hasDiagnosticProp<int>(
@@ -147,7 +147,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that locale of [AnyText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasLocaleWhere((it) => it.equals(Locale('en', 'US')));
+  /// spot<AnyText>().existsOnce().hasLocaleWhere((it) => it.equals(Locale('en', 'US')));
   /// ```
   WidgetMatcher<AnyText> hasLocaleWhere(MatchProp<Locale> match) {
     return hasDiagnosticProp<Locale>('locale', match);
@@ -156,7 +156,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that locale of [AnyText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasLocale(Locale('en', 'US'));
+  /// spot<AnyText>().existsOnce().hasLocale(Locale('en', 'US'));
   /// ```
   WidgetMatcher<AnyText> hasLocale(Locale? value) {
     return hasDiagnosticProp<Locale>(
@@ -166,7 +166,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that minLines of [AnyText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasMinLinesWhere((it) => it.isGreaterThan(10));
+  /// spot<AnyText>().existsOnce().hasMinLinesWhere((it) => it.isGreaterThan(10));
   /// ```
   WidgetMatcher<AnyText> hasMinLinesWhere(MatchProp<int> match) {
     return hasDiagnosticProp<int>('minLines', match);
@@ -175,7 +175,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that minLines of [AnyText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasMinLines(10);
+  /// spot<AnyText>().existsOnce().hasMinLines(10);
   /// ```
   WidgetMatcher<AnyText> hasMinLines(int? value) {
     return hasDiagnosticProp<int>(
@@ -185,7 +185,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that fontInherit of [AnyText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasFontInheritWhere((it) => it.isTrue());
+  /// spot<AnyText>().existsOnce().hasFontInheritWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<AnyText> hasFontInheritWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('font_inherit', match);
@@ -194,7 +194,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that fontInherit of [AnyText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasFontInherit(true);
+  /// spot<AnyText>().existsOnce().hasFontInherit(true);
   /// ```
   WidgetMatcher<AnyText> hasFontInherit(bool? value) {
     return hasDiagnosticProp<bool>(
@@ -204,7 +204,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that fontColor of [AnyText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasFontColorWhere((it) => it.equals(Colors.red));
+  /// spot<AnyText>().existsOnce().hasFontColorWhere((it) => it.equals(Colors.red));
   /// ```
   WidgetMatcher<AnyText> hasFontColorWhere(MatchProp<Color> match) {
     return hasDiagnosticProp<Color>('font_color', match);
@@ -213,7 +213,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that fontColor of [AnyText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasFontColor(Colors.red);
+  /// spot<AnyText>().existsOnce().hasFontColor(Colors.red);
   /// ```
   WidgetMatcher<AnyText> hasFontColor(Color? value) {
     return hasDiagnosticProp<Color>(
@@ -223,7 +223,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that fontBackgroundColor of [AnyText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasFontBackgroundColorWhere((it) => it.equals(Colors.red));
+  /// spot<AnyText>().existsOnce().hasFontBackgroundColorWhere((it) => it.equals(Colors.red));
   /// ```
   WidgetMatcher<AnyText> hasFontBackgroundColorWhere(MatchProp<Color> match) {
     return hasDiagnosticProp<Color>('font_backgroundColor', match);
@@ -232,7 +232,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that fontBackgroundColor of [AnyText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasFontBackgroundColor(Colors.red);
+  /// spot<AnyText>().existsOnce().hasFontBackgroundColor(Colors.red);
   /// ```
   WidgetMatcher<AnyText> hasFontBackgroundColor(Color? value) {
     return hasDiagnosticProp<Color>('font_backgroundColor',
@@ -242,7 +242,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that fontFamily of [AnyText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasFontFamilyWhere((it) => it.equals('foo'));
+  /// spot<AnyText>().existsOnce().hasFontFamilyWhere((it) => it.equals('foo'));
   /// ```
   WidgetMatcher<AnyText> hasFontFamilyWhere(MatchProp<String> match) {
     return hasDiagnosticProp<String>('font_family', match);
@@ -251,7 +251,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that fontFamily of [AnyText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasFontFamily('foo');
+  /// spot<AnyText>().existsOnce().hasFontFamily('foo');
   /// ```
   WidgetMatcher<AnyText> hasFontFamily(String? value) {
     return hasDiagnosticProp<String>(
@@ -261,7 +261,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that fontFamilyFallback of [AnyText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasFontFamilyFallbackWhere((it) => it.equals('foo'));
+  /// spot<AnyText>().existsOnce().hasFontFamilyFallbackWhere((it) => it.equals('foo'));
   /// ```
   WidgetMatcher<AnyText> hasFontFamilyFallbackWhere(MatchProp<String> match) {
     return hasDiagnosticProp<String>('font_familyFallback', match);
@@ -270,7 +270,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that fontFamilyFallback of [AnyText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasFontFamilyFallback('foo');
+  /// spot<AnyText>().existsOnce().hasFontFamilyFallback('foo');
   /// ```
   WidgetMatcher<AnyText> hasFontFamilyFallback(String? value) {
     return hasDiagnosticProp<String>('font_familyFallback',
@@ -280,7 +280,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that fontWeight of [AnyText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasFontWeightWhere((it) => it.equals(FontWeight.bold));
+  /// spot<AnyText>().existsOnce().hasFontWeightWhere((it) => it.equals(FontWeight.bold));
   /// ```
   WidgetMatcher<AnyText> hasFontWeightWhere(MatchProp<FontWeight> match) {
     return hasDiagnosticProp<FontWeight>('font_weight', match);
@@ -289,7 +289,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that fontWeight of [AnyText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasFontWeight(FontWeight.bold);
+  /// spot<AnyText>().existsOnce().hasFontWeight(FontWeight.bold);
   /// ```
   WidgetMatcher<AnyText> hasFontWeight(FontWeight? value) {
     return hasDiagnosticProp<FontWeight>(
@@ -299,7 +299,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that fontStyle of [AnyText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasFontStyleWhere((it) => it.equals(FontStyle.values.first));
+  /// spot<AnyText>().existsOnce().hasFontStyleWhere((it) => it.equals(FontStyle.values.first));
   /// ```
   WidgetMatcher<AnyText> hasFontStyleWhere(MatchProp<FontStyle> match) {
     return hasDiagnosticProp<FontStyle>('font_style', match);
@@ -308,7 +308,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that fontStyle of [AnyText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasFontStyle(FontStyle.values.first);
+  /// spot<AnyText>().existsOnce().hasFontStyle(FontStyle.values.first);
   /// ```
   WidgetMatcher<AnyText> hasFontStyle(FontStyle? value) {
     return hasDiagnosticProp<FontStyle>(
@@ -318,7 +318,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that fontLetterSpacing of [AnyText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasFontLetterSpacingWhere((it) => it.isGreaterThan(10.5));
+  /// spot<AnyText>().existsOnce().hasFontLetterSpacingWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<AnyText> hasFontLetterSpacingWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('font_letterSpacing', match);
@@ -327,7 +327,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that fontLetterSpacing of [AnyText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasFontLetterSpacing(10.5);
+  /// spot<AnyText>().existsOnce().hasFontLetterSpacing(10.5);
   /// ```
   WidgetMatcher<AnyText> hasFontLetterSpacing(double? value) {
     return hasDiagnosticProp<double>('font_letterSpacing',
@@ -337,7 +337,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that fontWordSpacing of [AnyText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasFontWordSpacingWhere((it) => it.isGreaterThan(10.5));
+  /// spot<AnyText>().existsOnce().hasFontWordSpacingWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<AnyText> hasFontWordSpacingWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('font_wordSpacing', match);
@@ -346,7 +346,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that fontWordSpacing of [AnyText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasFontWordSpacing(10.5);
+  /// spot<AnyText>().existsOnce().hasFontWordSpacing(10.5);
   /// ```
   WidgetMatcher<AnyText> hasFontWordSpacing(double? value) {
     return hasDiagnosticProp<double>('font_wordSpacing',
@@ -356,7 +356,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that fontBaseline of [AnyText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasFontBaselineWhere((it) => it.equals(TextBaseline.values.first));
+  /// spot<AnyText>().existsOnce().hasFontBaselineWhere((it) => it.equals(TextBaseline.values.first));
   /// ```
   WidgetMatcher<AnyText> hasFontBaselineWhere(MatchProp<TextBaseline> match) {
     return hasDiagnosticProp<TextBaseline>('font_baseline', match);
@@ -365,7 +365,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that fontBaseline of [AnyText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasFontBaseline(TextBaseline.values.first);
+  /// spot<AnyText>().existsOnce().hasFontBaseline(TextBaseline.values.first);
   /// ```
   WidgetMatcher<AnyText> hasFontBaseline(TextBaseline? value) {
     return hasDiagnosticProp<TextBaseline>('font_baseline',
@@ -375,7 +375,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that fontHeight of [AnyText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasFontHeightWhere((it) => it.isGreaterThan(10.5));
+  /// spot<AnyText>().existsOnce().hasFontHeightWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<AnyText> hasFontHeightWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('font_height', match);
@@ -384,7 +384,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that fontHeight of [AnyText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasFontHeight(10.5);
+  /// spot<AnyText>().existsOnce().hasFontHeight(10.5);
   /// ```
   WidgetMatcher<AnyText> hasFontHeight(double? value) {
     return hasDiagnosticProp<double>(
@@ -394,7 +394,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that fontLeadingDistribution of [AnyText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasFontLeadingDistributionWhere((it) => it.equals(TextLeadingDistribution.values.first));
+  /// spot<AnyText>().existsOnce().hasFontLeadingDistributionWhere((it) => it.equals(TextLeadingDistribution.values.first));
   /// ```
   WidgetMatcher<AnyText> hasFontLeadingDistributionWhere(
       MatchProp<TextLeadingDistribution> match) {
@@ -405,7 +405,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that fontLeadingDistribution of [AnyText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasFontLeadingDistribution(TextLeadingDistribution.values.first);
+  /// spot<AnyText>().existsOnce().hasFontLeadingDistribution(TextLeadingDistribution.values.first);
   /// ```
   WidgetMatcher<AnyText> hasFontLeadingDistribution(
       TextLeadingDistribution? value) {
@@ -417,7 +417,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that fontLocale of [AnyText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasFontLocaleWhere((it) => it.equals(Locale('en', 'US')));
+  /// spot<AnyText>().existsOnce().hasFontLocaleWhere((it) => it.equals(Locale('en', 'US')));
   /// ```
   WidgetMatcher<AnyText> hasFontLocaleWhere(MatchProp<Locale> match) {
     return hasDiagnosticProp<Locale>('font_locale', match);
@@ -426,7 +426,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that fontLocale of [AnyText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasFontLocale(Locale('en', 'US'));
+  /// spot<AnyText>().existsOnce().hasFontLocale(Locale('en', 'US'));
   /// ```
   WidgetMatcher<AnyText> hasFontLocale(Locale? value) {
     return hasDiagnosticProp<Locale>(
@@ -436,7 +436,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that fontForeground of [AnyText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasFontForegroundWhere((it) => it.equals(Paint()));
+  /// spot<AnyText>().existsOnce().hasFontForegroundWhere((it) => it.equals(Paint()));
   /// ```
   WidgetMatcher<AnyText> hasFontForegroundWhere(MatchProp<Paint> match) {
     return hasDiagnosticProp<Paint>('font_foreground', match);
@@ -445,7 +445,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that fontForeground of [AnyText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasFontForeground(Paint());
+  /// spot<AnyText>().existsOnce().hasFontForeground(Paint());
   /// ```
   WidgetMatcher<AnyText> hasFontForeground(Paint? value) {
     return hasDiagnosticProp<Paint>('font_foreground',
@@ -455,7 +455,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that fontBackground of [AnyText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasFontBackgroundWhere((it) => it.equals(Paint()));
+  /// spot<AnyText>().existsOnce().hasFontBackgroundWhere((it) => it.equals(Paint()));
   /// ```
   WidgetMatcher<AnyText> hasFontBackgroundWhere(MatchProp<Paint> match) {
     return hasDiagnosticProp<Paint>('font_background', match);
@@ -464,7 +464,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that fontBackground of [AnyText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasFontBackground(Paint());
+  /// spot<AnyText>().existsOnce().hasFontBackground(Paint());
   /// ```
   WidgetMatcher<AnyText> hasFontBackground(Paint? value) {
     return hasDiagnosticProp<Paint>('font_background',
@@ -474,7 +474,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that inherit of [AnyText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasInheritWhere((it) => it.isTrue());
+  /// spot<AnyText>().existsOnce().hasInheritWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<AnyText> hasInheritWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('inherit', match);
@@ -483,7 +483,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that inherit of [AnyText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasInherit(true);
+  /// spot<AnyText>().existsOnce().hasInherit(true);
   /// ```
   WidgetMatcher<AnyText> hasInherit(bool? value) {
     return hasDiagnosticProp<bool>(
@@ -493,7 +493,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that fontSize of [AnyText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasFontSizeWhere((it) => it.isGreaterThan(10.5));
+  /// spot<AnyText>().existsOnce().hasFontSizeWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<AnyText> hasFontSizeWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('font_size', match);
@@ -502,7 +502,7 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// Expects that fontSize of [AnyText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().existsOnce().hasFontSize(10.5);
+  /// spot<AnyText>().existsOnce().hasFontSize(10.5);
   /// ```
   WidgetMatcher<AnyText> hasFontSize(double? value) {
     return hasDiagnosticProp<double>(
@@ -515,7 +515,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where text matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().whereText((it) => it.equals('foo')).existsOnce();
+  /// spot<AnyText>().whereText((it) => it.equals('foo')).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> whereText(MatchProp<String> match) {
@@ -525,7 +525,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where text equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().withText('foo').existsOnce();
+  /// spot<AnyText>().withText('foo').existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> withText(String? value) {
@@ -536,7 +536,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where textDirection matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().whereTextDirection((it) => it.equals(TextDirection.values.first)).existsOnce();
+  /// spot<AnyText>().whereTextDirection((it) => it.equals(TextDirection.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> whereTextDirection(MatchProp<TextDirection> match) {
@@ -546,7 +546,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where textDirection equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().withTextDirection(TextDirection.values.first).existsOnce();
+  /// spot<AnyText>().withTextDirection(TextDirection.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> withTextDirection(TextDirection? value) {
@@ -557,7 +557,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where textAlign matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().whereTextAlign((it) => it.equals(TextAlign.values.first)).existsOnce();
+  /// spot<AnyText>().whereTextAlign((it) => it.equals(TextAlign.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> whereTextAlign(MatchProp<TextAlign> match) {
@@ -567,7 +567,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where textAlign equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().withTextAlign(TextAlign.values.first).existsOnce();
+  /// spot<AnyText>().withTextAlign(TextAlign.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> withTextAlign(TextAlign? value) {
@@ -578,7 +578,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where selectionColor matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().whereSelectionColor((it) => it.equals(Colors.red)).existsOnce();
+  /// spot<AnyText>().whereSelectionColor((it) => it.equals(Colors.red)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> whereSelectionColor(MatchProp<Color> match) {
@@ -588,7 +588,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where selectionColor equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().withSelectionColor(Colors.red).existsOnce();
+  /// spot<AnyText>().withSelectionColor(Colors.red).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> withSelectionColor(Color? value) {
@@ -599,7 +599,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where softWrap matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().whereSoftWrap((it) => it.isTrue()).existsOnce();
+  /// spot<AnyText>().whereSoftWrap((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> whereSoftWrap(MatchProp<bool> match) {
@@ -609,7 +609,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where softWrap equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().withSoftWrap(true).existsOnce();
+  /// spot<AnyText>().withSoftWrap(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> withSoftWrap(bool? value) {
@@ -620,7 +620,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where overflow matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().whereOverflow((it) => it.equals(TextOverflow.values.first)).existsOnce();
+  /// spot<AnyText>().whereOverflow((it) => it.equals(TextOverflow.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> whereOverflow(MatchProp<TextOverflow> match) {
@@ -630,7 +630,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where overflow equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().withOverflow(TextOverflow.values.first).existsOnce();
+  /// spot<AnyText>().withOverflow(TextOverflow.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> withOverflow(TextOverflow? value) {
@@ -641,7 +641,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where maxLines matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().whereMaxLines((it) => it.isGreaterThan(10)).existsOnce();
+  /// spot<AnyText>().whereMaxLines((it) => it.isGreaterThan(10)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> whereMaxLines(MatchProp<int> match) {
@@ -651,7 +651,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where maxLines equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().withMaxLines(10).existsOnce();
+  /// spot<AnyText>().withMaxLines(10).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> withMaxLines(int? value) {
@@ -662,7 +662,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where locale matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().whereLocale((it) => it.equals(Locale('en', 'US'))).existsOnce();
+  /// spot<AnyText>().whereLocale((it) => it.equals(Locale('en', 'US'))).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> whereLocale(MatchProp<Locale> match) {
@@ -672,7 +672,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where locale equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().withLocale(Locale('en', 'US')).existsOnce();
+  /// spot<AnyText>().withLocale(Locale('en', 'US')).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> withLocale(Locale? value) {
@@ -683,7 +683,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where minLines matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().whereMinLines((it) => it.isGreaterThan(10)).existsOnce();
+  /// spot<AnyText>().whereMinLines((it) => it.isGreaterThan(10)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> whereMinLines(MatchProp<int> match) {
@@ -693,7 +693,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where minLines equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().withMinLines(10).existsOnce();
+  /// spot<AnyText>().withMinLines(10).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> withMinLines(int? value) {
@@ -704,7 +704,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontInherit matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().whereFontInherit((it) => it.isTrue()).existsOnce();
+  /// spot<AnyText>().whereFontInherit((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> whereFontInherit(MatchProp<bool> match) {
@@ -714,7 +714,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontInherit equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().withFontInherit(true).existsOnce();
+  /// spot<AnyText>().withFontInherit(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> withFontInherit(bool? value) {
@@ -725,7 +725,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontColor matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().whereFontColor((it) => it.equals(Colors.red)).existsOnce();
+  /// spot<AnyText>().whereFontColor((it) => it.equals(Colors.red)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> whereFontColor(MatchProp<Color> match) {
@@ -735,7 +735,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontColor equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().withFontColor(Colors.red).existsOnce();
+  /// spot<AnyText>().withFontColor(Colors.red).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> withFontColor(Color? value) {
@@ -746,7 +746,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontBackgroundColor matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().whereFontBackgroundColor((it) => it.equals(Colors.red)).existsOnce();
+  /// spot<AnyText>().whereFontBackgroundColor((it) => it.equals(Colors.red)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> whereFontBackgroundColor(MatchProp<Color> match) {
@@ -756,7 +756,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontBackgroundColor equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().withFontBackgroundColor(Colors.red).existsOnce();
+  /// spot<AnyText>().withFontBackgroundColor(Colors.red).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> withFontBackgroundColor(Color? value) {
@@ -767,7 +767,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontFamily matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().whereFontFamily((it) => it.equals('foo')).existsOnce();
+  /// spot<AnyText>().whereFontFamily((it) => it.equals('foo')).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> whereFontFamily(MatchProp<String> match) {
@@ -777,7 +777,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontFamily equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().withFontFamily('foo').existsOnce();
+  /// spot<AnyText>().withFontFamily('foo').existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> withFontFamily(String? value) {
@@ -788,7 +788,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontFamilyFallback matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().whereFontFamilyFallback((it) => it.equals('foo')).existsOnce();
+  /// spot<AnyText>().whereFontFamilyFallback((it) => it.equals('foo')).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> whereFontFamilyFallback(MatchProp<String> match) {
@@ -798,7 +798,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontFamilyFallback equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().withFontFamilyFallback('foo').existsOnce();
+  /// spot<AnyText>().withFontFamilyFallback('foo').existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> withFontFamilyFallback(String? value) {
@@ -809,7 +809,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontWeight matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().whereFontWeight((it) => it.equals(FontWeight.bold)).existsOnce();
+  /// spot<AnyText>().whereFontWeight((it) => it.equals(FontWeight.bold)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> whereFontWeight(MatchProp<FontWeight> match) {
@@ -819,7 +819,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontWeight equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().withFontWeight(FontWeight.bold).existsOnce();
+  /// spot<AnyText>().withFontWeight(FontWeight.bold).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> withFontWeight(FontWeight? value) {
@@ -830,7 +830,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontStyle matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().whereFontStyle((it) => it.equals(FontStyle.values.first)).existsOnce();
+  /// spot<AnyText>().whereFontStyle((it) => it.equals(FontStyle.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> whereFontStyle(MatchProp<FontStyle> match) {
@@ -840,7 +840,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontStyle equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().withFontStyle(FontStyle.values.first).existsOnce();
+  /// spot<AnyText>().withFontStyle(FontStyle.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> withFontStyle(FontStyle? value) {
@@ -851,7 +851,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontLetterSpacing matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().whereFontLetterSpacing((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// spot<AnyText>().whereFontLetterSpacing((it) => it.isGreaterThan(10.5)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> whereFontLetterSpacing(MatchProp<double> match) {
@@ -861,7 +861,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontLetterSpacing equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().withFontLetterSpacing(10.5).existsOnce();
+  /// spot<AnyText>().withFontLetterSpacing(10.5).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> withFontLetterSpacing(double? value) {
@@ -872,7 +872,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontWordSpacing matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().whereFontWordSpacing((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// spot<AnyText>().whereFontWordSpacing((it) => it.isGreaterThan(10.5)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> whereFontWordSpacing(MatchProp<double> match) {
@@ -882,7 +882,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontWordSpacing equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().withFontWordSpacing(10.5).existsOnce();
+  /// spot<AnyText>().withFontWordSpacing(10.5).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> withFontWordSpacing(double? value) {
@@ -893,7 +893,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontBaseline matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().whereFontBaseline((it) => it.equals(TextBaseline.values.first)).existsOnce();
+  /// spot<AnyText>().whereFontBaseline((it) => it.equals(TextBaseline.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> whereFontBaseline(MatchProp<TextBaseline> match) {
@@ -903,7 +903,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontBaseline equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().withFontBaseline(TextBaseline.values.first).existsOnce();
+  /// spot<AnyText>().withFontBaseline(TextBaseline.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> withFontBaseline(TextBaseline? value) {
@@ -914,7 +914,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontHeight matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().whereFontHeight((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// spot<AnyText>().whereFontHeight((it) => it.isGreaterThan(10.5)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> whereFontHeight(MatchProp<double> match) {
@@ -924,7 +924,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontHeight equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().withFontHeight(10.5).existsOnce();
+  /// spot<AnyText>().withFontHeight(10.5).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> withFontHeight(double? value) {
@@ -935,7 +935,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontLeadingDistribution matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().whereFontLeadingDistribution((it) => it.equals(TextLeadingDistribution.values.first)).existsOnce();
+  /// spot<AnyText>().whereFontLeadingDistribution((it) => it.equals(TextLeadingDistribution.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> whereFontLeadingDistribution(
@@ -947,7 +947,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontLeadingDistribution equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().withFontLeadingDistribution(TextLeadingDistribution.values.first).existsOnce();
+  /// spot<AnyText>().withFontLeadingDistribution(TextLeadingDistribution.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> withFontLeadingDistribution(
@@ -960,7 +960,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontLocale matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().whereFontLocale((it) => it.equals(Locale('en', 'US'))).existsOnce();
+  /// spot<AnyText>().whereFontLocale((it) => it.equals(Locale('en', 'US'))).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> whereFontLocale(MatchProp<Locale> match) {
@@ -970,7 +970,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontLocale equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().withFontLocale(Locale('en', 'US')).existsOnce();
+  /// spot<AnyText>().withFontLocale(Locale('en', 'US')).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> withFontLocale(Locale? value) {
@@ -981,7 +981,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontForeground matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().whereFontForeground((it) => it.equals(Paint())).existsOnce();
+  /// spot<AnyText>().whereFontForeground((it) => it.equals(Paint())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> whereFontForeground(MatchProp<Paint> match) {
@@ -991,7 +991,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontForeground equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().withFontForeground(Paint()).existsOnce();
+  /// spot<AnyText>().withFontForeground(Paint()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> withFontForeground(Paint? value) {
@@ -1002,7 +1002,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontBackground matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().whereFontBackground((it) => it.equals(Paint())).existsOnce();
+  /// spot<AnyText>().whereFontBackground((it) => it.equals(Paint())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> whereFontBackground(MatchProp<Paint> match) {
@@ -1012,7 +1012,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontBackground equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().withFontBackground(Paint()).existsOnce();
+  /// spot<AnyText>().withFontBackground(Paint()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> withFontBackground(Paint? value) {
@@ -1023,7 +1023,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where inherit matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().whereInherit((it) => it.isTrue()).existsOnce();
+  /// spot<AnyText>().whereInherit((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> whereInherit(MatchProp<bool> match) {
@@ -1033,7 +1033,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where inherit equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().withInherit(true).existsOnce();
+  /// spot<AnyText>().withInherit(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> withInherit(bool? value) {
@@ -1044,7 +1044,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontSize matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().whereFontSize((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// spot<AnyText>().whereFontSize((it) => it.isGreaterThan(10.5)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> whereFontSize(MatchProp<double> match) {
@@ -1054,7 +1054,7 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontSize equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<AnyText>().withFontSize(10.5).existsOnce();
+  /// spot<AnyText>().withFontSize(10.5).existsOnce();
   /// ```
   @useResult
   WidgetSelector<AnyText> withFontSize(double? value) {

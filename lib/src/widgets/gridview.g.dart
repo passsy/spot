@@ -14,7 +14,7 @@ extension GridViewMatcher on WidgetMatcher<GridView> {
   /// Expects that scrollDirection of [GridView] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<GridView>().existsOnce().hasScrollDirectionWhere((it) => it.equals(Axis.values.first));
+  /// spot<GridView>().existsOnce().hasScrollDirectionWhere((it) => it.equals(Axis.values.first));
   /// ```
   WidgetMatcher<GridView> hasScrollDirectionWhere(MatchProp<Axis> match) {
     return hasDiagnosticProp<Axis>('scrollDirection', match);
@@ -23,7 +23,7 @@ extension GridViewMatcher on WidgetMatcher<GridView> {
   /// Expects that scrollDirection of [GridView] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<GridView>().existsOnce().hasScrollDirection(Axis.values.first);
+  /// spot<GridView>().existsOnce().hasScrollDirection(Axis.values.first);
   /// ```
   WidgetMatcher<GridView> hasScrollDirection(Axis? value) {
     return hasDiagnosticProp<Axis>('scrollDirection',
@@ -33,7 +33,7 @@ extension GridViewMatcher on WidgetMatcher<GridView> {
   /// Expects that reverse of [GridView] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<GridView>().existsOnce().hasReverseWhere((it) => it.isTrue());
+  /// spot<GridView>().existsOnce().hasReverseWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<GridView> hasReverseWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('reverse', match);
@@ -42,7 +42,7 @@ extension GridViewMatcher on WidgetMatcher<GridView> {
   /// Expects that reverse of [GridView] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<GridView>().existsOnce().hasReverse(true);
+  /// spot<GridView>().existsOnce().hasReverse(true);
   /// ```
   WidgetMatcher<GridView> hasReverse(bool? value) {
     return hasDiagnosticProp<bool>(
@@ -52,7 +52,7 @@ extension GridViewMatcher on WidgetMatcher<GridView> {
   /// Expects that controller of [GridView] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<GridView>().existsOnce().hasControllerWhere((it) => it.equals(ScrollController()));
+  /// spot<GridView>().existsOnce().hasControllerWhere((it) => it.equals(ScrollController()));
   /// ```
   WidgetMatcher<GridView> hasControllerWhere(
       MatchProp<ScrollController> match) {
@@ -62,7 +62,7 @@ extension GridViewMatcher on WidgetMatcher<GridView> {
   /// Expects that controller of [GridView] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<GridView>().existsOnce().hasController(ScrollController());
+  /// spot<GridView>().existsOnce().hasController(ScrollController());
   /// ```
   WidgetMatcher<GridView> hasController(ScrollController? value) {
     return hasDiagnosticProp<ScrollController>(
@@ -72,7 +72,7 @@ extension GridViewMatcher on WidgetMatcher<GridView> {
   /// Expects that primary of [GridView] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<GridView>().existsOnce().hasPrimaryWhere((it) => it.isTrue());
+  /// spot<GridView>().existsOnce().hasPrimaryWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<GridView> hasPrimaryWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('primary', match);
@@ -81,7 +81,7 @@ extension GridViewMatcher on WidgetMatcher<GridView> {
   /// Expects that primary of [GridView] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<GridView>().existsOnce().hasPrimary(true);
+  /// spot<GridView>().existsOnce().hasPrimary(true);
   /// ```
   WidgetMatcher<GridView> hasPrimary(bool? value) {
     return hasDiagnosticProp<bool>(
@@ -91,7 +91,7 @@ extension GridViewMatcher on WidgetMatcher<GridView> {
   /// Expects that physics of [GridView] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<GridView>().existsOnce().hasPhysicsWhere((it) => it.equals(BouncingScrollPhysics()));
+  /// spot<GridView>().existsOnce().hasPhysicsWhere((it) => it.equals(BouncingScrollPhysics()));
   /// ```
   WidgetMatcher<GridView> hasPhysicsWhere(MatchProp<ScrollPhysics> match) {
     return hasDiagnosticProp<ScrollPhysics>('physics', match);
@@ -100,7 +100,7 @@ extension GridViewMatcher on WidgetMatcher<GridView> {
   /// Expects that physics of [GridView] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<GridView>().existsOnce().hasPhysics(BouncingScrollPhysics());
+  /// spot<GridView>().existsOnce().hasPhysics(BouncingScrollPhysics());
   /// ```
   WidgetMatcher<GridView> hasPhysics(ScrollPhysics? value) {
     return hasDiagnosticProp<ScrollPhysics>(
@@ -110,7 +110,7 @@ extension GridViewMatcher on WidgetMatcher<GridView> {
   /// Expects that shrinkWrap of [GridView] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<GridView>().existsOnce().hasShrinkWrapWhere((it) => it.isTrue());
+  /// spot<GridView>().existsOnce().hasShrinkWrapWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<GridView> hasShrinkWrapWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('shrinkWrap', match);
@@ -119,7 +119,7 @@ extension GridViewMatcher on WidgetMatcher<GridView> {
   /// Expects that shrinkWrap of [GridView] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<GridView>().existsOnce().hasShrinkWrap(true);
+  /// spot<GridView>().existsOnce().hasShrinkWrap(true);
   /// ```
   WidgetMatcher<GridView> hasShrinkWrap(bool? value) {
     return hasDiagnosticProp<bool>(
@@ -129,7 +129,7 @@ extension GridViewMatcher on WidgetMatcher<GridView> {
   /// Expects that padding of [GridView] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<GridView>().existsOnce().hasPaddingWhere((it) => it.equals(EdgeInsets.all(8.0)));
+  /// spot<GridView>().existsOnce().hasPaddingWhere((it) => it.equals(EdgeInsets.all(8.0)));
   /// ```
   WidgetMatcher<GridView> hasPaddingWhere(MatchProp<EdgeInsetsGeometry> match) {
     return hasDiagnosticProp<EdgeInsetsGeometry>('padding', match);
@@ -138,7 +138,7 @@ extension GridViewMatcher on WidgetMatcher<GridView> {
   /// Expects that padding of [GridView] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<GridView>().existsOnce().hasPadding(EdgeInsets.all(8.0));
+  /// spot<GridView>().existsOnce().hasPadding(EdgeInsets.all(8.0));
   /// ```
   WidgetMatcher<GridView> hasPadding(EdgeInsetsGeometry? value) {
     return hasDiagnosticProp<EdgeInsetsGeometry>(
@@ -151,7 +151,7 @@ extension GridViewSelector on WidgetSelector<GridView> {
   /// Creates a [WidgetSelector] that finds all [GridView] where scrollDirection matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<GridView>().whereScrollDirection((it) => it.equals(Axis.values.first)).existsOnce();
+  /// spot<GridView>().whereScrollDirection((it) => it.equals(Axis.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<GridView> whereScrollDirection(MatchProp<Axis> match) {
@@ -161,7 +161,7 @@ extension GridViewSelector on WidgetSelector<GridView> {
   /// Creates a [WidgetSelector] that finds all [GridView] where scrollDirection equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<GridView>().withScrollDirection(Axis.values.first).existsOnce();
+  /// spot<GridView>().withScrollDirection(Axis.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<GridView> withScrollDirection(Axis? value) {
@@ -172,7 +172,7 @@ extension GridViewSelector on WidgetSelector<GridView> {
   /// Creates a [WidgetSelector] that finds all [GridView] where reverse matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<GridView>().whereReverse((it) => it.isTrue()).existsOnce();
+  /// spot<GridView>().whereReverse((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<GridView> whereReverse(MatchProp<bool> match) {
@@ -182,7 +182,7 @@ extension GridViewSelector on WidgetSelector<GridView> {
   /// Creates a [WidgetSelector] that finds all [GridView] where reverse equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<GridView>().withReverse(true).existsOnce();
+  /// spot<GridView>().withReverse(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<GridView> withReverse(bool? value) {
@@ -193,7 +193,7 @@ extension GridViewSelector on WidgetSelector<GridView> {
   /// Creates a [WidgetSelector] that finds all [GridView] where controller matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<GridView>().whereController((it) => it.equals(ScrollController())).existsOnce();
+  /// spot<GridView>().whereController((it) => it.equals(ScrollController())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<GridView> whereController(MatchProp<ScrollController> match) {
@@ -203,7 +203,7 @@ extension GridViewSelector on WidgetSelector<GridView> {
   /// Creates a [WidgetSelector] that finds all [GridView] where controller equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<GridView>().withController(ScrollController()).existsOnce();
+  /// spot<GridView>().withController(ScrollController()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<GridView> withController(ScrollController? value) {
@@ -214,7 +214,7 @@ extension GridViewSelector on WidgetSelector<GridView> {
   /// Creates a [WidgetSelector] that finds all [GridView] where primary matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<GridView>().wherePrimary((it) => it.isTrue()).existsOnce();
+  /// spot<GridView>().wherePrimary((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<GridView> wherePrimary(MatchProp<bool> match) {
@@ -224,7 +224,7 @@ extension GridViewSelector on WidgetSelector<GridView> {
   /// Creates a [WidgetSelector] that finds all [GridView] where primary equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<GridView>().withPrimary(true).existsOnce();
+  /// spot<GridView>().withPrimary(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<GridView> withPrimary(bool? value) {
@@ -235,7 +235,7 @@ extension GridViewSelector on WidgetSelector<GridView> {
   /// Creates a [WidgetSelector] that finds all [GridView] where physics matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<GridView>().wherePhysics((it) => it.equals(BouncingScrollPhysics())).existsOnce();
+  /// spot<GridView>().wherePhysics((it) => it.equals(BouncingScrollPhysics())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<GridView> wherePhysics(MatchProp<ScrollPhysics> match) {
@@ -245,7 +245,7 @@ extension GridViewSelector on WidgetSelector<GridView> {
   /// Creates a [WidgetSelector] that finds all [GridView] where physics equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<GridView>().withPhysics(BouncingScrollPhysics()).existsOnce();
+  /// spot<GridView>().withPhysics(BouncingScrollPhysics()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<GridView> withPhysics(ScrollPhysics? value) {
@@ -256,7 +256,7 @@ extension GridViewSelector on WidgetSelector<GridView> {
   /// Creates a [WidgetSelector] that finds all [GridView] where shrinkWrap matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<GridView>().whereShrinkWrap((it) => it.isTrue()).existsOnce();
+  /// spot<GridView>().whereShrinkWrap((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<GridView> whereShrinkWrap(MatchProp<bool> match) {
@@ -266,7 +266,7 @@ extension GridViewSelector on WidgetSelector<GridView> {
   /// Creates a [WidgetSelector] that finds all [GridView] where shrinkWrap equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<GridView>().withShrinkWrap(true).existsOnce();
+  /// spot<GridView>().withShrinkWrap(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<GridView> withShrinkWrap(bool? value) {
@@ -277,7 +277,7 @@ extension GridViewSelector on WidgetSelector<GridView> {
   /// Creates a [WidgetSelector] that finds all [GridView] where padding matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<GridView>().wherePadding((it) => it.equals(EdgeInsets.all(8.0))).existsOnce();
+  /// spot<GridView>().wherePadding((it) => it.equals(EdgeInsets.all(8.0))).existsOnce();
   /// ```
   @useResult
   WidgetSelector<GridView> wherePadding(MatchProp<EdgeInsetsGeometry> match) {
@@ -287,7 +287,7 @@ extension GridViewSelector on WidgetSelector<GridView> {
   /// Creates a [WidgetSelector] that finds all [GridView] where padding equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<GridView>().withPadding(EdgeInsets.all(8.0)).existsOnce();
+  /// spot<GridView>().withPadding(EdgeInsets.all(8.0)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<GridView> withPadding(EdgeInsetsGeometry? value) {

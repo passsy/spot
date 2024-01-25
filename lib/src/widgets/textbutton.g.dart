@@ -14,7 +14,7 @@ extension TextButtonMatcher on WidgetMatcher<TextButton> {
   /// Expects that enabled of [TextButton] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextButton>().existsOnce().isEnabledWhere((it) => it.isTrue());
+  /// spot<TextButton>().existsOnce().isEnabledWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<TextButton> isEnabledWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('enabled', match);
@@ -23,7 +23,7 @@ extension TextButtonMatcher on WidgetMatcher<TextButton> {
   /// Expects that enabled of [TextButton] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextButton>().existsOnce().isEnabled(true);
+  /// spot<TextButton>().existsOnce().isEnabled(true);
   /// ```
   WidgetMatcher<TextButton> isEnabled(bool? value) {
     return hasDiagnosticProp<bool>(
@@ -33,7 +33,7 @@ extension TextButtonMatcher on WidgetMatcher<TextButton> {
   /// Expects that style of [TextButton] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextButton>().existsOnce().hasStyleWhere((it) => it.equals(ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue))));
+  /// spot<TextButton>().existsOnce().hasStyleWhere((it) => it.equals(ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue))));
   /// ```
   WidgetMatcher<TextButton> hasStyleWhere(MatchProp<ButtonStyle> match) {
     return hasDiagnosticProp<ButtonStyle>('style', match);
@@ -42,7 +42,7 @@ extension TextButtonMatcher on WidgetMatcher<TextButton> {
   /// Expects that style of [TextButton] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextButton>().existsOnce().hasStyle(ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue)));
+  /// spot<TextButton>().existsOnce().hasStyle(ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue)));
   /// ```
   WidgetMatcher<TextButton> hasStyle(ButtonStyle? value) {
     return hasDiagnosticProp<ButtonStyle>(
@@ -52,7 +52,7 @@ extension TextButtonMatcher on WidgetMatcher<TextButton> {
   /// Expects that focusNode of [TextButton] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextButton>().existsOnce().hasFocusNodeWhere((it) => it.equals(FocusNode()));
+  /// spot<TextButton>().existsOnce().hasFocusNodeWhere((it) => it.equals(FocusNode()));
   /// ```
   WidgetMatcher<TextButton> hasFocusNodeWhere(MatchProp<FocusNode> match) {
     return hasDiagnosticProp<FocusNode>('focusNode', match);
@@ -61,7 +61,7 @@ extension TextButtonMatcher on WidgetMatcher<TextButton> {
   /// Expects that focusNode of [TextButton] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextButton>().existsOnce().hasFocusNode(FocusNode());
+  /// spot<TextButton>().existsOnce().hasFocusNode(FocusNode());
   /// ```
   WidgetMatcher<TextButton> hasFocusNode(FocusNode? value) {
     return hasDiagnosticProp<FocusNode>(
@@ -74,7 +74,7 @@ extension TextButtonSelector on WidgetSelector<TextButton> {
   /// Creates a [WidgetSelector] that finds all [TextButton] where enabled matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextButton>().whereEnabled((it) => it.isTrue()).existsOnce();
+  /// spot<TextButton>().whereEnabled((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextButton> whereEnabled(MatchProp<bool> match) {
@@ -84,7 +84,7 @@ extension TextButtonSelector on WidgetSelector<TextButton> {
   /// Creates a [WidgetSelector] that finds all [TextButton] where enabled equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextButton>().withEnabled(true).existsOnce();
+  /// spot<TextButton>().withEnabled(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextButton> withEnabled(bool? value) {
@@ -95,7 +95,7 @@ extension TextButtonSelector on WidgetSelector<TextButton> {
   /// Creates a [WidgetSelector] that finds all [TextButton] where style matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextButton>().whereStyle((it) => it.equals(ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue)))).existsOnce();
+  /// spot<TextButton>().whereStyle((it) => it.equals(ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue)))).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextButton> whereStyle(MatchProp<ButtonStyle> match) {
@@ -105,7 +105,7 @@ extension TextButtonSelector on WidgetSelector<TextButton> {
   /// Creates a [WidgetSelector] that finds all [TextButton] where style equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextButton>().withStyle(ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue))).existsOnce();
+  /// spot<TextButton>().withStyle(ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue))).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextButton> withStyle(ButtonStyle? value) {
@@ -116,7 +116,7 @@ extension TextButtonSelector on WidgetSelector<TextButton> {
   /// Creates a [WidgetSelector] that finds all [TextButton] where focusNode matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextButton>().whereFocusNode((it) => it.equals(FocusNode())).existsOnce();
+  /// spot<TextButton>().whereFocusNode((it) => it.equals(FocusNode())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextButton> whereFocusNode(MatchProp<FocusNode> match) {
@@ -126,7 +126,7 @@ extension TextButtonSelector on WidgetSelector<TextButton> {
   /// Creates a [WidgetSelector] that finds all [TextButton] where focusNode equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextButton>().withFocusNode(FocusNode()).existsOnce();
+  /// spot<TextButton>().withFocusNode(FocusNode()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextButton> withFocusNode(FocusNode? value) {

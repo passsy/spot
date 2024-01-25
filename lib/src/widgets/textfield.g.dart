@@ -15,7 +15,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that controller of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasControllerWhere((it) => it.equals(TextEditingController()));
+  /// spot<TextField>().existsOnce().hasControllerWhere((it) => it.equals(TextEditingController()));
   /// ```
   WidgetMatcher<TextField> hasControllerWhere(
       MatchProp<TextEditingController> match) {
@@ -25,7 +25,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that controller of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasController(TextEditingController());
+  /// spot<TextField>().existsOnce().hasController(TextEditingController());
   /// ```
   WidgetMatcher<TextField> hasController(TextEditingController? value) {
     return hasDiagnosticProp<TextEditingController>(
@@ -35,7 +35,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that focusNode of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasFocusNodeWhere((it) => it.equals(FocusNode()));
+  /// spot<TextField>().existsOnce().hasFocusNodeWhere((it) => it.equals(FocusNode()));
   /// ```
   WidgetMatcher<TextField> hasFocusNodeWhere(MatchProp<FocusNode> match) {
     return hasDiagnosticProp<FocusNode>('focusNode', match);
@@ -44,7 +44,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that focusNode of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasFocusNode(FocusNode());
+  /// spot<TextField>().existsOnce().hasFocusNode(FocusNode());
   /// ```
   WidgetMatcher<TextField> hasFocusNode(FocusNode? value) {
     return hasDiagnosticProp<FocusNode>(
@@ -54,7 +54,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that undoController of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasUndoControllerWhere((it) => it.equals(UndoHistoryController()));
+  /// spot<TextField>().existsOnce().hasUndoControllerWhere((it) => it.equals(UndoHistoryController()));
   /// ```
   WidgetMatcher<TextField> hasUndoControllerWhere(
       MatchProp<UndoHistoryController> match) {
@@ -64,7 +64,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that undoController of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasUndoController(UndoHistoryController());
+  /// spot<TextField>().existsOnce().hasUndoController(UndoHistoryController());
   /// ```
   WidgetMatcher<TextField> hasUndoController(UndoHistoryController? value) {
     return hasDiagnosticProp<UndoHistoryController>('undoController',
@@ -74,7 +74,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that enabled of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().isEnabledWhere((it) => it.isTrue());
+  /// spot<TextField>().existsOnce().isEnabledWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<TextField> isEnabledWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('enabled', match);
@@ -83,7 +83,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that enabled of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().isEnabled(true);
+  /// spot<TextField>().existsOnce().isEnabled(true);
   /// ```
   WidgetMatcher<TextField> isEnabled(bool? value) {
     return hasDiagnosticProp<bool>(
@@ -93,7 +93,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that decoration of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasDecorationWhere((it) => it.equals(InputDecoration()));
+  /// spot<TextField>().existsOnce().hasDecorationWhere((it) => it.equals(InputDecoration()));
   /// ```
   WidgetMatcher<TextField> hasDecorationWhere(
       MatchProp<InputDecoration> match) {
@@ -103,7 +103,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that decoration of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasDecoration(InputDecoration());
+  /// spot<TextField>().existsOnce().hasDecoration(InputDecoration());
   /// ```
   WidgetMatcher<TextField> hasDecoration(InputDecoration? value) {
     return hasDiagnosticProp<InputDecoration>(
@@ -113,7 +113,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that keyboardType of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasKeyboardTypeWhere((it) => it.equals(TextInputType.text));
+  /// spot<TextField>().existsOnce().hasKeyboardTypeWhere((it) => it.equals(TextInputType.text));
   /// ```
   WidgetMatcher<TextField> hasKeyboardTypeWhere(
       MatchProp<TextInputType> match) {
@@ -123,7 +123,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that keyboardType of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasKeyboardType(TextInputType.text);
+  /// spot<TextField>().existsOnce().hasKeyboardType(TextInputType.text);
   /// ```
   WidgetMatcher<TextField> hasKeyboardType(TextInputType? value) {
     return hasDiagnosticProp<TextInputType>(
@@ -133,7 +133,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that style of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasStyleWhere((it) => it.equals(TextStyle()));
+  /// spot<TextField>().existsOnce().hasStyleWhere((it) => it.equals(TextStyle()));
   /// ```
   WidgetMatcher<TextField> hasStyleWhere(MatchProp<TextStyle> match) {
     return hasDiagnosticProp<TextStyle>('style', match);
@@ -142,7 +142,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that style of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasStyle(TextStyle());
+  /// spot<TextField>().existsOnce().hasStyle(TextStyle());
   /// ```
   WidgetMatcher<TextField> hasStyle(TextStyle? value) {
     return hasDiagnosticProp<TextStyle>(
@@ -152,7 +152,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that autofocus of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasAutofocusWhere((it) => it.isTrue());
+  /// spot<TextField>().existsOnce().hasAutofocusWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<TextField> hasAutofocusWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('autofocus', match);
@@ -161,7 +161,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that autofocus of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasAutofocus(true);
+  /// spot<TextField>().existsOnce().hasAutofocus(true);
   /// ```
   WidgetMatcher<TextField> hasAutofocus(bool? value) {
     return hasDiagnosticProp<bool>(
@@ -171,7 +171,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that obscuringCharacter of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasObscuringCharacterWhere((it) => it.equals('foo'));
+  /// spot<TextField>().existsOnce().hasObscuringCharacterWhere((it) => it.equals('foo'));
   /// ```
   WidgetMatcher<TextField> hasObscuringCharacterWhere(MatchProp<String> match) {
     return hasDiagnosticProp<String>('obscuringCharacter', match);
@@ -180,7 +180,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that obscuringCharacter of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasObscuringCharacter('foo');
+  /// spot<TextField>().existsOnce().hasObscuringCharacter('foo');
   /// ```
   WidgetMatcher<TextField> hasObscuringCharacter(String? value) {
     return hasDiagnosticProp<String>('obscuringCharacter',
@@ -190,7 +190,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that obscureText of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasObscureTextWhere((it) => it.isTrue());
+  /// spot<TextField>().existsOnce().hasObscureTextWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<TextField> hasObscureTextWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('obscureText', match);
@@ -199,7 +199,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that obscureText of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasObscureText(true);
+  /// spot<TextField>().existsOnce().hasObscureText(true);
   /// ```
   WidgetMatcher<TextField> hasObscureText(bool? value) {
     return hasDiagnosticProp<bool>(
@@ -209,7 +209,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that autocorrect of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasAutocorrectWhere((it) => it.isTrue());
+  /// spot<TextField>().existsOnce().hasAutocorrectWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<TextField> hasAutocorrectWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('autocorrect', match);
@@ -218,7 +218,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that autocorrect of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasAutocorrect(true);
+  /// spot<TextField>().existsOnce().hasAutocorrect(true);
   /// ```
   WidgetMatcher<TextField> hasAutocorrect(bool? value) {
     return hasDiagnosticProp<bool>(
@@ -228,7 +228,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that smartDashesType of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasSmartDashesTypeWhere((it) => it.equals(SmartDashesType.values.first));
+  /// spot<TextField>().existsOnce().hasSmartDashesTypeWhere((it) => it.equals(SmartDashesType.values.first));
   /// ```
   WidgetMatcher<TextField> hasSmartDashesTypeWhere(
       MatchProp<SmartDashesType> match) {
@@ -238,7 +238,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that smartDashesType of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasSmartDashesType(SmartDashesType.values.first);
+  /// spot<TextField>().existsOnce().hasSmartDashesType(SmartDashesType.values.first);
   /// ```
   WidgetMatcher<TextField> hasSmartDashesType(SmartDashesType? value) {
     return hasDiagnosticProp<SmartDashesType>('smartDashesType',
@@ -248,7 +248,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that smartQuotesType of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasSmartQuotesTypeWhere((it) => it.equals(SmartQuotesType.values.first));
+  /// spot<TextField>().existsOnce().hasSmartQuotesTypeWhere((it) => it.equals(SmartQuotesType.values.first));
   /// ```
   WidgetMatcher<TextField> hasSmartQuotesTypeWhere(
       MatchProp<SmartQuotesType> match) {
@@ -258,7 +258,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that smartQuotesType of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasSmartQuotesType(SmartQuotesType.values.first);
+  /// spot<TextField>().existsOnce().hasSmartQuotesType(SmartQuotesType.values.first);
   /// ```
   WidgetMatcher<TextField> hasSmartQuotesType(SmartQuotesType? value) {
     return hasDiagnosticProp<SmartQuotesType>('smartQuotesType',
@@ -268,7 +268,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that enableSuggestions of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasEnableSuggestionsWhere((it) => it.isTrue());
+  /// spot<TextField>().existsOnce().hasEnableSuggestionsWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<TextField> hasEnableSuggestionsWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('enableSuggestions', match);
@@ -277,7 +277,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that enableSuggestions of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasEnableSuggestions(true);
+  /// spot<TextField>().existsOnce().hasEnableSuggestions(true);
   /// ```
   WidgetMatcher<TextField> hasEnableSuggestions(bool? value) {
     return hasDiagnosticProp<bool>('enableSuggestions',
@@ -287,7 +287,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that maxLines of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasMaxLinesWhere((it) => it.isGreaterThan(10));
+  /// spot<TextField>().existsOnce().hasMaxLinesWhere((it) => it.isGreaterThan(10));
   /// ```
   WidgetMatcher<TextField> hasMaxLinesWhere(MatchProp<int> match) {
     return hasDiagnosticProp<int>('maxLines', match);
@@ -296,7 +296,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that maxLines of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasMaxLines(10);
+  /// spot<TextField>().existsOnce().hasMaxLines(10);
   /// ```
   WidgetMatcher<TextField> hasMaxLines(int? value) {
     return hasDiagnosticProp<int>(
@@ -306,7 +306,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that minLines of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasMinLinesWhere((it) => it.isGreaterThan(10));
+  /// spot<TextField>().existsOnce().hasMinLinesWhere((it) => it.isGreaterThan(10));
   /// ```
   WidgetMatcher<TextField> hasMinLinesWhere(MatchProp<int> match) {
     return hasDiagnosticProp<int>('minLines', match);
@@ -315,7 +315,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that minLines of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasMinLines(10);
+  /// spot<TextField>().existsOnce().hasMinLines(10);
   /// ```
   WidgetMatcher<TextField> hasMinLines(int? value) {
     return hasDiagnosticProp<int>(
@@ -325,7 +325,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that expands of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasExpandsWhere((it) => it.isTrue());
+  /// spot<TextField>().existsOnce().hasExpandsWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<TextField> hasExpandsWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('expands', match);
@@ -334,7 +334,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that expands of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasExpands(true);
+  /// spot<TextField>().existsOnce().hasExpands(true);
   /// ```
   WidgetMatcher<TextField> hasExpands(bool? value) {
     return hasDiagnosticProp<bool>(
@@ -344,7 +344,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that maxLength of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasMaxLengthWhere((it) => it.isGreaterThan(10));
+  /// spot<TextField>().existsOnce().hasMaxLengthWhere((it) => it.isGreaterThan(10));
   /// ```
   WidgetMatcher<TextField> hasMaxLengthWhere(MatchProp<int> match) {
     return hasDiagnosticProp<int>('maxLength', match);
@@ -353,7 +353,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that maxLength of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasMaxLength(10);
+  /// spot<TextField>().existsOnce().hasMaxLength(10);
   /// ```
   WidgetMatcher<TextField> hasMaxLength(int? value) {
     return hasDiagnosticProp<int>(
@@ -363,7 +363,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that maxLengthEnforcement of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasMaxLengthEnforcementWhere((it) => it.equals(MaxLengthEnforcement.values.first));
+  /// spot<TextField>().existsOnce().hasMaxLengthEnforcementWhere((it) => it.equals(MaxLengthEnforcement.values.first));
   /// ```
   WidgetMatcher<TextField> hasMaxLengthEnforcementWhere(
       MatchProp<MaxLengthEnforcement> match) {
@@ -374,7 +374,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that maxLengthEnforcement of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasMaxLengthEnforcement(MaxLengthEnforcement.values.first);
+  /// spot<TextField>().existsOnce().hasMaxLengthEnforcement(MaxLengthEnforcement.values.first);
   /// ```
   WidgetMatcher<TextField> hasMaxLengthEnforcement(
       MaxLengthEnforcement? value) {
@@ -385,7 +385,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that textInputAction of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasTextInputActionWhere((it) => it.equals(TextInputAction.values.first));
+  /// spot<TextField>().existsOnce().hasTextInputActionWhere((it) => it.equals(TextInputAction.values.first));
   /// ```
   WidgetMatcher<TextField> hasTextInputActionWhere(
       MatchProp<TextInputAction> match) {
@@ -395,7 +395,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that textInputAction of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasTextInputAction(TextInputAction.values.first);
+  /// spot<TextField>().existsOnce().hasTextInputAction(TextInputAction.values.first);
   /// ```
   WidgetMatcher<TextField> hasTextInputAction(TextInputAction? value) {
     return hasDiagnosticProp<TextInputAction>('textInputAction',
@@ -405,7 +405,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that textCapitalization of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasTextCapitalizationWhere((it) => it.equals(TextCapitalization.values.first));
+  /// spot<TextField>().existsOnce().hasTextCapitalizationWhere((it) => it.equals(TextCapitalization.values.first));
   /// ```
   WidgetMatcher<TextField> hasTextCapitalizationWhere(
       MatchProp<TextCapitalization> match) {
@@ -415,7 +415,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that textCapitalization of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasTextCapitalization(TextCapitalization.values.first);
+  /// spot<TextField>().existsOnce().hasTextCapitalization(TextCapitalization.values.first);
   /// ```
   WidgetMatcher<TextField> hasTextCapitalization(TextCapitalization? value) {
     return hasDiagnosticProp<TextCapitalization>('textCapitalization',
@@ -425,7 +425,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that textAlign of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasTextAlignWhere((it) => it.equals(TextAlign.values.first));
+  /// spot<TextField>().existsOnce().hasTextAlignWhere((it) => it.equals(TextAlign.values.first));
   /// ```
   WidgetMatcher<TextField> hasTextAlignWhere(MatchProp<TextAlign> match) {
     return hasDiagnosticProp<TextAlign>('textAlign', match);
@@ -434,7 +434,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that textAlign of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasTextAlign(TextAlign.values.first);
+  /// spot<TextField>().existsOnce().hasTextAlign(TextAlign.values.first);
   /// ```
   WidgetMatcher<TextField> hasTextAlign(TextAlign? value) {
     return hasDiagnosticProp<TextAlign>(
@@ -444,7 +444,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that textAlignVertical of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasTextAlignVerticalWhere((it) => it.equals(TextAlignVertical.center));
+  /// spot<TextField>().existsOnce().hasTextAlignVerticalWhere((it) => it.equals(TextAlignVertical.center));
   /// ```
   WidgetMatcher<TextField> hasTextAlignVerticalWhere(
       MatchProp<TextAlignVertical> match) {
@@ -454,7 +454,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that textAlignVertical of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasTextAlignVertical(TextAlignVertical.center);
+  /// spot<TextField>().existsOnce().hasTextAlignVertical(TextAlignVertical.center);
   /// ```
   WidgetMatcher<TextField> hasTextAlignVertical(TextAlignVertical? value) {
     return hasDiagnosticProp<TextAlignVertical>('textAlignVertical',
@@ -464,7 +464,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that textDirection of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasTextDirectionWhere((it) => it.equals(TextDirection.values.first));
+  /// spot<TextField>().existsOnce().hasTextDirectionWhere((it) => it.equals(TextDirection.values.first));
   /// ```
   WidgetMatcher<TextField> hasTextDirectionWhere(
       MatchProp<TextDirection> match) {
@@ -474,7 +474,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that textDirection of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasTextDirection(TextDirection.values.first);
+  /// spot<TextField>().existsOnce().hasTextDirection(TextDirection.values.first);
   /// ```
   WidgetMatcher<TextField> hasTextDirection(TextDirection? value) {
     return hasDiagnosticProp<TextDirection>('textDirection',
@@ -484,7 +484,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that cursorWidth of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasCursorWidthWhere((it) => it.isGreaterThan(10.5));
+  /// spot<TextField>().existsOnce().hasCursorWidthWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<TextField> hasCursorWidthWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('cursorWidth', match);
@@ -493,7 +493,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that cursorWidth of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasCursorWidth(10.5);
+  /// spot<TextField>().existsOnce().hasCursorWidth(10.5);
   /// ```
   WidgetMatcher<TextField> hasCursorWidth(double? value) {
     return hasDiagnosticProp<double>(
@@ -503,7 +503,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that cursorHeight of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasCursorHeightWhere((it) => it.isGreaterThan(10.5));
+  /// spot<TextField>().existsOnce().hasCursorHeightWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<TextField> hasCursorHeightWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('cursorHeight', match);
@@ -512,7 +512,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that cursorHeight of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasCursorHeight(10.5);
+  /// spot<TextField>().existsOnce().hasCursorHeight(10.5);
   /// ```
   WidgetMatcher<TextField> hasCursorHeight(double? value) {
     return hasDiagnosticProp<double>(
@@ -522,7 +522,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that cursorRadius of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasCursorRadiusWhere((it) => it.equals(Radius.circular(10.0)));
+  /// spot<TextField>().existsOnce().hasCursorRadiusWhere((it) => it.equals(Radius.circular(10.0)));
   /// ```
   WidgetMatcher<TextField> hasCursorRadiusWhere(MatchProp<Radius> match) {
     return hasDiagnosticProp<Radius>('cursorRadius', match);
@@ -531,7 +531,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that cursorRadius of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasCursorRadius(Radius.circular(10.0));
+  /// spot<TextField>().existsOnce().hasCursorRadius(Radius.circular(10.0));
   /// ```
   WidgetMatcher<TextField> hasCursorRadius(Radius? value) {
     return hasDiagnosticProp<Radius>(
@@ -541,7 +541,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that cursorOpacityAnimates of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasCursorOpacityAnimatesWhere((it) => it.isTrue());
+  /// spot<TextField>().existsOnce().hasCursorOpacityAnimatesWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<TextField> hasCursorOpacityAnimatesWhere(
       MatchProp<bool> match) {
@@ -551,7 +551,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that cursorOpacityAnimates of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasCursorOpacityAnimates(true);
+  /// spot<TextField>().existsOnce().hasCursorOpacityAnimates(true);
   /// ```
   WidgetMatcher<TextField> hasCursorOpacityAnimates(bool? value) {
     return hasDiagnosticProp<bool>('cursorOpacityAnimates',
@@ -561,7 +561,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that cursorColor of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasCursorColorWhere((it) => it.equals(Colors.red));
+  /// spot<TextField>().existsOnce().hasCursorColorWhere((it) => it.equals(Colors.red));
   /// ```
   WidgetMatcher<TextField> hasCursorColorWhere(MatchProp<Color> match) {
     return hasDiagnosticProp<Color>('cursorColor', match);
@@ -570,7 +570,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that cursorColor of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasCursorColor(Colors.red);
+  /// spot<TextField>().existsOnce().hasCursorColor(Colors.red);
   /// ```
   WidgetMatcher<TextField> hasCursorColor(Color? value) {
     return hasDiagnosticProp<Color>(
@@ -580,7 +580,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that keyboardAppearance of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasKeyboardAppearanceWhere((it) => it.equals(Brightness.values.first));
+  /// spot<TextField>().existsOnce().hasKeyboardAppearanceWhere((it) => it.equals(Brightness.values.first));
   /// ```
   WidgetMatcher<TextField> hasKeyboardAppearanceWhere(
       MatchProp<Brightness> match) {
@@ -590,7 +590,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that keyboardAppearance of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasKeyboardAppearance(Brightness.values.first);
+  /// spot<TextField>().existsOnce().hasKeyboardAppearance(Brightness.values.first);
   /// ```
   WidgetMatcher<TextField> hasKeyboardAppearance(Brightness? value) {
     return hasDiagnosticProp<Brightness>('keyboardAppearance',
@@ -600,7 +600,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that scrollPadding of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasScrollPaddingWhere((it) => it.equals(EdgeInsets.all(8.0)));
+  /// spot<TextField>().existsOnce().hasScrollPaddingWhere((it) => it.equals(EdgeInsets.all(8.0)));
   /// ```
   WidgetMatcher<TextField> hasScrollPaddingWhere(
       MatchProp<EdgeInsetsGeometry> match) {
@@ -610,7 +610,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that scrollPadding of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasScrollPadding(EdgeInsets.all(8.0));
+  /// spot<TextField>().existsOnce().hasScrollPadding(EdgeInsets.all(8.0));
   /// ```
   WidgetMatcher<TextField> hasScrollPadding(EdgeInsetsGeometry? value) {
     return hasDiagnosticProp<EdgeInsetsGeometry>('scrollPadding',
@@ -620,7 +620,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that selectionEnabled of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasSelectionEnabledWhere((it) => it.isTrue());
+  /// spot<TextField>().existsOnce().hasSelectionEnabledWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<TextField> hasSelectionEnabledWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('selectionEnabled', match);
@@ -629,7 +629,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that selectionEnabled of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasSelectionEnabled(true);
+  /// spot<TextField>().existsOnce().hasSelectionEnabled(true);
   /// ```
   WidgetMatcher<TextField> hasSelectionEnabled(bool? value) {
     return hasDiagnosticProp<bool>('selectionEnabled',
@@ -639,7 +639,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that selectionControls of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasSelectionControlsWhere((it) => it.equals(MaterialTextSelectionControls()));
+  /// spot<TextField>().existsOnce().hasSelectionControlsWhere((it) => it.equals(MaterialTextSelectionControls()));
   /// ```
   WidgetMatcher<TextField> hasSelectionControlsWhere(
       MatchProp<TextSelectionControls> match) {
@@ -649,7 +649,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that selectionControls of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasSelectionControls(MaterialTextSelectionControls());
+  /// spot<TextField>().existsOnce().hasSelectionControls(MaterialTextSelectionControls());
   /// ```
   WidgetMatcher<TextField> hasSelectionControls(TextSelectionControls? value) {
     return hasDiagnosticProp<TextSelectionControls>('selectionControls',
@@ -659,7 +659,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that scrollController of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasScrollControllerWhere((it) => it.equals(ScrollController()));
+  /// spot<TextField>().existsOnce().hasScrollControllerWhere((it) => it.equals(ScrollController()));
   /// ```
   WidgetMatcher<TextField> hasScrollControllerWhere(
       MatchProp<ScrollController> match) {
@@ -669,7 +669,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that scrollController of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasScrollController(ScrollController());
+  /// spot<TextField>().existsOnce().hasScrollController(ScrollController());
   /// ```
   WidgetMatcher<TextField> hasScrollController(ScrollController? value) {
     return hasDiagnosticProp<ScrollController>('scrollController',
@@ -679,7 +679,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that scrollPhysics of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasScrollPhysicsWhere((it) => it.equals(BouncingScrollPhysics()));
+  /// spot<TextField>().existsOnce().hasScrollPhysicsWhere((it) => it.equals(BouncingScrollPhysics()));
   /// ```
   WidgetMatcher<TextField> hasScrollPhysicsWhere(
       MatchProp<ScrollPhysics> match) {
@@ -689,7 +689,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that scrollPhysics of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasScrollPhysics(BouncingScrollPhysics());
+  /// spot<TextField>().existsOnce().hasScrollPhysics(BouncingScrollPhysics());
   /// ```
   WidgetMatcher<TextField> hasScrollPhysics(ScrollPhysics? value) {
     return hasDiagnosticProp<ScrollPhysics>('scrollPhysics',
@@ -699,7 +699,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that clipBehavior of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasClipBehaviorWhere((it) => it.equals(Clip.values.first));
+  /// spot<TextField>().existsOnce().hasClipBehaviorWhere((it) => it.equals(Clip.values.first));
   /// ```
   WidgetMatcher<TextField> hasClipBehaviorWhere(MatchProp<Clip> match) {
     return hasDiagnosticProp<Clip>('clipBehavior', match);
@@ -708,7 +708,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that clipBehavior of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasClipBehavior(Clip.values.first);
+  /// spot<TextField>().existsOnce().hasClipBehavior(Clip.values.first);
   /// ```
   WidgetMatcher<TextField> hasClipBehavior(Clip? value) {
     return hasDiagnosticProp<Clip>(
@@ -718,7 +718,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that scribbleEnabled of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasScribbleEnabledWhere((it) => it.isTrue());
+  /// spot<TextField>().existsOnce().hasScribbleEnabledWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<TextField> hasScribbleEnabledWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('scribbleEnabled', match);
@@ -727,7 +727,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that scribbleEnabled of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasScribbleEnabled(true);
+  /// spot<TextField>().existsOnce().hasScribbleEnabled(true);
   /// ```
   WidgetMatcher<TextField> hasScribbleEnabled(bool? value) {
     return hasDiagnosticProp<bool>('scribbleEnabled',
@@ -737,7 +737,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that enableIMEPersonalizedLearning of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasEnableIMEPersonalizedLearningWhere((it) => it.isTrue());
+  /// spot<TextField>().existsOnce().hasEnableIMEPersonalizedLearningWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<TextField> hasEnableIMEPersonalizedLearningWhere(
       MatchProp<bool> match) {
@@ -747,7 +747,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that enableIMEPersonalizedLearning of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasEnableIMEPersonalizedLearning(true);
+  /// spot<TextField>().existsOnce().hasEnableIMEPersonalizedLearning(true);
   /// ```
   WidgetMatcher<TextField> hasEnableIMEPersonalizedLearning(bool? value) {
     return hasDiagnosticProp<bool>('enableIMEPersonalizedLearning',
@@ -757,7 +757,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that spellCheckConfiguration of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasSpellCheckConfigurationWhere((it) => it.equals(SpellCheckConfiguration()));
+  /// spot<TextField>().existsOnce().hasSpellCheckConfigurationWhere((it) => it.equals(SpellCheckConfiguration()));
   /// ```
   WidgetMatcher<TextField> hasSpellCheckConfigurationWhere(
       MatchProp<SpellCheckConfiguration> match) {
@@ -768,7 +768,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that spellCheckConfiguration of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasSpellCheckConfiguration(SpellCheckConfiguration());
+  /// spot<TextField>().existsOnce().hasSpellCheckConfiguration(SpellCheckConfiguration());
   /// ```
   WidgetMatcher<TextField> hasSpellCheckConfiguration(
       SpellCheckConfiguration? value) {
@@ -779,7 +779,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that contentCommitMimeTypes of [TextField] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasContentCommitMimeTypesWhere((it) => it.equals(['foo', 'bar']));
+  /// spot<TextField>().existsOnce().hasContentCommitMimeTypesWhere((it) => it.equals(['foo', 'bar']));
   /// ```
   WidgetMatcher<TextField> hasContentCommitMimeTypesWhere(
       MatchProp<List<String>> match) {
@@ -789,7 +789,7 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// Expects that contentCommitMimeTypes of [TextField] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().existsOnce().hasContentCommitMimeTypes(['foo', 'bar']);
+  /// spot<TextField>().existsOnce().hasContentCommitMimeTypes(['foo', 'bar']);
   /// ```
   WidgetMatcher<TextField> hasContentCommitMimeTypes(List<String>? value) {
     return hasDiagnosticProp<List<String>>('contentCommitMimeTypes',
@@ -802,7 +802,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where controller matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereController((it) => it.equals(TextEditingController())).existsOnce();
+  /// spot<TextField>().whereController((it) => it.equals(TextEditingController())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereController(
@@ -813,7 +813,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where controller equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withController(TextEditingController()).existsOnce();
+  /// spot<TextField>().withController(TextEditingController()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withController(TextEditingController? value) {
@@ -824,7 +824,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where focusNode matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereFocusNode((it) => it.equals(FocusNode())).existsOnce();
+  /// spot<TextField>().whereFocusNode((it) => it.equals(FocusNode())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereFocusNode(MatchProp<FocusNode> match) {
@@ -834,7 +834,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where focusNode equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withFocusNode(FocusNode()).existsOnce();
+  /// spot<TextField>().withFocusNode(FocusNode()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withFocusNode(FocusNode? value) {
@@ -845,7 +845,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where undoController matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereUndoController((it) => it.equals(UndoHistoryController())).existsOnce();
+  /// spot<TextField>().whereUndoController((it) => it.equals(UndoHistoryController())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereUndoController(
@@ -856,7 +856,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where undoController equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withUndoController(UndoHistoryController()).existsOnce();
+  /// spot<TextField>().withUndoController(UndoHistoryController()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withUndoController(UndoHistoryController? value) {
@@ -867,7 +867,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where enabled matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereEnabled((it) => it.isTrue()).existsOnce();
+  /// spot<TextField>().whereEnabled((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereEnabled(MatchProp<bool> match) {
@@ -877,7 +877,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where enabled equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withEnabled(true).existsOnce();
+  /// spot<TextField>().withEnabled(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withEnabled(bool? value) {
@@ -888,7 +888,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where decoration matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereDecoration((it) => it.equals(InputDecoration())).existsOnce();
+  /// spot<TextField>().whereDecoration((it) => it.equals(InputDecoration())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereDecoration(MatchProp<InputDecoration> match) {
@@ -898,7 +898,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where decoration equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withDecoration(InputDecoration()).existsOnce();
+  /// spot<TextField>().withDecoration(InputDecoration()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withDecoration(InputDecoration? value) {
@@ -909,7 +909,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where keyboardType matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereKeyboardType((it) => it.equals(TextInputType.text)).existsOnce();
+  /// spot<TextField>().whereKeyboardType((it) => it.equals(TextInputType.text)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereKeyboardType(MatchProp<TextInputType> match) {
@@ -919,7 +919,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where keyboardType equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withKeyboardType(TextInputType.text).existsOnce();
+  /// spot<TextField>().withKeyboardType(TextInputType.text).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withKeyboardType(TextInputType? value) {
@@ -930,7 +930,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where style matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereStyle((it) => it.equals(TextStyle())).existsOnce();
+  /// spot<TextField>().whereStyle((it) => it.equals(TextStyle())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereStyle(MatchProp<TextStyle> match) {
@@ -940,7 +940,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where style equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withStyle(TextStyle()).existsOnce();
+  /// spot<TextField>().withStyle(TextStyle()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withStyle(TextStyle? value) {
@@ -951,7 +951,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where autofocus matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereAutofocus((it) => it.isTrue()).existsOnce();
+  /// spot<TextField>().whereAutofocus((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereAutofocus(MatchProp<bool> match) {
@@ -961,7 +961,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where autofocus equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withAutofocus(true).existsOnce();
+  /// spot<TextField>().withAutofocus(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withAutofocus(bool? value) {
@@ -972,7 +972,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where obscuringCharacter matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereObscuringCharacter((it) => it.equals('foo')).existsOnce();
+  /// spot<TextField>().whereObscuringCharacter((it) => it.equals('foo')).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereObscuringCharacter(MatchProp<String> match) {
@@ -982,7 +982,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where obscuringCharacter equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withObscuringCharacter('foo').existsOnce();
+  /// spot<TextField>().withObscuringCharacter('foo').existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withObscuringCharacter(String? value) {
@@ -993,7 +993,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where obscureText matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereObscureText((it) => it.isTrue()).existsOnce();
+  /// spot<TextField>().whereObscureText((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereObscureText(MatchProp<bool> match) {
@@ -1003,7 +1003,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where obscureText equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withObscureText(true).existsOnce();
+  /// spot<TextField>().withObscureText(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withObscureText(bool? value) {
@@ -1014,7 +1014,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where autocorrect matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereAutocorrect((it) => it.isTrue()).existsOnce();
+  /// spot<TextField>().whereAutocorrect((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereAutocorrect(MatchProp<bool> match) {
@@ -1024,7 +1024,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where autocorrect equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withAutocorrect(true).existsOnce();
+  /// spot<TextField>().withAutocorrect(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withAutocorrect(bool? value) {
@@ -1035,7 +1035,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where smartDashesType matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereSmartDashesType((it) => it.equals(SmartDashesType.values.first)).existsOnce();
+  /// spot<TextField>().whereSmartDashesType((it) => it.equals(SmartDashesType.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereSmartDashesType(
@@ -1046,7 +1046,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where smartDashesType equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withSmartDashesType(SmartDashesType.values.first).existsOnce();
+  /// spot<TextField>().withSmartDashesType(SmartDashesType.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withSmartDashesType(SmartDashesType? value) {
@@ -1057,7 +1057,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where smartQuotesType matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereSmartQuotesType((it) => it.equals(SmartQuotesType.values.first)).existsOnce();
+  /// spot<TextField>().whereSmartQuotesType((it) => it.equals(SmartQuotesType.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereSmartQuotesType(
@@ -1068,7 +1068,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where smartQuotesType equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withSmartQuotesType(SmartQuotesType.values.first).existsOnce();
+  /// spot<TextField>().withSmartQuotesType(SmartQuotesType.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withSmartQuotesType(SmartQuotesType? value) {
@@ -1079,7 +1079,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where enableSuggestions matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereEnableSuggestions((it) => it.isTrue()).existsOnce();
+  /// spot<TextField>().whereEnableSuggestions((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereEnableSuggestions(MatchProp<bool> match) {
@@ -1089,7 +1089,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where enableSuggestions equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withEnableSuggestions(true).existsOnce();
+  /// spot<TextField>().withEnableSuggestions(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withEnableSuggestions(bool? value) {
@@ -1100,7 +1100,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where maxLines matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereMaxLines((it) => it.isGreaterThan(10)).existsOnce();
+  /// spot<TextField>().whereMaxLines((it) => it.isGreaterThan(10)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereMaxLines(MatchProp<int> match) {
@@ -1110,7 +1110,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where maxLines equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withMaxLines(10).existsOnce();
+  /// spot<TextField>().withMaxLines(10).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withMaxLines(int? value) {
@@ -1121,7 +1121,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where minLines matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereMinLines((it) => it.isGreaterThan(10)).existsOnce();
+  /// spot<TextField>().whereMinLines((it) => it.isGreaterThan(10)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereMinLines(MatchProp<int> match) {
@@ -1131,7 +1131,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where minLines equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withMinLines(10).existsOnce();
+  /// spot<TextField>().withMinLines(10).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withMinLines(int? value) {
@@ -1142,7 +1142,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where expands matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereExpands((it) => it.isTrue()).existsOnce();
+  /// spot<TextField>().whereExpands((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereExpands(MatchProp<bool> match) {
@@ -1152,7 +1152,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where expands equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withExpands(true).existsOnce();
+  /// spot<TextField>().withExpands(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withExpands(bool? value) {
@@ -1163,7 +1163,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where maxLength matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereMaxLength((it) => it.isGreaterThan(10)).existsOnce();
+  /// spot<TextField>().whereMaxLength((it) => it.isGreaterThan(10)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereMaxLength(MatchProp<int> match) {
@@ -1173,7 +1173,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where maxLength equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withMaxLength(10).existsOnce();
+  /// spot<TextField>().withMaxLength(10).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withMaxLength(int? value) {
@@ -1184,7 +1184,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where maxLengthEnforcement matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereMaxLengthEnforcement((it) => it.equals(MaxLengthEnforcement.values.first)).existsOnce();
+  /// spot<TextField>().whereMaxLengthEnforcement((it) => it.equals(MaxLengthEnforcement.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereMaxLengthEnforcement(
@@ -1196,7 +1196,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where maxLengthEnforcement equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withMaxLengthEnforcement(MaxLengthEnforcement.values.first).existsOnce();
+  /// spot<TextField>().withMaxLengthEnforcement(MaxLengthEnforcement.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withMaxLengthEnforcement(
@@ -1208,7 +1208,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where textInputAction matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereTextInputAction((it) => it.equals(TextInputAction.values.first)).existsOnce();
+  /// spot<TextField>().whereTextInputAction((it) => it.equals(TextInputAction.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereTextInputAction(
@@ -1219,7 +1219,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where textInputAction equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withTextInputAction(TextInputAction.values.first).existsOnce();
+  /// spot<TextField>().withTextInputAction(TextInputAction.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withTextInputAction(TextInputAction? value) {
@@ -1230,7 +1230,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where textCapitalization matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereTextCapitalization((it) => it.equals(TextCapitalization.values.first)).existsOnce();
+  /// spot<TextField>().whereTextCapitalization((it) => it.equals(TextCapitalization.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereTextCapitalization(
@@ -1241,7 +1241,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where textCapitalization equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withTextCapitalization(TextCapitalization.values.first).existsOnce();
+  /// spot<TextField>().withTextCapitalization(TextCapitalization.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withTextCapitalization(TextCapitalization? value) {
@@ -1252,7 +1252,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where textAlign matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereTextAlign((it) => it.equals(TextAlign.values.first)).existsOnce();
+  /// spot<TextField>().whereTextAlign((it) => it.equals(TextAlign.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereTextAlign(MatchProp<TextAlign> match) {
@@ -1262,7 +1262,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where textAlign equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withTextAlign(TextAlign.values.first).existsOnce();
+  /// spot<TextField>().withTextAlign(TextAlign.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withTextAlign(TextAlign? value) {
@@ -1273,7 +1273,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where textAlignVertical matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereTextAlignVertical((it) => it.equals(TextAlignVertical.center)).existsOnce();
+  /// spot<TextField>().whereTextAlignVertical((it) => it.equals(TextAlignVertical.center)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereTextAlignVertical(
@@ -1284,7 +1284,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where textAlignVertical equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withTextAlignVertical(TextAlignVertical.center).existsOnce();
+  /// spot<TextField>().withTextAlignVertical(TextAlignVertical.center).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withTextAlignVertical(TextAlignVertical? value) {
@@ -1295,7 +1295,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where textDirection matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereTextDirection((it) => it.equals(TextDirection.values.first)).existsOnce();
+  /// spot<TextField>().whereTextDirection((it) => it.equals(TextDirection.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereTextDirection(MatchProp<TextDirection> match) {
@@ -1305,7 +1305,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where textDirection equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withTextDirection(TextDirection.values.first).existsOnce();
+  /// spot<TextField>().withTextDirection(TextDirection.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withTextDirection(TextDirection? value) {
@@ -1316,7 +1316,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where cursorWidth matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereCursorWidth((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// spot<TextField>().whereCursorWidth((it) => it.isGreaterThan(10.5)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereCursorWidth(MatchProp<double> match) {
@@ -1326,7 +1326,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where cursorWidth equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withCursorWidth(10.5).existsOnce();
+  /// spot<TextField>().withCursorWidth(10.5).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withCursorWidth(double? value) {
@@ -1337,7 +1337,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where cursorHeight matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereCursorHeight((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// spot<TextField>().whereCursorHeight((it) => it.isGreaterThan(10.5)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereCursorHeight(MatchProp<double> match) {
@@ -1347,7 +1347,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where cursorHeight equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withCursorHeight(10.5).existsOnce();
+  /// spot<TextField>().withCursorHeight(10.5).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withCursorHeight(double? value) {
@@ -1358,7 +1358,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where cursorRadius matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereCursorRadius((it) => it.equals(Radius.circular(10.0))).existsOnce();
+  /// spot<TextField>().whereCursorRadius((it) => it.equals(Radius.circular(10.0))).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereCursorRadius(MatchProp<Radius> match) {
@@ -1368,7 +1368,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where cursorRadius equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withCursorRadius(Radius.circular(10.0)).existsOnce();
+  /// spot<TextField>().withCursorRadius(Radius.circular(10.0)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withCursorRadius(Radius? value) {
@@ -1379,7 +1379,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where cursorOpacityAnimates matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereCursorOpacityAnimates((it) => it.isTrue()).existsOnce();
+  /// spot<TextField>().whereCursorOpacityAnimates((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereCursorOpacityAnimates(MatchProp<bool> match) {
@@ -1389,7 +1389,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where cursorOpacityAnimates equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withCursorOpacityAnimates(true).existsOnce();
+  /// spot<TextField>().withCursorOpacityAnimates(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withCursorOpacityAnimates(bool? value) {
@@ -1400,7 +1400,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where cursorColor matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereCursorColor((it) => it.equals(Colors.red)).existsOnce();
+  /// spot<TextField>().whereCursorColor((it) => it.equals(Colors.red)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereCursorColor(MatchProp<Color> match) {
@@ -1410,7 +1410,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where cursorColor equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withCursorColor(Colors.red).existsOnce();
+  /// spot<TextField>().withCursorColor(Colors.red).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withCursorColor(Color? value) {
@@ -1421,7 +1421,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where keyboardAppearance matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereKeyboardAppearance((it) => it.equals(Brightness.values.first)).existsOnce();
+  /// spot<TextField>().whereKeyboardAppearance((it) => it.equals(Brightness.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereKeyboardAppearance(
@@ -1432,7 +1432,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where keyboardAppearance equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withKeyboardAppearance(Brightness.values.first).existsOnce();
+  /// spot<TextField>().withKeyboardAppearance(Brightness.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withKeyboardAppearance(Brightness? value) {
@@ -1443,7 +1443,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where scrollPadding matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereScrollPadding((it) => it.equals(EdgeInsets.all(8.0))).existsOnce();
+  /// spot<TextField>().whereScrollPadding((it) => it.equals(EdgeInsets.all(8.0))).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereScrollPadding(
@@ -1454,7 +1454,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where scrollPadding equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withScrollPadding(EdgeInsets.all(8.0)).existsOnce();
+  /// spot<TextField>().withScrollPadding(EdgeInsets.all(8.0)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withScrollPadding(EdgeInsetsGeometry? value) {
@@ -1465,7 +1465,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where selectionEnabled matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereSelectionEnabled((it) => it.isTrue()).existsOnce();
+  /// spot<TextField>().whereSelectionEnabled((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereSelectionEnabled(MatchProp<bool> match) {
@@ -1475,7 +1475,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where selectionEnabled equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withSelectionEnabled(true).existsOnce();
+  /// spot<TextField>().withSelectionEnabled(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withSelectionEnabled(bool? value) {
@@ -1486,7 +1486,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where selectionControls matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereSelectionControls((it) => it.equals(MaterialTextSelectionControls())).existsOnce();
+  /// spot<TextField>().whereSelectionControls((it) => it.equals(MaterialTextSelectionControls())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereSelectionControls(
@@ -1498,7 +1498,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where selectionControls equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withSelectionControls(MaterialTextSelectionControls()).existsOnce();
+  /// spot<TextField>().withSelectionControls(MaterialTextSelectionControls()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withSelectionControls(
@@ -1510,7 +1510,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where scrollController matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereScrollController((it) => it.equals(ScrollController())).existsOnce();
+  /// spot<TextField>().whereScrollController((it) => it.equals(ScrollController())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereScrollController(
@@ -1521,7 +1521,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where scrollController equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withScrollController(ScrollController()).existsOnce();
+  /// spot<TextField>().withScrollController(ScrollController()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withScrollController(ScrollController? value) {
@@ -1532,7 +1532,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where scrollPhysics matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereScrollPhysics((it) => it.equals(BouncingScrollPhysics())).existsOnce();
+  /// spot<TextField>().whereScrollPhysics((it) => it.equals(BouncingScrollPhysics())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereScrollPhysics(MatchProp<ScrollPhysics> match) {
@@ -1542,7 +1542,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where scrollPhysics equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withScrollPhysics(BouncingScrollPhysics()).existsOnce();
+  /// spot<TextField>().withScrollPhysics(BouncingScrollPhysics()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withScrollPhysics(ScrollPhysics? value) {
@@ -1553,7 +1553,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where clipBehavior matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereClipBehavior((it) => it.equals(Clip.values.first)).existsOnce();
+  /// spot<TextField>().whereClipBehavior((it) => it.equals(Clip.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereClipBehavior(MatchProp<Clip> match) {
@@ -1563,7 +1563,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where clipBehavior equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withClipBehavior(Clip.values.first).existsOnce();
+  /// spot<TextField>().withClipBehavior(Clip.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withClipBehavior(Clip? value) {
@@ -1574,7 +1574,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where scribbleEnabled matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereScribbleEnabled((it) => it.isTrue()).existsOnce();
+  /// spot<TextField>().whereScribbleEnabled((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereScribbleEnabled(MatchProp<bool> match) {
@@ -1584,7 +1584,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where scribbleEnabled equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withScribbleEnabled(true).existsOnce();
+  /// spot<TextField>().withScribbleEnabled(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withScribbleEnabled(bool? value) {
@@ -1595,7 +1595,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where enableIMEPersonalizedLearning matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereEnableIMEPersonalizedLearning((it) => it.isTrue()).existsOnce();
+  /// spot<TextField>().whereEnableIMEPersonalizedLearning((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereEnableIMEPersonalizedLearning(
@@ -1606,7 +1606,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where enableIMEPersonalizedLearning equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withEnableIMEPersonalizedLearning(true).existsOnce();
+  /// spot<TextField>().withEnableIMEPersonalizedLearning(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withEnableIMEPersonalizedLearning(bool? value) {
@@ -1617,7 +1617,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where spellCheckConfiguration matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereSpellCheckConfiguration((it) => it.equals(SpellCheckConfiguration())).existsOnce();
+  /// spot<TextField>().whereSpellCheckConfiguration((it) => it.equals(SpellCheckConfiguration())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereSpellCheckConfiguration(
@@ -1629,7 +1629,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where spellCheckConfiguration equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withSpellCheckConfiguration(SpellCheckConfiguration()).existsOnce();
+  /// spot<TextField>().withSpellCheckConfiguration(SpellCheckConfiguration()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withSpellCheckConfiguration(
@@ -1642,7 +1642,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where contentCommitMimeTypes matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().whereContentCommitMimeTypes((it) => it.equals(['foo', 'bar'])).existsOnce();
+  /// spot<TextField>().whereContentCommitMimeTypes((it) => it.equals(['foo', 'bar'])).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> whereContentCommitMimeTypes(
@@ -1653,7 +1653,7 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// Creates a [WidgetSelector] that finds all [TextField] where contentCommitMimeTypes equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<TextField>().withContentCommitMimeTypes(['foo', 'bar']).existsOnce();
+  /// spot<TextField>().withContentCommitMimeTypes(['foo', 'bar']).existsOnce();
   /// ```
   @useResult
   WidgetSelector<TextField> withContentCommitMimeTypes(List<String>? value) {

@@ -14,7 +14,7 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// Expects that message of [Tooltip] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().existsOnce().hasMessageWhere((it) => it.equals('foo'));
+  /// spot<Tooltip>().existsOnce().hasMessageWhere((it) => it.equals('foo'));
   /// ```
   WidgetMatcher<Tooltip> hasMessageWhere(MatchProp<String> match) {
     return hasDiagnosticProp<String>('message', match);
@@ -23,7 +23,7 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// Expects that message of [Tooltip] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().existsOnce().hasMessage('foo');
+  /// spot<Tooltip>().existsOnce().hasMessage('foo');
   /// ```
   WidgetMatcher<Tooltip> hasMessage(String? value) {
     return hasDiagnosticProp<String>(
@@ -33,7 +33,7 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// Expects that richMessage of [Tooltip] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().existsOnce().hasRichMessageWhere((it) => it.equals('foo'));
+  /// spot<Tooltip>().existsOnce().hasRichMessageWhere((it) => it.equals('foo'));
   /// ```
   WidgetMatcher<Tooltip> hasRichMessageWhere(MatchProp<String> match) {
     return hasDiagnosticProp<String>('richMessage', match);
@@ -42,7 +42,7 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// Expects that richMessage of [Tooltip] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().existsOnce().hasRichMessage('foo');
+  /// spot<Tooltip>().existsOnce().hasRichMessage('foo');
   /// ```
   WidgetMatcher<Tooltip> hasRichMessage(String? value) {
     return hasDiagnosticProp<String>(
@@ -52,7 +52,7 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// Expects that height of [Tooltip] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().existsOnce().hasHeightWhere((it) => it.isGreaterThan(10.5));
+  /// spot<Tooltip>().existsOnce().hasHeightWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<Tooltip> hasHeightWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('height', match);
@@ -61,7 +61,7 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// Expects that height of [Tooltip] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().existsOnce().hasHeight(10.5);
+  /// spot<Tooltip>().existsOnce().hasHeight(10.5);
   /// ```
   WidgetMatcher<Tooltip> hasHeight(double? value) {
     return hasDiagnosticProp<double>(
@@ -71,7 +71,7 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// Expects that padding of [Tooltip] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().existsOnce().hasPaddingWhere((it) => it.equals(EdgeInsets.all(8.0)));
+  /// spot<Tooltip>().existsOnce().hasPaddingWhere((it) => it.equals(EdgeInsets.all(8.0)));
   /// ```
   WidgetMatcher<Tooltip> hasPaddingWhere(MatchProp<EdgeInsetsGeometry> match) {
     return hasDiagnosticProp<EdgeInsetsGeometry>('padding', match);
@@ -80,7 +80,7 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// Expects that padding of [Tooltip] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().existsOnce().hasPadding(EdgeInsets.all(8.0));
+  /// spot<Tooltip>().existsOnce().hasPadding(EdgeInsets.all(8.0));
   /// ```
   WidgetMatcher<Tooltip> hasPadding(EdgeInsetsGeometry? value) {
     return hasDiagnosticProp<EdgeInsetsGeometry>(
@@ -90,7 +90,7 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// Expects that margin of [Tooltip] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().existsOnce().hasMarginWhere((it) => it.equals(EdgeInsets.all(8.0)));
+  /// spot<Tooltip>().existsOnce().hasMarginWhere((it) => it.equals(EdgeInsets.all(8.0)));
   /// ```
   WidgetMatcher<Tooltip> hasMarginWhere(MatchProp<EdgeInsetsGeometry> match) {
     return hasDiagnosticProp<EdgeInsetsGeometry>('margin', match);
@@ -99,7 +99,7 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// Expects that margin of [Tooltip] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().existsOnce().hasMargin(EdgeInsets.all(8.0));
+  /// spot<Tooltip>().existsOnce().hasMargin(EdgeInsets.all(8.0));
   /// ```
   WidgetMatcher<Tooltip> hasMargin(EdgeInsetsGeometry? value) {
     return hasDiagnosticProp<EdgeInsetsGeometry>(
@@ -109,7 +109,7 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// Expects that verticalOffset of [Tooltip] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().existsOnce().hasVerticalOffsetWhere((it) => it.isGreaterThan(10.5));
+  /// spot<Tooltip>().existsOnce().hasVerticalOffsetWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<Tooltip> hasVerticalOffsetWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('vertical offset', match);
@@ -118,7 +118,7 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// Expects that verticalOffset of [Tooltip] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().existsOnce().hasVerticalOffset(10.5);
+  /// spot<Tooltip>().existsOnce().hasVerticalOffset(10.5);
   /// ```
   WidgetMatcher<Tooltip> hasVerticalOffset(double? value) {
     return hasDiagnosticProp<double>('vertical offset',
@@ -128,7 +128,7 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// Expects that position of [Tooltip] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().existsOnce().hasPositionWhere((it) => it.isTrue());
+  /// spot<Tooltip>().existsOnce().hasPositionWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<Tooltip> hasPositionWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('position', match);
@@ -137,7 +137,7 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// Expects that position of [Tooltip] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().existsOnce().hasPosition(true);
+  /// spot<Tooltip>().existsOnce().hasPosition(true);
   /// ```
   WidgetMatcher<Tooltip> hasPosition(bool? value) {
     return hasDiagnosticProp<bool>(
@@ -147,7 +147,7 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// Expects that semantics of [Tooltip] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().existsOnce().hasSemanticsWhere((it) => it.isTrue());
+  /// spot<Tooltip>().existsOnce().hasSemanticsWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<Tooltip> hasSemanticsWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('semantics', match);
@@ -156,7 +156,7 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// Expects that semantics of [Tooltip] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().existsOnce().hasSemantics(true);
+  /// spot<Tooltip>().existsOnce().hasSemantics(true);
   /// ```
   WidgetMatcher<Tooltip> hasSemantics(bool? value) {
     return hasDiagnosticProp<bool>(
@@ -166,7 +166,7 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// Expects that waitDuration of [Tooltip] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().existsOnce().hasWaitDurationWhere((it) => it.equals(Duration(seconds: 30)));
+  /// spot<Tooltip>().existsOnce().hasWaitDurationWhere((it) => it.equals(Duration(seconds: 30)));
   /// ```
   WidgetMatcher<Tooltip> hasWaitDurationWhere(MatchProp<Duration> match) {
     return hasDiagnosticProp<Duration>('wait duration', match);
@@ -175,7 +175,7 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// Expects that waitDuration of [Tooltip] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().existsOnce().hasWaitDuration(Duration(seconds: 30));
+  /// spot<Tooltip>().existsOnce().hasWaitDuration(Duration(seconds: 30));
   /// ```
   WidgetMatcher<Tooltip> hasWaitDuration(Duration? value) {
     return hasDiagnosticProp<Duration>('wait duration',
@@ -185,7 +185,7 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// Expects that showDuration of [Tooltip] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().existsOnce().hasShowDurationWhere((it) => it.equals(Duration(seconds: 30)));
+  /// spot<Tooltip>().existsOnce().hasShowDurationWhere((it) => it.equals(Duration(seconds: 30)));
   /// ```
   WidgetMatcher<Tooltip> hasShowDurationWhere(MatchProp<Duration> match) {
     return hasDiagnosticProp<Duration>('show duration', match);
@@ -194,7 +194,7 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// Expects that showDuration of [Tooltip] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().existsOnce().hasShowDuration(Duration(seconds: 30));
+  /// spot<Tooltip>().existsOnce().hasShowDuration(Duration(seconds: 30));
   /// ```
   WidgetMatcher<Tooltip> hasShowDuration(Duration? value) {
     return hasDiagnosticProp<Duration>('show duration',
@@ -204,7 +204,7 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// Expects that triggerMode of [Tooltip] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().existsOnce().hasTriggerModeWhere((it) => it.equals(TooltipTriggerMode.values.first));
+  /// spot<Tooltip>().existsOnce().hasTriggerModeWhere((it) => it.equals(TooltipTriggerMode.values.first));
   /// ```
   WidgetMatcher<Tooltip> hasTriggerModeWhere(
       MatchProp<TooltipTriggerMode> match) {
@@ -214,7 +214,7 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// Expects that triggerMode of [Tooltip] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().existsOnce().hasTriggerMode(TooltipTriggerMode.values.first);
+  /// spot<Tooltip>().existsOnce().hasTriggerMode(TooltipTriggerMode.values.first);
   /// ```
   WidgetMatcher<Tooltip> hasTriggerMode(TooltipTriggerMode? value) {
     return hasDiagnosticProp<TooltipTriggerMode>(
@@ -224,7 +224,7 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// Expects that enableFeedback of [Tooltip] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().existsOnce().hasEnableFeedbackWhere((it) => it.isTrue());
+  /// spot<Tooltip>().existsOnce().hasEnableFeedbackWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<Tooltip> hasEnableFeedbackWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('enableFeedback', match);
@@ -233,7 +233,7 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// Expects that enableFeedback of [Tooltip] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().existsOnce().hasEnableFeedback(true);
+  /// spot<Tooltip>().existsOnce().hasEnableFeedback(true);
   /// ```
   WidgetMatcher<Tooltip> hasEnableFeedback(bool? value) {
     return hasDiagnosticProp<bool>('enableFeedback',
@@ -243,7 +243,7 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// Expects that textAlign of [Tooltip] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().existsOnce().hasTextAlignWhere((it) => it.equals(TextAlign.values.first));
+  /// spot<Tooltip>().existsOnce().hasTextAlignWhere((it) => it.equals(TextAlign.values.first));
   /// ```
   WidgetMatcher<Tooltip> hasTextAlignWhere(MatchProp<TextAlign> match) {
     return hasDiagnosticProp<TextAlign>('textAlign', match);
@@ -252,7 +252,7 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// Expects that textAlign of [Tooltip] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().existsOnce().hasTextAlign(TextAlign.values.first);
+  /// spot<Tooltip>().existsOnce().hasTextAlign(TextAlign.values.first);
   /// ```
   WidgetMatcher<Tooltip> hasTextAlign(TextAlign? value) {
     return hasDiagnosticProp<TextAlign>(
@@ -265,7 +265,7 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   /// Creates a [WidgetSelector] that finds all [Tooltip] where message matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().whereMessage((it) => it.equals('foo')).existsOnce();
+  /// spot<Tooltip>().whereMessage((it) => it.equals('foo')).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Tooltip> whereMessage(MatchProp<String> match) {
@@ -275,7 +275,7 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   /// Creates a [WidgetSelector] that finds all [Tooltip] where message equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().withMessage('foo').existsOnce();
+  /// spot<Tooltip>().withMessage('foo').existsOnce();
   /// ```
   @useResult
   WidgetSelector<Tooltip> withMessage(String? value) {
@@ -286,7 +286,7 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   /// Creates a [WidgetSelector] that finds all [Tooltip] where richMessage matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().whereRichMessage((it) => it.equals('foo')).existsOnce();
+  /// spot<Tooltip>().whereRichMessage((it) => it.equals('foo')).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Tooltip> whereRichMessage(MatchProp<String> match) {
@@ -296,7 +296,7 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   /// Creates a [WidgetSelector] that finds all [Tooltip] where richMessage equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().withRichMessage('foo').existsOnce();
+  /// spot<Tooltip>().withRichMessage('foo').existsOnce();
   /// ```
   @useResult
   WidgetSelector<Tooltip> withRichMessage(String? value) {
@@ -307,7 +307,7 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   /// Creates a [WidgetSelector] that finds all [Tooltip] where height matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().whereHeight((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// spot<Tooltip>().whereHeight((it) => it.isGreaterThan(10.5)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Tooltip> whereHeight(MatchProp<double> match) {
@@ -317,7 +317,7 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   /// Creates a [WidgetSelector] that finds all [Tooltip] where height equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().withHeight(10.5).existsOnce();
+  /// spot<Tooltip>().withHeight(10.5).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Tooltip> withHeight(double? value) {
@@ -328,7 +328,7 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   /// Creates a [WidgetSelector] that finds all [Tooltip] where padding matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().wherePadding((it) => it.equals(EdgeInsets.all(8.0))).existsOnce();
+  /// spot<Tooltip>().wherePadding((it) => it.equals(EdgeInsets.all(8.0))).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Tooltip> wherePadding(MatchProp<EdgeInsetsGeometry> match) {
@@ -338,7 +338,7 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   /// Creates a [WidgetSelector] that finds all [Tooltip] where padding equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().withPadding(EdgeInsets.all(8.0)).existsOnce();
+  /// spot<Tooltip>().withPadding(EdgeInsets.all(8.0)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Tooltip> withPadding(EdgeInsetsGeometry? value) {
@@ -349,7 +349,7 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   /// Creates a [WidgetSelector] that finds all [Tooltip] where margin matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().whereMargin((it) => it.equals(EdgeInsets.all(8.0))).existsOnce();
+  /// spot<Tooltip>().whereMargin((it) => it.equals(EdgeInsets.all(8.0))).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Tooltip> whereMargin(MatchProp<EdgeInsetsGeometry> match) {
@@ -359,7 +359,7 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   /// Creates a [WidgetSelector] that finds all [Tooltip] where margin equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().withMargin(EdgeInsets.all(8.0)).existsOnce();
+  /// spot<Tooltip>().withMargin(EdgeInsets.all(8.0)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Tooltip> withMargin(EdgeInsetsGeometry? value) {
@@ -370,7 +370,7 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   /// Creates a [WidgetSelector] that finds all [Tooltip] where verticalOffset matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().whereVerticalOffset((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// spot<Tooltip>().whereVerticalOffset((it) => it.isGreaterThan(10.5)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Tooltip> whereVerticalOffset(MatchProp<double> match) {
@@ -380,7 +380,7 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   /// Creates a [WidgetSelector] that finds all [Tooltip] where verticalOffset equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().withVerticalOffset(10.5).existsOnce();
+  /// spot<Tooltip>().withVerticalOffset(10.5).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Tooltip> withVerticalOffset(double? value) {
@@ -391,7 +391,7 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   /// Creates a [WidgetSelector] that finds all [Tooltip] where position matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().wherePosition((it) => it.isTrue()).existsOnce();
+  /// spot<Tooltip>().wherePosition((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Tooltip> wherePosition(MatchProp<bool> match) {
@@ -401,7 +401,7 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   /// Creates a [WidgetSelector] that finds all [Tooltip] where position equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().withPosition(true).existsOnce();
+  /// spot<Tooltip>().withPosition(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Tooltip> withPosition(bool? value) {
@@ -412,7 +412,7 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   /// Creates a [WidgetSelector] that finds all [Tooltip] where semantics matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().whereSemantics((it) => it.isTrue()).existsOnce();
+  /// spot<Tooltip>().whereSemantics((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Tooltip> whereSemantics(MatchProp<bool> match) {
@@ -422,7 +422,7 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   /// Creates a [WidgetSelector] that finds all [Tooltip] where semantics equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().withSemantics(true).existsOnce();
+  /// spot<Tooltip>().withSemantics(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Tooltip> withSemantics(bool? value) {
@@ -433,7 +433,7 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   /// Creates a [WidgetSelector] that finds all [Tooltip] where waitDuration matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().whereWaitDuration((it) => it.equals(Duration(seconds: 30))).existsOnce();
+  /// spot<Tooltip>().whereWaitDuration((it) => it.equals(Duration(seconds: 30))).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Tooltip> whereWaitDuration(MatchProp<Duration> match) {
@@ -443,7 +443,7 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   /// Creates a [WidgetSelector] that finds all [Tooltip] where waitDuration equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().withWaitDuration(Duration(seconds: 30)).existsOnce();
+  /// spot<Tooltip>().withWaitDuration(Duration(seconds: 30)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Tooltip> withWaitDuration(Duration? value) {
@@ -454,7 +454,7 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   /// Creates a [WidgetSelector] that finds all [Tooltip] where showDuration matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().whereShowDuration((it) => it.equals(Duration(seconds: 30))).existsOnce();
+  /// spot<Tooltip>().whereShowDuration((it) => it.equals(Duration(seconds: 30))).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Tooltip> whereShowDuration(MatchProp<Duration> match) {
@@ -464,7 +464,7 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   /// Creates a [WidgetSelector] that finds all [Tooltip] where showDuration equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().withShowDuration(Duration(seconds: 30)).existsOnce();
+  /// spot<Tooltip>().withShowDuration(Duration(seconds: 30)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Tooltip> withShowDuration(Duration? value) {
@@ -475,7 +475,7 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   /// Creates a [WidgetSelector] that finds all [Tooltip] where triggerMode matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().whereTriggerMode((it) => it.equals(TooltipTriggerMode.values.first)).existsOnce();
+  /// spot<Tooltip>().whereTriggerMode((it) => it.equals(TooltipTriggerMode.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Tooltip> whereTriggerMode(
@@ -486,7 +486,7 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   /// Creates a [WidgetSelector] that finds all [Tooltip] where triggerMode equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().withTriggerMode(TooltipTriggerMode.values.first).existsOnce();
+  /// spot<Tooltip>().withTriggerMode(TooltipTriggerMode.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Tooltip> withTriggerMode(TooltipTriggerMode? value) {
@@ -497,7 +497,7 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   /// Creates a [WidgetSelector] that finds all [Tooltip] where enableFeedback matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().whereEnableFeedback((it) => it.isTrue()).existsOnce();
+  /// spot<Tooltip>().whereEnableFeedback((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Tooltip> whereEnableFeedback(MatchProp<bool> match) {
@@ -507,7 +507,7 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   /// Creates a [WidgetSelector] that finds all [Tooltip] where enableFeedback equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().withEnableFeedback(true).existsOnce();
+  /// spot<Tooltip>().withEnableFeedback(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Tooltip> withEnableFeedback(bool? value) {
@@ -518,7 +518,7 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   /// Creates a [WidgetSelector] that finds all [Tooltip] where textAlign matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().whereTextAlign((it) => it.equals(TextAlign.values.first)).existsOnce();
+  /// spot<Tooltip>().whereTextAlign((it) => it.equals(TextAlign.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Tooltip> whereTextAlign(MatchProp<TextAlign> match) {
@@ -528,7 +528,7 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   /// Creates a [WidgetSelector] that finds all [Tooltip] where textAlign equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Tooltip>().withTextAlign(TextAlign.values.first).existsOnce();
+  /// spot<Tooltip>().withTextAlign(TextAlign.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Tooltip> withTextAlign(TextAlign? value) {

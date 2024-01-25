@@ -14,7 +14,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that leading of [ListTile] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasLeadingWhere((it) => it.equals(Container()));
+  /// spot<ListTile>().existsOnce().hasLeadingWhere((it) => it.equals(Container()));
   /// ```
   WidgetMatcher<ListTile> hasLeadingWhere(MatchProp<Widget> match) {
     return hasDiagnosticProp<Widget>('leading', match);
@@ -23,7 +23,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that leading of [ListTile] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasLeading(Container());
+  /// spot<ListTile>().existsOnce().hasLeading(Container());
   /// ```
   WidgetMatcher<ListTile> hasLeading(Widget? value) {
     return hasDiagnosticProp<Widget>(
@@ -33,7 +33,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that title of [ListTile] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasTitleWhere((it) => it.equals(Container()));
+  /// spot<ListTile>().existsOnce().hasTitleWhere((it) => it.equals(Container()));
   /// ```
   WidgetMatcher<ListTile> hasTitleWhere(MatchProp<Widget> match) {
     return hasDiagnosticProp<Widget>('title', match);
@@ -42,7 +42,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that title of [ListTile] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasTitle(Container());
+  /// spot<ListTile>().existsOnce().hasTitle(Container());
   /// ```
   WidgetMatcher<ListTile> hasTitle(Widget? value) {
     return hasDiagnosticProp<Widget>(
@@ -52,7 +52,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that subtitle of [ListTile] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasSubtitleWhere((it) => it.equals(Container()));
+  /// spot<ListTile>().existsOnce().hasSubtitleWhere((it) => it.equals(Container()));
   /// ```
   WidgetMatcher<ListTile> hasSubtitleWhere(MatchProp<Widget> match) {
     return hasDiagnosticProp<Widget>('subtitle', match);
@@ -61,7 +61,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that subtitle of [ListTile] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasSubtitle(Container());
+  /// spot<ListTile>().existsOnce().hasSubtitle(Container());
   /// ```
   WidgetMatcher<ListTile> hasSubtitle(Widget? value) {
     return hasDiagnosticProp<Widget>(
@@ -71,7 +71,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that trailing of [ListTile] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasTrailingWhere((it) => it.equals(Container()));
+  /// spot<ListTile>().existsOnce().hasTrailingWhere((it) => it.equals(Container()));
   /// ```
   WidgetMatcher<ListTile> hasTrailingWhere(MatchProp<Widget> match) {
     return hasDiagnosticProp<Widget>('trailing', match);
@@ -80,7 +80,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that trailing of [ListTile] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasTrailing(Container());
+  /// spot<ListTile>().existsOnce().hasTrailing(Container());
   /// ```
   WidgetMatcher<ListTile> hasTrailing(Widget? value) {
     return hasDiagnosticProp<Widget>(
@@ -90,7 +90,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that isThreeLine of [ListTile] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasIsThreeLineWhere((it) => it.isTrue());
+  /// spot<ListTile>().existsOnce().hasIsThreeLineWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<ListTile> hasIsThreeLineWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('isThreeLine', match);
@@ -99,7 +99,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that isThreeLine of [ListTile] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasIsThreeLine(true);
+  /// spot<ListTile>().existsOnce().hasIsThreeLine(true);
   /// ```
   WidgetMatcher<ListTile> hasIsThreeLine(bool? value) {
     return hasDiagnosticProp<bool>(
@@ -109,7 +109,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that dense of [ListTile] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasDenseWhere((it) => it.isTrue());
+  /// spot<ListTile>().existsOnce().hasDenseWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<ListTile> hasDenseWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('dense', match);
@@ -118,7 +118,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that dense of [ListTile] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasDense(true);
+  /// spot<ListTile>().existsOnce().hasDense(true);
   /// ```
   WidgetMatcher<ListTile> hasDense(bool? value) {
     return hasDiagnosticProp<bool>(
@@ -128,7 +128,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that visualDensity of [ListTile] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasVisualDensityWhere((it) => it.equals(VisualDensity(horizontal: 1.0,vertical: 1.0)));
+  /// spot<ListTile>().existsOnce().hasVisualDensityWhere((it) => it.equals(VisualDensity(horizontal: 1.0,vertical: 1.0)));
   /// ```
   WidgetMatcher<ListTile> hasVisualDensityWhere(
       MatchProp<VisualDensity> match) {
@@ -138,7 +138,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that visualDensity of [ListTile] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasVisualDensity(VisualDensity(horizontal: 1.0,vertical: 1.0));
+  /// spot<ListTile>().existsOnce().hasVisualDensity(VisualDensity(horizontal: 1.0,vertical: 1.0));
   /// ```
   WidgetMatcher<ListTile> hasVisualDensity(VisualDensity? value) {
     return hasDiagnosticProp<VisualDensity>('visualDensity',
@@ -148,7 +148,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that shape of [ListTile] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasShapeWhere((it) => it.equals(RoundedRectangleBorder()));
+  /// spot<ListTile>().existsOnce().hasShapeWhere((it) => it.equals(RoundedRectangleBorder()));
   /// ```
   WidgetMatcher<ListTile> hasShapeWhere(MatchProp<ShapeBorder> match) {
     return hasDiagnosticProp<ShapeBorder>('shape', match);
@@ -157,7 +157,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that shape of [ListTile] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasShape(RoundedRectangleBorder());
+  /// spot<ListTile>().existsOnce().hasShape(RoundedRectangleBorder());
   /// ```
   WidgetMatcher<ListTile> hasShape(ShapeBorder? value) {
     return hasDiagnosticProp<ShapeBorder>(
@@ -167,7 +167,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that style of [ListTile] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasStyleWhere((it) => it.equals(ListTileStyle.values.first));
+  /// spot<ListTile>().existsOnce().hasStyleWhere((it) => it.equals(ListTileStyle.values.first));
   /// ```
   WidgetMatcher<ListTile> hasStyleWhere(MatchProp<ListTileStyle> match) {
     return hasDiagnosticProp<ListTileStyle>('style', match);
@@ -176,7 +176,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that style of [ListTile] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasStyle(ListTileStyle.values.first);
+  /// spot<ListTile>().existsOnce().hasStyle(ListTileStyle.values.first);
   /// ```
   WidgetMatcher<ListTile> hasStyle(ListTileStyle? value) {
     return hasDiagnosticProp<ListTileStyle>(
@@ -186,7 +186,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that selectedColor of [ListTile] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasSelectedColorWhere((it) => it.equals(Colors.red));
+  /// spot<ListTile>().existsOnce().hasSelectedColorWhere((it) => it.equals(Colors.red));
   /// ```
   WidgetMatcher<ListTile> hasSelectedColorWhere(MatchProp<Color> match) {
     return hasDiagnosticProp<Color>('selectedColor', match);
@@ -195,7 +195,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that selectedColor of [ListTile] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasSelectedColor(Colors.red);
+  /// spot<ListTile>().existsOnce().hasSelectedColor(Colors.red);
   /// ```
   WidgetMatcher<ListTile> hasSelectedColor(Color? value) {
     return hasDiagnosticProp<Color>('selectedColor',
@@ -205,7 +205,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that iconColor of [ListTile] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasIconColorWhere((it) => it.equals(Colors.red));
+  /// spot<ListTile>().existsOnce().hasIconColorWhere((it) => it.equals(Colors.red));
   /// ```
   WidgetMatcher<ListTile> hasIconColorWhere(MatchProp<Color> match) {
     return hasDiagnosticProp<Color>('iconColor', match);
@@ -214,7 +214,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that iconColor of [ListTile] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasIconColor(Colors.red);
+  /// spot<ListTile>().existsOnce().hasIconColor(Colors.red);
   /// ```
   WidgetMatcher<ListTile> hasIconColor(Color? value) {
     return hasDiagnosticProp<Color>(
@@ -224,7 +224,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that textColor of [ListTile] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasTextColorWhere((it) => it.equals(Colors.red));
+  /// spot<ListTile>().existsOnce().hasTextColorWhere((it) => it.equals(Colors.red));
   /// ```
   WidgetMatcher<ListTile> hasTextColorWhere(MatchProp<Color> match) {
     return hasDiagnosticProp<Color>('textColor', match);
@@ -233,7 +233,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that textColor of [ListTile] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasTextColor(Colors.red);
+  /// spot<ListTile>().existsOnce().hasTextColor(Colors.red);
   /// ```
   WidgetMatcher<ListTile> hasTextColor(Color? value) {
     return hasDiagnosticProp<Color>(
@@ -243,7 +243,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that titleTextStyle of [ListTile] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasTitleTextStyleWhere((it) => it.equals(TextStyle()));
+  /// spot<ListTile>().existsOnce().hasTitleTextStyleWhere((it) => it.equals(TextStyle()));
   /// ```
   WidgetMatcher<ListTile> hasTitleTextStyleWhere(MatchProp<TextStyle> match) {
     return hasDiagnosticProp<TextStyle>('titleTextStyle', match);
@@ -252,7 +252,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that titleTextStyle of [ListTile] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasTitleTextStyle(TextStyle());
+  /// spot<ListTile>().existsOnce().hasTitleTextStyle(TextStyle());
   /// ```
   WidgetMatcher<ListTile> hasTitleTextStyle(TextStyle? value) {
     return hasDiagnosticProp<TextStyle>('titleTextStyle',
@@ -262,7 +262,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that subtitleTextStyle of [ListTile] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasSubtitleTextStyleWhere((it) => it.equals(TextStyle()));
+  /// spot<ListTile>().existsOnce().hasSubtitleTextStyleWhere((it) => it.equals(TextStyle()));
   /// ```
   WidgetMatcher<ListTile> hasSubtitleTextStyleWhere(
       MatchProp<TextStyle> match) {
@@ -272,7 +272,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that subtitleTextStyle of [ListTile] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasSubtitleTextStyle(TextStyle());
+  /// spot<ListTile>().existsOnce().hasSubtitleTextStyle(TextStyle());
   /// ```
   WidgetMatcher<ListTile> hasSubtitleTextStyle(TextStyle? value) {
     return hasDiagnosticProp<TextStyle>('subtitleTextStyle',
@@ -282,7 +282,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that leadingAndTrailingTextStyle of [ListTile] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasLeadingAndTrailingTextStyleWhere((it) => it.equals(TextStyle()));
+  /// spot<ListTile>().existsOnce().hasLeadingAndTrailingTextStyleWhere((it) => it.equals(TextStyle()));
   /// ```
   WidgetMatcher<ListTile> hasLeadingAndTrailingTextStyleWhere(
       MatchProp<TextStyle> match) {
@@ -292,7 +292,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that leadingAndTrailingTextStyle of [ListTile] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasLeadingAndTrailingTextStyle(TextStyle());
+  /// spot<ListTile>().existsOnce().hasLeadingAndTrailingTextStyle(TextStyle());
   /// ```
   WidgetMatcher<ListTile> hasLeadingAndTrailingTextStyle(TextStyle? value) {
     return hasDiagnosticProp<TextStyle>('leadingAndTrailingTextStyle',
@@ -302,7 +302,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that contentPadding of [ListTile] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasContentPaddingWhere((it) => it.equals(EdgeInsets.all(8.0)));
+  /// spot<ListTile>().existsOnce().hasContentPaddingWhere((it) => it.equals(EdgeInsets.all(8.0)));
   /// ```
   WidgetMatcher<ListTile> hasContentPaddingWhere(
       MatchProp<EdgeInsetsGeometry> match) {
@@ -312,7 +312,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that contentPadding of [ListTile] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasContentPadding(EdgeInsets.all(8.0));
+  /// spot<ListTile>().existsOnce().hasContentPadding(EdgeInsets.all(8.0));
   /// ```
   WidgetMatcher<ListTile> hasContentPadding(EdgeInsetsGeometry? value) {
     return hasDiagnosticProp<EdgeInsetsGeometry>('contentPadding',
@@ -322,7 +322,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that enabled of [ListTile] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().isEnabledWhere((it) => it.isTrue());
+  /// spot<ListTile>().existsOnce().isEnabledWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<ListTile> isEnabledWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('enabled', match);
@@ -331,7 +331,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that enabled of [ListTile] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().isEnabled(true);
+  /// spot<ListTile>().existsOnce().isEnabled(true);
   /// ```
   WidgetMatcher<ListTile> isEnabled(bool? value) {
     return hasDiagnosticProp<bool>(
@@ -341,7 +341,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that onTap of [ListTile] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasOnTapWhere((it) => it.equals(() {}));
+  /// spot<ListTile>().existsOnce().hasOnTapWhere((it) => it.equals(() {}));
   /// ```
   WidgetMatcher<ListTile> hasOnTapWhere(MatchProp<Function> match) {
     return hasDiagnosticProp<Function>('onTap', match);
@@ -350,7 +350,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that onTap of [ListTile] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasOnTap(() {});
+  /// spot<ListTile>().existsOnce().hasOnTap(() {});
   /// ```
   WidgetMatcher<ListTile> hasOnTap(Function? value) {
     return hasDiagnosticProp<Function>(
@@ -360,7 +360,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that onLongPress of [ListTile] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasOnLongPressWhere((it) => it.equals(() {}));
+  /// spot<ListTile>().existsOnce().hasOnLongPressWhere((it) => it.equals(() {}));
   /// ```
   WidgetMatcher<ListTile> hasOnLongPressWhere(MatchProp<Function> match) {
     return hasDiagnosticProp<Function>('onLongPress', match);
@@ -369,7 +369,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that onLongPress of [ListTile] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasOnLongPress(() {});
+  /// spot<ListTile>().existsOnce().hasOnLongPress(() {});
   /// ```
   WidgetMatcher<ListTile> hasOnLongPress(Function? value) {
     return hasDiagnosticProp<Function>(
@@ -379,7 +379,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that mouseCursor of [ListTile] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasMouseCursorWhere((it) => it.equals(SystemMouseCursors.click));
+  /// spot<ListTile>().existsOnce().hasMouseCursorWhere((it) => it.equals(SystemMouseCursors.click));
   /// ```
   WidgetMatcher<ListTile> hasMouseCursorWhere(MatchProp<MouseCursor> match) {
     return hasDiagnosticProp<MouseCursor>('mouseCursor', match);
@@ -388,7 +388,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that mouseCursor of [ListTile] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasMouseCursor(SystemMouseCursors.click);
+  /// spot<ListTile>().existsOnce().hasMouseCursor(SystemMouseCursors.click);
   /// ```
   WidgetMatcher<ListTile> hasMouseCursor(MouseCursor? value) {
     return hasDiagnosticProp<MouseCursor>(
@@ -398,7 +398,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that selected of [ListTile] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasSelectedWhere((it) => it.isTrue());
+  /// spot<ListTile>().existsOnce().hasSelectedWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<ListTile> hasSelectedWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('selected', match);
@@ -407,7 +407,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that selected of [ListTile] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasSelected(true);
+  /// spot<ListTile>().existsOnce().hasSelected(true);
   /// ```
   WidgetMatcher<ListTile> hasSelected(bool? value) {
     return hasDiagnosticProp<bool>(
@@ -417,7 +417,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that focusColor of [ListTile] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasFocusColorWhere((it) => it.equals(Colors.red));
+  /// spot<ListTile>().existsOnce().hasFocusColorWhere((it) => it.equals(Colors.red));
   /// ```
   WidgetMatcher<ListTile> hasFocusColorWhere(MatchProp<Color> match) {
     return hasDiagnosticProp<Color>('focusColor', match);
@@ -426,7 +426,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that focusColor of [ListTile] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasFocusColor(Colors.red);
+  /// spot<ListTile>().existsOnce().hasFocusColor(Colors.red);
   /// ```
   WidgetMatcher<ListTile> hasFocusColor(Color? value) {
     return hasDiagnosticProp<Color>(
@@ -436,7 +436,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that hoverColor of [ListTile] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasHoverColorWhere((it) => it.equals(Colors.red));
+  /// spot<ListTile>().existsOnce().hasHoverColorWhere((it) => it.equals(Colors.red));
   /// ```
   WidgetMatcher<ListTile> hasHoverColorWhere(MatchProp<Color> match) {
     return hasDiagnosticProp<Color>('hoverColor', match);
@@ -445,7 +445,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that hoverColor of [ListTile] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasHoverColor(Colors.red);
+  /// spot<ListTile>().existsOnce().hasHoverColor(Colors.red);
   /// ```
   WidgetMatcher<ListTile> hasHoverColor(Color? value) {
     return hasDiagnosticProp<Color>(
@@ -455,7 +455,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that focusNode of [ListTile] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasFocusNodeWhere((it) => it.equals(FocusNode()));
+  /// spot<ListTile>().existsOnce().hasFocusNodeWhere((it) => it.equals(FocusNode()));
   /// ```
   WidgetMatcher<ListTile> hasFocusNodeWhere(MatchProp<FocusNode> match) {
     return hasDiagnosticProp<FocusNode>('focusNode', match);
@@ -464,7 +464,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that focusNode of [ListTile] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasFocusNode(FocusNode());
+  /// spot<ListTile>().existsOnce().hasFocusNode(FocusNode());
   /// ```
   WidgetMatcher<ListTile> hasFocusNode(FocusNode? value) {
     return hasDiagnosticProp<FocusNode>(
@@ -474,7 +474,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that autofocus of [ListTile] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasAutofocusWhere((it) => it.isTrue());
+  /// spot<ListTile>().existsOnce().hasAutofocusWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<ListTile> hasAutofocusWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('autofocus', match);
@@ -483,7 +483,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that autofocus of [ListTile] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasAutofocus(true);
+  /// spot<ListTile>().existsOnce().hasAutofocus(true);
   /// ```
   WidgetMatcher<ListTile> hasAutofocus(bool? value) {
     return hasDiagnosticProp<bool>(
@@ -493,7 +493,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that tileColor of [ListTile] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasTileColorWhere((it) => it.equals(Colors.red));
+  /// spot<ListTile>().existsOnce().hasTileColorWhere((it) => it.equals(Colors.red));
   /// ```
   WidgetMatcher<ListTile> hasTileColorWhere(MatchProp<Color> match) {
     return hasDiagnosticProp<Color>('tileColor', match);
@@ -502,7 +502,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that tileColor of [ListTile] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasTileColor(Colors.red);
+  /// spot<ListTile>().existsOnce().hasTileColor(Colors.red);
   /// ```
   WidgetMatcher<ListTile> hasTileColor(Color? value) {
     return hasDiagnosticProp<Color>(
@@ -512,7 +512,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that selectedTileColor of [ListTile] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasSelectedTileColorWhere((it) => it.equals(Colors.red));
+  /// spot<ListTile>().existsOnce().hasSelectedTileColorWhere((it) => it.equals(Colors.red));
   /// ```
   WidgetMatcher<ListTile> hasSelectedTileColorWhere(MatchProp<Color> match) {
     return hasDiagnosticProp<Color>('selectedTileColor', match);
@@ -521,7 +521,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that selectedTileColor of [ListTile] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasSelectedTileColor(Colors.red);
+  /// spot<ListTile>().existsOnce().hasSelectedTileColor(Colors.red);
   /// ```
   WidgetMatcher<ListTile> hasSelectedTileColor(Color? value) {
     return hasDiagnosticProp<Color>('selectedTileColor',
@@ -531,7 +531,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that enableFeedback of [ListTile] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasEnableFeedbackWhere((it) => it.isTrue());
+  /// spot<ListTile>().existsOnce().hasEnableFeedbackWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<ListTile> hasEnableFeedbackWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('enableFeedback', match);
@@ -540,7 +540,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that enableFeedback of [ListTile] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasEnableFeedback(true);
+  /// spot<ListTile>().existsOnce().hasEnableFeedback(true);
   /// ```
   WidgetMatcher<ListTile> hasEnableFeedback(bool? value) {
     return hasDiagnosticProp<bool>('enableFeedback',
@@ -550,7 +550,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that horizontalTitleGap of [ListTile] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasHorizontalTitleGapWhere((it) => it.isGreaterThan(10.5));
+  /// spot<ListTile>().existsOnce().hasHorizontalTitleGapWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<ListTile> hasHorizontalTitleGapWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('horizontalTitleGap', match);
@@ -559,7 +559,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that horizontalTitleGap of [ListTile] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasHorizontalTitleGap(10.5);
+  /// spot<ListTile>().existsOnce().hasHorizontalTitleGap(10.5);
   /// ```
   WidgetMatcher<ListTile> hasHorizontalTitleGap(double? value) {
     return hasDiagnosticProp<double>('horizontalTitleGap',
@@ -569,7 +569,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that minVerticalPadding of [ListTile] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasMinVerticalPaddingWhere((it) => it.isGreaterThan(10.5));
+  /// spot<ListTile>().existsOnce().hasMinVerticalPaddingWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<ListTile> hasMinVerticalPaddingWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('minVerticalPadding', match);
@@ -578,7 +578,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that minVerticalPadding of [ListTile] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasMinVerticalPadding(10.5);
+  /// spot<ListTile>().existsOnce().hasMinVerticalPadding(10.5);
   /// ```
   WidgetMatcher<ListTile> hasMinVerticalPadding(double? value) {
     return hasDiagnosticProp<double>('minVerticalPadding',
@@ -588,7 +588,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that minLeadingWidth of [ListTile] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasMinLeadingWidthWhere((it) => it.isGreaterThan(10.5));
+  /// spot<ListTile>().existsOnce().hasMinLeadingWidthWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<ListTile> hasMinLeadingWidthWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('minLeadingWidth', match);
@@ -597,7 +597,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that minLeadingWidth of [ListTile] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasMinLeadingWidth(10.5);
+  /// spot<ListTile>().existsOnce().hasMinLeadingWidth(10.5);
   /// ```
   WidgetMatcher<ListTile> hasMinLeadingWidth(double? value) {
     return hasDiagnosticProp<double>('minLeadingWidth',
@@ -607,7 +607,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that titleAlignment of [ListTile] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasTitleAlignmentWhere((it) => it.equals(ListTileTitleAlignment.values.first));
+  /// spot<ListTile>().existsOnce().hasTitleAlignmentWhere((it) => it.equals(ListTileTitleAlignment.values.first));
   /// ```
   WidgetMatcher<ListTile> hasTitleAlignmentWhere(
       MatchProp<ListTileTitleAlignment> match) {
@@ -617,7 +617,7 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// Expects that titleAlignment of [ListTile] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().existsOnce().hasTitleAlignment(ListTileTitleAlignment.values.first);
+  /// spot<ListTile>().existsOnce().hasTitleAlignment(ListTileTitleAlignment.values.first);
   /// ```
   WidgetMatcher<ListTile> hasTitleAlignment(ListTileTitleAlignment? value) {
     return hasDiagnosticProp<ListTileTitleAlignment>('titleAlignment',
@@ -630,7 +630,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where leading matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().whereLeading((it) => it.equals(Container())).existsOnce();
+  /// spot<ListTile>().whereLeading((it) => it.equals(Container())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> whereLeading(MatchProp<Widget> match) {
@@ -640,7 +640,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where leading equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().withLeading(Container()).existsOnce();
+  /// spot<ListTile>().withLeading(Container()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> withLeading(Widget? value) {
@@ -651,7 +651,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where title matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().whereTitle((it) => it.equals(Container())).existsOnce();
+  /// spot<ListTile>().whereTitle((it) => it.equals(Container())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> whereTitle(MatchProp<Widget> match) {
@@ -661,7 +661,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where title equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().withTitle(Container()).existsOnce();
+  /// spot<ListTile>().withTitle(Container()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> withTitle(Widget? value) {
@@ -672,7 +672,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where subtitle matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().whereSubtitle((it) => it.equals(Container())).existsOnce();
+  /// spot<ListTile>().whereSubtitle((it) => it.equals(Container())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> whereSubtitle(MatchProp<Widget> match) {
@@ -682,7 +682,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where subtitle equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().withSubtitle(Container()).existsOnce();
+  /// spot<ListTile>().withSubtitle(Container()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> withSubtitle(Widget? value) {
@@ -693,7 +693,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where trailing matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().whereTrailing((it) => it.equals(Container())).existsOnce();
+  /// spot<ListTile>().whereTrailing((it) => it.equals(Container())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> whereTrailing(MatchProp<Widget> match) {
@@ -703,7 +703,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where trailing equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().withTrailing(Container()).existsOnce();
+  /// spot<ListTile>().withTrailing(Container()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> withTrailing(Widget? value) {
@@ -714,7 +714,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where isThreeLine matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().whereIsThreeLine((it) => it.isTrue()).existsOnce();
+  /// spot<ListTile>().whereIsThreeLine((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> whereIsThreeLine(MatchProp<bool> match) {
@@ -724,7 +724,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where isThreeLine equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().withIsThreeLine(true).existsOnce();
+  /// spot<ListTile>().withIsThreeLine(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> withIsThreeLine(bool? value) {
@@ -735,7 +735,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where dense matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().whereDense((it) => it.isTrue()).existsOnce();
+  /// spot<ListTile>().whereDense((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> whereDense(MatchProp<bool> match) {
@@ -745,7 +745,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where dense equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().withDense(true).existsOnce();
+  /// spot<ListTile>().withDense(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> withDense(bool? value) {
@@ -756,7 +756,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where visualDensity matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().whereVisualDensity((it) => it.equals(VisualDensity(horizontal: 1.0,vertical: 1.0))).existsOnce();
+  /// spot<ListTile>().whereVisualDensity((it) => it.equals(VisualDensity(horizontal: 1.0,vertical: 1.0))).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> whereVisualDensity(MatchProp<VisualDensity> match) {
@@ -766,7 +766,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where visualDensity equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().withVisualDensity(VisualDensity(horizontal: 1.0,vertical: 1.0)).existsOnce();
+  /// spot<ListTile>().withVisualDensity(VisualDensity(horizontal: 1.0,vertical: 1.0)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> withVisualDensity(VisualDensity? value) {
@@ -777,7 +777,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where shape matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().whereShape((it) => it.equals(RoundedRectangleBorder())).existsOnce();
+  /// spot<ListTile>().whereShape((it) => it.equals(RoundedRectangleBorder())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> whereShape(MatchProp<ShapeBorder> match) {
@@ -787,7 +787,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where shape equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().withShape(RoundedRectangleBorder()).existsOnce();
+  /// spot<ListTile>().withShape(RoundedRectangleBorder()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> withShape(ShapeBorder? value) {
@@ -798,7 +798,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where style matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().whereStyle((it) => it.equals(ListTileStyle.values.first)).existsOnce();
+  /// spot<ListTile>().whereStyle((it) => it.equals(ListTileStyle.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> whereStyle(MatchProp<ListTileStyle> match) {
@@ -808,7 +808,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where style equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().withStyle(ListTileStyle.values.first).existsOnce();
+  /// spot<ListTile>().withStyle(ListTileStyle.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> withStyle(ListTileStyle? value) {
@@ -819,7 +819,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where selectedColor matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().whereSelectedColor((it) => it.equals(Colors.red)).existsOnce();
+  /// spot<ListTile>().whereSelectedColor((it) => it.equals(Colors.red)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> whereSelectedColor(MatchProp<Color> match) {
@@ -829,7 +829,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where selectedColor equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().withSelectedColor(Colors.red).existsOnce();
+  /// spot<ListTile>().withSelectedColor(Colors.red).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> withSelectedColor(Color? value) {
@@ -840,7 +840,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where iconColor matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().whereIconColor((it) => it.equals(Colors.red)).existsOnce();
+  /// spot<ListTile>().whereIconColor((it) => it.equals(Colors.red)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> whereIconColor(MatchProp<Color> match) {
@@ -850,7 +850,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where iconColor equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().withIconColor(Colors.red).existsOnce();
+  /// spot<ListTile>().withIconColor(Colors.red).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> withIconColor(Color? value) {
@@ -861,7 +861,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where textColor matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().whereTextColor((it) => it.equals(Colors.red)).existsOnce();
+  /// spot<ListTile>().whereTextColor((it) => it.equals(Colors.red)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> whereTextColor(MatchProp<Color> match) {
@@ -871,7 +871,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where textColor equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().withTextColor(Colors.red).existsOnce();
+  /// spot<ListTile>().withTextColor(Colors.red).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> withTextColor(Color? value) {
@@ -882,7 +882,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where titleTextStyle matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().whereTitleTextStyle((it) => it.equals(TextStyle())).existsOnce();
+  /// spot<ListTile>().whereTitleTextStyle((it) => it.equals(TextStyle())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> whereTitleTextStyle(MatchProp<TextStyle> match) {
@@ -892,7 +892,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where titleTextStyle equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().withTitleTextStyle(TextStyle()).existsOnce();
+  /// spot<ListTile>().withTitleTextStyle(TextStyle()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> withTitleTextStyle(TextStyle? value) {
@@ -903,7 +903,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where subtitleTextStyle matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().whereSubtitleTextStyle((it) => it.equals(TextStyle())).existsOnce();
+  /// spot<ListTile>().whereSubtitleTextStyle((it) => it.equals(TextStyle())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> whereSubtitleTextStyle(MatchProp<TextStyle> match) {
@@ -913,7 +913,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where subtitleTextStyle equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().withSubtitleTextStyle(TextStyle()).existsOnce();
+  /// spot<ListTile>().withSubtitleTextStyle(TextStyle()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> withSubtitleTextStyle(TextStyle? value) {
@@ -924,7 +924,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where leadingAndTrailingTextStyle matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().whereLeadingAndTrailingTextStyle((it) => it.equals(TextStyle())).existsOnce();
+  /// spot<ListTile>().whereLeadingAndTrailingTextStyle((it) => it.equals(TextStyle())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> whereLeadingAndTrailingTextStyle(
@@ -935,7 +935,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where leadingAndTrailingTextStyle equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().withLeadingAndTrailingTextStyle(TextStyle()).existsOnce();
+  /// spot<ListTile>().withLeadingAndTrailingTextStyle(TextStyle()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> withLeadingAndTrailingTextStyle(TextStyle? value) {
@@ -946,7 +946,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where contentPadding matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().whereContentPadding((it) => it.equals(EdgeInsets.all(8.0))).existsOnce();
+  /// spot<ListTile>().whereContentPadding((it) => it.equals(EdgeInsets.all(8.0))).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> whereContentPadding(
@@ -957,7 +957,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where contentPadding equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().withContentPadding(EdgeInsets.all(8.0)).existsOnce();
+  /// spot<ListTile>().withContentPadding(EdgeInsets.all(8.0)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> withContentPadding(EdgeInsetsGeometry? value) {
@@ -968,7 +968,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where enabled matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().whereEnabled((it) => it.isTrue()).existsOnce();
+  /// spot<ListTile>().whereEnabled((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> whereEnabled(MatchProp<bool> match) {
@@ -978,7 +978,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where enabled equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().withEnabled(true).existsOnce();
+  /// spot<ListTile>().withEnabled(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> withEnabled(bool? value) {
@@ -989,7 +989,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where onTap matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().whereOnTap((it) => it.equals(() {})).existsOnce();
+  /// spot<ListTile>().whereOnTap((it) => it.equals(() {})).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> whereOnTap(MatchProp<Function> match) {
@@ -999,7 +999,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where onTap equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().withOnTap(() {}).existsOnce();
+  /// spot<ListTile>().withOnTap(() {}).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> withOnTap(Function? value) {
@@ -1010,7 +1010,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where onLongPress matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().whereOnLongPress((it) => it.equals(() {})).existsOnce();
+  /// spot<ListTile>().whereOnLongPress((it) => it.equals(() {})).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> whereOnLongPress(MatchProp<Function> match) {
@@ -1020,7 +1020,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where onLongPress equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().withOnLongPress(() {}).existsOnce();
+  /// spot<ListTile>().withOnLongPress(() {}).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> withOnLongPress(Function? value) {
@@ -1031,7 +1031,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where mouseCursor matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().whereMouseCursor((it) => it.equals(SystemMouseCursors.click)).existsOnce();
+  /// spot<ListTile>().whereMouseCursor((it) => it.equals(SystemMouseCursors.click)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> whereMouseCursor(MatchProp<MouseCursor> match) {
@@ -1041,7 +1041,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where mouseCursor equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().withMouseCursor(SystemMouseCursors.click).existsOnce();
+  /// spot<ListTile>().withMouseCursor(SystemMouseCursors.click).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> withMouseCursor(MouseCursor? value) {
@@ -1052,7 +1052,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where selected matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().whereSelected((it) => it.isTrue()).existsOnce();
+  /// spot<ListTile>().whereSelected((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> whereSelected(MatchProp<bool> match) {
@@ -1062,7 +1062,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where selected equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().withSelected(true).existsOnce();
+  /// spot<ListTile>().withSelected(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> withSelected(bool? value) {
@@ -1073,7 +1073,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where focusColor matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().whereFocusColor((it) => it.equals(Colors.red)).existsOnce();
+  /// spot<ListTile>().whereFocusColor((it) => it.equals(Colors.red)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> whereFocusColor(MatchProp<Color> match) {
@@ -1083,7 +1083,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where focusColor equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().withFocusColor(Colors.red).existsOnce();
+  /// spot<ListTile>().withFocusColor(Colors.red).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> withFocusColor(Color? value) {
@@ -1094,7 +1094,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where hoverColor matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().whereHoverColor((it) => it.equals(Colors.red)).existsOnce();
+  /// spot<ListTile>().whereHoverColor((it) => it.equals(Colors.red)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> whereHoverColor(MatchProp<Color> match) {
@@ -1104,7 +1104,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where hoverColor equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().withHoverColor(Colors.red).existsOnce();
+  /// spot<ListTile>().withHoverColor(Colors.red).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> withHoverColor(Color? value) {
@@ -1115,7 +1115,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where focusNode matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().whereFocusNode((it) => it.equals(FocusNode())).existsOnce();
+  /// spot<ListTile>().whereFocusNode((it) => it.equals(FocusNode())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> whereFocusNode(MatchProp<FocusNode> match) {
@@ -1125,7 +1125,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where focusNode equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().withFocusNode(FocusNode()).existsOnce();
+  /// spot<ListTile>().withFocusNode(FocusNode()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> withFocusNode(FocusNode? value) {
@@ -1136,7 +1136,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where autofocus matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().whereAutofocus((it) => it.isTrue()).existsOnce();
+  /// spot<ListTile>().whereAutofocus((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> whereAutofocus(MatchProp<bool> match) {
@@ -1146,7 +1146,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where autofocus equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().withAutofocus(true).existsOnce();
+  /// spot<ListTile>().withAutofocus(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> withAutofocus(bool? value) {
@@ -1157,7 +1157,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where tileColor matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().whereTileColor((it) => it.equals(Colors.red)).existsOnce();
+  /// spot<ListTile>().whereTileColor((it) => it.equals(Colors.red)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> whereTileColor(MatchProp<Color> match) {
@@ -1167,7 +1167,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where tileColor equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().withTileColor(Colors.red).existsOnce();
+  /// spot<ListTile>().withTileColor(Colors.red).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> withTileColor(Color? value) {
@@ -1178,7 +1178,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where selectedTileColor matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().whereSelectedTileColor((it) => it.equals(Colors.red)).existsOnce();
+  /// spot<ListTile>().whereSelectedTileColor((it) => it.equals(Colors.red)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> whereSelectedTileColor(MatchProp<Color> match) {
@@ -1188,7 +1188,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where selectedTileColor equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().withSelectedTileColor(Colors.red).existsOnce();
+  /// spot<ListTile>().withSelectedTileColor(Colors.red).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> withSelectedTileColor(Color? value) {
@@ -1199,7 +1199,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where enableFeedback matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().whereEnableFeedback((it) => it.isTrue()).existsOnce();
+  /// spot<ListTile>().whereEnableFeedback((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> whereEnableFeedback(MatchProp<bool> match) {
@@ -1209,7 +1209,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where enableFeedback equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().withEnableFeedback(true).existsOnce();
+  /// spot<ListTile>().withEnableFeedback(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> withEnableFeedback(bool? value) {
@@ -1220,7 +1220,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where horizontalTitleGap matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().whereHorizontalTitleGap((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// spot<ListTile>().whereHorizontalTitleGap((it) => it.isGreaterThan(10.5)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> whereHorizontalTitleGap(MatchProp<double> match) {
@@ -1230,7 +1230,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where horizontalTitleGap equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().withHorizontalTitleGap(10.5).existsOnce();
+  /// spot<ListTile>().withHorizontalTitleGap(10.5).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> withHorizontalTitleGap(double? value) {
@@ -1241,7 +1241,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where minVerticalPadding matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().whereMinVerticalPadding((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// spot<ListTile>().whereMinVerticalPadding((it) => it.isGreaterThan(10.5)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> whereMinVerticalPadding(MatchProp<double> match) {
@@ -1251,7 +1251,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where minVerticalPadding equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().withMinVerticalPadding(10.5).existsOnce();
+  /// spot<ListTile>().withMinVerticalPadding(10.5).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> withMinVerticalPadding(double? value) {
@@ -1262,7 +1262,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where minLeadingWidth matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().whereMinLeadingWidth((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// spot<ListTile>().whereMinLeadingWidth((it) => it.isGreaterThan(10.5)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> whereMinLeadingWidth(MatchProp<double> match) {
@@ -1272,7 +1272,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where minLeadingWidth equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().withMinLeadingWidth(10.5).existsOnce();
+  /// spot<ListTile>().withMinLeadingWidth(10.5).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> withMinLeadingWidth(double? value) {
@@ -1283,7 +1283,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where titleAlignment matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().whereTitleAlignment((it) => it.equals(ListTileTitleAlignment.values.first)).existsOnce();
+  /// spot<ListTile>().whereTitleAlignment((it) => it.equals(ListTileTitleAlignment.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> whereTitleAlignment(
@@ -1294,7 +1294,7 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// Creates a [WidgetSelector] that finds all [ListTile] where titleAlignment equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<ListTile>().withTitleAlignment(ListTileTitleAlignment.values.first).existsOnce();
+  /// spot<ListTile>().withTitleAlignment(ListTileTitleAlignment.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<ListTile> withTitleAlignment(ListTileTitleAlignment? value) {

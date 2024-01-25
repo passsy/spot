@@ -14,7 +14,7 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
   /// Expects that icon of [IconButton] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().existsOnce().hasIconWhere((it) => it.equals(Container()));
+  /// spot<IconButton>().existsOnce().hasIconWhere((it) => it.equals(Container()));
   /// ```
   WidgetMatcher<IconButton> hasIconWhere(MatchProp<Widget> match) {
     return hasDiagnosticProp<Widget>('icon', match);
@@ -23,7 +23,7 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
   /// Expects that icon of [IconButton] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().existsOnce().hasIcon(Container());
+  /// spot<IconButton>().existsOnce().hasIcon(Container());
   /// ```
   WidgetMatcher<IconButton> hasIcon(Widget? value) {
     return hasDiagnosticProp<Widget>(
@@ -33,7 +33,7 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
   /// Expects that tooltip of [IconButton] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().existsOnce().hasTooltipWhere((it) => it.equals('foo'));
+  /// spot<IconButton>().existsOnce().hasTooltipWhere((it) => it.equals('foo'));
   /// ```
   WidgetMatcher<IconButton> hasTooltipWhere(MatchProp<String> match) {
     return hasDiagnosticProp<String>('tooltip', match);
@@ -42,7 +42,7 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
   /// Expects that tooltip of [IconButton] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().existsOnce().hasTooltip('foo');
+  /// spot<IconButton>().existsOnce().hasTooltip('foo');
   /// ```
   WidgetMatcher<IconButton> hasTooltip(String? value) {
     return hasDiagnosticProp<String>(
@@ -52,7 +52,7 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
   /// Expects that color of [IconButton] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().existsOnce().hasColorWhere((it) => it.equals(Colors.red));
+  /// spot<IconButton>().existsOnce().hasColorWhere((it) => it.equals(Colors.red));
   /// ```
   WidgetMatcher<IconButton> hasColorWhere(MatchProp<Color> match) {
     return hasDiagnosticProp<Color>('color', match);
@@ -61,7 +61,7 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
   /// Expects that color of [IconButton] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().existsOnce().hasColor(Colors.red);
+  /// spot<IconButton>().existsOnce().hasColor(Colors.red);
   /// ```
   WidgetMatcher<IconButton> hasColor(Color? value) {
     return hasDiagnosticProp<Color>(
@@ -71,7 +71,7 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
   /// Expects that disabledColor of [IconButton] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().existsOnce().hasDisabledColorWhere((it) => it.equals(Colors.red));
+  /// spot<IconButton>().existsOnce().hasDisabledColorWhere((it) => it.equals(Colors.red));
   /// ```
   WidgetMatcher<IconButton> hasDisabledColorWhere(MatchProp<Color> match) {
     return hasDiagnosticProp<Color>('disabledColor', match);
@@ -80,7 +80,7 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
   /// Expects that disabledColor of [IconButton] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().existsOnce().hasDisabledColor(Colors.red);
+  /// spot<IconButton>().existsOnce().hasDisabledColor(Colors.red);
   /// ```
   WidgetMatcher<IconButton> hasDisabledColor(Color? value) {
     return hasDiagnosticProp<Color>('disabledColor',
@@ -90,7 +90,7 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
   /// Expects that focusColor of [IconButton] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().existsOnce().hasFocusColorWhere((it) => it.equals(Colors.red));
+  /// spot<IconButton>().existsOnce().hasFocusColorWhere((it) => it.equals(Colors.red));
   /// ```
   WidgetMatcher<IconButton> hasFocusColorWhere(MatchProp<Color> match) {
     return hasDiagnosticProp<Color>('focusColor', match);
@@ -99,7 +99,7 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
   /// Expects that focusColor of [IconButton] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().existsOnce().hasFocusColor(Colors.red);
+  /// spot<IconButton>().existsOnce().hasFocusColor(Colors.red);
   /// ```
   WidgetMatcher<IconButton> hasFocusColor(Color? value) {
     return hasDiagnosticProp<Color>(
@@ -109,7 +109,7 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
   /// Expects that hoverColor of [IconButton] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().existsOnce().hasHoverColorWhere((it) => it.equals(Colors.red));
+  /// spot<IconButton>().existsOnce().hasHoverColorWhere((it) => it.equals(Colors.red));
   /// ```
   WidgetMatcher<IconButton> hasHoverColorWhere(MatchProp<Color> match) {
     return hasDiagnosticProp<Color>('hoverColor', match);
@@ -118,7 +118,7 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
   /// Expects that hoverColor of [IconButton] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().existsOnce().hasHoverColor(Colors.red);
+  /// spot<IconButton>().existsOnce().hasHoverColor(Colors.red);
   /// ```
   WidgetMatcher<IconButton> hasHoverColor(Color? value) {
     return hasDiagnosticProp<Color>(
@@ -128,7 +128,7 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
   /// Expects that highlightColor of [IconButton] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().existsOnce().hasHighlightColorWhere((it) => it.equals(Colors.red));
+  /// spot<IconButton>().existsOnce().hasHighlightColorWhere((it) => it.equals(Colors.red));
   /// ```
   WidgetMatcher<IconButton> hasHighlightColorWhere(MatchProp<Color> match) {
     return hasDiagnosticProp<Color>('highlightColor', match);
@@ -137,7 +137,7 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
   /// Expects that highlightColor of [IconButton] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().existsOnce().hasHighlightColor(Colors.red);
+  /// spot<IconButton>().existsOnce().hasHighlightColor(Colors.red);
   /// ```
   WidgetMatcher<IconButton> hasHighlightColor(Color? value) {
     return hasDiagnosticProp<Color>('highlightColor',
@@ -147,7 +147,7 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
   /// Expects that splashColor of [IconButton] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().existsOnce().hasSplashColorWhere((it) => it.equals(Colors.red));
+  /// spot<IconButton>().existsOnce().hasSplashColorWhere((it) => it.equals(Colors.red));
   /// ```
   WidgetMatcher<IconButton> hasSplashColorWhere(MatchProp<Color> match) {
     return hasDiagnosticProp<Color>('splashColor', match);
@@ -156,7 +156,7 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
   /// Expects that splashColor of [IconButton] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().existsOnce().hasSplashColor(Colors.red);
+  /// spot<IconButton>().existsOnce().hasSplashColor(Colors.red);
   /// ```
   WidgetMatcher<IconButton> hasSplashColor(Color? value) {
     return hasDiagnosticProp<Color>(
@@ -166,7 +166,7 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
   /// Expects that padding of [IconButton] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().existsOnce().hasPaddingWhere((it) => it.equals(EdgeInsets.all(8.0)));
+  /// spot<IconButton>().existsOnce().hasPaddingWhere((it) => it.equals(EdgeInsets.all(8.0)));
   /// ```
   WidgetMatcher<IconButton> hasPaddingWhere(
       MatchProp<EdgeInsetsGeometry> match) {
@@ -176,7 +176,7 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
   /// Expects that padding of [IconButton] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().existsOnce().hasPadding(EdgeInsets.all(8.0));
+  /// spot<IconButton>().existsOnce().hasPadding(EdgeInsets.all(8.0));
   /// ```
   WidgetMatcher<IconButton> hasPadding(EdgeInsetsGeometry? value) {
     return hasDiagnosticProp<EdgeInsetsGeometry>(
@@ -186,7 +186,7 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
   /// Expects that focusNode of [IconButton] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().existsOnce().hasFocusNodeWhere((it) => it.equals(FocusNode()));
+  /// spot<IconButton>().existsOnce().hasFocusNodeWhere((it) => it.equals(FocusNode()));
   /// ```
   WidgetMatcher<IconButton> hasFocusNodeWhere(MatchProp<FocusNode> match) {
     return hasDiagnosticProp<FocusNode>('focusNode', match);
@@ -195,7 +195,7 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
   /// Expects that focusNode of [IconButton] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().existsOnce().hasFocusNode(FocusNode());
+  /// spot<IconButton>().existsOnce().hasFocusNode(FocusNode());
   /// ```
   WidgetMatcher<IconButton> hasFocusNode(FocusNode? value) {
     return hasDiagnosticProp<FocusNode>(
@@ -208,7 +208,7 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
   /// Creates a [WidgetSelector] that finds all [IconButton] where icon matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().whereIcon((it) => it.equals(Container())).existsOnce();
+  /// spot<IconButton>().whereIcon((it) => it.equals(Container())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<IconButton> whereIcon(MatchProp<Widget> match) {
@@ -218,7 +218,7 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
   /// Creates a [WidgetSelector] that finds all [IconButton] where icon equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().withIcon(Container()).existsOnce();
+  /// spot<IconButton>().withIcon(Container()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<IconButton> withIcon(Widget? value) {
@@ -229,7 +229,7 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
   /// Creates a [WidgetSelector] that finds all [IconButton] where tooltip matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().whereTooltip((it) => it.equals('foo')).existsOnce();
+  /// spot<IconButton>().whereTooltip((it) => it.equals('foo')).existsOnce();
   /// ```
   @useResult
   WidgetSelector<IconButton> whereTooltip(MatchProp<String> match) {
@@ -239,7 +239,7 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
   /// Creates a [WidgetSelector] that finds all [IconButton] where tooltip equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().withTooltip('foo').existsOnce();
+  /// spot<IconButton>().withTooltip('foo').existsOnce();
   /// ```
   @useResult
   WidgetSelector<IconButton> withTooltip(String? value) {
@@ -250,7 +250,7 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
   /// Creates a [WidgetSelector] that finds all [IconButton] where color matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().whereColor((it) => it.equals(Colors.red)).existsOnce();
+  /// spot<IconButton>().whereColor((it) => it.equals(Colors.red)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<IconButton> whereColor(MatchProp<Color> match) {
@@ -260,7 +260,7 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
   /// Creates a [WidgetSelector] that finds all [IconButton] where color equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().withColor(Colors.red).existsOnce();
+  /// spot<IconButton>().withColor(Colors.red).existsOnce();
   /// ```
   @useResult
   WidgetSelector<IconButton> withColor(Color? value) {
@@ -271,7 +271,7 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
   /// Creates a [WidgetSelector] that finds all [IconButton] where disabledColor matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().whereDisabledColor((it) => it.equals(Colors.red)).existsOnce();
+  /// spot<IconButton>().whereDisabledColor((it) => it.equals(Colors.red)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<IconButton> whereDisabledColor(MatchProp<Color> match) {
@@ -281,7 +281,7 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
   /// Creates a [WidgetSelector] that finds all [IconButton] where disabledColor equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().withDisabledColor(Colors.red).existsOnce();
+  /// spot<IconButton>().withDisabledColor(Colors.red).existsOnce();
   /// ```
   @useResult
   WidgetSelector<IconButton> withDisabledColor(Color? value) {
@@ -292,7 +292,7 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
   /// Creates a [WidgetSelector] that finds all [IconButton] where focusColor matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().whereFocusColor((it) => it.equals(Colors.red)).existsOnce();
+  /// spot<IconButton>().whereFocusColor((it) => it.equals(Colors.red)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<IconButton> whereFocusColor(MatchProp<Color> match) {
@@ -302,7 +302,7 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
   /// Creates a [WidgetSelector] that finds all [IconButton] where focusColor equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().withFocusColor(Colors.red).existsOnce();
+  /// spot<IconButton>().withFocusColor(Colors.red).existsOnce();
   /// ```
   @useResult
   WidgetSelector<IconButton> withFocusColor(Color? value) {
@@ -313,7 +313,7 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
   /// Creates a [WidgetSelector] that finds all [IconButton] where hoverColor matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().whereHoverColor((it) => it.equals(Colors.red)).existsOnce();
+  /// spot<IconButton>().whereHoverColor((it) => it.equals(Colors.red)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<IconButton> whereHoverColor(MatchProp<Color> match) {
@@ -323,7 +323,7 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
   /// Creates a [WidgetSelector] that finds all [IconButton] where hoverColor equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().withHoverColor(Colors.red).existsOnce();
+  /// spot<IconButton>().withHoverColor(Colors.red).existsOnce();
   /// ```
   @useResult
   WidgetSelector<IconButton> withHoverColor(Color? value) {
@@ -334,7 +334,7 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
   /// Creates a [WidgetSelector] that finds all [IconButton] where highlightColor matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().whereHighlightColor((it) => it.equals(Colors.red)).existsOnce();
+  /// spot<IconButton>().whereHighlightColor((it) => it.equals(Colors.red)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<IconButton> whereHighlightColor(MatchProp<Color> match) {
@@ -344,7 +344,7 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
   /// Creates a [WidgetSelector] that finds all [IconButton] where highlightColor equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().withHighlightColor(Colors.red).existsOnce();
+  /// spot<IconButton>().withHighlightColor(Colors.red).existsOnce();
   /// ```
   @useResult
   WidgetSelector<IconButton> withHighlightColor(Color? value) {
@@ -355,7 +355,7 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
   /// Creates a [WidgetSelector] that finds all [IconButton] where splashColor matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().whereSplashColor((it) => it.equals(Colors.red)).existsOnce();
+  /// spot<IconButton>().whereSplashColor((it) => it.equals(Colors.red)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<IconButton> whereSplashColor(MatchProp<Color> match) {
@@ -365,7 +365,7 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
   /// Creates a [WidgetSelector] that finds all [IconButton] where splashColor equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().withSplashColor(Colors.red).existsOnce();
+  /// spot<IconButton>().withSplashColor(Colors.red).existsOnce();
   /// ```
   @useResult
   WidgetSelector<IconButton> withSplashColor(Color? value) {
@@ -376,7 +376,7 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
   /// Creates a [WidgetSelector] that finds all [IconButton] where padding matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().wherePadding((it) => it.equals(EdgeInsets.all(8.0))).existsOnce();
+  /// spot<IconButton>().wherePadding((it) => it.equals(EdgeInsets.all(8.0))).existsOnce();
   /// ```
   @useResult
   WidgetSelector<IconButton> wherePadding(MatchProp<EdgeInsetsGeometry> match) {
@@ -386,7 +386,7 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
   /// Creates a [WidgetSelector] that finds all [IconButton] where padding equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().withPadding(EdgeInsets.all(8.0)).existsOnce();
+  /// spot<IconButton>().withPadding(EdgeInsets.all(8.0)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<IconButton> withPadding(EdgeInsetsGeometry? value) {
@@ -397,7 +397,7 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
   /// Creates a [WidgetSelector] that finds all [IconButton] where focusNode matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().whereFocusNode((it) => it.equals(FocusNode())).existsOnce();
+  /// spot<IconButton>().whereFocusNode((it) => it.equals(FocusNode())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<IconButton> whereFocusNode(MatchProp<FocusNode> match) {
@@ -407,7 +407,7 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
   /// Creates a [WidgetSelector] that finds all [IconButton] where focusNode equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<IconButton>().withFocusNode(FocusNode()).existsOnce();
+  /// spot<IconButton>().withFocusNode(FocusNode()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<IconButton> withFocusNode(FocusNode? value) {

@@ -16,7 +16,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that container of [Semantics] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasContainerWhere((it) => it.isTrue());
+  /// spot<Semantics>().existsOnce().hasContainerWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<Semantics> hasContainerWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('container', match);
@@ -25,7 +25,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that container of [Semantics] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasContainer(true);
+  /// spot<Semantics>().existsOnce().hasContainer(true);
   /// ```
   WidgetMatcher<Semantics> hasContainer(bool? value) {
     return hasDiagnosticProp<bool>(
@@ -35,7 +35,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that properties of [Semantics] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasPropertiesWhere((it) => it.equals(SemanticsProperties()));
+  /// spot<Semantics>().existsOnce().hasPropertiesWhere((it) => it.equals(SemanticsProperties()));
   /// ```
   WidgetMatcher<Semantics> hasPropertiesWhere(
       MatchProp<SemanticsProperties> match) {
@@ -45,7 +45,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that properties of [Semantics] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasProperties(SemanticsProperties());
+  /// spot<Semantics>().existsOnce().hasProperties(SemanticsProperties());
   /// ```
   WidgetMatcher<Semantics> hasProperties(SemanticsProperties? value) {
     return hasDiagnosticProp<SemanticsProperties>(
@@ -55,7 +55,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that checked of [Semantics] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasCheckedWhere((it) => it.isTrue());
+  /// spot<Semantics>().existsOnce().hasCheckedWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<Semantics> hasCheckedWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('checked', match);
@@ -64,7 +64,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that checked of [Semantics] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasChecked(true);
+  /// spot<Semantics>().existsOnce().hasChecked(true);
   /// ```
   WidgetMatcher<Semantics> hasChecked(bool? value) {
     return hasDiagnosticProp<bool>(
@@ -74,7 +74,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that mixed of [Semantics] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasMixedWhere((it) => it.isTrue());
+  /// spot<Semantics>().existsOnce().hasMixedWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<Semantics> hasMixedWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('mixed', match);
@@ -83,17 +83,36 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that mixed of [Semantics] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasMixed(true);
+  /// spot<Semantics>().existsOnce().hasMixed(true);
   /// ```
   WidgetMatcher<Semantics> hasMixed(bool? value) {
     return hasDiagnosticProp<bool>(
         'mixed', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Expects that expanded of [Semantics] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  /// spot<Semantics>().existsOnce().hasExpandedWhere((it) => it.isTrue());
+  /// ```
+  WidgetMatcher<Semantics> hasExpandedWhere(MatchProp<bool> match) {
+    return hasDiagnosticProp<bool>('expanded', match);
+  }
+
+  /// Expects that expanded of [Semantics] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  /// spot<Semantics>().existsOnce().hasExpanded(true);
+  /// ```
+  WidgetMatcher<Semantics> hasExpanded(bool? value) {
+    return hasDiagnosticProp<bool>(
+        'expanded', (it) => value == null ? it.isNull() : it.equals(value));
+  }
+
   /// Expects that selected of [Semantics] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasSelectedWhere((it) => it.isTrue());
+  /// spot<Semantics>().existsOnce().hasSelectedWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<Semantics> hasSelectedWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('selected', match);
@@ -102,7 +121,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that selected of [Semantics] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasSelected(true);
+  /// spot<Semantics>().existsOnce().hasSelected(true);
   /// ```
   WidgetMatcher<Semantics> hasSelected(bool? value) {
     return hasDiagnosticProp<bool>(
@@ -112,7 +131,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that label of [Semantics] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasLabelWhere((it) => it.equals('foo'));
+  /// spot<Semantics>().existsOnce().hasLabelWhere((it) => it.equals('foo'));
   /// ```
   WidgetMatcher<Semantics> hasLabelWhere(MatchProp<String> match) {
     return hasDiagnosticProp<String>('label', match);
@@ -121,7 +140,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that label of [Semantics] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasLabel('foo');
+  /// spot<Semantics>().existsOnce().hasLabel('foo');
   /// ```
   WidgetMatcher<Semantics> hasLabel(String? value) {
     return hasDiagnosticProp<String>(
@@ -131,7 +150,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that attributedLabel of [Semantics] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasAttributedLabelWhere((it) => it.equals('foo'));
+  /// spot<Semantics>().existsOnce().hasAttributedLabelWhere((it) => it.equals('foo'));
   /// ```
   WidgetMatcher<Semantics> hasAttributedLabelWhere(MatchProp<String> match) {
     return hasDiagnosticProp<String>('attributedLabel', match);
@@ -140,7 +159,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that attributedLabel of [Semantics] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasAttributedLabel('foo');
+  /// spot<Semantics>().existsOnce().hasAttributedLabel('foo');
   /// ```
   WidgetMatcher<Semantics> hasAttributedLabel(String? value) {
     return hasDiagnosticProp<String>('attributedLabel',
@@ -150,7 +169,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that value of [Semantics] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasValueWhere((it) => it.equals('foo'));
+  /// spot<Semantics>().existsOnce().hasValueWhere((it) => it.equals('foo'));
   /// ```
   WidgetMatcher<Semantics> hasValueWhere(MatchProp<String> match) {
     return hasDiagnosticProp<String>('value', match);
@@ -159,7 +178,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that value of [Semantics] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasValue('foo');
+  /// spot<Semantics>().existsOnce().hasValue('foo');
   /// ```
   WidgetMatcher<Semantics> hasValue(String? value) {
     return hasDiagnosticProp<String>(
@@ -169,7 +188,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that attributedValue of [Semantics] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasAttributedValueWhere((it) => it.equals('foo'));
+  /// spot<Semantics>().existsOnce().hasAttributedValueWhere((it) => it.equals('foo'));
   /// ```
   WidgetMatcher<Semantics> hasAttributedValueWhere(MatchProp<String> match) {
     return hasDiagnosticProp<String>('attributedValue', match);
@@ -178,7 +197,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that attributedValue of [Semantics] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasAttributedValue('foo');
+  /// spot<Semantics>().existsOnce().hasAttributedValue('foo');
   /// ```
   WidgetMatcher<Semantics> hasAttributedValue(String? value) {
     return hasDiagnosticProp<String>('attributedValue',
@@ -188,7 +207,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that increasedValue of [Semantics] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasIncreasedValueWhere((it) => it.equals('foo'));
+  /// spot<Semantics>().existsOnce().hasIncreasedValueWhere((it) => it.equals('foo'));
   /// ```
   WidgetMatcher<Semantics> hasIncreasedValueWhere(MatchProp<String> match) {
     return hasDiagnosticProp<String>('increasedValue', match);
@@ -197,7 +216,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that increasedValue of [Semantics] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasIncreasedValue('foo');
+  /// spot<Semantics>().existsOnce().hasIncreasedValue('foo');
   /// ```
   WidgetMatcher<Semantics> hasIncreasedValue(String? value) {
     return hasDiagnosticProp<String>('increasedValue',
@@ -207,7 +226,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that attributedIncreasedValue of [Semantics] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasAttributedIncreasedValueWhere((it) => it.equals('foo'));
+  /// spot<Semantics>().existsOnce().hasAttributedIncreasedValueWhere((it) => it.equals('foo'));
   /// ```
   WidgetMatcher<Semantics> hasAttributedIncreasedValueWhere(
       MatchProp<String> match) {
@@ -217,7 +236,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that attributedIncreasedValue of [Semantics] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasAttributedIncreasedValue('foo');
+  /// spot<Semantics>().existsOnce().hasAttributedIncreasedValue('foo');
   /// ```
   WidgetMatcher<Semantics> hasAttributedIncreasedValue(String? value) {
     return hasDiagnosticProp<String>('attributedIncreasedValue',
@@ -227,7 +246,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that decreasedValue of [Semantics] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasDecreasedValueWhere((it) => it.equals('foo'));
+  /// spot<Semantics>().existsOnce().hasDecreasedValueWhere((it) => it.equals('foo'));
   /// ```
   WidgetMatcher<Semantics> hasDecreasedValueWhere(MatchProp<String> match) {
     return hasDiagnosticProp<String>('decreasedValue', match);
@@ -236,7 +255,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that decreasedValue of [Semantics] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasDecreasedValue('foo');
+  /// spot<Semantics>().existsOnce().hasDecreasedValue('foo');
   /// ```
   WidgetMatcher<Semantics> hasDecreasedValue(String? value) {
     return hasDiagnosticProp<String>('decreasedValue',
@@ -246,7 +265,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that attributedDecreasedValue of [Semantics] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasAttributedDecreasedValueWhere((it) => it.equals('foo'));
+  /// spot<Semantics>().existsOnce().hasAttributedDecreasedValueWhere((it) => it.equals('foo'));
   /// ```
   WidgetMatcher<Semantics> hasAttributedDecreasedValueWhere(
       MatchProp<String> match) {
@@ -256,7 +275,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that attributedDecreasedValue of [Semantics] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasAttributedDecreasedValue('foo');
+  /// spot<Semantics>().existsOnce().hasAttributedDecreasedValue('foo');
   /// ```
   WidgetMatcher<Semantics> hasAttributedDecreasedValue(String? value) {
     return hasDiagnosticProp<String>('attributedDecreasedValue',
@@ -266,7 +285,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that hint of [Semantics] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasHintWhere((it) => it.equals('foo'));
+  /// spot<Semantics>().existsOnce().hasHintWhere((it) => it.equals('foo'));
   /// ```
   WidgetMatcher<Semantics> hasHintWhere(MatchProp<String> match) {
     return hasDiagnosticProp<String>('hint', match);
@@ -275,7 +294,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that hint of [Semantics] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasHint('foo');
+  /// spot<Semantics>().existsOnce().hasHint('foo');
   /// ```
   WidgetMatcher<Semantics> hasHint(String? value) {
     return hasDiagnosticProp<String>(
@@ -285,7 +304,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that attributedHint of [Semantics] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasAttributedHintWhere((it) => it.equals('foo'));
+  /// spot<Semantics>().existsOnce().hasAttributedHintWhere((it) => it.equals('foo'));
   /// ```
   WidgetMatcher<Semantics> hasAttributedHintWhere(MatchProp<String> match) {
     return hasDiagnosticProp<String>('attributedHint', match);
@@ -294,7 +313,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that attributedHint of [Semantics] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasAttributedHint('foo');
+  /// spot<Semantics>().existsOnce().hasAttributedHint('foo');
   /// ```
   WidgetMatcher<Semantics> hasAttributedHint(String? value) {
     return hasDiagnosticProp<String>('attributedHint',
@@ -304,7 +323,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that tooltip of [Semantics] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasTooltipWhere((it) => it.equals('foo'));
+  /// spot<Semantics>().existsOnce().hasTooltipWhere((it) => it.equals('foo'));
   /// ```
   WidgetMatcher<Semantics> hasTooltipWhere(MatchProp<String> match) {
     return hasDiagnosticProp<String>('tooltip', match);
@@ -313,7 +332,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that tooltip of [Semantics] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasTooltip('foo');
+  /// spot<Semantics>().existsOnce().hasTooltip('foo');
   /// ```
   WidgetMatcher<Semantics> hasTooltip(String? value) {
     return hasDiagnosticProp<String>(
@@ -323,7 +342,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that textDirection of [Semantics] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasTextDirectionWhere((it) => it.equals(TextDirection.values.first));
+  /// spot<Semantics>().existsOnce().hasTextDirectionWhere((it) => it.equals(TextDirection.values.first));
   /// ```
   WidgetMatcher<Semantics> hasTextDirectionWhere(
       MatchProp<TextDirection> match) {
@@ -333,7 +352,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that textDirection of [Semantics] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasTextDirection(TextDirection.values.first);
+  /// spot<Semantics>().existsOnce().hasTextDirection(TextDirection.values.first);
   /// ```
   WidgetMatcher<Semantics> hasTextDirection(TextDirection? value) {
     return hasDiagnosticProp<TextDirection>('textDirection',
@@ -343,7 +362,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that sortKey of [Semantics] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasSortKeyWhere((it) => it.equals(OrdinalSortKey(1.0)));
+  /// spot<Semantics>().existsOnce().hasSortKeyWhere((it) => it.equals(OrdinalSortKey(1.0)));
   /// ```
   WidgetMatcher<Semantics> hasSortKeyWhere(MatchProp<SemanticsSortKey> match) {
     return hasDiagnosticProp<SemanticsSortKey>('sortKey', match);
@@ -352,7 +371,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that sortKey of [Semantics] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasSortKey(OrdinalSortKey(1.0));
+  /// spot<Semantics>().existsOnce().hasSortKey(OrdinalSortKey(1.0));
   /// ```
   WidgetMatcher<Semantics> hasSortKey(SemanticsSortKey? value) {
     return hasDiagnosticProp<SemanticsSortKey>(
@@ -362,7 +381,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that hintOverrides of [Semantics] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasHintOverridesWhere((it) => it.equals(SemanticsHintOverrides()));
+  /// spot<Semantics>().existsOnce().hasHintOverridesWhere((it) => it.equals(SemanticsHintOverrides()));
   /// ```
   WidgetMatcher<Semantics> hasHintOverridesWhere(
       MatchProp<SemanticsHintOverrides> match) {
@@ -372,7 +391,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that hintOverrides of [Semantics] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasHintOverrides(SemanticsHintOverrides());
+  /// spot<Semantics>().existsOnce().hasHintOverrides(SemanticsHintOverrides());
   /// ```
   WidgetMatcher<Semantics> hasHintOverrides(SemanticsHintOverrides? value) {
     return hasDiagnosticProp<SemanticsHintOverrides>('hintOverrides',
@@ -382,7 +401,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that renderObject of [Semantics] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasRenderObjectWhere((it) => it.equals(RenderBox()));
+  /// spot<Semantics>().existsOnce().hasRenderObjectWhere((it) => it.equals(RenderBox()));
   /// ```
   WidgetMatcher<Semantics> hasRenderObjectWhere(
       MatchProp<RenderSemanticsAnnotations> match) {
@@ -392,7 +411,7 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// Expects that renderObject of [Semantics] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().existsOnce().hasRenderObject(RenderBox());
+  /// spot<Semantics>().existsOnce().hasRenderObject(RenderBox());
   /// ```
   WidgetMatcher<Semantics> hasRenderObject(RenderSemanticsAnnotations? value) {
     return hasDiagnosticProp<RenderSemanticsAnnotations>(
@@ -405,7 +424,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where container matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().whereContainer((it) => it.isTrue()).existsOnce();
+  /// spot<Semantics>().whereContainer((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> whereContainer(MatchProp<bool> match) {
@@ -415,7 +434,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where container equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().withContainer(true).existsOnce();
+  /// spot<Semantics>().withContainer(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> withContainer(bool? value) {
@@ -426,7 +445,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where properties matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().whereProperties((it) => it.equals(SemanticsProperties())).existsOnce();
+  /// spot<Semantics>().whereProperties((it) => it.equals(SemanticsProperties())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> whereProperties(
@@ -437,7 +456,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where properties equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().withProperties(SemanticsProperties()).existsOnce();
+  /// spot<Semantics>().withProperties(SemanticsProperties()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> withProperties(SemanticsProperties? value) {
@@ -448,7 +467,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where checked matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().whereChecked((it) => it.isTrue()).existsOnce();
+  /// spot<Semantics>().whereChecked((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> whereChecked(MatchProp<bool> match) {
@@ -458,7 +477,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where checked equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().withChecked(true).existsOnce();
+  /// spot<Semantics>().withChecked(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> withChecked(bool? value) {
@@ -469,7 +488,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where mixed matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().whereMixed((it) => it.isTrue()).existsOnce();
+  /// spot<Semantics>().whereMixed((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> whereMixed(MatchProp<bool> match) {
@@ -479,7 +498,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where mixed equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().withMixed(true).existsOnce();
+  /// spot<Semantics>().withMixed(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> withMixed(bool? value) {
@@ -487,10 +506,31 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
         'mixed', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Creates a [WidgetSelector] that finds all [Semantics] where expanded matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  /// spot<Semantics>().whereExpanded((it) => it.isTrue()).existsOnce();
+  /// ```
+  @useResult
+  WidgetSelector<Semantics> whereExpanded(MatchProp<bool> match) {
+    return withDiagnosticProp<bool>('expanded', match);
+  }
+
+  /// Creates a [WidgetSelector] that finds all [Semantics] where expanded equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  /// spot<Semantics>().withExpanded(true).existsOnce();
+  /// ```
+  @useResult
+  WidgetSelector<Semantics> withExpanded(bool? value) {
+    return withDiagnosticProp<bool>(
+        'expanded', (it) => value == null ? it.isNull() : it.equals(value));
+  }
+
   /// Creates a [WidgetSelector] that finds all [Semantics] where selected matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().whereSelected((it) => it.isTrue()).existsOnce();
+  /// spot<Semantics>().whereSelected((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> whereSelected(MatchProp<bool> match) {
@@ -500,7 +540,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where selected equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().withSelected(true).existsOnce();
+  /// spot<Semantics>().withSelected(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> withSelected(bool? value) {
@@ -511,7 +551,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where label matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().whereLabel((it) => it.equals('foo')).existsOnce();
+  /// spot<Semantics>().whereLabel((it) => it.equals('foo')).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> whereLabel(MatchProp<String> match) {
@@ -521,7 +561,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where label equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().withLabel('foo').existsOnce();
+  /// spot<Semantics>().withLabel('foo').existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> withLabel(String? value) {
@@ -532,7 +572,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where attributedLabel matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().whereAttributedLabel((it) => it.equals('foo')).existsOnce();
+  /// spot<Semantics>().whereAttributedLabel((it) => it.equals('foo')).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> whereAttributedLabel(MatchProp<String> match) {
@@ -542,7 +582,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where attributedLabel equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().withAttributedLabel('foo').existsOnce();
+  /// spot<Semantics>().withAttributedLabel('foo').existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> withAttributedLabel(String? value) {
@@ -553,7 +593,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where value matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().whereValue((it) => it.equals('foo')).existsOnce();
+  /// spot<Semantics>().whereValue((it) => it.equals('foo')).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> whereValue(MatchProp<String> match) {
@@ -563,7 +603,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where value equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().withValue('foo').existsOnce();
+  /// spot<Semantics>().withValue('foo').existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> withValue(String? value) {
@@ -574,7 +614,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where attributedValue matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().whereAttributedValue((it) => it.equals('foo')).existsOnce();
+  /// spot<Semantics>().whereAttributedValue((it) => it.equals('foo')).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> whereAttributedValue(MatchProp<String> match) {
@@ -584,7 +624,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where attributedValue equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().withAttributedValue('foo').existsOnce();
+  /// spot<Semantics>().withAttributedValue('foo').existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> withAttributedValue(String? value) {
@@ -595,7 +635,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where increasedValue matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().whereIncreasedValue((it) => it.equals('foo')).existsOnce();
+  /// spot<Semantics>().whereIncreasedValue((it) => it.equals('foo')).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> whereIncreasedValue(MatchProp<String> match) {
@@ -605,7 +645,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where increasedValue equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().withIncreasedValue('foo').existsOnce();
+  /// spot<Semantics>().withIncreasedValue('foo').existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> withIncreasedValue(String? value) {
@@ -616,7 +656,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where attributedIncreasedValue matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().whereAttributedIncreasedValue((it) => it.equals('foo')).existsOnce();
+  /// spot<Semantics>().whereAttributedIncreasedValue((it) => it.equals('foo')).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> whereAttributedIncreasedValue(
@@ -627,7 +667,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where attributedIncreasedValue equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().withAttributedIncreasedValue('foo').existsOnce();
+  /// spot<Semantics>().withAttributedIncreasedValue('foo').existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> withAttributedIncreasedValue(String? value) {
@@ -638,7 +678,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where decreasedValue matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().whereDecreasedValue((it) => it.equals('foo')).existsOnce();
+  /// spot<Semantics>().whereDecreasedValue((it) => it.equals('foo')).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> whereDecreasedValue(MatchProp<String> match) {
@@ -648,7 +688,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where decreasedValue equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().withDecreasedValue('foo').existsOnce();
+  /// spot<Semantics>().withDecreasedValue('foo').existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> withDecreasedValue(String? value) {
@@ -659,7 +699,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where attributedDecreasedValue matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().whereAttributedDecreasedValue((it) => it.equals('foo')).existsOnce();
+  /// spot<Semantics>().whereAttributedDecreasedValue((it) => it.equals('foo')).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> whereAttributedDecreasedValue(
@@ -670,7 +710,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where attributedDecreasedValue equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().withAttributedDecreasedValue('foo').existsOnce();
+  /// spot<Semantics>().withAttributedDecreasedValue('foo').existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> withAttributedDecreasedValue(String? value) {
@@ -681,7 +721,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where hint matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().whereHint((it) => it.equals('foo')).existsOnce();
+  /// spot<Semantics>().whereHint((it) => it.equals('foo')).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> whereHint(MatchProp<String> match) {
@@ -691,7 +731,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where hint equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().withHint('foo').existsOnce();
+  /// spot<Semantics>().withHint('foo').existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> withHint(String? value) {
@@ -702,7 +742,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where attributedHint matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().whereAttributedHint((it) => it.equals('foo')).existsOnce();
+  /// spot<Semantics>().whereAttributedHint((it) => it.equals('foo')).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> whereAttributedHint(MatchProp<String> match) {
@@ -712,7 +752,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where attributedHint equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().withAttributedHint('foo').existsOnce();
+  /// spot<Semantics>().withAttributedHint('foo').existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> withAttributedHint(String? value) {
@@ -723,7 +763,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where tooltip matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().whereTooltip((it) => it.equals('foo')).existsOnce();
+  /// spot<Semantics>().whereTooltip((it) => it.equals('foo')).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> whereTooltip(MatchProp<String> match) {
@@ -733,7 +773,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where tooltip equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().withTooltip('foo').existsOnce();
+  /// spot<Semantics>().withTooltip('foo').existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> withTooltip(String? value) {
@@ -744,7 +784,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where textDirection matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().whereTextDirection((it) => it.equals(TextDirection.values.first)).existsOnce();
+  /// spot<Semantics>().whereTextDirection((it) => it.equals(TextDirection.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> whereTextDirection(MatchProp<TextDirection> match) {
@@ -754,7 +794,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where textDirection equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().withTextDirection(TextDirection.values.first).existsOnce();
+  /// spot<Semantics>().withTextDirection(TextDirection.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> withTextDirection(TextDirection? value) {
@@ -765,7 +805,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where sortKey matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().whereSortKey((it) => it.equals(OrdinalSortKey(1.0))).existsOnce();
+  /// spot<Semantics>().whereSortKey((it) => it.equals(OrdinalSortKey(1.0))).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> whereSortKey(MatchProp<SemanticsSortKey> match) {
@@ -775,7 +815,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where sortKey equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().withSortKey(OrdinalSortKey(1.0)).existsOnce();
+  /// spot<Semantics>().withSortKey(OrdinalSortKey(1.0)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> withSortKey(SemanticsSortKey? value) {
@@ -786,7 +826,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where hintOverrides matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().whereHintOverrides((it) => it.equals(SemanticsHintOverrides())).existsOnce();
+  /// spot<Semantics>().whereHintOverrides((it) => it.equals(SemanticsHintOverrides())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> whereHintOverrides(
@@ -797,7 +837,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where hintOverrides equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().withHintOverrides(SemanticsHintOverrides()).existsOnce();
+  /// spot<Semantics>().withHintOverrides(SemanticsHintOverrides()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> withHintOverrides(SemanticsHintOverrides? value) {
@@ -808,7 +848,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where renderObject matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().whereRenderObject((it) => it.equals(RenderBox())).existsOnce();
+  /// spot<Semantics>().whereRenderObject((it) => it.equals(RenderBox())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> whereRenderObject(
@@ -820,7 +860,7 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// Creates a [WidgetSelector] that finds all [Semantics] where renderObject equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Semantics>().withRenderObject(RenderBox()).existsOnce();
+  /// spot<Semantics>().withRenderObject(RenderBox()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Semantics> withRenderObject(

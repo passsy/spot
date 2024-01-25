@@ -15,7 +15,7 @@ extension RowMatcher on WidgetMatcher<Row> {
   /// Expects that direction of [Row] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Row>().existsOnce().hasDirectionWhere((it) => it.equals(Axis.values.first));
+  /// spot<Row>().existsOnce().hasDirectionWhere((it) => it.equals(Axis.values.first));
   /// ```
   WidgetMatcher<Row> hasDirectionWhere(MatchProp<Axis> match) {
     return hasDiagnosticProp<Axis>('direction', match);
@@ -24,7 +24,7 @@ extension RowMatcher on WidgetMatcher<Row> {
   /// Expects that direction of [Row] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Row>().existsOnce().hasDirection(Axis.values.first);
+  /// spot<Row>().existsOnce().hasDirection(Axis.values.first);
   /// ```
   WidgetMatcher<Row> hasDirection(Axis? value) {
     return hasDiagnosticProp<Axis>(
@@ -34,7 +34,7 @@ extension RowMatcher on WidgetMatcher<Row> {
   /// Expects that mainAxisAlignment of [Row] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Row>().existsOnce().hasMainAxisAlignmentWhere((it) => it.equals(MainAxisAlignment.values.first));
+  /// spot<Row>().existsOnce().hasMainAxisAlignmentWhere((it) => it.equals(MainAxisAlignment.values.first));
   /// ```
   WidgetMatcher<Row> hasMainAxisAlignmentWhere(
       MatchProp<MainAxisAlignment> match) {
@@ -44,7 +44,7 @@ extension RowMatcher on WidgetMatcher<Row> {
   /// Expects that mainAxisAlignment of [Row] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Row>().existsOnce().hasMainAxisAlignment(MainAxisAlignment.values.first);
+  /// spot<Row>().existsOnce().hasMainAxisAlignment(MainAxisAlignment.values.first);
   /// ```
   WidgetMatcher<Row> hasMainAxisAlignment(MainAxisAlignment? value) {
     return hasDiagnosticProp<MainAxisAlignment>('mainAxisAlignment',
@@ -54,7 +54,7 @@ extension RowMatcher on WidgetMatcher<Row> {
   /// Expects that mainAxisSize of [Row] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Row>().existsOnce().hasMainAxisSizeWhere((it) => it.equals(MainAxisSize.values.first));
+  /// spot<Row>().existsOnce().hasMainAxisSizeWhere((it) => it.equals(MainAxisSize.values.first));
   /// ```
   WidgetMatcher<Row> hasMainAxisSizeWhere(MatchProp<MainAxisSize> match) {
     return hasDiagnosticProp<MainAxisSize>('mainAxisSize', match);
@@ -63,7 +63,7 @@ extension RowMatcher on WidgetMatcher<Row> {
   /// Expects that mainAxisSize of [Row] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Row>().existsOnce().hasMainAxisSize(MainAxisSize.values.first);
+  /// spot<Row>().existsOnce().hasMainAxisSize(MainAxisSize.values.first);
   /// ```
   WidgetMatcher<Row> hasMainAxisSize(MainAxisSize? value) {
     return hasDiagnosticProp<MainAxisSize>(
@@ -73,7 +73,7 @@ extension RowMatcher on WidgetMatcher<Row> {
   /// Expects that crossAxisAlignment of [Row] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Row>().existsOnce().hasCrossAxisAlignmentWhere((it) => it.equals(CrossAxisAlignment.values.first));
+  /// spot<Row>().existsOnce().hasCrossAxisAlignmentWhere((it) => it.equals(CrossAxisAlignment.values.first));
   /// ```
   WidgetMatcher<Row> hasCrossAxisAlignmentWhere(
       MatchProp<CrossAxisAlignment> match) {
@@ -83,7 +83,7 @@ extension RowMatcher on WidgetMatcher<Row> {
   /// Expects that crossAxisAlignment of [Row] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Row>().existsOnce().hasCrossAxisAlignment(CrossAxisAlignment.values.first);
+  /// spot<Row>().existsOnce().hasCrossAxisAlignment(CrossAxisAlignment.values.first);
   /// ```
   WidgetMatcher<Row> hasCrossAxisAlignment(CrossAxisAlignment? value) {
     return hasDiagnosticProp<CrossAxisAlignment>('crossAxisAlignment',
@@ -93,7 +93,7 @@ extension RowMatcher on WidgetMatcher<Row> {
   /// Expects that textDirection of [Row] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Row>().existsOnce().hasTextDirectionWhere((it) => it.equals(TextDirection.values.first));
+  /// spot<Row>().existsOnce().hasTextDirectionWhere((it) => it.equals(TextDirection.values.first));
   /// ```
   WidgetMatcher<Row> hasTextDirectionWhere(MatchProp<TextDirection> match) {
     return hasDiagnosticProp<TextDirection>('textDirection', match);
@@ -102,7 +102,7 @@ extension RowMatcher on WidgetMatcher<Row> {
   /// Expects that textDirection of [Row] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Row>().existsOnce().hasTextDirection(TextDirection.values.first);
+  /// spot<Row>().existsOnce().hasTextDirection(TextDirection.values.first);
   /// ```
   WidgetMatcher<Row> hasTextDirection(TextDirection? value) {
     return hasDiagnosticProp<TextDirection>('textDirection',
@@ -112,7 +112,7 @@ extension RowMatcher on WidgetMatcher<Row> {
   /// Expects that verticalDirection of [Row] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Row>().existsOnce().hasVerticalDirectionWhere((it) => it.equals(VerticalDirection.values.first));
+  /// spot<Row>().existsOnce().hasVerticalDirectionWhere((it) => it.equals(VerticalDirection.values.first));
   /// ```
   WidgetMatcher<Row> hasVerticalDirectionWhere(
       MatchProp<VerticalDirection> match) {
@@ -122,7 +122,7 @@ extension RowMatcher on WidgetMatcher<Row> {
   /// Expects that verticalDirection of [Row] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Row>().existsOnce().hasVerticalDirection(VerticalDirection.values.first);
+  /// spot<Row>().existsOnce().hasVerticalDirection(VerticalDirection.values.first);
   /// ```
   WidgetMatcher<Row> hasVerticalDirection(VerticalDirection? value) {
     return hasDiagnosticProp<VerticalDirection>('verticalDirection',
@@ -132,7 +132,7 @@ extension RowMatcher on WidgetMatcher<Row> {
   /// Expects that textBaseline of [Row] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Row>().existsOnce().hasTextBaselineWhere((it) => it.equals(TextBaseline.values.first));
+  /// spot<Row>().existsOnce().hasTextBaselineWhere((it) => it.equals(TextBaseline.values.first));
   /// ```
   WidgetMatcher<Row> hasTextBaselineWhere(MatchProp<TextBaseline> match) {
     return hasDiagnosticProp<TextBaseline>('textBaseline', match);
@@ -141,7 +141,7 @@ extension RowMatcher on WidgetMatcher<Row> {
   /// Expects that textBaseline of [Row] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Row>().existsOnce().hasTextBaseline(TextBaseline.values.first);
+  /// spot<Row>().existsOnce().hasTextBaseline(TextBaseline.values.first);
   /// ```
   WidgetMatcher<Row> hasTextBaseline(TextBaseline? value) {
     return hasDiagnosticProp<TextBaseline>(
@@ -151,7 +151,7 @@ extension RowMatcher on WidgetMatcher<Row> {
   /// Expects that renderObject of [Row] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Row>().existsOnce().hasRenderObjectWhere((it) => it.equals(RenderBox()));
+  /// spot<Row>().existsOnce().hasRenderObjectWhere((it) => it.equals(RenderBox()));
   /// ```
   WidgetMatcher<Row> hasRenderObjectWhere(MatchProp<RenderFlex> match) {
     return hasDiagnosticProp<RenderFlex>('renderObject', match);
@@ -160,7 +160,7 @@ extension RowMatcher on WidgetMatcher<Row> {
   /// Expects that renderObject of [Row] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Row>().existsOnce().hasRenderObject(RenderBox());
+  /// spot<Row>().existsOnce().hasRenderObject(RenderBox());
   /// ```
   WidgetMatcher<Row> hasRenderObject(RenderFlex? value) {
     return hasDiagnosticProp<RenderFlex>(
@@ -173,7 +173,7 @@ extension RowSelector on WidgetSelector<Row> {
   /// Creates a [WidgetSelector] that finds all [Row] where direction matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Row>().whereDirection((it) => it.equals(Axis.values.first)).existsOnce();
+  /// spot<Row>().whereDirection((it) => it.equals(Axis.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Row> whereDirection(MatchProp<Axis> match) {
@@ -183,7 +183,7 @@ extension RowSelector on WidgetSelector<Row> {
   /// Creates a [WidgetSelector] that finds all [Row] where direction equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Row>().withDirection(Axis.values.first).existsOnce();
+  /// spot<Row>().withDirection(Axis.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Row> withDirection(Axis? value) {
@@ -194,7 +194,7 @@ extension RowSelector on WidgetSelector<Row> {
   /// Creates a [WidgetSelector] that finds all [Row] where mainAxisAlignment matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Row>().whereMainAxisAlignment((it) => it.equals(MainAxisAlignment.values.first)).existsOnce();
+  /// spot<Row>().whereMainAxisAlignment((it) => it.equals(MainAxisAlignment.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Row> whereMainAxisAlignment(
@@ -205,7 +205,7 @@ extension RowSelector on WidgetSelector<Row> {
   /// Creates a [WidgetSelector] that finds all [Row] where mainAxisAlignment equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Row>().withMainAxisAlignment(MainAxisAlignment.values.first).existsOnce();
+  /// spot<Row>().withMainAxisAlignment(MainAxisAlignment.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Row> withMainAxisAlignment(MainAxisAlignment? value) {
@@ -216,7 +216,7 @@ extension RowSelector on WidgetSelector<Row> {
   /// Creates a [WidgetSelector] that finds all [Row] where mainAxisSize matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Row>().whereMainAxisSize((it) => it.equals(MainAxisSize.values.first)).existsOnce();
+  /// spot<Row>().whereMainAxisSize((it) => it.equals(MainAxisSize.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Row> whereMainAxisSize(MatchProp<MainAxisSize> match) {
@@ -226,7 +226,7 @@ extension RowSelector on WidgetSelector<Row> {
   /// Creates a [WidgetSelector] that finds all [Row] where mainAxisSize equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Row>().withMainAxisSize(MainAxisSize.values.first).existsOnce();
+  /// spot<Row>().withMainAxisSize(MainAxisSize.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Row> withMainAxisSize(MainAxisSize? value) {
@@ -237,7 +237,7 @@ extension RowSelector on WidgetSelector<Row> {
   /// Creates a [WidgetSelector] that finds all [Row] where crossAxisAlignment matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Row>().whereCrossAxisAlignment((it) => it.equals(CrossAxisAlignment.values.first)).existsOnce();
+  /// spot<Row>().whereCrossAxisAlignment((it) => it.equals(CrossAxisAlignment.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Row> whereCrossAxisAlignment(
@@ -248,7 +248,7 @@ extension RowSelector on WidgetSelector<Row> {
   /// Creates a [WidgetSelector] that finds all [Row] where crossAxisAlignment equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Row>().withCrossAxisAlignment(CrossAxisAlignment.values.first).existsOnce();
+  /// spot<Row>().withCrossAxisAlignment(CrossAxisAlignment.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Row> withCrossAxisAlignment(CrossAxisAlignment? value) {
@@ -259,7 +259,7 @@ extension RowSelector on WidgetSelector<Row> {
   /// Creates a [WidgetSelector] that finds all [Row] where textDirection matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Row>().whereTextDirection((it) => it.equals(TextDirection.values.first)).existsOnce();
+  /// spot<Row>().whereTextDirection((it) => it.equals(TextDirection.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Row> whereTextDirection(MatchProp<TextDirection> match) {
@@ -269,7 +269,7 @@ extension RowSelector on WidgetSelector<Row> {
   /// Creates a [WidgetSelector] that finds all [Row] where textDirection equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Row>().withTextDirection(TextDirection.values.first).existsOnce();
+  /// spot<Row>().withTextDirection(TextDirection.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Row> withTextDirection(TextDirection? value) {
@@ -280,7 +280,7 @@ extension RowSelector on WidgetSelector<Row> {
   /// Creates a [WidgetSelector] that finds all [Row] where verticalDirection matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Row>().whereVerticalDirection((it) => it.equals(VerticalDirection.values.first)).existsOnce();
+  /// spot<Row>().whereVerticalDirection((it) => it.equals(VerticalDirection.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Row> whereVerticalDirection(
@@ -291,7 +291,7 @@ extension RowSelector on WidgetSelector<Row> {
   /// Creates a [WidgetSelector] that finds all [Row] where verticalDirection equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Row>().withVerticalDirection(VerticalDirection.values.first).existsOnce();
+  /// spot<Row>().withVerticalDirection(VerticalDirection.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Row> withVerticalDirection(VerticalDirection? value) {
@@ -302,7 +302,7 @@ extension RowSelector on WidgetSelector<Row> {
   /// Creates a [WidgetSelector] that finds all [Row] where textBaseline matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Row>().whereTextBaseline((it) => it.equals(TextBaseline.values.first)).existsOnce();
+  /// spot<Row>().whereTextBaseline((it) => it.equals(TextBaseline.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Row> whereTextBaseline(MatchProp<TextBaseline> match) {
@@ -312,7 +312,7 @@ extension RowSelector on WidgetSelector<Row> {
   /// Creates a [WidgetSelector] that finds all [Row] where textBaseline equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Row>().withTextBaseline(TextBaseline.values.first).existsOnce();
+  /// spot<Row>().withTextBaseline(TextBaseline.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Row> withTextBaseline(TextBaseline? value) {
@@ -323,7 +323,7 @@ extension RowSelector on WidgetSelector<Row> {
   /// Creates a [WidgetSelector] that finds all [Row] where renderObject matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Row>().whereRenderObject((it) => it.equals(RenderBox())).existsOnce();
+  /// spot<Row>().whereRenderObject((it) => it.equals(RenderBox())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Row> whereRenderObject(MatchProp<RenderFlex> match) {
@@ -333,7 +333,7 @@ extension RowSelector on WidgetSelector<Row> {
   /// Creates a [WidgetSelector] that finds all [Row] where renderObject equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Row>().withRenderObject(RenderBox()).existsOnce();
+  /// spot<Row>().withRenderObject(RenderBox()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Row> withRenderObject(RenderFlex? value) {

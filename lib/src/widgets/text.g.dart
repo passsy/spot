@@ -14,7 +14,7 @@ extension TextMatcher on WidgetMatcher<Text> {
   /// Expects that text of [Text] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().existsOnce().hasTextWhere((it) => it.equals('foo'));
+  /// spot<Text>().existsOnce().hasTextWhere((it) => it.equals('foo'));
   /// ```
   WidgetMatcher<Text> hasTextWhere(MatchProp<String> match) {
     return hasDiagnosticProp<String>('data', match);
@@ -23,7 +23,7 @@ extension TextMatcher on WidgetMatcher<Text> {
   /// Expects that text of [Text] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().existsOnce().hasText('foo');
+  /// spot<Text>().existsOnce().hasText('foo');
   /// ```
   WidgetMatcher<Text> hasText(String? value) {
     return hasDiagnosticProp<String>(
@@ -33,7 +33,7 @@ extension TextMatcher on WidgetMatcher<Text> {
   /// Expects that textAlign of [Text] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().existsOnce().hasTextAlignWhere((it) => it.equals(TextAlign.values.first));
+  /// spot<Text>().existsOnce().hasTextAlignWhere((it) => it.equals(TextAlign.values.first));
   /// ```
   WidgetMatcher<Text> hasTextAlignWhere(MatchProp<TextAlign> match) {
     return hasDiagnosticProp<TextAlign>('textAlign', match);
@@ -42,7 +42,7 @@ extension TextMatcher on WidgetMatcher<Text> {
   /// Expects that textAlign of [Text] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().existsOnce().hasTextAlign(TextAlign.values.first);
+  /// spot<Text>().existsOnce().hasTextAlign(TextAlign.values.first);
   /// ```
   WidgetMatcher<Text> hasTextAlign(TextAlign? value) {
     return hasDiagnosticProp<TextAlign>(
@@ -52,7 +52,7 @@ extension TextMatcher on WidgetMatcher<Text> {
   /// Expects that textDirection of [Text] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().existsOnce().hasTextDirectionWhere((it) => it.equals(TextDirection.values.first));
+  /// spot<Text>().existsOnce().hasTextDirectionWhere((it) => it.equals(TextDirection.values.first));
   /// ```
   WidgetMatcher<Text> hasTextDirectionWhere(MatchProp<TextDirection> match) {
     return hasDiagnosticProp<TextDirection>('textDirection', match);
@@ -61,7 +61,7 @@ extension TextMatcher on WidgetMatcher<Text> {
   /// Expects that textDirection of [Text] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().existsOnce().hasTextDirection(TextDirection.values.first);
+  /// spot<Text>().existsOnce().hasTextDirection(TextDirection.values.first);
   /// ```
   WidgetMatcher<Text> hasTextDirection(TextDirection? value) {
     return hasDiagnosticProp<TextDirection>('textDirection',
@@ -71,7 +71,7 @@ extension TextMatcher on WidgetMatcher<Text> {
   /// Expects that locale of [Text] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().existsOnce().hasLocaleWhere((it) => it.equals(Locale('en', 'US')));
+  /// spot<Text>().existsOnce().hasLocaleWhere((it) => it.equals(Locale('en', 'US')));
   /// ```
   WidgetMatcher<Text> hasLocaleWhere(MatchProp<Locale> match) {
     return hasDiagnosticProp<Locale>('locale', match);
@@ -80,7 +80,7 @@ extension TextMatcher on WidgetMatcher<Text> {
   /// Expects that locale of [Text] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().existsOnce().hasLocale(Locale('en', 'US'));
+  /// spot<Text>().existsOnce().hasLocale(Locale('en', 'US'));
   /// ```
   WidgetMatcher<Text> hasLocale(Locale? value) {
     return hasDiagnosticProp<Locale>(
@@ -90,7 +90,7 @@ extension TextMatcher on WidgetMatcher<Text> {
   /// Expects that softWrap of [Text] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().existsOnce().hasSoftWrapWhere((it) => it.isTrue());
+  /// spot<Text>().existsOnce().hasSoftWrapWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<Text> hasSoftWrapWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('softWrap', match);
@@ -99,7 +99,7 @@ extension TextMatcher on WidgetMatcher<Text> {
   /// Expects that softWrap of [Text] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().existsOnce().hasSoftWrap(true);
+  /// spot<Text>().existsOnce().hasSoftWrap(true);
   /// ```
   WidgetMatcher<Text> hasSoftWrap(bool? value) {
     return hasDiagnosticProp<bool>(
@@ -109,7 +109,7 @@ extension TextMatcher on WidgetMatcher<Text> {
   /// Expects that overflow of [Text] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().existsOnce().hasOverflowWhere((it) => it.equals(TextOverflow.values.first));
+  /// spot<Text>().existsOnce().hasOverflowWhere((it) => it.equals(TextOverflow.values.first));
   /// ```
   WidgetMatcher<Text> hasOverflowWhere(MatchProp<TextOverflow> match) {
     return hasDiagnosticProp<TextOverflow>('overflow', match);
@@ -118,7 +118,7 @@ extension TextMatcher on WidgetMatcher<Text> {
   /// Expects that overflow of [Text] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().existsOnce().hasOverflow(TextOverflow.values.first);
+  /// spot<Text>().existsOnce().hasOverflow(TextOverflow.values.first);
   /// ```
   WidgetMatcher<Text> hasOverflow(TextOverflow? value) {
     return hasDiagnosticProp<TextOverflow>(
@@ -128,7 +128,7 @@ extension TextMatcher on WidgetMatcher<Text> {
   /// Expects that textScaleFactor of [Text] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().existsOnce().hasTextScaleFactorWhere((it) => it.isGreaterThan(10.5));
+  /// spot<Text>().existsOnce().hasTextScaleFactorWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<Text> hasTextScaleFactorWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('textScaleFactor', match);
@@ -137,7 +137,7 @@ extension TextMatcher on WidgetMatcher<Text> {
   /// Expects that textScaleFactor of [Text] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().existsOnce().hasTextScaleFactor(10.5);
+  /// spot<Text>().existsOnce().hasTextScaleFactor(10.5);
   /// ```
   WidgetMatcher<Text> hasTextScaleFactor(double? value) {
     return hasDiagnosticProp<double>('textScaleFactor',
@@ -147,7 +147,7 @@ extension TextMatcher on WidgetMatcher<Text> {
   /// Expects that maxLines of [Text] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().existsOnce().hasMaxLinesWhere((it) => it.isGreaterThan(10));
+  /// spot<Text>().existsOnce().hasMaxLinesWhere((it) => it.isGreaterThan(10));
   /// ```
   WidgetMatcher<Text> hasMaxLinesWhere(MatchProp<int> match) {
     return hasDiagnosticProp<int>('maxLines', match);
@@ -156,7 +156,7 @@ extension TextMatcher on WidgetMatcher<Text> {
   /// Expects that maxLines of [Text] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().existsOnce().hasMaxLines(10);
+  /// spot<Text>().existsOnce().hasMaxLines(10);
   /// ```
   WidgetMatcher<Text> hasMaxLines(int? value) {
     return hasDiagnosticProp<int>(
@@ -166,7 +166,7 @@ extension TextMatcher on WidgetMatcher<Text> {
   /// Expects that textWidthBasis of [Text] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().existsOnce().hasTextWidthBasisWhere((it) => it.equals(TextWidthBasis.values.first));
+  /// spot<Text>().existsOnce().hasTextWidthBasisWhere((it) => it.equals(TextWidthBasis.values.first));
   /// ```
   WidgetMatcher<Text> hasTextWidthBasisWhere(MatchProp<TextWidthBasis> match) {
     return hasDiagnosticProp<TextWidthBasis>('textWidthBasis', match);
@@ -175,7 +175,7 @@ extension TextMatcher on WidgetMatcher<Text> {
   /// Expects that textWidthBasis of [Text] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().existsOnce().hasTextWidthBasis(TextWidthBasis.values.first);
+  /// spot<Text>().existsOnce().hasTextWidthBasis(TextWidthBasis.values.first);
   /// ```
   WidgetMatcher<Text> hasTextWidthBasis(TextWidthBasis? value) {
     return hasDiagnosticProp<TextWidthBasis>('textWidthBasis',
@@ -185,7 +185,7 @@ extension TextMatcher on WidgetMatcher<Text> {
   /// Expects that textHeightBehavior of [Text] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().existsOnce().hasTextHeightBehaviorWhere((it) => it.equals(TextHeightBehavior(applyHeightToFirstAscent: true, applyHeightToLastDescent: false)));
+  /// spot<Text>().existsOnce().hasTextHeightBehaviorWhere((it) => it.equals(TextHeightBehavior(applyHeightToFirstAscent: true, applyHeightToLastDescent: false)));
   /// ```
   WidgetMatcher<Text> hasTextHeightBehaviorWhere(
       MatchProp<TextHeightBehavior> match) {
@@ -195,7 +195,7 @@ extension TextMatcher on WidgetMatcher<Text> {
   /// Expects that textHeightBehavior of [Text] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().existsOnce().hasTextHeightBehavior(TextHeightBehavior(applyHeightToFirstAscent: true, applyHeightToLastDescent: false));
+  /// spot<Text>().existsOnce().hasTextHeightBehavior(TextHeightBehavior(applyHeightToFirstAscent: true, applyHeightToLastDescent: false));
   /// ```
   WidgetMatcher<Text> hasTextHeightBehavior(TextHeightBehavior? value) {
     return hasDiagnosticProp<TextHeightBehavior>('textHeightBehavior',
@@ -208,7 +208,7 @@ extension TextSelector on WidgetSelector<Text> {
   /// Creates a [WidgetSelector] that finds all [Text] where text matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().whereText((it) => it.equals('foo')).existsOnce();
+  /// spot<Text>().whereText((it) => it.equals('foo')).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Text> whereText(MatchProp<String> match) {
@@ -218,7 +218,7 @@ extension TextSelector on WidgetSelector<Text> {
   /// Creates a [WidgetSelector] that finds all [Text] where text equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().withText('foo').existsOnce();
+  /// spot<Text>().withText('foo').existsOnce();
   /// ```
   @useResult
   WidgetSelector<Text> withText(String? value) {
@@ -229,7 +229,7 @@ extension TextSelector on WidgetSelector<Text> {
   /// Creates a [WidgetSelector] that finds all [Text] where textAlign matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().whereTextAlign((it) => it.equals(TextAlign.values.first)).existsOnce();
+  /// spot<Text>().whereTextAlign((it) => it.equals(TextAlign.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Text> whereTextAlign(MatchProp<TextAlign> match) {
@@ -239,7 +239,7 @@ extension TextSelector on WidgetSelector<Text> {
   /// Creates a [WidgetSelector] that finds all [Text] where textAlign equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().withTextAlign(TextAlign.values.first).existsOnce();
+  /// spot<Text>().withTextAlign(TextAlign.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Text> withTextAlign(TextAlign? value) {
@@ -250,7 +250,7 @@ extension TextSelector on WidgetSelector<Text> {
   /// Creates a [WidgetSelector] that finds all [Text] where textDirection matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().whereTextDirection((it) => it.equals(TextDirection.values.first)).existsOnce();
+  /// spot<Text>().whereTextDirection((it) => it.equals(TextDirection.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Text> whereTextDirection(MatchProp<TextDirection> match) {
@@ -260,7 +260,7 @@ extension TextSelector on WidgetSelector<Text> {
   /// Creates a [WidgetSelector] that finds all [Text] where textDirection equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().withTextDirection(TextDirection.values.first).existsOnce();
+  /// spot<Text>().withTextDirection(TextDirection.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Text> withTextDirection(TextDirection? value) {
@@ -271,7 +271,7 @@ extension TextSelector on WidgetSelector<Text> {
   /// Creates a [WidgetSelector] that finds all [Text] where locale matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().whereLocale((it) => it.equals(Locale('en', 'US'))).existsOnce();
+  /// spot<Text>().whereLocale((it) => it.equals(Locale('en', 'US'))).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Text> whereLocale(MatchProp<Locale> match) {
@@ -281,7 +281,7 @@ extension TextSelector on WidgetSelector<Text> {
   /// Creates a [WidgetSelector] that finds all [Text] where locale equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().withLocale(Locale('en', 'US')).existsOnce();
+  /// spot<Text>().withLocale(Locale('en', 'US')).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Text> withLocale(Locale? value) {
@@ -292,7 +292,7 @@ extension TextSelector on WidgetSelector<Text> {
   /// Creates a [WidgetSelector] that finds all [Text] where softWrap matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().whereSoftWrap((it) => it.isTrue()).existsOnce();
+  /// spot<Text>().whereSoftWrap((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Text> whereSoftWrap(MatchProp<bool> match) {
@@ -302,7 +302,7 @@ extension TextSelector on WidgetSelector<Text> {
   /// Creates a [WidgetSelector] that finds all [Text] where softWrap equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().withSoftWrap(true).existsOnce();
+  /// spot<Text>().withSoftWrap(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Text> withSoftWrap(bool? value) {
@@ -313,7 +313,7 @@ extension TextSelector on WidgetSelector<Text> {
   /// Creates a [WidgetSelector] that finds all [Text] where overflow matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().whereOverflow((it) => it.equals(TextOverflow.values.first)).existsOnce();
+  /// spot<Text>().whereOverflow((it) => it.equals(TextOverflow.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Text> whereOverflow(MatchProp<TextOverflow> match) {
@@ -323,7 +323,7 @@ extension TextSelector on WidgetSelector<Text> {
   /// Creates a [WidgetSelector] that finds all [Text] where overflow equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().withOverflow(TextOverflow.values.first).existsOnce();
+  /// spot<Text>().withOverflow(TextOverflow.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Text> withOverflow(TextOverflow? value) {
@@ -334,7 +334,7 @@ extension TextSelector on WidgetSelector<Text> {
   /// Creates a [WidgetSelector] that finds all [Text] where textScaleFactor matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().whereTextScaleFactor((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// spot<Text>().whereTextScaleFactor((it) => it.isGreaterThan(10.5)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Text> whereTextScaleFactor(MatchProp<double> match) {
@@ -344,7 +344,7 @@ extension TextSelector on WidgetSelector<Text> {
   /// Creates a [WidgetSelector] that finds all [Text] where textScaleFactor equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().withTextScaleFactor(10.5).existsOnce();
+  /// spot<Text>().withTextScaleFactor(10.5).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Text> withTextScaleFactor(double? value) {
@@ -355,7 +355,7 @@ extension TextSelector on WidgetSelector<Text> {
   /// Creates a [WidgetSelector] that finds all [Text] where maxLines matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().whereMaxLines((it) => it.isGreaterThan(10)).existsOnce();
+  /// spot<Text>().whereMaxLines((it) => it.isGreaterThan(10)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Text> whereMaxLines(MatchProp<int> match) {
@@ -365,7 +365,7 @@ extension TextSelector on WidgetSelector<Text> {
   /// Creates a [WidgetSelector] that finds all [Text] where maxLines equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().withMaxLines(10).existsOnce();
+  /// spot<Text>().withMaxLines(10).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Text> withMaxLines(int? value) {
@@ -376,7 +376,7 @@ extension TextSelector on WidgetSelector<Text> {
   /// Creates a [WidgetSelector] that finds all [Text] where textWidthBasis matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().whereTextWidthBasis((it) => it.equals(TextWidthBasis.values.first)).existsOnce();
+  /// spot<Text>().whereTextWidthBasis((it) => it.equals(TextWidthBasis.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Text> whereTextWidthBasis(MatchProp<TextWidthBasis> match) {
@@ -386,7 +386,7 @@ extension TextSelector on WidgetSelector<Text> {
   /// Creates a [WidgetSelector] that finds all [Text] where textWidthBasis equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().withTextWidthBasis(TextWidthBasis.values.first).existsOnce();
+  /// spot<Text>().withTextWidthBasis(TextWidthBasis.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Text> withTextWidthBasis(TextWidthBasis? value) {
@@ -397,7 +397,7 @@ extension TextSelector on WidgetSelector<Text> {
   /// Creates a [WidgetSelector] that finds all [Text] where textHeightBehavior matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().whereTextHeightBehavior((it) => it.equals(TextHeightBehavior(applyHeightToFirstAscent: true, applyHeightToLastDescent: false))).existsOnce();
+  /// spot<Text>().whereTextHeightBehavior((it) => it.equals(TextHeightBehavior(applyHeightToFirstAscent: true, applyHeightToLastDescent: false))).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Text> whereTextHeightBehavior(
@@ -408,7 +408,7 @@ extension TextSelector on WidgetSelector<Text> {
   /// Creates a [WidgetSelector] that finds all [Text] where textHeightBehavior equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Text>().withTextHeightBehavior(TextHeightBehavior(applyHeightToFirstAscent: true, applyHeightToLastDescent: false)).existsOnce();
+  /// spot<Text>().withTextHeightBehavior(TextHeightBehavior(applyHeightToFirstAscent: true, applyHeightToLastDescent: false)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Text> withTextHeightBehavior(TextHeightBehavior? value) {

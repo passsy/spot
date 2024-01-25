@@ -14,7 +14,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that text of [SelectableText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasTextWhere((it) => it.equals('foo'));
+  /// spot<SelectableText>().existsOnce().hasTextWhere((it) => it.equals('foo'));
   /// ```
   WidgetMatcher<SelectableText> hasTextWhere(MatchProp<String> match) {
     return hasDiagnosticProp<String>('data', match);
@@ -23,7 +23,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that text of [SelectableText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasText('foo');
+  /// spot<SelectableText>().existsOnce().hasText('foo');
   /// ```
   WidgetMatcher<SelectableText> hasText(String? value) {
     return hasDiagnosticProp<String>(
@@ -33,7 +33,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that semanticsLabel of [SelectableText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasSemanticsLabelWhere((it) => it.equals('foo'));
+  /// spot<SelectableText>().existsOnce().hasSemanticsLabelWhere((it) => it.equals('foo'));
   /// ```
   WidgetMatcher<SelectableText> hasSemanticsLabelWhere(
       MatchProp<String> match) {
@@ -43,7 +43,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that semanticsLabel of [SelectableText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasSemanticsLabel('foo');
+  /// spot<SelectableText>().existsOnce().hasSemanticsLabel('foo');
   /// ```
   WidgetMatcher<SelectableText> hasSemanticsLabel(String? value) {
     return hasDiagnosticProp<String>('semanticsLabel',
@@ -53,7 +53,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that focusNode of [SelectableText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasFocusNodeWhere((it) => it.equals(FocusNode()));
+  /// spot<SelectableText>().existsOnce().hasFocusNodeWhere((it) => it.equals(FocusNode()));
   /// ```
   WidgetMatcher<SelectableText> hasFocusNodeWhere(MatchProp<FocusNode> match) {
     return hasDiagnosticProp<FocusNode>('focusNode', match);
@@ -62,7 +62,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that focusNode of [SelectableText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasFocusNode(FocusNode());
+  /// spot<SelectableText>().existsOnce().hasFocusNode(FocusNode());
   /// ```
   WidgetMatcher<SelectableText> hasFocusNode(FocusNode? value) {
     return hasDiagnosticProp<FocusNode>(
@@ -72,7 +72,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that style of [SelectableText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasStyleWhere((it) => it.equals(TextStyle()));
+  /// spot<SelectableText>().existsOnce().hasStyleWhere((it) => it.equals(TextStyle()));
   /// ```
   WidgetMatcher<SelectableText> hasStyleWhere(MatchProp<TextStyle> match) {
     return hasDiagnosticProp<TextStyle>('style', match);
@@ -81,7 +81,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that style of [SelectableText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasStyle(TextStyle());
+  /// spot<SelectableText>().existsOnce().hasStyle(TextStyle());
   /// ```
   WidgetMatcher<SelectableText> hasStyle(TextStyle? value) {
     return hasDiagnosticProp<TextStyle>(
@@ -91,7 +91,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that autofocus of [SelectableText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasAutofocusWhere((it) => it.isTrue());
+  /// spot<SelectableText>().existsOnce().hasAutofocusWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<SelectableText> hasAutofocusWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('autofocus', match);
@@ -100,7 +100,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that autofocus of [SelectableText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasAutofocus(true);
+  /// spot<SelectableText>().existsOnce().hasAutofocus(true);
   /// ```
   WidgetMatcher<SelectableText> hasAutofocus(bool? value) {
     return hasDiagnosticProp<bool>(
@@ -110,7 +110,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that showCursor of [SelectableText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasShowCursorWhere((it) => it.isTrue());
+  /// spot<SelectableText>().existsOnce().hasShowCursorWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<SelectableText> hasShowCursorWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('showCursor', match);
@@ -119,7 +119,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that showCursor of [SelectableText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasShowCursor(true);
+  /// spot<SelectableText>().existsOnce().hasShowCursor(true);
   /// ```
   WidgetMatcher<SelectableText> hasShowCursor(bool? value) {
     return hasDiagnosticProp<bool>(
@@ -129,7 +129,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that minLines of [SelectableText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasMinLinesWhere((it) => it.isGreaterThan(10));
+  /// spot<SelectableText>().existsOnce().hasMinLinesWhere((it) => it.isGreaterThan(10));
   /// ```
   WidgetMatcher<SelectableText> hasMinLinesWhere(MatchProp<int> match) {
     return hasDiagnosticProp<int>('minLines', match);
@@ -138,7 +138,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that minLines of [SelectableText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasMinLines(10);
+  /// spot<SelectableText>().existsOnce().hasMinLines(10);
   /// ```
   WidgetMatcher<SelectableText> hasMinLines(int? value) {
     return hasDiagnosticProp<int>(
@@ -148,7 +148,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that maxLines of [SelectableText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasMaxLinesWhere((it) => it.isGreaterThan(10));
+  /// spot<SelectableText>().existsOnce().hasMaxLinesWhere((it) => it.isGreaterThan(10));
   /// ```
   WidgetMatcher<SelectableText> hasMaxLinesWhere(MatchProp<int> match) {
     return hasDiagnosticProp<int>('maxLines', match);
@@ -157,7 +157,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that maxLines of [SelectableText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasMaxLines(10);
+  /// spot<SelectableText>().existsOnce().hasMaxLines(10);
   /// ```
   WidgetMatcher<SelectableText> hasMaxLines(int? value) {
     return hasDiagnosticProp<int>(
@@ -167,7 +167,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that textAlign of [SelectableText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasTextAlignWhere((it) => it.equals(TextAlign.values.first));
+  /// spot<SelectableText>().existsOnce().hasTextAlignWhere((it) => it.equals(TextAlign.values.first));
   /// ```
   WidgetMatcher<SelectableText> hasTextAlignWhere(MatchProp<TextAlign> match) {
     return hasDiagnosticProp<TextAlign>('textAlign', match);
@@ -176,7 +176,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that textAlign of [SelectableText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasTextAlign(TextAlign.values.first);
+  /// spot<SelectableText>().existsOnce().hasTextAlign(TextAlign.values.first);
   /// ```
   WidgetMatcher<SelectableText> hasTextAlign(TextAlign? value) {
     return hasDiagnosticProp<TextAlign>(
@@ -186,7 +186,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that textDirection of [SelectableText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasTextDirectionWhere((it) => it.equals(TextDirection.values.first));
+  /// spot<SelectableText>().existsOnce().hasTextDirectionWhere((it) => it.equals(TextDirection.values.first));
   /// ```
   WidgetMatcher<SelectableText> hasTextDirectionWhere(
       MatchProp<TextDirection> match) {
@@ -196,7 +196,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that textDirection of [SelectableText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasTextDirection(TextDirection.values.first);
+  /// spot<SelectableText>().existsOnce().hasTextDirection(TextDirection.values.first);
   /// ```
   WidgetMatcher<SelectableText> hasTextDirection(TextDirection? value) {
     return hasDiagnosticProp<TextDirection>('textDirection',
@@ -206,7 +206,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that textScaleFactor of [SelectableText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasTextScaleFactorWhere((it) => it.isGreaterThan(10.5));
+  /// spot<SelectableText>().existsOnce().hasTextScaleFactorWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<SelectableText> hasTextScaleFactorWhere(
       MatchProp<double> match) {
@@ -216,17 +216,37 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that textScaleFactor of [SelectableText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasTextScaleFactor(10.5);
+  /// spot<SelectableText>().existsOnce().hasTextScaleFactor(10.5);
   /// ```
   WidgetMatcher<SelectableText> hasTextScaleFactor(double? value) {
     return hasDiagnosticProp<double>('textScaleFactor',
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Expects that textScaler of [SelectableText] matches the condition in [match].
+  /// #### Example usage:
+  /// ```dart
+  /// spot<SelectableText>().existsOnce().hasTextScalerWhere((it) => it.equals(your TextScaler value to match));
+  /// ```
+  WidgetMatcher<SelectableText> hasTextScalerWhere(
+      MatchProp<TextScaler> match) {
+    return hasDiagnosticProp<TextScaler>('textScaler', match);
+  }
+
+  /// Expects that textScaler of [SelectableText] equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  /// spot<SelectableText>().existsOnce().hasTextScaler(your TextScaler value to match);
+  /// ```
+  WidgetMatcher<SelectableText> hasTextScaler(TextScaler? value) {
+    return hasDiagnosticProp<TextScaler>(
+        'textScaler', (it) => value == null ? it.isNull() : it.equals(value));
+  }
+
   /// Expects that cursorWidth of [SelectableText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasCursorWidthWhere((it) => it.isGreaterThan(10.5));
+  /// spot<SelectableText>().existsOnce().hasCursorWidthWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<SelectableText> hasCursorWidthWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('cursorWidth', match);
@@ -235,7 +255,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that cursorWidth of [SelectableText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasCursorWidth(10.5);
+  /// spot<SelectableText>().existsOnce().hasCursorWidth(10.5);
   /// ```
   WidgetMatcher<SelectableText> hasCursorWidth(double? value) {
     return hasDiagnosticProp<double>(
@@ -245,7 +265,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that cursorHeight of [SelectableText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasCursorHeightWhere((it) => it.isGreaterThan(10.5));
+  /// spot<SelectableText>().existsOnce().hasCursorHeightWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<SelectableText> hasCursorHeightWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('cursorHeight', match);
@@ -254,7 +274,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that cursorHeight of [SelectableText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasCursorHeight(10.5);
+  /// spot<SelectableText>().existsOnce().hasCursorHeight(10.5);
   /// ```
   WidgetMatcher<SelectableText> hasCursorHeight(double? value) {
     return hasDiagnosticProp<double>(
@@ -264,7 +284,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that cursorRadius of [SelectableText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasCursorRadiusWhere((it) => it.equals(Radius.circular(10.0)));
+  /// spot<SelectableText>().existsOnce().hasCursorRadiusWhere((it) => it.equals(Radius.circular(10.0)));
   /// ```
   WidgetMatcher<SelectableText> hasCursorRadiusWhere(MatchProp<Radius> match) {
     return hasDiagnosticProp<Radius>('cursorRadius', match);
@@ -273,7 +293,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that cursorRadius of [SelectableText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasCursorRadius(Radius.circular(10.0));
+  /// spot<SelectableText>().existsOnce().hasCursorRadius(Radius.circular(10.0));
   /// ```
   WidgetMatcher<SelectableText> hasCursorRadius(Radius? value) {
     return hasDiagnosticProp<Radius>(
@@ -283,7 +303,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that cursorColor of [SelectableText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasCursorColorWhere((it) => it.equals(Colors.red));
+  /// spot<SelectableText>().existsOnce().hasCursorColorWhere((it) => it.equals(Colors.red));
   /// ```
   WidgetMatcher<SelectableText> hasCursorColorWhere(MatchProp<Color> match) {
     return hasDiagnosticProp<Color>('cursorColor', match);
@@ -292,7 +312,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that cursorColor of [SelectableText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasCursorColor(Colors.red);
+  /// spot<SelectableText>().existsOnce().hasCursorColor(Colors.red);
   /// ```
   WidgetMatcher<SelectableText> hasCursorColor(Color? value) {
     return hasDiagnosticProp<Color>(
@@ -302,7 +322,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that selectionEnabled of [SelectableText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasSelectionEnabledWhere((it) => it.isTrue());
+  /// spot<SelectableText>().existsOnce().hasSelectionEnabledWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<SelectableText> hasSelectionEnabledWhere(
       MatchProp<bool> match) {
@@ -312,7 +332,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that selectionEnabled of [SelectableText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasSelectionEnabled(true);
+  /// spot<SelectableText>().existsOnce().hasSelectionEnabled(true);
   /// ```
   WidgetMatcher<SelectableText> hasSelectionEnabled(bool? value) {
     return hasDiagnosticProp<bool>('selectionEnabled',
@@ -322,7 +342,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that selectionControls of [SelectableText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasSelectionControlsWhere((it) => it.equals(MaterialTextSelectionControls()));
+  /// spot<SelectableText>().existsOnce().hasSelectionControlsWhere((it) => it.equals(MaterialTextSelectionControls()));
   /// ```
   WidgetMatcher<SelectableText> hasSelectionControlsWhere(
       MatchProp<TextSelectionControls> match) {
@@ -332,7 +352,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that selectionControls of [SelectableText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasSelectionControls(MaterialTextSelectionControls());
+  /// spot<SelectableText>().existsOnce().hasSelectionControls(MaterialTextSelectionControls());
   /// ```
   WidgetMatcher<SelectableText> hasSelectionControls(
       TextSelectionControls? value) {
@@ -343,7 +363,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that scrollPhysics of [SelectableText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasScrollPhysicsWhere((it) => it.equals(BouncingScrollPhysics()));
+  /// spot<SelectableText>().existsOnce().hasScrollPhysicsWhere((it) => it.equals(BouncingScrollPhysics()));
   /// ```
   WidgetMatcher<SelectableText> hasScrollPhysicsWhere(
       MatchProp<ScrollPhysics> match) {
@@ -353,7 +373,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that scrollPhysics of [SelectableText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasScrollPhysics(BouncingScrollPhysics());
+  /// spot<SelectableText>().existsOnce().hasScrollPhysics(BouncingScrollPhysics());
   /// ```
   WidgetMatcher<SelectableText> hasScrollPhysics(ScrollPhysics? value) {
     return hasDiagnosticProp<ScrollPhysics>('scrollPhysics',
@@ -363,7 +383,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that textHeightBehavior of [SelectableText] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasTextHeightBehaviorWhere((it) => it.equals(TextHeightBehavior(applyHeightToFirstAscent: true, applyHeightToLastDescent: false)));
+  /// spot<SelectableText>().existsOnce().hasTextHeightBehaviorWhere((it) => it.equals(TextHeightBehavior(applyHeightToFirstAscent: true, applyHeightToLastDescent: false)));
   /// ```
   WidgetMatcher<SelectableText> hasTextHeightBehaviorWhere(
       MatchProp<TextHeightBehavior> match) {
@@ -373,7 +393,7 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// Expects that textHeightBehavior of [SelectableText] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().existsOnce().hasTextHeightBehavior(TextHeightBehavior(applyHeightToFirstAscent: true, applyHeightToLastDescent: false));
+  /// spot<SelectableText>().existsOnce().hasTextHeightBehavior(TextHeightBehavior(applyHeightToFirstAscent: true, applyHeightToLastDescent: false));
   /// ```
   WidgetMatcher<SelectableText> hasTextHeightBehavior(
       TextHeightBehavior? value) {
@@ -387,7 +407,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where text matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().whereText((it) => it.equals('foo')).existsOnce();
+  /// spot<SelectableText>().whereText((it) => it.equals('foo')).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> whereText(MatchProp<String> match) {
@@ -397,7 +417,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where text equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().withText('foo').existsOnce();
+  /// spot<SelectableText>().withText('foo').existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> withText(String? value) {
@@ -408,7 +428,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where semanticsLabel matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().whereSemanticsLabel((it) => it.equals('foo')).existsOnce();
+  /// spot<SelectableText>().whereSemanticsLabel((it) => it.equals('foo')).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> whereSemanticsLabel(MatchProp<String> match) {
@@ -418,7 +438,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where semanticsLabel equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().withSemanticsLabel('foo').existsOnce();
+  /// spot<SelectableText>().withSemanticsLabel('foo').existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> withSemanticsLabel(String? value) {
@@ -429,7 +449,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where focusNode matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().whereFocusNode((it) => it.equals(FocusNode())).existsOnce();
+  /// spot<SelectableText>().whereFocusNode((it) => it.equals(FocusNode())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> whereFocusNode(MatchProp<FocusNode> match) {
@@ -439,7 +459,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where focusNode equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().withFocusNode(FocusNode()).existsOnce();
+  /// spot<SelectableText>().withFocusNode(FocusNode()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> withFocusNode(FocusNode? value) {
@@ -450,7 +470,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where style matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().whereStyle((it) => it.equals(TextStyle())).existsOnce();
+  /// spot<SelectableText>().whereStyle((it) => it.equals(TextStyle())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> whereStyle(MatchProp<TextStyle> match) {
@@ -460,7 +480,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where style equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().withStyle(TextStyle()).existsOnce();
+  /// spot<SelectableText>().withStyle(TextStyle()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> withStyle(TextStyle? value) {
@@ -471,7 +491,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where autofocus matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().whereAutofocus((it) => it.isTrue()).existsOnce();
+  /// spot<SelectableText>().whereAutofocus((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> whereAutofocus(MatchProp<bool> match) {
@@ -481,7 +501,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where autofocus equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().withAutofocus(true).existsOnce();
+  /// spot<SelectableText>().withAutofocus(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> withAutofocus(bool? value) {
@@ -492,7 +512,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where showCursor matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().whereShowCursor((it) => it.isTrue()).existsOnce();
+  /// spot<SelectableText>().whereShowCursor((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> whereShowCursor(MatchProp<bool> match) {
@@ -502,7 +522,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where showCursor equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().withShowCursor(true).existsOnce();
+  /// spot<SelectableText>().withShowCursor(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> withShowCursor(bool? value) {
@@ -513,7 +533,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where minLines matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().whereMinLines((it) => it.isGreaterThan(10)).existsOnce();
+  /// spot<SelectableText>().whereMinLines((it) => it.isGreaterThan(10)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> whereMinLines(MatchProp<int> match) {
@@ -523,7 +543,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where minLines equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().withMinLines(10).existsOnce();
+  /// spot<SelectableText>().withMinLines(10).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> withMinLines(int? value) {
@@ -534,7 +554,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where maxLines matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().whereMaxLines((it) => it.isGreaterThan(10)).existsOnce();
+  /// spot<SelectableText>().whereMaxLines((it) => it.isGreaterThan(10)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> whereMaxLines(MatchProp<int> match) {
@@ -544,7 +564,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where maxLines equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().withMaxLines(10).existsOnce();
+  /// spot<SelectableText>().withMaxLines(10).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> withMaxLines(int? value) {
@@ -555,7 +575,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where textAlign matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().whereTextAlign((it) => it.equals(TextAlign.values.first)).existsOnce();
+  /// spot<SelectableText>().whereTextAlign((it) => it.equals(TextAlign.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> whereTextAlign(MatchProp<TextAlign> match) {
@@ -565,7 +585,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where textAlign equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().withTextAlign(TextAlign.values.first).existsOnce();
+  /// spot<SelectableText>().withTextAlign(TextAlign.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> withTextAlign(TextAlign? value) {
@@ -576,7 +596,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where textDirection matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().whereTextDirection((it) => it.equals(TextDirection.values.first)).existsOnce();
+  /// spot<SelectableText>().whereTextDirection((it) => it.equals(TextDirection.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> whereTextDirection(
@@ -587,7 +607,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where textDirection equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().withTextDirection(TextDirection.values.first).existsOnce();
+  /// spot<SelectableText>().withTextDirection(TextDirection.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> withTextDirection(TextDirection? value) {
@@ -598,7 +618,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where textScaleFactor matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().whereTextScaleFactor((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// spot<SelectableText>().whereTextScaleFactor((it) => it.isGreaterThan(10.5)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> whereTextScaleFactor(MatchProp<double> match) {
@@ -608,7 +628,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where textScaleFactor equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().withTextScaleFactor(10.5).existsOnce();
+  /// spot<SelectableText>().withTextScaleFactor(10.5).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> withTextScaleFactor(double? value) {
@@ -616,10 +636,31 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Creates a [WidgetSelector] that finds all [SelectableText] where textScaler matches the condition.
+  /// #### Example usage:
+  /// ```dart
+  /// spot<SelectableText>().whereTextScaler((it) => it.equals(your TextScaler value to match)).existsOnce();
+  /// ```
+  @useResult
+  WidgetSelector<SelectableText> whereTextScaler(MatchProp<TextScaler> match) {
+    return withDiagnosticProp<TextScaler>('textScaler', match);
+  }
+
+  /// Creates a [WidgetSelector] that finds all [SelectableText] where textScaler equals (==) [value].
+  /// #### Example usage:
+  /// ```dart
+  /// spot<SelectableText>().withTextScaler(your TextScaler value to match).existsOnce();
+  /// ```
+  @useResult
+  WidgetSelector<SelectableText> withTextScaler(TextScaler? value) {
+    return withDiagnosticProp<TextScaler>(
+        'textScaler', (it) => value == null ? it.isNull() : it.equals(value));
+  }
+
   /// Creates a [WidgetSelector] that finds all [SelectableText] where cursorWidth matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().whereCursorWidth((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// spot<SelectableText>().whereCursorWidth((it) => it.isGreaterThan(10.5)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> whereCursorWidth(MatchProp<double> match) {
@@ -629,7 +670,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where cursorWidth equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().withCursorWidth(10.5).existsOnce();
+  /// spot<SelectableText>().withCursorWidth(10.5).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> withCursorWidth(double? value) {
@@ -640,7 +681,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where cursorHeight matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().whereCursorHeight((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// spot<SelectableText>().whereCursorHeight((it) => it.isGreaterThan(10.5)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> whereCursorHeight(MatchProp<double> match) {
@@ -650,7 +691,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where cursorHeight equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().withCursorHeight(10.5).existsOnce();
+  /// spot<SelectableText>().withCursorHeight(10.5).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> withCursorHeight(double? value) {
@@ -661,7 +702,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where cursorRadius matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().whereCursorRadius((it) => it.equals(Radius.circular(10.0))).existsOnce();
+  /// spot<SelectableText>().whereCursorRadius((it) => it.equals(Radius.circular(10.0))).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> whereCursorRadius(MatchProp<Radius> match) {
@@ -671,7 +712,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where cursorRadius equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().withCursorRadius(Radius.circular(10.0)).existsOnce();
+  /// spot<SelectableText>().withCursorRadius(Radius.circular(10.0)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> withCursorRadius(Radius? value) {
@@ -682,7 +723,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where cursorColor matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().whereCursorColor((it) => it.equals(Colors.red)).existsOnce();
+  /// spot<SelectableText>().whereCursorColor((it) => it.equals(Colors.red)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> whereCursorColor(MatchProp<Color> match) {
@@ -692,7 +733,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where cursorColor equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().withCursorColor(Colors.red).existsOnce();
+  /// spot<SelectableText>().withCursorColor(Colors.red).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> withCursorColor(Color? value) {
@@ -703,7 +744,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where selectionEnabled matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().whereSelectionEnabled((it) => it.isTrue()).existsOnce();
+  /// spot<SelectableText>().whereSelectionEnabled((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> whereSelectionEnabled(MatchProp<bool> match) {
@@ -713,7 +754,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where selectionEnabled equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().withSelectionEnabled(true).existsOnce();
+  /// spot<SelectableText>().withSelectionEnabled(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> withSelectionEnabled(bool? value) {
@@ -724,7 +765,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where selectionControls matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().whereSelectionControls((it) => it.equals(MaterialTextSelectionControls())).existsOnce();
+  /// spot<SelectableText>().whereSelectionControls((it) => it.equals(MaterialTextSelectionControls())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> whereSelectionControls(
@@ -736,7 +777,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where selectionControls equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().withSelectionControls(MaterialTextSelectionControls()).existsOnce();
+  /// spot<SelectableText>().withSelectionControls(MaterialTextSelectionControls()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> withSelectionControls(
@@ -748,7 +789,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where scrollPhysics matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().whereScrollPhysics((it) => it.equals(BouncingScrollPhysics())).existsOnce();
+  /// spot<SelectableText>().whereScrollPhysics((it) => it.equals(BouncingScrollPhysics())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> whereScrollPhysics(
@@ -759,7 +800,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where scrollPhysics equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().withScrollPhysics(BouncingScrollPhysics()).existsOnce();
+  /// spot<SelectableText>().withScrollPhysics(BouncingScrollPhysics()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> withScrollPhysics(ScrollPhysics? value) {
@@ -770,7 +811,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where textHeightBehavior matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().whereTextHeightBehavior((it) => it.equals(TextHeightBehavior(applyHeightToFirstAscent: true, applyHeightToLastDescent: false))).existsOnce();
+  /// spot<SelectableText>().whereTextHeightBehavior((it) => it.equals(TextHeightBehavior(applyHeightToFirstAscent: true, applyHeightToLastDescent: false))).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> whereTextHeightBehavior(
@@ -781,7 +822,7 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// Creates a [WidgetSelector] that finds all [SelectableText] where textHeightBehavior equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SelectableText>().withTextHeightBehavior(TextHeightBehavior(applyHeightToFirstAscent: true, applyHeightToLastDescent: false)).existsOnce();
+  /// spot<SelectableText>().withTextHeightBehavior(TextHeightBehavior(applyHeightToFirstAscent: true, applyHeightToLastDescent: false)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SelectableText> withTextHeightBehavior(

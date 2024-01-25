@@ -14,7 +14,7 @@ extension SwitchMatcher on WidgetMatcher<Switch> {
   /// Expects that value of [Switch] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Switch>().existsOnce().hasValueWhere((it) => it.isTrue());
+  /// spot<Switch>().existsOnce().hasValueWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<Switch> hasValueWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('value', match);
@@ -23,7 +23,7 @@ extension SwitchMatcher on WidgetMatcher<Switch> {
   /// Expects that value of [Switch] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Switch>().existsOnce().hasValue(true);
+  /// spot<Switch>().existsOnce().hasValue(true);
   /// ```
   WidgetMatcher<Switch> hasValue(bool? value) {
     return hasDiagnosticProp<bool>(
@@ -36,7 +36,7 @@ extension SwitchSelector on WidgetSelector<Switch> {
   /// Creates a [WidgetSelector] that finds all [Switch] where value matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Switch>().whereValue((it) => it.isTrue()).existsOnce();
+  /// spot<Switch>().whereValue((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Switch> whereValue(MatchProp<bool> match) {
@@ -46,7 +46,7 @@ extension SwitchSelector on WidgetSelector<Switch> {
   /// Creates a [WidgetSelector] that finds all [Switch] where value equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Switch>().withValue(true).existsOnce();
+  /// spot<Switch>().withValue(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Switch> withValue(bool? value) {

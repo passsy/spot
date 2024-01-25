@@ -15,7 +15,7 @@ extension LinearProgressIndicatorMatcher
   /// Expects that value of [LinearProgressIndicator] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<LinearProgressIndicator>().existsOnce().hasValueWhere((it) => it.isGreaterThan(10.5));
+  /// spot<LinearProgressIndicator>().existsOnce().hasValueWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<LinearProgressIndicator> hasValueWhere(
       MatchProp<double> match) {
@@ -25,7 +25,7 @@ extension LinearProgressIndicatorMatcher
   /// Expects that value of [LinearProgressIndicator] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<LinearProgressIndicator>().existsOnce().hasValue(10.5);
+  /// spot<LinearProgressIndicator>().existsOnce().hasValue(10.5);
   /// ```
   WidgetMatcher<LinearProgressIndicator> hasValue(double? value) {
     return hasDiagnosticProp<double>(
@@ -39,7 +39,7 @@ extension LinearProgressIndicatorSelector
   /// Creates a [WidgetSelector] that finds all [LinearProgressIndicator] where value matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<LinearProgressIndicator>().whereValue((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// spot<LinearProgressIndicator>().whereValue((it) => it.isGreaterThan(10.5)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<LinearProgressIndicator> whereValue(MatchProp<double> match) {
@@ -49,7 +49,7 @@ extension LinearProgressIndicatorSelector
   /// Creates a [WidgetSelector] that finds all [LinearProgressIndicator] where value equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<LinearProgressIndicator>().withValue(10.5).existsOnce();
+  /// spot<LinearProgressIndicator>().withValue(10.5).existsOnce();
   /// ```
   @useResult
   WidgetSelector<LinearProgressIndicator> withValue(double? value) {

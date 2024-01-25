@@ -15,7 +15,7 @@ extension WrapMatcher on WidgetMatcher<Wrap> {
   /// Expects that direction of [Wrap] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().existsOnce().hasDirectionWhere((it) => it.equals(Axis.values.first));
+  /// spot<Wrap>().existsOnce().hasDirectionWhere((it) => it.equals(Axis.values.first));
   /// ```
   WidgetMatcher<Wrap> hasDirectionWhere(MatchProp<Axis> match) {
     return hasDiagnosticProp<Axis>('direction', match);
@@ -24,7 +24,7 @@ extension WrapMatcher on WidgetMatcher<Wrap> {
   /// Expects that direction of [Wrap] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().existsOnce().hasDirection(Axis.values.first);
+  /// spot<Wrap>().existsOnce().hasDirection(Axis.values.first);
   /// ```
   WidgetMatcher<Wrap> hasDirection(Axis? value) {
     return hasDiagnosticProp<Axis>(
@@ -34,7 +34,7 @@ extension WrapMatcher on WidgetMatcher<Wrap> {
   /// Expects that alignment of [Wrap] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().existsOnce().hasAlignmentWhere((it) => it.equals(WrapAlignment.values.first));
+  /// spot<Wrap>().existsOnce().hasAlignmentWhere((it) => it.equals(WrapAlignment.values.first));
   /// ```
   WidgetMatcher<Wrap> hasAlignmentWhere(MatchProp<WrapAlignment> match) {
     return hasDiagnosticProp<WrapAlignment>('alignment', match);
@@ -43,7 +43,7 @@ extension WrapMatcher on WidgetMatcher<Wrap> {
   /// Expects that alignment of [Wrap] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().existsOnce().hasAlignment(WrapAlignment.values.first);
+  /// spot<Wrap>().existsOnce().hasAlignment(WrapAlignment.values.first);
   /// ```
   WidgetMatcher<Wrap> hasAlignment(WrapAlignment? value) {
     return hasDiagnosticProp<WrapAlignment>(
@@ -53,7 +53,7 @@ extension WrapMatcher on WidgetMatcher<Wrap> {
   /// Expects that spacing of [Wrap] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().existsOnce().hasSpacingWhere((it) => it.isGreaterThan(10.5));
+  /// spot<Wrap>().existsOnce().hasSpacingWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<Wrap> hasSpacingWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('spacing', match);
@@ -62,7 +62,7 @@ extension WrapMatcher on WidgetMatcher<Wrap> {
   /// Expects that spacing of [Wrap] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().existsOnce().hasSpacing(10.5);
+  /// spot<Wrap>().existsOnce().hasSpacing(10.5);
   /// ```
   WidgetMatcher<Wrap> hasSpacing(double? value) {
     return hasDiagnosticProp<double>(
@@ -72,7 +72,7 @@ extension WrapMatcher on WidgetMatcher<Wrap> {
   /// Expects that runAlignment of [Wrap] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().existsOnce().hasRunAlignmentWhere((it) => it.equals(WrapAlignment.values.first));
+  /// spot<Wrap>().existsOnce().hasRunAlignmentWhere((it) => it.equals(WrapAlignment.values.first));
   /// ```
   WidgetMatcher<Wrap> hasRunAlignmentWhere(MatchProp<WrapAlignment> match) {
     return hasDiagnosticProp<WrapAlignment>('runAlignment', match);
@@ -81,7 +81,7 @@ extension WrapMatcher on WidgetMatcher<Wrap> {
   /// Expects that runAlignment of [Wrap] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().existsOnce().hasRunAlignment(WrapAlignment.values.first);
+  /// spot<Wrap>().existsOnce().hasRunAlignment(WrapAlignment.values.first);
   /// ```
   WidgetMatcher<Wrap> hasRunAlignment(WrapAlignment? value) {
     return hasDiagnosticProp<WrapAlignment>(
@@ -91,7 +91,7 @@ extension WrapMatcher on WidgetMatcher<Wrap> {
   /// Expects that runSpacing of [Wrap] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().existsOnce().hasRunSpacingWhere((it) => it.isGreaterThan(10.5));
+  /// spot<Wrap>().existsOnce().hasRunSpacingWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<Wrap> hasRunSpacingWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('runSpacing', match);
@@ -100,7 +100,7 @@ extension WrapMatcher on WidgetMatcher<Wrap> {
   /// Expects that runSpacing of [Wrap] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().existsOnce().hasRunSpacing(10.5);
+  /// spot<Wrap>().existsOnce().hasRunSpacing(10.5);
   /// ```
   WidgetMatcher<Wrap> hasRunSpacing(double? value) {
     return hasDiagnosticProp<double>(
@@ -110,7 +110,7 @@ extension WrapMatcher on WidgetMatcher<Wrap> {
   /// Expects that crossAxisAlignment of [Wrap] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().existsOnce().hasCrossAxisAlignmentWhere((it) => it.equals(WrapCrossAlignment.values.first));
+  /// spot<Wrap>().existsOnce().hasCrossAxisAlignmentWhere((it) => it.equals(WrapCrossAlignment.values.first));
   /// ```
   WidgetMatcher<Wrap> hasCrossAxisAlignmentWhere(
       MatchProp<WrapCrossAlignment> match) {
@@ -120,7 +120,7 @@ extension WrapMatcher on WidgetMatcher<Wrap> {
   /// Expects that crossAxisAlignment of [Wrap] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().existsOnce().hasCrossAxisAlignment(WrapCrossAlignment.values.first);
+  /// spot<Wrap>().existsOnce().hasCrossAxisAlignment(WrapCrossAlignment.values.first);
   /// ```
   WidgetMatcher<Wrap> hasCrossAxisAlignment(WrapCrossAlignment? value) {
     return hasDiagnosticProp<WrapCrossAlignment>('crossAxisAlignment',
@@ -130,7 +130,7 @@ extension WrapMatcher on WidgetMatcher<Wrap> {
   /// Expects that textDirection of [Wrap] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().existsOnce().hasTextDirectionWhere((it) => it.equals(TextDirection.values.first));
+  /// spot<Wrap>().existsOnce().hasTextDirectionWhere((it) => it.equals(TextDirection.values.first));
   /// ```
   WidgetMatcher<Wrap> hasTextDirectionWhere(MatchProp<TextDirection> match) {
     return hasDiagnosticProp<TextDirection>('textDirection', match);
@@ -139,7 +139,7 @@ extension WrapMatcher on WidgetMatcher<Wrap> {
   /// Expects that textDirection of [Wrap] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().existsOnce().hasTextDirection(TextDirection.values.first);
+  /// spot<Wrap>().existsOnce().hasTextDirection(TextDirection.values.first);
   /// ```
   WidgetMatcher<Wrap> hasTextDirection(TextDirection? value) {
     return hasDiagnosticProp<TextDirection>('textDirection',
@@ -149,7 +149,7 @@ extension WrapMatcher on WidgetMatcher<Wrap> {
   /// Expects that verticalDirection of [Wrap] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().existsOnce().hasVerticalDirectionWhere((it) => it.equals(VerticalDirection.values.first));
+  /// spot<Wrap>().existsOnce().hasVerticalDirectionWhere((it) => it.equals(VerticalDirection.values.first));
   /// ```
   WidgetMatcher<Wrap> hasVerticalDirectionWhere(
       MatchProp<VerticalDirection> match) {
@@ -159,7 +159,7 @@ extension WrapMatcher on WidgetMatcher<Wrap> {
   /// Expects that verticalDirection of [Wrap] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().existsOnce().hasVerticalDirection(VerticalDirection.values.first);
+  /// spot<Wrap>().existsOnce().hasVerticalDirection(VerticalDirection.values.first);
   /// ```
   WidgetMatcher<Wrap> hasVerticalDirection(VerticalDirection? value) {
     return hasDiagnosticProp<VerticalDirection>('verticalDirection',
@@ -169,7 +169,7 @@ extension WrapMatcher on WidgetMatcher<Wrap> {
   /// Expects that renderObject of [Wrap] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().existsOnce().hasRenderObjectWhere((it) => it.equals(RenderBox()));
+  /// spot<Wrap>().existsOnce().hasRenderObjectWhere((it) => it.equals(RenderBox()));
   /// ```
   WidgetMatcher<Wrap> hasRenderObjectWhere(MatchProp<RenderWrap> match) {
     return hasDiagnosticProp<RenderWrap>('renderObject', match);
@@ -178,7 +178,7 @@ extension WrapMatcher on WidgetMatcher<Wrap> {
   /// Expects that renderObject of [Wrap] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().existsOnce().hasRenderObject(RenderBox());
+  /// spot<Wrap>().existsOnce().hasRenderObject(RenderBox());
   /// ```
   WidgetMatcher<Wrap> hasRenderObject(RenderWrap? value) {
     return hasDiagnosticProp<RenderWrap>(
@@ -191,7 +191,7 @@ extension WrapSelector on WidgetSelector<Wrap> {
   /// Creates a [WidgetSelector] that finds all [Wrap] where direction matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().whereDirection((it) => it.equals(Axis.values.first)).existsOnce();
+  /// spot<Wrap>().whereDirection((it) => it.equals(Axis.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Wrap> whereDirection(MatchProp<Axis> match) {
@@ -201,7 +201,7 @@ extension WrapSelector on WidgetSelector<Wrap> {
   /// Creates a [WidgetSelector] that finds all [Wrap] where direction equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().withDirection(Axis.values.first).existsOnce();
+  /// spot<Wrap>().withDirection(Axis.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Wrap> withDirection(Axis? value) {
@@ -212,7 +212,7 @@ extension WrapSelector on WidgetSelector<Wrap> {
   /// Creates a [WidgetSelector] that finds all [Wrap] where alignment matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().whereAlignment((it) => it.equals(WrapAlignment.values.first)).existsOnce();
+  /// spot<Wrap>().whereAlignment((it) => it.equals(WrapAlignment.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Wrap> whereAlignment(MatchProp<WrapAlignment> match) {
@@ -222,7 +222,7 @@ extension WrapSelector on WidgetSelector<Wrap> {
   /// Creates a [WidgetSelector] that finds all [Wrap] where alignment equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().withAlignment(WrapAlignment.values.first).existsOnce();
+  /// spot<Wrap>().withAlignment(WrapAlignment.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Wrap> withAlignment(WrapAlignment? value) {
@@ -233,7 +233,7 @@ extension WrapSelector on WidgetSelector<Wrap> {
   /// Creates a [WidgetSelector] that finds all [Wrap] where spacing matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().whereSpacing((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// spot<Wrap>().whereSpacing((it) => it.isGreaterThan(10.5)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Wrap> whereSpacing(MatchProp<double> match) {
@@ -243,7 +243,7 @@ extension WrapSelector on WidgetSelector<Wrap> {
   /// Creates a [WidgetSelector] that finds all [Wrap] where spacing equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().withSpacing(10.5).existsOnce();
+  /// spot<Wrap>().withSpacing(10.5).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Wrap> withSpacing(double? value) {
@@ -254,7 +254,7 @@ extension WrapSelector on WidgetSelector<Wrap> {
   /// Creates a [WidgetSelector] that finds all [Wrap] where runAlignment matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().whereRunAlignment((it) => it.equals(WrapAlignment.values.first)).existsOnce();
+  /// spot<Wrap>().whereRunAlignment((it) => it.equals(WrapAlignment.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Wrap> whereRunAlignment(MatchProp<WrapAlignment> match) {
@@ -264,7 +264,7 @@ extension WrapSelector on WidgetSelector<Wrap> {
   /// Creates a [WidgetSelector] that finds all [Wrap] where runAlignment equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().withRunAlignment(WrapAlignment.values.first).existsOnce();
+  /// spot<Wrap>().withRunAlignment(WrapAlignment.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Wrap> withRunAlignment(WrapAlignment? value) {
@@ -275,7 +275,7 @@ extension WrapSelector on WidgetSelector<Wrap> {
   /// Creates a [WidgetSelector] that finds all [Wrap] where runSpacing matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().whereRunSpacing((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// spot<Wrap>().whereRunSpacing((it) => it.isGreaterThan(10.5)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Wrap> whereRunSpacing(MatchProp<double> match) {
@@ -285,7 +285,7 @@ extension WrapSelector on WidgetSelector<Wrap> {
   /// Creates a [WidgetSelector] that finds all [Wrap] where runSpacing equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().withRunSpacing(10.5).existsOnce();
+  /// spot<Wrap>().withRunSpacing(10.5).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Wrap> withRunSpacing(double? value) {
@@ -296,7 +296,7 @@ extension WrapSelector on WidgetSelector<Wrap> {
   /// Creates a [WidgetSelector] that finds all [Wrap] where crossAxisAlignment matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().whereCrossAxisAlignment((it) => it.equals(WrapCrossAlignment.values.first)).existsOnce();
+  /// spot<Wrap>().whereCrossAxisAlignment((it) => it.equals(WrapCrossAlignment.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Wrap> whereCrossAxisAlignment(
@@ -307,7 +307,7 @@ extension WrapSelector on WidgetSelector<Wrap> {
   /// Creates a [WidgetSelector] that finds all [Wrap] where crossAxisAlignment equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().withCrossAxisAlignment(WrapCrossAlignment.values.first).existsOnce();
+  /// spot<Wrap>().withCrossAxisAlignment(WrapCrossAlignment.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Wrap> withCrossAxisAlignment(WrapCrossAlignment? value) {
@@ -318,7 +318,7 @@ extension WrapSelector on WidgetSelector<Wrap> {
   /// Creates a [WidgetSelector] that finds all [Wrap] where textDirection matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().whereTextDirection((it) => it.equals(TextDirection.values.first)).existsOnce();
+  /// spot<Wrap>().whereTextDirection((it) => it.equals(TextDirection.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Wrap> whereTextDirection(MatchProp<TextDirection> match) {
@@ -328,7 +328,7 @@ extension WrapSelector on WidgetSelector<Wrap> {
   /// Creates a [WidgetSelector] that finds all [Wrap] where textDirection equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().withTextDirection(TextDirection.values.first).existsOnce();
+  /// spot<Wrap>().withTextDirection(TextDirection.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Wrap> withTextDirection(TextDirection? value) {
@@ -339,7 +339,7 @@ extension WrapSelector on WidgetSelector<Wrap> {
   /// Creates a [WidgetSelector] that finds all [Wrap] where verticalDirection matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().whereVerticalDirection((it) => it.equals(VerticalDirection.values.first)).existsOnce();
+  /// spot<Wrap>().whereVerticalDirection((it) => it.equals(VerticalDirection.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Wrap> whereVerticalDirection(
@@ -350,7 +350,7 @@ extension WrapSelector on WidgetSelector<Wrap> {
   /// Creates a [WidgetSelector] that finds all [Wrap] where verticalDirection equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().withVerticalDirection(VerticalDirection.values.first).existsOnce();
+  /// spot<Wrap>().withVerticalDirection(VerticalDirection.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Wrap> withVerticalDirection(VerticalDirection? value) {
@@ -361,7 +361,7 @@ extension WrapSelector on WidgetSelector<Wrap> {
   /// Creates a [WidgetSelector] that finds all [Wrap] where renderObject matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().whereRenderObject((it) => it.equals(RenderBox())).existsOnce();
+  /// spot<Wrap>().whereRenderObject((it) => it.equals(RenderBox())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Wrap> whereRenderObject(MatchProp<RenderWrap> match) {
@@ -371,7 +371,7 @@ extension WrapSelector on WidgetSelector<Wrap> {
   /// Creates a [WidgetSelector] that finds all [Wrap] where renderObject equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Wrap>().withRenderObject(RenderBox()).existsOnce();
+  /// spot<Wrap>().withRenderObject(RenderBox()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Wrap> withRenderObject(RenderWrap? value) {

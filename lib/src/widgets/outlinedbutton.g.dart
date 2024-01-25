@@ -14,7 +14,7 @@ extension OutlinedButtonMatcher on WidgetMatcher<OutlinedButton> {
   /// Expects that enabled of [OutlinedButton] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<OutlinedButton>().existsOnce().isEnabledWhere((it) => it.isTrue());
+  /// spot<OutlinedButton>().existsOnce().isEnabledWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<OutlinedButton> isEnabledWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('enabled', match);
@@ -23,7 +23,7 @@ extension OutlinedButtonMatcher on WidgetMatcher<OutlinedButton> {
   /// Expects that enabled of [OutlinedButton] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<OutlinedButton>().existsOnce().isEnabled(true);
+  /// spot<OutlinedButton>().existsOnce().isEnabled(true);
   /// ```
   WidgetMatcher<OutlinedButton> isEnabled(bool? value) {
     return hasDiagnosticProp<bool>(
@@ -33,7 +33,7 @@ extension OutlinedButtonMatcher on WidgetMatcher<OutlinedButton> {
   /// Expects that style of [OutlinedButton] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<OutlinedButton>().existsOnce().hasStyleWhere((it) => it.equals(ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue))));
+  /// spot<OutlinedButton>().existsOnce().hasStyleWhere((it) => it.equals(ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue))));
   /// ```
   WidgetMatcher<OutlinedButton> hasStyleWhere(MatchProp<ButtonStyle> match) {
     return hasDiagnosticProp<ButtonStyle>('style', match);
@@ -42,7 +42,7 @@ extension OutlinedButtonMatcher on WidgetMatcher<OutlinedButton> {
   /// Expects that style of [OutlinedButton] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<OutlinedButton>().existsOnce().hasStyle(ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue)));
+  /// spot<OutlinedButton>().existsOnce().hasStyle(ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue)));
   /// ```
   WidgetMatcher<OutlinedButton> hasStyle(ButtonStyle? value) {
     return hasDiagnosticProp<ButtonStyle>(
@@ -52,7 +52,7 @@ extension OutlinedButtonMatcher on WidgetMatcher<OutlinedButton> {
   /// Expects that focusNode of [OutlinedButton] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<OutlinedButton>().existsOnce().hasFocusNodeWhere((it) => it.equals(FocusNode()));
+  /// spot<OutlinedButton>().existsOnce().hasFocusNodeWhere((it) => it.equals(FocusNode()));
   /// ```
   WidgetMatcher<OutlinedButton> hasFocusNodeWhere(MatchProp<FocusNode> match) {
     return hasDiagnosticProp<FocusNode>('focusNode', match);
@@ -61,7 +61,7 @@ extension OutlinedButtonMatcher on WidgetMatcher<OutlinedButton> {
   /// Expects that focusNode of [OutlinedButton] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<OutlinedButton>().existsOnce().hasFocusNode(FocusNode());
+  /// spot<OutlinedButton>().existsOnce().hasFocusNode(FocusNode());
   /// ```
   WidgetMatcher<OutlinedButton> hasFocusNode(FocusNode? value) {
     return hasDiagnosticProp<FocusNode>(
@@ -74,7 +74,7 @@ extension OutlinedButtonSelector on WidgetSelector<OutlinedButton> {
   /// Creates a [WidgetSelector] that finds all [OutlinedButton] where enabled matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<OutlinedButton>().whereEnabled((it) => it.isTrue()).existsOnce();
+  /// spot<OutlinedButton>().whereEnabled((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<OutlinedButton> whereEnabled(MatchProp<bool> match) {
@@ -84,7 +84,7 @@ extension OutlinedButtonSelector on WidgetSelector<OutlinedButton> {
   /// Creates a [WidgetSelector] that finds all [OutlinedButton] where enabled equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<OutlinedButton>().withEnabled(true).existsOnce();
+  /// spot<OutlinedButton>().withEnabled(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<OutlinedButton> withEnabled(bool? value) {
@@ -95,7 +95,7 @@ extension OutlinedButtonSelector on WidgetSelector<OutlinedButton> {
   /// Creates a [WidgetSelector] that finds all [OutlinedButton] where style matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<OutlinedButton>().whereStyle((it) => it.equals(ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue)))).existsOnce();
+  /// spot<OutlinedButton>().whereStyle((it) => it.equals(ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue)))).existsOnce();
   /// ```
   @useResult
   WidgetSelector<OutlinedButton> whereStyle(MatchProp<ButtonStyle> match) {
@@ -105,7 +105,7 @@ extension OutlinedButtonSelector on WidgetSelector<OutlinedButton> {
   /// Creates a [WidgetSelector] that finds all [OutlinedButton] where style equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<OutlinedButton>().withStyle(ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue))).existsOnce();
+  /// spot<OutlinedButton>().withStyle(ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue))).existsOnce();
   /// ```
   @useResult
   WidgetSelector<OutlinedButton> withStyle(ButtonStyle? value) {
@@ -116,7 +116,7 @@ extension OutlinedButtonSelector on WidgetSelector<OutlinedButton> {
   /// Creates a [WidgetSelector] that finds all [OutlinedButton] where focusNode matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<OutlinedButton>().whereFocusNode((it) => it.equals(FocusNode())).existsOnce();
+  /// spot<OutlinedButton>().whereFocusNode((it) => it.equals(FocusNode())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<OutlinedButton> whereFocusNode(MatchProp<FocusNode> match) {
@@ -126,7 +126,7 @@ extension OutlinedButtonSelector on WidgetSelector<OutlinedButton> {
   /// Creates a [WidgetSelector] that finds all [OutlinedButton] where focusNode equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<OutlinedButton>().withFocusNode(FocusNode()).existsOnce();
+  /// spot<OutlinedButton>().withFocusNode(FocusNode()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<OutlinedButton> withFocusNode(FocusNode? value) {

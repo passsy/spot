@@ -15,7 +15,7 @@ extension OpacityMatcher on WidgetMatcher<Opacity> {
   /// Expects that opacity of [Opacity] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Opacity>().existsOnce().hasOpacityWhere((it) => it.isGreaterThan(10.5));
+  /// spot<Opacity>().existsOnce().hasOpacityWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<Opacity> hasOpacityWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('opacity', match);
@@ -24,7 +24,7 @@ extension OpacityMatcher on WidgetMatcher<Opacity> {
   /// Expects that opacity of [Opacity] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Opacity>().existsOnce().hasOpacity(10.5);
+  /// spot<Opacity>().existsOnce().hasOpacity(10.5);
   /// ```
   WidgetMatcher<Opacity> hasOpacity(double? value) {
     return hasDiagnosticProp<double>(
@@ -34,7 +34,7 @@ extension OpacityMatcher on WidgetMatcher<Opacity> {
   /// Expects that alwaysIncludeSemantics of [Opacity] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Opacity>().existsOnce().hasAlwaysIncludeSemanticsWhere((it) => it.isTrue());
+  /// spot<Opacity>().existsOnce().hasAlwaysIncludeSemanticsWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<Opacity> hasAlwaysIncludeSemanticsWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('alwaysIncludeSemantics', match);
@@ -43,7 +43,7 @@ extension OpacityMatcher on WidgetMatcher<Opacity> {
   /// Expects that alwaysIncludeSemantics of [Opacity] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Opacity>().existsOnce().hasAlwaysIncludeSemantics(true);
+  /// spot<Opacity>().existsOnce().hasAlwaysIncludeSemantics(true);
   /// ```
   WidgetMatcher<Opacity> hasAlwaysIncludeSemantics(bool? value) {
     return hasDiagnosticProp<bool>('alwaysIncludeSemantics',
@@ -53,7 +53,7 @@ extension OpacityMatcher on WidgetMatcher<Opacity> {
   /// Expects that renderObject of [Opacity] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Opacity>().existsOnce().hasRenderObjectWhere((it) => it.equals(RenderBox()));
+  /// spot<Opacity>().existsOnce().hasRenderObjectWhere((it) => it.equals(RenderBox()));
   /// ```
   WidgetMatcher<Opacity> hasRenderObjectWhere(MatchProp<RenderOpacity> match) {
     return hasDiagnosticProp<RenderOpacity>('renderObject', match);
@@ -62,7 +62,7 @@ extension OpacityMatcher on WidgetMatcher<Opacity> {
   /// Expects that renderObject of [Opacity] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Opacity>().existsOnce().hasRenderObject(RenderBox());
+  /// spot<Opacity>().existsOnce().hasRenderObject(RenderBox());
   /// ```
   WidgetMatcher<Opacity> hasRenderObject(RenderOpacity? value) {
     return hasDiagnosticProp<RenderOpacity>(
@@ -75,7 +75,7 @@ extension OpacitySelector on WidgetSelector<Opacity> {
   /// Creates a [WidgetSelector] that finds all [Opacity] where opacity matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Opacity>().whereOpacity((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// spot<Opacity>().whereOpacity((it) => it.isGreaterThan(10.5)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Opacity> whereOpacity(MatchProp<double> match) {
@@ -85,7 +85,7 @@ extension OpacitySelector on WidgetSelector<Opacity> {
   /// Creates a [WidgetSelector] that finds all [Opacity] where opacity equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Opacity>().withOpacity(10.5).existsOnce();
+  /// spot<Opacity>().withOpacity(10.5).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Opacity> withOpacity(double? value) {
@@ -96,7 +96,7 @@ extension OpacitySelector on WidgetSelector<Opacity> {
   /// Creates a [WidgetSelector] that finds all [Opacity] where alwaysIncludeSemantics matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Opacity>().whereAlwaysIncludeSemantics((it) => it.isTrue()).existsOnce();
+  /// spot<Opacity>().whereAlwaysIncludeSemantics((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Opacity> whereAlwaysIncludeSemantics(MatchProp<bool> match) {
@@ -106,7 +106,7 @@ extension OpacitySelector on WidgetSelector<Opacity> {
   /// Creates a [WidgetSelector] that finds all [Opacity] where alwaysIncludeSemantics equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Opacity>().withAlwaysIncludeSemantics(true).existsOnce();
+  /// spot<Opacity>().withAlwaysIncludeSemantics(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Opacity> withAlwaysIncludeSemantics(bool? value) {
@@ -117,7 +117,7 @@ extension OpacitySelector on WidgetSelector<Opacity> {
   /// Creates a [WidgetSelector] that finds all [Opacity] where renderObject matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Opacity>().whereRenderObject((it) => it.equals(RenderBox())).existsOnce();
+  /// spot<Opacity>().whereRenderObject((it) => it.equals(RenderBox())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Opacity> whereRenderObject(MatchProp<RenderOpacity> match) {
@@ -127,7 +127,7 @@ extension OpacitySelector on WidgetSelector<Opacity> {
   /// Creates a [WidgetSelector] that finds all [Opacity] where renderObject equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Opacity>().withRenderObject(RenderBox()).existsOnce();
+  /// spot<Opacity>().withRenderObject(RenderBox()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Opacity> withRenderObject(RenderOpacity? value) {

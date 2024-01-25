@@ -14,7 +14,7 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// Expects that tooltip of [FloatingActionButton] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().existsOnce().hasTooltipWhere((it) => it.equals('foo'));
+  /// spot<FloatingActionButton>().existsOnce().hasTooltipWhere((it) => it.equals('foo'));
   /// ```
   WidgetMatcher<FloatingActionButton> hasTooltipWhere(MatchProp<String> match) {
     return hasDiagnosticProp<String>('tooltip', match);
@@ -23,7 +23,7 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// Expects that tooltip of [FloatingActionButton] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().existsOnce().hasTooltip('foo');
+  /// spot<FloatingActionButton>().existsOnce().hasTooltip('foo');
   /// ```
   WidgetMatcher<FloatingActionButton> hasTooltip(String? value) {
     return hasDiagnosticProp<String>(
@@ -33,7 +33,7 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// Expects that foregroundColor of [FloatingActionButton] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().existsOnce().hasForegroundColorWhere((it) => it.equals(Colors.red));
+  /// spot<FloatingActionButton>().existsOnce().hasForegroundColorWhere((it) => it.equals(Colors.red));
   /// ```
   WidgetMatcher<FloatingActionButton> hasForegroundColorWhere(
       MatchProp<Color> match) {
@@ -43,7 +43,7 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// Expects that foregroundColor of [FloatingActionButton] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().existsOnce().hasForegroundColor(Colors.red);
+  /// spot<FloatingActionButton>().existsOnce().hasForegroundColor(Colors.red);
   /// ```
   WidgetMatcher<FloatingActionButton> hasForegroundColor(Color? value) {
     return hasDiagnosticProp<Color>('foregroundColor',
@@ -53,7 +53,7 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// Expects that backgroundColor of [FloatingActionButton] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().existsOnce().hasBackgroundColorWhere((it) => it.equals(Colors.red));
+  /// spot<FloatingActionButton>().existsOnce().hasBackgroundColorWhere((it) => it.equals(Colors.red));
   /// ```
   WidgetMatcher<FloatingActionButton> hasBackgroundColorWhere(
       MatchProp<Color> match) {
@@ -63,7 +63,7 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// Expects that backgroundColor of [FloatingActionButton] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().existsOnce().hasBackgroundColor(Colors.red);
+  /// spot<FloatingActionButton>().existsOnce().hasBackgroundColor(Colors.red);
   /// ```
   WidgetMatcher<FloatingActionButton> hasBackgroundColor(Color? value) {
     return hasDiagnosticProp<Color>('backgroundColor',
@@ -73,7 +73,7 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// Expects that focusColor of [FloatingActionButton] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().existsOnce().hasFocusColorWhere((it) => it.equals(Colors.red));
+  /// spot<FloatingActionButton>().existsOnce().hasFocusColorWhere((it) => it.equals(Colors.red));
   /// ```
   WidgetMatcher<FloatingActionButton> hasFocusColorWhere(
       MatchProp<Color> match) {
@@ -83,7 +83,7 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// Expects that focusColor of [FloatingActionButton] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().existsOnce().hasFocusColor(Colors.red);
+  /// spot<FloatingActionButton>().existsOnce().hasFocusColor(Colors.red);
   /// ```
   WidgetMatcher<FloatingActionButton> hasFocusColor(Color? value) {
     return hasDiagnosticProp<Color>(
@@ -93,7 +93,7 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// Expects that hoverColor of [FloatingActionButton] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().existsOnce().hasHoverColorWhere((it) => it.equals(Colors.red));
+  /// spot<FloatingActionButton>().existsOnce().hasHoverColorWhere((it) => it.equals(Colors.red));
   /// ```
   WidgetMatcher<FloatingActionButton> hasHoverColorWhere(
       MatchProp<Color> match) {
@@ -103,7 +103,7 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// Expects that hoverColor of [FloatingActionButton] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().existsOnce().hasHoverColor(Colors.red);
+  /// spot<FloatingActionButton>().existsOnce().hasHoverColor(Colors.red);
   /// ```
   WidgetMatcher<FloatingActionButton> hasHoverColor(Color? value) {
     return hasDiagnosticProp<Color>(
@@ -113,7 +113,7 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// Expects that splashColor of [FloatingActionButton] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().existsOnce().hasSplashColorWhere((it) => it.equals(Colors.red));
+  /// spot<FloatingActionButton>().existsOnce().hasSplashColorWhere((it) => it.equals(Colors.red));
   /// ```
   WidgetMatcher<FloatingActionButton> hasSplashColorWhere(
       MatchProp<Color> match) {
@@ -123,7 +123,7 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// Expects that splashColor of [FloatingActionButton] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().existsOnce().hasSplashColor(Colors.red);
+  /// spot<FloatingActionButton>().existsOnce().hasSplashColor(Colors.red);
   /// ```
   WidgetMatcher<FloatingActionButton> hasSplashColor(Color? value) {
     return hasDiagnosticProp<Color>(
@@ -133,7 +133,7 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// Expects that heroTag of [FloatingActionButton] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().existsOnce().hasHeroTagWhere((it) => it.equals(Object()));
+  /// spot<FloatingActionButton>().existsOnce().hasHeroTagWhere((it) => it.equals(Object()));
   /// ```
   WidgetMatcher<FloatingActionButton> hasHeroTagWhere(MatchProp<Object> match) {
     return hasDiagnosticProp<Object>('heroTag', match);
@@ -142,7 +142,7 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// Expects that heroTag of [FloatingActionButton] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().existsOnce().hasHeroTag(Object());
+  /// spot<FloatingActionButton>().existsOnce().hasHeroTag(Object());
   /// ```
   WidgetMatcher<FloatingActionButton> hasHeroTag(Object? value) {
     return hasDiagnosticProp<Object>(
@@ -152,7 +152,7 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// Expects that elevation of [FloatingActionButton] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().existsOnce().hasElevationWhere((it) => it.isGreaterThan(10.5));
+  /// spot<FloatingActionButton>().existsOnce().hasElevationWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<FloatingActionButton> hasElevationWhere(
       MatchProp<double> match) {
@@ -162,7 +162,7 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// Expects that elevation of [FloatingActionButton] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().existsOnce().hasElevation(10.5);
+  /// spot<FloatingActionButton>().existsOnce().hasElevation(10.5);
   /// ```
   WidgetMatcher<FloatingActionButton> hasElevation(double? value) {
     return hasDiagnosticProp<double>(
@@ -172,7 +172,7 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// Expects that focusElevation of [FloatingActionButton] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().existsOnce().hasFocusElevationWhere((it) => it.isGreaterThan(10.5));
+  /// spot<FloatingActionButton>().existsOnce().hasFocusElevationWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<FloatingActionButton> hasFocusElevationWhere(
       MatchProp<double> match) {
@@ -182,7 +182,7 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// Expects that focusElevation of [FloatingActionButton] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().existsOnce().hasFocusElevation(10.5);
+  /// spot<FloatingActionButton>().existsOnce().hasFocusElevation(10.5);
   /// ```
   WidgetMatcher<FloatingActionButton> hasFocusElevation(double? value) {
     return hasDiagnosticProp<double>('focusElevation',
@@ -192,7 +192,7 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// Expects that hoverElevation of [FloatingActionButton] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().existsOnce().hasHoverElevationWhere((it) => it.isGreaterThan(10.5));
+  /// spot<FloatingActionButton>().existsOnce().hasHoverElevationWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<FloatingActionButton> hasHoverElevationWhere(
       MatchProp<double> match) {
@@ -202,7 +202,7 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// Expects that hoverElevation of [FloatingActionButton] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().existsOnce().hasHoverElevation(10.5);
+  /// spot<FloatingActionButton>().existsOnce().hasHoverElevation(10.5);
   /// ```
   WidgetMatcher<FloatingActionButton> hasHoverElevation(double? value) {
     return hasDiagnosticProp<double>('hoverElevation',
@@ -212,7 +212,7 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// Expects that highlightElevation of [FloatingActionButton] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().existsOnce().hasHighlightElevationWhere((it) => it.isGreaterThan(10.5));
+  /// spot<FloatingActionButton>().existsOnce().hasHighlightElevationWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<FloatingActionButton> hasHighlightElevationWhere(
       MatchProp<double> match) {
@@ -222,7 +222,7 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// Expects that highlightElevation of [FloatingActionButton] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().existsOnce().hasHighlightElevation(10.5);
+  /// spot<FloatingActionButton>().existsOnce().hasHighlightElevation(10.5);
   /// ```
   WidgetMatcher<FloatingActionButton> hasHighlightElevation(double? value) {
     return hasDiagnosticProp<double>('highlightElevation',
@@ -232,7 +232,7 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// Expects that disabledElevation of [FloatingActionButton] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().existsOnce().hasDisabledElevationWhere((it) => it.isGreaterThan(10.5));
+  /// spot<FloatingActionButton>().existsOnce().hasDisabledElevationWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<FloatingActionButton> hasDisabledElevationWhere(
       MatchProp<double> match) {
@@ -242,7 +242,7 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// Expects that disabledElevation of [FloatingActionButton] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().existsOnce().hasDisabledElevation(10.5);
+  /// spot<FloatingActionButton>().existsOnce().hasDisabledElevation(10.5);
   /// ```
   WidgetMatcher<FloatingActionButton> hasDisabledElevation(double? value) {
     return hasDiagnosticProp<double>('disabledElevation',
@@ -252,7 +252,7 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// Expects that shape of [FloatingActionButton] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().existsOnce().hasShapeWhere((it) => it.equals(RoundedRectangleBorder()));
+  /// spot<FloatingActionButton>().existsOnce().hasShapeWhere((it) => it.equals(RoundedRectangleBorder()));
   /// ```
   WidgetMatcher<FloatingActionButton> hasShapeWhere(
       MatchProp<ShapeBorder> match) {
@@ -262,7 +262,7 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// Expects that shape of [FloatingActionButton] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().existsOnce().hasShape(RoundedRectangleBorder());
+  /// spot<FloatingActionButton>().existsOnce().hasShape(RoundedRectangleBorder());
   /// ```
   WidgetMatcher<FloatingActionButton> hasShape(ShapeBorder? value) {
     return hasDiagnosticProp<ShapeBorder>(
@@ -272,7 +272,7 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// Expects that focusNode of [FloatingActionButton] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().existsOnce().hasFocusNodeWhere((it) => it.equals(FocusNode()));
+  /// spot<FloatingActionButton>().existsOnce().hasFocusNodeWhere((it) => it.equals(FocusNode()));
   /// ```
   WidgetMatcher<FloatingActionButton> hasFocusNodeWhere(
       MatchProp<FocusNode> match) {
@@ -282,7 +282,7 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// Expects that focusNode of [FloatingActionButton] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().existsOnce().hasFocusNode(FocusNode());
+  /// spot<FloatingActionButton>().existsOnce().hasFocusNode(FocusNode());
   /// ```
   WidgetMatcher<FloatingActionButton> hasFocusNode(FocusNode? value) {
     return hasDiagnosticProp<FocusNode>(
@@ -292,7 +292,7 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// Expects that isExtended of [FloatingActionButton] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().existsOnce().hasIsExtendedWhere((it) => it.isTrue());
+  /// spot<FloatingActionButton>().existsOnce().hasIsExtendedWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<FloatingActionButton> hasIsExtendedWhere(
       MatchProp<bool> match) {
@@ -302,7 +302,7 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// Expects that isExtended of [FloatingActionButton] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().existsOnce().hasIsExtended(true);
+  /// spot<FloatingActionButton>().existsOnce().hasIsExtended(true);
   /// ```
   WidgetMatcher<FloatingActionButton> hasIsExtended(bool? value) {
     return hasDiagnosticProp<bool>(
@@ -312,7 +312,7 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// Expects that materialTapTargetSize of [FloatingActionButton] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().existsOnce().hasMaterialTapTargetSizeWhere((it) => it.equals(MaterialTapTargetSize.values.first));
+  /// spot<FloatingActionButton>().existsOnce().hasMaterialTapTargetSizeWhere((it) => it.equals(MaterialTapTargetSize.values.first));
   /// ```
   WidgetMatcher<FloatingActionButton> hasMaterialTapTargetSizeWhere(
       MatchProp<MaterialTapTargetSize> match) {
@@ -323,7 +323,7 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// Expects that materialTapTargetSize of [FloatingActionButton] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().existsOnce().hasMaterialTapTargetSize(MaterialTapTargetSize.values.first);
+  /// spot<FloatingActionButton>().existsOnce().hasMaterialTapTargetSize(MaterialTapTargetSize.values.first);
   /// ```
   WidgetMatcher<FloatingActionButton> hasMaterialTapTargetSize(
       MaterialTapTargetSize? value) {
@@ -337,7 +337,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where tooltip matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().whereTooltip((it) => it.equals('foo')).existsOnce();
+  /// spot<FloatingActionButton>().whereTooltip((it) => it.equals('foo')).existsOnce();
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> whereTooltip(MatchProp<String> match) {
@@ -347,7 +347,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where tooltip equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().withTooltip('foo').existsOnce();
+  /// spot<FloatingActionButton>().withTooltip('foo').existsOnce();
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> withTooltip(String? value) {
@@ -358,7 +358,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where foregroundColor matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().whereForegroundColor((it) => it.equals(Colors.red)).existsOnce();
+  /// spot<FloatingActionButton>().whereForegroundColor((it) => it.equals(Colors.red)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> whereForegroundColor(
@@ -369,7 +369,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where foregroundColor equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().withForegroundColor(Colors.red).existsOnce();
+  /// spot<FloatingActionButton>().withForegroundColor(Colors.red).existsOnce();
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> withForegroundColor(Color? value) {
@@ -380,7 +380,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where backgroundColor matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().whereBackgroundColor((it) => it.equals(Colors.red)).existsOnce();
+  /// spot<FloatingActionButton>().whereBackgroundColor((it) => it.equals(Colors.red)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> whereBackgroundColor(
@@ -391,7 +391,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where backgroundColor equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().withBackgroundColor(Colors.red).existsOnce();
+  /// spot<FloatingActionButton>().withBackgroundColor(Colors.red).existsOnce();
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> withBackgroundColor(Color? value) {
@@ -402,7 +402,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where focusColor matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().whereFocusColor((it) => it.equals(Colors.red)).existsOnce();
+  /// spot<FloatingActionButton>().whereFocusColor((it) => it.equals(Colors.red)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> whereFocusColor(MatchProp<Color> match) {
@@ -412,7 +412,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where focusColor equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().withFocusColor(Colors.red).existsOnce();
+  /// spot<FloatingActionButton>().withFocusColor(Colors.red).existsOnce();
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> withFocusColor(Color? value) {
@@ -423,7 +423,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where hoverColor matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().whereHoverColor((it) => it.equals(Colors.red)).existsOnce();
+  /// spot<FloatingActionButton>().whereHoverColor((it) => it.equals(Colors.red)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> whereHoverColor(MatchProp<Color> match) {
@@ -433,7 +433,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where hoverColor equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().withHoverColor(Colors.red).existsOnce();
+  /// spot<FloatingActionButton>().withHoverColor(Colors.red).existsOnce();
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> withHoverColor(Color? value) {
@@ -444,7 +444,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where splashColor matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().whereSplashColor((it) => it.equals(Colors.red)).existsOnce();
+  /// spot<FloatingActionButton>().whereSplashColor((it) => it.equals(Colors.red)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> whereSplashColor(
@@ -455,7 +455,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where splashColor equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().withSplashColor(Colors.red).existsOnce();
+  /// spot<FloatingActionButton>().withSplashColor(Colors.red).existsOnce();
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> withSplashColor(Color? value) {
@@ -466,7 +466,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where heroTag matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().whereHeroTag((it) => it.equals(Object())).existsOnce();
+  /// spot<FloatingActionButton>().whereHeroTag((it) => it.equals(Object())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> whereHeroTag(MatchProp<Object> match) {
@@ -476,7 +476,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where heroTag equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().withHeroTag(Object()).existsOnce();
+  /// spot<FloatingActionButton>().withHeroTag(Object()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> withHeroTag(Object? value) {
@@ -487,7 +487,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where elevation matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().whereElevation((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// spot<FloatingActionButton>().whereElevation((it) => it.isGreaterThan(10.5)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> whereElevation(MatchProp<double> match) {
@@ -497,7 +497,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where elevation equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().withElevation(10.5).existsOnce();
+  /// spot<FloatingActionButton>().withElevation(10.5).existsOnce();
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> withElevation(double? value) {
@@ -508,7 +508,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where focusElevation matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().whereFocusElevation((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// spot<FloatingActionButton>().whereFocusElevation((it) => it.isGreaterThan(10.5)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> whereFocusElevation(
@@ -519,7 +519,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where focusElevation equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().withFocusElevation(10.5).existsOnce();
+  /// spot<FloatingActionButton>().withFocusElevation(10.5).existsOnce();
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> withFocusElevation(double? value) {
@@ -530,7 +530,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where hoverElevation matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().whereHoverElevation((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// spot<FloatingActionButton>().whereHoverElevation((it) => it.isGreaterThan(10.5)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> whereHoverElevation(
@@ -541,7 +541,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where hoverElevation equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().withHoverElevation(10.5).existsOnce();
+  /// spot<FloatingActionButton>().withHoverElevation(10.5).existsOnce();
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> withHoverElevation(double? value) {
@@ -552,7 +552,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where highlightElevation matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().whereHighlightElevation((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// spot<FloatingActionButton>().whereHighlightElevation((it) => it.isGreaterThan(10.5)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> whereHighlightElevation(
@@ -563,7 +563,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where highlightElevation equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().withHighlightElevation(10.5).existsOnce();
+  /// spot<FloatingActionButton>().withHighlightElevation(10.5).existsOnce();
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> withHighlightElevation(double? value) {
@@ -574,7 +574,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where disabledElevation matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().whereDisabledElevation((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// spot<FloatingActionButton>().whereDisabledElevation((it) => it.isGreaterThan(10.5)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> whereDisabledElevation(
@@ -585,7 +585,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where disabledElevation equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().withDisabledElevation(10.5).existsOnce();
+  /// spot<FloatingActionButton>().withDisabledElevation(10.5).existsOnce();
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> withDisabledElevation(double? value) {
@@ -596,7 +596,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where shape matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().whereShape((it) => it.equals(RoundedRectangleBorder())).existsOnce();
+  /// spot<FloatingActionButton>().whereShape((it) => it.equals(RoundedRectangleBorder())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> whereShape(
@@ -607,7 +607,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where shape equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().withShape(RoundedRectangleBorder()).existsOnce();
+  /// spot<FloatingActionButton>().withShape(RoundedRectangleBorder()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> withShape(ShapeBorder? value) {
@@ -618,7 +618,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where focusNode matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().whereFocusNode((it) => it.equals(FocusNode())).existsOnce();
+  /// spot<FloatingActionButton>().whereFocusNode((it) => it.equals(FocusNode())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> whereFocusNode(
@@ -629,7 +629,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where focusNode equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().withFocusNode(FocusNode()).existsOnce();
+  /// spot<FloatingActionButton>().withFocusNode(FocusNode()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> withFocusNode(FocusNode? value) {
@@ -640,7 +640,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where isExtended matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().whereIsExtended((it) => it.isTrue()).existsOnce();
+  /// spot<FloatingActionButton>().whereIsExtended((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> whereIsExtended(MatchProp<bool> match) {
@@ -650,7 +650,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where isExtended equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().withIsExtended(true).existsOnce();
+  /// spot<FloatingActionButton>().withIsExtended(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> withIsExtended(bool? value) {
@@ -661,7 +661,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where materialTapTargetSize matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().whereMaterialTapTargetSize((it) => it.equals(MaterialTapTargetSize.values.first)).existsOnce();
+  /// spot<FloatingActionButton>().whereMaterialTapTargetSize((it) => it.equals(MaterialTapTargetSize.values.first)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> whereMaterialTapTargetSize(
@@ -673,7 +673,7 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where materialTapTargetSize equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<FloatingActionButton>().withMaterialTapTargetSize(MaterialTapTargetSize.values.first).existsOnce();
+  /// spot<FloatingActionButton>().withMaterialTapTargetSize(MaterialTapTargetSize.values.first).existsOnce();
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> withMaterialTapTargetSize(

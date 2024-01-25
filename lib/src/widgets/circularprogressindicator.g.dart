@@ -15,7 +15,7 @@ extension CircularProgressIndicatorMatcher
   /// Expects that value of [CircularProgressIndicator] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<CircularProgressIndicator>().existsOnce().hasValueWhere((it) => it.isGreaterThan(10.5));
+  /// spot<CircularProgressIndicator>().existsOnce().hasValueWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<CircularProgressIndicator> hasValueWhere(
       MatchProp<double> match) {
@@ -25,7 +25,7 @@ extension CircularProgressIndicatorMatcher
   /// Expects that value of [CircularProgressIndicator] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<CircularProgressIndicator>().existsOnce().hasValue(10.5);
+  /// spot<CircularProgressIndicator>().existsOnce().hasValue(10.5);
   /// ```
   WidgetMatcher<CircularProgressIndicator> hasValue(double? value) {
     return hasDiagnosticProp<double>(
@@ -39,7 +39,7 @@ extension CircularProgressIndicatorSelector
   /// Creates a [WidgetSelector] that finds all [CircularProgressIndicator] where value matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<CircularProgressIndicator>().whereValue((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// spot<CircularProgressIndicator>().whereValue((it) => it.isGreaterThan(10.5)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<CircularProgressIndicator> whereValue(
@@ -50,7 +50,7 @@ extension CircularProgressIndicatorSelector
   /// Creates a [WidgetSelector] that finds all [CircularProgressIndicator] where value equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<CircularProgressIndicator>().withValue(10.5).existsOnce();
+  /// spot<CircularProgressIndicator>().withValue(10.5).existsOnce();
   /// ```
   @useResult
   WidgetSelector<CircularProgressIndicator> withValue(double? value) {

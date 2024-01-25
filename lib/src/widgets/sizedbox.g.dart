@@ -15,7 +15,7 @@ extension SizedBoxMatcher on WidgetMatcher<SizedBox> {
   /// Expects that width of [SizedBox] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SizedBox>().existsOnce().hasWidthWhere((it) => it.isGreaterThan(10.5));
+  /// spot<SizedBox>().existsOnce().hasWidthWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<SizedBox> hasWidthWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('width', match);
@@ -24,7 +24,7 @@ extension SizedBoxMatcher on WidgetMatcher<SizedBox> {
   /// Expects that width of [SizedBox] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SizedBox>().existsOnce().hasWidth(10.5);
+  /// spot<SizedBox>().existsOnce().hasWidth(10.5);
   /// ```
   WidgetMatcher<SizedBox> hasWidth(double? value) {
     return hasDiagnosticProp<double>(
@@ -34,7 +34,7 @@ extension SizedBoxMatcher on WidgetMatcher<SizedBox> {
   /// Expects that height of [SizedBox] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SizedBox>().existsOnce().hasHeightWhere((it) => it.isGreaterThan(10.5));
+  /// spot<SizedBox>().existsOnce().hasHeightWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<SizedBox> hasHeightWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('height', match);
@@ -43,7 +43,7 @@ extension SizedBoxMatcher on WidgetMatcher<SizedBox> {
   /// Expects that height of [SizedBox] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SizedBox>().existsOnce().hasHeight(10.5);
+  /// spot<SizedBox>().existsOnce().hasHeight(10.5);
   /// ```
   WidgetMatcher<SizedBox> hasHeight(double? value) {
     return hasDiagnosticProp<double>(
@@ -53,7 +53,7 @@ extension SizedBoxMatcher on WidgetMatcher<SizedBox> {
   /// Expects that renderObject of [SizedBox] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SizedBox>().existsOnce().hasRenderObjectWhere((it) => it.equals(RenderBox()));
+  /// spot<SizedBox>().existsOnce().hasRenderObjectWhere((it) => it.equals(RenderBox()));
   /// ```
   WidgetMatcher<SizedBox> hasRenderObjectWhere(
       MatchProp<RenderConstrainedBox> match) {
@@ -63,7 +63,7 @@ extension SizedBoxMatcher on WidgetMatcher<SizedBox> {
   /// Expects that renderObject of [SizedBox] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SizedBox>().existsOnce().hasRenderObject(RenderBox());
+  /// spot<SizedBox>().existsOnce().hasRenderObject(RenderBox());
   /// ```
   WidgetMatcher<SizedBox> hasRenderObject(RenderConstrainedBox? value) {
     return hasDiagnosticProp<RenderConstrainedBox>(
@@ -76,7 +76,7 @@ extension SizedBoxSelector on WidgetSelector<SizedBox> {
   /// Creates a [WidgetSelector] that finds all [SizedBox] where width matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<SizedBox>().whereWidth((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// spot<SizedBox>().whereWidth((it) => it.isGreaterThan(10.5)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SizedBox> whereWidth(MatchProp<double> match) {
@@ -86,7 +86,7 @@ extension SizedBoxSelector on WidgetSelector<SizedBox> {
   /// Creates a [WidgetSelector] that finds all [SizedBox] where width equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SizedBox>().withWidth(10.5).existsOnce();
+  /// spot<SizedBox>().withWidth(10.5).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SizedBox> withWidth(double? value) {
@@ -97,7 +97,7 @@ extension SizedBoxSelector on WidgetSelector<SizedBox> {
   /// Creates a [WidgetSelector] that finds all [SizedBox] where height matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<SizedBox>().whereHeight((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// spot<SizedBox>().whereHeight((it) => it.isGreaterThan(10.5)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SizedBox> whereHeight(MatchProp<double> match) {
@@ -107,7 +107,7 @@ extension SizedBoxSelector on WidgetSelector<SizedBox> {
   /// Creates a [WidgetSelector] that finds all [SizedBox] where height equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SizedBox>().withHeight(10.5).existsOnce();
+  /// spot<SizedBox>().withHeight(10.5).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SizedBox> withHeight(double? value) {
@@ -118,7 +118,7 @@ extension SizedBoxSelector on WidgetSelector<SizedBox> {
   /// Creates a [WidgetSelector] that finds all [SizedBox] where renderObject matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<SizedBox>().whereRenderObject((it) => it.equals(RenderBox())).existsOnce();
+  /// spot<SizedBox>().whereRenderObject((it) => it.equals(RenderBox())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SizedBox> whereRenderObject(
@@ -129,7 +129,7 @@ extension SizedBoxSelector on WidgetSelector<SizedBox> {
   /// Creates a [WidgetSelector] that finds all [SizedBox] where renderObject equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<SizedBox>().withRenderObject(RenderBox()).existsOnce();
+  /// spot<SizedBox>().withRenderObject(RenderBox()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<SizedBox> withRenderObject(RenderConstrainedBox? value) {

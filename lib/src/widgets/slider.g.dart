@@ -14,7 +14,7 @@ extension SliderMatcher on WidgetMatcher<Slider> {
   /// Expects that value of [Slider] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().existsOnce().hasValueWhere((it) => it.isGreaterThan(10.5));
+  /// spot<Slider>().existsOnce().hasValueWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<Slider> hasValueWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('value', match);
@@ -23,7 +23,7 @@ extension SliderMatcher on WidgetMatcher<Slider> {
   /// Expects that value of [Slider] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().existsOnce().hasValue(10.5);
+  /// spot<Slider>().existsOnce().hasValue(10.5);
   /// ```
   WidgetMatcher<Slider> hasValue(double? value) {
     return hasDiagnosticProp<double>(
@@ -33,7 +33,7 @@ extension SliderMatcher on WidgetMatcher<Slider> {
   /// Expects that secondaryTrackValue of [Slider] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().existsOnce().hasSecondaryTrackValueWhere((it) => it.isGreaterThan(10.5));
+  /// spot<Slider>().existsOnce().hasSecondaryTrackValueWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<Slider> hasSecondaryTrackValueWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('secondaryTrackValue', match);
@@ -42,7 +42,7 @@ extension SliderMatcher on WidgetMatcher<Slider> {
   /// Expects that secondaryTrackValue of [Slider] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().existsOnce().hasSecondaryTrackValue(10.5);
+  /// spot<Slider>().existsOnce().hasSecondaryTrackValue(10.5);
   /// ```
   WidgetMatcher<Slider> hasSecondaryTrackValue(double? value) {
     return hasDiagnosticProp<double>('secondaryTrackValue',
@@ -52,7 +52,7 @@ extension SliderMatcher on WidgetMatcher<Slider> {
   /// Expects that min of [Slider] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().existsOnce().hasMinWhere((it) => it.isGreaterThan(10.5));
+  /// spot<Slider>().existsOnce().hasMinWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<Slider> hasMinWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('min', match);
@@ -61,7 +61,7 @@ extension SliderMatcher on WidgetMatcher<Slider> {
   /// Expects that min of [Slider] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().existsOnce().hasMin(10.5);
+  /// spot<Slider>().existsOnce().hasMin(10.5);
   /// ```
   WidgetMatcher<Slider> hasMin(double? value) {
     return hasDiagnosticProp<double>(
@@ -71,7 +71,7 @@ extension SliderMatcher on WidgetMatcher<Slider> {
   /// Expects that max of [Slider] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().existsOnce().hasMaxWhere((it) => it.isGreaterThan(10.5));
+  /// spot<Slider>().existsOnce().hasMaxWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<Slider> hasMaxWhere(MatchProp<double> match) {
     return hasDiagnosticProp<double>('max', match);
@@ -80,7 +80,7 @@ extension SliderMatcher on WidgetMatcher<Slider> {
   /// Expects that max of [Slider] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().existsOnce().hasMax(10.5);
+  /// spot<Slider>().existsOnce().hasMax(10.5);
   /// ```
   WidgetMatcher<Slider> hasMax(double? value) {
     return hasDiagnosticProp<double>(
@@ -90,7 +90,7 @@ extension SliderMatcher on WidgetMatcher<Slider> {
   /// Expects that divisions of [Slider] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().existsOnce().hasDivisionsWhere((it) => it.isGreaterThan(10));
+  /// spot<Slider>().existsOnce().hasDivisionsWhere((it) => it.isGreaterThan(10));
   /// ```
   WidgetMatcher<Slider> hasDivisionsWhere(MatchProp<int> match) {
     return hasDiagnosticProp<int>('divisions', match);
@@ -99,7 +99,7 @@ extension SliderMatcher on WidgetMatcher<Slider> {
   /// Expects that divisions of [Slider] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().existsOnce().hasDivisions(10);
+  /// spot<Slider>().existsOnce().hasDivisions(10);
   /// ```
   WidgetMatcher<Slider> hasDivisions(int? value) {
     return hasDiagnosticProp<int>(
@@ -109,7 +109,7 @@ extension SliderMatcher on WidgetMatcher<Slider> {
   /// Expects that label of [Slider] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().existsOnce().hasLabelWhere((it) => it.equals('foo'));
+  /// spot<Slider>().existsOnce().hasLabelWhere((it) => it.equals('foo'));
   /// ```
   WidgetMatcher<Slider> hasLabelWhere(MatchProp<String> match) {
     return hasDiagnosticProp<String>('label', match);
@@ -118,7 +118,7 @@ extension SliderMatcher on WidgetMatcher<Slider> {
   /// Expects that label of [Slider] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().existsOnce().hasLabel('foo');
+  /// spot<Slider>().existsOnce().hasLabel('foo');
   /// ```
   WidgetMatcher<Slider> hasLabel(String? value) {
     return hasDiagnosticProp<String>(
@@ -128,7 +128,7 @@ extension SliderMatcher on WidgetMatcher<Slider> {
   /// Expects that activeColor of [Slider] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().existsOnce().hasActiveColorWhere((it) => it.equals(Colors.red));
+  /// spot<Slider>().existsOnce().hasActiveColorWhere((it) => it.equals(Colors.red));
   /// ```
   WidgetMatcher<Slider> hasActiveColorWhere(MatchProp<Color> match) {
     return hasDiagnosticProp<Color>('activeColor', match);
@@ -137,7 +137,7 @@ extension SliderMatcher on WidgetMatcher<Slider> {
   /// Expects that activeColor of [Slider] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().existsOnce().hasActiveColor(Colors.red);
+  /// spot<Slider>().existsOnce().hasActiveColor(Colors.red);
   /// ```
   WidgetMatcher<Slider> hasActiveColor(Color? value) {
     return hasDiagnosticProp<Color>(
@@ -147,7 +147,7 @@ extension SliderMatcher on WidgetMatcher<Slider> {
   /// Expects that inactiveColor of [Slider] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().existsOnce().hasInactiveColorWhere((it) => it.equals(Colors.red));
+  /// spot<Slider>().existsOnce().hasInactiveColorWhere((it) => it.equals(Colors.red));
   /// ```
   WidgetMatcher<Slider> hasInactiveColorWhere(MatchProp<Color> match) {
     return hasDiagnosticProp<Color>('inactiveColor', match);
@@ -156,7 +156,7 @@ extension SliderMatcher on WidgetMatcher<Slider> {
   /// Expects that inactiveColor of [Slider] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().existsOnce().hasInactiveColor(Colors.red);
+  /// spot<Slider>().existsOnce().hasInactiveColor(Colors.red);
   /// ```
   WidgetMatcher<Slider> hasInactiveColor(Color? value) {
     return hasDiagnosticProp<Color>('inactiveColor',
@@ -166,7 +166,7 @@ extension SliderMatcher on WidgetMatcher<Slider> {
   /// Expects that secondaryActiveColor of [Slider] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().existsOnce().hasSecondaryActiveColorWhere((it) => it.equals(Colors.red));
+  /// spot<Slider>().existsOnce().hasSecondaryActiveColorWhere((it) => it.equals(Colors.red));
   /// ```
   WidgetMatcher<Slider> hasSecondaryActiveColorWhere(MatchProp<Color> match) {
     return hasDiagnosticProp<Color>('secondaryActiveColor', match);
@@ -175,7 +175,7 @@ extension SliderMatcher on WidgetMatcher<Slider> {
   /// Expects that secondaryActiveColor of [Slider] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().existsOnce().hasSecondaryActiveColor(Colors.red);
+  /// spot<Slider>().existsOnce().hasSecondaryActiveColor(Colors.red);
   /// ```
   WidgetMatcher<Slider> hasSecondaryActiveColor(Color? value) {
     return hasDiagnosticProp<Color>('secondaryActiveColor',
@@ -185,7 +185,7 @@ extension SliderMatcher on WidgetMatcher<Slider> {
   /// Expects that focusNode of [Slider] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().existsOnce().hasFocusNodeWhere((it) => it.equals(FocusNode()));
+  /// spot<Slider>().existsOnce().hasFocusNodeWhere((it) => it.equals(FocusNode()));
   /// ```
   WidgetMatcher<Slider> hasFocusNodeWhere(MatchProp<FocusNode> match) {
     return hasDiagnosticProp<FocusNode>('focusNode', match);
@@ -194,7 +194,7 @@ extension SliderMatcher on WidgetMatcher<Slider> {
   /// Expects that focusNode of [Slider] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().existsOnce().hasFocusNode(FocusNode());
+  /// spot<Slider>().existsOnce().hasFocusNode(FocusNode());
   /// ```
   WidgetMatcher<Slider> hasFocusNode(FocusNode? value) {
     return hasDiagnosticProp<FocusNode>(
@@ -204,7 +204,7 @@ extension SliderMatcher on WidgetMatcher<Slider> {
   /// Expects that autofocus of [Slider] matches the condition in [match].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().existsOnce().hasAutofocusWhere((it) => it.isTrue());
+  /// spot<Slider>().existsOnce().hasAutofocusWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<Slider> hasAutofocusWhere(MatchProp<bool> match) {
     return hasDiagnosticProp<bool>('autofocus', match);
@@ -213,7 +213,7 @@ extension SliderMatcher on WidgetMatcher<Slider> {
   /// Expects that autofocus of [Slider] equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().existsOnce().hasAutofocus(true);
+  /// spot<Slider>().existsOnce().hasAutofocus(true);
   /// ```
   WidgetMatcher<Slider> hasAutofocus(bool? value) {
     return hasDiagnosticProp<bool>(
@@ -226,7 +226,7 @@ extension SliderSelector on WidgetSelector<Slider> {
   /// Creates a [WidgetSelector] that finds all [Slider] where value matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().whereValue((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// spot<Slider>().whereValue((it) => it.isGreaterThan(10.5)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Slider> whereValue(MatchProp<double> match) {
@@ -236,7 +236,7 @@ extension SliderSelector on WidgetSelector<Slider> {
   /// Creates a [WidgetSelector] that finds all [Slider] where value equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().withValue(10.5).existsOnce();
+  /// spot<Slider>().withValue(10.5).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Slider> withValue(double? value) {
@@ -247,7 +247,7 @@ extension SliderSelector on WidgetSelector<Slider> {
   /// Creates a [WidgetSelector] that finds all [Slider] where secondaryTrackValue matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().whereSecondaryTrackValue((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// spot<Slider>().whereSecondaryTrackValue((it) => it.isGreaterThan(10.5)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Slider> whereSecondaryTrackValue(MatchProp<double> match) {
@@ -257,7 +257,7 @@ extension SliderSelector on WidgetSelector<Slider> {
   /// Creates a [WidgetSelector] that finds all [Slider] where secondaryTrackValue equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().withSecondaryTrackValue(10.5).existsOnce();
+  /// spot<Slider>().withSecondaryTrackValue(10.5).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Slider> withSecondaryTrackValue(double? value) {
@@ -268,7 +268,7 @@ extension SliderSelector on WidgetSelector<Slider> {
   /// Creates a [WidgetSelector] that finds all [Slider] where min matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().whereMin((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// spot<Slider>().whereMin((it) => it.isGreaterThan(10.5)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Slider> whereMin(MatchProp<double> match) {
@@ -278,7 +278,7 @@ extension SliderSelector on WidgetSelector<Slider> {
   /// Creates a [WidgetSelector] that finds all [Slider] where min equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().withMin(10.5).existsOnce();
+  /// spot<Slider>().withMin(10.5).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Slider> withMin(double? value) {
@@ -289,7 +289,7 @@ extension SliderSelector on WidgetSelector<Slider> {
   /// Creates a [WidgetSelector] that finds all [Slider] where max matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().whereMax((it) => it.isGreaterThan(10.5)).existsOnce();
+  /// spot<Slider>().whereMax((it) => it.isGreaterThan(10.5)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Slider> whereMax(MatchProp<double> match) {
@@ -299,7 +299,7 @@ extension SliderSelector on WidgetSelector<Slider> {
   /// Creates a [WidgetSelector] that finds all [Slider] where max equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().withMax(10.5).existsOnce();
+  /// spot<Slider>().withMax(10.5).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Slider> withMax(double? value) {
@@ -310,7 +310,7 @@ extension SliderSelector on WidgetSelector<Slider> {
   /// Creates a [WidgetSelector] that finds all [Slider] where divisions matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().whereDivisions((it) => it.isGreaterThan(10)).existsOnce();
+  /// spot<Slider>().whereDivisions((it) => it.isGreaterThan(10)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Slider> whereDivisions(MatchProp<int> match) {
@@ -320,7 +320,7 @@ extension SliderSelector on WidgetSelector<Slider> {
   /// Creates a [WidgetSelector] that finds all [Slider] where divisions equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().withDivisions(10).existsOnce();
+  /// spot<Slider>().withDivisions(10).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Slider> withDivisions(int? value) {
@@ -331,7 +331,7 @@ extension SliderSelector on WidgetSelector<Slider> {
   /// Creates a [WidgetSelector] that finds all [Slider] where label matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().whereLabel((it) => it.equals('foo')).existsOnce();
+  /// spot<Slider>().whereLabel((it) => it.equals('foo')).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Slider> whereLabel(MatchProp<String> match) {
@@ -341,7 +341,7 @@ extension SliderSelector on WidgetSelector<Slider> {
   /// Creates a [WidgetSelector] that finds all [Slider] where label equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().withLabel('foo').existsOnce();
+  /// spot<Slider>().withLabel('foo').existsOnce();
   /// ```
   @useResult
   WidgetSelector<Slider> withLabel(String? value) {
@@ -352,7 +352,7 @@ extension SliderSelector on WidgetSelector<Slider> {
   /// Creates a [WidgetSelector] that finds all [Slider] where activeColor matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().whereActiveColor((it) => it.equals(Colors.red)).existsOnce();
+  /// spot<Slider>().whereActiveColor((it) => it.equals(Colors.red)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Slider> whereActiveColor(MatchProp<Color> match) {
@@ -362,7 +362,7 @@ extension SliderSelector on WidgetSelector<Slider> {
   /// Creates a [WidgetSelector] that finds all [Slider] where activeColor equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().withActiveColor(Colors.red).existsOnce();
+  /// spot<Slider>().withActiveColor(Colors.red).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Slider> withActiveColor(Color? value) {
@@ -373,7 +373,7 @@ extension SliderSelector on WidgetSelector<Slider> {
   /// Creates a [WidgetSelector] that finds all [Slider] where inactiveColor matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().whereInactiveColor((it) => it.equals(Colors.red)).existsOnce();
+  /// spot<Slider>().whereInactiveColor((it) => it.equals(Colors.red)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Slider> whereInactiveColor(MatchProp<Color> match) {
@@ -383,7 +383,7 @@ extension SliderSelector on WidgetSelector<Slider> {
   /// Creates a [WidgetSelector] that finds all [Slider] where inactiveColor equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().withInactiveColor(Colors.red).existsOnce();
+  /// spot<Slider>().withInactiveColor(Colors.red).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Slider> withInactiveColor(Color? value) {
@@ -394,7 +394,7 @@ extension SliderSelector on WidgetSelector<Slider> {
   /// Creates a [WidgetSelector] that finds all [Slider] where secondaryActiveColor matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().whereSecondaryActiveColor((it) => it.equals(Colors.red)).existsOnce();
+  /// spot<Slider>().whereSecondaryActiveColor((it) => it.equals(Colors.red)).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Slider> whereSecondaryActiveColor(MatchProp<Color> match) {
@@ -404,7 +404,7 @@ extension SliderSelector on WidgetSelector<Slider> {
   /// Creates a [WidgetSelector] that finds all [Slider] where secondaryActiveColor equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().withSecondaryActiveColor(Colors.red).existsOnce();
+  /// spot<Slider>().withSecondaryActiveColor(Colors.red).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Slider> withSecondaryActiveColor(Color? value) {
@@ -415,7 +415,7 @@ extension SliderSelector on WidgetSelector<Slider> {
   /// Creates a [WidgetSelector] that finds all [Slider] where focusNode matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().whereFocusNode((it) => it.equals(FocusNode())).existsOnce();
+  /// spot<Slider>().whereFocusNode((it) => it.equals(FocusNode())).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Slider> whereFocusNode(MatchProp<FocusNode> match) {
@@ -425,7 +425,7 @@ extension SliderSelector on WidgetSelector<Slider> {
   /// Creates a [WidgetSelector] that finds all [Slider] where focusNode equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().withFocusNode(FocusNode()).existsOnce();
+  /// spot<Slider>().withFocusNode(FocusNode()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Slider> withFocusNode(FocusNode? value) {
@@ -436,7 +436,7 @@ extension SliderSelector on WidgetSelector<Slider> {
   /// Creates a [WidgetSelector] that finds all [Slider] where autofocus matches the condition.
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().whereAutofocus((it) => it.isTrue()).existsOnce();
+  /// spot<Slider>().whereAutofocus((it) => it.isTrue()).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Slider> whereAutofocus(MatchProp<bool> match) {
@@ -446,7 +446,7 @@ extension SliderSelector on WidgetSelector<Slider> {
   /// Creates a [WidgetSelector] that finds all [Slider] where autofocus equals (==) [value].
   /// #### Example usage:
   /// ```dart
-  ///   spot<Slider>().withAutofocus(true).existsOnce();
+  /// spot<Slider>().withAutofocus(true).existsOnce();
   /// ```
   @useResult
   WidgetSelector<Slider> withAutofocus(bool? value) {
