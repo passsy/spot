@@ -1,1 +1,4 @@
 **/*.g.dart linguist-generated=true
+/doc/*.html linguist-generated=true
+
+
