@@ -1917,7 +1917,7 @@ extension QuantitySelectors<W extends Widget> on WidgetSelector<W> {
 /// These matchers enable assertions on whether a certain number
 /// of widgets exist.
 extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
-  /// Asserts that at least one widget exists.
+  /// Asserts that at least one widget of type [W] exists.
   ///
   /// This matcher is used when the expectation is to have one or more
   /// widgets of type [W] present in the widget tree.
@@ -1939,7 +1939,7 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
     return snapshot(atLeastOne).multi;
   }
 
-  /// Asserts that at most one widget exists.
+  /// Asserts that at most one widget of type [W] exists.
   ///
   /// This matcher is useful for scenarios where either one or no widget
   /// of type [W] should be present.
