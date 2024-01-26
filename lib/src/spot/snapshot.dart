@@ -6,6 +6,13 @@ import 'package:spot/spot.dart';
 import 'package:spot/src/spot/selectors.dart';
 import 'package:spot/src/spot/tree_snapshot.dart';
 
+/// Creates a snapshot of widgets that match the specified [selector].
+///
+/// This function captures the current state of widgets that match the criteria
+/// defined in [selector] for further analysis or assertions. It handles both
+/// simple selectors and selectors with parent constraints. For
+/// parent-constrained selectors, it generates candidates based on the parent
+/// selectors and applies additional filters as defined in the selector.
 WidgetSnapshot<W> snapshot<W extends Widget>(
   WidgetSelector<W> selector, {
   bool validateQuantity = true,
@@ -44,11 +51,20 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
   return snapshot;
 }
 
+/// Generates candidate widget tree nodes based on parent selectors for a
+/// given widget type [W].
+///
+/// This class is used to create a set of candidates by considering the
+/// hierarchical context defined by parent selectors in a [WidgetSelector].
 class CandidateGeneratorFromParents<W extends Widget>
     implements CandidateGenerator<W> {
-  final WidgetSelector<W> selector;
-
+  /// Constructs a [CandidateGeneratorFromParents] using the
+  /// provided [selector].
   CandidateGeneratorFromParents(this.selector);
+
+  /// The [WidgetSelector] whose parent selectors are used to generat
+  /// candidates.
+  final WidgetSelector<W> selector;
 
   @override
   Iterable<WidgetTreeNode> generateCandidates() {
@@ -232,24 +248,43 @@ extension _ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
   }
 }
 
+/// Extension on [WidgetSnapshot]<W> providing matchers for asserting
+/// the existence of a specific number of widgets.
+///
+/// These matchers allow checking if a certain number of widgets of type [W]
+/// exist in the widget tree based on the snapshot's selector.
 extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
+  /// Asserts that no widgets of type [W] exist.
   void doesNotExist() => _exists(max: 0);
 
+  /// Asserts that exactly one widget of type [W] exists.
   WidgetMatcher<W> existsOnce() =>
       WidgetMatcher.fromSnapshot(_exists(min: 1, max: 1));
 
+  /// Asserts that at least one widget of type [W] exists.
   MultiWidgetMatcher<W> existsAtLeastOnce() => _exists(min: 1).multi;
 
+  /// Asserts that at most one widget of type [W] exists.
   WidgetMatcher<W> existsAtMostOnce() =>
       WidgetMatcher.fromSnapshot(_exists(max: 1));
 
+  /// Asserts that exactly [n] widgets of type [W] exist.
   MultiWidgetMatcher<W> existsExactlyNTimes(int n) =>
       _exists(min: n, max: n).multi;
 
+  /// Asserts that at least [n] widgets of type [W] exist.
   MultiWidgetMatcher<W> existsAtLeastNTimes(int n) => _exists(min: n).multi;
 
+  /// Asserts that at most [n] widgets of type [W] exist.
   MultiWidgetMatcher<W> existsAtMostNTimes(int n) => _exists(max: n).multi;
 
+  /// Internal method to check the existence of widgets with optional
+  /// minimum and maximum limits.
+  ///
+  /// Validates the number of discovered widgets against the provided [min]
+  /// and [max] constraints.
+  /// Throws a descriptive error if the actual count of widgets does not meet
+  /// the constraints.
   WidgetSnapshot<W> _exists({int? min, int? max}) {
     assert(min != null || max != null);
     assert(min == null || min > 0);
@@ -402,7 +437,9 @@ void _dumpWidgetTree(StringBuffer buffer) {
   }
 }
 
+/// Extension on [Element] providing access to parent and child elements.
 extension ElementParent on Element {
+  /// Gets the immediate parent of this element.
   Element? get parent {
     Element? parent;
     visitAncestorElements((element) {
@@ -412,6 +449,7 @@ extension ElementParent on Element {
     return parent;
   }
 
+  /// Gets all parent elements of this element.
   Iterable<Element> get parents sync* {
     Element? element = this;
     while (element != null) {
@@ -420,6 +458,7 @@ extension ElementParent on Element {
     }
   }
 
+  /// Gets all immediate child elements of this element.
   Iterable<Element> get children sync* {
     final List<Element> found = [];
     visitChildren(found.add);
@@ -473,6 +512,7 @@ extension _LessSpecificSelectors<W extends Widget> on WidgetSelector<W> {
   }
 }
 
+/// Generates all subsets of a given list.
 @visibleForTesting
 List<List<T>> getAllSubsets<T>(List<T> list) {
   final List<List<T>> result = [[]];
@@ -487,6 +527,7 @@ List<List<T>> getAllSubsets<T>(List<T> list) {
   return result.sortedByDescending((element) => element.length).toList();
 }
 
+/// Finds the common ancestor of a set of elements.
 Element findCommonAncestor(Iterable<Element> elements) {
   // ignore: deprecated_member_use
   final rootElement = WidgetsBinding.instance.renderViewElement!;

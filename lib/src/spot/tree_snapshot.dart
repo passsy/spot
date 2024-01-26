@@ -46,17 +46,29 @@ WidgetTreeSnapshot createWidgetTreeSnapshot() {
 /// A node in [WidgetTreeSnapshot] holding a single [element] and knows about
 /// parent and children.
 class WidgetTreeNode {
-  /// The actual element in the element tree holding the widget of type [W]
+  /// The actual element in the element tree holding the widget of type `W`.
   final Element element;
 
   List<WidgetTreeNode> _children = const [];
 
+  /// Gets the list of child nodes of this widget tree node.
+  ///
+  /// It provides access to the children of this node, allowing traversal of
+  /// the widget tree.
   List<WidgetTreeNode> get children => _children;
 
+  /// Adds a child node to this widget tree node.
+  ///
+  /// This method updates the list of children by adding [child]. The list of
+  /// children remains unmodifiable to external modifications.
   void addChild(WidgetTreeNode child) {
     _children = List.unmodifiable([..._children, child]);
   }
 
+  /// The parent widget tree node of this node.
+  ///
+  /// This is a nullable reference to the parent node. It's `null` for the root
+  /// node of the tree.
   final WidgetTreeNode? parent;
 
   /// Creates an [Element] in the element tree.
@@ -79,10 +91,24 @@ class WidgetTreeNode {
 /// This tree is a tree of [WidgetTreeNode]s, which are wrappers around [Element]
 /// with additional information about the widget.
 class WidgetTreeSnapshot extends ScopedWidgetTreeSnapshot {
+  /// Represents the precise point in time at which the state of
+  /// the widget tree was recorded.
   final DateTime timestamp;
 
   bool _isNextFrame = false;
 
+  /// Creates a snapshot of the widget tree at the given [timestamp].
+  ///
+  /// The snapshot is initialized with the `origin` of the current widget scope
+  /// and the specified [timestamp]. It sets up a post-frame callback to mark
+  /// the snapshot as outdated when the next frame is pumped.
+  ///
+  /// The snapshot captures the state of the widget tree at the exact moment of
+  /// its creation, allowing for analysis of the tree state at that specific
+  /// point in time.
+  ///
+  /// - [origin]: The origin widget of this snapshot.
+  /// - [timestamp]: The time at which the snapshot was taken.
   WidgetTreeSnapshot({
     required super.origin,
     required this.timestamp,
@@ -108,16 +134,36 @@ class WidgetTreeSnapshot extends ScopedWidgetTreeSnapshot {
   }
 }
 
-/// A subtree of [WidgetTreeSnapshot] that starts at [origin]
+/// A snapshot representing a specific subtree within a [WidgetTreeSnapshot].
+///
+/// This class provides a focused view of a subtree starting from the [origin]
+/// node. It is used to analyze and interact with a specific part of the widget
+/// tree, isolated from the rest. Each instance of this class captures the state
+/// and structure of the subtree at a specific point in time, facilitating
+/// targeted analysis and debugging within that scope.
+///
+/// The snapshot includes various utility methods to traverse and inspect the
+/// subtree, such as obtaining all elements, widgets, and nodes in depth-first
+/// order. It also manages the lifecycle of the snapshot, ensuring its validity
+/// only within the current frame.
 class ScopedWidgetTreeSnapshot {
-  final WidgetTreeNode origin;
-  final ScopedWidgetTreeSnapshot? parentScope;
-
+  /// This constructor initializes a snapshot of a subtree, starting at the
+  /// provided [origin]. It captures the state of the subtree for further
+  /// analysis or operations.
   ScopedWidgetTreeSnapshot({
     required this.origin,
     required this.parentScope,
   });
 
+  /// The root node of the subtree to be captured in this snapshot.
+  final WidgetTreeNode origin;
+
+  /// The parent scope from which this subtree snapshot is derived.
+  final ScopedWidgetTreeSnapshot? parentScope;
+
+  /// Returns `true` if the snapshot represents the state of the widgets
+  /// as of the current frame. If a new frame has been pumped,
+  /// it returns `false`, indicating that the snapshot is outdated.
   bool get isFromThisFrame => root.isFromThisFrame;
 
   void _ensureSnapshotIsFromThisFrame() {
@@ -197,6 +243,20 @@ class ScopedWidgetTreeSnapshot {
     return 'ScopedWidgetTreeSnapshot{origin: ${origin.element.widget.runtimeType}}';
   }
 
+  /// Returns a detailed string representation of the subtree starting at the
+  /// origin.
+  ///
+  /// This method provides a depth-first traversal representation of the
+  /// subtree, showing detailed information about each widget in the hierarchy.
+  /// It is particularly useful for debugging and visualizing the structure of
+  /// the subtree.
+  ///
+  /// #### Example usage:
+  /// ```dart
+  /// final WidgetTreeSnapshot snapshot = currentWidgetTreeSnapshot();
+  /// final ScopedWidgetTreeSnapshot scopedSnapshot = snapshot.scope(snapshot.origin);
+  /// final String deepString = scopedSnapshot.toStringDeep();
+  /// ```
   String toStringDeep() {
     return origin.element.toStringDeep();
   }

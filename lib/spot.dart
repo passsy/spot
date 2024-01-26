@@ -1,9 +1,9 @@
 /// Spot is a library for testing the Widget tree of Flutter apps.
 library spot;
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:spot/spot.dart';
-import 'package:spot/src/spot/selectors.dart' show Spot;
+import 'package:spot/src/spot/selectors.dart' show Spot, WidgetTypeFilter;
 
 export 'package:checks/checks.dart'
     hide
@@ -297,8 +297,10 @@ WidgetSelector<W> spotSingleText<W extends Widget>(
 ///
 /// Set [findRichText] to true to also find [RichText] Widgets.
 ///
-/// To find [SelectableText] Widgets, use `spotSingle<SelectableText>(children: [spotTexts('foo')])`
-/// which finds a [SelectableText] Widget that contains an [EditableText] with 'foo'.
+/// To find [SelectableText] Widgets, use
+/// `spotSingle<SelectableText>(children: [spotTexts('foo')])`
+/// which finds a [SelectableText] Widget that contains an [EditableText]
+/// with 'foo'.
 @Deprecated(
   'Use spotText("Hello") or '
   'spot<Text>().whereText((it) => it.equals("Hello")) instead',
@@ -318,7 +320,7 @@ WidgetSelector<W> spotTexts<W extends Widget>(
   );
 }
 
-/// Creates a chainable [WidgetSelector] that finds a [Icon] based on [IconData]
+/// Creates a chainable [WidgetSelector] that finds an [Icon] based on [IconData]
 /// [icon]
 @useResult
 @Deprecated('Use spotIcon<W>().atMost(1)')
