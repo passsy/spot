@@ -193,11 +193,11 @@ extension EffectiveTextSelector on WidgetSelector<Text> {
   /// #### Example:
   /// ```dart
   /// spot<Text>().withText('foo').withEffectiveTextStyleMatching(
-  /// (style) {
-  /// style.fontSize.isGreaterOrEqual(20);
-  /// style.fontStyle.isNotNull();
-  /// style.fontWeight.equals(FontWeight.bold);
-  /// },
+  ///   (style) {
+  ///     style.fontSize.isGreaterOrEqual(20);
+  ///     style.fontStyle.isNotNull();
+  ///     style.fontWeight.equals(FontWeight.bold);
+  ///   },
   /// ).existsOnce();
   /// ```
   ///
