@@ -9,21 +9,10 @@ import 'package:spot/src/spot/tree_snapshot.dart';
 /// Creates a snapshot of widgets that match the specified [selector].
 ///
 /// This function captures the current state of widgets that match the criteria
-/// defined in [selector] for further analysis or assertions.
-///
-/// Parameters:
-///   [selector] - The [WidgetSelector] used to find the widgets.
-///   [validateQuantity] - If `true`, validates that the number of discovered
-///                        widgets matches the quantity constraint in the selector.
-///
-/// Returns:
-///   A [WidgetSnapshot] containing the discovered widgets, their elements, and
-///   the scope of the widget tree where the search was performed.
-///
-/// This function handles both simple selectors and selectors with parent
-/// constraints. For parent-constrained selectors, it generates candidates
-/// based on the parent selectors and applies additional filters as defined
-/// in the selector.
+/// defined in [selector] for further analysis or assertions. It handles both
+/// simple selectors and selectors with parent constraints. For
+/// parent-constrained selectors, it generates candidates based on the parent
+/// selectors and applies additional filters as defined in the selector.
 WidgetSnapshot<W> snapshot<W extends Widget>(
   WidgetSelector<W> selector, {
   bool validateQuantity = true,
