@@ -368,7 +368,12 @@ mixin Selectors<T extends Widget> {
     );
   }
 
-  /// Creates a [WidgetSelector] that finds widgets with the given [key]
+  /// Creates a [WidgetSelector] that finds widgets with the given [key].
+  ///
+  /// Example usage:
+  /// ```dart
+  /// spot<Center>().spotKey(const ValueKey('key')).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<W> spotKey<W extends Widget>(
     Key key, {
@@ -388,7 +393,7 @@ mixin Selectors<T extends Widget> {
     );
   }
 
-  /// Creates a [WidgetSelector] that finds a single widget with the given [key]
+  /// Creates a [WidgetSelector] that finds a single widget with the given [key].
   @useResult
   @Deprecated('Use spotKey().atMost(1)')
   WidgetSelector<W> spotSingleKey<W extends Widget>(
@@ -422,7 +427,12 @@ mixin Selectors<T extends Widget> {
   ///
   /// "first" is neither the top-most or the bottom-most widget. Instead, it is
   /// the widget that was found first during a depth-first search of the widget
-  /// tree
+  /// tree.
+  ///
+  /// #### Example usage:
+  /// ```dart
+  /// spot<Text>().first().existsOnce().hasText('Pepe');
+  /// ```
   @useResult
   WidgetSelector<T> first() {
     // TODO add names to the elementFilters, for a better WidgetSelector.toString()
@@ -433,7 +443,12 @@ mixin Selectors<T extends Widget> {
   ///
   /// "last" is neither the top-most or the bottom-most widget. Instead, it is
   /// the widget that was found last during a depth-first search of the widget
-  /// tree
+  /// tree.
+  ///
+  /// #### Example usage:
+  /// ```dart
+  /// spot<Text>().last().existsOnce().hasText('Pepe');
+  /// ```
   @useResult
   WidgetSelector<T> last() {
     return self!.copyWith(elementFilters: [_LastElement()]);
@@ -520,7 +535,16 @@ extension SelectorQueries<W extends Widget> on Selectors<W> {
   /// Creates a filter for the discovered elements which is applied when the
   /// [WidgetSelector] is snapshotted.
   ///
-  /// The [description] is required to make error messages understandable
+  /// The [description] is required to make error messages understandable.
+  ///
+  /// #### Example usage:
+  /// ```dart
+  /// spot<Checkbox>()
+  ///   .whereElement(
+  ///     (el) => (el.widget as Checkbox).value == true,
+  ///     description: 'is checked',
+  ///   ).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<W> whereElement(
     bool Function(Element element) predicate, {
@@ -882,6 +906,14 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
   ///
   /// This method is useful for making assertions on properties directly
   /// within the widget.
+  ///
+  /// #### Example usage:
+  /// ```dart
+  /// spot<Checkbox>().existsOnce().hasWidgetProp(
+  ///   prop: widgetProp('value', (widget) => widget.value),
+  ///   match: (value) => value.isTrue(),
+  /// );
+  /// ```
   WidgetMatcher<W> hasWidgetProp<T>({
     required NamedWidgetProp<W, T?> prop,
     required MatchProp<T> match,
@@ -915,6 +947,14 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
   ///
   /// This method is useful for making assertions on properties within the
   /// element of the widget.
+  ///
+  /// #### Example usage:
+  /// ```dart
+  /// spot<Checkbox>().existsOnce().hasElementProp(
+  ///   prop: elementProp('value', (e) => (e.widget as Checkbox).value),
+  ///   match: (it) => it.equals(true),
+  /// );
+  /// ```
   WidgetMatcher<W> hasElementProp<T>({
     required NamedElementProp<T?> prop,
     required MatchProp<T> match,
@@ -951,6 +991,18 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
   ///
   /// This method is useful for making assertions on properties within the
   /// render object of the widget.
+  ///
+  /// #### Example usage:
+  /// ```dart
+  /// final isComplexProp = renderObjectProp<bool?, RenderCustomPaint>(
+  ///   'isComplex',
+  ///   (r) => r.isComplex,
+  /// );
+  /// spot<Checkbox>().spot<CustomPaint>().existsOnce().hasRenderObjectProp(
+  ///   prop: isComplexProp,
+  ///   match: (it) => it.isFalse(),
+  /// );
+  /// ```
   WidgetMatcher<W> hasRenderObjectProp<T, R extends RenderObject>({
     required NamedRenderObjectProp<R, T?> prop,
     required MatchProp<T> match,
