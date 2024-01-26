@@ -112,16 +112,16 @@ const Spot _global = Spot();
 WidgetSelector<Widget> get allWidgets => WidgetSelector.all;
 
 /// Creates a chainable [WidgetSelector] that matches a single [Widget] of
-/// type `W`.
+/// type [W].
 ///
 /// When executed this [WidgetSelector] will fail when it finds multiple
-/// [Widget]s of type `W` in widget tree.
+/// [Widget]s of type [W] in widget tree.
 ///
 /// This selector compares the Widgets by runtimeType rather than by super
 /// type (see [WidgetTypeFilter]). This makes sure that e.g. `spotSingle<Align>()`
 /// does not accidentally match a [Center] Widget, that extends [Align].
 ///
-/// If multiple Widgets of type `W` are expected, use [spot] instead.
+/// If multiple Widgets of type [W] are expected, use [spot] instead.
 @useResult
 @Deprecated('Use spot<W>().atMost(1)')
 WidgetSelector<W> spotSingle<W extends Widget>({
@@ -135,7 +135,7 @@ WidgetSelector<W> spotSingle<W extends Widget>({
 }
 
 /// Creates a chainable [WidgetSelector] that matches a all Widgets of
-/// type `W` in widget tree.
+/// type [W] in widget tree.
 ///
 /// `spot<SomeWidget>()` is the most common way to chain selectors.
 ///
@@ -293,7 +293,7 @@ WidgetSelector<W> spotSingleText<W extends Widget>(
   );
 }
 
-/// Either finds [Text] or [EditableText] Widgets (set `W` accordingly).
+/// Either finds [Text] or [EditableText] Widgets (set [W] accordingly).
 ///
 /// Set [findRichText] to true to also find [RichText] Widgets.
 ///
