@@ -250,6 +250,13 @@ class ScopedWidgetTreeSnapshot {
   /// subtree, showing detailed information about each widget in the hierarchy.
   /// It is particularly useful for debugging and visualizing the structure of
   /// the subtree.
+  ///
+  /// #### Example usage:
+  /// ```dart
+  /// final WidgetTreeSnapshot snapshot = currentWidgetTreeSnapshot();
+  /// final ScopedWidgetTreeSnapshot scopedSnapshot = snapshot.scope(snapshot.origin);
+  /// final String deepString = scopedSnapshot.toStringDeep();
+  /// ```
   String toStringDeep() {
     return origin.element.toStringDeep();
   }
