@@ -44,8 +44,9 @@ mixin Selectors<T extends Widget> {
   /// type (see [WidgetTypeFilter]). This makes sure that e.g. `spot<Align>()`
   /// does not accidentally match a [Center] Widget, that extends [Align].
   ///
+  /// ### Example usage:
   /// ```dart
-  /// final appbar = spot<MaterialApp>().spot<Scaffold>().spot<AppBar>()
+  /// final appbar = spot<MaterialApp>().spot<Scaffold>().spot<AppBar>();
   /// ```
   @useResult
   WidgetSelector<W> spot<W extends Widget>({
@@ -70,10 +71,11 @@ mixin Selectors<T extends Widget> {
   /// type (see [WidgetTypeFilter]). This makes sure that e.g. `spot<Align>()`
   /// does not accidentally match a [Center] Widget, that extends [Align].
   ///
+  /// ### Example usage:
   /// ```dart
   /// final appbar = spotSingle<MaterialApp>()
-  ///    .spotSingle<Scaffold>()
-  ///    .spotSingle<AppBar>()
+  ///   .spotSingle<Scaffold>()
+  ///   .spotSingle<AppBar>();
   /// ```
   @useResult
   @Deprecated('Use spot<W>().atMost(1)')
@@ -169,6 +171,7 @@ mixin Selectors<T extends Widget> {
   /// For assertions against specific text widgets and their properties, use the
   /// normal [spot] method and set the text widget type as generic type argument.
   ///
+  /// #### Example usage:
   /// ```dart
   /// final welcome = spot<Text>().whereText((it) => it.equals("Hello"));
   /// welcome.first().snapshot().hasMaxLines(1).hasTextAlign(TextAlign.center);
@@ -437,10 +440,11 @@ mixin Selectors<T extends Widget> {
   }
 
   /// Selects the widget at a specified [index] in the list of found widgets.
-  /// Example:
-  ///   ```
-  ///   spot<YourWidgetType>().atIndex(2) // Selects the third widget
-  ///   ```
+  ///
+  /// #### Example usage:
+  ///```dart
+  /// spot<YourWidgetType>().atIndex(2) // Selects the third widget
+  ///```
   @useResult
   WidgetSelector<T> atIndex(int index) {
     return self!.copyWith(elementFilters: [_ElementAtIndex(index)]);
@@ -538,13 +542,13 @@ extension SelectorQueries<W extends Widget> on Selectors<W> {
   ///
   /// The [description] is required to make error messages understandable
   ///
+  /// #### Example usage:
   /// ```dart
   /// spotSingle<Checkbox>()
-  ///    .whereWidget(
-  ///      (widget) => widget.value == true,
-  ///      description: 'isChecked',
-  ///    )
-  ///    .existsOnce();
+  ///   .whereWidget(
+  ///     (widget) => widget.value == true,
+  ///     description: 'isChecked',
+  ///   ).existsOnce();
   /// ```
   @useResult
   WidgetSelector<W> whereWidget(
@@ -568,14 +572,14 @@ extension SelectorQueries<W extends Widget> on Selectors<W> {
   /// Creates a filter for the widgets of the discovered elements which is
   /// applied when the [WidgetSelector] is snapshotted.
   ///
+  /// #### Example usage:
   /// ```dart
   /// spotSingle<Checkbox>()
   ///   .whereWidgetProp(
   ///     prop: widgetProp('isChecked', (widget) => widget.value),
   ///     match: (value) => value == true,
-  ///   )
-  ///   .existsOnce();
-  ///   ```
+  ///   ).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<W> whereWidgetProp<T>(
     NamedWidgetProp<W, T> prop,
@@ -600,15 +604,14 @@ extension SelectorQueries<W extends Widget> on Selectors<W> {
   /// a specified property. The filter is applied when the [WidgetSelector] is
   /// snapshotted.
   ///
-  /// Example:
-  ///   ```
-  ///   spotSingle<Checkbox>()
-  ///     .whereElementProp<bool>(
-  ///       prop: elementProp('isFocused', (element) => element.isFocused),
-  ///       match: (isFocused) => isFocused == true,
-  ///     )
-  ///     .existsOnce();
-  ///   ```
+  /// #### Example usage:
+  /// ```dart
+  /// spotSingle<Checkbox>()
+  ///   .whereElementProp<bool>(
+  ///     prop: elementProp('isFocused', (element) => element.isFocused),
+  ///     match: (isFocused) => isFocused == true,
+  ///   ).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<W> whereElementProp<T>(
     NamedElementProp<T> prop,
@@ -635,15 +638,14 @@ extension SelectorQueries<W extends Widget> on Selectors<W> {
   /// Useful for selecting widgets based on specific properties of their render
   /// objects. Provide a [NamedRenderObjectProp] and a matching function.
   ///
-  /// Example:
-  ///   ```
-  ///   spotSingle<Checkbox>()
-  ///     .whereRenderObjectProp<double, RenderBox>(
-  ///       prop: renderObjectProp('opacity', (ro) => ro.opacity),
-  ///       match: (opacity) => opacity > 0.5,
-  ///     )
-  ///     .existsOnce();
-  ///   ```
+  /// #### Example usage:
+  /// ```dart
+  /// spotSingle<Checkbox>()
+  ///   .whereRenderObjectProp<double, RenderBox>(
+  ///     prop: renderObjectProp('opacity', (ro) => ro.opacity),
+  ///     match: (opacity) => opacity > 0.5,
+  ///   ).existsOnce();
+  /// ```
   @useResult
   WidgetSelector<W> whereRenderObjectProp<T, R extends RenderObject>(
     NamedRenderObjectProp<R, T> prop,
@@ -809,6 +811,7 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
   /// [Widget]s or in the state.
   /// Use [selector] to extract the actual value and validate it with [match].
   ///
+  /// #### Example usage:
   /// ```dart
   /// hasProp(
   ///   selector: (subject) => subject.context.nest<int?>(
@@ -1514,6 +1517,7 @@ class WidgetSelector<W extends Widget> with Selectors<W> {
   /// - [SelectorQueries.whereElementProp]
   /// - [SelectorQueries.whereRenderObjectProp]
   ///
+  /// #### Example usage:
   /// ```dart
   /// withProp(
   ///   selector: (subject) => subject.context.nest<int?>(
@@ -1921,17 +1925,18 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   ///
   /// This matcher is used when the expectation is to have one or more
   /// widgets of type [W] present in the widget tree.
-  /// #### Example:
+  ///
+  /// #### Example usage:
   /// ```dart
   /// spot<ElevatedButton>().existsAtLeastOnce();
   /// ```
   /// #### See also:
   /// - [doesNotExist] asserts that no widgets of type [W] exist.
   /// - [existsOnce] asserts that exactly one widget of type [W] exists.
-  /// - [existsExactlyNTimes] asserts that exactly [n] widgets of type [W] exist.
-  /// - [existsAtLeastNTimes] asserts that at least [n] widgets of type [W] exist.
+  /// - [existsExactlyNTimes] asserts that exactly `n` widgets of type [W] exist.
+  /// - [existsAtLeastNTimes] asserts that at least `n` widgets of type [W] exist.
   /// - [existsAtMostOnce] asserts that at most one widget exists.
-  /// - [existsAtMostNTimes] asserts that at most [n] widgets of type [W] exist.
+  /// - [existsAtMostNTimes] asserts that at most `n` widgets of type [W] exist.
   MultiWidgetMatcher<W> existsAtLeastOnce() {
     TestAsyncUtils.guardSync();
     final atLeastOne =
@@ -1943,17 +1948,18 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   ///
   /// This matcher is useful for scenarios where either one or no widget
   /// of type [W] should be present.
-  /// #### Example:
+  ///
+  /// #### Example usage:
   /// ```dart
   /// spot<ElevatedButton>().existsAtMostOnce();
   /// ```
   /// #### See also:
   /// - [doesNotExist] asserts that no widgets of type [W] exist.
   /// - [existsOnce] asserts that exactly one widget of type [W] exists.
-  /// - [existsExactlyNTimes] asserts that exactly [n] widgets of type [W] exist.
+  /// - [existsExactlyNTimes] asserts that exactly `n` widgets of type [W] exist.
   /// - [existsAtLeastOnce] asserts that at least one widget of type [W] exists.
-  /// - [existsAtLeastNTimes] asserts that at least [n] widgets of type [W] exist.
-  /// - [existsAtMostNTimes] asserts that at most [n] widgets of type [W] exist.
+  /// - [existsAtLeastNTimes] asserts that at least `n` widgets of type [W] exist.
+  /// - [existsAtMostNTimes] asserts that at most `n` widgets of type [W] exist.
   WidgetMatcher<W> existsAtMostOnce() {
     TestAsyncUtils.guardSync();
     final atMostOne = copyWith(quantityConstraint: QuantityConstraint.single);
@@ -1964,17 +1970,18 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   ///
   /// This method does not return a matcher but directly verifies that
   /// no widgets are found.
-  /// #### Example:
+  ///
+  /// #### Example usage:
   /// ```dart
   /// spot<ElevatedButton>().doesNotExist();
   /// ```
   /// #### See also:
   /// - [existsOnce] asserts that exactly one widget of type [W] exists.
-  /// - [existsExactlyNTimes] asserts that exactly [n] widgets of type [W] exist.
+  /// - [existsExactlyNTimes] asserts that exactly `n` widgets of type [W] exist.
   /// - [existsAtLeastOnce] asserts that at least one widget of type [W] exists.
-  /// - [existsAtLeastNTimes] asserts that at least [n] widgets of type [W] exist.
+  /// - [existsAtLeastNTimes] asserts that at least `n` widgets of type [W] exist.
   /// - [existsAtMostOnce] asserts that at most one widget exists.
-  /// - [existsAtMostNTimes] asserts that at most [n] widgets of type [W] exist.
+  /// - [existsAtMostNTimes] asserts that at most `n` widgets of type [W] exist.
   void doesNotExist() {
     TestAsyncUtils.guardSync();
     final none = copyWith(quantityConstraint: QuantityConstraint.zero);
@@ -1982,17 +1989,18 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   }
 
   /// Asserts that exactly one widget of type [W] exists.
-  /// #### Example:
+  ///
+  /// #### Example usage:
   /// ```dart
   /// spot<ElevatedButton>().existsOnce();
   /// ```
   /// #### See also:
   /// - [doesNotExist] asserts that no widgets of type [W] exist.
-  /// - [existsExactlyNTimes] asserts that exactly [n] widgets of type [W] exist.
+  /// - [existsExactlyNTimes] asserts that exactly `n` widgets of type [W] exist.
   /// - [existsAtLeastOnce] asserts that at least one widget of type [W] exists.
-  /// - [existsAtLeastNTimes] asserts that at least [n] widgets of type [W] exist.
+  /// - [existsAtLeastNTimes] asserts that at least `n` widgets of type [W] exist.
   /// - [existsAtMostOnce] asserts that at most one widget exists.
-  /// - [existsAtMostNTimes] asserts that at most [n] widgets of type [W] exist.
+  /// - [existsAtMostNTimes] asserts that at most `n` widgets of type [W] exist.
   WidgetMatcher<W> existsOnce() {
     TestAsyncUtils.guardSync();
     final one =
@@ -2001,7 +2009,8 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   }
 
   /// Asserts that exactly [n] widgets of type [W] exist.
-  /// #### Example:
+  ///
+  /// #### Example usage:
   /// ```dart
   /// spot<ElevatedButton>().existsExactlyNTimes(2);
   /// ```
@@ -2020,7 +2029,8 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   }
 
   /// Asserts that at least [n] widgets of type [W] exist.
-  /// #### Example:
+  ///
+  /// #### Example usage:
   /// ```dart
   /// spot<ElevatedButton>().existsAtLeastNTimes(2);
   /// ```
@@ -2038,7 +2048,8 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   }
 
   /// Asserts that at most [n] widgets of type [W] exist.
-  /// #### Example:
+  ///
+  /// #### Example usage:
   /// ```dart
   /// spot<ElevatedButton>().existsAtMostNTimes(2);
   /// ```
@@ -2060,7 +2071,8 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
 extension RelativeSelectors<W extends Widget> on WidgetSelector<W> {
   /// Returns a [WidgetSelector] that requires [parent] to be a parent of the
   /// widget to match.
-  /// #### Example:
+  ///
+  /// #### Example usage:
   /// ```dart
   ///  final containers = spot<Container>();
   ///  containers.withParent(spot<Wrap>()).existsOnce()
@@ -2076,7 +2088,8 @@ extension RelativeSelectors<W extends Widget> on WidgetSelector<W> {
 
   /// Returns a [WidgetSelector] that requires [parents] to be parents of the
   /// widget to match.
-  /// #### Example:
+  ///
+  /// #### Example usage:
   /// ```dart
   ///  final containers = spot<Container>();
   ///  containers.withParents([spot<Wrap>()]).existsOnce();
@@ -2092,10 +2105,11 @@ extension RelativeSelectors<W extends Widget> on WidgetSelector<W> {
 
   /// Returns a [WidgetSelector] that requires [child] to be a child of the
   /// widget to match.
-  /// #### Example:
+  ///
+  /// #### Example usage:
   /// ```dart
   ///  final containers = spot<Container>();
-  ///  containers.witchChild(spot<Wrap>()).existsOnce()
+  ///  containers.witchChild(spot<Wrap>()).existsOnce();
   /// ```
   /// #### See also:
   /// - [withParent] requires [parent] to be a parent of the widget to match.
@@ -2108,9 +2122,10 @@ extension RelativeSelectors<W extends Widget> on WidgetSelector<W> {
 
   /// Returns a [WidgetSelector] that requires [children] to be children of the
   /// widget to match.
-  /// #### Example:
+  ///
+  /// #### Example usage:
   /// ```dart
-  ///  final containers = spot<Container>();
+  /// final containers = spot<Container>();
   /// containers.withChildren([spot<Wrap>()]).existsOnce();
   /// ```
   /// #### See also:
