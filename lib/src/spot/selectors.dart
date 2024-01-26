@@ -431,7 +431,7 @@ mixin Selectors<T extends Widget> {
   ///
   /// #### Example usage:
   /// ```dart
-  /// spot<Text>().first().existsOnce().hasText('Pepe');
+  /// spot<Center>().first().spotText('Pepe').existsOnce();
   /// ```
   @useResult
   WidgetSelector<T> first() {
@@ -447,7 +447,7 @@ mixin Selectors<T extends Widget> {
   ///
   /// #### Example usage:
   /// ```dart
-  /// spot<Text>().last().existsOnce().hasText('Pepe');
+  /// spot<Center>().last().spotText('Pepe').existsOnce();
   /// ```
   @useResult
   WidgetSelector<T> last() {
