@@ -592,3 +592,71 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
         'textAlign', (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
+
+/// Retrieves the [DiagnosticsProperty] of the matched widget with [propName] of type [T]
+extension TooltipGetter on WidgetMatcher<Tooltip> {
+  /// Returns the message of the matched [Tooltip] via [Widget.toDiagnosticsNode]
+  String getMessage() {
+    return getDiagnosticProp<String>('message');
+  }
+
+  /// Returns the richMessage of the matched [Tooltip] via [Widget.toDiagnosticsNode]
+  String getRichMessage() {
+    return getDiagnosticProp<String>('richMessage');
+  }
+
+  /// Returns the height of the matched [Tooltip] via [Widget.toDiagnosticsNode]
+  double getHeight() {
+    return getDiagnosticProp<double>('height');
+  }
+
+  /// Returns the padding of the matched [Tooltip] via [Widget.toDiagnosticsNode]
+  EdgeInsetsGeometry getPadding() {
+    return getDiagnosticProp<EdgeInsetsGeometry>('padding');
+  }
+
+  /// Returns the margin of the matched [Tooltip] via [Widget.toDiagnosticsNode]
+  EdgeInsetsGeometry getMargin() {
+    return getDiagnosticProp<EdgeInsetsGeometry>('margin');
+  }
+
+  /// Returns the verticalOffset of the matched [Tooltip] via [Widget.toDiagnosticsNode]
+  double getVerticalOffset() {
+    return getDiagnosticProp<double>('vertical offset');
+  }
+
+  /// Returns the position of the matched [Tooltip] via [Widget.toDiagnosticsNode]
+  bool getPosition() {
+    return getDiagnosticProp<bool>('position');
+  }
+
+  /// Returns the semantics of the matched [Tooltip] via [Widget.toDiagnosticsNode]
+  bool getSemantics() {
+    return getDiagnosticProp<bool>('semantics');
+  }
+
+  /// Returns the waitDuration of the matched [Tooltip] via [Widget.toDiagnosticsNode]
+  Duration getWaitDuration() {
+    return getDiagnosticProp<Duration>('wait duration');
+  }
+
+  /// Returns the showDuration of the matched [Tooltip] via [Widget.toDiagnosticsNode]
+  Duration getShowDuration() {
+    return getDiagnosticProp<Duration>('show duration');
+  }
+
+  /// Returns the triggerMode of the matched [Tooltip] via [Widget.toDiagnosticsNode]
+  TooltipTriggerMode getTriggerMode() {
+    return getDiagnosticProp<TooltipTriggerMode>('triggerMode');
+  }
+
+  /// Returns the enableFeedback of the matched [Tooltip] via [Widget.toDiagnosticsNode]
+  bool getEnableFeedback() {
+    return getDiagnosticProp<bool>('enableFeedback');
+  }
+
+  /// Returns the textAlign of the matched [Tooltip] via [Widget.toDiagnosticsNode]
+  TextAlign getTextAlign() {
+    return getDiagnosticProp<TextAlign>('textAlign');
+  }
+}

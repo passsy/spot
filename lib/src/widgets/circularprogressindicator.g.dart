@@ -66,3 +66,12 @@ extension CircularProgressIndicatorMatcher
         'value', (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
+
+/// Retrieves the [DiagnosticsProperty] of the matched widget with [propName] of type [T]
+extension CircularProgressIndicatorGetter
+    on WidgetMatcher<CircularProgressIndicator> {
+  /// Returns the value of the matched [CircularProgressIndicator] via [Widget.toDiagnosticsNode]
+  double getValue() {
+    return getDiagnosticProp<double>('value');
+  }
+}

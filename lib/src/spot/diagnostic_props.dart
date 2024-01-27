@@ -95,6 +95,21 @@ extension DiagnosticPropWidgetSelector<W extends Widget> on WidgetSelector<W> {
 
 /// All [DiagnosticsProperty] related matchers
 extension DiagnosticPropWidgetMatcher<W extends Widget> on WidgetMatcher<W> {
+  /// Retrieves the [DiagnosticsProperty] of the matched widget with [propName] of type [T]
+  ///
+  /// #### Example usage:
+  /// ```dart
+  /// final checked = spot<Checkbox>().existsOnce().getDiagnosticProp<bool>('value');
+  /// ```
+  T getDiagnosticProp<T>(String propName) {
+    final diagnosticsNode =
+        selector.mapElementToWidget(element).toDiagnosticsNode();
+    final DiagnosticsNode? prop = diagnosticsNode
+        .getProperties()
+        .firstOrNullWhere((e) => e.name == propName);
+    final actual = prop?.value as T? ?? prop?.getDefaultValue<T>();
+    return actual as T;
+  }
 
   /// Asserts that a widget has a specific diagnostic property.
   ///

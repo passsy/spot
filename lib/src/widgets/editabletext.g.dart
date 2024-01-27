@@ -1907,3 +1907,217 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
+
+/// Retrieves the [DiagnosticsProperty] of the matched widget with [propName] of type [T]
+extension EditableTextGetter on WidgetMatcher<EditableText> {
+  /// Returns the controller of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  TextEditingController getController() {
+    return getDiagnosticProp<TextEditingController>('controller');
+  }
+
+  /// Returns the focusNode of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  FocusNode getFocusNode() {
+    return getDiagnosticProp<FocusNode>('focusNode');
+  }
+
+  /// Returns the obscureText of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  bool getObscureText() {
+    return getDiagnosticProp<bool>('obscureText');
+  }
+
+  /// Returns the readOnly of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  bool getReadOnly() {
+    return getDiagnosticProp<bool>('readOnly');
+  }
+
+  /// Returns the autocorrect of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  bool getAutocorrect() {
+    return getDiagnosticProp<bool>('autocorrect');
+  }
+
+  /// Returns the smartDashesType of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  SmartDashesType getSmartDashesType() {
+    return getDiagnosticProp<SmartDashesType>('smartDashesType');
+  }
+
+  /// Returns the smartQuotesType of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  SmartQuotesType getSmartQuotesType() {
+    return getDiagnosticProp<SmartQuotesType>('smartQuotesType');
+  }
+
+  /// Returns the enableSuggestions of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  bool getEnableSuggestions() {
+    return getDiagnosticProp<bool>('enableSuggestions');
+  }
+
+  /// Returns the inherit of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  bool getInherit() {
+    return getDiagnosticProp<bool>('inherit');
+  }
+
+  /// Returns the color of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  Color getColor() {
+    return getDiagnosticProp<Color>('color');
+  }
+
+  /// Returns the backgroundColor of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  Color getBackgroundColor() {
+    return getDiagnosticProp<Color>('backgroundColor');
+  }
+
+  /// Returns the family of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  String getFamily() {
+    return getDiagnosticProp<String>('family');
+  }
+
+  /// Returns the familyFallback of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  String getFamilyFallback() {
+    return getDiagnosticProp<String>('familyFallback');
+  }
+
+  /// Returns the size of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  double getSize() {
+    return getDiagnosticProp<double>('size');
+  }
+
+  /// Returns the weight of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  FontWeight getWeight() {
+    return getDiagnosticProp<FontWeight>('weight');
+  }
+
+  /// Returns the style of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  FontStyle getStyle() {
+    return getDiagnosticProp<FontStyle>('style');
+  }
+
+  /// Returns the letterSpacing of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  double getLetterSpacing() {
+    return getDiagnosticProp<double>('letterSpacing');
+  }
+
+  /// Returns the wordSpacing of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  double getWordSpacing() {
+    return getDiagnosticProp<double>('wordSpacing');
+  }
+
+  /// Returns the baseline of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  TextBaseline getBaseline() {
+    return getDiagnosticProp<TextBaseline>('baseline');
+  }
+
+  /// Returns the height of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  double getHeight() {
+    return getDiagnosticProp<double>('height');
+  }
+
+  /// Returns the leadingDistribution of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  TextLeadingDistribution getLeadingDistribution() {
+    return getDiagnosticProp<TextLeadingDistribution>('leadingDistribution');
+  }
+
+  /// Returns the locale of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  Locale getLocale() {
+    return getDiagnosticProp<Locale>('locale');
+  }
+
+  /// Returns the foreground of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  Paint getForeground() {
+    return getDiagnosticProp<Paint>('foreground');
+  }
+
+  /// Returns the background of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  Paint getBackground() {
+    return getDiagnosticProp<Paint>('background');
+  }
+
+  /// Returns the textAlign of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  TextAlign getTextAlign() {
+    return getDiagnosticProp<TextAlign>('textAlign');
+  }
+
+  /// Returns the textDirection of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  TextDirection getTextDirection() {
+    return getDiagnosticProp<TextDirection>('textDirection');
+  }
+
+  /// Returns the textScaler of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  TextScaler getTextScaler() {
+    return getDiagnosticProp<TextScaler>('textScaler');
+  }
+
+  /// Returns the maxLines of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  int getMaxLines() {
+    return getDiagnosticProp<int>('maxLines');
+  }
+
+  /// Returns the minLines of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  int getMinLines() {
+    return getDiagnosticProp<int>('minLines');
+  }
+
+  /// Returns the expands of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  bool getExpands() {
+    return getDiagnosticProp<bool>('expands');
+  }
+
+  /// Returns the autofocus of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  bool getAutofocus() {
+    return getDiagnosticProp<bool>('autofocus');
+  }
+
+  /// Returns the keyboardType of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  TextInputType getKeyboardType() {
+    return getDiagnosticProp<TextInputType>('keyboardType');
+  }
+
+  /// Returns the scrollController of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  ScrollController getScrollController() {
+    return getDiagnosticProp<ScrollController>('scrollController');
+  }
+
+  /// Returns the scrollPhysics of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  ScrollPhysics getScrollPhysics() {
+    return getDiagnosticProp<ScrollPhysics>('scrollPhysics');
+  }
+
+  /// Returns the autofillHints of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  Iterable<String> getAutofillHints() {
+    return getDiagnosticProp<Iterable<String>>('autofillHints');
+  }
+
+  /// Returns the textHeightBehavior of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  TextHeightBehavior getTextHeightBehavior() {
+    return getDiagnosticProp<TextHeightBehavior>('textHeightBehavior');
+  }
+
+  /// Returns the scribbleEnabled of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  bool getScribbleEnabled() {
+    return getDiagnosticProp<bool>('scribbleEnabled');
+  }
+
+  /// Returns the enableIMEPersonalizedLearning of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  bool getEnableIMEPersonalizedLearning() {
+    return getDiagnosticProp<bool>('enableIMEPersonalizedLearning');
+  }
+
+  /// Returns the enableInteractiveSelection of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  bool getEnableInteractiveSelection() {
+    return getDiagnosticProp<bool>('enableInteractiveSelection');
+  }
+
+  /// Returns the undoController of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  UndoHistoryController getUndoController() {
+    return getDiagnosticProp<UndoHistoryController>('undoController');
+  }
+
+  /// Returns the spellCheckConfiguration of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  SpellCheckConfiguration getSpellCheckConfiguration() {
+    return getDiagnosticProp<SpellCheckConfiguration>(
+        'spellCheckConfiguration');
+  }
+
+  /// Returns the contentCommitMimeTypes of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  List<String> getContentCommitMimeTypes() {
+    return getDiagnosticProp<List<String>>('contentCommitMimeTypes');
+  }
+}

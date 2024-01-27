@@ -65,3 +65,12 @@ extension LinearProgressIndicatorMatcher
         'value', (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
+
+/// Retrieves the [DiagnosticsProperty] of the matched widget with [propName] of type [T]
+extension LinearProgressIndicatorGetter
+    on WidgetMatcher<LinearProgressIndicator> {
+  /// Returns the value of the matched [LinearProgressIndicator] via [Widget.toDiagnosticsNode]
+  double getValue() {
+    return getDiagnosticProp<double>('value');
+  }
+}

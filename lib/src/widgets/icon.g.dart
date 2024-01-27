@@ -458,3 +458,56 @@ extension IconMatcher on WidgetMatcher<Icon> {
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
+
+/// Retrieves the [DiagnosticsProperty] of the matched widget with [propName] of type [T]
+extension IconGetter on WidgetMatcher<Icon> {
+  /// Returns the icon of the matched [Icon] via [Widget.toDiagnosticsNode]
+  IconData getIcon() {
+    return getDiagnosticProp<IconData>('icon');
+  }
+
+  /// Returns the size of the matched [Icon] via [Widget.toDiagnosticsNode]
+  double getSize() {
+    return getDiagnosticProp<double>('size');
+  }
+
+  /// Returns the fill of the matched [Icon] via [Widget.toDiagnosticsNode]
+  double getFill() {
+    return getDiagnosticProp<double>('fill');
+  }
+
+  /// Returns the weight of the matched [Icon] via [Widget.toDiagnosticsNode]
+  double getWeight() {
+    return getDiagnosticProp<double>('weight');
+  }
+
+  /// Returns the grade of the matched [Icon] via [Widget.toDiagnosticsNode]
+  double getGrade() {
+    return getDiagnosticProp<double>('grade');
+  }
+
+  /// Returns the opticalSize of the matched [Icon] via [Widget.toDiagnosticsNode]
+  double getOpticalSize() {
+    return getDiagnosticProp<double>('opticalSize');
+  }
+
+  /// Returns the color of the matched [Icon] via [Widget.toDiagnosticsNode]
+  Color getColor() {
+    return getDiagnosticProp<Color>('color');
+  }
+
+  /// Returns the shadows of the matched [Icon] via [Widget.toDiagnosticsNode]
+  Shadow getShadows() {
+    return getDiagnosticProp<Shadow>('shadows');
+  }
+
+  /// Returns the semanticLabel of the matched [Icon] via [Widget.toDiagnosticsNode]
+  String getSemanticLabel() {
+    return getDiagnosticProp<String>('semanticLabel');
+  }
+
+  /// Returns the textDirection of the matched [Icon] via [Widget.toDiagnosticsNode]
+  TextDirection getTextDirection() {
+    return getDiagnosticProp<TextDirection>('textDirection');
+  }
+}

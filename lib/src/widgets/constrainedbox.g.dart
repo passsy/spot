@@ -111,3 +111,16 @@ extension ConstrainedBoxMatcher on WidgetMatcher<ConstrainedBox> {
         'renderObject', (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
+
+/// Retrieves the [DiagnosticsProperty] of the matched widget with [propName] of type [T]
+extension ConstrainedBoxGetter on WidgetMatcher<ConstrainedBox> {
+  /// Returns the constraints of the matched [ConstrainedBox] via [Widget.toDiagnosticsNode]
+  BoxConstraints getConstraints() {
+    return getDiagnosticProp<BoxConstraints>('constraints');
+  }
+
+  /// Returns the renderObject of the matched [ConstrainedBox] via [Widget.toDiagnosticsNode]
+  RenderConstrainedBox getRenderObject() {
+    return getDiagnosticProp<RenderConstrainedBox>('renderObject');
+  }
+}

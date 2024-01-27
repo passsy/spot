@@ -150,3 +150,21 @@ extension TextButtonMatcher on WidgetMatcher<TextButton> {
         'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
+
+/// Retrieves the [DiagnosticsProperty] of the matched widget with [propName] of type [T]
+extension TextButtonGetter on WidgetMatcher<TextButton> {
+  /// Returns the enabled of the matched [TextButton] via [Widget.toDiagnosticsNode]
+  bool getEnabled() {
+    return getDiagnosticProp<bool>('enabled');
+  }
+
+  /// Returns the style of the matched [TextButton] via [Widget.toDiagnosticsNode]
+  ButtonStyle getStyle() {
+    return getDiagnosticProp<ButtonStyle>('style');
+  }
+
+  /// Returns the focusNode of the matched [TextButton] via [Widget.toDiagnosticsNode]
+  FocusNode getFocusNode() {
+    return getDiagnosticProp<FocusNode>('focusNode');
+  }
+}

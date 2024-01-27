@@ -722,3 +722,86 @@ extension ImageMatcher on WidgetMatcher<Image> {
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
+
+/// Retrieves the [DiagnosticsProperty] of the matched widget with [propName] of type [T]
+extension ImageGetter on WidgetMatcher<Image> {
+  /// Returns the image of the matched [Image] via [Widget.toDiagnosticsNode]
+  ImageProvider<Object> getImage() {
+    return getDiagnosticProp<ImageProvider<Object>>('image');
+  }
+
+  /// Returns the frameBuilder of the matched [Image] via [Widget.toDiagnosticsNode]
+  Function getFrameBuilder() {
+    return getDiagnosticProp<Function>('frameBuilder');
+  }
+
+  /// Returns the loadingBuilder of the matched [Image] via [Widget.toDiagnosticsNode]
+  Function getLoadingBuilder() {
+    return getDiagnosticProp<Function>('loadingBuilder');
+  }
+
+  /// Returns the width of the matched [Image] via [Widget.toDiagnosticsNode]
+  double getWidth() {
+    return getDiagnosticProp<double>('width');
+  }
+
+  /// Returns the height of the matched [Image] via [Widget.toDiagnosticsNode]
+  double getHeight() {
+    return getDiagnosticProp<double>('height');
+  }
+
+  /// Returns the color of the matched [Image] via [Widget.toDiagnosticsNode]
+  Color getColor() {
+    return getDiagnosticProp<Color>('color');
+  }
+
+  /// Returns the opacity of the matched [Image] via [Widget.toDiagnosticsNode]
+  Animation<double>? getOpacity() {
+    return getDiagnosticProp<Animation<double>?>('opacity');
+  }
+
+  /// Returns the colorBlendMode of the matched [Image] via [Widget.toDiagnosticsNode]
+  BlendMode getColorBlendMode() {
+    return getDiagnosticProp<BlendMode>('colorBlendMode');
+  }
+
+  /// Returns the fit of the matched [Image] via [Widget.toDiagnosticsNode]
+  BoxFit getFit() {
+    return getDiagnosticProp<BoxFit>('fit');
+  }
+
+  /// Returns the alignment of the matched [Image] via [Widget.toDiagnosticsNode]
+  AlignmentGeometry getAlignment() {
+    return getDiagnosticProp<AlignmentGeometry>('alignment');
+  }
+
+  /// Returns the repeat of the matched [Image] via [Widget.toDiagnosticsNode]
+  ImageRepeat getRepeat() {
+    return getDiagnosticProp<ImageRepeat>('repeat');
+  }
+
+  /// Returns the centerSlice of the matched [Image] via [Widget.toDiagnosticsNode]
+  Rect getCenterSlice() {
+    return getDiagnosticProp<Rect>('centerSlice');
+  }
+
+  /// Returns the matchTextDirection of the matched [Image] via [Widget.toDiagnosticsNode]
+  bool getMatchTextDirection() {
+    return getDiagnosticProp<bool>('matchTextDirection');
+  }
+
+  /// Returns the semanticLabel of the matched [Image] via [Widget.toDiagnosticsNode]
+  String getSemanticLabel() {
+    return getDiagnosticProp<String>('semanticLabel');
+  }
+
+  /// Returns the excludeFromSemantics of the matched [Image] via [Widget.toDiagnosticsNode]
+  bool getExcludeFromSemantics() {
+    return getDiagnosticProp<bool>('this.excludeFromSemantics');
+  }
+
+  /// Returns the filterQuality of the matched [Image] via [Widget.toDiagnosticsNode]
+  FilterQuality getFilterQuality() {
+    return getDiagnosticProp<FilterQuality>('filterQuality');
+  }
+}

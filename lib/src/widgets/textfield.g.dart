@@ -1825,3 +1825,207 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
+
+/// Retrieves the [DiagnosticsProperty] of the matched widget with [propName] of type [T]
+extension TextFieldGetter on WidgetMatcher<TextField> {
+  /// Returns the controller of the matched [TextField] via [Widget.toDiagnosticsNode]
+  TextEditingController getController() {
+    return getDiagnosticProp<TextEditingController>('controller');
+  }
+
+  /// Returns the focusNode of the matched [TextField] via [Widget.toDiagnosticsNode]
+  FocusNode getFocusNode() {
+    return getDiagnosticProp<FocusNode>('focusNode');
+  }
+
+  /// Returns the undoController of the matched [TextField] via [Widget.toDiagnosticsNode]
+  UndoHistoryController getUndoController() {
+    return getDiagnosticProp<UndoHistoryController>('undoController');
+  }
+
+  /// Returns the enabled of the matched [TextField] via [Widget.toDiagnosticsNode]
+  bool getEnabled() {
+    return getDiagnosticProp<bool>('enabled');
+  }
+
+  /// Returns the decoration of the matched [TextField] via [Widget.toDiagnosticsNode]
+  InputDecoration getDecoration() {
+    return getDiagnosticProp<InputDecoration>('decoration');
+  }
+
+  /// Returns the keyboardType of the matched [TextField] via [Widget.toDiagnosticsNode]
+  TextInputType getKeyboardType() {
+    return getDiagnosticProp<TextInputType>('keyboardType');
+  }
+
+  /// Returns the style of the matched [TextField] via [Widget.toDiagnosticsNode]
+  TextStyle getStyle() {
+    return getDiagnosticProp<TextStyle>('style');
+  }
+
+  /// Returns the autofocus of the matched [TextField] via [Widget.toDiagnosticsNode]
+  bool getAutofocus() {
+    return getDiagnosticProp<bool>('autofocus');
+  }
+
+  /// Returns the obscuringCharacter of the matched [TextField] via [Widget.toDiagnosticsNode]
+  String getObscuringCharacter() {
+    return getDiagnosticProp<String>('obscuringCharacter');
+  }
+
+  /// Returns the obscureText of the matched [TextField] via [Widget.toDiagnosticsNode]
+  bool getObscureText() {
+    return getDiagnosticProp<bool>('obscureText');
+  }
+
+  /// Returns the autocorrect of the matched [TextField] via [Widget.toDiagnosticsNode]
+  bool getAutocorrect() {
+    return getDiagnosticProp<bool>('autocorrect');
+  }
+
+  /// Returns the smartDashesType of the matched [TextField] via [Widget.toDiagnosticsNode]
+  SmartDashesType getSmartDashesType() {
+    return getDiagnosticProp<SmartDashesType>('smartDashesType');
+  }
+
+  /// Returns the smartQuotesType of the matched [TextField] via [Widget.toDiagnosticsNode]
+  SmartQuotesType getSmartQuotesType() {
+    return getDiagnosticProp<SmartQuotesType>('smartQuotesType');
+  }
+
+  /// Returns the enableSuggestions of the matched [TextField] via [Widget.toDiagnosticsNode]
+  bool getEnableSuggestions() {
+    return getDiagnosticProp<bool>('enableSuggestions');
+  }
+
+  /// Returns the maxLines of the matched [TextField] via [Widget.toDiagnosticsNode]
+  int getMaxLines() {
+    return getDiagnosticProp<int>('maxLines');
+  }
+
+  /// Returns the minLines of the matched [TextField] via [Widget.toDiagnosticsNode]
+  int getMinLines() {
+    return getDiagnosticProp<int>('minLines');
+  }
+
+  /// Returns the expands of the matched [TextField] via [Widget.toDiagnosticsNode]
+  bool getExpands() {
+    return getDiagnosticProp<bool>('expands');
+  }
+
+  /// Returns the maxLength of the matched [TextField] via [Widget.toDiagnosticsNode]
+  int getMaxLength() {
+    return getDiagnosticProp<int>('maxLength');
+  }
+
+  /// Returns the maxLengthEnforcement of the matched [TextField] via [Widget.toDiagnosticsNode]
+  MaxLengthEnforcement getMaxLengthEnforcement() {
+    return getDiagnosticProp<MaxLengthEnforcement>('maxLengthEnforcement');
+  }
+
+  /// Returns the textInputAction of the matched [TextField] via [Widget.toDiagnosticsNode]
+  TextInputAction getTextInputAction() {
+    return getDiagnosticProp<TextInputAction>('textInputAction');
+  }
+
+  /// Returns the textCapitalization of the matched [TextField] via [Widget.toDiagnosticsNode]
+  TextCapitalization getTextCapitalization() {
+    return getDiagnosticProp<TextCapitalization>('textCapitalization');
+  }
+
+  /// Returns the textAlign of the matched [TextField] via [Widget.toDiagnosticsNode]
+  TextAlign getTextAlign() {
+    return getDiagnosticProp<TextAlign>('textAlign');
+  }
+
+  /// Returns the textAlignVertical of the matched [TextField] via [Widget.toDiagnosticsNode]
+  TextAlignVertical getTextAlignVertical() {
+    return getDiagnosticProp<TextAlignVertical>('textAlignVertical');
+  }
+
+  /// Returns the textDirection of the matched [TextField] via [Widget.toDiagnosticsNode]
+  TextDirection getTextDirection() {
+    return getDiagnosticProp<TextDirection>('textDirection');
+  }
+
+  /// Returns the cursorWidth of the matched [TextField] via [Widget.toDiagnosticsNode]
+  double getCursorWidth() {
+    return getDiagnosticProp<double>('cursorWidth');
+  }
+
+  /// Returns the cursorHeight of the matched [TextField] via [Widget.toDiagnosticsNode]
+  double getCursorHeight() {
+    return getDiagnosticProp<double>('cursorHeight');
+  }
+
+  /// Returns the cursorRadius of the matched [TextField] via [Widget.toDiagnosticsNode]
+  Radius getCursorRadius() {
+    return getDiagnosticProp<Radius>('cursorRadius');
+  }
+
+  /// Returns the cursorOpacityAnimates of the matched [TextField] via [Widget.toDiagnosticsNode]
+  bool getCursorOpacityAnimates() {
+    return getDiagnosticProp<bool>('cursorOpacityAnimates');
+  }
+
+  /// Returns the cursorColor of the matched [TextField] via [Widget.toDiagnosticsNode]
+  Color getCursorColor() {
+    return getDiagnosticProp<Color>('cursorColor');
+  }
+
+  /// Returns the keyboardAppearance of the matched [TextField] via [Widget.toDiagnosticsNode]
+  Brightness getKeyboardAppearance() {
+    return getDiagnosticProp<Brightness>('keyboardAppearance');
+  }
+
+  /// Returns the scrollPadding of the matched [TextField] via [Widget.toDiagnosticsNode]
+  EdgeInsetsGeometry getScrollPadding() {
+    return getDiagnosticProp<EdgeInsetsGeometry>('scrollPadding');
+  }
+
+  /// Returns the selectionEnabled of the matched [TextField] via [Widget.toDiagnosticsNode]
+  bool getSelectionEnabled() {
+    return getDiagnosticProp<bool>('selectionEnabled');
+  }
+
+  /// Returns the selectionControls of the matched [TextField] via [Widget.toDiagnosticsNode]
+  TextSelectionControls getSelectionControls() {
+    return getDiagnosticProp<TextSelectionControls>('selectionControls');
+  }
+
+  /// Returns the scrollController of the matched [TextField] via [Widget.toDiagnosticsNode]
+  ScrollController getScrollController() {
+    return getDiagnosticProp<ScrollController>('scrollController');
+  }
+
+  /// Returns the scrollPhysics of the matched [TextField] via [Widget.toDiagnosticsNode]
+  ScrollPhysics getScrollPhysics() {
+    return getDiagnosticProp<ScrollPhysics>('scrollPhysics');
+  }
+
+  /// Returns the clipBehavior of the matched [TextField] via [Widget.toDiagnosticsNode]
+  Clip getClipBehavior() {
+    return getDiagnosticProp<Clip>('clipBehavior');
+  }
+
+  /// Returns the scribbleEnabled of the matched [TextField] via [Widget.toDiagnosticsNode]
+  bool getScribbleEnabled() {
+    return getDiagnosticProp<bool>('scribbleEnabled');
+  }
+
+  /// Returns the enableIMEPersonalizedLearning of the matched [TextField] via [Widget.toDiagnosticsNode]
+  bool getEnableIMEPersonalizedLearning() {
+    return getDiagnosticProp<bool>('enableIMEPersonalizedLearning');
+  }
+
+  /// Returns the spellCheckConfiguration of the matched [TextField] via [Widget.toDiagnosticsNode]
+  SpellCheckConfiguration getSpellCheckConfiguration() {
+    return getDiagnosticProp<SpellCheckConfiguration>(
+        'spellCheckConfiguration');
+  }
+
+  /// Returns the contentCommitMimeTypes of the matched [TextField] via [Widget.toDiagnosticsNode]
+  List<String> getContentCommitMimeTypes() {
+    return getDiagnosticProp<List<String>>('contentCommitMimeTypes');
+  }
+}

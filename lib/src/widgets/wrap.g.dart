@@ -419,3 +419,51 @@ extension WrapMatcher on WidgetMatcher<Wrap> {
         'renderObject', (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
+
+/// Retrieves the [DiagnosticsProperty] of the matched widget with [propName] of type [T]
+extension WrapGetter on WidgetMatcher<Wrap> {
+  /// Returns the direction of the matched [Wrap] via [Widget.toDiagnosticsNode]
+  Axis getDirection() {
+    return getDiagnosticProp<Axis>('direction');
+  }
+
+  /// Returns the alignment of the matched [Wrap] via [Widget.toDiagnosticsNode]
+  WrapAlignment getAlignment() {
+    return getDiagnosticProp<WrapAlignment>('alignment');
+  }
+
+  /// Returns the spacing of the matched [Wrap] via [Widget.toDiagnosticsNode]
+  double getSpacing() {
+    return getDiagnosticProp<double>('spacing');
+  }
+
+  /// Returns the runAlignment of the matched [Wrap] via [Widget.toDiagnosticsNode]
+  WrapAlignment getRunAlignment() {
+    return getDiagnosticProp<WrapAlignment>('runAlignment');
+  }
+
+  /// Returns the runSpacing of the matched [Wrap] via [Widget.toDiagnosticsNode]
+  double getRunSpacing() {
+    return getDiagnosticProp<double>('runSpacing');
+  }
+
+  /// Returns the crossAxisAlignment of the matched [Wrap] via [Widget.toDiagnosticsNode]
+  WrapCrossAlignment getCrossAxisAlignment() {
+    return getDiagnosticProp<WrapCrossAlignment>('crossAxisAlignment');
+  }
+
+  /// Returns the textDirection of the matched [Wrap] via [Widget.toDiagnosticsNode]
+  TextDirection getTextDirection() {
+    return getDiagnosticProp<TextDirection>('textDirection');
+  }
+
+  /// Returns the verticalDirection of the matched [Wrap] via [Widget.toDiagnosticsNode]
+  VerticalDirection getVerticalDirection() {
+    return getDiagnosticProp<VerticalDirection>('verticalDirection');
+  }
+
+  /// Returns the renderObject of the matched [Wrap] via [Widget.toDiagnosticsNode]
+  RenderWrap getRenderObject() {
+    return getDiagnosticProp<RenderWrap>('renderObject');
+  }
+}

@@ -915,3 +915,106 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
+
+/// Retrieves the [DiagnosticsProperty] of the matched widget with [propName] of type [T]
+extension SelectableTextGetter on WidgetMatcher<SelectableText> {
+  /// Returns the text of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  String getText() {
+    return getDiagnosticProp<String>('data');
+  }
+
+  /// Returns the semanticsLabel of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  String getSemanticsLabel() {
+    return getDiagnosticProp<String>('semanticsLabel');
+  }
+
+  /// Returns the focusNode of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  FocusNode getFocusNode() {
+    return getDiagnosticProp<FocusNode>('focusNode');
+  }
+
+  /// Returns the style of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  TextStyle getStyle() {
+    return getDiagnosticProp<TextStyle>('style');
+  }
+
+  /// Returns the autofocus of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  bool getAutofocus() {
+    return getDiagnosticProp<bool>('autofocus');
+  }
+
+  /// Returns the showCursor of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  bool getShowCursor() {
+    return getDiagnosticProp<bool>('showCursor');
+  }
+
+  /// Returns the minLines of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  int getMinLines() {
+    return getDiagnosticProp<int>('minLines');
+  }
+
+  /// Returns the maxLines of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  int getMaxLines() {
+    return getDiagnosticProp<int>('maxLines');
+  }
+
+  /// Returns the textAlign of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  TextAlign getTextAlign() {
+    return getDiagnosticProp<TextAlign>('textAlign');
+  }
+
+  /// Returns the textDirection of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  TextDirection getTextDirection() {
+    return getDiagnosticProp<TextDirection>('textDirection');
+  }
+
+  /// Returns the textScaleFactor of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  double getTextScaleFactor() {
+    return getDiagnosticProp<double>('textScaleFactor');
+  }
+
+  /// Returns the textScaler of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  TextScaler getTextScaler() {
+    return getDiagnosticProp<TextScaler>('textScaler');
+  }
+
+  /// Returns the cursorWidth of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  double getCursorWidth() {
+    return getDiagnosticProp<double>('cursorWidth');
+  }
+
+  /// Returns the cursorHeight of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  double getCursorHeight() {
+    return getDiagnosticProp<double>('cursorHeight');
+  }
+
+  /// Returns the cursorRadius of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  Radius getCursorRadius() {
+    return getDiagnosticProp<Radius>('cursorRadius');
+  }
+
+  /// Returns the cursorColor of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  Color getCursorColor() {
+    return getDiagnosticProp<Color>('cursorColor');
+  }
+
+  /// Returns the selectionEnabled of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  bool getSelectionEnabled() {
+    return getDiagnosticProp<bool>('selectionEnabled');
+  }
+
+  /// Returns the selectionControls of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  TextSelectionControls getSelectionControls() {
+    return getDiagnosticProp<TextSelectionControls>('selectionControls');
+  }
+
+  /// Returns the scrollPhysics of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  ScrollPhysics getScrollPhysics() {
+    return getDiagnosticProp<ScrollPhysics>('scrollPhysics');
+  }
+
+  /// Returns the textHeightBehavior of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  TextHeightBehavior getTextHeightBehavior() {
+    return getDiagnosticProp<TextHeightBehavior>('textHeightBehavior');
+  }
+}

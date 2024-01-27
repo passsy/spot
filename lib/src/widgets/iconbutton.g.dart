@@ -459,3 +459,56 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
         'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
+
+/// Retrieves the [DiagnosticsProperty] of the matched widget with [propName] of type [T]
+extension IconButtonGetter on WidgetMatcher<IconButton> {
+  /// Returns the icon of the matched [IconButton] via [Widget.toDiagnosticsNode]
+  Widget getIcon() {
+    return getDiagnosticProp<Widget>('icon');
+  }
+
+  /// Returns the tooltip of the matched [IconButton] via [Widget.toDiagnosticsNode]
+  String getTooltip() {
+    return getDiagnosticProp<String>('tooltip');
+  }
+
+  /// Returns the color of the matched [IconButton] via [Widget.toDiagnosticsNode]
+  Color getColor() {
+    return getDiagnosticProp<Color>('color');
+  }
+
+  /// Returns the disabledColor of the matched [IconButton] via [Widget.toDiagnosticsNode]
+  Color getDisabledColor() {
+    return getDiagnosticProp<Color>('disabledColor');
+  }
+
+  /// Returns the focusColor of the matched [IconButton] via [Widget.toDiagnosticsNode]
+  Color getFocusColor() {
+    return getDiagnosticProp<Color>('focusColor');
+  }
+
+  /// Returns the hoverColor of the matched [IconButton] via [Widget.toDiagnosticsNode]
+  Color getHoverColor() {
+    return getDiagnosticProp<Color>('hoverColor');
+  }
+
+  /// Returns the highlightColor of the matched [IconButton] via [Widget.toDiagnosticsNode]
+  Color getHighlightColor() {
+    return getDiagnosticProp<Color>('highlightColor');
+  }
+
+  /// Returns the splashColor of the matched [IconButton] via [Widget.toDiagnosticsNode]
+  Color getSplashColor() {
+    return getDiagnosticProp<Color>('splashColor');
+  }
+
+  /// Returns the padding of the matched [IconButton] via [Widget.toDiagnosticsNode]
+  EdgeInsetsGeometry getPadding() {
+    return getDiagnosticProp<EdgeInsetsGeometry>('padding');
+  }
+
+  /// Returns the focusNode of the matched [IconButton] via [Widget.toDiagnosticsNode]
+  FocusNode getFocusNode() {
+    return getDiagnosticProp<FocusNode>('focusNode');
+  }
+}

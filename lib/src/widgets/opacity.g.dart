@@ -151,3 +151,21 @@ extension OpacityMatcher on WidgetMatcher<Opacity> {
         'renderObject', (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
+
+/// Retrieves the [DiagnosticsProperty] of the matched widget with [propName] of type [T]
+extension OpacityGetter on WidgetMatcher<Opacity> {
+  /// Returns the opacity of the matched [Opacity] via [Widget.toDiagnosticsNode]
+  double getOpacity() {
+    return getDiagnosticProp<double>('opacity');
+  }
+
+  /// Returns the alwaysIncludeSemantics of the matched [Opacity] via [Widget.toDiagnosticsNode]
+  bool getAlwaysIncludeSemantics() {
+    return getDiagnosticProp<bool>('alwaysIncludeSemantics');
+  }
+
+  /// Returns the renderObject of the matched [Opacity] via [Widget.toDiagnosticsNode]
+  RenderOpacity getRenderObject() {
+    return getDiagnosticProp<RenderOpacity>('renderObject');
+  }
+}

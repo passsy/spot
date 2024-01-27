@@ -377,3 +377,46 @@ extension RowMatcher on WidgetMatcher<Row> {
         'renderObject', (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
+
+/// Retrieves the [DiagnosticsProperty] of the matched widget with [propName] of type [T]
+extension RowGetter on WidgetMatcher<Row> {
+  /// Returns the direction of the matched [Row] via [Widget.toDiagnosticsNode]
+  Axis getDirection() {
+    return getDiagnosticProp<Axis>('direction');
+  }
+
+  /// Returns the mainAxisAlignment of the matched [Row] via [Widget.toDiagnosticsNode]
+  MainAxisAlignment getMainAxisAlignment() {
+    return getDiagnosticProp<MainAxisAlignment>('mainAxisAlignment');
+  }
+
+  /// Returns the mainAxisSize of the matched [Row] via [Widget.toDiagnosticsNode]
+  MainAxisSize getMainAxisSize() {
+    return getDiagnosticProp<MainAxisSize>('mainAxisSize');
+  }
+
+  /// Returns the crossAxisAlignment of the matched [Row] via [Widget.toDiagnosticsNode]
+  CrossAxisAlignment getCrossAxisAlignment() {
+    return getDiagnosticProp<CrossAxisAlignment>('crossAxisAlignment');
+  }
+
+  /// Returns the textDirection of the matched [Row] via [Widget.toDiagnosticsNode]
+  TextDirection getTextDirection() {
+    return getDiagnosticProp<TextDirection>('textDirection');
+  }
+
+  /// Returns the verticalDirection of the matched [Row] via [Widget.toDiagnosticsNode]
+  VerticalDirection getVerticalDirection() {
+    return getDiagnosticProp<VerticalDirection>('verticalDirection');
+  }
+
+  /// Returns the textBaseline of the matched [Row] via [Widget.toDiagnosticsNode]
+  TextBaseline getTextBaseline() {
+    return getDiagnosticProp<TextBaseline>('textBaseline');
+  }
+
+  /// Returns the renderObject of the matched [Row] via [Widget.toDiagnosticsNode]
+  RenderFlex getRenderObject() {
+    return getDiagnosticProp<RenderFlex>('renderObject');
+  }
+}
