@@ -3,7 +3,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:spot/src/checks/checks_nullability.dart';
-import 'package:spot/src/spot/selectors.dart';
+import 'package:spot/src/spot/widget_selector.dart';
 
 /// A union type for any text widget that can be found in the widget tree.
 /// Specifically this includes:

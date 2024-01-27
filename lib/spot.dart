@@ -3,7 +3,7 @@ library spot;
 
 import 'package:flutter/material.dart';
 import 'package:spot/spot.dart';
-import 'package:spot/src/spot/selectors.dart' show Spot, WidgetTypeFilter;
+import 'package:spot/src/spot/selectors.dart' show Spot;
 
 export 'package:checks/checks.dart'
     hide
@@ -26,43 +26,37 @@ export 'package:meta/meta.dart' show useResult;
 export 'package:spot/src/act/act.dart';
 export 'package:spot/src/screenshot/screenshot.dart';
 export 'package:spot/src/spot/default_selectors.dart';
+export 'package:spot/src/spot/diagnostic_props.dart';
 export 'package:spot/src/spot/effective/effective_text.dart';
 export 'package:spot/src/spot/finder_interop.dart';
 export 'package:spot/src/spot/matcher_generator.dart' show CreateMatchers;
 export 'package:spot/src/spot/props.dart';
 export 'package:spot/src/spot/selectors.dart'
     show
-        ElementFilter,
-        // ignore: deprecated_member_use_from_same_package
-        ExpectedQuantity,
-        // ignore: deprecated_member_use_from_same_package
-        MatchProp,
-        // ignore: deprecated_member_use_from_same_package
-        MultiWidgetSelector,
-        // ignore: deprecated_member_use_from_same_package
-        MultiWidgetSnapshot,
         // ignore: deprecated_member_use_from_same_package
         MutliMatchers,
-        QuantityConstraint,
         QuantityMatchers,
         QuantitySelectors,
         RelativeSelectors,
         SelectorQueries,
         SelectorToSnapshot,
+
         // ignore: deprecated_member_use_from_same_package
-        SingleWidgetSelector,
+        WidgetMatcher,
+        WidgetMatcherExtensions;
+export 'package:spot/src/spot/snapshot.dart'
+    show
+        MultiWidgetSelectorMatcher,
+        // ignore: deprecated_member_use_from_same_package
+        MultiWidgetSnapshot,
         // ignore: deprecated_member_use_from_same_package
         SingleWidgetSnapshot,
         ToWidgetMatcher,
-        // ignore: deprecated_member_use_from_same_package
-        WidgetMatcher,
-        WidgetMatcherExtensions,
-        WidgetSelector,
         WidgetSnapshot,
         WidgetSnapshotShorthands;
-export 'package:spot/src/spot/snapshot.dart' show MultiWidgetSelectorMatcher;
 export 'package:spot/src/spot/text/any_text.dart' show AnyText;
 export 'package:spot/src/spot/tree_snapshot.dart' show WidgetTreeNode;
+export 'package:spot/src/spot/widget_selector.dart';
 export 'package:spot/src/widgets/align.g.dart';
 export 'package:spot/src/widgets/anytext.g.dart';
 export 'package:spot/src/widgets/circularprogressindicator.g.dart';

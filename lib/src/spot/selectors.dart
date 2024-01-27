@@ -1,14 +1,12 @@
 import 'package:checks/checks.dart';
 import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/checks/checks_nullability.dart';
 import 'package:spot/src/spot/snapshot.dart' as snapshot_file show snapshot;
 import 'package:spot/src/spot/snapshot.dart';
 import 'package:spot/src/spot/text/any_text.dart';
-import 'package:spot/src/spot/tree_snapshot.dart';
 
 export 'package:checks/context.dart';
 
@@ -22,7 +20,7 @@ export 'package:checks/context.dart';
 /// - [spotIcon]
 /// - [spotWidget]
 /// - [spotElement]
-class Spot with Selectors<Widget> {
+class Spot with ChainableSelectors<Widget> {
   /// Creates a starting point for a [WidgetSelector] chain.
   const Spot();
 
@@ -31,7 +29,7 @@ class Spot with Selectors<Widget> {
 }
 
 /// A mixin that provides chainable builder methods to create a [WidgetSelector].
-mixin Selectors<T extends Widget> {
+mixin ChainableSelectors<T extends Widget> {
   /// The [WidgetSelector] the chainable methods build upon.
   ///
   /// This is `null` for the root of the chain.
@@ -516,22 +514,15 @@ class _ElementAtIndex extends ElementFilter {
   String get description => ':first';
 }
 
-/// Extension on [Selectors<W>] for advanced widget querying.
+/// Extension on [WidgetSelector<W>] for advanced widget querying.
 ///
 /// Adds methods to refine widget selections based on elements, widgets,
 /// and their properties. Filters are applied during the snapshotting
 /// of the selector, enabling precise widget selection.
 ///
-/// Methods:
-///   - [whereElement]: Filter on [Element] properties.
-///   - [whereWidget]: Filter based on widget properties.
-///   - [whereWidgetProp]: Filter widgets by a specific property.
-///   - [whereElementProp]: Filter elements by a specific property.
-///   - [whereRenderObjectProp]: Filter by render object properties.
-///
 /// Each method requires a predicate and a description for clear
 /// error messages and precise selection.
-extension SelectorQueries<W extends Widget> on Selectors<W> {
+extension SelectorQueries<W extends Widget> on WidgetSelector<W> {
   /// Creates a filter for the discovered elements which is applied when the
   /// [WidgetSelector] is snapshotted.
   ///
@@ -550,9 +541,9 @@ extension SelectorQueries<W extends Widget> on Selectors<W> {
     bool Function(Element element) predicate, {
     required String description,
   }) {
-    return self!.copyWith(
+    return self.copyWith(
       props: [
-        ...self!.props,
+        ...self.props,
         PredicateWithDescription(
           (Element e) => predicate(e),
           description: description,
@@ -579,150 +570,18 @@ extension SelectorQueries<W extends Widget> on Selectors<W> {
     bool Function(W widget) predicate, {
     required String description,
   }) {
-    return self!.copyWith(
+    return self.copyWith(
       props: [
-        ...self!.props,
+        ...self.props,
         PredicateWithDescription(
           (Element element) {
-            final widget = self!.mapElementToWidget(element);
+            final widget = self.mapElementToWidget(element);
             return predicate(widget);
           },
           description: description,
         ),
       ],
     );
-  }
-
-  /// Creates a filter for the widgets of the discovered elements which is
-  /// applied when the [WidgetSelector] is snapshotted.
-  ///
-  /// #### Example usage:
-  /// ```dart
-  /// spotSingle<Checkbox>()
-  ///   .whereWidgetProp(
-  ///     prop: widgetProp('isChecked', (widget) => widget.value),
-  ///     match: (value) => value == true,
-  ///   ).existsOnce();
-  /// ```
-  @useResult
-  WidgetSelector<W> whereWidgetProp<T>(
-    NamedWidgetProp<W, T> prop,
-    bool Function(T value) match,
-  ) {
-    return self!.copyWith(
-      props: [
-        ...self!.props,
-        PredicateWithDescription(
-          (Element element) {
-            final widget = self!.mapElementToWidget(element);
-            final value = prop.get(widget);
-            return match(value);
-          },
-          description: prop.name,
-        ),
-      ],
-    );
-  }
-
-  /// Creates a filter for the elements of the discovered widgets based on
-  /// a specified property. The filter is applied when the [WidgetSelector] is
-  /// snapshotted.
-  ///
-  /// #### Example usage:
-  /// ```dart
-  /// spotSingle<Checkbox>()
-  ///   .whereElementProp<bool>(
-  ///     prop: elementProp('isFocused', (element) => element.isFocused),
-  ///     match: (isFocused) => isFocused == true,
-  ///   ).existsOnce();
-  /// ```
-  @useResult
-  WidgetSelector<W> whereElementProp<T>(
-    NamedElementProp<T> prop,
-    bool Function(T value) match,
-  ) {
-    return self!.copyWith(
-      props: [
-        ...self!.props,
-        PredicateWithDescription(
-          (Element element) {
-            final value = prop.get(element);
-            return match(value);
-          },
-          description: prop.name,
-        ),
-      ],
-    );
-  }
-
-  /// Creates a filter for the render objects of the discovered widgets based on
-  /// a specified property. This filter is applied when the [WidgetSelector] is
-  /// snapshotted.
-  ///
-  /// Useful for selecting widgets based on specific properties of their render
-  /// objects. Provide a [NamedRenderObjectProp] and a matching function.
-  ///
-  /// #### Example usage:
-  /// ```dart
-  /// spotSingle<Checkbox>()
-  ///   .whereRenderObjectProp<double, RenderBox>(
-  ///     prop: renderObjectProp('opacity', (ro) => ro.opacity),
-  ///     match: (opacity) => opacity > 0.5,
-  ///   ).existsOnce();
-  /// ```
-  @useResult
-  WidgetSelector<W> whereRenderObjectProp<T, R extends RenderObject>(
-    NamedRenderObjectProp<R, T> prop,
-    bool Function(T value) match,
-  ) {
-    return self!.copyWith(
-      props: [
-        ...self!.props,
-        PredicateWithDescription(
-          (Element element) {
-            final renderObject = element.renderObject;
-            if (renderObject is R) {
-              final value = prop.get(renderObject);
-              return match(value);
-            }
-            return false;
-          },
-          description: prop.name,
-        ),
-      ],
-    );
-  }
-}
-
-/// A Function that fires checks against [T] using the [Subject] API
-///
-/// The [Subject] keeps the error states and is further processed
-typedef MatchProp<T> = void Function(Subject<T>);
-
-/// Extension on [MatchProp<T>] to handle nullable types.
-///
-/// Provides methods to convert a matcher of nullable types to a matcher of
-/// non-nullable types, ensuring nullability is appropriately handled in
-/// matchers.
-extension MatchPropNullable<T> on MatchProp<T> {
-  /// Converts a [MatchProp<T>] to [MatchProp<T?>], hiding its nullability.
-  MatchProp<T?> hideNullability() {
-    return (Subject<T?> subject) {
-      this.call(subject.hideNullability());
-    };
-  }
-}
-
-/// Extension on [MatchProp<T?>] to handle non-nullable types.
-///
-/// Provides methods to convert a matcher of non-nullable types to a matcher of
-/// nullable types, ensuring nullability is appropriately handled in matchers.
-extension MatchPropNonNullable<T> on MatchProp<T?> {
-  /// Converts a [MatchProp<T?>] to [MatchProp<T>], revealing its nullability.
-  MatchProp<T> revealNullability() {
-    return (Subject<T> subject) {
-      this.call(subject.revealNullability());
-    };
   }
 }
 
@@ -789,48 +648,6 @@ class _WidgetMatcherFromSnapshot<W extends Widget> implements WidgetMatcher<W> {
 /// These matchers facilitate more specific assertions on widget properties,
 /// element properties, and render object properties.
 extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
-  /// Asserts that a widget has a specific diagnostic property.
-  ///
-  /// Useful for testing properties that are part of a widget's diagnostics.
-  WidgetMatcher<W> hasDiagnosticProp<T>(
-    String propName,
-    MatchProp<T> match,
-  ) {
-    final diagnosticsNode = widget.toDiagnosticsNode();
-    final DiagnosticsNode? prop = diagnosticsNode
-        .getProperties()
-        .firstOrNullWhere((e) => e.name == propName);
-
-    final unconstrainedSelector =
-        selector.overrideQuantityConstraint(QuantityConstraint.unconstrained);
-    final actual = prop?.value as T? ?? prop?.getDefaultValue<T>();
-
-    final ConditionSubject<T?> conditionSubject = it<T?>();
-    final Subject<T> subject = conditionSubject.context.nest<T>(
-      () => [
-        unconstrainedSelector.toStringBreadcrumb(),
-        'with property $propName',
-      ],
-      (value) {
-        if (prop == null) {
-          return Extracted.rejection(which: ['Has no prop "$propName"']);
-        }
-        if (value is! T) {
-          return Extracted.rejection(
-            which: [
-              'Has no prop "$propName" of type "$T", the type is "${prop.value.runtimeType}"',
-            ],
-          );
-        }
-        return Extracted.value(value);
-      },
-    );
-    match(subject);
-    final failure = softCheckHideNull(actual, conditionSubject);
-    failure.throwPropertyCheckFailure(conditionSubject, element);
-    return this;
-  }
-
   /// Allows checking for properties of [Element] that are stored in child
   /// [Widget]s or in the state.
   /// Use [selector] to extract the actual value and validate it with [match].
@@ -1025,7 +842,7 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
   }
 }
 
-extension on CheckFailure? {
+extension ThrowCheckFailure on CheckFailure? {
   void throwPropertyCheckFailure<T>(
     ConditionSubject<T> conditionSubject,
     Object? actual,
@@ -1059,47 +876,6 @@ class PropertyCheckFailure extends TestFailure {
   final String matcherDescription;
 }
 
-/// Defines a matcher for properties of a widget.
-///
-/// This class is used to create custom matchers that assert specific
-/// properties on widgets.
-class PropMatcher<W extends Widget> {
-  /// Constructs a [PropMatcher] with a matcher function and a description.
-  const PropMatcher(
-    this.matcher, {
-    required this.description,
-  });
-
-  /// Function that applies the matcher to a [WidgetMatcher].
-  final void Function(WidgetMatcher<W>) matcher;
-
-  /// Description of what this matcher is checking.
-  final String description;
-}
-
-/// Represents a predicate with an associated description.
-///
-/// Used to create readable and descriptive predicates in widget testing.
-class PredicateWithDescription {
-  /// Constructs a [PredicateWithDescription] with a predicate function and
-  /// a description.
-  PredicateWithDescription(
-    this.predicate, {
-    required this.description,
-  });
-
-  /// The predicate function to evaluate.
-  final bool Function(Element) predicate;
-
-  /// Description of what this predicate checks.
-  final String description;
-
-  @override
-  String toString() {
-    return 'PredicateWithDescription{"$description"}';
-  }
-}
-
 /// A predicate that checks if an element's widget is of a specific type [W].
 ///
 /// This class is a specialized version of [PredicateWithDescription] that
@@ -1119,643 +895,6 @@ class WidgetTypePredicate<W extends Widget>
   String toString() {
     return 'WidgetTypePredicate<$W>()';
   }
-}
-
-/// A [WidgetSelector] that intends to resolve to a single widget
-@Deprecated('Use WidgetSelector')
-typedef SingleWidgetSelector<W extends Widget> = WidgetSelector<W>;
-
-/// A [WidgetSelector] that to 0..N widgets
-@Deprecated('Use WidgetSelector')
-typedef MultiWidgetSelector<W extends Widget> = WidgetSelector<W>;
-
-/// Base class for defining filters on widget tree nodes.
-///
-/// Filters are used to narrow down the set of widget tree nodes based on
-/// specific criteria.
-abstract class ElementFilter {
-  /// Filters all candidates, retuning only a subset that matches
-  Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates);
-
-  /// A description to describe the filter
-  String get description;
-}
-
-/// Base class for generating candidate widget tree nodes for a given widget type.
-///
-/// Implementations of this class are used to produce sets of candidates
-/// that match a certain widget type [W].
-abstract class CandidateGenerator<W extends Widget> {
-  /// Generates a set of candidate widget tree nodes.
-  Iterable<WidgetTreeNode> generateCandidates();
-}
-
-Type _typeOf<T>() => T;
-
-/// Filters candidates by widget type [W] comparing the runtime type.
-///
-/// Comparing the runtimeType makes sure that `spot<Align>()`
-/// does not accidentally match a [Center] Widget, that extends [Align].
-class WidgetTypeFilter<W extends Widget> implements ElementFilter {
-  @override
-  Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
-    final type = _typeOf<W>();
-    return candidates
-        .where((WidgetTreeNode node) => node.element.widget.runtimeType == type)
-        .toList();
-  }
-
-  @override
-  String get description => '$W';
-
-  @override
-  String toString() {
-    return 'WidgetTypeFilter of $W';
-  }
-}
-
-/// Filters widget tree nodes based on a set of properties.
-///
-/// Applies multiple [PredicateWithDescription] objects to filter nodes.
-/// Nodes must meet all property conditions to be included in the result.
-class PropFilter implements ElementFilter {
-  /// A list of predicates with descriptions used to filter the widget tree nodes.
-  ///
-  /// Each predicate defines a condition that the node must satisfy to be included
-  /// in the filtered set.
-  final List<PredicateWithDescription> props;
-
-  /// Constructs a [PropFilter] with a list of [PredicateWithDescription].
-  ///
-  /// The [props] parameter takes a list of predicates, each with a description,
-  /// which are used to filter the widget tree nodes.
-  PropFilter(this.props);
-
-  @override
-  Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
-    return candidates.where((node) {
-      return props.all((prop) {
-        return prop.predicate(node.element);
-      });
-    }).toList();
-  }
-
-  @override
-  String get description {
-    final props = this.props.isNotEmpty
-        ? this.props.map((e) => e.description).join(' ')
-        : null;
-    return props ?? 'any Widget';
-  }
-
-  @override
-  String toString() {
-    return 'PropFilter of $description';
-  }
-}
-
-/// Keeps all [WidgetTreeNode] that have child elements that match
-/// the [childSelectors] selectors
-class ChildFilter implements ElementFilter {
-  /// Constructs a [ChildFilter] with a list of
-  /// [WidgetSelector]s for matching child elements.
-  ChildFilter(this.childSelectors);
-
-  /// A list of [WidgetSelector]s used to match child elements of the widget
-  /// tree nodes.
-  ///
-  /// The filter checks each candidate node to see if its children satisfy the
-  /// conditions defined in these selectors.
-  final List<WidgetSelector> childSelectors;
-
-  @override
-  Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
-    final tree = currentWidgetTreeSnapshot();
-
-    // First check all negate selectors (where maxQuantity == 0)
-    final negates = childSelectors.where((e) => e.quantityConstraint.max == 0);
-    for (final negate in negates) {
-      final s = snapshot(negate, validateQuantity: false);
-      if (s.discovered.isNotEmpty) {
-        // this negate selector matches, which it shouldn't
-        return [];
-      }
-    }
-
-    final List<WidgetTreeNode> matchingChildNodes = [];
-
-    // Then check for every queryMatch if the children and props match
-    for (final WidgetTreeNode candidate in candidates) {
-      final Map<WidgetSelector, List<WidgetTreeNode>> matchesPerChild = {};
-
-      final ScopedWidgetTreeSnapshot subtree = tree.scope(candidate);
-      final List<WidgetTreeNode> subtreeNodes = subtree.allNodes;
-      for (final WidgetSelector<Widget> childSelector
-          in childSelectors - negates) {
-        matchesPerChild[childSelector] = [];
-        // TODO instead of searching the children, starting from the root widget, find a way to reverse the search and
-        //  start form the subtree.
-        //  Keep in mind, each child selector might be defined with parents which are outside of the subtree
-        final WidgetSnapshot ss =
-            snapshot(childSelector, validateQuantity: false);
-
-        final minConstraint = childSelector.quantityConstraint.min;
-        final maxConstraint = childSelector.quantityConstraint.max;
-
-        final discoveredInSubtree =
-            ss.discovered.where((node) => subtreeNodes.contains(node)).toList();
-
-        if (minConstraint == null &&
-            maxConstraint == null &&
-            discoveredInSubtree.isEmpty) {
-          // This childSelector doesn't match any child
-          continue;
-        }
-
-        if (minConstraint != null &&
-            minConstraint > discoveredInSubtree.length) {
-          // not a match found less than the minimum required
-          continue;
-        }
-        if (maxConstraint != null &&
-            maxConstraint < discoveredInSubtree.length) {
-          // not a match because found more than the maximum allowed
-          continue;
-        }
-
-        // consider it as a match
-        matchesPerChild[childSelector] = discoveredInSubtree;
-      }
-      // TODO early exist the loop above instead of adding an empty list to the map
-      if (matchesPerChild.values.any((list) => list.isEmpty)) {
-        // not all children match
-        continue;
-      }
-      matchingChildNodes.add(candidate);
-    }
-    return matchingChildNodes;
-  }
-
-  @override
-  String get description {
-    final children = childSelectors.isNotEmpty
-        ? 'with children: [${childSelectors.map((e) => e.toStringBreadcrumb()).join(', ')}]'
-        : null;
-    return children ?? 'any Widget';
-  }
-
-  @override
-  String toString() {
-    return 'PropFilter of $description';
-  }
-}
-
-/// Represents the expected quantity of widgets a selector should match.
-@Deprecated('Use QuantityConstraint instead')
-enum ExpectedQuantity {
-  /// A selector that matches a single widget
-  single,
-
-  /// A selector that matches multiple widgets
-  multi,
-}
-
-/// Represents a chain of widgets in the widget tree that can be asserted
-///
-/// Compared to normal [Finder], this gives great error messages along the chain
-class WidgetSelector<W extends Widget> with Selectors<W> {
-  /// Matches any widget currently mounted
-  static final WidgetSelector all = WidgetSelector(
-    props: [
-      PredicateWithDescription(
-        (e) => true,
-        description: 'any Widget',
-      ),
-    ],
-  );
-
-  /// The runtime type of the widget this selector is intended for.
-  Type get type => W;
-
-  /// Constructor for creating a [WidgetSelector].
-  ///
-  /// Allows specifying various parameters for customizing the selection criteria.
-  WidgetSelector({
-    List<PredicateWithDescription>? props,
-    List<WidgetSelector>? parents,
-    List<WidgetSelector>? children,
-    List<ElementFilter>? elementFilters,
-    @Deprecated('Use quantityConstraint instead')
-    ExpectedQuantity expectedQuantity = ExpectedQuantity.multi,
-    QuantityConstraint? quantityConstraint,
-    W Function(Element element)? mapElementToWidget,
-  })  : props = List.unmodifiable(props ?? []),
-        parents = List.unmodifiable(parents?.toSet().toList() ?? []),
-        children = List.unmodifiable(children ?? []),
-        elementFilters = List.unmodifiable(elementFilters ?? []),
-        quantityConstraint = quantityConstraint ??
-            // ignore: deprecated_member_use_from_same_package
-            (expectedQuantity == ExpectedQuantity.single
-                ? QuantityConstraint.single
-                : QuantityConstraint.unconstrained),
-        mapElementToWidget = mapElementToWidget ?? defaultMapElementToWidget<W>;
-
-  /// A list of predicates with descriptions used to filter the widget tree nodes.
-  ///
-  /// These predicates define various conditions that the nodes must satisfy
-  /// to be included in the filtered set.
-  final List<PredicateWithDescription> props;
-
-  /// A list of parent selectors used to define a hierarchical
-  /// context for the selection.
-  ///
-  /// These selectors specify the parent widgets in the tree that the current
-  /// selector's widget must be a descendant of.
-  final List<WidgetSelector> parents;
-
-  /// A list of child selectors used to filter widgets based on their children.
-  ///
-  /// These selectors are applied to the children of the widget being matched,
-  /// allowing for selection based on child widget properties.
-  final List<WidgetSelector> children;
-
-  /// A list of element filters used to apply additional custom filtering logic.
-  ///
-  /// These filters enable advanced selection criteria beyond the standard
-  /// widget properties and hierarchy.
-  final List<ElementFilter> elementFilters;
-
-  /// Whether this selector expects to find a single or multiple widgets
-  @Deprecated('Use quantityConstraint instead')
-  ExpectedQuantity get expectedQuantity => quantityConstraint.max == 1
-      ? ExpectedQuantity.single
-      : ExpectedQuantity.multi;
-
-  /// The number of widgets that this selector expects to find
-  final QuantityConstraint quantityConstraint;
-
-  /// Default mapping function to convert an [Element] to a widget of type [W].
-  ///
-  /// This function is used when no custom mapping is provided in the constructor.
-  static W defaultMapElementToWidget<W>(Element element) {
-    return element.widget as W;
-  }
-
-  /// Overwrite this method when [W] is a synthetic widget like [AnyText] that
-  /// combines multiple widgets of similar (but not exact) Type
-  final W Function(Element element) mapElementToWidget;
-
-  /// Returns a list of [ElementFilter] that is used to filter the widget tree
-  /// (or subtrees of [parents]) for widgets that match this selectors criteria
-  ///
-  /// This method is intended to be overridden by subclasses to add additional
-  /// filters that are not covered by this base implementation.
-  List<ElementFilter> createElementFilters() {
-    return [
-      if (props.isNotEmpty) PropFilter(props),
-      if (children.isNotEmpty) ChildFilter(children),
-      ...elementFilters,
-    ];
-  }
-
-  /// Generates a candidate generator for this selector.
-  ///
-  /// Used to produce sets of candidate widget tree nodes that match
-  /// this selector.
-  CandidateGenerator<W> createCandidateGenerator() {
-    return CandidateGeneratorFromParents(this);
-  }
-
-  @override
-  String toString() {
-    final children = this.children.isNotEmpty
-        ? 'with children: [${this.children.map((e) => e.toString()).join(', ')}]'
-        : null;
-    final parents = this.parents.isNotEmpty
-        ? 'with parents: [${this.parents.map((e) => e.toString()).join(', ')}]'
-        : null;
-    final props = this.props.isNotEmpty
-        ? this.props.map((e) => e.description).join(' ')
-        : null;
-    final filters = elementFilters.isNotEmpty
-        ? elementFilters.map((e) => e.description).join(' ')
-        : null;
-    final quantity = () {
-      if (quantityConstraint.min == null && quantityConstraint.max == 0) {
-        return '(amount: 0)';
-      }
-      if (quantityConstraint.min == 0 && quantityConstraint.max == 0) {
-        return '(amount: 0)';
-      }
-      if (quantityConstraint.min != null &&
-          quantityConstraint.min == quantityConstraint.max) {
-        return '(amount: ${quantityConstraint.min})';
-      }
-      if (quantityConstraint.min != null && quantityConstraint.max != null) {
-        return '(amount: ${quantityConstraint.min}...${quantityConstraint.max})';
-      }
-      if (quantityConstraint.min != null) {
-        return '(amount: >=${quantityConstraint.min})';
-      }
-      if (quantityConstraint.max != null) {
-        return '(amount: <=${quantityConstraint.max})';
-      }
-      return null;
-    }();
-
-    final constraints =
-        [props, quantity, children, parents, filters].where((e) => e != null);
-    if (constraints.isEmpty) {
-      return '';
-    }
-    return constraints.join(' ');
-  }
-
-  /// Generates a string representation of this selector, excluding parents.
-  ///
-  /// This method is used internally for creating a more concise string output.
-  String toStringWithoutParents() {
-    final children = this.children.isNotEmpty
-        ? 'with children: [${this.children.map((e) => e.toString()).join(', ')}]'
-        : null;
-    final props = this.props.isNotEmpty
-        ? this.props.map((e) => e.description).join(' ')
-        : null;
-    final filters = elementFilters.isNotEmpty
-        ? elementFilters.map((e) => e.description).join(' ')
-        : null;
-    final quantity = () {
-      if (quantityConstraint.min == null && quantityConstraint.max == 0) {
-        return '(amount: 0)';
-      }
-      if (quantityConstraint.min == 0 && quantityConstraint.max == 0) {
-        return '(amount: 0)';
-      }
-      if (quantityConstraint.min != null &&
-          quantityConstraint.min == quantityConstraint.max) {
-        return '(amount: ${quantityConstraint.min})';
-      }
-      if (quantityConstraint.min != null && quantityConstraint.max != null) {
-        return '(amount: ${quantityConstraint.min}...${quantityConstraint.max})';
-      }
-      if (quantityConstraint.min != null) {
-        return '(amount: >=${quantityConstraint.min})';
-      }
-      if (quantityConstraint.max != null) {
-        return '(amount: <=${quantityConstraint.max})';
-      }
-      return null;
-    }();
-
-    final constraints =
-        [props, quantity, children, filters].where((e) => e != null);
-    return constraints.join(' ');
-  }
-
-  /// Generates a breadcrumb-like string representation of this selector.
-  ///
-  /// This method includes parent selectors in the output, showing the full
-  /// hierarchy of the selection.
-  String toStringBreadcrumb() {
-    final parents = this.parents;
-
-    if (parents.isEmpty) {
-      return toStringWithoutParents();
-    }
-
-    final parentBreadcrumbs = parents.map((e) => e.toStringBreadcrumb());
-    if (parentBreadcrumbs.length == 1) {
-      return '${parentBreadcrumbs.first} > ${toStringWithoutParents()}';
-    } else {
-      return '[${parentBreadcrumbs.join(' && ')}] > ${toStringWithoutParents()}';
-    }
-  }
-
-  @override
-  WidgetSelector<W> get self => this;
-
-  /// Returns a new instance of [WidgetSelector] with some properties replaced
-  /// with new values.
-  ///
-  /// This method is used for creating a new selector based on the current one
-  /// but with some modified parameters.
-  @useResult
-  WidgetSelector<W> copyWith({
-    List<PredicateWithDescription>? props,
-    List<WidgetSelector>? parents,
-    List<WidgetSelector>? children,
-    List<ElementFilter>? elementFilters,
-    // ignore: deprecated_member_use_from_same_package
-    ExpectedQuantity? expectedQuantity,
-    QuantityConstraint? quantityConstraint,
-    W Function(Element element)? mapElementToWidget,
-  }) {
-    return WidgetSelector<W>(
-      props: props ?? this.props,
-      parents: parents ?? this.parents,
-      children: children ?? this.children,
-      elementFilters: elementFilters ?? this.elementFilters,
-      // ignore: deprecated_member_use_from_same_package
-      expectedQuantity: expectedQuantity ?? this.expectedQuantity,
-      quantityConstraint: quantityConstraint ?? this.quantityConstraint,
-      mapElementToWidget: mapElementToWidget ?? this.mapElementToWidget,
-    );
-  }
-
-  /// Filters all elements that match the selector
-  ///
-  /// Not yet deprecated, but it is recommend to use `whereWidgetProp()` instead.
-  /// - [SelectorQueries.whereWidgetProp]
-  /// - [SelectorQueries.whereElementProp]
-  /// - [SelectorQueries.whereRenderObjectProp]
-  ///
-  /// #### Example usage:
-  /// ```dart
-  /// withProp(
-  ///   selector: (subject) => subject.context.nest<int?>(
-  ///     () => ['with "maxLines"'],
-  ///     (Element element) => Extracted.value(_extractMaxLines(element)),
-  ///   ),
-  ///   match: (maxLines) => maxLines.equals(1),
-  /// );
-  /// ```
-  @useResult
-  WidgetSelector<W> withProp<T>({
-    @Deprecated('use elementSelector instead')
-    Subject<T> Function(ConditionSubject<Element>)? selector,
-    Subject<T> Function(ConditionSubject<Element>)? elementSelector,
-    Subject<T> Function(Subject<W>)? widgetSelector,
-    required MatchProp<T> match,
-  }) {
-    final ConditionSubject<Element> elementSubject = it<Element>();
-    final Subject<T> subject = () {
-      if (selector != null) {
-        return selector(elementSubject);
-      }
-      if (elementSelector != null) {
-        return elementSelector(elementSubject);
-      }
-      if (widgetSelector != null) {
-        final Subject<W> widgetSubject = elementSubject.context.nest<W>(
-          () => [],
-          (element) {
-            final widget = this.mapElementToWidget(element);
-            return Extracted.value(widget);
-          },
-        );
-        return widgetSelector.call(widgetSubject);
-      }
-
-      throw ArgumentError(
-        'Either elementSelector (former selector) or widgetSelector must be set',
-      );
-    }();
-
-    match(subject);
-    final name =
-        describe(elementSubject).map((it) => it.trim()).toList().join(' ');
-
-    return whereElement(
-      (element) {
-        final failure = softCheckHideNull(element, elementSubject);
-        if (failure != null) {
-          return false;
-        }
-        return true;
-      },
-      description: name,
-    );
-  }
-
-  // TODO add getDiagnosticProp()
-
-  /// Finds the diagnostic property (from [Element.toDiagnosticsNode]) with
-  /// [propName] and returns the value as type [T]
-  @useResult
-  WidgetSelector<W> withDiagnosticProp<T>(
-    String propName,
-    MatchProp<T> match,
-  ) {
-    final ConditionSubject<T> nameSubject = it();
-    nameSubject.context.nest<T>(
-      () => ['with prop "$propName"'],
-      (value) => Extracted.value(value),
-    );
-    match(nameSubject);
-    final name =
-        describe(nameSubject).map((it) => it.trim()).toList().join(' ');
-
-    return whereElement(
-      (element) {
-        final diagnosticsNode = mapElementToWidget(element).toDiagnosticsNode();
-        final DiagnosticsNode? prop = diagnosticsNode
-            .getProperties()
-            .firstOrNullWhere((e) => e.name == propName);
-
-        final unconstrainedSelector =
-            overrideQuantityConstraint(QuantityConstraint.unconstrained);
-        final actual = prop?.value as T? ?? prop?.getDefaultValue<T>();
-
-        final ConditionSubject<T?> conditionSubject = it<T?>();
-        final Subject<T> subject = conditionSubject.context.nest<T>(
-          () => [
-            unconstrainedSelector.toStringBreadcrumb(),
-            'with prop "$propName"',
-          ],
-          (value) {
-            if (prop == null) {
-              return Extracted.rejection(which: ['Has no prop "$propName"']);
-            }
-            if (value is! T) {
-              return Extracted.rejection(
-                which: [
-                  'Has no prop "$propName" of type "$T", the type is "${prop.value.runtimeType}"',
-                ],
-              );
-            }
-
-            return Extracted.value(actual as T);
-          },
-        );
-        match(subject);
-        final failure = softCheckHideNull(actual, conditionSubject);
-        if (failure != null) {
-          return false;
-        }
-
-        return true;
-      },
-      description: name,
-    );
-  }
-}
-
-/// Defines the quantity constraints for the number of widgets
-/// expected to be found.
-///
-/// This class specifies the minimum and maximum number of widgets that a
-/// selector should match, enabling precise control over the selection criteria.
-class QuantityConstraint {
-  /// Constructs a [QuantityConstraint] with optional minimum and maximum values.
-  ///
-  /// The [min] value specifies the minimum number of widgets to match, and
-  /// the [max] value specifies the maximum number of widgets to match.
-  /// If both are provided, [min] must be less than or equal to [max].
-  const QuantityConstraint({this.min, this.max})
-      : assert(min == null || max == null || min <= max);
-
-  /// Constructs a [QuantityConstraint] where exactly [n] widgets should match.
-  const QuantityConstraint.exactly(int n)
-      : min = n,
-        max = n;
-
-  /// Constructs a [QuantityConstraint] where at least [n] widgets should match.
-  const QuantityConstraint.atLeast(int n)
-      : min = n,
-        max = null;
-
-  /// Constructs a [QuantityConstraint] where at most [n] widgets should match.
-  const QuantityConstraint.atMost(int n)
-      : min = null,
-        max = n;
-
-  /// Represents an unconstrained quantity, allowing any number of widgets
-  /// to match.
-  static const QuantityConstraint unconstrained = QuantityConstraint();
-
-  /// Represents a constraint where no widgets should match.
-  static const QuantityConstraint zero = QuantityConstraint.atMost(0);
-
-  /// Represents a constraint where exactly one widget should match.
-  static const QuantityConstraint single = QuantityConstraint.atMost(1);
-
-  /// The minimum number of widgets that should match. `null` for no minimum.
-  final int? min;
-
-  /// The maximum number of widgets that should match. `null` for no maximum.
-  final int? max;
-
-  @override
-  String toString() {
-    if (min == null && max == null) {
-      return 'QuantityConstraint.unconstrained';
-    }
-    if (max == 0) {
-      return 'QuantityConstraint.zero';
-    }
-    return 'QuantityConstraint{min: $min, max: $max}';
-  }
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is QuantityConstraint &&
-          runtimeType == other.runtimeType &&
-          min == other.min &&
-          max == other.max;
-
-  @override
-  int get hashCode => min.hashCode ^ max.hashCode;
 }
 
 /// Extension on [WidgetSelector<W>] to create snapshots of the current
@@ -1815,127 +954,6 @@ extension ReadSingleSnapshot<W extends Widget> on WidgetSelector<W> {
     // So we can safely assume that this cast never fails.
     return snapshot_file.snapshot(this).single.element.renderObject!;
   }
-}
-
-/// A type alias for a snapshot that can contain multiple widgets.
-@Deprecated('Use WidgetSnapshot')
-typedef MultiWidgetSnapshot<W extends Widget> = WidgetSnapshot<W>;
-
-/// A type alias for a snapshot that contains a single widget.
-@Deprecated('Use WidgetSnapshot')
-typedef SingleWidgetSnapshot<W extends Widget> = WidgetSnapshot<W>;
-
-/// Represents a snapshot of widgets that have been discovered
-/// by a [WidgetSelector].
-///
-/// This class encapsulates the result of a widget selection process, containing
-/// information about the widgets that matched the selector's criteria.
-class WidgetSnapshot<W extends Widget> {
-  /// Constructs a [WidgetSnapshot].
-  WidgetSnapshot({
-    required this.selector,
-    required this.discovered,
-    required this.debugCandidates,
-    required this.scope,
-  }) : _widgets = Map.fromEntries(
-          discovered
-              .map((e) => MapEntry(e, selector.mapElementToWidget(e.element))),
-        );
-
-  /// The widgets at the point when the snapshot was taken
-  ///
-  /// [Element] is a mutable object that might have changed since the snapshot
-  /// was taken. This is a reference to the widget that was found at the time
-  /// the snapshot was taken. This allows to compare the widget with the current
-  /// widget in the tree.
-  final Map<WidgetTreeNode, Widget> _widgets;
-
-  /// The [WidgetSelector] that was used to search/filter elements in [scope]
-  final WidgetSelector<W> selector;
-
-  /// A widget tree (not necessarily the whole tree) that was used to
-  /// match elements with [selector]
-  final ScopedWidgetTreeSnapshot scope;
-
-  /// All widgets from [scope] that were checked by [selector]
-  ///
-  /// Only ever use this for debugging purposes, the number of candidates can vary
-  final List<Element> debugCandidates;
-
-  /// All elements in [scope] that match [selector]
-  final List<WidgetTreeNode> discovered;
-
-  @override
-  String toString() {
-    return 'SpotSnapshot of $selector (${discoveredElements.length} matches)}';
-  }
-}
-
-/// Extension on [WidgetSnapshot<W>] to convert it to [WidgetMatcher] types.
-///
-/// Provides convenience methods to transform a widget snapshot into matchers
-/// for single or multiple widgets.
-// TODO make WidgetSnapshot implement WidgetMatcher and MultiWidgetMatcher
-extension ToWidgetMatcher<W extends Widget> on WidgetSnapshot<W> {
-  /// Converts the snapshot to a [MultiWidgetMatcher],
-  /// which can match multiple widgets.
-  ///
-  /// This method is used when you want to perform assertions or operations
-  /// on multiple widgets discovered by the snapshot.
-  @useResult
-  MultiWidgetMatcher<W> get multi {
-    return MultiWidgetMatcher.fromSnapshot(this);
-  }
-
-  /// Converts the snapshot to a [WidgetMatcher],
-  /// ensuring it matches at most one widget.
-  ///
-  /// This method is used for assertions or operations on a single widget.
-  /// It asserts that the snapshot contains at most one widget.
-  @useResult
-  WidgetMatcher<W> get single {
-    assert(discovered.length <= 1);
-    return existsAtMostOnce();
-  }
-}
-
-/// Extension on [WidgetSnapshot]<W> providing shorthand accessors
-/// to the discovered widgets and elements.
-///
-/// Offers convenient methods to retrieve single widgets or elements
-/// and lists of discovered widgets and elements.
-extension WidgetSnapshotShorthands<W extends Widget> on WidgetSnapshot<W> {
-  /// Gets the first discovered widget of type [W], if any.
-  /// Returns `null` if no such widget was discovered.
-  W? get discoveredWidget => discoveredWidgets.firstOrNull;
-
-  /// Deprecated: Use [discoveredWidget] instead.
-  @Deprecated('Use discoveredWidget')
-  W? get widget => discoveredWidget;
-
-  /// Gets the first discovered [Element], if any.
-  /// Returns `null` if no element was discovered.
-  Element? get discoveredElement => discoveredElements.firstOrNull;
-
-  /// Deprecated: Use [discoveredElement] instead.
-  @Deprecated('Use discoveredElement')
-  Element? get element => discoveredElement;
-
-  /// Shorthand to get the widgets of all discovered elements
-  /// (see [discovered] or [discoveredElements])
-  ///
-  /// This list may be incomplete for synthetic widgets like [AnyText],
-  /// when the widgets are not of type [W].
-  ///
-  /// To check the number of discovered elements, always use [discovered]
-  /// or [discoveredElements]. Use [discoveredWidgets] only when you need
-  /// to access any properties of the widgets.
-  List<W> get discoveredWidgets => _widgets.values.whereType<W>().toList();
-
-  /// A list of all elements that were discovered.
-  /// Use this list to access elements corresponding to the discovered widgets.
-  List<Element> get discoveredElements =>
-      discovered.map((e) => e.element).toList();
 }
 
 /// Extension on [WidgetSelector<W>] providing methods to specify the
@@ -2290,18 +1308,5 @@ extension MutliMatchers<W extends Widget> on MultiWidgetMatcher<W> {
     throw TestFailure(
         "Expected that all candidates fulfill matcher '$matcherDescription', but only ${discovered.length - missMatches.length} of ${discovered.length} did.\n"
         'Mismatches: ${missMatches.map((e) => e.element.toStringDeep()).join(', ')}');
-  }
-}
-
-extension on DiagnosticsNode {
-  T? getDefaultValue<T>() {
-    try {
-      if (this is DiagnosticsProperty) {
-        return (this as DiagnosticsProperty).defaultValue as T?;
-      }
-    } catch (_) {
-      return null;
-    }
-    return null;
   }
 }

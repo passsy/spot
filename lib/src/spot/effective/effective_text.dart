@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/spot/element_extensions.dart';
-import 'package:spot/src/spot/selectors.dart';
 
 /// Matchers for the [Text] widget to make assertions about:
 /// - [Text.maxLines]

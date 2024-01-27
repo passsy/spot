@@ -1,10 +1,129 @@
-import 'package:collection/collection.dart';
 import 'package:dartx/dartx.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/spot/selectors.dart';
-import 'package:spot/src/spot/tree_snapshot.dart';
+
+/// A type alias for a snapshot that can contain multiple widgets.
+@Deprecated('Use WidgetSnapshot')
+typedef MultiWidgetSnapshot<W extends Widget> = WidgetSnapshot<W>;
+
+/// A type alias for a snapshot that contains a single widget.
+@Deprecated('Use WidgetSnapshot')
+typedef SingleWidgetSnapshot<W extends Widget> = WidgetSnapshot<W>;
+
+/// Represents a snapshot of widgets that have been discovered
+/// by a [WidgetSelector].
+///
+/// This class encapsulates the result of a widget selection process, containing
+/// information about the widgets that matched the selector's criteria.
+class WidgetSnapshot<W extends Widget> {
+  /// Constructs a [WidgetSnapshot].
+  WidgetSnapshot({
+    required this.selector,
+    required this.discovered,
+    required this.debugCandidates,
+    required this.scope,
+  }) : _widgets = Map.fromEntries(
+          discovered
+              .map((e) => MapEntry(e, selector.mapElementToWidget(e.element))),
+        );
+
+  /// The widgets at the point when the snapshot was taken
+  ///
+  /// [Element] is a mutable object that might have changed since the snapshot
+  /// was taken. This is a reference to the widget that was found at the time
+  /// the snapshot was taken. This allows to compare the widget with the current
+  /// widget in the tree.
+  final Map<WidgetTreeNode, Widget> _widgets;
+
+  /// The [WidgetSelector] that was used to search/filter elements in [scope]
+  final WidgetSelector<W> selector;
+
+  /// A widget tree (not necessarily the whole tree) that was used to
+  /// match elements with [selector]
+  final ScopedWidgetTreeSnapshot scope;
+
+  /// All widgets from [scope] that were checked by [selector]
+  ///
+  /// Only ever use this for debugging purposes, the number of candidates can vary
+  final List<Element> debugCandidates;
+
+  /// All elements in [scope] that match [selector]
+  final List<WidgetTreeNode> discovered;
+
+  @override
+  String toString() {
+    return 'SpotSnapshot of $selector (${discoveredElements.length} matches)}';
+  }
+}
+
+/// Extension on [WidgetSnapshot<W>] to convert it to [WidgetMatcher] types.
+///
+/// Provides convenience methods to transform a widget snapshot into matchers
+/// for single or multiple widgets.
+// TODO make WidgetSnapshot implement WidgetMatcher and MultiWidgetMatcher
+extension ToWidgetMatcher<W extends Widget> on WidgetSnapshot<W> {
+  /// Converts the snapshot to a [MultiWidgetMatcher],
+  /// which can match multiple widgets.
+  ///
+  /// This method is used when you want to perform assertions or operations
+  /// on multiple widgets discovered by the snapshot.
+  @useResult
+  MultiWidgetMatcher<W> get multi {
+    return MultiWidgetMatcher.fromSnapshot(this);
+  }
+
+  /// Converts the snapshot to a [WidgetMatcher],
+  /// ensuring it matches at most one widget.
+  ///
+  /// This method is used for assertions or operations on a single widget.
+  /// It asserts that the snapshot contains at most one widget.
+  @useResult
+  WidgetMatcher<W> get single {
+    assert(discovered.length <= 1);
+    return existsAtMostOnce();
+  }
+}
+
+/// Extension on [WidgetSnapshot]<W> providing shorthand accessors
+/// to the discovered widgets and elements.
+///
+/// Offers convenient methods to retrieve single widgets or elements
+/// and lists of discovered widgets and elements.
+extension WidgetSnapshotShorthands<W extends Widget> on WidgetSnapshot<W> {
+  /// Gets the first discovered widget of type [W], if any.
+  /// Returns `null` if no such widget was discovered.
+  W? get discoveredWidget => discoveredWidgets.firstOrNull;
+
+  /// Deprecated: Use [discoveredWidget] instead.
+  @Deprecated('Use discoveredWidget')
+  W? get widget => discoveredWidget;
+
+  /// Gets the first discovered [Element], if any.
+  /// Returns `null` if no element was discovered.
+  Element? get discoveredElement => discoveredElements.firstOrNull;
+
+  /// Deprecated: Use [discoveredElement] instead.
+  @Deprecated('Use discoveredElement')
+  Element? get element => discoveredElement;
+
+  /// Shorthand to get the widgets of all discovered elements
+  /// (see [discovered] or [discoveredElements])
+  ///
+  /// This list may be incomplete for synthetic widgets like [AnyText],
+  /// when the widgets are not of type [W].
+  ///
+  /// To check the number of discovered elements, always use [discovered]
+  /// or [discoveredElements]. Use [discoveredWidgets] only when you need
+  /// to access any properties of the widgets.
+  List<W> get discoveredWidgets => _widgets.values.whereType<W>().toList();
+
+  /// A list of all elements that were discovered.
+  /// Use this list to access elements corresponding to the discovered widgets.
+  List<Element> get discoveredElements =>
+      discovered.map((e) => e.element).toList();
+}
 
 /// Creates a snapshot of widgets that match the specified [selector].
 ///
@@ -317,7 +436,7 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
           'expected at most $max',
         );
 
-        discovered.forEachIndexed((index, candidate) {
+        discovered.forEachIndexed((candidate, index) {
           errorBuilder.writeln("Possible match #$index:");
           errorBuilder.writeln(candidate.element.widget.toStringDeep());
         });
@@ -544,7 +663,7 @@ Element findCommonAncestor(Iterable<Element> elements) {
   final allOtherParents =
       elements.exceptElement(highestElement).map((e) => e.parents);
 
-  final commonAncestor = highestElement.parents.firstWhereOrNull(
+  final commonAncestor = highestElement.parents.firstOrNullWhere(
     (parent) => allOtherParents.every((parents) => parents.contains(parent)),
   );
 

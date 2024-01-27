@@ -2,7 +2,6 @@
 
 import 'package:flutter/widgets.dart';
 import 'package:spot/spot.dart';
-import 'package:spot/src/spot/selectors.dart';
 
 extension DefaultWidgetMatchers<W extends Widget> on WidgetMatcher<W> {
   WidgetMatcher<W> hasDepthWhere(MatchProp<int> match) {
