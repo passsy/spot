@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.10.0-beta.2
+
+- New `getDiagnosticProp<T>('name')` for easy access to the values of a diagnostic property #40
+- New `hasEffectiveTextStyle`, `withEffectiveTextStyleMatching()`, `withEffectiveTextStyle()` #36, #38
+- Tons of documentation and examples #37, #39
+- Restructure of internal files
+
 ## 0.10.0-beta.1
 
 Eventually **Breaking**, but only the class names. The end user API stays the same.
