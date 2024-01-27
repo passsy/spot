@@ -150,3 +150,21 @@ extension OutlinedButtonMatcher on WidgetMatcher<OutlinedButton> {
         'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
+
+/// Retrieves the [DiagnosticsProperty] of the matched widget with [propName] of type [T]
+extension OutlinedButtonGetter on WidgetMatcher<OutlinedButton> {
+  /// Returns the enabled of the matched [OutlinedButton] via [Widget.toDiagnosticsNode]
+  bool getEnabled() {
+    return getDiagnosticProp<bool>('enabled');
+  }
+
+  /// Returns the style of the matched [OutlinedButton] via [Widget.toDiagnosticsNode]
+  ButtonStyle getStyle() {
+    return getDiagnosticProp<ButtonStyle>('style');
+  }
+
+  /// Returns the focusNode of the matched [OutlinedButton] via [Widget.toDiagnosticsNode]
+  FocusNode getFocusNode() {
+    return getDiagnosticProp<FocusNode>('focusNode');
+  }
+}

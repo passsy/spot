@@ -327,3 +327,41 @@ extension GridViewMatcher on WidgetMatcher<GridView> {
         'padding', (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
+
+/// Retrieves the [DiagnosticsProperty] of the matched widget with [propName] of type [T]
+extension GridViewGetter on WidgetMatcher<GridView> {
+  /// Returns the scrollDirection of the matched [GridView] via [Widget.toDiagnosticsNode]
+  Axis getScrollDirection() {
+    return getDiagnosticProp<Axis>('scrollDirection');
+  }
+
+  /// Returns the reverse of the matched [GridView] via [Widget.toDiagnosticsNode]
+  bool getReverse() {
+    return getDiagnosticProp<bool>('reverse');
+  }
+
+  /// Returns the controller of the matched [GridView] via [Widget.toDiagnosticsNode]
+  ScrollController getController() {
+    return getDiagnosticProp<ScrollController>('controller');
+  }
+
+  /// Returns the primary of the matched [GridView] via [Widget.toDiagnosticsNode]
+  bool getPrimary() {
+    return getDiagnosticProp<bool>('primary');
+  }
+
+  /// Returns the physics of the matched [GridView] via [Widget.toDiagnosticsNode]
+  ScrollPhysics getPhysics() {
+    return getDiagnosticProp<ScrollPhysics>('physics');
+  }
+
+  /// Returns the shrinkWrap of the matched [GridView] via [Widget.toDiagnosticsNode]
+  bool getShrinkWrap() {
+    return getDiagnosticProp<bool>('shrinkWrap');
+  }
+
+  /// Returns the padding of the matched [GridView] via [Widget.toDiagnosticsNode]
+  EdgeInsetsGeometry getPadding() {
+    return getDiagnosticProp<EdgeInsetsGeometry>('padding');
+  }
+}

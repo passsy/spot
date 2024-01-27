@@ -197,3 +197,26 @@ extension AlignMatcher on WidgetMatcher<Align> {
         'renderObject', (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
+
+/// Retrieves the [DiagnosticsProperty] of the matched widget with [propName] of type [T]
+extension AlignGetter on WidgetMatcher<Align> {
+  /// Returns the alignment of the matched [Align] via [Widget.toDiagnosticsNode]
+  AlignmentGeometry getAlignment() {
+    return getDiagnosticProp<AlignmentGeometry>('alignment');
+  }
+
+  /// Returns the widthFactor of the matched [Align] via [Widget.toDiagnosticsNode]
+  double getWidthFactor() {
+    return getDiagnosticProp<double>('widthFactor');
+  }
+
+  /// Returns the heightFactor of the matched [Align] via [Widget.toDiagnosticsNode]
+  double getHeightFactor() {
+    return getDiagnosticProp<double>('heightFactor');
+  }
+
+  /// Returns the renderObject of the matched [Align] via [Widget.toDiagnosticsNode]
+  RenderPositionedBox getRenderObject() {
+    return getDiagnosticProp<RenderPositionedBox>('renderObject');
+  }
+}

@@ -85,6 +85,14 @@ extension ${widgetType}Selector on WidgetSelector<$widgetType> {
 ''',
     );
 
+    final getterSb = StringBuffer();
+    getterSb.writeln(
+      '''
+/// Retrieves the [DiagnosticsProperty] of the matched widget with [propName] of type [T]
+extension ${widgetType}Getter on WidgetMatcher<$widgetType> {
+''',
+    );
+
     final distinctProps =
         [...widgetProps, ...elementProps].distinctBy((it) => it.name).toList();
     for (final DiagnosticsNode prop in distinctProps) {
@@ -161,6 +169,13 @@ extension ${widgetType}Selector on WidgetSelector<$widgetType> {
       final String valueExample = _getExampleValue(node: prop);
       final String matcherExample = _getExampleValue(node: prop, matcher: true);
 
+      getterSb.writeln('''
+  /// Returns the $humanPropName of the matched [$widgetType] via [Widget.toDiagnosticsNode]
+  $propType get${humanPropName.capitalize()}() {
+    return getDiagnosticProp<$propType>('$diagnosticPropName');
+  }
+''');
+
       matcherSb.writeln('''
   /// Expects that $humanPropName of [$widgetType] matches the condition in [match].
   ///
@@ -212,6 +227,7 @@ extension ${widgetType}Selector on WidgetSelector<$widgetType> {
 
     matcherSb.writeln('}');
     selectorSb.writeln('}');
+    getterSb.writeln('}');
 
     if (addedMethods == false) {
       // nothing added, don't generate the file at all
@@ -245,7 +261,10 @@ ${imports ?? "import 'package:flutter/widgets.dart';"}
 import 'package:spot/spot.dart';
 
 $selectorSb
+
 $matcherSb
+
+$getterSb
     ''';
   }
 }

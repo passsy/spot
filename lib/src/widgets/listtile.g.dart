@@ -1434,3 +1434,166 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
+
+/// Retrieves the [DiagnosticsProperty] of the matched widget with [propName] of type [T]
+extension ListTileGetter on WidgetMatcher<ListTile> {
+  /// Returns the leading of the matched [ListTile] via [Widget.toDiagnosticsNode]
+  Widget getLeading() {
+    return getDiagnosticProp<Widget>('leading');
+  }
+
+  /// Returns the title of the matched [ListTile] via [Widget.toDiagnosticsNode]
+  Widget getTitle() {
+    return getDiagnosticProp<Widget>('title');
+  }
+
+  /// Returns the subtitle of the matched [ListTile] via [Widget.toDiagnosticsNode]
+  Widget getSubtitle() {
+    return getDiagnosticProp<Widget>('subtitle');
+  }
+
+  /// Returns the trailing of the matched [ListTile] via [Widget.toDiagnosticsNode]
+  Widget getTrailing() {
+    return getDiagnosticProp<Widget>('trailing');
+  }
+
+  /// Returns the isThreeLine of the matched [ListTile] via [Widget.toDiagnosticsNode]
+  bool getIsThreeLine() {
+    return getDiagnosticProp<bool>('isThreeLine');
+  }
+
+  /// Returns the dense of the matched [ListTile] via [Widget.toDiagnosticsNode]
+  bool getDense() {
+    return getDiagnosticProp<bool>('dense');
+  }
+
+  /// Returns the visualDensity of the matched [ListTile] via [Widget.toDiagnosticsNode]
+  VisualDensity getVisualDensity() {
+    return getDiagnosticProp<VisualDensity>('visualDensity');
+  }
+
+  /// Returns the shape of the matched [ListTile] via [Widget.toDiagnosticsNode]
+  ShapeBorder getShape() {
+    return getDiagnosticProp<ShapeBorder>('shape');
+  }
+
+  /// Returns the style of the matched [ListTile] via [Widget.toDiagnosticsNode]
+  ListTileStyle getStyle() {
+    return getDiagnosticProp<ListTileStyle>('style');
+  }
+
+  /// Returns the selectedColor of the matched [ListTile] via [Widget.toDiagnosticsNode]
+  Color getSelectedColor() {
+    return getDiagnosticProp<Color>('selectedColor');
+  }
+
+  /// Returns the iconColor of the matched [ListTile] via [Widget.toDiagnosticsNode]
+  Color getIconColor() {
+    return getDiagnosticProp<Color>('iconColor');
+  }
+
+  /// Returns the textColor of the matched [ListTile] via [Widget.toDiagnosticsNode]
+  Color getTextColor() {
+    return getDiagnosticProp<Color>('textColor');
+  }
+
+  /// Returns the titleTextStyle of the matched [ListTile] via [Widget.toDiagnosticsNode]
+  TextStyle getTitleTextStyle() {
+    return getDiagnosticProp<TextStyle>('titleTextStyle');
+  }
+
+  /// Returns the subtitleTextStyle of the matched [ListTile] via [Widget.toDiagnosticsNode]
+  TextStyle getSubtitleTextStyle() {
+    return getDiagnosticProp<TextStyle>('subtitleTextStyle');
+  }
+
+  /// Returns the leadingAndTrailingTextStyle of the matched [ListTile] via [Widget.toDiagnosticsNode]
+  TextStyle getLeadingAndTrailingTextStyle() {
+    return getDiagnosticProp<TextStyle>('leadingAndTrailingTextStyle');
+  }
+
+  /// Returns the contentPadding of the matched [ListTile] via [Widget.toDiagnosticsNode]
+  EdgeInsetsGeometry getContentPadding() {
+    return getDiagnosticProp<EdgeInsetsGeometry>('contentPadding');
+  }
+
+  /// Returns the enabled of the matched [ListTile] via [Widget.toDiagnosticsNode]
+  bool getEnabled() {
+    return getDiagnosticProp<bool>('enabled');
+  }
+
+  /// Returns the onTap of the matched [ListTile] via [Widget.toDiagnosticsNode]
+  Function getOnTap() {
+    return getDiagnosticProp<Function>('onTap');
+  }
+
+  /// Returns the onLongPress of the matched [ListTile] via [Widget.toDiagnosticsNode]
+  Function getOnLongPress() {
+    return getDiagnosticProp<Function>('onLongPress');
+  }
+
+  /// Returns the mouseCursor of the matched [ListTile] via [Widget.toDiagnosticsNode]
+  MouseCursor getMouseCursor() {
+    return getDiagnosticProp<MouseCursor>('mouseCursor');
+  }
+
+  /// Returns the selected of the matched [ListTile] via [Widget.toDiagnosticsNode]
+  bool getSelected() {
+    return getDiagnosticProp<bool>('selected');
+  }
+
+  /// Returns the focusColor of the matched [ListTile] via [Widget.toDiagnosticsNode]
+  Color getFocusColor() {
+    return getDiagnosticProp<Color>('focusColor');
+  }
+
+  /// Returns the hoverColor of the matched [ListTile] via [Widget.toDiagnosticsNode]
+  Color getHoverColor() {
+    return getDiagnosticProp<Color>('hoverColor');
+  }
+
+  /// Returns the focusNode of the matched [ListTile] via [Widget.toDiagnosticsNode]
+  FocusNode getFocusNode() {
+    return getDiagnosticProp<FocusNode>('focusNode');
+  }
+
+  /// Returns the autofocus of the matched [ListTile] via [Widget.toDiagnosticsNode]
+  bool getAutofocus() {
+    return getDiagnosticProp<bool>('autofocus');
+  }
+
+  /// Returns the tileColor of the matched [ListTile] via [Widget.toDiagnosticsNode]
+  Color getTileColor() {
+    return getDiagnosticProp<Color>('tileColor');
+  }
+
+  /// Returns the selectedTileColor of the matched [ListTile] via [Widget.toDiagnosticsNode]
+  Color getSelectedTileColor() {
+    return getDiagnosticProp<Color>('selectedTileColor');
+  }
+
+  /// Returns the enableFeedback of the matched [ListTile] via [Widget.toDiagnosticsNode]
+  bool getEnableFeedback() {
+    return getDiagnosticProp<bool>('enableFeedback');
+  }
+
+  /// Returns the horizontalTitleGap of the matched [ListTile] via [Widget.toDiagnosticsNode]
+  double getHorizontalTitleGap() {
+    return getDiagnosticProp<double>('horizontalTitleGap');
+  }
+
+  /// Returns the minVerticalPadding of the matched [ListTile] via [Widget.toDiagnosticsNode]
+  double getMinVerticalPadding() {
+    return getDiagnosticProp<double>('minVerticalPadding');
+  }
+
+  /// Returns the minLeadingWidth of the matched [ListTile] via [Widget.toDiagnosticsNode]
+  double getMinLeadingWidth() {
+    return getDiagnosticProp<double>('minLeadingWidth');
+  }
+
+  /// Returns the titleAlignment of the matched [ListTile] via [Widget.toDiagnosticsNode]
+  ListTileTitleAlignment getTitleAlignment() {
+    return getDiagnosticProp<ListTileTitleAlignment>('titleAlignment');
+  }
+}

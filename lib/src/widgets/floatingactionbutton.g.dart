@@ -750,3 +750,86 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
+
+/// Retrieves the [DiagnosticsProperty] of the matched widget with [propName] of type [T]
+extension FloatingActionButtonGetter on WidgetMatcher<FloatingActionButton> {
+  /// Returns the tooltip of the matched [FloatingActionButton] via [Widget.toDiagnosticsNode]
+  String getTooltip() {
+    return getDiagnosticProp<String>('tooltip');
+  }
+
+  /// Returns the foregroundColor of the matched [FloatingActionButton] via [Widget.toDiagnosticsNode]
+  Color getForegroundColor() {
+    return getDiagnosticProp<Color>('foregroundColor');
+  }
+
+  /// Returns the backgroundColor of the matched [FloatingActionButton] via [Widget.toDiagnosticsNode]
+  Color getBackgroundColor() {
+    return getDiagnosticProp<Color>('backgroundColor');
+  }
+
+  /// Returns the focusColor of the matched [FloatingActionButton] via [Widget.toDiagnosticsNode]
+  Color getFocusColor() {
+    return getDiagnosticProp<Color>('focusColor');
+  }
+
+  /// Returns the hoverColor of the matched [FloatingActionButton] via [Widget.toDiagnosticsNode]
+  Color getHoverColor() {
+    return getDiagnosticProp<Color>('hoverColor');
+  }
+
+  /// Returns the splashColor of the matched [FloatingActionButton] via [Widget.toDiagnosticsNode]
+  Color getSplashColor() {
+    return getDiagnosticProp<Color>('splashColor');
+  }
+
+  /// Returns the heroTag of the matched [FloatingActionButton] via [Widget.toDiagnosticsNode]
+  Object getHeroTag() {
+    return getDiagnosticProp<Object>('heroTag');
+  }
+
+  /// Returns the elevation of the matched [FloatingActionButton] via [Widget.toDiagnosticsNode]
+  double getElevation() {
+    return getDiagnosticProp<double>('elevation');
+  }
+
+  /// Returns the focusElevation of the matched [FloatingActionButton] via [Widget.toDiagnosticsNode]
+  double getFocusElevation() {
+    return getDiagnosticProp<double>('focusElevation');
+  }
+
+  /// Returns the hoverElevation of the matched [FloatingActionButton] via [Widget.toDiagnosticsNode]
+  double getHoverElevation() {
+    return getDiagnosticProp<double>('hoverElevation');
+  }
+
+  /// Returns the highlightElevation of the matched [FloatingActionButton] via [Widget.toDiagnosticsNode]
+  double getHighlightElevation() {
+    return getDiagnosticProp<double>('highlightElevation');
+  }
+
+  /// Returns the disabledElevation of the matched [FloatingActionButton] via [Widget.toDiagnosticsNode]
+  double getDisabledElevation() {
+    return getDiagnosticProp<double>('disabledElevation');
+  }
+
+  /// Returns the shape of the matched [FloatingActionButton] via [Widget.toDiagnosticsNode]
+  ShapeBorder getShape() {
+    return getDiagnosticProp<ShapeBorder>('shape');
+  }
+
+  /// Returns the focusNode of the matched [FloatingActionButton] via [Widget.toDiagnosticsNode]
+  FocusNode getFocusNode() {
+    return getDiagnosticProp<FocusNode>('focusNode');
+  }
+
+  /// Returns the isExtended of the matched [FloatingActionButton] via [Widget.toDiagnosticsNode]
+  bool getIsExtended() {
+    return getDiagnosticProp<bool>('isExtended');
+  }
+
+  /// Returns the materialTapTargetSize of the matched [FloatingActionButton] via [Widget.toDiagnosticsNode]
+  MaterialTapTargetSize getMaterialTapTargetSize() {
+    return getDiagnosticProp<MaterialTapTargetSize>('materialTapTargetSize');
+  }
+}

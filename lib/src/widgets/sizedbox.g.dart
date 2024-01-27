@@ -153,3 +153,21 @@ extension SizedBoxMatcher on WidgetMatcher<SizedBox> {
         'renderObject', (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
+
+/// Retrieves the [DiagnosticsProperty] of the matched widget with [propName] of type [T]
+extension SizedBoxGetter on WidgetMatcher<SizedBox> {
+  /// Returns the width of the matched [SizedBox] via [Widget.toDiagnosticsNode]
+  double getWidth() {
+    return getDiagnosticProp<double>('width');
+  }
+
+  /// Returns the height of the matched [SizedBox] via [Widget.toDiagnosticsNode]
+  double getHeight() {
+    return getDiagnosticProp<double>('height');
+  }
+
+  /// Returns the renderObject of the matched [SizedBox] via [Widget.toDiagnosticsNode]
+  RenderConstrainedBox getRenderObject() {
+    return getDiagnosticProp<RenderConstrainedBox>('renderObject');
+  }
+}

@@ -373,3 +373,46 @@ extension ContainerMatcher on WidgetMatcher<Container> {
         'transform', (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
+
+/// Retrieves the [DiagnosticsProperty] of the matched widget with [propName] of type [T]
+extension ContainerGetter on WidgetMatcher<Container> {
+  /// Returns the alignment of the matched [Container] via [Widget.toDiagnosticsNode]
+  AlignmentGeometry getAlignment() {
+    return getDiagnosticProp<AlignmentGeometry>('alignment');
+  }
+
+  /// Returns the padding of the matched [Container] via [Widget.toDiagnosticsNode]
+  EdgeInsetsGeometry getPadding() {
+    return getDiagnosticProp<EdgeInsetsGeometry>('padding');
+  }
+
+  /// Returns the clipBehavior of the matched [Container] via [Widget.toDiagnosticsNode]
+  Clip getClipBehavior() {
+    return getDiagnosticProp<Clip>('clipBehavior');
+  }
+
+  /// Returns the background of the matched [Container] via [Widget.toDiagnosticsNode]
+  Decoration getBackground() {
+    return getDiagnosticProp<Decoration>('bg');
+  }
+
+  /// Returns the foreground of the matched [Container] via [Widget.toDiagnosticsNode]
+  Decoration getForeground() {
+    return getDiagnosticProp<Decoration>('fg');
+  }
+
+  /// Returns the constraints of the matched [Container] via [Widget.toDiagnosticsNode]
+  BoxConstraints getConstraints() {
+    return getDiagnosticProp<BoxConstraints>('constraints');
+  }
+
+  /// Returns the margin of the matched [Container] via [Widget.toDiagnosticsNode]
+  EdgeInsetsGeometry getMargin() {
+    return getDiagnosticProp<EdgeInsetsGeometry>('margin');
+  }
+
+  /// Returns the transform of the matched [Container] via [Widget.toDiagnosticsNode]
+  Matrix4 getTransform() {
+    return getDiagnosticProp<Matrix4>('transform');
+  }
+}

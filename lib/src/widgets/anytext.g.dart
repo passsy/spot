@@ -1170,3 +1170,137 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
         'font_size', (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
+
+/// Retrieves the [DiagnosticsProperty] of the matched widget with [propName] of type [T]
+extension AnyTextGetter on WidgetMatcher<AnyText> {
+  /// Returns the text of the matched [AnyText] via [Widget.toDiagnosticsNode]
+  String getText() {
+    return getDiagnosticProp<String>('text');
+  }
+
+  /// Returns the textDirection of the matched [AnyText] via [Widget.toDiagnosticsNode]
+  TextDirection getTextDirection() {
+    return getDiagnosticProp<TextDirection>('textDirection');
+  }
+
+  /// Returns the textAlign of the matched [AnyText] via [Widget.toDiagnosticsNode]
+  TextAlign getTextAlign() {
+    return getDiagnosticProp<TextAlign>('textAlign');
+  }
+
+  /// Returns the selectionColor of the matched [AnyText] via [Widget.toDiagnosticsNode]
+  Color getSelectionColor() {
+    return getDiagnosticProp<Color>('selectionColor');
+  }
+
+  /// Returns the softWrap of the matched [AnyText] via [Widget.toDiagnosticsNode]
+  bool getSoftWrap() {
+    return getDiagnosticProp<bool>('softWrap');
+  }
+
+  /// Returns the overflow of the matched [AnyText] via [Widget.toDiagnosticsNode]
+  TextOverflow getOverflow() {
+    return getDiagnosticProp<TextOverflow>('overflow');
+  }
+
+  /// Returns the maxLines of the matched [AnyText] via [Widget.toDiagnosticsNode]
+  int getMaxLines() {
+    return getDiagnosticProp<int>('maxLines');
+  }
+
+  /// Returns the locale of the matched [AnyText] via [Widget.toDiagnosticsNode]
+  Locale getLocale() {
+    return getDiagnosticProp<Locale>('locale');
+  }
+
+  /// Returns the minLines of the matched [AnyText] via [Widget.toDiagnosticsNode]
+  int getMinLines() {
+    return getDiagnosticProp<int>('minLines');
+  }
+
+  /// Returns the fontInherit of the matched [AnyText] via [Widget.toDiagnosticsNode]
+  bool getFontInherit() {
+    return getDiagnosticProp<bool>('font_inherit');
+  }
+
+  /// Returns the fontColor of the matched [AnyText] via [Widget.toDiagnosticsNode]
+  Color getFontColor() {
+    return getDiagnosticProp<Color>('font_color');
+  }
+
+  /// Returns the fontBackgroundColor of the matched [AnyText] via [Widget.toDiagnosticsNode]
+  Color getFontBackgroundColor() {
+    return getDiagnosticProp<Color>('font_backgroundColor');
+  }
+
+  /// Returns the fontFamily of the matched [AnyText] via [Widget.toDiagnosticsNode]
+  String getFontFamily() {
+    return getDiagnosticProp<String>('font_family');
+  }
+
+  /// Returns the fontFamilyFallback of the matched [AnyText] via [Widget.toDiagnosticsNode]
+  String getFontFamilyFallback() {
+    return getDiagnosticProp<String>('font_familyFallback');
+  }
+
+  /// Returns the fontWeight of the matched [AnyText] via [Widget.toDiagnosticsNode]
+  FontWeight getFontWeight() {
+    return getDiagnosticProp<FontWeight>('font_weight');
+  }
+
+  /// Returns the fontStyle of the matched [AnyText] via [Widget.toDiagnosticsNode]
+  FontStyle getFontStyle() {
+    return getDiagnosticProp<FontStyle>('font_style');
+  }
+
+  /// Returns the fontLetterSpacing of the matched [AnyText] via [Widget.toDiagnosticsNode]
+  double getFontLetterSpacing() {
+    return getDiagnosticProp<double>('font_letterSpacing');
+  }
+
+  /// Returns the fontWordSpacing of the matched [AnyText] via [Widget.toDiagnosticsNode]
+  double getFontWordSpacing() {
+    return getDiagnosticProp<double>('font_wordSpacing');
+  }
+
+  /// Returns the fontBaseline of the matched [AnyText] via [Widget.toDiagnosticsNode]
+  TextBaseline getFontBaseline() {
+    return getDiagnosticProp<TextBaseline>('font_baseline');
+  }
+
+  /// Returns the fontHeight of the matched [AnyText] via [Widget.toDiagnosticsNode]
+  double getFontHeight() {
+    return getDiagnosticProp<double>('font_height');
+  }
+
+  /// Returns the fontLeadingDistribution of the matched [AnyText] via [Widget.toDiagnosticsNode]
+  TextLeadingDistribution getFontLeadingDistribution() {
+    return getDiagnosticProp<TextLeadingDistribution>(
+        'font_leadingDistribution');
+  }
+
+  /// Returns the fontLocale of the matched [AnyText] via [Widget.toDiagnosticsNode]
+  Locale getFontLocale() {
+    return getDiagnosticProp<Locale>('font_locale');
+  }
+
+  /// Returns the fontForeground of the matched [AnyText] via [Widget.toDiagnosticsNode]
+  Paint getFontForeground() {
+    return getDiagnosticProp<Paint>('font_foreground');
+  }
+
+  /// Returns the fontBackground of the matched [AnyText] via [Widget.toDiagnosticsNode]
+  Paint getFontBackground() {
+    return getDiagnosticProp<Paint>('font_background');
+  }
+
+  /// Returns the inherit of the matched [AnyText] via [Widget.toDiagnosticsNode]
+  bool getInherit() {
+    return getDiagnosticProp<bool>('inherit');
+  }
+
+  /// Returns the fontSize of the matched [AnyText] via [Widget.toDiagnosticsNode]
+  double getFontSize() {
+    return getDiagnosticProp<double>('font_size');
+  }
+}

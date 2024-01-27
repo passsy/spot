@@ -460,3 +460,56 @@ extension TextMatcher on WidgetMatcher<Text> {
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
+
+/// Retrieves the [DiagnosticsProperty] of the matched widget with [propName] of type [T]
+extension TextGetter on WidgetMatcher<Text> {
+  /// Returns the text of the matched [Text] via [Widget.toDiagnosticsNode]
+  String getText() {
+    return getDiagnosticProp<String>('data');
+  }
+
+  /// Returns the textAlign of the matched [Text] via [Widget.toDiagnosticsNode]
+  TextAlign getTextAlign() {
+    return getDiagnosticProp<TextAlign>('textAlign');
+  }
+
+  /// Returns the textDirection of the matched [Text] via [Widget.toDiagnosticsNode]
+  TextDirection getTextDirection() {
+    return getDiagnosticProp<TextDirection>('textDirection');
+  }
+
+  /// Returns the locale of the matched [Text] via [Widget.toDiagnosticsNode]
+  Locale getLocale() {
+    return getDiagnosticProp<Locale>('locale');
+  }
+
+  /// Returns the softWrap of the matched [Text] via [Widget.toDiagnosticsNode]
+  bool getSoftWrap() {
+    return getDiagnosticProp<bool>('softWrap');
+  }
+
+  /// Returns the overflow of the matched [Text] via [Widget.toDiagnosticsNode]
+  TextOverflow getOverflow() {
+    return getDiagnosticProp<TextOverflow>('overflow');
+  }
+
+  /// Returns the textScaleFactor of the matched [Text] via [Widget.toDiagnosticsNode]
+  double getTextScaleFactor() {
+    return getDiagnosticProp<double>('textScaleFactor');
+  }
+
+  /// Returns the maxLines of the matched [Text] via [Widget.toDiagnosticsNode]
+  int getMaxLines() {
+    return getDiagnosticProp<int>('maxLines');
+  }
+
+  /// Returns the textWidthBasis of the matched [Text] via [Widget.toDiagnosticsNode]
+  TextWidthBasis getTextWidthBasis() {
+    return getDiagnosticProp<TextWidthBasis>('textWidthBasis');
+  }
+
+  /// Returns the textHeightBehavior of the matched [Text] via [Widget.toDiagnosticsNode]
+  TextHeightBehavior getTextHeightBehavior() {
+    return getDiagnosticProp<TextHeightBehavior>('textHeightBehavior');
+  }
+}

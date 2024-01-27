@@ -62,3 +62,11 @@ extension SwitchMatcher on WidgetMatcher<Switch> {
         'value', (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
+
+/// Retrieves the [DiagnosticsProperty] of the matched widget with [propName] of type [T]
+extension SwitchGetter on WidgetMatcher<Switch> {
+  /// Returns the value of the matched [Switch] via [Widget.toDiagnosticsNode]
+  bool getValue() {
+    return getDiagnosticProp<bool>('value');
+  }
+}

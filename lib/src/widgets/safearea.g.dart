@@ -194,3 +194,26 @@ extension SafeAreaMatcher on WidgetMatcher<SafeArea> {
         'bottom', (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
+
+/// Retrieves the [DiagnosticsProperty] of the matched widget with [propName] of type [T]
+extension SafeAreaGetter on WidgetMatcher<SafeArea> {
+  /// Returns the left of the matched [SafeArea] via [Widget.toDiagnosticsNode]
+  bool getLeft() {
+    return getDiagnosticProp<bool>('left');
+  }
+
+  /// Returns the top of the matched [SafeArea] via [Widget.toDiagnosticsNode]
+  bool getTop() {
+    return getDiagnosticProp<bool>('top');
+  }
+
+  /// Returns the right of the matched [SafeArea] via [Widget.toDiagnosticsNode]
+  bool getRight() {
+    return getDiagnosticProp<bool>('right');
+  }
+
+  /// Returns the bottom of the matched [SafeArea] via [Widget.toDiagnosticsNode]
+  bool getBottom() {
+    return getDiagnosticProp<bool>('bottom');
+  }
+}

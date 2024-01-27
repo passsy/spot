@@ -502,3 +502,61 @@ extension SliderMatcher on WidgetMatcher<Slider> {
         'autofocus', (it) => value == null ? it.isNull() : it.equals(value));
   }
 }
+
+/// Retrieves the [DiagnosticsProperty] of the matched widget with [propName] of type [T]
+extension SliderGetter on WidgetMatcher<Slider> {
+  /// Returns the value of the matched [Slider] via [Widget.toDiagnosticsNode]
+  double getValue() {
+    return getDiagnosticProp<double>('value');
+  }
+
+  /// Returns the secondaryTrackValue of the matched [Slider] via [Widget.toDiagnosticsNode]
+  double getSecondaryTrackValue() {
+    return getDiagnosticProp<double>('secondaryTrackValue');
+  }
+
+  /// Returns the min of the matched [Slider] via [Widget.toDiagnosticsNode]
+  double getMin() {
+    return getDiagnosticProp<double>('min');
+  }
+
+  /// Returns the max of the matched [Slider] via [Widget.toDiagnosticsNode]
+  double getMax() {
+    return getDiagnosticProp<double>('max');
+  }
+
+  /// Returns the divisions of the matched [Slider] via [Widget.toDiagnosticsNode]
+  int getDivisions() {
+    return getDiagnosticProp<int>('divisions');
+  }
+
+  /// Returns the label of the matched [Slider] via [Widget.toDiagnosticsNode]
+  String getLabel() {
+    return getDiagnosticProp<String>('label');
+  }
+
+  /// Returns the activeColor of the matched [Slider] via [Widget.toDiagnosticsNode]
+  Color getActiveColor() {
+    return getDiagnosticProp<Color>('activeColor');
+  }
+
+  /// Returns the inactiveColor of the matched [Slider] via [Widget.toDiagnosticsNode]
+  Color getInactiveColor() {
+    return getDiagnosticProp<Color>('inactiveColor');
+  }
+
+  /// Returns the secondaryActiveColor of the matched [Slider] via [Widget.toDiagnosticsNode]
+  Color getSecondaryActiveColor() {
+    return getDiagnosticProp<Color>('secondaryActiveColor');
+  }
+
+  /// Returns the focusNode of the matched [Slider] via [Widget.toDiagnosticsNode]
+  FocusNode getFocusNode() {
+    return getDiagnosticProp<FocusNode>('focusNode');
+  }
+
+  /// Returns the autofocus of the matched [Slider] via [Widget.toDiagnosticsNode]
+  bool getAutofocus() {
+    return getDiagnosticProp<bool>('autofocus');
+  }
+}

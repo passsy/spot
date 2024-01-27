@@ -269,29 +269,6 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [SelectableText] where textScaler matches the condition.
-  ///
-  /// #### Example usage:
-  /// ```dart
-  /// spot<SelectableText>().whereTextScaler((it) => it.equals(your TextScaler value to match)).existsOnce();
-  /// ```
-  @useResult
-  WidgetSelector<SelectableText> whereTextScaler(MatchProp<TextScaler> match) {
-    return withDiagnosticProp<TextScaler>('textScaler', match);
-  }
-
-  /// Creates a [WidgetSelector] that finds all [SelectableText] where textScaler equals (==) [value].
-  ///
-  /// #### Example usage:
-  /// ```dart
-  /// spot<SelectableText>().withTextScaler(your TextScaler value to match).existsOnce();
-  /// ```
-  @useResult
-  WidgetSelector<SelectableText> withTextScaler(TextScaler? value) {
-    return withDiagnosticProp<TextScaler>(
-        'textScaler', (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
   /// Creates a [WidgetSelector] that finds all [SelectableText] where cursorWidth matches the condition.
   ///
   /// #### Example usage:
@@ -719,28 +696,6 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that textScaler of [SelectableText] matches the condition in [match].
-  ///
-  /// #### Example usage:
-  /// ```dart
-  /// spot<SelectableText>().existsOnce().hasTextScalerWhere((it) => it.equals(your TextScaler value to match));
-  /// ```
-  WidgetMatcher<SelectableText> hasTextScalerWhere(
-      MatchProp<TextScaler> match) {
-    return hasDiagnosticProp<TextScaler>('textScaler', match);
-  }
-
-  /// Expects that textScaler of [SelectableText] equals (==) [value].
-  ///
-  /// #### Example usage:
-  /// ```dart
-  /// spot<SelectableText>().existsOnce().hasTextScaler(your TextScaler value to match);
-  /// ```
-  WidgetMatcher<SelectableText> hasTextScaler(TextScaler? value) {
-    return hasDiagnosticProp<TextScaler>(
-        'textScaler', (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
   /// Expects that cursorWidth of [SelectableText] matches the condition in [match].
   ///
   /// #### Example usage:
@@ -913,5 +868,103 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
       TextHeightBehavior? value) {
     return hasDiagnosticProp<TextHeightBehavior>('textHeightBehavior',
         (it) => value == null ? it.isNull() : it.equals(value));
+  }
+}
+
+/// Retrieves the [DiagnosticsProperty] of the matched widget with [propName] of type [T]
+extension SelectableTextGetter on WidgetMatcher<SelectableText> {
+  /// Returns the text of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  String getText() {
+    return getDiagnosticProp<String>('data');
+  }
+
+  /// Returns the semanticsLabel of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  String getSemanticsLabel() {
+    return getDiagnosticProp<String>('semanticsLabel');
+  }
+
+  /// Returns the focusNode of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  FocusNode getFocusNode() {
+    return getDiagnosticProp<FocusNode>('focusNode');
+  }
+
+  /// Returns the style of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  TextStyle getStyle() {
+    return getDiagnosticProp<TextStyle>('style');
+  }
+
+  /// Returns the autofocus of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  bool getAutofocus() {
+    return getDiagnosticProp<bool>('autofocus');
+  }
+
+  /// Returns the showCursor of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  bool getShowCursor() {
+    return getDiagnosticProp<bool>('showCursor');
+  }
+
+  /// Returns the minLines of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  int getMinLines() {
+    return getDiagnosticProp<int>('minLines');
+  }
+
+  /// Returns the maxLines of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  int getMaxLines() {
+    return getDiagnosticProp<int>('maxLines');
+  }
+
+  /// Returns the textAlign of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  TextAlign getTextAlign() {
+    return getDiagnosticProp<TextAlign>('textAlign');
+  }
+
+  /// Returns the textDirection of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  TextDirection getTextDirection() {
+    return getDiagnosticProp<TextDirection>('textDirection');
+  }
+
+  /// Returns the textScaleFactor of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  double getTextScaleFactor() {
+    return getDiagnosticProp<double>('textScaleFactor');
+  }
+
+  /// Returns the cursorWidth of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  double getCursorWidth() {
+    return getDiagnosticProp<double>('cursorWidth');
+  }
+
+  /// Returns the cursorHeight of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  double getCursorHeight() {
+    return getDiagnosticProp<double>('cursorHeight');
+  }
+
+  /// Returns the cursorRadius of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  Radius getCursorRadius() {
+    return getDiagnosticProp<Radius>('cursorRadius');
+  }
+
+  /// Returns the cursorColor of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  Color getCursorColor() {
+    return getDiagnosticProp<Color>('cursorColor');
+  }
+
+  /// Returns the selectionEnabled of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  bool getSelectionEnabled() {
+    return getDiagnosticProp<bool>('selectionEnabled');
+  }
+
+  /// Returns the selectionControls of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  TextSelectionControls getSelectionControls() {
+    return getDiagnosticProp<TextSelectionControls>('selectionControls');
+  }
+
+  /// Returns the scrollPhysics of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  ScrollPhysics getScrollPhysics() {
+    return getDiagnosticProp<ScrollPhysics>('scrollPhysics');
+  }
+
+  /// Returns the textHeightBehavior of the matched [SelectableText] via [Widget.toDiagnosticsNode]
+  TextHeightBehavior getTextHeightBehavior() {
+    return getDiagnosticProp<TextHeightBehavior>('textHeightBehavior');
   }
 }

@@ -110,29 +110,6 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
         'mixed', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [Semantics] where expanded matches the condition.
-  ///
-  /// #### Example usage:
-  /// ```dart
-  /// spot<Semantics>().whereExpanded((it) => it.isTrue()).existsOnce();
-  /// ```
-  @useResult
-  WidgetSelector<Semantics> whereExpanded(MatchProp<bool> match) {
-    return withDiagnosticProp<bool>('expanded', match);
-  }
-
-  /// Creates a [WidgetSelector] that finds all [Semantics] where expanded equals (==) [value].
-  ///
-  /// #### Example usage:
-  /// ```dart
-  /// spot<Semantics>().withExpanded(true).existsOnce();
-  /// ```
-  @useResult
-  WidgetSelector<Semantics> withExpanded(bool? value) {
-    return withDiagnosticProp<bool>(
-        'expanded', (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
   /// Creates a [WidgetSelector] that finds all [Semantics] where selected matches the condition.
   ///
   /// #### Example usage:
@@ -595,27 +572,6 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
         'mixed', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that expanded of [Semantics] matches the condition in [match].
-  ///
-  /// #### Example usage:
-  /// ```dart
-  /// spot<Semantics>().existsOnce().hasExpandedWhere((it) => it.isTrue());
-  /// ```
-  WidgetMatcher<Semantics> hasExpandedWhere(MatchProp<bool> match) {
-    return hasDiagnosticProp<bool>('expanded', match);
-  }
-
-  /// Expects that expanded of [Semantics] equals (==) [value].
-  ///
-  /// #### Example usage:
-  /// ```dart
-  /// spot<Semantics>().existsOnce().hasExpanded(true);
-  /// ```
-  WidgetMatcher<Semantics> hasExpanded(bool? value) {
-    return hasDiagnosticProp<bool>(
-        'expanded', (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
   /// Expects that selected of [Semantics] matches the condition in [match].
   ///
   /// #### Example usage:
@@ -955,5 +911,108 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   WidgetMatcher<Semantics> hasRenderObject(RenderSemanticsAnnotations? value) {
     return hasDiagnosticProp<RenderSemanticsAnnotations>(
         'renderObject', (it) => value == null ? it.isNull() : it.equals(value));
+  }
+}
+
+/// Retrieves the [DiagnosticsProperty] of the matched widget with [propName] of type [T]
+extension SemanticsGetter on WidgetMatcher<Semantics> {
+  /// Returns the container of the matched [Semantics] via [Widget.toDiagnosticsNode]
+  bool getContainer() {
+    return getDiagnosticProp<bool>('container');
+  }
+
+  /// Returns the properties of the matched [Semantics] via [Widget.toDiagnosticsNode]
+  SemanticsProperties getProperties() {
+    return getDiagnosticProp<SemanticsProperties>('properties');
+  }
+
+  /// Returns the checked of the matched [Semantics] via [Widget.toDiagnosticsNode]
+  bool getChecked() {
+    return getDiagnosticProp<bool>('checked');
+  }
+
+  /// Returns the mixed of the matched [Semantics] via [Widget.toDiagnosticsNode]
+  bool getMixed() {
+    return getDiagnosticProp<bool>('mixed');
+  }
+
+  /// Returns the selected of the matched [Semantics] via [Widget.toDiagnosticsNode]
+  bool getSelected() {
+    return getDiagnosticProp<bool>('selected');
+  }
+
+  /// Returns the label of the matched [Semantics] via [Widget.toDiagnosticsNode]
+  String getLabel() {
+    return getDiagnosticProp<String>('label');
+  }
+
+  /// Returns the attributedLabel of the matched [Semantics] via [Widget.toDiagnosticsNode]
+  String getAttributedLabel() {
+    return getDiagnosticProp<String>('attributedLabel');
+  }
+
+  /// Returns the value of the matched [Semantics] via [Widget.toDiagnosticsNode]
+  String getValue() {
+    return getDiagnosticProp<String>('value');
+  }
+
+  /// Returns the attributedValue of the matched [Semantics] via [Widget.toDiagnosticsNode]
+  String getAttributedValue() {
+    return getDiagnosticProp<String>('attributedValue');
+  }
+
+  /// Returns the increasedValue of the matched [Semantics] via [Widget.toDiagnosticsNode]
+  String getIncreasedValue() {
+    return getDiagnosticProp<String>('increasedValue');
+  }
+
+  /// Returns the attributedIncreasedValue of the matched [Semantics] via [Widget.toDiagnosticsNode]
+  String getAttributedIncreasedValue() {
+    return getDiagnosticProp<String>('attributedIncreasedValue');
+  }
+
+  /// Returns the decreasedValue of the matched [Semantics] via [Widget.toDiagnosticsNode]
+  String getDecreasedValue() {
+    return getDiagnosticProp<String>('decreasedValue');
+  }
+
+  /// Returns the attributedDecreasedValue of the matched [Semantics] via [Widget.toDiagnosticsNode]
+  String getAttributedDecreasedValue() {
+    return getDiagnosticProp<String>('attributedDecreasedValue');
+  }
+
+  /// Returns the hint of the matched [Semantics] via [Widget.toDiagnosticsNode]
+  String getHint() {
+    return getDiagnosticProp<String>('hint');
+  }
+
+  /// Returns the attributedHint of the matched [Semantics] via [Widget.toDiagnosticsNode]
+  String getAttributedHint() {
+    return getDiagnosticProp<String>('attributedHint');
+  }
+
+  /// Returns the tooltip of the matched [Semantics] via [Widget.toDiagnosticsNode]
+  String getTooltip() {
+    return getDiagnosticProp<String>('tooltip');
+  }
+
+  /// Returns the textDirection of the matched [Semantics] via [Widget.toDiagnosticsNode]
+  TextDirection getTextDirection() {
+    return getDiagnosticProp<TextDirection>('textDirection');
+  }
+
+  /// Returns the sortKey of the matched [Semantics] via [Widget.toDiagnosticsNode]
+  SemanticsSortKey getSortKey() {
+    return getDiagnosticProp<SemanticsSortKey>('sortKey');
+  }
+
+  /// Returns the hintOverrides of the matched [Semantics] via [Widget.toDiagnosticsNode]
+  SemanticsHintOverrides getHintOverrides() {
+    return getDiagnosticProp<SemanticsHintOverrides>('hintOverrides');
+  }
+
+  /// Returns the renderObject of the matched [Semantics] via [Widget.toDiagnosticsNode]
+  RenderSemanticsAnnotations getRenderObject() {
+    return getDiagnosticProp<RenderSemanticsAnnotations>('renderObject');
   }
 }
