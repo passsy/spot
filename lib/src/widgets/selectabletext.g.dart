@@ -269,29 +269,6 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [SelectableText] where textScaler matches the condition.
-  ///
-  /// #### Example usage:
-  /// ```dart
-  /// spot<SelectableText>().whereTextScaler((it) => it.equals(your TextScaler value to match)).existsOnce();
-  /// ```
-  @useResult
-  WidgetSelector<SelectableText> whereTextScaler(MatchProp<TextScaler> match) {
-    return withDiagnosticProp<TextScaler>('textScaler', match);
-  }
-
-  /// Creates a [WidgetSelector] that finds all [SelectableText] where textScaler equals (==) [value].
-  ///
-  /// #### Example usage:
-  /// ```dart
-  /// spot<SelectableText>().withTextScaler(your TextScaler value to match).existsOnce();
-  /// ```
-  @useResult
-  WidgetSelector<SelectableText> withTextScaler(TextScaler? value) {
-    return withDiagnosticProp<TextScaler>(
-        'textScaler', (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
   /// Creates a [WidgetSelector] that finds all [SelectableText] where cursorWidth matches the condition.
   ///
   /// #### Example usage:
@@ -719,28 +696,6 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that textScaler of [SelectableText] matches the condition in [match].
-  ///
-  /// #### Example usage:
-  /// ```dart
-  /// spot<SelectableText>().existsOnce().hasTextScalerWhere((it) => it.equals(your TextScaler value to match));
-  /// ```
-  WidgetMatcher<SelectableText> hasTextScalerWhere(
-      MatchProp<TextScaler> match) {
-    return hasDiagnosticProp<TextScaler>('textScaler', match);
-  }
-
-  /// Expects that textScaler of [SelectableText] equals (==) [value].
-  ///
-  /// #### Example usage:
-  /// ```dart
-  /// spot<SelectableText>().existsOnce().hasTextScaler(your TextScaler value to match);
-  /// ```
-  WidgetMatcher<SelectableText> hasTextScaler(TextScaler? value) {
-    return hasDiagnosticProp<TextScaler>(
-        'textScaler', (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
   /// Expects that cursorWidth of [SelectableText] matches the condition in [match].
   ///
   /// #### Example usage:
@@ -971,11 +926,6 @@ extension SelectableTextGetter on WidgetMatcher<SelectableText> {
   /// Returns the textScaleFactor of the matched [SelectableText] via [Widget.toDiagnosticsNode]
   double getTextScaleFactor() {
     return getDiagnosticProp<double>('textScaleFactor');
-  }
-
-  /// Returns the textScaler of the matched [SelectableText] via [Widget.toDiagnosticsNode]
-  TextScaler getTextScaler() {
-    return getDiagnosticProp<TextScaler>('textScaler');
   }
 
   /// Returns the cursorWidth of the matched [SelectableText] via [Widget.toDiagnosticsNode]

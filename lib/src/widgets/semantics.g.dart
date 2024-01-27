@@ -110,29 +110,6 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
         'mixed', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [Semantics] where expanded matches the condition.
-  ///
-  /// #### Example usage:
-  /// ```dart
-  /// spot<Semantics>().whereExpanded((it) => it.isTrue()).existsOnce();
-  /// ```
-  @useResult
-  WidgetSelector<Semantics> whereExpanded(MatchProp<bool> match) {
-    return withDiagnosticProp<bool>('expanded', match);
-  }
-
-  /// Creates a [WidgetSelector] that finds all [Semantics] where expanded equals (==) [value].
-  ///
-  /// #### Example usage:
-  /// ```dart
-  /// spot<Semantics>().withExpanded(true).existsOnce();
-  /// ```
-  @useResult
-  WidgetSelector<Semantics> withExpanded(bool? value) {
-    return withDiagnosticProp<bool>(
-        'expanded', (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
   /// Creates a [WidgetSelector] that finds all [Semantics] where selected matches the condition.
   ///
   /// #### Example usage:
@@ -595,27 +572,6 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
         'mixed', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that expanded of [Semantics] matches the condition in [match].
-  ///
-  /// #### Example usage:
-  /// ```dart
-  /// spot<Semantics>().existsOnce().hasExpandedWhere((it) => it.isTrue());
-  /// ```
-  WidgetMatcher<Semantics> hasExpandedWhere(MatchProp<bool> match) {
-    return hasDiagnosticProp<bool>('expanded', match);
-  }
-
-  /// Expects that expanded of [Semantics] equals (==) [value].
-  ///
-  /// #### Example usage:
-  /// ```dart
-  /// spot<Semantics>().existsOnce().hasExpanded(true);
-  /// ```
-  WidgetMatcher<Semantics> hasExpanded(bool? value) {
-    return hasDiagnosticProp<bool>(
-        'expanded', (it) => value == null ? it.isNull() : it.equals(value));
-  }
-
   /// Expects that selected of [Semantics] matches the condition in [match].
   ///
   /// #### Example usage:
@@ -978,11 +934,6 @@ extension SemanticsGetter on WidgetMatcher<Semantics> {
   /// Returns the mixed of the matched [Semantics] via [Widget.toDiagnosticsNode]
   bool getMixed() {
     return getDiagnosticProp<bool>('mixed');
-  }
-
-  /// Returns the expanded of the matched [Semantics] via [Widget.toDiagnosticsNode]
-  bool getExpanded() {
-    return getDiagnosticProp<bool>('expanded');
   }
 
   /// Returns the selected of the matched [Semantics] via [Widget.toDiagnosticsNode]

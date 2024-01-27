@@ -620,27 +620,27 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where textScaler matches the condition.
+  /// Creates a [WidgetSelector] that finds all [EditableText] where textScaleFactor matches the condition.
   ///
   /// #### Example usage:
   /// ```dart
-  /// spot<EditableText>().whereTextScaler((it) => it.equals(your TextScaler value to match)).existsOnce();
+  /// spot<EditableText>().whereTextScaleFactor((it) => it.isGreaterThan(10.5)).existsOnce();
   /// ```
   @useResult
-  WidgetSelector<EditableText> whereTextScaler(MatchProp<TextScaler> match) {
-    return withDiagnosticProp<TextScaler>('textScaler', match);
+  WidgetSelector<EditableText> whereTextScaleFactor(MatchProp<double> match) {
+    return withDiagnosticProp<double>('textScaleFactor', match);
   }
 
-  /// Creates a [WidgetSelector] that finds all [EditableText] where textScaler equals (==) [value].
+  /// Creates a [WidgetSelector] that finds all [EditableText] where textScaleFactor equals (==) [value].
   ///
   /// #### Example usage:
   /// ```dart
-  /// spot<EditableText>().withTextScaler(your TextScaler value to match).existsOnce();
+  /// spot<EditableText>().withTextScaleFactor(10.5).existsOnce();
   /// ```
   @useResult
-  WidgetSelector<EditableText> withTextScaler(TextScaler? value) {
-    return withDiagnosticProp<TextScaler>(
-        'textScaler', (it) => value == null ? it.isNull() : it.equals(value));
+  WidgetSelector<EditableText> withTextScaleFactor(double? value) {
+    return withDiagnosticProp<double>('textScaleFactor',
+        (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where maxLines matches the condition.
@@ -1559,25 +1559,25 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
         (it) => value == null ? it.isNull() : it.equals(value));
   }
 
-  /// Expects that textScaler of [EditableText] matches the condition in [match].
+  /// Expects that textScaleFactor of [EditableText] matches the condition in [match].
   ///
   /// #### Example usage:
   /// ```dart
-  /// spot<EditableText>().existsOnce().hasTextScalerWhere((it) => it.equals(your TextScaler value to match));
+  /// spot<EditableText>().existsOnce().hasTextScaleFactorWhere((it) => it.isGreaterThan(10.5));
   /// ```
-  WidgetMatcher<EditableText> hasTextScalerWhere(MatchProp<TextScaler> match) {
-    return hasDiagnosticProp<TextScaler>('textScaler', match);
+  WidgetMatcher<EditableText> hasTextScaleFactorWhere(MatchProp<double> match) {
+    return hasDiagnosticProp<double>('textScaleFactor', match);
   }
 
-  /// Expects that textScaler of [EditableText] equals (==) [value].
+  /// Expects that textScaleFactor of [EditableText] equals (==) [value].
   ///
   /// #### Example usage:
   /// ```dart
-  /// spot<EditableText>().existsOnce().hasTextScaler(your TextScaler value to match);
+  /// spot<EditableText>().existsOnce().hasTextScaleFactor(10.5);
   /// ```
-  WidgetMatcher<EditableText> hasTextScaler(TextScaler? value) {
-    return hasDiagnosticProp<TextScaler>(
-        'textScaler', (it) => value == null ? it.isNull() : it.equals(value));
+  WidgetMatcher<EditableText> hasTextScaleFactor(double? value) {
+    return hasDiagnosticProp<double>('textScaleFactor',
+        (it) => value == null ? it.isNull() : it.equals(value));
   }
 
   /// Expects that maxLines of [EditableText] matches the condition in [match].
@@ -2040,9 +2040,9 @@ extension EditableTextGetter on WidgetMatcher<EditableText> {
     return getDiagnosticProp<TextDirection>('textDirection');
   }
 
-  /// Returns the textScaler of the matched [EditableText] via [Widget.toDiagnosticsNode]
-  TextScaler getTextScaler() {
-    return getDiagnosticProp<TextScaler>('textScaler');
+  /// Returns the textScaleFactor of the matched [EditableText] via [Widget.toDiagnosticsNode]
+  double getTextScaleFactor() {
+    return getDiagnosticProp<double>('textScaleFactor');
   }
 
   /// Returns the maxLines of the matched [EditableText] via [Widget.toDiagnosticsNode]
