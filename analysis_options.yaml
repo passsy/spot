@@ -4,7 +4,6 @@ include: package:lint/package.yaml
 # You might want to exclude auto-generated files from dart analysis
 analyzer:
   exclude:
-    - 'lib/src/widgets/**.g.dart'
     - 'lib/src/checks/**.dart'
     - 'test/checks/**.dart'
 
