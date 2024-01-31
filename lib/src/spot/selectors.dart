@@ -511,7 +511,7 @@ class _ElementAtIndex extends ElementFilter {
   }
 
   @override
-  String get description => ':first';
+  String get description => ':index($index)';
 }
 
 /// Extension on [WidgetSelector<W>] for advanced widget querying.
