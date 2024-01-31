@@ -3,6 +3,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:spot/src/checks/checks_nullability.dart';
+import 'package:spot/src/spot/onstage_element_filter.dart';
 import 'package:spot/src/spot/widget_selector.dart';
 
 /// A union type for any text widget that can be found in the widget tree.
@@ -238,9 +239,12 @@ class AnyTextWidgetSelector extends WidgetSelector<AnyText> {
   /// - `parents`: Parent selectors to include in the match.
   AnyTextWidgetSelector({
     required super.props,
+    this.skipOffstage = true,
     super.children,
     super.parents,
-  }) : super(mapElementToWidget: _mapElementToAnyText);
+  }) : super(mapElementToWidget: _mapElementToAnyText, elementFilters: [
+          if (skipOffstage) OnstageFilter(),
+        ]);
 
   static AnyText _mapElementToAnyText(Element element) {
     if (element.widget is RichText) {
@@ -257,10 +261,12 @@ class AnyTextWidgetSelector extends WidgetSelector<AnyText> {
     );
   }
 
+  final bool skipOffstage;
+
   @override
   List<ElementFilter> createElementFilters() {
+    // Matches multiple widget types, can't filter by synthetic type AnyText
     return super.createElementFilters()
-      // Matches multiple widget types, can't filter by synthetic type AnyText
       ..removeWhere((it) => it is WidgetTypeFilter);
   }
 }
