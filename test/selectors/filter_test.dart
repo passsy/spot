@@ -94,4 +94,27 @@ void main() {
       topMostCenter.spot<Text>().existsOnce().hasText('c');
     });
   });
+
+  testWidgets('atIndex', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Row(
+          children: [
+            Text('a'),
+            Text('b'),
+            Text('c'),
+          ],
+        ),
+      ),
+    );
+
+    // has to be fixed
+    spot<Text>().atIndex(1).withText('b').existsOnce();
+
+    // works already
+    spot<Text>().atIndex(1).existsOnce().hasText('b');
+
+    // should throw some kind of RangeError
+    // spot<Text>().withText('b').atIndex(1).existsOnce();
+  });
 }
