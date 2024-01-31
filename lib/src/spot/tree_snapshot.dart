@@ -23,14 +23,35 @@ WidgetTreeSnapshot createWidgetTreeSnapshot() {
   // ignore: deprecated_member_use
   final rootElement = WidgetsBinding.instance.renderViewElement!;
 
-  WidgetTreeNode build(Element element, {WidgetTreeNode? parent}) {
+  WidgetTreeNode build(
+    Element element, {
+    WidgetTreeNode? parent,
+    bool isOffstage = false,
+  }) {
+    // Get all onstage children of the parent
+    final allOnstageChildren = parent?.element.onstageChildren.toList();
+
+    final bool isOffstageElement;
+    if (allOnstageChildren == null) {
+      // If there is no parent use isOffstage which is false by default
+      isOffstageElement = isOffstage;
+    } else {
+      // Check if the current element is offstage or use the parent's state
+      isOffstageElement = !allOnstageChildren.contains(element) || isOffstage;
+    }
+
     final snapshot = WidgetTreeNode(
       element: element,
       parent: parent,
+      isOffstage: isOffstageElement,
     );
 
     for (final child in element.children) {
-      snapshot.addChild(build(child, parent: snapshot));
+      snapshot.addChild(build(
+        child,
+        parent: snapshot,
+        isOffstage: isOffstageElement,
+      ));
     }
     return snapshot;
   }
@@ -71,12 +92,15 @@ class WidgetTreeNode {
   /// node of the tree.
   final WidgetTreeNode? parent;
 
+  final bool isOffstage;
+
   /// Creates an [Element] in the element tree.
   ///
   /// Do not forget to call [addChild] manually after creation!
   WidgetTreeNode({
     required this.element,
     required this.parent,
+    this.isOffstage = false,
   });
 
   @override

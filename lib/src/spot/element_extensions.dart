@@ -28,4 +28,12 @@ extension ElementExtensions on Element {
     visitChildren(found.add);
     yield* found;
   }
+
+  /// Returns only onstage children of [Element] in depth first order from the closest
+  /// to the leaves
+  Iterable<Element> get onstageChildren sync* {
+    final List<Element> found = [];
+    debugVisitOnstageChildren(found.add);
+    yield* found;
+  }
 }
