@@ -106,14 +106,6 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
     ];
   }
 
-  /// Generates a candidate generator for this selector.
-  ///
-  /// Used to produce sets of candidate widget tree nodes that match
-  /// this selector.
-  CandidateGenerator<W> createCandidateGenerator() {
-    return CandidateGeneratorFromParents(this);
-  }
-
   @override
   String toString() {
     final children = this.children.isNotEmpty
@@ -274,15 +266,6 @@ abstract class ElementFilter {
 
   /// A description to describe the filter
   String get description;
-}
-
-/// Base class for generating candidate widget tree nodes for a given widget type.
-///
-/// Implementations of this class are used to produce sets of candidates
-/// that match a certain widget type [W].
-abstract class CandidateGenerator<W extends Widget> {
-  /// Generates a set of candidate widget tree nodes.
-  Iterable<WidgetTreeNode> generateCandidates();
 }
 
 /// Defines the quantity constraints for the number of widgets

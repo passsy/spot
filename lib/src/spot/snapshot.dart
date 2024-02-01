@@ -148,7 +148,7 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
   }
 
   final List<WidgetTreeNode> candidates =
-      selector.createCandidateGenerator().generateCandidates().toList();
+      CandidateGeneratorFromParents(selector).generateCandidates().toList();
 
   final filters = selector.createElementFilters();
   final discovered =
@@ -175,8 +175,7 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
 ///
 /// This class is used to create a set of candidates by considering the
 /// hierarchical context defined by parent selectors in a [WidgetSelector].
-class CandidateGeneratorFromParents<W extends Widget>
-    implements CandidateGenerator<W> {
+class CandidateGeneratorFromParents<W extends Widget> {
   /// Constructs a [CandidateGeneratorFromParents] using the
   /// provided [selector].
   CandidateGeneratorFromParents(this.selector);
@@ -185,7 +184,6 @@ class CandidateGeneratorFromParents<W extends Widget>
   /// candidates.
   final WidgetSelector<W> selector;
 
-  @override
   Iterable<WidgetTreeNode> generateCandidates() {
     final tree = currentWidgetTreeSnapshot();
     final List<WidgetSnapshot<Widget>> parentSnapshots =

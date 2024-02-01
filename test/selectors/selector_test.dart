@@ -67,9 +67,6 @@ void main() {
     final List<ElementFilter> createElementFilters =
         selector.createElementFilters();
     expect(createElementFilters, isNotNull);
-    final CandidateGenerator<Center> createCandidateGenerator =
-        selector.createCandidateGenerator();
-    expect(createCandidateGenerator, isNotNull);
     final String stringWithoutParents = selector.toStringWithoutParents();
     expect(stringWithoutParents, isNotNull);
     final String stringBreadcrumb = selector.toStringBreadcrumb();
