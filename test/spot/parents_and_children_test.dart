@@ -52,6 +52,14 @@ void main() {
     // IconButton has parents with a different scope
     // and search is not limited to scope of IconButton
     scaffold.spot<IconButton>(parents: [wrap]).existsOnce();
+    final button = scaffold
+        .spot<IconButton>()
+        .atIndex(1)
+        .withParent(wrap)
+        .withColor(Colors.green)
+      ..doesNotExist();
+    print(button);
+    print(button.toStringBreadcrumb());
   });
 
   testWidgets('children can have parents too', (tester) async {

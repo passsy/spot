@@ -89,9 +89,8 @@ void main() {
           ),
         ),
       );
-      // TODO find better way assert children
-      final topMostCenter = spot<Center>().last();
-      topMostCenter.spot<Text>().existsOnce().hasText('c');
+      final bottomCenter = spot<Center>().last();
+      bottomCenter.spot<Text>().existsOnce().hasText('c');
     });
   });
 
@@ -108,13 +107,10 @@ void main() {
       ),
     );
 
-    // TODO make this work
     spot<Text>().atIndex(1).withText('b').existsOnce();
-
-    // works already
     spot<Text>().atIndex(1).existsOnce().hasText('b');
 
     // should throw some kind of RangeError
-    // spot<Text>().withText('b').atIndex(1).existsOnce();
+    //spot<Text>().withText('b').atIndex(1).existsOnce();
   });
 }

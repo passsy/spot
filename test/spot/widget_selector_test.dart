@@ -15,7 +15,7 @@ void main() {
     );
     expect(
       selector2.toString(),
-      'Center with child SizedBox > with parent Row',
+      'Center with child SizedBox ❯ with parent Row',
     );
   });
 
@@ -27,11 +27,11 @@ void main() {
         spot<Center>().withChild(spot<SizedBox>()).withParent(spot<Row>());
     expect(
       selector1.toStringBreadcrumb(),
-      'Center with child (Row > SizedBox)',
+      'Center with child (Row ᗕ SizedBox)',
     );
     expect(
       selector2.toStringBreadcrumb(),
-      'Row > Center with child SizedBox',
+      'Row ᗕ Center with child SizedBox',
     );
   });
 }

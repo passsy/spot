@@ -23,6 +23,24 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
     ],
   );
 
+  /// Separator indicating a parent-child relationship between selectors
+  ///
+  /// ```
+  /// MaterialApp ᗕ Scaffold
+  /// ```
+  ///
+  /// MaterialApp is parent of Scaffold
+  static const String inheritanceSeparator = ' ᗕ ';
+
+  /// Separator splitting stages of a selector
+  ///
+  /// ```
+  /// IconButton ❯ (at index 1) ❯ with prop "color" equals <MaterialColor(primary value: Color(0xff4caf50))>
+  /// ```
+  ///
+  /// IconButton is stage 1, taking the second item is stage 2, and matching the color is stage 3
+  static const String stageSeparator = ' ❯ ';
+
   /// Constructor for creating a [WidgetSelector].
   ///
   /// Allows specifying various parameters for customizing the selection criteria.
@@ -112,7 +130,7 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
       if (stage is WidgetTypeFilter) {
         sb.write(' ');
       } else if (!isLast) {
-        sb.write(' > ');
+        sb.write(stageSeparator);
       }
     }
     final parts =
@@ -129,7 +147,11 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
     for (int i = 0; i < stages.length; i++) {
       final stage = stages[i];
       if (stage is ParentFilter) {
-        final child = sb.toString();
+        var child = sb.toString();
+        if (child.endsWith(stageSeparator)) {
+          // Remove stage separator from the end
+          child = child.substring(0, child.length - stageSeparator.length);
+        }
         sb = StringBuffer();
         final String desc;
         if (stage.parents.length == 1) {
@@ -138,17 +160,19 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
           desc =
               '[${stage.parents.map((e) => e.toStringBreadcrumb()).join(', ')}]';
         }
-        if (desc.contains(' > ')) {
+        if (desc.contains(inheritanceSeparator) ||
+            desc.contains(stageSeparator)) {
           sb.write('($desc)');
         } else {
           sb.write(desc);
         }
-        sb.write(' > ');
+        sb.write(inheritanceSeparator);
         sb.write(child);
       } else if (stage is ChildFilter) {
         if (stage.childSelectors.length == 1) {
           var desc = stage.childSelectors.first.toStringBreadcrumb();
-          if (desc.contains(' > ')) {
+          if (desc.contains(inheritanceSeparator) ||
+              desc.contains(stageSeparator)) {
             desc = '($desc)';
           }
           sb.write('with child $desc');
@@ -156,22 +180,32 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
           var desc = stage.childSelectors
               .map((e) => e.toStringBreadcrumb())
               .join(', ');
-          if (desc.contains(' > ')) {
+          if (desc.contains(inheritanceSeparator) ||
+              desc.contains(stageSeparator)) {
             desc = '($desc)';
           }
           sb.write('with children [$desc]');
         }
       } else {
         final desc = stage.description;
-        if (desc.contains(' > ')) {
+        if (desc.contains(inheritanceSeparator) ||
+            desc.contains(stageSeparator)) {
           sb.write('($desc)');
         } else {
           sb.write(desc);
         }
       }
 
+      final isLast = i == stages.length - 1;
       if (stage is WidgetTypeFilter) {
-        sb.write(' ');
+        if (!sb.toString().endsWith(' ')) {
+          sb.write(' ');
+        }
+      } else if (!isLast) {
+        if (!sb.toString().endsWith(stageSeparator)) {
+          sb = StringBuffer(sb.toString().trimRight());
+          sb.write(stageSeparator);
+        }
       }
     }
 

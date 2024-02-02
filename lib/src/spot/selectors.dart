@@ -488,7 +488,7 @@ class _FirstElement extends ElementFilter {
   }
 
   @override
-  String get description => ':first';
+  String get description => 'first item';
 }
 
 class _LastElement extends ElementFilter {
@@ -504,7 +504,7 @@ class _LastElement extends ElementFilter {
   }
 
   @override
-  String get description => ':last';
+  String get description => 'last item';
 }
 
 class _ElementAtIndex extends ElementFilter {
@@ -522,7 +522,7 @@ class _ElementAtIndex extends ElementFilter {
   }
 
   @override
-  String get description => ':index($index)';
+  String get description => 'at index $index';
 
   @override
   String toString() {
