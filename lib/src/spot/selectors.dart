@@ -4,9 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/checks/checks_nullability.dart';
-import 'package:spot/src/spot/child_element_filter.dart';
-import 'package:spot/src/spot/parent_element_filter.dart';
-import 'package:spot/src/spot/prop_element_filter.dart';
 import 'package:spot/src/spot/snapshot.dart' as snapshot_file show snapshot;
 import 'package:spot/src/spot/snapshot.dart';
 import 'package:spot/src/spot/text/any_text.dart';
@@ -101,7 +98,7 @@ mixin ChainableSelectors<T extends Widget> {
     final selector = WidgetSelector<W>(
       stages: [
         WidgetTypeFilter<W>(),
-        PropFilter(
+        PredicateFilter(
           predicate: (Element e) => identical(e.widget, widget),
           description: 'Widget === $widget',
         ),
@@ -154,7 +151,7 @@ mixin ChainableSelectors<T extends Widget> {
     final selector = WidgetSelector<W>(
       stages: [
         WidgetTypeFilter<W>(),
-        PropFilter(
+        PredicateFilter(
           predicate: (Element e) => identical(e, element),
           description: 'Element === $element',
         ),
@@ -288,7 +285,7 @@ mixin ChainableSelectors<T extends Widget> {
     final selector = WidgetSelector<W>(
       stages: [
         WidgetTypeFilter<W>(),
-        PropFilter(
+        PredicateFilter(
           predicate: (Element e) {
             if (e.widget is Text) {
               final actual = (e.widget as Text).data;
@@ -329,7 +326,7 @@ mixin ChainableSelectors<T extends Widget> {
     final selector = WidgetSelector<Icon>(
       stages: [
         WidgetTypeFilter<Icon>(),
-        PropFilter(
+        PredicateFilter(
           predicate: (Element e) {
             if (e.widget is Icon) {
               return (e.widget as Icon).icon == icon;
@@ -395,7 +392,7 @@ mixin ChainableSelectors<T extends Widget> {
     final selector = WidgetSelector<W>(
       stages: [
         WidgetTypeFilter<W>(),
-        PropFilter(
+        PredicateFilter(
           predicate: (Element e) => e.widget.key == key,
           description: 'with key: "$key"',
         ),
@@ -561,7 +558,7 @@ extension SelectorQueries<W extends Widget> on WidgetSelector<W> {
     required String description,
   }) {
     return self.addStage(
-      PropFilter(
+      PredicateFilter(
         predicate: predicate,
         description: description,
       ),
@@ -587,7 +584,7 @@ extension SelectorQueries<W extends Widget> on WidgetSelector<W> {
     required String description,
   }) {
     return self.addStage(
-      PropFilter(
+      PredicateFilter(
         predicate: (Element element) {
           final widget = self.mapElementToWidget(element);
           return predicate(widget);

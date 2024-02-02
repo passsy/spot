@@ -28,6 +28,12 @@ export 'package:spot/src/screenshot/screenshot.dart';
 export 'package:spot/src/spot/default_selectors.dart';
 export 'package:spot/src/spot/diagnostic_props.dart';
 export 'package:spot/src/spot/effective/effective_text.dart';
+export 'package:spot/src/spot/filters/child_filter.dart' show ChildFilter;
+export 'package:spot/src/spot/filters/parent_filter.dart' show ParentFilter;
+export 'package:spot/src/spot/filters/predicate_filter.dart'
+    show PredicateFilter;
+export 'package:spot/src/spot/filters/widget_type_filter.dart'
+    show WidgetTypeFilter;
 export 'package:spot/src/spot/finder_interop.dart';
 export 'package:spot/src/spot/matcher_generator.dart' show CreateMatchers;
 export 'package:spot/src/spot/props.dart';

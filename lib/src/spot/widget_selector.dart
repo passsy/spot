@@ -1,8 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
-import 'package:spot/src/spot/child_element_filter.dart';
-import 'package:spot/src/spot/parent_element_filter.dart';
-import 'package:spot/src/spot/prop_element_filter.dart';
+import 'package:spot/src/spot/filters/child_filter.dart';
+import 'package:spot/src/spot/filters/parent_filter.dart';
+import 'package:spot/src/spot/filters/predicate_filter.dart';
+import 'package:spot/src/spot/filters/widget_type_filter.dart';
 import 'package:spot/src/spot/selectors.dart' show ChainableSelectors;
 import 'package:spot/src/spot/tree_snapshot.dart';
 
@@ -15,7 +16,7 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
   /// Matches any widget currently mounted
   static final WidgetSelector all = WidgetSelector(
     stages: [
-      PropFilter(
+      PredicateFilter(
         predicate: (e) => true,
         description: 'any Widget',
       ),
@@ -46,7 +47,7 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
   /// Usual filters are:
   /// - [ParentFilter]
   /// - [ChildFilter]
-  /// - [PropFilter]
+  /// - [PredicateFilter]
   /// - [WidgetTypeFilter]
   final List<ElementFilter> stages;
 
@@ -225,7 +226,10 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
       mapElementToWidget: mapElementToWidget ?? this.mapElementToWidget,
     );
   }
+}
 
+/// Allows modification of stages of a [WidgetSelector]
+extension MutateStages<W extends Widget> on WidgetSelector<W> {
   /// Adds a new [stage] to at the end to further narrow down the selection of widgets
   @useResult
   WidgetSelector<W> addStage(ElementFilter newStage) {
@@ -247,7 +251,7 @@ typedef MultiWidgetSelector<W extends Widget> = WidgetSelector<W>;
 /// specific criteria.
 ///
 /// Notable implementations:
-/// - [PropFilter]
+/// - [PredicateFilter]
 /// - [ChildFilter]
 /// - [WidgetTypeFilter]
 /// - [ParentFilter]
@@ -336,30 +340,3 @@ enum ExpectedQuantity {
   /// A selector that matches multiple widgets
   multi,
 }
-
-/// Filters candidates by widget type [W] comparing the runtime type.
-///
-/// Comparing the runtimeType makes sure that `spot<Align>()`
-/// does not accidentally match a [Center] Widget, that extends [Align].
-class WidgetTypeFilter<W extends Widget> implements ElementFilter {
-  @override
-  Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
-    if (W == Widget) {
-      return candidates;
-    }
-    final type = _typeOf<W>();
-    return candidates
-        .where((WidgetTreeNode node) => node.element.widget.runtimeType == type)
-        .toList();
-  }
-
-  @override
-  String get description => '$W';
-
-  @override
-  String toString() {
-    return 'WidgetTypeFilter of $W';
-  }
-}
-
-Type _typeOf<T>() => T;

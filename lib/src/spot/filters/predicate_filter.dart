@@ -2,12 +2,14 @@ import 'package:flutter/widgets.dart';
 import 'package:spot/src/spot/widget_selector.dart';
 
 /// Filters widget tree nodes based on a predicate
-class PropFilter implements ElementFilter {
+class PredicateFilter implements ElementFilter {
   /// The predicate function to evaluate.
   final bool Function(Element) predicate;
 
-  /// Which property to match
-  PropFilter({required this.predicate, required this.description});
+  /// Creates a super generic filter that filters based on a predicate.
+  ///
+  /// The [description] is used to describe the filter in error messages.
+  PredicateFilter({required this.predicate, required this.description});
 
   @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
@@ -21,6 +23,6 @@ class PropFilter implements ElementFilter {
 
   @override
   String toString() {
-    return 'PropFilter of $description';
+    return 'PredicateFilter of $description';
   }
 }

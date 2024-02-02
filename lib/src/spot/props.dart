@@ -2,7 +2,7 @@ import 'package:checks/checks.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 import 'package:spot/src/checks/checks_nullability.dart';
-import 'package:spot/src/spot/prop_element_filter.dart';
+import 'package:spot/src/spot/filters/predicate_filter.dart';
 import 'package:spot/src/spot/selectors.dart';
 import 'package:spot/src/spot/widget_selector.dart';
 
@@ -95,7 +95,7 @@ extension PropSelectorQueries<W extends Widget> on ChainableSelectors<W> {
     bool Function(T value) match,
   ) {
     return self!.addStage(
-      PropFilter(
+      PredicateFilter(
         predicate: (Element element) {
           final widget = self!.mapElementToWidget(element);
           final value = prop.get(widget);
@@ -124,7 +124,7 @@ extension PropSelectorQueries<W extends Widget> on ChainableSelectors<W> {
     bool Function(T value) match,
   ) {
     return self!.addStage(
-      PropFilter(
+      PredicateFilter(
         predicate: (Element element) {
           final value = prop.get(element);
           return match(value);
@@ -155,7 +155,7 @@ extension PropSelectorQueries<W extends Widget> on ChainableSelectors<W> {
     bool Function(T value) match,
   ) {
     return self!.addStage(
-      PropFilter(
+      PredicateFilter(
         predicate: (Element element) {
           final renderObject = element.renderObject;
           if (renderObject is R) {

@@ -5,8 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
-import 'package:spot/src/spot/child_element_filter.dart';
-import 'package:spot/src/spot/parent_element_filter.dart';
 
 void main() {
   testWidgets('parents can have parents too', (tester) async {
