@@ -138,17 +138,7 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
 }) {
   TestAsyncUtils.guardSync();
   final treeSnapshot = currentWidgetTreeSnapshot();
-
-  // if (selector.parents.isEmpty) {
-  //   final WidgetSnapshot<W> snapshot = findWithinScope(treeSnapshot, selector);
-  //   if (validateQuantity) {
-  //     snapshot.validateQuantity();
-  //   }
-  //   return snapshot;
-  // }
-
   final List<WidgetTreeNode> candidates = treeSnapshot.allNodes;
-
   final filters = selector.stages;
 
   // an easy to debug list of all filters and their individual results
@@ -179,86 +169,6 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
 
   return snapshot;
 }
-/*
-/// Generates candidate widget tree nodes based on parent selectors for a
-/// given widget type [W].
-///
-/// This class is used to create a set of candidates by considering the
-/// hierarchical context defined by parent selectors in a [WidgetSelector].
-class CandidateGeneratorFromParents<W extends Widget>
-    implements CandidateGenerator<W> {
-  /// Constructs a [CandidateGeneratorFromParents] using the
-  /// provided [selector].
-  CandidateGeneratorFromParents(this.selector);
-
-  /// The [WidgetSelector] whose parent selectors are used to generat
-  /// candidates.
-  final WidgetSelector<W> selector;
-
-  @override
-  Iterable<WidgetTreeNode> generateCandidates() {
-    final tree = currentWidgetTreeSnapshot();
-    final List<WidgetSnapshot<Widget>> parentSnapshots =
-        selector.parents.map((selector) {
-      final WidgetSnapshot<Widget> widgetSnapshot = snapshot(selector);
-      widgetSnapshot.validateQuantity();
-      return widgetSnapshot;
-    }).toList();
-
-    final WidgetSelector<W> selectorWithoutParents =
-        selector.copyWith(parents: []);
-
-    // Take a snapshot from each parent and get the snapshots of all nodes that match
-    final List<Map<WidgetTreeNode, List<WidgetSnapshot<W>>>> discoveryByParent =
-        parentSnapshots.map((WidgetSnapshot<Widget> parentSnapshot) {
-      final Map<WidgetTreeNode, List<WidgetSnapshot<W>>> groups = {};
-      if (parentSnapshot.discovered.isEmpty) {
-        return groups;
-      }
-
-      for (final WidgetTreeNode node in parentSnapshot.discovered) {
-        final WidgetSnapshot<W> group =
-            findWithinScope(tree.scope(node), selectorWithoutParents);
-        final list = groups[node];
-        if (list == null) {
-          groups[node] = [group];
-        } else {
-          list.add(group);
-        }
-      }
-
-      return groups;
-    }).toList();
-
-    final List<WidgetSnapshot<W>> discoveredSnapshots =
-        discoveryByParent.map((it) => it.values).flatten().flatten().toList();
-
-    final List<WidgetTreeNode> allDiscoveredNodes =
-        discoveredSnapshots.map((it) => it.discovered).flatten().toList();
-
-    final List<Element> distinctElements =
-        allDiscoveredNodes.map((e) => e.element).toSet().toList();
-
-    // find nodes that exist in all parents
-    final List<Element> elementsInAllParents =
-        distinctElements.where((element) {
-      return discoveryByParent.all((
-        Map<WidgetTreeNode, List<WidgetSnapshot<W>>> discovered,
-      ) {
-        return discovered.values.any((List<WidgetSnapshot<W>> list) {
-          return list.any((node) {
-            return node.discovered.map((e) => e.element).contains(element);
-          });
-        });
-      });
-    }).toList();
-
-    final List<WidgetTreeNode> allNodes = tree.allNodes;
-    return elementsInAllParents
-        .map((e) => allNodes.firstWhere((node) => node.element == e))
-        .toList();
-  }
-}*/
 
 /// Finds elements inside scope, completely ignores parents
 WidgetSnapshot<W> findWithinScope<W extends Widget>(
