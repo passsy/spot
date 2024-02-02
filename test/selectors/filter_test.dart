@@ -108,7 +108,7 @@ void main() {
       ),
     );
 
-    // has to be fixed
+    // TODO make this work
     spot<Text>().atIndex(1).withText('b').existsOnce();
 
     // works already

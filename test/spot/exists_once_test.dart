@@ -221,9 +221,13 @@ void main() {
     snapshot(spot<Text>()).existsAtLeastOnce();
 
     multipleSpotter.copyWith(
-      parents: [
-        // only finds the single SizedBox in Wrap, not the SizedBox below Center
-        wrap.spot<SizedBox>(),
+      stages: [
+        Stage(
+          parents: [
+            // only finds the single SizedBox in Wrap, not the SizedBox below Center
+            wrap.spot<SizedBox>(),
+          ],
+        )
       ],
     ).existsOnce();
   });

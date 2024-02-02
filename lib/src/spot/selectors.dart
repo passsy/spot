@@ -52,11 +52,15 @@ mixin ChainableSelectors<T extends Widget> {
     List<WidgetSelector> children = const [],
   }) {
     final selector = WidgetSelector<W>(
-      props: [
-        WidgetTypePredicate<W>(),
+      stages: [
+        Stage(
+          props: [
+            WidgetTypePredicate<W>(),
+          ],
+          parents: [if (self != null) self!, ...parents],
+          children: children,
+        )
       ],
-      parents: [if (self != null) self!, ...parents],
-      children: children,
     );
 
     return selector;
@@ -95,15 +99,19 @@ mixin ChainableSelectors<T extends Widget> {
     List<WidgetSelector> children = const [],
   }) {
     return WidgetSelector<W>(
-      props: [
-        WidgetTypePredicate<W>(),
-        PredicateWithDescription(
-          (Element e) => identical(e.widget, widget),
-          description: 'Widget === $widget',
-        ),
+      stages: [
+        Stage(
+          props: [
+            WidgetTypePredicate<W>(),
+            PredicateWithDescription(
+              (Element e) => identical(e.widget, widget),
+              description: 'Widget === $widget',
+            ),
+          ],
+          parents: [if (self != null) self!, ...parents],
+          children: children,
+        )
       ],
-      parents: [if (self != null) self!, ...parents],
-      children: children,
     );
   }
 
@@ -146,15 +154,19 @@ mixin ChainableSelectors<T extends Widget> {
     List<WidgetSelector> children = const [],
   }) {
     return WidgetSelector<W>(
-      props: [
-        WidgetTypePredicate<W>(),
-        PredicateWithDescription(
-          (Element e) => identical(e, element),
-          description: 'Element === $element',
-        ),
+      stages: [
+        Stage(
+          props: [
+            WidgetTypePredicate<W>(),
+            PredicateWithDescription(
+              (Element e) => identical(e, element),
+              description: 'Element === $element',
+            ),
+          ],
+          parents: [if (self != null) self!, ...parents],
+          children: children,
+        )
       ],
-      parents: [if (self != null) self!, ...parents],
-      children: children,
     );
   }
 
@@ -230,14 +242,18 @@ mixin ChainableSelectors<T extends Widget> {
           return describe(subject).map((it) => it.trim()).toList().join(' ');
         }();
     return AnyTextWidgetSelector(
-      props: [
-        MatchTextPredicate(
-          match: (it) => match(it),
-          description: 'Widget with text $name',
-        ),
+      stages: [
+        Stage(
+          props: [
+            MatchTextPredicate(
+              match: (it) => match(it),
+              description: 'Widget with text $name',
+            ),
+          ],
+          parents: [if (self != null) self!, ...parents],
+          children: children,
+        )
       ],
-      parents: [if (self != null) self!, ...parents],
-      children: children,
     );
   }
 
@@ -276,33 +292,37 @@ mixin ChainableSelectors<T extends Widget> {
     bool findRichText = false,
   }) {
     return WidgetSelector<W>(
-      props: [
-        WidgetTypePredicate<W>(),
-        PredicateWithDescription(
-          (Element e) {
-            if (e.widget is Text) {
-              final actual = (e.widget as Text).data;
-              return actual == text;
-            }
-            if (e.widget is SelectableText) {
-              final actual = (e.widget as SelectableText).data;
-              return actual == text;
-            }
-            if (e.widget is EditableText) {
-              final actual = (e.widget as EditableText).controller.text;
-              return actual == text;
-            }
-            if (findRichText == true && e.widget is RichText) {
-              final actual = (e.widget as RichText).text.toPlainText();
-              return actual == text;
-            }
-            return false;
-          },
-          description: 'Widget with exact text: "$text"',
-        ),
+      stages: [
+        Stage(
+          props: [
+            WidgetTypePredicate<W>(),
+            PredicateWithDescription(
+              (Element e) {
+                if (e.widget is Text) {
+                  final actual = (e.widget as Text).data;
+                  return actual == text;
+                }
+                if (e.widget is SelectableText) {
+                  final actual = (e.widget as SelectableText).data;
+                  return actual == text;
+                }
+                if (e.widget is EditableText) {
+                  final actual = (e.widget as EditableText).controller.text;
+                  return actual == text;
+                }
+                if (findRichText == true && e.widget is RichText) {
+                  final actual = (e.widget as RichText).text.toPlainText();
+                  return actual == text;
+                }
+                return false;
+              },
+              description: 'Widget with exact text: "$text"',
+            ),
+          ],
+          parents: [if (self != null) self!, ...parents],
+          children: children,
+        )
       ],
-      parents: [if (self != null) self!, ...parents],
-      children: children,
     );
   }
 
@@ -315,20 +335,24 @@ mixin ChainableSelectors<T extends Widget> {
     List<WidgetSelector> children = const [],
   }) {
     return WidgetSelector(
-      props: [
-        WidgetTypePredicate<Icon>(),
-        PredicateWithDescription(
-          (Element e) {
-            if (e.widget is Icon) {
-              return (e.widget as Icon).icon == icon;
-            }
-            return false;
-          },
-          description: 'Widget with icon: "$icon"',
-        ),
+      stages: [
+        Stage(
+          props: [
+            WidgetTypePredicate<Icon>(),
+            PredicateWithDescription(
+              (Element e) {
+                if (e.widget is Icon) {
+                  return (e.widget as Icon).icon == icon;
+                }
+                return false;
+              },
+              description: 'Widget with icon: "$icon"',
+            ),
+          ],
+          parents: [if (self != null) self!, ...parents],
+          children: children,
+        )
       ],
-      parents: [if (self != null) self!, ...parents],
-      children: children,
     );
   }
 
@@ -379,15 +403,19 @@ mixin ChainableSelectors<T extends Widget> {
     List<WidgetSelector> children = const [],
   }) {
     return WidgetSelector(
-      props: [
-        WidgetTypePredicate<W>(),
-        PredicateWithDescription(
-          (element) => element.widget.key == key,
-          description: 'with key: "$key"',
-        ),
+      stages: [
+        Stage(
+          props: [
+            WidgetTypePredicate<W>(),
+            PredicateWithDescription(
+              (element) => element.widget.key == key,
+              description: 'with key: "$key"',
+            ),
+          ],
+          parents: [if (self != null) self!, ...parents],
+          children: children,
+        )
       ],
-      parents: [if (self != null) self!, ...parents],
-      children: children,
     );
   }
 
@@ -434,7 +462,14 @@ mixin ChainableSelectors<T extends Widget> {
   @useResult
   WidgetSelector<T> first() {
     // TODO add names to the elementFilters, for a better WidgetSelector.toString()
-    return self!.copyWith(elementFilters: [_FirstElement()]);
+    return self!.copyWith(
+      stages: [
+        ...self!.stages,
+        Stage(
+          elementFilters: [_FirstElement()],
+        )
+      ],
+    );
   }
 
   /// Selects the last of n widgets
@@ -449,7 +484,14 @@ mixin ChainableSelectors<T extends Widget> {
   /// ```
   @useResult
   WidgetSelector<T> last() {
-    return self!.copyWith(elementFilters: [_LastElement()]);
+    return self!.copyWith(
+      stages: [
+        ...self!.stages,
+        Stage(
+          elementFilters: [_LastElement()],
+        )
+      ],
+    );
   }
 
   /// Selects the widget at a specified [index] in the list of found widgets.
@@ -460,7 +502,14 @@ mixin ChainableSelectors<T extends Widget> {
   ///```
   @useResult
   WidgetSelector<T> atIndex(int index) {
-    return self!.copyWith(elementFilters: [_ElementAtIndex(index)]);
+    return self!.copyWith(
+      stages: [
+        ...self!.stages,
+        Stage(
+          elementFilters: [_ElementAtIndex(index)],
+        )
+      ],
+    );
   }
 }
 
@@ -512,6 +561,11 @@ class _ElementAtIndex extends ElementFilter {
 
   @override
   String get description => ':index($index)';
+
+  @override
+  String toString() {
+    return '_ElementAtIndex{index: $index}';
+  }
 }
 
 /// Extension on [WidgetSelector<W>] for advanced widget querying.
@@ -542,12 +596,16 @@ extension SelectorQueries<W extends Widget> on WidgetSelector<W> {
     required String description,
   }) {
     return self.copyWith(
-      props: [
-        ...self.props,
-        PredicateWithDescription(
-          (Element e) => predicate(e),
-          description: description,
-        ),
+      stages: [
+        ...self.stages,
+        Stage(
+          props: [
+            PredicateWithDescription(
+              (Element e) => predicate(e),
+              description: description,
+            ),
+          ],
+        )
       ],
     );
   }
@@ -571,15 +629,19 @@ extension SelectorQueries<W extends Widget> on WidgetSelector<W> {
     required String description,
   }) {
     return self.copyWith(
-      props: [
-        ...self.props,
-        PredicateWithDescription(
-          (Element element) {
-            final widget = self.mapElementToWidget(element);
-            return predicate(widget);
-          },
-          description: description,
-        ),
+      stages: [
+        ...self.stages,
+        Stage(
+          props: [
+            PredicateWithDescription(
+              (Element element) {
+                final widget = self.mapElementToWidget(element);
+                return predicate(widget);
+              },
+              description: description,
+            ),
+          ],
+        )
       ],
     );
   }
@@ -1153,7 +1215,14 @@ extension RelativeSelectors<W extends Widget> on WidgetSelector<W> {
   /// - [withChildren] requires [children] to be children of the widget to match.
   @useResult
   WidgetSelector<W> withParent(WidgetSelector parent) {
-    return copyWith(parents: [...parents, parent]);
+    return copyWith(
+      stages: [
+        ...self.stages,
+        Stage(
+          parents: [parent],
+        )
+      ],
+    );
   }
 
   /// Returns a [WidgetSelector] that requires [parents] to be parents of the
@@ -1170,7 +1239,12 @@ extension RelativeSelectors<W extends Widget> on WidgetSelector<W> {
   /// - [withChildren] requires [children] to be children of the widget to match.
   @useResult
   WidgetSelector<W> withParents(List<WidgetSelector> parents) {
-    return copyWith(parents: [...this.parents, ...parents]);
+    return copyWith(
+      stages: [
+        ...self.stages,
+        Stage(parents: [...parents])
+      ],
+    );
   }
 
   /// Returns a [WidgetSelector] that requires [child] to be a child of the
@@ -1187,7 +1261,14 @@ extension RelativeSelectors<W extends Widget> on WidgetSelector<W> {
   /// - [withChildren] requires [children] to be children of the widget to match.
   @useResult
   WidgetSelector<W> withChild(WidgetSelector child) {
-    return copyWith(children: [...children, child]);
+    return copyWith(
+      stages: [
+        ...self.stages,
+        Stage(
+          children: [child],
+        )
+      ],
+    );
   }
 
   /// Returns a [WidgetSelector] that requires [children] to be children of the
@@ -1204,7 +1285,14 @@ extension RelativeSelectors<W extends Widget> on WidgetSelector<W> {
   /// - [withChild] requires [child] to be a child of the widget to match.
   @useResult
   WidgetSelector<W> withChildren(List<WidgetSelector> children) {
-    return copyWith(children: [...this.children, ...children]);
+    return copyWith(
+      stages: [
+        ...self.stages,
+        Stage(
+          children: [...children],
+        )
+      ],
+    );
   }
 }
 

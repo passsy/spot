@@ -90,15 +90,19 @@ extension PropSelectorQueries<W extends Widget> on ChainableSelectors<W> {
     bool Function(T value) match,
   ) {
     return self!.copyWith(
-      props: [
-        ...self!.props,
-        PredicateWithDescription(
-          (Element element) {
-            final widget = self!.mapElementToWidget(element);
-            final value = prop.get(widget);
-            return match(value);
-          },
-          description: prop.name,
+      stages: [
+        ...self!.stages,
+        Stage(
+          props: [
+            PredicateWithDescription(
+              (Element element) {
+                final widget = self!.mapElementToWidget(element);
+                final value = prop.get(widget);
+                return match(value);
+              },
+              description: prop.name,
+            )
+          ],
         ),
       ],
     );
@@ -122,14 +126,18 @@ extension PropSelectorQueries<W extends Widget> on ChainableSelectors<W> {
     bool Function(T value) match,
   ) {
     return self!.copyWith(
-      props: [
-        ...self!.props,
-        PredicateWithDescription(
-          (Element element) {
-            final value = prop.get(element);
-            return match(value);
-          },
-          description: prop.name,
+      stages: [
+        ...self!.stages,
+        Stage(
+          props: [
+            PredicateWithDescription(
+              (Element element) {
+                final value = prop.get(element);
+                return match(value);
+              },
+              description: prop.name,
+            ),
+          ],
         ),
       ],
     );
@@ -156,18 +164,22 @@ extension PropSelectorQueries<W extends Widget> on ChainableSelectors<W> {
     bool Function(T value) match,
   ) {
     return self!.copyWith(
-      props: [
-        ...self!.props,
-        PredicateWithDescription(
-          (Element element) {
-            final renderObject = element.renderObject;
-            if (renderObject is R) {
-              final value = prop.get(renderObject);
-              return match(value);
-            }
-            return false;
-          },
-          description: prop.name,
+      stages: [
+        ...self!.stages,
+        Stage(
+          props: [
+            PredicateWithDescription(
+              (Element element) {
+                final renderObject = element.renderObject;
+                if (renderObject is R) {
+                  final value = prop.get(renderObject);
+                  return match(value);
+                }
+                return false;
+              },
+              description: prop.name,
+            ),
+          ],
         ),
       ],
     );

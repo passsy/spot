@@ -237,9 +237,7 @@ class AnyTextWidgetSelector extends WidgetSelector<AnyText> {
   /// - `children`: Child selectors to include in the match.
   /// - `parents`: Parent selectors to include in the match.
   AnyTextWidgetSelector({
-    required super.props,
-    super.children,
-    super.parents,
+    required super.stages,
   }) : super(mapElementToWidget: _mapElementToAnyText);
 
   static AnyText _mapElementToAnyText(Element element) {
@@ -257,12 +255,12 @@ class AnyTextWidgetSelector extends WidgetSelector<AnyText> {
     );
   }
 
-  @override
-  List<ElementFilter> createElementFilters() {
-    return super.createElementFilters()
-      // Matches multiple widget types, can't filter by synthetic type AnyText
-      ..removeWhere((it) => it is WidgetTypeFilter);
-  }
+  // @override
+  // List<ElementFilter> createElementFilters() {
+  //   return super.createElementFilters()
+  //     Matches multiple widget types, can't filter by synthetic type AnyText
+  // ..removeWhere((it) => it is WidgetTypeFilter);
+  // }
 }
 
 /// Matches text widgets ([EditableText] and [RichText]) on screen.

@@ -11,7 +11,11 @@ extension FinderToSpot on Finder {
   @useResult
   WidgetSelector<W> spot<W extends Widget>() {
     return WidgetSelector<W>(
-      elementFilters: [_FinderFilter(this)],
+      stages: [
+        Stage(
+          elementFilters: [_FinderFilter(this)],
+        ),
+      ],
     );
   }
 }
@@ -31,8 +35,12 @@ extension SpotToFinder<W extends Widget> on WidgetSelector<W> {
   @useResult
   WidgetSelector<T> spotFinder<T extends Widget>(Finder finder) {
     return WidgetSelector<T>(
-      parents: [this],
-      elementFilters: [_FinderFilter(finder)],
+      stages: [
+        Stage(
+          parents: [this],
+          elementFilters: [_FinderFilter(finder)],
+        ),
+      ],
     );
   }
 }
