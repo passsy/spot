@@ -108,7 +108,7 @@ void main() {
       throwsSpotErrorContaining(
         [
           'Found 2 elements',
-          "Text with parent Wrap",
+          "Wrap > Text",
           'expected exactly 1',
           '\nWrap(', // at the beginning of the line, common ancestor
           'Text("World"',

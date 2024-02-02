@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 import 'package:spot/src/spot/child_element_filter.dart';
+import 'package:spot/src/spot/parent_element_filter.dart';
 import 'package:spot/src/spot/prop_element_filter.dart';
 import 'package:spot/src/spot/selectors.dart' show ChainableSelectors;
 import 'package:spot/src/spot/tree_snapshot.dart';
@@ -68,37 +69,33 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
     final sb = StringBuffer();
     for (int i = 0; i < stages.length; i++) {
       final stage = stages[i];
-      final desc = stage.description;
-      if (desc.contains(' > ')) {
-        sb.write('($desc)');
+      if (stage is ParentFilter) {
+        var desc = stage.parents.first.toString();
+        if (desc.contains(' with parent ') || desc.contains(' with child ')) {
+          desc = '($desc)';
+        }
+        sb.write('with parent $desc');
+      } else if (stage is ChildFilter) {
+        if (stage.childSelectors.length == 1) {
+          var desc = stage.childSelectors.first.toString();
+          if (desc.contains(' with parent ') || desc.contains(' with child ')) {
+            desc = '($desc)';
+          }
+          sb.write('with child $desc');
+        } else {
+          var desc = stage.childSelectors.map((e) => e.toString()).join(', ');
+          if (desc.contains(' with parent ') || desc.contains(' with child ')) {
+            desc = '($desc)';
+          }
+          sb.write('with children [$desc]');
+        }
       } else {
-        sb.write(desc);
-      }
-
-      final isLast = i == stages.length - 1;
-      if (stage is WidgetTypeFilter) {
-        sb.write(' ');
-      } else if (!isLast) {
-        sb.write(' > ');
-      }
-    }
-    final parts =
-        [sb.toString().trim(), _quantityToString()].where((e) => e != null);
-    return parts.join(' ');
-  }
-
-  /// Generates a string representation of this selector, excluding parents.
-  ///
-  /// This method is used internally for creating a more concise string output.
-  String toStringWithoutParents() {
-    final sb = StringBuffer();
-    for (int i = 0; i < stages.length; i++) {
-      final stage = stages[i];
-      final desc = stage.description;
-      if (desc.contains(' > ')) {
-        sb.write('($desc)');
-      } else {
-        sb.write(desc);
+        final desc = stage.description;
+        if (desc.contains(' with parent ') || desc.contains(' with child ')) {
+          sb.write('($desc)');
+        } else {
+          sb.write(desc);
+        }
       }
 
       final isLast = i == stages.length - 1;
@@ -118,21 +115,53 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
   /// This method includes parent selectors in the output, showing the full
   /// hierarchy of the selection.
   String toStringBreadcrumb() {
-    final sb = StringBuffer();
+    var sb = StringBuffer();
     for (int i = 0; i < stages.length; i++) {
       final stage = stages[i];
-      final desc = stage.description;
-      if (desc.contains(' > ')) {
-        sb.write('($desc)');
+      if (stage is ParentFilter) {
+        final child = sb.toString();
+        sb = StringBuffer();
+        final String desc;
+        if (stage.parents.length == 1) {
+          desc = stage.parents.first.toStringBreadcrumb();
+        } else {
+          desc =
+              '[${stage.parents.map((e) => e.toStringBreadcrumb()).join(', ')}]';
+        }
+        if (desc.contains(' > ')) {
+          sb.write('($desc)');
+        } else {
+          sb.write(desc);
+        }
+        sb.write(' > ');
+        sb.write(child);
+      } else if (stage is ChildFilter) {
+        if (stage.childSelectors.length == 1) {
+          var desc = stage.childSelectors.first.toStringBreadcrumb();
+          if (desc.contains(' > ')) {
+            desc = '($desc)';
+          }
+          sb.write('with child $desc');
+        } else {
+          var desc = stage.childSelectors
+              .map((e) => e.toStringBreadcrumb())
+              .join(', ');
+          if (desc.contains(' > ')) {
+            desc = '($desc)';
+          }
+          sb.write('with children [$desc]');
+        }
       } else {
-        sb.write(desc);
+        final desc = stage.description;
+        if (desc.contains(' > ')) {
+          sb.write('($desc)');
+        } else {
+          sb.write(desc);
+        }
       }
 
-      final isLast = i == stages.length - 1;
       if (stage is WidgetTypeFilter) {
         sb.write(' ');
-      } else if (!isLast) {
-        sb.write(' > ');
       }
     }
 

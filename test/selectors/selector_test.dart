@@ -69,8 +69,8 @@ void main() {
     // final List<ElementFilter> createElementFilters =
     //     selector.createElementFilters();
     // expect(createElementFilters, isNotNull);
-    final String stringWithoutParents = selector.toStringWithoutParents();
-    expect(stringWithoutParents, isNotNull);
+    // final String stringWithoutParents = selector.toStringWithoutParents();
+    // expect(stringWithoutParents, isNotNull);
     final String stringBreadcrumb = selector.toStringBreadcrumb();
     expect(stringBreadcrumb, isNotNull);
     final WidgetSelector<Center> self = selector.self;

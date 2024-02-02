@@ -4,16 +4,16 @@ import 'package:spot/spot.dart';
 import 'package:spot/src/spot/snapshot.dart';
 
 class ParentFilter implements ElementFilter {
-  ParentFilter(this.parents);
+  ParentFilter(this.parents) : assert(parents.isNotEmpty);
 
   final List<WidgetSelector> parents;
 
   @override
   String get description {
     if (parents.length == 1) {
-      return 'with parent ${parents.first.toStringBreadcrumb()}';
+      return parents.first.toStringBreadcrumb();
     }
-    return 'with parents [${parents.map((e) => e.toStringBreadcrumb()).join(', ')}]';
+    return '[${parents.map((e) => e.toStringBreadcrumb()).join(', ')}]';
   }
 
   @override

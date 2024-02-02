@@ -8,7 +8,7 @@ import 'package:spot/src/spot/widget_selector.dart';
 class ChildFilter implements ElementFilter {
   /// Constructs a [ChildFilter] with a list of
   /// [WidgetSelector]s for matching child elements.
-  ChildFilter(this.childSelectors);
+  ChildFilter(this.childSelectors) : assert(childSelectors.isNotEmpty);
 
   /// A list of [WidgetSelector]s used to match child elements of the widget
   /// tree nodes.
@@ -91,9 +91,9 @@ class ChildFilter implements ElementFilter {
   @override
   String get description {
     if (childSelectors.length == 1) {
-      return 'with child ${childSelectors.first.toStringBreadcrumb()}';
+      return childSelectors.first.toStringBreadcrumb();
     }
-    return 'with children [${childSelectors.map((e) => e.toStringBreadcrumb()).join(', ')}]';
+    return '[${childSelectors.map((e) => e.toStringBreadcrumb()).join(', ')}]';
   }
 
   @override

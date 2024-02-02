@@ -129,7 +129,7 @@ void main() {
       final material = spot<Material>(parents: [spot<SizedBox>()]);
 
       final throwsFailureWithMessage = throwsSpotErrorContaining(
-        ["Could not find Material with parent SizedBox in widget tree"],
+        ["Could not find SizedBox > Material in widget tree"],
       );
 
       expect(material.snapshot().discovered, isEmpty);
@@ -164,7 +164,7 @@ void main() {
       expect(selector.snapshot().discovered, isEmpty);
 
       final throwsFailureWithMessage = throwsSpotErrorContaining([
-        "Could not find Center with child SizedBox > with parent Material in widget tree, expected",
+        "Could not find Material > Center with child SizedBox in widget tree, expected",
         RegExp(r"(?:exactly|at most|at least) \d+"),
         RegExp(
           r"A less specific search \(Center with child SizedBox\) discovered \d+ matches",
@@ -259,7 +259,7 @@ void main() {
         () => spot<Text>(parents: [spot<Row>()]).existsAtLeastNTimes(2),
         throwsSpotErrorContaining(
           [
-            "Found 1 elements matching Text with parent Row in widget tree, expected at least 2",
+            "Found 1 elements matching Row > Text in widget tree, expected at least 2",
             "A less specific search (Text) discovered 3 matches!",
             "Maybe you have to adjust your WidgetSelector (Text with parent Row) to cover those missing elements.",
             'Possible match #1:\nText("a"',
