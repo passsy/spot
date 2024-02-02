@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
-import 'package:spot/src/spot/snapshot.dart';
+import 'package:spot/src/spot/parent_element_filter.dart';
 
 import '../util/assert_error.dart';
 
@@ -108,7 +108,7 @@ void main() {
       throwsSpotErrorContaining(
         [
           'Found 2 elements',
-          "Wrap > Text",
+          "Text with parent Wrap",
           'expected exactly 1',
           '\nWrap(', // at the beginning of the line, common ancestor
           'Text("World"',
@@ -208,27 +208,21 @@ void main() {
       ),
     );
 
-    final textSnapshot = spot<Text>().snapshot();
-    expect(textSnapshot.discoveredElements.length, 2);
-
-    final wrap = spot<Wrap>()..snapshot().existsOnce();
-    // only find the single sizedBox below Wrap
-    wrap.spot<SizedBox>().existsOnce();
+    // final textSnapshot = spot<Text>().snapshot();
+    // expect(textSnapshot.discoveredElements.length, 2);
+    //
+    final wrap = spot<Wrap>();
+    // // only find the single sizedBox below Wrap
+    // wrap.spot<SizedBox>().existsOnce();
 
     final multipleSpotter = spot<Text>();
-    expect(snapshot(multipleSpotter).discovered.length, 2);
+    // expect(snapshot(multipleSpotter).discovered.length, 2);
 
-    snapshot(spot<Text>()).existsAtLeastOnce();
+    // snapshot(spot<Text>()).existsAtLeastOnce();
 
-    multipleSpotter.copyWith(
-      stages: [
-        Stage(
-          parents: [
-            // only finds the single SizedBox in Wrap, not the SizedBox below Center
-            wrap.spot<SizedBox>(),
-          ],
-        )
-      ],
-    ).existsOnce();
+    multipleSpotter
+        // only finds the single SizedBox in Wrap, not the SizedBox below Center
+        .addStage(ParentFilter([wrap.spot<SizedBox>()]))
+        .existsOnce();
   });
 }

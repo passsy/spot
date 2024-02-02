@@ -2,6 +2,7 @@ import 'package:checks/checks.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 import 'package:spot/src/checks/checks_nullability.dart';
+import 'package:spot/src/spot/prop_element_filter.dart';
 import 'package:spot/src/spot/selectors.dart';
 import 'package:spot/src/spot/widget_selector.dart';
 
@@ -89,22 +90,15 @@ extension PropSelectorQueries<W extends Widget> on ChainableSelectors<W> {
     NamedWidgetProp<W, T> prop,
     bool Function(T value) match,
   ) {
-    return self!.copyWith(
-      stages: [
-        ...self!.stages,
-        Stage(
-          props: [
-            PredicateWithDescription(
-              (Element element) {
-                final widget = self!.mapElementToWidget(element);
-                final value = prop.get(widget);
-                return match(value);
-              },
-              description: prop.name,
-            )
-          ],
-        ),
-      ],
+    return self!.addStage(
+      PropFilter(
+        predicate: (Element element) {
+          final widget = self!.mapElementToWidget(element);
+          final value = prop.get(widget);
+          return match(value);
+        },
+        description: prop.name,
+      ),
     );
   }
 
@@ -125,21 +119,14 @@ extension PropSelectorQueries<W extends Widget> on ChainableSelectors<W> {
     NamedElementProp<T> prop,
     bool Function(T value) match,
   ) {
-    return self!.copyWith(
-      stages: [
-        ...self!.stages,
-        Stage(
-          props: [
-            PredicateWithDescription(
-              (Element element) {
-                final value = prop.get(element);
-                return match(value);
-              },
-              description: prop.name,
-            ),
-          ],
-        ),
-      ],
+    return self!.addStage(
+      PropFilter(
+        predicate: (Element element) {
+          final value = prop.get(element);
+          return match(value);
+        },
+        description: prop.name,
+      ),
     );
   }
 
@@ -163,25 +150,18 @@ extension PropSelectorQueries<W extends Widget> on ChainableSelectors<W> {
     NamedRenderObjectProp<R, T> prop,
     bool Function(T value) match,
   ) {
-    return self!.copyWith(
-      stages: [
-        ...self!.stages,
-        Stage(
-          props: [
-            PredicateWithDescription(
-              (Element element) {
-                final renderObject = element.renderObject;
-                if (renderObject is R) {
-                  final value = prop.get(renderObject);
-                  return match(value);
-                }
-                return false;
-              },
-              description: prop.name,
-            ),
-          ],
-        ),
-      ],
+    return self!.addStage(
+      PropFilter(
+        predicate: (Element element) {
+          final renderObject = element.renderObject;
+          if (renderObject is R) {
+            final value = prop.get(renderObject);
+            return match(value);
+          }
+          return false;
+        },
+        description: prop.name,
+      ),
     );
   }
 }

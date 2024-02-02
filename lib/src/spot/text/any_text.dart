@@ -268,13 +268,13 @@ class AnyTextWidgetSelector extends WidgetSelector<AnyText> {
 /// This predicate is used to verify the presence and properties of text within
 /// widgets. It extracts text data from the relevant widget and uses the
 /// provided [match] function to assert the text content.
-class MatchTextPredicate implements PredicateWithDescription {
-  /// Constructs a [MatchTextPredicate].
+class MatchTextFilter implements ElementFilter {
+  /// Constructs a [MatchTextFilter].
   ///
   /// The [match] function is used to assert the text content found in the
   /// relevant widget. The [description] provides a human-readable explanation
   /// of what this predicate checks.
-  MatchTextPredicate({
+  MatchTextFilter({
     required this.match,
     required this.description,
   });
@@ -288,7 +288,9 @@ class MatchTextPredicate implements PredicateWithDescription {
   final String description;
 
   @override
-  bool Function(Element e) get predicate => _match;
+  Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
+    return candidates.where((it) => _match(it.element));
+  }
 
   bool _match(Element element) {
     try {

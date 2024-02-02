@@ -2,6 +2,7 @@ import 'package:dartx/dartx.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
+import 'package:spot/src/spot/parent_element_filter.dart';
 
 /// Extensions that convert from the [Finder] API to spot
 extension FinderToSpot on Finder {
@@ -11,11 +12,7 @@ extension FinderToSpot on Finder {
   @useResult
   WidgetSelector<W> spot<W extends Widget>() {
     return WidgetSelector<W>(
-      stages: [
-        Stage(
-          elementFilters: [_FinderFilter(this)],
-        ),
-      ],
+      stages: [FinderFilter(this)],
     );
   }
 }
@@ -36,19 +33,18 @@ extension SpotToFinder<W extends Widget> on WidgetSelector<W> {
   WidgetSelector<T> spotFinder<T extends Widget>(Finder finder) {
     return WidgetSelector<T>(
       stages: [
-        Stage(
-          parents: [this],
-          elementFilters: [_FinderFilter(finder)],
-        ),
+        FinderFilter(finder),
+        ParentFilter([this]),
       ],
     );
   }
 }
 
-class _FinderFilter extends ElementFilter {
+/// An interop filter that filters elements based on a flutter_test [Finder]
+class FinderFilter extends ElementFilter {
   final Finder finder;
 
-  _FinderFilter(this.finder);
+  FinderFilter(this.finder);
 
   @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {

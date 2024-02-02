@@ -1,11 +1,8 @@
-import 'package:collection/collection.dart';
-import 'package:dartx/dartx.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 import 'package:spot/src/spot/child_element_filter.dart';
 import 'package:spot/src/spot/prop_element_filter.dart';
 import 'package:spot/src/spot/selectors.dart' show ChainableSelectors;
-import 'package:spot/src/spot/snapshot.dart';
 import 'package:spot/src/spot/tree_snapshot.dart';
 
 export 'package:spot/src/spot/tree_snapshot.dart';
@@ -17,13 +14,9 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
   /// Matches any widget currently mounted
   static final WidgetSelector all = WidgetSelector(
     stages: [
-      Stage(
-        props: [
-          PredicateWithDescription(
-            (e) => true,
-            description: 'any Widget',
-          ),
-        ],
+      PropFilter(
+        predicate: (e) => true,
+        description: 'any Widget',
       ),
     ],
   );
@@ -32,19 +25,20 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
   ///
   /// Allows specifying various parameters for customizing the selection criteria.
   WidgetSelector({
-    required this.stages,
+    required List<ElementFilter> stages,
     @Deprecated('Use quantityConstraint instead')
     ExpectedQuantity expectedQuantity = ExpectedQuantity.multi,
     QuantityConstraint? quantityConstraint,
     W Function(Element element)? mapElementToWidget,
-  })  : quantityConstraint = quantityConstraint ??
+  })  : stages = List.unmodifiable(stages),
+        quantityConstraint = quantityConstraint ??
             // ignore: deprecated_member_use_from_same_package
             (expectedQuantity == ExpectedQuantity.single
                 ? QuantityConstraint.single
                 : QuantityConstraint.unconstrained),
         mapElementToWidget = mapElementToWidget ?? defaultMapElementToWidget<W>;
 
-  final List<Stage> stages;
+  final List<ElementFilter> stages;
 
   /// Whether this selector expects to find a single or multiple widgets
   @Deprecated('Use quantityConstraint instead')
@@ -74,14 +68,22 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
     final sb = StringBuffer();
     for (int i = 0; i < stages.length; i++) {
       final stage = stages[i];
-      sb.write(stage.toString());
+      final desc = stage.description;
+      if (desc.contains(' > ')) {
+        sb.write('($desc)');
+      } else {
+        sb.write(desc);
+      }
 
       final isLast = i == stages.length - 1;
-      if (!isLast) {
+      if (stage is WidgetTypeFilter) {
+        sb.write(' ');
+      } else if (!isLast) {
         sb.write(' > ');
       }
     }
-    final parts = [sb.toString(), _quantityToString()].where((e) => e != null);
+    final parts =
+        [sb.toString().trim(), _quantityToString()].where((e) => e != null);
     return parts.join(' ');
   }
 
@@ -92,14 +94,50 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
     final sb = StringBuffer();
     for (int i = 0; i < stages.length; i++) {
       final stage = stages[i];
-      sb.write(stage.toStringWithoutParents());
+      final desc = stage.description;
+      if (desc.contains(' > ')) {
+        sb.write('($desc)');
+      } else {
+        sb.write(desc);
+      }
 
       final isLast = i == stages.length - 1;
-      if (!isLast) {
+      if (stage is WidgetTypeFilter) {
+        sb.write(' ');
+      } else if (!isLast) {
         sb.write(' > ');
       }
     }
-    final parts = [sb.toString(), _quantityToString()].where((e) => e != null);
+    final parts =
+        [sb.toString().trim(), _quantityToString()].where((e) => e != null);
+    return parts.join(' ');
+  }
+
+  /// Generates a breadcrumb-like string representation of this selector.
+  ///
+  /// This method includes parent selectors in the output, showing the full
+  /// hierarchy of the selection.
+  String toStringBreadcrumb() {
+    final sb = StringBuffer();
+    for (int i = 0; i < stages.length; i++) {
+      final stage = stages[i];
+      final desc = stage.description;
+      if (desc.contains(' > ')) {
+        sb.write('($desc)');
+      } else {
+        sb.write(desc);
+      }
+
+      final isLast = i == stages.length - 1;
+      if (stage is WidgetTypeFilter) {
+        sb.write(' ');
+      } else if (!isLast) {
+        sb.write(' > ');
+      }
+    }
+
+    final parts =
+        [sb.toString().trim(), _quantityToString()].where((e) => e != null);
     return parts.join(' ');
   }
 
@@ -127,26 +165,6 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
     return null;
   }
 
-  /// Generates a breadcrumb-like string representation of this selector.
-  ///
-  /// This method includes parent selectors in the output, showing the full
-  /// hierarchy of the selection.
-  String toStringBreadcrumb() {
-    final sb = StringBuffer();
-    for (int i = 0; i < stages.length; i++) {
-      final stage = stages[i];
-      sb.write(stage.toStringBreadcrumb());
-
-      final isLast = i == stages.length - 1;
-      if (!isLast) {
-        sb.write(' > ');
-      }
-    }
-
-    final parts = [sb.toString(), _quantityToString()].where((e) => e != null);
-    return parts.join(' ');
-  }
-
   @override
   WidgetSelector<W> get self => this;
 
@@ -157,7 +175,7 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
   /// but with some modified parameters.
   @useResult
   WidgetSelector<W> copyWith({
-    List<Stage>? stages,
+    List<ElementFilter>? stages,
     // ignore: deprecated_member_use_from_same_package
     ExpectedQuantity? expectedQuantity,
     QuantityConstraint? quantityConstraint,
@@ -171,115 +189,8 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
   }
 
   @useResult
-  WidgetSelector<W> addStage(Stage stage) {
-    return copyWith(stages: [...stages, stage]);
-  }
-}
-
-class Stage {
-  Stage({
-    List<PredicateWithDescription>? props,
-    List<WidgetSelector>? parents,
-    List<WidgetSelector>? children,
-    List<ElementFilter>? elementFilters,
-  })  : props = List.unmodifiable(props ?? []),
-        parents = List.unmodifiable(parents?.toSet().toList() ?? []),
-        children = List.unmodifiable(children ?? []),
-        elementFilters = List.unmodifiable(elementFilters ?? []);
-
-  /// A list of predicates with descriptions used to filter the widget tree nodes.
-  ///
-  /// These predicates define various conditions that the nodes must satisfy
-  /// to be included in the filtered set.
-  final List<PredicateWithDescription> props;
-
-  /// A list of parent selectors used to define a hierarchical
-  /// context for the selection.
-  ///
-  /// These selectors specify the parent widgets in the tree that the current
-  /// selector's widget must be a descendant of.
-  final List<WidgetSelector> parents;
-
-  /// A list of child selectors used to filter widgets based on their children.
-  ///
-  /// These selectors are applied to the children of the widget being matched,
-  /// allowing for selection based on child widget properties.
-  final List<WidgetSelector> children;
-
-  /// A list of element filters used to apply additional custom filtering logic.
-  ///
-  /// These filters enable advanced selection criteria beyond the standard
-  /// widget properties and hierarchy.
-  final List<ElementFilter> elementFilters;
-
-  List<ElementFilter> createElementFilter() {
-    return [
-      if (parents.isNotEmpty) ParentFilter(parents),
-      if (props.isNotEmpty) PropFilter(props),
-      if (children.isNotEmpty) ChildFilter(children),
-      ...elementFilters,
-    ];
-  }
-
-  @override
-  String toString() {
-    final children = this.children.isNotEmpty
-        ? 'with children: [${this.children.map((e) => e.toString()).join(', ')}]'
-        : null;
-    final parents = this.parents.isNotEmpty
-        ? 'with parents: [${this.parents.map((e) => e.toString()).join(', ')}]'
-        : null;
-    final props = this.props.isNotEmpty
-        ? this.props.map((e) => e.description).join(' ')
-        : null;
-    final filters = elementFilters.isNotEmpty
-        ? elementFilters.map((e) => e.description).join(' ')
-        : null;
-
-    final constraints = [
-      props,
-      children,
-      parents,
-      filters,
-    ].where((e) => e != null);
-    if (constraints.isEmpty) {
-      return '';
-    }
-    return constraints.join(' ');
-  }
-
-  String toStringWithoutParents() {
-    final children = this.children.isNotEmpty
-        ? 'with children: [${this.children.map((e) => e.toString()).join(', ')}]'
-        : null;
-    final props = this.props.isNotEmpty
-        ? this.props.map((e) => e.description).join(' ')
-        : null;
-    final filters = elementFilters.isNotEmpty
-        ? elementFilters.map((e) => e.description).join(' ')
-        : null;
-
-    final constraints = [
-      props,
-      children,
-      filters,
-    ].where((e) => e != null);
-    return constraints.join(' ');
-  }
-
-  String toStringBreadcrumb() {
-    final parents = this.parents;
-
-    if (parents.isEmpty) {
-      return toStringWithoutParents();
-    }
-
-    final parentBreadcrumbs = parents.map((e) => e.toStringBreadcrumb());
-    if (parentBreadcrumbs.length == 1) {
-      return '${parentBreadcrumbs.first} > ${toStringWithoutParents()}';
-    } else {
-      return '[${parentBreadcrumbs.join(' && ')}] > ${toStringWithoutParents()}';
-    }
+  WidgetSelector<W> addStage(ElementFilter newStage) {
+    return copyWith(stages: [...stages, newStage]);
   }
 }
 
@@ -386,29 +297,6 @@ enum ExpectedQuantity {
   multi,
 }
 
-/// Represents a predicate with an associated description.
-///
-/// Used to create readable and descriptive predicates in widget testing.
-class PredicateWithDescription {
-  /// Constructs a [PredicateWithDescription] with a predicate function and
-  /// a description.
-  PredicateWithDescription(
-    this.predicate, {
-    required this.description,
-  });
-
-  /// The predicate function to evaluate.
-  final bool Function(Element) predicate;
-
-  /// Description of what this predicate checks.
-  final String description;
-
-  @override
-  String toString() {
-    return 'PredicateWithDescription{"$description"}';
-  }
-}
-
 /// Filters candidates by widget type [W] comparing the runtime type.
 ///
 /// Comparing the runtimeType makes sure that `spot<Align>()`
@@ -416,6 +304,9 @@ class PredicateWithDescription {
 class WidgetTypeFilter<W extends Widget> implements ElementFilter {
   @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
+    if (W == Widget) {
+      return candidates;
+    }
     final type = _typeOf<W>();
     return candidates
         .where((WidgetTreeNode node) => node.element.widget.runtimeType == type)
@@ -428,75 +319,6 @@ class WidgetTypeFilter<W extends Widget> implements ElementFilter {
   @override
   String toString() {
     return 'WidgetTypeFilter of $W';
-  }
-}
-
-class ParentFilter implements ElementFilter {
-  ParentFilter(this.parents);
-
-  final List<WidgetSelector> parents;
-
-  @override
-  String get description => throw UnimplementedError();
-
-  @override
-  Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
-    final tree = currentWidgetTreeSnapshot();
-    final List<WidgetSnapshot<Widget>> parentSnapshots =
-        parents.map((selector) {
-      final WidgetSnapshot<Widget> widgetSnapshot = snapshot(selector);
-      widgetSnapshot.validateQuantity();
-      return widgetSnapshot;
-    }).toList();
-
-    // Take a snapshot from each parent and get the snapshots of all nodes that match
-    final List<Map<WidgetTreeNode, List<WidgetSnapshot>>> discoveryByParent =
-        parentSnapshots.map((WidgetSnapshot<Widget> parentSnapshot) {
-      final Map<WidgetTreeNode, List<WidgetSnapshot>> groups = {};
-      if (parentSnapshot.discovered.isEmpty) {
-        return groups;
-      }
-
-      for (final WidgetTreeNode node in parentSnapshot.discovered) {
-        final WidgetSnapshot group =
-            findWithinScope(tree.scope(node), WidgetSelector.all);
-        final list = groups[node];
-        if (list == null) {
-          groups[node] = [group];
-        } else {
-          list.add(group);
-        }
-      }
-
-      return groups;
-    }).toList();
-
-    final List<WidgetSnapshot> discoveredSnapshots =
-        discoveryByParent.map((it) => it.values).flatten().flatten().toList();
-
-    final List<WidgetTreeNode> allDiscoveredNodes =
-        discoveredSnapshots.map((it) => it.discovered).flatten().toList();
-
-    final List<Element> distinctElements =
-        allDiscoveredNodes.map((e) => e.element).toSet().toList();
-
-    // find nodes that exist in all parents
-    final List<Element> elementsInAllParents =
-        distinctElements.where((element) {
-      return discoveryByParent.all((
-        Map<WidgetTreeNode, List<WidgetSnapshot>> discovered,
-      ) {
-        return discovered.values.any((List<WidgetSnapshot> list) {
-          return list.any((node) {
-            return node.discovered.map((e) => e.element).contains(element);
-          });
-        });
-      });
-    }).toList();
-
-    return elementsInAllParents.mapNotNull((e) {
-      return candidates.firstWhereOrNull((node) => node.element == e);
-    }).toList();
   }
 }
 

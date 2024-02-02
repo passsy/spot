@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
+import 'package:spot/src/spot/child_element_filter.dart';
+import 'package:spot/src/spot/parent_element_filter.dart';
 
 void main() {
   testWidgets('parents can have parents too', (tester) async {
@@ -240,8 +242,18 @@ void main() {
         .withChildren([spot<Center>(), spot<Wrap>()])
       ..existsOnce();
 
-    expect(withChildTwice.stages.flatMap((e) => e.children).length, 2);
-    expect(withChildren.stages.flatMap((e) => e.children).length, 2);
+    expect(
+      withChildTwice.stages
+          .flatMap((it) => it is ChildFilter ? it.childSelectors : [])
+          .length,
+      2,
+    );
+    expect(
+      withChildren.stages
+          .flatMap((it) => it is ChildFilter ? it.childSelectors : [])
+          .length,
+      2,
+    );
   });
 
   testWidgets('withParent', (tester) async {
@@ -290,7 +302,17 @@ void main() {
         .withParents([spot<Center>(), spot<Wrap>()])
       ..existsOnce();
 
-    expect(withParentTwice.stages.flatMap((e) => e.parents).length, 2);
-    expect(withParents.stages.flatMap((e) => e.parents).length, 2);
+    expect(
+      withParentTwice.stages
+          .flatMap((it) => it is ParentFilter ? it.parents : [])
+          .length,
+      2,
+    );
+    expect(
+      withParents.stages
+          .flatMap((it) => it is ParentFilter ? it.parents : [])
+          .length,
+      2,
+    );
   });
 }

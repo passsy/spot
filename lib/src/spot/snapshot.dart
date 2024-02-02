@@ -149,11 +149,21 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
 
   final List<WidgetTreeNode> candidates = treeSnapshot.allNodes;
 
-  final filters =
-      selector.stages.flatMap((stage) => stage.createElementFilter()).toList();
+  final filters = selector.stages;
+
+  // an easy to debug list of all filters and their individual results
+  final List<({ElementFilter filter, List<WidgetTreeNode> candidates})>
+      results = [];
+
   final discovered =
       filters.fold<Iterable<WidgetTreeNode>>(candidates, (list, filter) {
-    return filter.filter(list);
+    if (list.isEmpty) {
+      return [];
+    }
+    final before = list.toList();
+    final after = filter.filter(before).toList();
+    results.add((filter: filter, candidates: after));
+    return after;
   }).toList();
 
   final snapshot = WidgetSnapshot<W>(
@@ -260,8 +270,7 @@ WidgetSnapshot<W> findWithinScope<W extends Widget>(
   //       "Either remove them or use snapshot() instead";
   // }
   final candidates = scope.allNodes;
-  final List<ElementFilter> filters =
-      selector.stages.flatMap((stage) => stage.createElementFilter()).toList();
+  final List<ElementFilter> filters = selector.stages;
 
   final List<WidgetTreeNode> discovered = filters
       .fold<Iterable<WidgetTreeNode>>(candidates, (list, ElementFilter filter) {
@@ -596,25 +605,18 @@ extension _LessSpecificSelectors<W extends Widget> on WidgetSelector<W> {
   /// - selector which only matches for type Center
   /// - selector which only matches for parent SizedBox
   Iterable<WidgetSelector<W>> _lessSpecificSelectors() sync* {
-    yield* [];
-    // final List<WidgetSelector<W> Function(WidgetSelector<W>)> criteria = [
-    //   for (final prop in props) (s) => s.copyWith(props: [prop]),
-    //   for (final parent in parents)
-    //     (s) => s.copyWith(parents: [...s.parents, parent]),
-    //   for (final child in children)
-    //     (s) => s.copyWith(children: [...s.children, child]),
-    // ];
-    //
-    // for (final subset in getAllSubsets(criteria)) {
-    //   final selector = _buildSelector(subset);
-    //   // do not yield selectors which match any widgets
-    //   if (selector.children.isNotEmpty ||
-    //       selector.parents.isNotEmpty ||
-    //       selector.props.isNotEmpty ||
-    //       selector.type != Widget) {
-    //     yield selector;
-    //   }
-    // }
+    final List<WidgetSelector<W> Function(WidgetSelector<W>)> criteria = [
+      for (final stage in stages)
+        (s) => s.copyWith(stages: [...s.stages, stage]),
+    ];
+
+    for (final subset in getAllSubsets(criteria)) {
+      final selector = _buildSelector(subset);
+      // do not yield selectors which match any widgets
+      if (selector.stages.isNotEmpty || selector.type != Widget) {
+        yield selector;
+      }
+    }
   }
 
   WidgetSelector<W> _buildSelector(
