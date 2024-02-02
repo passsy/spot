@@ -899,7 +899,6 @@ extension SelectorToSnapshot<W extends Widget> on WidgetSelector<W> {
   /// This method captures the current state of the widgets selected by the
   /// selector for further analysis or assertions.
   WidgetSnapshot<W> snapshot() {
-    TestAsyncUtils.guardSync();
     return snapshot_file.snapshot(this, validateQuantity: false);
   }
 
@@ -928,19 +927,16 @@ extension SelectorToSnapshot<W extends Widget> on WidgetSelector<W> {
 extension ReadSingleSnapshot<W extends Widget> on WidgetSelector<W> {
   /// Convenience getter to access the [Widget] when evaluating the [WidgetSelector]
   W snapshotWidget() {
-    TestAsyncUtils.guardSync();
     return snapshot_file.snapshot(this).single.widget;
   }
 
   /// Convenience getter to access the [Element] when evaluating the [WidgetSelector]
   Element snapshotElement() {
-    TestAsyncUtils.guardSync();
     return snapshot_file.snapshot(this).single.element;
   }
 
   /// Convenience getter to access the [RenderObject] when evaluating the [WidgetSelector]
   RenderObject snapshotRenderObject() {
-    TestAsyncUtils.guardSync();
     // There is not a single Element in the Flutter SDK that returns null for `renderObject`.
     // So we can safely assume that this cast never fails.
     return snapshot_file.snapshot(this).single.element.renderObject!;
@@ -999,7 +995,6 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostOnce] asserts that at most one widget exists.
   /// - [existsAtMostNTimes] asserts that at most `n` widgets of type [W] exist.
   MultiWidgetMatcher<W> existsAtLeastOnce() {
-    TestAsyncUtils.guardSync();
     final atLeastOne =
         copyWith(quantityConstraint: const QuantityConstraint.atLeast(1));
     return snapshot(atLeastOne).multi;
@@ -1022,7 +1017,6 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtLeastNTimes] asserts that at least `n` widgets of type [W] exist.
   /// - [existsAtMostNTimes] asserts that at most `n` widgets of type [W] exist.
   WidgetMatcher<W> existsAtMostOnce() {
-    TestAsyncUtils.guardSync();
     final atMostOne = copyWith(quantityConstraint: QuantityConstraint.single);
     return snapshot(atMostOne).single;
   }
@@ -1044,7 +1038,6 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostOnce] asserts that at most one widget exists.
   /// - [existsAtMostNTimes] asserts that at most `n` widgets of type [W] exist.
   void doesNotExist() {
-    TestAsyncUtils.guardSync();
     final none = copyWith(quantityConstraint: QuantityConstraint.zero);
     snapshot(none);
   }
@@ -1063,7 +1056,6 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostOnce] asserts that at most one widget exists.
   /// - [existsAtMostNTimes] asserts that at most `n` widgets of type [W] exist.
   WidgetMatcher<W> existsOnce() {
-    TestAsyncUtils.guardSync();
     final one =
         copyWith(quantityConstraint: const QuantityConstraint.exactly(1));
     return snapshot(one).single;
@@ -1083,7 +1075,6 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostOnce] asserts that at most one widget exists.
   /// - [existsAtMostNTimes] asserts that at most [n] widgets of type [W] exist.
   MultiWidgetMatcher<W> existsExactlyNTimes(int n) {
-    TestAsyncUtils.guardSync();
     final exactlyNTimes =
         copyWith(quantityConstraint: QuantityConstraint.exactly(n));
     return snapshot(exactlyNTimes).multi;
@@ -1103,7 +1094,6 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostOnce] asserts that at most one widget exists.
   /// - [existsAtMostNTimes] asserts that at most [n] widgets of type [W] exist.
   MultiWidgetMatcher<W> existsAtLeastNTimes(int n) {
-    TestAsyncUtils.guardSync();
     final atLeast = copyWith(quantityConstraint: QuantityConstraint.atLeast(n));
     return snapshot(atLeast).multi;
   }
@@ -1122,7 +1112,6 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtLeastNTimes] asserts that at least [n] widgets of type [W] exist.
   /// - [existsAtMostOnce] asserts that at most one widget exists.
   MultiWidgetMatcher<W> existsAtMostNTimes(int n) {
-    TestAsyncUtils.guardSync();
     final atMostN = copyWith(quantityConstraint: QuantityConstraint.atMost(n));
     return snapshot(atMostN).multi;
   }

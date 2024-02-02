@@ -136,7 +136,10 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
   WidgetSelector<W> selector, {
   bool validateQuantity = true,
 }) {
+  // Make sure that any previous asynchronous operations are completed.
+  // This check makes sure that a missing `await` in the line before throws here
   TestAsyncUtils.guardSync();
+
   final treeSnapshot = currentWidgetTreeSnapshot();
   final List<WidgetTreeNode> candidates = treeSnapshot.allNodes;
 
