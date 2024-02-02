@@ -43,7 +43,7 @@ void main() {
       () => spot<Scaffold>().withChild(spot<ListView>().atMost(0)).existsOnce(),
       throwsSpotErrorContaining(
         [
-          'Could not find Scaffold with children: [ListView (amount: 0)] in widget tree, expected exactly 1',
+          'Could not find Scaffold > with children: [ListView (amount: 0)] in widget tree, expected exactly 1',
         ],
       ),
     );

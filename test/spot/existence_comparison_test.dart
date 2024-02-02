@@ -292,7 +292,7 @@ void main() {
             .whereText((text) => text.startsWith('a'))
             .existsExactlyNTimes(3),
         throwsSpotErrorContaining([
-          'Found 4 elements matching Text with prop "data" starts with \'a\' in widget tree, expected exactly 3',
+          'Found 4 elements matching Text > with prop "data" starts with \'a\' in widget tree, expected exactly 3',
           'Text("aa"',
           'Text("ab"',
           'Text("ac"',

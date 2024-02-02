@@ -69,113 +69,62 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
   /// The runtime type of the widget this selector is intended for.
   Type get type => W;
 
-  /// Returns a list of [ElementFilter] that is used to filter the widget tree
-  /// (or subtrees of [parents]) for widgets that match this selectors criteria
-  ///
-  /// This method is intended to be overridden by subclasses to add additional
-  /// filters that are not covered by this base implementation.
-// List<ElementFilter> createElementFilters() {
-//   return [
-//     if (predecessor != null) ...predecessor!.createElementFilters(),
-//     if (props.isNotEmpty) PropFilter(props),
-//     if (children.isNotEmpty) ChildFilter(children),
-//     ...elementFilters,
-//   ];
-// }
-
   @override
   String toString() {
-    // final children = this.children.isNotEmpty
-    //     ? 'with children: [${this.children.map((e) => e.toString()).join(', ')}]'
-    //     : null;
-    // final parents = this.parents.isNotEmpty
-    //     ? 'with parents: [${this.parents.map((e) => e.toString()).join(', ')}]'
-    //     : null;
-    // final props = this.props.isNotEmpty
-    //     ? this.props.map((e) => e.description).join(' ')
-    //     : null;
-    // final filters = elementFilters.isNotEmpty
-    //     ? elementFilters.map((e) => e.description).join(' ')
-    //     : null;
-    final quantity = () {
-      if (quantityConstraint.min == null && quantityConstraint.max == 0) {
-        return '(amount: 0)';
-      }
-      if (quantityConstraint.min == 0 && quantityConstraint.max == 0) {
-        return '(amount: 0)';
-      }
-      if (quantityConstraint.min != null &&
-          quantityConstraint.min == quantityConstraint.max) {
-        return '(amount: ${quantityConstraint.min})';
-      }
-      if (quantityConstraint.min != null && quantityConstraint.max != null) {
-        return '(amount: ${quantityConstraint.min}...${quantityConstraint.max})';
-      }
-      if (quantityConstraint.min != null) {
-        return '(amount: >=${quantityConstraint.min})';
-      }
-      if (quantityConstraint.max != null) {
-        return '(amount: <=${quantityConstraint.max})';
-      }
-      return null;
-    }();
+    final sb = StringBuffer();
+    for (int i = 0; i < stages.length; i++) {
+      final stage = stages[i];
+      sb.write(stage.toString());
 
-    final constraints = [
-      // props,
-      quantity,
-      // children,
-      // parents,
-      // filters,
-    ].where((e) => e != null);
-    if (constraints.isEmpty) {
-      return '';
+      final isLast = i == stages.length - 1;
+      if (!isLast) {
+        sb.write(' > ');
+      }
     }
-    return constraints.join(' ');
+    final parts = [sb.toString(), _quantityToString()].where((e) => e != null);
+    return parts.join(' ');
   }
 
   /// Generates a string representation of this selector, excluding parents.
   ///
   /// This method is used internally for creating a more concise string output.
   String toStringWithoutParents() {
-    // final children = this.children.isNotEmpty
-    //     ? 'with children: [${this.children.map((e) => e.toString()).join(', ')}]'
-    //     : null;
-    // final props = this.props.isNotEmpty
-    //     ? this.props.map((e) => e.description).join(' ')
-    //     : null;
-    // final filters = elementFilters.isNotEmpty
-    //     ? elementFilters.map((e) => e.description).join(' ')
-    //     : null;
-    final quantity = () {
-      if (quantityConstraint.min == null && quantityConstraint.max == 0) {
-        return '(amount: 0)';
-      }
-      if (quantityConstraint.min == 0 && quantityConstraint.max == 0) {
-        return '(amount: 0)';
-      }
-      if (quantityConstraint.min != null &&
-          quantityConstraint.min == quantityConstraint.max) {
-        return '(amount: ${quantityConstraint.min})';
-      }
-      if (quantityConstraint.min != null && quantityConstraint.max != null) {
-        return '(amount: ${quantityConstraint.min}...${quantityConstraint.max})';
-      }
-      if (quantityConstraint.min != null) {
-        return '(amount: >=${quantityConstraint.min})';
-      }
-      if (quantityConstraint.max != null) {
-        return '(amount: <=${quantityConstraint.max})';
-      }
-      return null;
-    }();
+    final sb = StringBuffer();
+    for (int i = 0; i < stages.length; i++) {
+      final stage = stages[i];
+      sb.write(stage.toStringWithoutParents());
 
-    final constraints = [
-      // props,
-      quantity,
-      // children,
-      // filters,
-    ].where((e) => e != null);
-    return constraints.join(' ');
+      final isLast = i == stages.length - 1;
+      if (!isLast) {
+        sb.write(' > ');
+      }
+    }
+    final parts = [sb.toString(), _quantityToString()].where((e) => e != null);
+    return parts.join(' ');
+  }
+
+  /// Generates a string representation of the quantity constraints.
+  String? _quantityToString() {
+    if (quantityConstraint.min == null && quantityConstraint.max == 0) {
+      return '(amount: 0)';
+    }
+    if (quantityConstraint.min == 0 && quantityConstraint.max == 0) {
+      return '(amount: 0)';
+    }
+    if (quantityConstraint.min != null &&
+        quantityConstraint.min == quantityConstraint.max) {
+      return '(amount: ${quantityConstraint.min})';
+    }
+    if (quantityConstraint.min != null && quantityConstraint.max != null) {
+      return '(amount: ${quantityConstraint.min}...${quantityConstraint.max})';
+    }
+    if (quantityConstraint.min != null) {
+      return '(amount: >=${quantityConstraint.min})';
+    }
+    if (quantityConstraint.max != null) {
+      return '(amount: <=${quantityConstraint.max})';
+    }
+    return null;
   }
 
   /// Generates a breadcrumb-like string representation of this selector.
@@ -183,19 +132,19 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
   /// This method includes parent selectors in the output, showing the full
   /// hierarchy of the selection.
   String toStringBreadcrumb() {
-    return "";
-    // final parents = this.parents;
-    //
-    // if (parents.isEmpty) {
-    //   return toStringWithoutParents();
-    // }
-    //
-    // final parentBreadcrumbs = parents.map((e) => e.toStringBreadcrumb());
-    // if (parentBreadcrumbs.length == 1) {
-    //   return '${parentBreadcrumbs.first} > ${toStringWithoutParents()}';
-    // } else {
-    //   return '[${parentBreadcrumbs.join(' && ')}] > ${toStringWithoutParents()}';
-    // }
+    final sb = StringBuffer();
+    for (int i = 0; i < stages.length; i++) {
+      final stage = stages[i];
+      sb.write(stage.toStringBreadcrumb());
+
+      final isLast = i == stages.length - 1;
+      if (!isLast) {
+        sb.write(' > ');
+      }
+    }
+
+    final parts = [sb.toString(), _quantityToString()].where((e) => e != null);
+    return parts.join(' ');
   }
 
   @override
@@ -270,6 +219,67 @@ class Stage {
       if (children.isNotEmpty) ChildFilter(children),
       ...elementFilters,
     ];
+  }
+
+  @override
+  String toString() {
+    final children = this.children.isNotEmpty
+        ? 'with children: [${this.children.map((e) => e.toString()).join(', ')}]'
+        : null;
+    final parents = this.parents.isNotEmpty
+        ? 'with parents: [${this.parents.map((e) => e.toString()).join(', ')}]'
+        : null;
+    final props = this.props.isNotEmpty
+        ? this.props.map((e) => e.description).join(' ')
+        : null;
+    final filters = elementFilters.isNotEmpty
+        ? elementFilters.map((e) => e.description).join(' ')
+        : null;
+
+    final constraints = [
+      props,
+      children,
+      parents,
+      filters,
+    ].where((e) => e != null);
+    if (constraints.isEmpty) {
+      return '';
+    }
+    return constraints.join(' ');
+  }
+
+  String toStringWithoutParents() {
+    final children = this.children.isNotEmpty
+        ? 'with children: [${this.children.map((e) => e.toString()).join(', ')}]'
+        : null;
+    final props = this.props.isNotEmpty
+        ? this.props.map((e) => e.description).join(' ')
+        : null;
+    final filters = elementFilters.isNotEmpty
+        ? elementFilters.map((e) => e.description).join(' ')
+        : null;
+
+    final constraints = [
+      props,
+      children,
+      filters,
+    ].where((e) => e != null);
+    return constraints.join(' ');
+  }
+
+  String toStringBreadcrumb() {
+    final parents = this.parents;
+
+    if (parents.isEmpty) {
+      return toStringWithoutParents();
+    }
+
+    final parentBreadcrumbs = parents.map((e) => e.toStringBreadcrumb());
+    if (parentBreadcrumbs.length == 1) {
+      return '${parentBreadcrumbs.first} > ${toStringWithoutParents()}';
+    } else {
+      return '[${parentBreadcrumbs.join(' && ')}] > ${toStringWithoutParents()}';
+    }
   }
 }
 

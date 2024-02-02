@@ -90,7 +90,7 @@ void main() {
             .withDiagnosticProp<int>('maxLines', (it) => it.equals(2))
             .existsOnce(),
         throwsSpotErrorContaining([
-          'Could not find Text with prop "maxLines" equals <2> in widget tree',
+          'Could not find Text > with prop "maxLines" equals <2> in widget tree',
           'A less specific search (Text) discovered 1 matches!',
           'Text("a", maxLines: 4,',
         ]),
@@ -113,7 +113,7 @@ void main() {
       expect(
         () => spot<Text>().withMaxLines(2).existsOnce(),
         throwsSpotErrorContaining([
-          'Could not find Text with prop "maxLines" equals <2> in widget tree',
+          'Could not find Text > with prop "maxLines" equals <2> in widget tree',
           'A less specific search (Text) discovered 1 matches!',
           'Text("a", maxLines: 4,',
         ]),
