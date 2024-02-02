@@ -38,14 +38,15 @@ class ParentFilter implements ElementFilter {
       }
 
       for (final WidgetTreeNode node in parentSnapshot.discovered) {
-        final WidgetSnapshot group =
-            findWithinScope(tree.scope(node), WidgetSelector.all);
-        final list = groups[node];
-        if (list == null) {
-          groups[node] = [group];
-        } else {
-          list.add(group);
-        }
+        final subtree = tree.scope(node);
+        final snapshot = WidgetSnapshot(
+          selector: WidgetSelector.all.withParent(parentSnapshot.selector),
+          discovered: subtree.allNodes,
+          scope: subtree,
+          debugCandidates: candidates.map((it) => it.element).toList(),
+        );
+        groups[node] ??= [];
+        groups[node]!.add(snapshot);
       }
 
       return groups;

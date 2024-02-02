@@ -170,32 +170,6 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
   return snapshot;
 }
 
-/// Finds elements inside scope, completely ignores parents
-WidgetSnapshot<W> findWithinScope<W extends Widget>(
-  ScopedWidgetTreeSnapshot scope,
-  WidgetSelector<W> selector,
-) {
-  // if (selector.parents.isNotEmpty) {
-  //   throw "Don't use findWithinScope with a selector that has parents. "
-  //       "Either remove them or use snapshot() instead";
-  // }
-  final candidates = scope.allNodes;
-  final List<ElementFilter> filters = selector.stages;
-
-  final List<WidgetTreeNode> discovered = filters
-      .fold<Iterable<WidgetTreeNode>>(candidates, (list, ElementFilter filter) {
-    final Iterable<WidgetTreeNode> result = filter.filter(list);
-    return result;
-  }).toList();
-
-  return WidgetSnapshot<W>(
-    selector: selector,
-    discovered: discovered,
-    scope: scope,
-    debugCandidates: candidates.map((it) => it.element).toList(),
-  );
-}
-
 /// Extension on [WidgetSnapshot]<W> providing methods to validate the quantity of discovered widgets.
 extension ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
   /// Validates the quantity of [discovered] to match [WidgetSelector.quantityConstraint]
