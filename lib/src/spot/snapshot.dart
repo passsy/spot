@@ -139,26 +139,21 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
   TestAsyncUtils.guardSync();
   final treeSnapshot = currentWidgetTreeSnapshot();
   final List<WidgetTreeNode> candidates = treeSnapshot.allNodes;
-  final filters = selector.stages;
 
   // an easy to debug list of all filters and their individual results
-  final List<({ElementFilter filter, List<WidgetTreeNode> candidates})>
-      results = [];
+  final stageResults = [
+    (filter: WidgetSelector.all.stages.first, candidates: candidates),
+  ];
 
-  final discovered =
-      filters.fold<Iterable<WidgetTreeNode>>(candidates, (list, filter) {
-    if (list.isEmpty) {
-      return [];
-    }
-    final before = list.toList();
+  for (final filter in selector.stages) {
+    final before = stageResults.last.candidates.toList();
     final after = filter.filter(before).toList();
-    results.add((filter: filter, candidates: after));
-    return after;
-  }).toList();
+    stageResults.add((filter: filter, candidates: after));
+  }
 
   final snapshot = WidgetSnapshot<W>(
     selector: selector,
-    discovered: discovered,
+    discovered: stageResults.last.candidates,
     scope: treeSnapshot,
     debugCandidates: candidates.map((element) => element.element).toList(),
   );

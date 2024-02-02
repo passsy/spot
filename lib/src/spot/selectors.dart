@@ -396,8 +396,8 @@ mixin ChainableSelectors<T extends Widget> {
           predicate: (Element e) => e.widget.key == key,
           description: 'with key: "$key"',
         ),
-        if (p.isNotEmpty) ParentFilter(p),
         if (children.isNotEmpty) ChildFilter(children),
+        if (p.isNotEmpty) ParentFilter(p),
       ],
     );
     return selector;
