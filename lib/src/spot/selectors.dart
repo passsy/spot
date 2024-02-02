@@ -855,7 +855,9 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
   }
 }
 
+/// Extension which throws a [PropertyCheckFailure] when a [CheckFailure] is detected.
 extension ThrowCheckFailure on CheckFailure? {
+  /// Throws a [PropertyCheckFailure] if the [CheckFailure] is not `null`.
   void throwPropertyCheckFailure<T>(
     ConditionSubject<T> conditionSubject,
     Object? actual,

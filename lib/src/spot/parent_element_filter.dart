@@ -3,9 +3,12 @@ import 'package:flutter/widgets.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/spot/snapshot.dart';
 
+/// A filter that checks if the candidates are children of all [parents]
 class ParentFilter implements ElementFilter {
+  /// Creates a [ParentFilter] with a list of [parents]
   ParentFilter(this.parents) : assert(parents.isNotEmpty);
 
+  /// The list of [WidgetSelector] that are checked to be parents of the candidates
   final List<WidgetSelector> parents;
 
   @override

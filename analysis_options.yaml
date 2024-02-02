@@ -18,4 +18,4 @@ linter:
     sort_pub_dependencies: false
 
     # Documentation is key
-    #public_member_api_docs: true
+    public_member_api_docs: true

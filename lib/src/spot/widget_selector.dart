@@ -39,6 +39,15 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
                 : QuantityConstraint.unconstrained),
         mapElementToWidget = mapElementToWidget ?? defaultMapElementToWidget<W>;
 
+  /// The list of filters which are used to narrow down the selection of widgets in the tree
+  ///
+  /// Each filter is applied in sequence (order is important for filters like `.atIndex(1)`)
+  ///
+  /// Usual filters are:
+  /// - [ParentFilter]
+  /// - [ChildFilter]
+  /// - [PropFilter]
+  /// - [WidgetTypeFilter]
   final List<ElementFilter> stages;
 
   /// Whether this selector expects to find a single or multiple widgets
@@ -217,6 +226,7 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
     );
   }
 
+  /// Adds a new [stage] to at the end to further narrow down the selection of widgets
   @useResult
   WidgetSelector<W> addStage(ElementFilter newStage) {
     return copyWith(stages: [...stages, newStage]);
@@ -240,6 +250,7 @@ typedef MultiWidgetSelector<W extends Widget> = WidgetSelector<W>;
 /// - [PropFilter]
 /// - [ChildFilter]
 /// - [WidgetTypeFilter]
+/// - [ParentFilter]
 abstract class ElementFilter {
   /// Filters all candidates, retuning only a subset that matches
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates);

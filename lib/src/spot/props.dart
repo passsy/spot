@@ -6,6 +6,9 @@ import 'package:spot/src/spot/prop_element_filter.dart';
 import 'package:spot/src/spot/selectors.dart';
 import 'package:spot/src/spot/widget_selector.dart';
 
+/// Allows narrowing down the search to widgets that match a specific properties
+///
+/// Please use the newer version of this extension [PropSelectorQueries] instead.
 extension WidgetSelectorProp<W extends Widget> on WidgetSelector<W> {
   /// Filters all elements that match the selector
   ///
@@ -73,6 +76,7 @@ extension WidgetSelectorProp<W extends Widget> on WidgetSelector<W> {
   }
 }
 
+/// The newer version of [WidgetSelector.withProp] that uses [NamedWidgetProp].
 extension PropSelectorQueries<W extends Widget> on ChainableSelectors<W> {
   /// Creates a filter for the widgets of the discovered elements which is
   /// applied when the [WidgetSelector] is snapshotted.

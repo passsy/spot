@@ -42,8 +42,10 @@ extension SpotToFinder<W extends Widget> on WidgetSelector<W> {
 
 /// An interop filter that filters elements based on a flutter_test [Finder]
 class FinderFilter extends ElementFilter {
+  /// A usual [Finder] from [find] by the flutter_test package
   final Finder finder;
 
+  /// Creates an [ElementFilter] for [WidgetSelector] based on a [Finder]
   FinderFilter(this.finder);
 
   @override

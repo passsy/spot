@@ -286,7 +286,9 @@ WidgetSnapshot<W> findWithinScope<W extends Widget>(
   );
 }
 
+/// Extension on [WidgetSnapshot]<W> providing methods to validate the quantity of discovered widgets.
 extension ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
+  /// Validates the quantity of [discovered] to match [WidgetSelector.quantityConstraint]
   void validateQuantity() {
     final count = discovered.length;
     final minimumConstraint = selector.quantityConstraint.min;
