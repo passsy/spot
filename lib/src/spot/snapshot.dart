@@ -145,13 +145,17 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
 
   // an easy to debug list of all filters and their individual results
   final stageResults = [
-    (filter: WidgetSelector.all.stages.first, candidates: candidates),
+    (
+      filter: WidgetSelector.all.stages.first,
+      candidates: candidates.toUnmodifiable(),
+    ),
   ];
 
-  for (final filter in selector.stages) {
-    final before = stageResults.last.candidates.toList();
-    final after = filter.filter(before).toList();
-    stageResults.add((filter: filter, candidates: after));
+  for (final stage in selector.stages) {
+    // using unmodifiable copies to prevent accidental modification during filtering
+    final before = stageResults.last.candidates.toUnmodifiable();
+    final after = stage.filter(before).toList().toUnmodifiable();
+    stageResults.add((filter: stage, candidates: after));
   }
 
   final snapshot = WidgetSnapshot<W>(
