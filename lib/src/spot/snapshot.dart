@@ -504,7 +504,10 @@ extension _LessSpecificSelectors<W extends Widget> on WidgetSelector<W> {
     List<WidgetSelector<W> Function(WidgetSelector<W>)> criteria,
   ) {
     WidgetSelector<W> s = copyWith(
+      // stages will be added partially with each criteria
       stages: [],
+      // No constraints needed
+      // In this scenario no widget was found previously, and would be happy to find any
       quantityConstraint: QuantityConstraint.unconstrained,
     );
     for (final criteria in criteria) {
