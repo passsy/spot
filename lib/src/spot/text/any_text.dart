@@ -254,13 +254,6 @@ class AnyTextWidgetSelector extends WidgetSelector<AnyText> {
       'Widget ${element.widget.toStringShort()} is not supported by AnyText',
     );
   }
-
-  // @override
-  // List<ElementFilter> createElementFilters() {
-  //   return super.createElementFilters()
-  //     Matches multiple widget types, can't filter by synthetic type AnyText
-  // ..removeWhere((it) => it is WidgetTypeFilter);
-  // }
 }
 
 /// Matches text widgets ([EditableText] and [RichText]) on screen.

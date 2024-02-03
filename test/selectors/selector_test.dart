@@ -13,9 +13,6 @@ void main() {
 
     final singleSelector = multiSelector.single;
 
-    // expect(multiSelector.parents, singleSelector.parents);
-    // expect(multiSelector.children, singleSelector.children);
-    // expect(multiSelector.props, singleSelector.props);
     expect(multiSelector.mapElementToWidget, singleSelector.mapElementToWidget);
     expect(singleSelector.expectedQuantity, ExpectedQuantity.single);
     expect(multiSelector.expectedQuantity, ExpectedQuantity.multi);
@@ -29,9 +26,6 @@ void main() {
 
     final multiSelector = singleSelector.multi;
 
-    // expect(multiSelector.parents, singleSelector.parents);
-    // expect(multiSelector.children, singleSelector.children);
-    // expect(multiSelector.props, singleSelector.props);
     expect(multiSelector.mapElementToWidget, singleSelector.mapElementToWidget);
     expect(multiSelector.quantityConstraint, QuantityConstraint.unconstrained);
     expect(singleSelector.quantityConstraint, QuantityConstraint.single);
@@ -49,16 +43,10 @@ void main() {
   testWidgets('WidgetSelector API', (tester) async {
     await tester.pumpWidget(const Center());
     final WidgetSelector<Center> selector = spot<Center>();
-    // final List<PredicateWithDescription> props = selector.props;
-    // expect(props, isNotNull);
-    // final List<WidgetSelector<Widget>> parents = selector.parents;
-    // expect(parents, isNotNull);
-    // final List<WidgetSelector<Widget>> children = selector.children;
-    // expect(children, isNotNull);
-    // final List<ElementFilter> filters = selector.elementFilters;
-    // expect(filters, isNotNull);
     final Type type = selector.type;
     expect(type, isNotNull);
+    final List<ElementFilter> stages = selector.stages;
+    expect(stages, isNotNull);
     final ExpectedQuantity expectedQuantity = selector.expectedQuantity;
     expect(expectedQuantity, isNotNull);
     final MultiWidgetSnapshot<Center> snapshot = selector.snapshot();
@@ -66,11 +54,6 @@ void main() {
     final Center Function(Element element) mapElementToWidget =
         selector.mapElementToWidget;
     expect(mapElementToWidget, isNotNull);
-    // final List<ElementFilter> createElementFilters =
-    //     selector.createElementFilters();
-    // expect(createElementFilters, isNotNull);
-    // final String stringWithoutParents = selector.toStringWithoutParents();
-    // expect(stringWithoutParents, isNotNull);
     final String stringBreadcrumb = selector.toStringBreadcrumb();
     expect(stringBreadcrumb, isNotNull);
     final WidgetSelector<Center> self = selector.self;

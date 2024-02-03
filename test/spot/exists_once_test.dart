@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
+import 'package:spot/src/spot/snapshot.dart';
 
 import '../util/assert_error.dart';
 
@@ -207,21 +208,19 @@ void main() {
       ),
     );
 
-    // final textSnapshot = spot<Text>().snapshot();
-    // expect(textSnapshot.discoveredElements.length, 2);
-    //
+    final textSnapshot = spot<Text>().snapshot();
+    expect(textSnapshot.discoveredElements.length, 2);
+
     final wrap = spot<Wrap>();
-    // // only find the single sizedBox below Wrap
-    // wrap.spot<SizedBox>().existsOnce();
+    // only find the single sizedBox below Wrap
+    wrap.spot<SizedBox>().existsOnce();
 
     final multipleSpotter = spot<Text>();
-    // expect(snapshot(multipleSpotter).discovered.length, 2);
+    expect(snapshot(multipleSpotter).discovered.length, 2);
 
-    // snapshot(spot<Text>()).existsAtLeastOnce();
+    snapshot(spot<Text>()).existsAtLeastOnce();
 
-    multipleSpotter
-        // only finds the single SizedBox in Wrap, not the SizedBox below Center
-        .addStage(ParentFilter([wrap.spot<SizedBox>()]))
-        .existsOnce();
+    // only finds the single SizedBox in Wrap, not the SizedBox below Center
+    multipleSpotter.withParent(wrap.spot<SizedBox>()).existsOnce();
   });
 }
