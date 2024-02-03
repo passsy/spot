@@ -136,29 +136,31 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
   WidgetSelector<W> selector, {
   bool validateQuantity = true,
 }) {
+  // Make sure that any previous asynchronous operations are completed.
+  // This check makes sure that a missing `await` in the line before throws here
   TestAsyncUtils.guardSync();
+
   final treeSnapshot = currentWidgetTreeSnapshot();
+  final List<WidgetTreeNode> candidates = treeSnapshot.allNodes;
 
-  if (selector.parents.isEmpty) {
-    final WidgetSnapshot<W> snapshot = findWithinScope(treeSnapshot, selector);
-    if (validateQuantity) {
-      snapshot.validateQuantity();
-    }
-    return snapshot;
+  // an easy to debug list of all filters and their individual results
+  final stageResults = [
+    (
+      filter: WidgetSelector.all.stages.first,
+      candidates: candidates.toUnmodifiable(),
+    ),
+  ];
+
+  for (final stage in selector.stages) {
+    // using unmodifiable copies to prevent accidental modification during filtering
+    final before = stageResults.last.candidates.toUnmodifiable();
+    final after = stage.filter(before).toList().toUnmodifiable();
+    stageResults.add((filter: stage, candidates: after));
   }
-
-  final List<WidgetTreeNode> candidates =
-      selector.createCandidateGenerator().generateCandidates().toList();
-
-  final filters = selector.createElementFilters();
-  final discovered =
-      filters.fold<Iterable<WidgetTreeNode>>(candidates, (list, filter) {
-    return filter.filter(list);
-  }).toList();
 
   final snapshot = WidgetSnapshot<W>(
     selector: selector,
-    discovered: discovered,
+    discovered: stageResults.last.candidates,
     scope: treeSnapshot,
     debugCandidates: candidates.map((element) => element.element).toList(),
   );
@@ -170,113 +172,9 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
   return snapshot;
 }
 
-/// Generates candidate widget tree nodes based on parent selectors for a
-/// given widget type [W].
-///
-/// This class is used to create a set of candidates by considering the
-/// hierarchical context defined by parent selectors in a [WidgetSelector].
-class CandidateGeneratorFromParents<W extends Widget>
-    implements CandidateGenerator<W> {
-  /// Constructs a [CandidateGeneratorFromParents] using the
-  /// provided [selector].
-  CandidateGeneratorFromParents(this.selector);
-
-  /// The [WidgetSelector] whose parent selectors are used to generat
-  /// candidates.
-  final WidgetSelector<W> selector;
-
-  @override
-  Iterable<WidgetTreeNode> generateCandidates() {
-    final tree = currentWidgetTreeSnapshot();
-    final List<WidgetSnapshot<Widget>> parentSnapshots =
-        selector.parents.map((selector) {
-      final WidgetSnapshot<Widget> widgetSnapshot = snapshot(selector);
-      widgetSnapshot.validateQuantity();
-      return widgetSnapshot;
-    }).toList();
-
-    final WidgetSelector<W> selectorWithoutParents =
-        selector.copyWith(parents: []);
-
-    // Take a snapshot from each parent and get the snapshots of all nodes that match
-    final List<Map<WidgetTreeNode, List<WidgetSnapshot<W>>>> discoveryByParent =
-        parentSnapshots.map((WidgetSnapshot<Widget> parentSnapshot) {
-      final Map<WidgetTreeNode, List<WidgetSnapshot<W>>> groups = {};
-      if (parentSnapshot.discovered.isEmpty) {
-        return groups;
-      }
-
-      for (final WidgetTreeNode node in parentSnapshot.discovered) {
-        final WidgetSnapshot<W> group =
-            findWithinScope(tree.scope(node), selectorWithoutParents);
-        final list = groups[node];
-        if (list == null) {
-          groups[node] = [group];
-        } else {
-          list.add(group);
-        }
-      }
-
-      return groups;
-    }).toList();
-
-    final List<WidgetSnapshot<W>> discoveredSnapshots =
-        discoveryByParent.map((it) => it.values).flatten().flatten().toList();
-
-    final List<WidgetTreeNode> allDiscoveredNodes =
-        discoveredSnapshots.map((it) => it.discovered).flatten().toList();
-
-    final List<Element> distinctElements =
-        allDiscoveredNodes.map((e) => e.element).toSet().toList();
-
-    // find nodes that exist in all parents
-    final List<Element> elementsInAllParents =
-        distinctElements.where((element) {
-      return discoveryByParent.all((
-        Map<WidgetTreeNode, List<WidgetSnapshot<W>>> discovered,
-      ) {
-        return discovered.values.any((List<WidgetSnapshot<W>> list) {
-          return list.any((node) {
-            return node.discovered.map((e) => e.element).contains(element);
-          });
-        });
-      });
-    }).toList();
-
-    final List<WidgetTreeNode> allNodes = tree.allNodes;
-    return elementsInAllParents
-        .map((e) => allNodes.firstWhere((node) => node.element == e))
-        .toList();
-  }
-}
-
-/// Finds elements inside scope, completely ignores parents
-WidgetSnapshot<W> findWithinScope<W extends Widget>(
-  ScopedWidgetTreeSnapshot scope,
-  WidgetSelector<W> selector,
-) {
-  if (selector.parents.isNotEmpty) {
-    throw "Don't use findWithinScope with a selector that has parents. "
-        "Either remove them or use snapshot() instead";
-  }
-  final candidates = scope.allNodes;
-  final List<ElementFilter> filters = selector.createElementFilters();
-
-  final List<WidgetTreeNode> discovered = filters
-      .fold<Iterable<WidgetTreeNode>>(candidates, (list, ElementFilter filter) {
-    final Iterable<WidgetTreeNode> result = filter.filter(list);
-    return result;
-  }).toList();
-
-  return WidgetSnapshot<W>(
-    selector: selector,
-    discovered: discovered,
-    scope: scope,
-    debugCandidates: candidates.map((it) => it.element).toList(),
-  );
-}
-
-extension _ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
+/// Extension on [WidgetSnapshot]<W> providing methods to validate the quantity of discovered widgets.
+extension ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
+  /// Validates the quantity of [discovered] to match [WidgetSelector.quantityConstraint]
   void validateQuantity() {
     final count = discovered.length;
     final minimumConstraint = selector.quantityConstraint.min;
@@ -467,7 +365,7 @@ void _tryMatchingLessSpecificCriteria(WidgetSnapshot snapshot) {
   final unconstrainedSelector =
       selector.overrideQuantityConstraint(QuantityConstraint.unconstrained);
   for (final lessSpecificSelector
-      in unconstrainedSelector._lessSpecificSelectors()) {
+      in unconstrainedSelector.lessSpecificSelectors()) {
     late final WidgetSnapshot lessSpecificSnapshot;
     try {
       lessSpecificSnapshot = lessSpecificSelector.snapshot();
@@ -585,7 +483,9 @@ extension ElementParent on Element {
   }
 }
 
-extension _LessSpecificSelectors<W extends Widget> on WidgetSelector<W> {
+/// Extension on [WidgetSelector] providing methods to generate less specific selectors.
+@visibleForTesting
+extension LessSpecificSelectors<W extends Widget> on WidgetSelector<W> {
   /// Returns all less specific selectors, removing one criteria at a time until
   /// the selector is empty.
   ///
@@ -594,24 +494,22 @@ extension _LessSpecificSelectors<W extends Widget> on WidgetSelector<W> {
   /// For example, if the selector matches for type Center and parent SizedBox it will return
   /// - selector which only matches for type Center
   /// - selector which only matches for parent SizedBox
-  Iterable<WidgetSelector<W>> _lessSpecificSelectors() sync* {
+  @visibleForTesting
+  Iterable<WidgetSelector<W>> lessSpecificSelectors() sync* {
     final List<WidgetSelector<W> Function(WidgetSelector<W>)> criteria = [
-      for (final prop in props) (s) => s.copyWith(props: [prop]),
-      for (final parent in parents)
-        (s) => s.copyWith(parents: [...s.parents, parent]),
-      for (final child in children)
-        (s) => s.copyWith(children: [...s.children, child]),
+      for (final stage in stages)
+        (s) => s.copyWith(stages: [...s.stages, stage]),
     ];
+    if (criteria.length <= 1) {
+      return;
+    }
 
     for (final subset in getAllSubsets(criteria)) {
-      final selector = _buildSelector(subset);
-      // do not yield selectors which match any widgets
-      if (selector.children.isNotEmpty ||
-          selector.parents.isNotEmpty ||
-          selector.props.isNotEmpty ||
-          selector.type != Widget) {
-        yield selector;
+      if (subset.isEmpty) {
+        // no criteria would return all widgets, which is not useful
+        continue;
       }
+      yield _buildSelector(subset);
     }
   }
 
@@ -619,13 +517,17 @@ extension _LessSpecificSelectors<W extends Widget> on WidgetSelector<W> {
     List<WidgetSelector<W> Function(WidgetSelector<W>)> criteria,
   ) {
     WidgetSelector<W> s = copyWith(
-      props: [],
-      parents: [],
-      children: [],
+      // stages will be added partially with each criteria
+      stages: [],
+      // No constraints needed
+      // In this scenario no widget was found previously, and would be happy to find any
       quantityConstraint: QuantityConstraint.unconstrained,
     );
     for (final criteria in criteria) {
       s = criteria(s);
+    }
+    if (!s.stages.any((stage) => stage is WidgetTypeFilter)) {
+      return s.copyWith(stages: [WidgetSelector.all.stages[0], ...s.stages]);
     }
     return s;
   }

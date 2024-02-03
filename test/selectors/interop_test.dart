@@ -119,7 +119,7 @@ void main() {
             (e) => e.message,
             'message',
             contains(
-              'Could not find Directionality > text "nope" in widget tree',
+              'Could not find Directionality ᗕ text "nope" in widget tree',
             ),
           ),
         ),

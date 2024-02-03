@@ -2,9 +2,13 @@ import 'package:checks/checks.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 import 'package:spot/src/checks/checks_nullability.dart';
+import 'package:spot/src/spot/filters/predicate_filter.dart';
 import 'package:spot/src/spot/selectors.dart';
 import 'package:spot/src/spot/widget_selector.dart';
 
+/// Allows narrowing down the search to widgets that match a specific properties
+///
+/// Please use the newer version of this extension [PropSelectorQueries] instead.
 extension WidgetSelectorProp<W extends Widget> on WidgetSelector<W> {
   /// Filters all elements that match the selector
   ///
@@ -72,6 +76,7 @@ extension WidgetSelectorProp<W extends Widget> on WidgetSelector<W> {
   }
 }
 
+/// The newer version of [WidgetSelector.withProp] that uses [NamedWidgetProp].
 extension PropSelectorQueries<W extends Widget> on ChainableSelectors<W> {
   /// Creates a filter for the widgets of the discovered elements which is
   /// applied when the [WidgetSelector] is snapshotted.
@@ -89,18 +94,15 @@ extension PropSelectorQueries<W extends Widget> on ChainableSelectors<W> {
     NamedWidgetProp<W, T> prop,
     bool Function(T value) match,
   ) {
-    return self!.copyWith(
-      props: [
-        ...self!.props,
-        PredicateWithDescription(
-          (Element element) {
-            final widget = self!.mapElementToWidget(element);
-            final value = prop.get(widget);
-            return match(value);
-          },
-          description: prop.name,
-        ),
-      ],
+    return self!.addStage(
+      PredicateFilter(
+        predicate: (Element element) {
+          final widget = self!.mapElementToWidget(element);
+          final value = prop.get(widget);
+          return match(value);
+        },
+        description: prop.name,
+      ),
     );
   }
 
@@ -121,17 +123,14 @@ extension PropSelectorQueries<W extends Widget> on ChainableSelectors<W> {
     NamedElementProp<T> prop,
     bool Function(T value) match,
   ) {
-    return self!.copyWith(
-      props: [
-        ...self!.props,
-        PredicateWithDescription(
-          (Element element) {
-            final value = prop.get(element);
-            return match(value);
-          },
-          description: prop.name,
-        ),
-      ],
+    return self!.addStage(
+      PredicateFilter(
+        predicate: (Element element) {
+          final value = prop.get(element);
+          return match(value);
+        },
+        description: prop.name,
+      ),
     );
   }
 
@@ -155,21 +154,18 @@ extension PropSelectorQueries<W extends Widget> on ChainableSelectors<W> {
     NamedRenderObjectProp<R, T> prop,
     bool Function(T value) match,
   ) {
-    return self!.copyWith(
-      props: [
-        ...self!.props,
-        PredicateWithDescription(
-          (Element element) {
-            final renderObject = element.renderObject;
-            if (renderObject is R) {
-              final value = prop.get(renderObject);
-              return match(value);
-            }
-            return false;
-          },
-          description: prop.name,
-        ),
-      ],
+    return self!.addStage(
+      PredicateFilter(
+        predicate: (Element element) {
+          final renderObject = element.renderObject;
+          if (renderObject is R) {
+            final value = prop.get(renderObject);
+            return match(value);
+          }
+          return false;
+        },
+        description: prop.name,
+      ),
     );
   }
 }

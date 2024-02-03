@@ -11,7 +11,7 @@ extension FinderToSpot on Finder {
   @useResult
   WidgetSelector<W> spot<W extends Widget>() {
     return WidgetSelector<W>(
-      elementFilters: [_FinderFilter(this)],
+      stages: [FinderFilter(this)],
     );
   }
 }
@@ -31,16 +31,21 @@ extension SpotToFinder<W extends Widget> on WidgetSelector<W> {
   @useResult
   WidgetSelector<T> spotFinder<T extends Widget>(Finder finder) {
     return WidgetSelector<T>(
-      parents: [this],
-      elementFilters: [_FinderFilter(finder)],
+      stages: [
+        FinderFilter(finder),
+        ParentFilter([this]),
+      ],
     );
   }
 }
 
-class _FinderFilter extends ElementFilter {
+/// An interop filter that filters elements based on a flutter_test [Finder]
+class FinderFilter extends ElementFilter {
+  /// A usual [Finder] from [find] by the flutter_test package
   final Finder finder;
 
-  _FinderFilter(this.finder);
+  /// Creates an [ElementFilter] for [WidgetSelector] based on a [Finder]
+  FinderFilter(this.finder);
 
   @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {

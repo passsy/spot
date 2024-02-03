@@ -51,14 +51,14 @@ mixin ChainableSelectors<T extends Widget> {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
+    final p = [if (self != null) self!, ...parents];
     final selector = WidgetSelector<W>(
-      props: [
-        WidgetTypePredicate<W>(),
+      stages: [
+        WidgetTypeFilter<W>(),
+        if (children.isNotEmpty) ChildFilter(children),
+        if (p.isNotEmpty) ParentFilter(p),
       ],
-      parents: [if (self != null) self!, ...parents],
-      children: children,
     );
-
     return selector;
   }
 
@@ -94,17 +94,19 @@ mixin ChainableSelectors<T extends Widget> {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    return WidgetSelector<W>(
-      props: [
-        WidgetTypePredicate<W>(),
-        PredicateWithDescription(
-          (Element e) => identical(e.widget, widget),
+    final p = [if (self != null) self!, ...parents];
+    final selector = WidgetSelector<W>(
+      stages: [
+        WidgetTypeFilter<W>(),
+        PredicateFilter(
+          predicate: (Element e) => identical(e.widget, widget),
           description: 'Widget === $widget',
         ),
+        if (children.isNotEmpty) ChildFilter(children),
+        if (p.isNotEmpty) ParentFilter(p),
       ],
-      parents: [if (self != null) self!, ...parents],
-      children: children,
     );
+    return selector;
   }
 
   /// Creates a [WidgetSelector] that finds [widget] by identity and returns
@@ -145,17 +147,19 @@ mixin ChainableSelectors<T extends Widget> {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    return WidgetSelector<W>(
-      props: [
-        WidgetTypePredicate<W>(),
-        PredicateWithDescription(
-          (Element e) => identical(e, element),
+    final p = [if (self != null) self!, ...parents];
+    final selector = WidgetSelector<W>(
+      stages: [
+        WidgetTypeFilter<W>(),
+        PredicateFilter(
+          predicate: (Element e) => identical(e, element),
           description: 'Element === $element',
         ),
+        if (children.isNotEmpty) ChildFilter(children),
+        if (p.isNotEmpty) ParentFilter(p),
       ],
-      parents: [if (self != null) self!, ...parents],
-      children: children,
     );
+    return selector;
   }
 
   /// Creates a [WidgetSelector] that finds text within the parent
@@ -229,16 +233,18 @@ mixin ChainableSelectors<T extends Widget> {
           match(subject);
           return describe(subject).map((it) => it.trim()).toList().join(' ');
         }();
-    return AnyTextWidgetSelector(
-      props: [
-        MatchTextPredicate(
+    final p = [if (self != null) self!, ...parents];
+    final selector = AnyTextWidgetSelector(
+      stages: [
+        MatchTextFilter(
           match: (it) => match(it),
           description: 'Widget with text $name',
         ),
+        if (children.isNotEmpty) ChildFilter(children),
+        if (p.isNotEmpty) ParentFilter(p),
       ],
-      parents: [if (self != null) self!, ...parents],
-      children: children,
     );
+    return selector;
   }
 
   /// Creates a [WidgetSelector] that finds a single [Text], [EditableText] or
@@ -275,11 +281,12 @@ mixin ChainableSelectors<T extends Widget> {
     List<WidgetSelector> children = const [],
     bool findRichText = false,
   }) {
-    return WidgetSelector<W>(
-      props: [
-        WidgetTypePredicate<W>(),
-        PredicateWithDescription(
-          (Element e) {
+    final p = [if (self != null) self!, ...parents];
+    final selector = WidgetSelector<W>(
+      stages: [
+        WidgetTypeFilter<W>(),
+        PredicateFilter(
+          predicate: (Element e) {
             if (e.widget is Text) {
               final actual = (e.widget as Text).data;
               return actual == text;
@@ -300,10 +307,11 @@ mixin ChainableSelectors<T extends Widget> {
           },
           description: 'Widget with exact text: "$text"',
         ),
+        if (children.isNotEmpty) ChildFilter(children),
+        if (p.isNotEmpty) ParentFilter(p),
       ],
-      parents: [if (self != null) self!, ...parents],
-      children: children,
     );
+    return selector;
   }
 
   /// Creates a [WidgetSelector] that finds all [Icon] widgets showing [icon]
@@ -314,11 +322,12 @@ mixin ChainableSelectors<T extends Widget> {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    return WidgetSelector(
-      props: [
-        WidgetTypePredicate<Icon>(),
-        PredicateWithDescription(
-          (Element e) {
+    final p = [if (self != null) self!, ...parents];
+    final selector = WidgetSelector<Icon>(
+      stages: [
+        WidgetTypeFilter<Icon>(),
+        PredicateFilter(
+          predicate: (Element e) {
             if (e.widget is Icon) {
               return (e.widget as Icon).icon == icon;
             }
@@ -326,10 +335,11 @@ mixin ChainableSelectors<T extends Widget> {
           },
           description: 'Widget with icon: "$icon"',
         ),
+        if (children.isNotEmpty) ChildFilter(children),
+        if (p.isNotEmpty) ParentFilter(p),
       ],
-      parents: [if (self != null) self!, ...parents],
-      children: children,
     );
+    return selector;
   }
 
   /// Creates a [WidgetSelector] that finds a single [Icon] based on the [icon]
@@ -378,17 +388,19 @@ mixin ChainableSelectors<T extends Widget> {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    return WidgetSelector(
-      props: [
-        WidgetTypePredicate<W>(),
-        PredicateWithDescription(
-          (element) => element.widget.key == key,
+    final p = [if (self != null) self!, ...parents];
+    final selector = WidgetSelector<W>(
+      stages: [
+        WidgetTypeFilter<W>(),
+        PredicateFilter(
+          predicate: (Element e) => e.widget.key == key,
           description: 'with key: "$key"',
         ),
+        if (children.isNotEmpty) ChildFilter(children),
+        if (p.isNotEmpty) ParentFilter(p),
       ],
-      parents: [if (self != null) self!, ...parents],
-      children: children,
     );
+    return selector;
   }
 
   /// Creates a [WidgetSelector] that finds a single widget with the given [key].
@@ -433,8 +445,7 @@ mixin ChainableSelectors<T extends Widget> {
   /// ```
   @useResult
   WidgetSelector<T> first() {
-    // TODO add names to the elementFilters, for a better WidgetSelector.toString()
-    return self!.copyWith(elementFilters: [_FirstElement()]);
+    return self!.addStage(_FirstElement());
   }
 
   /// Selects the last of n widgets
@@ -449,7 +460,7 @@ mixin ChainableSelectors<T extends Widget> {
   /// ```
   @useResult
   WidgetSelector<T> last() {
-    return self!.copyWith(elementFilters: [_LastElement()]);
+    return self!.addStage(_LastElement());
   }
 
   /// Selects the widget at a specified [index] in the list of found widgets.
@@ -460,7 +471,7 @@ mixin ChainableSelectors<T extends Widget> {
   ///```
   @useResult
   WidgetSelector<T> atIndex(int index) {
-    return self!.copyWith(elementFilters: [_ElementAtIndex(index)]);
+    return self!.addStage(_ElementAtIndex(index));
   }
 }
 
@@ -477,7 +488,7 @@ class _FirstElement extends ElementFilter {
   }
 
   @override
-  String get description => ':first';
+  String get description => 'first item';
 }
 
 class _LastElement extends ElementFilter {
@@ -493,7 +504,7 @@ class _LastElement extends ElementFilter {
   }
 
   @override
-  String get description => ':last';
+  String get description => 'last item';
 }
 
 class _ElementAtIndex extends ElementFilter {
@@ -511,7 +522,12 @@ class _ElementAtIndex extends ElementFilter {
   }
 
   @override
-  String get description => ':index($index)';
+  String get description => 'at index $index';
+
+  @override
+  String toString() {
+    return '_ElementAtIndex{index: $index}';
+  }
 }
 
 /// Extension on [WidgetSelector<W>] for advanced widget querying.
@@ -541,14 +557,11 @@ extension SelectorQueries<W extends Widget> on WidgetSelector<W> {
     bool Function(Element element) predicate, {
     required String description,
   }) {
-    return self.copyWith(
-      props: [
-        ...self.props,
-        PredicateWithDescription(
-          (Element e) => predicate(e),
-          description: description,
-        ),
-      ],
+    return self.addStage(
+      PredicateFilter(
+        predicate: predicate,
+        description: description,
+      ),
     );
   }
 
@@ -570,17 +583,14 @@ extension SelectorQueries<W extends Widget> on WidgetSelector<W> {
     bool Function(W widget) predicate, {
     required String description,
   }) {
-    return self.copyWith(
-      props: [
-        ...self.props,
-        PredicateWithDescription(
-          (Element element) {
-            final widget = self.mapElementToWidget(element);
-            return predicate(widget);
-          },
-          description: description,
-        ),
-      ],
+    return self.addStage(
+      PredicateFilter(
+        predicate: (Element element) {
+          final widget = self.mapElementToWidget(element);
+          return predicate(widget);
+        },
+        description: description,
+      ),
     );
   }
 }
@@ -842,7 +852,9 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
   }
 }
 
+/// Extension which throws a [PropertyCheckFailure] when a [CheckFailure] is detected.
 extension ThrowCheckFailure on CheckFailure? {
+  /// Throws a [PropertyCheckFailure] if the [CheckFailure] is not `null`.
   void throwPropertyCheckFailure<T>(
     ConditionSubject<T> conditionSubject,
     Object? actual,
@@ -876,27 +888,6 @@ class PropertyCheckFailure extends TestFailure {
   final String matcherDescription;
 }
 
-/// A predicate that checks if an element's widget is of a specific type [W].
-///
-/// This class is a specialized version of [PredicateWithDescription] that
-/// is used to filter widgets by their type.
-class WidgetTypePredicate<W extends Widget>
-    implements PredicateWithDescription {
-  /// Constructs a [WidgetTypePredicate] for the widget type [W].
-  WidgetTypePredicate();
-
-  @override
-  String get description => '$W';
-
-  @override
-  bool Function(Element e) get predicate => (e) => e.widget is W;
-
-  @override
-  String toString() {
-    return 'WidgetTypePredicate<$W>()';
-  }
-}
-
 /// Extension on [WidgetSelector<W>] to create snapshots of the current
 /// widget selection.
 ///
@@ -908,7 +899,6 @@ extension SelectorToSnapshot<W extends Widget> on WidgetSelector<W> {
   /// This method captures the current state of the widgets selected by the
   /// selector for further analysis or assertions.
   WidgetSnapshot<W> snapshot() {
-    TestAsyncUtils.guardSync();
     return snapshot_file.snapshot(this, validateQuantity: false);
   }
 
@@ -937,19 +927,16 @@ extension SelectorToSnapshot<W extends Widget> on WidgetSelector<W> {
 extension ReadSingleSnapshot<W extends Widget> on WidgetSelector<W> {
   /// Convenience getter to access the [Widget] when evaluating the [WidgetSelector]
   W snapshotWidget() {
-    TestAsyncUtils.guardSync();
     return snapshot_file.snapshot(this).single.widget;
   }
 
   /// Convenience getter to access the [Element] when evaluating the [WidgetSelector]
   Element snapshotElement() {
-    TestAsyncUtils.guardSync();
     return snapshot_file.snapshot(this).single.element;
   }
 
   /// Convenience getter to access the [RenderObject] when evaluating the [WidgetSelector]
   RenderObject snapshotRenderObject() {
-    TestAsyncUtils.guardSync();
     // There is not a single Element in the Flutter SDK that returns null for `renderObject`.
     // So we can safely assume that this cast never fails.
     return snapshot_file.snapshot(this).single.element.renderObject!;
@@ -1008,7 +995,6 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostOnce] asserts that at most one widget exists.
   /// - [existsAtMostNTimes] asserts that at most `n` widgets of type [W] exist.
   MultiWidgetMatcher<W> existsAtLeastOnce() {
-    TestAsyncUtils.guardSync();
     final atLeastOne =
         copyWith(quantityConstraint: const QuantityConstraint.atLeast(1));
     return snapshot(atLeastOne).multi;
@@ -1031,7 +1017,6 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtLeastNTimes] asserts that at least `n` widgets of type [W] exist.
   /// - [existsAtMostNTimes] asserts that at most `n` widgets of type [W] exist.
   WidgetMatcher<W> existsAtMostOnce() {
-    TestAsyncUtils.guardSync();
     final atMostOne = copyWith(quantityConstraint: QuantityConstraint.single);
     return snapshot(atMostOne).single;
   }
@@ -1053,7 +1038,6 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostOnce] asserts that at most one widget exists.
   /// - [existsAtMostNTimes] asserts that at most `n` widgets of type [W] exist.
   void doesNotExist() {
-    TestAsyncUtils.guardSync();
     final none = copyWith(quantityConstraint: QuantityConstraint.zero);
     snapshot(none);
   }
@@ -1072,7 +1056,6 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostOnce] asserts that at most one widget exists.
   /// - [existsAtMostNTimes] asserts that at most `n` widgets of type [W] exist.
   WidgetMatcher<W> existsOnce() {
-    TestAsyncUtils.guardSync();
     final one =
         copyWith(quantityConstraint: const QuantityConstraint.exactly(1));
     return snapshot(one).single;
@@ -1092,7 +1075,6 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostOnce] asserts that at most one widget exists.
   /// - [existsAtMostNTimes] asserts that at most [n] widgets of type [W] exist.
   MultiWidgetMatcher<W> existsExactlyNTimes(int n) {
-    TestAsyncUtils.guardSync();
     final exactlyNTimes =
         copyWith(quantityConstraint: QuantityConstraint.exactly(n));
     return snapshot(exactlyNTimes).multi;
@@ -1112,7 +1094,6 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostOnce] asserts that at most one widget exists.
   /// - [existsAtMostNTimes] asserts that at most [n] widgets of type [W] exist.
   MultiWidgetMatcher<W> existsAtLeastNTimes(int n) {
-    TestAsyncUtils.guardSync();
     final atLeast = copyWith(quantityConstraint: QuantityConstraint.atLeast(n));
     return snapshot(atLeast).multi;
   }
@@ -1131,7 +1112,6 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtLeastNTimes] asserts that at least [n] widgets of type [W] exist.
   /// - [existsAtMostOnce] asserts that at most one widget exists.
   MultiWidgetMatcher<W> existsAtMostNTimes(int n) {
-    TestAsyncUtils.guardSync();
     final atMostN = copyWith(quantityConstraint: QuantityConstraint.atMost(n));
     return snapshot(atMostN).multi;
   }
@@ -1153,7 +1133,7 @@ extension RelativeSelectors<W extends Widget> on WidgetSelector<W> {
   /// - [withChildren] requires [children] to be children of the widget to match.
   @useResult
   WidgetSelector<W> withParent(WidgetSelector parent) {
-    return copyWith(parents: [...parents, parent]);
+    return addStage(ParentFilter([parent]));
   }
 
   /// Returns a [WidgetSelector] that requires [parents] to be parents of the
@@ -1170,7 +1150,7 @@ extension RelativeSelectors<W extends Widget> on WidgetSelector<W> {
   /// - [withChildren] requires [children] to be children of the widget to match.
   @useResult
   WidgetSelector<W> withParents(List<WidgetSelector> parents) {
-    return copyWith(parents: [...this.parents, ...parents]);
+    return addStage(ParentFilter(parents));
   }
 
   /// Returns a [WidgetSelector] that requires [child] to be a child of the
@@ -1187,7 +1167,7 @@ extension RelativeSelectors<W extends Widget> on WidgetSelector<W> {
   /// - [withChildren] requires [children] to be children of the widget to match.
   @useResult
   WidgetSelector<W> withChild(WidgetSelector child) {
-    return copyWith(children: [...children, child]);
+    return addStage(ChildFilter([child]));
   }
 
   /// Returns a [WidgetSelector] that requires [children] to be children of the
@@ -1204,7 +1184,7 @@ extension RelativeSelectors<W extends Widget> on WidgetSelector<W> {
   /// - [withChild] requires [child] to be a child of the widget to match.
   @useResult
   WidgetSelector<W> withChildren(List<WidgetSelector> children) {
-    return copyWith(children: [...this.children, ...children]);
+    return addStage(ChildFilter(children));
   }
 }
 
