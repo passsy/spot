@@ -109,8 +109,22 @@ void main() {
 
     spot<Text>().atIndex(1).withText('b').existsOnce();
     spot<Text>().atIndex(1).existsOnce().hasText('b');
+  });
 
-    // should throw some kind of RangeError
-    //spot<Text>().withText('b').atIndex(1).existsOnce();
+  testWidgets('atIndex does not throw any RangeError', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Row(
+          children: [
+            Text('a'),
+            Text('b'),
+            Text('c'),
+          ],
+        ),
+      ),
+    );
+
+    // just report nothing found
+    spot<Text>().atIndex(4).doesNotExist();
   });
 }
