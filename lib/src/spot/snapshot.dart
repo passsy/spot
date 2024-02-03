@@ -365,7 +365,7 @@ void _tryMatchingLessSpecificCriteria(WidgetSnapshot snapshot) {
   final unconstrainedSelector =
       selector.overrideQuantityConstraint(QuantityConstraint.unconstrained);
   for (final lessSpecificSelector
-      in unconstrainedSelector._lessSpecificSelectors()) {
+      in unconstrainedSelector.lessSpecificSelectors()) {
     late final WidgetSnapshot lessSpecificSnapshot;
     try {
       lessSpecificSnapshot = lessSpecificSelector.snapshot();
@@ -483,7 +483,9 @@ extension ElementParent on Element {
   }
 }
 
-extension _LessSpecificSelectors<W extends Widget> on WidgetSelector<W> {
+/// Extension on [WidgetSelector] providing methods to generate less specific selectors.
+@visibleForTesting
+extension LessSpecificSelectors<W extends Widget> on WidgetSelector<W> {
   /// Returns all less specific selectors, removing one criteria at a time until
   /// the selector is empty.
   ///
@@ -492,18 +494,22 @@ extension _LessSpecificSelectors<W extends Widget> on WidgetSelector<W> {
   /// For example, if the selector matches for type Center and parent SizedBox it will return
   /// - selector which only matches for type Center
   /// - selector which only matches for parent SizedBox
-  Iterable<WidgetSelector<W>> _lessSpecificSelectors() sync* {
+  @visibleForTesting
+  Iterable<WidgetSelector<W>> lessSpecificSelectors() sync* {
     final List<WidgetSelector<W> Function(WidgetSelector<W>)> criteria = [
       for (final stage in stages)
         (s) => s.copyWith(stages: [...s.stages, stage]),
     ];
+    if (criteria.length <= 1) {
+      return;
+    }
 
     for (final subset in getAllSubsets(criteria)) {
-      final selector = _buildSelector(subset);
-      // do not yield selectors which match any widgets
-      if (selector.stages.isNotEmpty || selector.type != Widget) {
-        yield selector;
+      if (subset.isEmpty) {
+        // no criteria would return all widgets, which is not useful
+        continue;
       }
+      yield _buildSelector(subset);
     }
   }
 
@@ -519,6 +525,9 @@ extension _LessSpecificSelectors<W extends Widget> on WidgetSelector<W> {
     );
     for (final criteria in criteria) {
       s = criteria(s);
+    }
+    if (!s.stages.any((stage) => stage is WidgetTypeFilter)) {
+      return s.copyWith(stages: [WidgetSelector.all.stages[0], ...s.stages]);
     }
     return s;
   }

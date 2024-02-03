@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
+import 'package:spot/src/spot/snapshot.dart';
 
 void main() {
   test('toString() Not child parent ambiguity', () {
@@ -34,4 +35,69 @@ void main() {
       'Row ᗕ Center with child SizedBox',
     );
   });
+
+  group('lessSpecificSelectors()', () {
+    test('no less specific ones', () {
+      final selector = spot<Center>();
+      final lessSpecificSelectors = selector.lessSpecificSelectors().toList();
+      expect(lessSpecificSelectors.length, 0);
+    });
+    test('one level', () {
+      final selector = spot<Center>().spot<Container>();
+      final lessSpecificSelectors = selector.lessSpecificSelectors().toList();
+      expect(lessSpecificSelectors.length, 2);
+      expect(
+        lessSpecificSelectors[0].toStringBreadcrumb(),
+        spot<Container>().toStringBreadcrumb(),
+      );
+      expect(
+        lessSpecificSelectors[1].toStringBreadcrumb(),
+        WidgetSelector.all.withParent(spot<Center>()).toStringBreadcrumb(),
+      );
+    });
+
+    test('two levels', () {
+      final selector =
+          spot<Center>().spot<Container>().withAlignment(Alignment.topCenter);
+      final lessSpecificSelectors = selector.lessSpecificSelectors().toList();
+      expect(lessSpecificSelectors.length, 6);
+      expect(
+        lessSpecificSelectors[0].toStringBreadcrumb(),
+        spot<Container>().withParent(spot<Center>()).toStringBreadcrumb(),
+      );
+      expect(
+        lessSpecificSelectors[1].toStringBreadcrumb(),
+        spot<Container>()
+            .withAlignment(Alignment.topCenter)
+            .toStringBreadcrumb(),
+      );
+      expect(
+        lessSpecificSelectors[2].toStringBreadcrumb(),
+        allCasted<Container>()
+            .withParent(spot<Center>())
+            .withAlignment(Alignment.topCenter)
+            .toStringBreadcrumb(),
+      );
+      expect(
+        lessSpecificSelectors[3].toStringBreadcrumb(),
+        spot<Container>().toStringBreadcrumb(),
+      );
+      expect(
+        lessSpecificSelectors[4].toStringBreadcrumb(),
+        allCasted().withParent(spot<Center>()).toStringBreadcrumb(),
+      );
+      expect(
+        lessSpecificSelectors[5].toStringBreadcrumb(),
+        allCasted<Container>()
+            .withAlignment(Alignment.topCenter)
+            .toStringBreadcrumb(),
+      );
+    });
+  });
+}
+
+/// Returns a [WidgetSelector] matching all widgets but allows building further
+/// selectors for the [Widget] type [T].
+WidgetSelector<T> allCasted<T extends Widget>() {
+  return WidgetSelector(stages: WidgetSelector.all.stages);
 }
