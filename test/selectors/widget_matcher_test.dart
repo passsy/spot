@@ -1,5 +1,3 @@
-// ignore_for_file: unnecessary_cast
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
@@ -17,7 +15,7 @@ void main() {
     final WidgetSelector<MaterialApp> selector = matcher.selector;
     expect(selector, isA<WidgetSelector<MaterialApp>>());
     final WidgetMatcher<MaterialApp> hasWidgetProp = matcher.hasWidgetProp(
-      prop: widgetProp('null', (widget) => null as Widget?),
+      prop: widgetProp('null', _getNullWidgetProp),
       match: (it) => it
           .has((Widget widget) => widget.toStringDeep(), 'toStringDeep')
           .isNull(),
@@ -25,11 +23,11 @@ void main() {
     expect(hasWidgetProp, isA<WidgetMatcher<MaterialApp>>());
 
     final Widget? getWidgetProp =
-        matcher.getWidgetProp(widgetProp('null', (widget) => null));
+        matcher.getWidgetProp(widgetProp('null', _getNullWidgetProp));
     expect(getWidgetProp, isNull);
 
     final WidgetMatcher<MaterialApp> hasElementProp = matcher.hasElementProp(
-      prop: elementProp('null', (element) => null as Widget?),
+      prop: elementProp('null', _getNullWidgetProp),
       match: (it) => it
           .has((Widget widget) => widget.toStringDeep(), 'toStringDeep')
           .isNull(),
@@ -37,12 +35,12 @@ void main() {
     expect(hasElementProp, isA<WidgetMatcher<MaterialApp>>());
 
     final Widget? getElementProp =
-        matcher.getElementProp(elementProp('null', (element) => null));
+        matcher.getElementProp(elementProp('null', _getNullWidgetProp));
     expect(getElementProp, isNull);
 
     final WidgetMatcher<MaterialApp> hasRenderObjectProp =
         matcher.hasRenderObjectProp(
-      prop: renderObjectProp('null', (element) => null as Widget?),
+      prop: renderObjectProp('null', _getNullWidgetProp),
       match: (it) => it
           .has((Widget widget) => widget.toStringDeep(), 'toStringDeep')
           .isNull(),
@@ -50,7 +48,7 @@ void main() {
     expect(hasRenderObjectProp, isA<WidgetMatcher<MaterialApp>>());
 
     final Widget? getRenderObjectProp = matcher
-        .getRenderObjectProp(renderObjectProp('null', (element) => null));
+        .getRenderObjectProp(renderObjectProp('null', _getNullWidgetProp));
     expect(getRenderObjectProp, isNull);
   });
 
@@ -75,7 +73,7 @@ void main() {
     final MultiWidgetMatcher<MaterialApp> all =
         matcher.all((WidgetMatcher<MaterialApp> widget) {
       widget.hasWidgetProp(
-        prop: widgetProp('null', (widget) => null as Widget?),
+        prop: widgetProp('null', _getNullWidgetProp),
         match: (it) => it
             .has((Widget widget) => widget.toStringDeep(), 'toStringDeep')
             .isNull(),
@@ -86,7 +84,7 @@ void main() {
     final MultiWidgetMatcher<MaterialApp> any =
         matcher.any((WidgetMatcher<MaterialApp> widget) {
       widget.hasWidgetProp(
-        prop: widgetProp('null', (widget) => null as Widget?),
+        prop: widgetProp('null', _getNullWidgetProp),
         match: (it) => it
             .has((Widget widget) => widget.toStringDeep(), 'toStringDeep')
             .isNull(),
@@ -95,3 +93,8 @@ void main() {
     expect(any, isA<MultiWidgetMatcher<MaterialApp>>());
   });
 }
+
+/// A function that returns a `Widget?` with the static value null
+///
+/// It is useful to test nullable support in the API
+Widget? Function(Object?) _getNullWidgetProp = (any) => null;
