@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors
 
+import 'package:dartx/dartx.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -239,8 +240,18 @@ void main() {
         .withChildren([spot<Center>(), spot<Wrap>()])
       ..existsOnce();
 
-    expect(withChildTwice.children.length, 2);
-    expect(withChildren.children.length, 2);
+    expect(
+      withChildTwice.stages
+          .flatMap((it) => it is ChildFilter ? it.childSelectors : [])
+          .length,
+      2,
+    );
+    expect(
+      withChildren.stages
+          .flatMap((it) => it is ChildFilter ? it.childSelectors : [])
+          .length,
+      2,
+    );
   });
 
   testWidgets('withParent', (tester) async {
@@ -289,7 +300,17 @@ void main() {
         .withParents([spot<Center>(), spot<Wrap>()])
       ..existsOnce();
 
-    expect(withParentTwice.parents.length, 2);
-    expect(withParents.parents.length, 2);
+    expect(
+      withParentTwice.stages
+          .flatMap((it) => it is ParentFilter ? it.parents : [])
+          .length,
+      2,
+    );
+    expect(
+      withParents.stages
+          .flatMap((it) => it is ParentFilter ? it.parents : [])
+          .length,
+      2,
+    );
   });
 }

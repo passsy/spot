@@ -1,9 +1,10 @@
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
-import 'package:spot/src/spot/child_element_filter.dart';
-import 'package:spot/src/spot/prop_element_filter.dart';
+import 'package:spot/src/spot/filters/child_filter.dart';
+import 'package:spot/src/spot/filters/parent_filter.dart';
+import 'package:spot/src/spot/filters/predicate_filter.dart';
+import 'package:spot/src/spot/filters/widget_type_filter.dart';
 import 'package:spot/src/spot/selectors.dart' show ChainableSelectors;
-import 'package:spot/src/spot/snapshot.dart';
 import 'package:spot/src/spot/tree_snapshot.dart';
 
 export 'package:spot/src/spot/tree_snapshot.dart';
@@ -14,33 +15,42 @@ export 'package:spot/src/spot/tree_snapshot.dart';
 class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
   /// Matches any widget currently mounted
   static final WidgetSelector all = WidgetSelector(
-    props: [
-      PredicateWithDescription(
-        (e) => true,
+    stages: [
+      PredicateFilter(
+        predicate: (e) => true,
         description: 'any Widget',
       ),
     ],
   );
 
-  /// The runtime type of the widget this selector is intended for.
-  Type get type => W;
+  /// Separator indicating a parent-child relationship between selectors
+  ///
+  /// ```
+  /// MaterialApp ᗕ Scaffold
+  /// ```
+  ///
+  /// MaterialApp is parent of Scaffold
+  static const String inheritanceSeparator = ' ᗕ ';
+
+  /// Separator splitting stages of a selector
+  ///
+  /// ```
+  /// IconButton ❯ (at index 1) ❯ with prop "color" equals <MaterialColor(primary value: Color(0xff4caf50))>
+  /// ```
+  ///
+  /// IconButton is stage 1, taking the second item is stage 2, and matching the color is stage 3
+  static const String stageSeparator = ' ❯ ';
 
   /// Constructor for creating a [WidgetSelector].
   ///
   /// Allows specifying various parameters for customizing the selection criteria.
   WidgetSelector({
-    List<PredicateWithDescription>? props,
-    List<WidgetSelector>? parents,
-    List<WidgetSelector>? children,
-    List<ElementFilter>? elementFilters,
+    required List<ElementFilter> stages,
     @Deprecated('Use quantityConstraint instead')
     ExpectedQuantity expectedQuantity = ExpectedQuantity.multi,
     QuantityConstraint? quantityConstraint,
     W Function(Element element)? mapElementToWidget,
-  })  : props = List.unmodifiable(props ?? []),
-        parents = List.unmodifiable(parents?.toSet().toList() ?? []),
-        children = List.unmodifiable(children ?? []),
-        elementFilters = List.unmodifiable(elementFilters ?? []),
+  })  : stages = List.unmodifiable(stages),
         quantityConstraint = quantityConstraint ??
             // ignore: deprecated_member_use_from_same_package
             (expectedQuantity == ExpectedQuantity.single
@@ -48,30 +58,16 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
                 : QuantityConstraint.unconstrained),
         mapElementToWidget = mapElementToWidget ?? defaultMapElementToWidget<W>;
 
-  /// A list of predicates with descriptions used to filter the widget tree nodes.
+  /// The list of filters which are used to narrow down the selection of widgets in the tree
   ///
-  /// These predicates define various conditions that the nodes must satisfy
-  /// to be included in the filtered set.
-  final List<PredicateWithDescription> props;
-
-  /// A list of parent selectors used to define a hierarchical
-  /// context for the selection.
+  /// Each filter is applied in sequence (order is important for filters like `.atIndex(1)`)
   ///
-  /// These selectors specify the parent widgets in the tree that the current
-  /// selector's widget must be a descendant of.
-  final List<WidgetSelector> parents;
-
-  /// A list of child selectors used to filter widgets based on their children.
-  ///
-  /// These selectors are applied to the children of the widget being matched,
-  /// allowing for selection based on child widget properties.
-  final List<WidgetSelector> children;
-
-  /// A list of element filters used to apply additional custom filtering logic.
-  ///
-  /// These filters enable advanced selection criteria beyond the standard
-  /// widget properties and hierarchy.
-  final List<ElementFilter> elementFilters;
+  /// Usual filters are:
+  /// - [ParentFilter]
+  /// - [ChildFilter]
+  /// - [PredicateFilter]
+  /// - [WidgetTypeFilter]
+  final List<ElementFilter> stages;
 
   /// Whether this selector expects to find a single or multiple widgets
   @Deprecated('Use quantityConstraint instead')
@@ -93,111 +89,53 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
   /// combines multiple widgets of similar (but not exact) Type
   final W Function(Element element) mapElementToWidget;
 
-  /// Returns a list of [ElementFilter] that is used to filter the widget tree
-  /// (or subtrees of [parents]) for widgets that match this selectors criteria
-  ///
-  /// This method is intended to be overridden by subclasses to add additional
-  /// filters that are not covered by this base implementation.
-  List<ElementFilter> createElementFilters() {
-    return [
-      if (props.isNotEmpty) PropFilter(props),
-      if (children.isNotEmpty) ChildFilter(children),
-      ...elementFilters,
-    ];
-  }
-
-  /// Generates a candidate generator for this selector.
-  ///
-  /// Used to produce sets of candidate widget tree nodes that match
-  /// this selector.
-  CandidateGenerator<W> createCandidateGenerator() {
-    return CandidateGeneratorFromParents(this);
-  }
+  /// The runtime type of the widget this selector is intended for.
+  Type get type => W;
 
   @override
   String toString() {
-    final children = this.children.isNotEmpty
-        ? 'with children: [${this.children.map((e) => e.toString()).join(', ')}]'
-        : null;
-    final parents = this.parents.isNotEmpty
-        ? 'with parents: [${this.parents.map((e) => e.toString()).join(', ')}]'
-        : null;
-    final props = this.props.isNotEmpty
-        ? this.props.map((e) => e.description).join(' ')
-        : null;
-    final filters = elementFilters.isNotEmpty
-        ? elementFilters.map((e) => e.description).join(' ')
-        : null;
-    final quantity = () {
-      if (quantityConstraint.min == null && quantityConstraint.max == 0) {
-        return '(amount: 0)';
+    final sb = StringBuffer();
+    for (int i = 0; i < stages.length; i++) {
+      final stage = stages[i];
+      if (stage is ParentFilter) {
+        var desc = stage.parents.first.toString();
+        if (desc.contains(' with parent ') || desc.contains(' with child ')) {
+          desc = '($desc)';
+        }
+        sb.write('with parent $desc');
+      } else if (stage is ChildFilter) {
+        if (stage.childSelectors.length == 1) {
+          var desc = stage.childSelectors.first.toString();
+          if (desc.contains(' with parent ') || desc.contains(' with child ')) {
+            desc = '($desc)';
+          }
+          sb.write('with child $desc');
+        } else {
+          var desc = stage.childSelectors.map((e) => e.toString()).join(', ');
+          if (desc.contains(' with parent ') || desc.contains(' with child ')) {
+            desc = '($desc)';
+          }
+          sb.write('with children [$desc]');
+        }
+      } else {
+        final desc = stage.description;
+        if (desc.contains(' with parent ') || desc.contains(' with child ')) {
+          sb.write('($desc)');
+        } else {
+          sb.write(desc);
+        }
       }
-      if (quantityConstraint.min == 0 && quantityConstraint.max == 0) {
-        return '(amount: 0)';
-      }
-      if (quantityConstraint.min != null &&
-          quantityConstraint.min == quantityConstraint.max) {
-        return '(amount: ${quantityConstraint.min})';
-      }
-      if (quantityConstraint.min != null && quantityConstraint.max != null) {
-        return '(amount: ${quantityConstraint.min}...${quantityConstraint.max})';
-      }
-      if (quantityConstraint.min != null) {
-        return '(amount: >=${quantityConstraint.min})';
-      }
-      if (quantityConstraint.max != null) {
-        return '(amount: <=${quantityConstraint.max})';
-      }
-      return null;
-    }();
 
-    final constraints =
-        [props, quantity, children, parents, filters].where((e) => e != null);
-    if (constraints.isEmpty) {
-      return '';
+      final isLast = i == stages.length - 1;
+      if (stage is WidgetTypeFilter) {
+        sb.write(' ');
+      } else if (!isLast) {
+        sb.write(stageSeparator);
+      }
     }
-    return constraints.join(' ');
-  }
-
-  /// Generates a string representation of this selector, excluding parents.
-  ///
-  /// This method is used internally for creating a more concise string output.
-  String toStringWithoutParents() {
-    final children = this.children.isNotEmpty
-        ? 'with children: [${this.children.map((e) => e.toString()).join(', ')}]'
-        : null;
-    final props = this.props.isNotEmpty
-        ? this.props.map((e) => e.description).join(' ')
-        : null;
-    final filters = elementFilters.isNotEmpty
-        ? elementFilters.map((e) => e.description).join(' ')
-        : null;
-    final quantity = () {
-      if (quantityConstraint.min == null && quantityConstraint.max == 0) {
-        return '(amount: 0)';
-      }
-      if (quantityConstraint.min == 0 && quantityConstraint.max == 0) {
-        return '(amount: 0)';
-      }
-      if (quantityConstraint.min != null &&
-          quantityConstraint.min == quantityConstraint.max) {
-        return '(amount: ${quantityConstraint.min})';
-      }
-      if (quantityConstraint.min != null && quantityConstraint.max != null) {
-        return '(amount: ${quantityConstraint.min}...${quantityConstraint.max})';
-      }
-      if (quantityConstraint.min != null) {
-        return '(amount: >=${quantityConstraint.min})';
-      }
-      if (quantityConstraint.max != null) {
-        return '(amount: <=${quantityConstraint.max})';
-      }
-      return null;
-    }();
-
-    final constraints =
-        [props, quantity, children, filters].where((e) => e != null);
-    return constraints.join(' ');
+    final parts =
+        [sb.toString().trim(), _quantityToString()].where((e) => e != null);
+    return parts.join(' ');
   }
 
   /// Generates a breadcrumb-like string representation of this selector.
@@ -205,18 +143,99 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
   /// This method includes parent selectors in the output, showing the full
   /// hierarchy of the selection.
   String toStringBreadcrumb() {
-    final parents = this.parents;
+    var sb = StringBuffer();
+    for (int i = 0; i < stages.length; i++) {
+      final stage = stages[i];
+      if (stage is ParentFilter) {
+        var child = sb.toString();
+        if (child.endsWith(stageSeparator)) {
+          // Remove stage separator from the end
+          child = child.substring(0, child.length - stageSeparator.length);
+        }
+        sb = StringBuffer();
+        final String desc;
+        if (stage.parents.length == 1) {
+          desc = stage.parents.first.toStringBreadcrumb();
+        } else {
+          desc =
+              '[${stage.parents.map((e) => e.toStringBreadcrumb()).join(', ')}]';
+        }
+        if (desc.contains(inheritanceSeparator) ||
+            desc.contains(stageSeparator)) {
+          sb.write('($desc)');
+        } else {
+          sb.write(desc);
+        }
+        sb.write(inheritanceSeparator);
+        sb.write(child);
+      } else if (stage is ChildFilter) {
+        if (stage.childSelectors.length == 1) {
+          var desc = stage.childSelectors.first.toStringBreadcrumb();
+          if (desc.contains(inheritanceSeparator) ||
+              desc.contains(stageSeparator)) {
+            desc = '($desc)';
+          }
+          sb.write('with child $desc');
+        } else {
+          var desc = stage.childSelectors
+              .map((e) => e.toStringBreadcrumb())
+              .join(', ');
+          if (desc.contains(inheritanceSeparator) ||
+              desc.contains(stageSeparator)) {
+            desc = '($desc)';
+          }
+          sb.write('with children [$desc]');
+        }
+      } else {
+        final desc = stage.description;
+        if (desc.contains(inheritanceSeparator) ||
+            desc.contains(stageSeparator)) {
+          sb.write('($desc)');
+        } else {
+          sb.write(desc);
+        }
+      }
 
-    if (parents.isEmpty) {
-      return toStringWithoutParents();
+      final isLast = i == stages.length - 1;
+      if (stage is WidgetTypeFilter) {
+        if (!sb.toString().endsWith(' ')) {
+          sb.write(' ');
+        }
+      } else if (!isLast) {
+        if (!sb.toString().endsWith(stageSeparator)) {
+          sb = StringBuffer(sb.toString().trimRight());
+          sb.write(stageSeparator);
+        }
+      }
     }
 
-    final parentBreadcrumbs = parents.map((e) => e.toStringBreadcrumb());
-    if (parentBreadcrumbs.length == 1) {
-      return '${parentBreadcrumbs.first} > ${toStringWithoutParents()}';
-    } else {
-      return '[${parentBreadcrumbs.join(' && ')}] > ${toStringWithoutParents()}';
+    final parts =
+        [sb.toString().trim(), _quantityToString()].where((e) => e != null);
+    return parts.join(' ');
+  }
+
+  /// Generates a string representation of the quantity constraints.
+  String? _quantityToString() {
+    if (quantityConstraint.min == null && quantityConstraint.max == 0) {
+      return '(amount: 0)';
     }
+    if (quantityConstraint.min == 0 && quantityConstraint.max == 0) {
+      return '(amount: 0)';
+    }
+    if (quantityConstraint.min != null &&
+        quantityConstraint.min == quantityConstraint.max) {
+      return '(amount: ${quantityConstraint.min})';
+    }
+    if (quantityConstraint.min != null && quantityConstraint.max != null) {
+      return '(amount: ${quantityConstraint.min}...${quantityConstraint.max})';
+    }
+    if (quantityConstraint.min != null) {
+      return '(amount: >=${quantityConstraint.min})';
+    }
+    if (quantityConstraint.max != null) {
+      return '(amount: <=${quantityConstraint.max})';
+    }
+    return null;
   }
 
   @override
@@ -229,25 +248,26 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
   /// but with some modified parameters.
   @useResult
   WidgetSelector<W> copyWith({
-    List<PredicateWithDescription>? props,
-    List<WidgetSelector>? parents,
-    List<WidgetSelector>? children,
-    List<ElementFilter>? elementFilters,
+    List<ElementFilter>? stages,
     // ignore: deprecated_member_use_from_same_package
     ExpectedQuantity? expectedQuantity,
     QuantityConstraint? quantityConstraint,
     W Function(Element element)? mapElementToWidget,
   }) {
     return WidgetSelector<W>(
-      props: props ?? this.props,
-      parents: parents ?? this.parents,
-      children: children ?? this.children,
-      elementFilters: elementFilters ?? this.elementFilters,
-      // ignore: deprecated_member_use_from_same_package
-      expectedQuantity: expectedQuantity ?? this.expectedQuantity,
+      stages: stages ?? this.stages,
       quantityConstraint: quantityConstraint ?? this.quantityConstraint,
       mapElementToWidget: mapElementToWidget ?? this.mapElementToWidget,
     );
+  }
+}
+
+/// Allows modification of stages of a [WidgetSelector]
+extension MutateStages<W extends Widget> on WidgetSelector<W> {
+  /// Adds a new [stage] to at the end to further narrow down the selection of widgets
+  @useResult
+  WidgetSelector<W> addStage(ElementFilter newStage) {
+    return copyWith(stages: [...stages, newStage]);
   }
 }
 
@@ -265,24 +285,16 @@ typedef MultiWidgetSelector<W extends Widget> = WidgetSelector<W>;
 /// specific criteria.
 ///
 /// Notable implementations:
-/// - [PropFilter]
+/// - [PredicateFilter]
 /// - [ChildFilter]
 /// - [WidgetTypeFilter]
+/// - [ParentFilter]
 abstract class ElementFilter {
   /// Filters all candidates, retuning only a subset that matches
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates);
 
   /// A description to describe the filter
   String get description;
-}
-
-/// Base class for generating candidate widget tree nodes for a given widget type.
-///
-/// Implementations of this class are used to produce sets of candidates
-/// that match a certain widget type [W].
-abstract class CandidateGenerator<W extends Widget> {
-  /// Generates a set of candidate widget tree nodes.
-  Iterable<WidgetTreeNode> generateCandidates();
 }
 
 /// Defines the quantity constraints for the number of widgets
@@ -362,50 +374,3 @@ enum ExpectedQuantity {
   /// A selector that matches multiple widgets
   multi,
 }
-
-/// Represents a predicate with an associated description.
-///
-/// Used to create readable and descriptive predicates in widget testing.
-class PredicateWithDescription {
-  /// Constructs a [PredicateWithDescription] with a predicate function and
-  /// a description.
-  PredicateWithDescription(
-    this.predicate, {
-    required this.description,
-  });
-
-  /// The predicate function to evaluate.
-  final bool Function(Element) predicate;
-
-  /// Description of what this predicate checks.
-  final String description;
-
-  @override
-  String toString() {
-    return 'PredicateWithDescription{"$description"}';
-  }
-}
-
-/// Filters candidates by widget type [W] comparing the runtime type.
-///
-/// Comparing the runtimeType makes sure that `spot<Align>()`
-/// does not accidentally match a [Center] Widget, that extends [Align].
-class WidgetTypeFilter<W extends Widget> implements ElementFilter {
-  @override
-  Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
-    final type = _typeOf<W>();
-    return candidates
-        .where((WidgetTreeNode node) => node.element.widget.runtimeType == type)
-        .toList();
-  }
-
-  @override
-  String get description => '$W';
-
-  @override
-  String toString() {
-    return 'WidgetTypeFilter of $W';
-  }
-}
-
-Type _typeOf<T>() => T;

@@ -30,13 +30,13 @@ class Act {
         final renderObject = element.renderObject;
         if (renderObject == null) {
           throw TestFailure(
-            "Widget '${selector.toStringWithoutParents()}' has no associated RenderObject.\n"
+            "Widget '${selector.toStringBreadcrumb()}' has no associated RenderObject.\n"
             "Spot does not know where the widget is located on the screen.",
           );
         }
         if (renderObject is! RenderBox) {
           throw TestFailure(
-            "Widget '${selector.toStringWithoutParents()}' is associated to $renderObject which "
+            "Widget '${selector.toStringBreadcrumb()}' is associated to $renderObject which "
             "is not a RenderObject in the 2D Cartesian coordinate system "
             "(implements RenderBox).\n"
             "Spot does not know how to hit test such a widget.",
@@ -81,7 +81,7 @@ class Act {
     final intersection = viewport.intersect(location);
     if (intersection.width < 0 || intersection.height < 0) {
       throw TestFailure(
-        "Widget '${selector.toStringWithoutParents()}' is located outside the viewport ($location).",
+        "Widget '${selector.toStringBreadcrumb()}' is located outside the viewport ($location).",
       );
     }
     // TODO handle case when location is partially outside viewport
@@ -123,7 +123,7 @@ class Act {
     );
 
     throw TestFailure(
-      "Widget '${snapshot.selector.toStringWithoutParents()}' is covered by '${hitTargetElements.first.widget.toStringShort()}' and can't be tapped.\n"
+      "Widget '${snapshot.selector.toStringBreadcrumb()}' is covered by '${hitTargetElements.first.widget.toStringShort()}' and can't be tapped.\n"
       "The common ancestor of both widgets is:\n"
       "${commonAncestor.toStringDeep()}",
     );
@@ -142,7 +142,7 @@ class Act {
         final location = getCreationLocation(childElement) ??
             childElement.debugGetCreatorChain(100);
         throw TestFailure(
-            "Widget '${snapshot.selector.toStringWithoutParents()}' is wrapped in AbsorbPointer and doesn't receive taps.\n"
+            "Widget '${snapshot.selector.toStringBreadcrumb()}' is wrapped in AbsorbPointer and doesn't receive taps.\n"
             "AbsorbPointer is created at $location\n"
             "The closest widget reacting to the touch event is:\n"
             "${hitTarget.toStringDeep()}");
@@ -170,7 +170,7 @@ class Act {
       final location = getCreationLocation(ignorePointer) ??
           targetElement.debugGetCreatorChain(100);
       throw TestFailure(
-        "Widget '${snapshot.selector.toStringWithoutParents()}' is wrapped in IgnorePointer and doesn't receive taps. "
+        "Widget '${snapshot.selector.toStringBreadcrumb()}' is wrapped in IgnorePointer and doesn't receive taps. "
         "The IgnorePointer is located at $location",
       );
     }

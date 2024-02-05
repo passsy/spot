@@ -89,9 +89,42 @@ void main() {
           ),
         ),
       );
-      // TODO find better way assert children
-      final topMostCenter = spot<Center>().last();
-      topMostCenter.spot<Text>().existsOnce().hasText('c');
+      final bottomCenter = spot<Center>().last();
+      bottomCenter.spot<Text>().existsOnce().hasText('c');
     });
+  });
+
+  testWidgets('atIndex', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Row(
+          children: [
+            Text('a'),
+            Text('b'),
+            Text('c'),
+          ],
+        ),
+      ),
+    );
+
+    spot<Text>().atIndex(1).withText('b').existsOnce();
+    spot<Text>().atIndex(1).existsOnce().hasText('b');
+  });
+
+  testWidgets('atIndex does not throw any RangeError', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Row(
+          children: [
+            Text('a'),
+            Text('b'),
+            Text('c'),
+          ],
+        ),
+      ),
+    );
+
+    // just report nothing found
+    spot<Text>().atIndex(4).doesNotExist();
   });
 }

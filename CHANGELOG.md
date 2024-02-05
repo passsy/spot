@@ -1,11 +1,28 @@
 # Changelog
 
+## 0.10.0-beta.3
+
+This release contains breaking changes to the "internal" `WidgetSelector` API.
+Unless you are using the `WidgetSelector` directly, you should not be affected by this.
+
+The end-user `spot` API is not affected.
+
+- **Breaking** `WidgetSelector` now has `List<ElementFilter> stages`, replacing the previous `props`, `parents`, `children` and `elementFilters`.
+- **Breaking** `WidgetSelector` constructor and `copyWith` signature changed, reflecting the new properties. `createElementFilters()`, `createCandidateGenerator()` and `toStringWithoutParents()` have been removed.
+- **Breaking** `PropFilter` has been renamed to `PredicateFilter`
+- **Breaking** `PredicateWithDescription` has been removed
+- **Breaking** `CandidateGenerator` has been removed
+- `WidgetSelector.toString()` has been improved, has now separators for stages and adds braces. Example: `Center with child SizedBox ❯ with parent (Scaffold ᗕ Row)`
+- Fix `.atIndex(n)` to be executed at the right time, not after all other filters.
+
+
 ## 0.10.0-beta.2
 
 - New `getDiagnosticProp<T>('name')` for easy access to the values of a diagnostic property #40
 - New `hasEffectiveTextStyle`, `withEffectiveTextStyleMatching()`, `withEffectiveTextStyle()` #36, #38
 - Tons of documentation and examples #37, #39
 - Restructure of internal files
+
 
 ## 0.10.0-beta.1
 
