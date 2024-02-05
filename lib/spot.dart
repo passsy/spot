@@ -145,7 +145,24 @@ const Spot _global = Spot();
 /// // WidgetsApp-[GlobalObjectKey _MaterialAppState#5b870],
 /// // ...
 /// ```
+@Deprecated('Use spotAllWidgets()')
 WidgetSelector<Widget> get allWidgets => WidgetSelector.all;
+
+/// A WidgetSelector that matches all widgets in the widget tree.
+///
+/// ```
+/// final globalKeyWidgets = spotAllWidgets()
+///     .whereWidget(
+///       (widget) => widget.key is GlobalKey,
+///       description: 'with GlobalKey',
+///     )
+///     .snapshot();
+/// print(globalKeyWidgets.discoveredWidgets);
+/// // [View-[GlobalObjectKey TestFlutterView#81689],
+/// // WidgetsApp-[GlobalObjectKey _MaterialAppState#5b870],
+/// // ...
+/// ```
+WidgetSelector<Widget> spotAllWidgets() => WidgetSelector.all;
 
 /// Creates a chainable [WidgetSelector] that matches a single [Widget] of
 /// type [W].

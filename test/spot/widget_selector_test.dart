@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/spot/snapshot.dart';
@@ -34,6 +34,15 @@ void main() {
       selector2.toStringBreadcrumb(),
       'Row ᗕ Center with child SizedBox',
     );
+  });
+
+  group('all', () {
+    testWidgets('find all widgets', (tester) async {
+      await tester.pumpWidget(const MaterialApp());
+      final s = spotAllWidgets().snapshot();
+      expect(s.discovered.length, greaterThan(10));
+      spotAllWidgets().spot<MaterialApp>().existsOnce();
+    });
   });
 
   group('lessSpecificSelectors()', () {
