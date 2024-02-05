@@ -119,12 +119,10 @@ WidgetSelector<Widget> get allWidgets => WidgetSelector.all;
 @useResult
 @Deprecated('Use spot<W>().atMost(1)')
 WidgetSelector<W> spotSingle<W extends Widget>({
-  bool skipOffstage = true,
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {
   return _global.spotSingle<W>(
-    skipOffstage: skipOffstage,
     parents: parents,
     children: children,
   );
@@ -140,12 +138,10 @@ WidgetSelector<W> spotSingle<W extends Widget>({
 /// does not accidentally match a [Center] Widget, that extends [Align].
 @useResult
 WidgetSelector<W> spot<W extends Widget>({
-  bool skipOffstage = true,
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {
   return _global.spot<W>(
-    skipOffstage: skipOffstage,
     parents: parents,
     children: children,
   );
@@ -157,13 +153,11 @@ WidgetSelector<W> spot<W extends Widget>({
 /// The comparison happens by identity (===)
 WidgetSelector<W> spotWidget<W extends Widget>(
   W widget, {
-  bool skipOffstage = true,
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {
   return _global.spotWidget<W>(
     widget,
-    skipOffstage: skipOffstage,
     parents: parents,
     children: children,
   );
@@ -175,13 +169,11 @@ WidgetSelector<W> spotWidget<W extends Widget>(
 @Deprecated('Use spotWidget<W>().atMost(1)')
 WidgetSelector<W> spotSingleWidget<W extends Widget>(
   W widget, {
-  bool skipOffstage = true,
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {
   return _global.spotSingleWidget<W>(
     widget,
-    skipOffstage: skipOffstage,
     parents: parents,
     children: children,
   );
@@ -192,13 +184,11 @@ WidgetSelector<W> spotSingleWidget<W extends Widget>(
 @Deprecated('Use spotWidget<W>()')
 WidgetSelector<W> spotWidgets<W extends Widget>(
   W widget, {
-  bool skipOffstage = true,
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {
   return _global.spotWidgets<W>(
     widget,
-    skipOffstage: skipOffstage,
     parents: parents,
     children: children,
   );
@@ -209,16 +199,10 @@ WidgetSelector<W> spotWidgets<W extends Widget>(
 @useResult
 WidgetSelector<W> spotElement<W extends Widget>(
   Element element, {
-  bool skipOffstage = true,
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {
-  return _global.spotElement<W>(
-    element,
-    skipOffstage: skipOffstage,
-    parents: parents,
-    children: children,
-  );
+  return _global.spotElement<W>(element);
 }
 
 /// Finds text on the screen
@@ -239,14 +223,12 @@ WidgetSelector<W> spotElement<W extends Widget>(
 @useResult
 WidgetSelector<AnyText> spotText(
   Pattern text, {
-  bool skipOffstage = true,
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
   bool exact = false,
 }) {
   return _global.spotText(
     text,
-    skipOffstage: skipOffstage,
     parents: parents,
     children: children,
     exact: exact,
@@ -270,13 +252,11 @@ WidgetSelector<AnyText> spotText(
 @useResult
 WidgetSelector<AnyText> spotTextWhere(
   void Function(Subject<String>) match, {
-  bool skipOffstage = true,
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {
   return _global.spotTextWhere(
     match,
-    skipOffstage: skipOffstage,
     parents: parents,
     children: children,
   );
@@ -295,14 +275,12 @@ WidgetSelector<AnyText> spotTextWhere(
 @useResult
 WidgetSelector<W> spotSingleText<W extends Widget>(
   String text, {
-  bool skipOffstage = true,
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
   bool findRichText = false,
 }) {
   return _global.spotSingleText(
     text,
-    skipOffstage: skipOffstage,
     parents: parents,
     children: children,
     findRichText: findRichText,
@@ -324,14 +302,12 @@ WidgetSelector<W> spotSingleText<W extends Widget>(
 @useResult
 WidgetSelector<W> spotTexts<W extends Widget>(
   String text, {
-  bool skipOffstage = true,
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
   bool findRichText = false,
 }) {
   return _global.spotTexts<W>(
     text,
-    skipOffstage: skipOffstage,
     parents: parents,
     children: children,
     findRichText: findRichText,
@@ -350,7 +326,6 @@ WidgetSelector<Icon> spotSingleIcon(
 }) {
   return _global.spotSingleIcon(
     icon,
-    skipOffstage: skipOffstage,
     parents: parents,
     children: children,
   );
@@ -361,13 +336,11 @@ WidgetSelector<Icon> spotSingleIcon(
 @useResult
 WidgetSelector<Icon> spotIcon(
   IconData icon, {
-  bool skipOffstage = true,
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {
   return _global.spotIcon(
     icon,
-    skipOffstage: skipOffstage,
     parents: parents,
     children: children,
   );
@@ -385,7 +358,6 @@ WidgetSelector<Icon> spotIcons(
 }) {
   return _global.spotIcons(
     icon,
-    skipOffstage: skipOffstage,
     parents: parents,
     children: children,
   );
@@ -396,13 +368,11 @@ WidgetSelector<Icon> spotIcons(
 @Deprecated('Use spotKey().atMost(1)')
 WidgetSelector<W> spotSingleKey<W extends Widget>(
   Key key, {
-  bool skipOffstage = true,
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {
   return _global.spotSingleKey<W>(
     key,
-    skipOffstage: skipOffstage,
     parents: parents,
     children: children,
   );
@@ -412,13 +382,11 @@ WidgetSelector<W> spotSingleKey<W extends Widget>(
 @useResult
 WidgetSelector<W> spotKey<W extends Widget>(
   Key key, {
-  bool skipOffstage = true,
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {
   return _global.spotKey<W>(
     key,
-    skipOffstage: skipOffstage,
     parents: parents,
     children: children,
   );
@@ -430,13 +398,11 @@ WidgetSelector<W> spotKey<W extends Widget>(
 @Deprecated('Use spotKey()')
 WidgetSelector<W> spotKeys<W extends Widget>(
   Key key, {
-  bool skipOffstage = true,
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {
   return _global.spotKeys<W>(
     key,
-    skipOffstage: skipOffstage,
     parents: parents,
     children: children,
   );

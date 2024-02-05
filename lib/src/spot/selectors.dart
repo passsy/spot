@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/checks/checks_nullability.dart';
-import 'package:spot/src/spot/onstage_element_filter.dart';
 import 'package:spot/src/spot/snapshot.dart' as snapshot_file show snapshot;
 import 'package:spot/src/spot/snapshot.dart';
 import 'package:spot/src/spot/text/any_text.dart';
@@ -49,16 +48,12 @@ mixin ChainableSelectors<T extends Widget> {
   /// ```
   @useResult
   WidgetSelector<W> spot<W extends Widget>({
-    bool skipOffstage = true,
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
     final selector = WidgetSelector<W>(
       props: [
         WidgetTypePredicate<W>(),
-      ],
-      elementFilters: [
-        if (skipOffstage) OnstageFilter(),
       ],
       parents: [if (self != null) self!, ...parents],
       children: children,
@@ -83,15 +78,10 @@ mixin ChainableSelectors<T extends Widget> {
   @useResult
   @Deprecated('Use spot<W>().atMost(1)')
   WidgetSelector<W> spotSingle<W extends Widget>({
-    bool skipOffstage = true,
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    return spot<W>(
-      skipOffstage: skipOffstage,
-      parents: parents,
-      children: children,
-    ).atMost(1);
+    return spot<W>(parents: parents, children: children).atMost(1);
   }
 
   /// Creates a [WidgetSelector] that finds [widget] by identity and returns all
@@ -101,7 +91,6 @@ mixin ChainableSelectors<T extends Widget> {
   @useResult
   WidgetSelector<W> spotWidget<W extends Widget>(
     W widget, {
-    bool skipOffstage = true,
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
@@ -112,9 +101,6 @@ mixin ChainableSelectors<T extends Widget> {
           (Element e) => identical(e.widget, widget),
           description: 'Widget === $widget',
         ),
-      ],
-      elementFilters: [
-        if (skipOffstage) OnstageFilter(),
       ],
       parents: [if (self != null) self!, ...parents],
       children: children,
@@ -129,16 +115,11 @@ mixin ChainableSelectors<T extends Widget> {
   @Deprecated('Use spotWidget().atMost(1)')
   WidgetSelector<W> spotSingleWidget<W extends Widget>(
     W widget, {
-    bool skipOffstage = true,
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    return spotWidgets<W>(
-      widget,
-      skipOffstage: skipOffstage,
-      parents: parents,
-      children: children,
-    ).atMost(1);
+    return spotWidgets<W>(widget, parents: parents, children: children)
+        .atMost(1);
   }
 
   /// Creates a [WidgetSelector] that finds all [widget] by identity
@@ -148,16 +129,10 @@ mixin ChainableSelectors<T extends Widget> {
   @Deprecated('Use spotWidget().atMost(1)')
   WidgetSelector<W> spotWidgets<W extends Widget>(
     W widget, {
-    bool skipOffstage = true,
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    return spotWidget<W>(
-      widget,
-      skipOffstage: skipOffstage,
-      parents: parents,
-      children: children,
-    );
+    return spotWidget<W>(widget, parents: parents, children: children);
   }
 
   /// Creates a [WidgetSelector] that finds the widget that is associated with
@@ -167,7 +142,6 @@ mixin ChainableSelectors<T extends Widget> {
   @useResult
   WidgetSelector<W> spotElement<W extends Widget>(
     Element element, {
-    bool skipOffstage = true,
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
@@ -178,9 +152,6 @@ mixin ChainableSelectors<T extends Widget> {
           (Element e) => identical(e, element),
           description: 'Element === $element',
         ),
-      ],
-      elementFilters: [
-        if (skipOffstage) OnstageFilter(),
       ],
       parents: [if (self != null) self!, ...parents],
       children: children,
@@ -206,7 +177,6 @@ mixin ChainableSelectors<T extends Widget> {
   @useResult
   WidgetSelector<AnyText> spotText(
     Pattern text, {
-    bool skipOffstage = true,
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
     bool exact = false,
@@ -219,7 +189,6 @@ mixin ChainableSelectors<T extends Widget> {
       }
       return spotTextWhere(
         (it) => it.equals(text),
-        skipOffstage: skipOffstage,
         description: 'with text "$text"',
         parents: parents,
         children: children,
@@ -229,7 +198,6 @@ mixin ChainableSelectors<T extends Widget> {
     // default with contains
     return spotTextWhere(
       (it) => it.contains(text),
-      skipOffstage: skipOffstage,
       description: 'contains text "$text"',
       parents: parents,
       children: children,
@@ -251,7 +219,6 @@ mixin ChainableSelectors<T extends Widget> {
   @useResult
   WidgetSelector<AnyText> spotTextWhere(
     void Function(Subject<String>) match, {
-    bool skipOffstage = true,
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
     String? description,
@@ -269,7 +236,6 @@ mixin ChainableSelectors<T extends Widget> {
           description: 'Widget with text $name',
         ),
       ],
-      skipOffstage: skipOffstage,
       parents: [if (self != null) self!, ...parents],
       children: children,
     );
@@ -284,14 +250,12 @@ mixin ChainableSelectors<T extends Widget> {
   @useResult
   WidgetSelector<W> spotSingleText<W extends Widget>(
     String text, {
-    bool skipOffstage = true,
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
     bool findRichText = false,
   }) {
     return spotTexts<W>(
       text,
-      skipOffstage: skipOffstage,
       parents: parents,
       children: children,
       findRichText: findRichText,
@@ -307,7 +271,6 @@ mixin ChainableSelectors<T extends Widget> {
   @useResult
   WidgetSelector<W> spotTexts<W extends Widget>(
     String text, {
-    bool skipOffstage = true,
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
     bool findRichText = false,
@@ -338,9 +301,6 @@ mixin ChainableSelectors<T extends Widget> {
           description: 'Widget with exact text: "$text"',
         ),
       ],
-      elementFilters: [
-        if (skipOffstage) OnstageFilter(),
-      ],
       parents: [if (self != null) self!, ...parents],
       children: children,
     );
@@ -366,9 +326,6 @@ mixin ChainableSelectors<T extends Widget> {
           },
           description: 'Widget with icon: "$icon"',
         ),
-      ],
-      elementFilters: [
-        if (skipOffstage) OnstageFilter(),
       ],
       parents: [if (self != null) self!, ...parents],
       children: children,
@@ -418,7 +375,6 @@ mixin ChainableSelectors<T extends Widget> {
   @useResult
   WidgetSelector<W> spotKey<W extends Widget>(
     Key key, {
-    bool skipOffstage = true,
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
@@ -430,9 +386,6 @@ mixin ChainableSelectors<T extends Widget> {
           description: 'with key: "$key"',
         ),
       ],
-      elementFilters: [
-        if (skipOffstage) OnstageFilter(),
-      ],
       parents: [if (self != null) self!, ...parents],
       children: children,
     );
@@ -443,13 +396,11 @@ mixin ChainableSelectors<T extends Widget> {
   @Deprecated('Use spotKey().atMost(1)')
   WidgetSelector<W> spotSingleKey<W extends Widget>(
     Key key, {
-    bool skipOffstage = true,
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
     return spotKey<W>(
       key,
-      skipOffstage: skipOffstage,
       parents: parents,
       children: children,
     ).atMost(1);
@@ -460,13 +411,11 @@ mixin ChainableSelectors<T extends Widget> {
   @Deprecated('Use spotKey()')
   WidgetSelector<W> spotKeys<W extends Widget>(
     Key key, {
-    bool skipOffstage = true,
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
     return spotKey<W>(
       key,
-      skipOffstage: skipOffstage,
       parents: parents,
       children: children,
     );
@@ -483,12 +432,9 @@ mixin ChainableSelectors<T extends Widget> {
   /// spot<Center>().first().spotText('Pepe').existsOnce();
   /// ```
   @useResult
-  WidgetSelector<T> first({bool skipOffstage = true}) {
+  WidgetSelector<T> first() {
     // TODO add names to the elementFilters, for a better WidgetSelector.toString()
-    return self!.copyWith(elementFilters: [
-      if (skipOffstage) OnstageFilter(),
-      _FirstElement(),
-    ]);
+    return self!.copyWith(elementFilters: [_FirstElement()]);
   }
 
   /// Selects the last of n widgets
@@ -502,11 +448,8 @@ mixin ChainableSelectors<T extends Widget> {
   /// spot<Center>().last().spotText('Pepe').existsOnce();
   /// ```
   @useResult
-  WidgetSelector<T> last({bool skipOffstage = true}) {
-    return self!.copyWith(elementFilters: [
-      if (skipOffstage) OnstageFilter(),
-      _LastElement(),
-    ]);
+  WidgetSelector<T> last() {
+    return self!.copyWith(elementFilters: [_LastElement()]);
   }
 
   /// Selects the widget at a specified [index] in the list of found widgets.
@@ -516,11 +459,8 @@ mixin ChainableSelectors<T extends Widget> {
   /// spot<YourWidgetType>().atIndex(2) // Selects the third widget
   ///```
   @useResult
-  WidgetSelector<T> atIndex(int index, {bool skipOffstage = true}) {
-    return self!.copyWith(elementFilters: [
-      if (skipOffstage) OnstageFilter(),
-      _ElementAtIndex(index),
-    ]);
+  WidgetSelector<T> atIndex(int index) {
+    return self!.copyWith(elementFilters: [_ElementAtIndex(index)]);
   }
 }
 
@@ -600,7 +540,6 @@ extension SelectorQueries<W extends Widget> on WidgetSelector<W> {
   WidgetSelector<W> whereElement(
     bool Function(Element element) predicate, {
     required String description,
-    bool skipOffstage = true,
   }) {
     return self.copyWith(
       props: [
@@ -609,9 +548,6 @@ extension SelectorQueries<W extends Widget> on WidgetSelector<W> {
           (Element e) => predicate(e),
           description: description,
         ),
-      ],
-      elementFilters: [
-        if (skipOffstage) OnstageFilter(),
       ],
     );
   }
@@ -633,7 +569,6 @@ extension SelectorQueries<W extends Widget> on WidgetSelector<W> {
   WidgetSelector<W> whereWidget(
     bool Function(W widget) predicate, {
     required String description,
-    bool skipOffstage = true,
   }) {
     return self.copyWith(
       props: [
@@ -645,9 +580,6 @@ extension SelectorQueries<W extends Widget> on WidgetSelector<W> {
           },
           description: description,
         ),
-      ],
-      elementFilters: [
-        if (skipOffstage) OnstageFilter(),
       ],
     );
   }
