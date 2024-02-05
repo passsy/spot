@@ -2,6 +2,7 @@ import 'package:dartx/dartx.dart';
 import 'package:flutter/widgets.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/spot/snapshot.dart';
+import 'package:spot/src/spot/tree_snapshot.dart';
 
 /// A filter that checks if the candidates are children of all [parents]
 class ParentFilter implements ElementFilter {

@@ -23,24 +23,47 @@ export 'package:checks/context.dart'
         Rejection,
         Subject;
 export 'package:meta/meta.dart' show useResult;
-export 'package:spot/src/act/act.dart';
-export 'package:spot/src/screenshot/screenshot.dart';
-export 'package:spot/src/spot/default_selectors.dart';
-export 'package:spot/src/spot/diagnostic_props.dart';
-export 'package:spot/src/spot/effective/effective_text.dart';
+export 'package:spot/src/act/act.dart' show Act, act;
+export 'package:spot/src/screenshot/screenshot.dart'
+    show
+        ElementScreenshotExtension,
+        Screenshot,
+        SelectorScreenshotExtension,
+        SnapshotScreenshotExtension,
+        takeScreenshot;
+export 'package:spot/src/spot/default_selectors.dart'
+    show DefaultWidgetMatchers, DefaultWidgetSelectors;
+export 'package:spot/src/spot/diagnostic_props.dart'
+    show DiagnosticPropWidgetMatcher, DiagnosticPropWidgetSelector;
+export 'package:spot/src/spot/effective/effective_text.dart'
+    show EffectiveTextMatcher, EffectiveTextSelector, TextStyleSubject;
 export 'package:spot/src/spot/filters/child_filter.dart' show ChildFilter;
 export 'package:spot/src/spot/filters/parent_filter.dart' show ParentFilter;
 export 'package:spot/src/spot/filters/predicate_filter.dart'
     show PredicateFilter;
 export 'package:spot/src/spot/filters/widget_type_filter.dart'
     show WidgetTypeFilter;
-export 'package:spot/src/spot/finder_interop.dart';
+export 'package:spot/src/spot/finder_interop.dart'
+    show FinderFilter, FinderToSpot, SpotToFinder;
 export 'package:spot/src/spot/matcher_generator.dart' show CreateMatchers;
-export 'package:spot/src/spot/props.dart';
+export 'package:spot/src/spot/props.dart'
+    show
+        MatchProp,
+        MatchPropNonNullable,
+        MatchPropNullable,
+        NamedElementProp,
+        NamedRenderObjectProp,
+        NamedWidgetProp,
+        PropSelectorQueries,
+        WidgetSelectorProp,
+        elementProp,
+        renderObjectProp,
+        widgetProp;
 export 'package:spot/src/spot/selectors.dart'
     show
         QuantityMatchers,
         QuantitySelectors,
+        ReadSingleSnapshot,
         RelativeSelectors,
         SelectorQueries,
         SelectorToSnapshot;
@@ -55,7 +78,8 @@ export 'package:spot/src/spot/snapshot.dart'
         WidgetSnapshot,
         WidgetSnapshotShorthands;
 export 'package:spot/src/spot/text/any_text.dart' show AnyText;
-export 'package:spot/src/spot/tree_snapshot.dart' show WidgetTreeNode;
+export 'package:spot/src/spot/tree_snapshot.dart'
+    show ScopedWidgetTreeSnapshot, WidgetTreeNode;
 export 'package:spot/src/spot/widget_matcher.dart'
     show
         MultiWidgetMatcher,
@@ -63,7 +87,18 @@ export 'package:spot/src/spot/widget_matcher.dart'
         PropertyCheckFailure,
         WidgetMatcher,
         WidgetMatcherExtensions;
-export 'package:spot/src/spot/widget_selector.dart';
+export 'package:spot/src/spot/widget_selector.dart'
+    show
+        ElementFilter,
+        // ignore: deprecated_member_use_from_same_package
+        ExpectedQuantity,
+        // ignore: deprecated_member_use_from_same_package
+        MultiWidgetSelector,
+        MutateStages,
+        QuantityConstraint,
+        // ignore: deprecated_member_use_from_same_package
+        SingleWidgetSelector,
+        WidgetSelector;
 export 'package:spot/src/widgets/align.g.dart';
 export 'package:spot/src/widgets/anytext.g.dart';
 export 'package:spot/src/widgets/circularprogressindicator.g.dart';

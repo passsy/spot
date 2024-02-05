@@ -2,6 +2,7 @@ import 'package:dartx/dartx.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
+import 'package:spot/src/spot/widget_selector.dart';
 
 /// A type alias for a snapshot that can contain multiple widgets.
 @Deprecated('Use WidgetSnapshot')

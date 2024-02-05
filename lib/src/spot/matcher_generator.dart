@@ -271,7 +271,7 @@ $getterSb
 
 /// Extension on [DiagnosticsNode] with helper methods to
 /// extract the type of a property.
-extension ReadType on DiagnosticsNode {
+extension on DiagnosticsNode {
   /// Returns the type of the property.
   String getType() {
     if (this is StringProperty) {
