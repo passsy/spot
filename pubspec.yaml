@@ -1,6 +1,6 @@
 name: spot
 description: Chainable powerful finder API, screenshots and assertions for awesome widget tests.
-version: 0.10.0-beta.3
+version: 0.10.0
 repository: https://github.com/passsy/spot
 issue_tracker: https://github.com/passsy/spot/issues
 
