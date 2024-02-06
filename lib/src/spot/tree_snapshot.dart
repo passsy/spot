@@ -23,42 +23,44 @@ WidgetTreeSnapshot createWidgetTreeSnapshot() {
   // ignore: deprecated_member_use
   final rootElement = WidgetsBinding.instance.renderViewElement!;
 
-  WidgetTreeNode build(
+  WidgetTreeNode buildTreeNode(
     Element element, {
     WidgetTreeNode? parent,
-    bool isOffstage = false,
+    bool isParentOffstage = false,
   }) {
-    // Get all onstage children of the parent
-    final allOnstageChildren = parent?.element.onstageChildren.toList();
-
-    final bool isOffstageElement;
-    if (allOnstageChildren == null) {
-      // If there is no parent use isOffstage which is false by default
-      isOffstageElement = isOffstage;
-    } else {
-      // Check if the current element is offstage or use the parent's state
-      isOffstageElement = !allOnstageChildren.contains(element) || isOffstage;
-    }
-
-    final snapshot = WidgetTreeNode(
+    final node = WidgetTreeNode(
       element: element,
       parent: parent,
-      isOffstage: isOffstageElement,
+      isOffstage: isParentOffstage,
     );
 
-    for (final child in element.children) {
-      snapshot.addChild(
-        build(
-          child,
-          parent: snapshot,
-          isOffstage: isOffstageElement,
-        ),
+    // children contains onstage and offstage children
+    final children = element.children.toList();
+
+    for (final child in children) {
+      // Once a part of the widget tree is offstage, all children are offstage, too.
+      // There is now way a child might become onstage again
+      final isOffstage = isParentOffstage ||
+          () {
+            final onstageOnly = element.onstageChildren.toList();
+            final offstageOnly = element.children
+                .where((it) => !onstageOnly.contains(it))
+                .toList();
+            return offstageOnly.contains(child);
+          }();
+
+      final childNode = buildTreeNode(
+        child,
+        parent: node,
+        isParentOffstage: isOffstage,
       );
+      node.addChild(childNode);
     }
-    return snapshot;
+    return node;
   }
 
-  final origin = build(rootElement);
+  // TODO replace recursion with iteration to prevent stack overflow for giant widget trees
+  final origin = buildTreeNode(rootElement);
 
   return WidgetTreeSnapshot(
     origin: origin,
@@ -103,7 +105,7 @@ class WidgetTreeNode {
   WidgetTreeNode({
     required this.element,
     required this.parent,
-    this.isOffstage = false,
+    required this.isOffstage,
   });
 
   @override
