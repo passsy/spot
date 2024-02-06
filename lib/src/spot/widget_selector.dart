@@ -49,8 +49,10 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
     @Deprecated('Use quantityConstraint instead')
     ExpectedQuantity expectedQuantity = ExpectedQuantity.multi,
     QuantityConstraint? quantityConstraint,
+    bool? includeOffstage,
     W Function(Element element)? mapElementToWidget,
   })  : stages = List.unmodifiable(stages),
+        includeOffstage = includeOffstage ?? false,
         quantityConstraint = quantityConstraint ??
             // ignore: deprecated_member_use_from_same_package
             (expectedQuantity == ExpectedQuantity.single
@@ -91,6 +93,9 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
 
   /// The runtime type of the widget this selector is intended for.
   Type get type => W;
+
+  /// Whether to include offstage widgets in the selection
+  final bool includeOffstage;
 
   @override
   String toString() {
@@ -252,11 +257,13 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
     // ignore: deprecated_member_use_from_same_package
     ExpectedQuantity? expectedQuantity,
     QuantityConstraint? quantityConstraint,
+    bool? includeOffstage,
     W Function(Element element)? mapElementToWidget,
   }) {
     return WidgetSelector<W>(
       stages: stages ?? this.stages,
       quantityConstraint: quantityConstraint ?? this.quantityConstraint,
+      includeOffstage: includeOffstage ?? this.includeOffstage,
       mapElementToWidget: mapElementToWidget ?? this.mapElementToWidget,
     );
   }

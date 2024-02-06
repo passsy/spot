@@ -57,12 +57,49 @@ mixin ChainableSelectors<T extends Widget> {
         if (children.isNotEmpty) ChildFilter(children),
         if (p.isNotEmpty) ParentFilter(p),
       ],
+      includeOffstage: self?.includeOffstage,
     );
     return selector;
   }
 
-  /// Creates a [WidgetSelector] that matches a single Widgets of
-  /// type [W] that is in the scope of the parent [WidgetSelector].
+  /// Creates a [WidgetSelector] that includes offstage widgets in the selection.
+  ///
+  /// Offstage widgets are those that are not currently visible on the screen,
+  /// but are still part of the widget tree. This can be useful when you want to
+  /// select and perform operations on widgets that are not currently visible to the user.
+  ///
+  /// Returns a new [WidgetSelector] that includes offstage widgets.
+  ///
+  /// ### Example usage:
+  /// ```dart
+  /// final text = spotText('text')
+  ///   .offstage();
+  /// ```
+  @useResult
+  WidgetSelector<T> offstage() {
+    return self!.copyWith(includeOffstage: true);
+  }
+
+  /// Creates a [WidgetSelector] that excludes offstage widgets from the selection.
+  ///
+  /// This is the default behavior of a [WidgetSelector], but this method can be useful
+  /// if you have previously called `offstage` on the selector and want to revert back
+  /// to only selecting widgets that are currently visible on the screen.
+  ///
+  /// Returns a new [WidgetSelector] that excludes offstage widgets.
+  ///
+  /// ### Example usage:
+  /// ```dart
+  /// final text = spotText('text')
+  ///   .offstage()
+  ///   .onstage();
+  /// ```
+  @useResult
+  WidgetSelector<T> onstage() {
+    return self!.copyWith(includeOffstage: false);
+  }
+
+  /// Creates a [WidgetSelector] that excludes offstage widgets from the selection.
   ///
   /// This selector compares the Widgets by runtimeType rather than by super
   /// type (see [WidgetTypeFilter]). This makes sure that e.g. `spot<Align>()`
@@ -104,6 +141,7 @@ mixin ChainableSelectors<T extends Widget> {
         if (children.isNotEmpty) ChildFilter(children),
         if (p.isNotEmpty) ParentFilter(p),
       ],
+      includeOffstage: self?.includeOffstage,
     );
     return selector;
   }
@@ -157,6 +195,7 @@ mixin ChainableSelectors<T extends Widget> {
         if (children.isNotEmpty) ChildFilter(children),
         if (p.isNotEmpty) ParentFilter(p),
       ],
+      includeOffstage: self?.includeOffstage,
     );
     return selector;
   }
@@ -242,6 +281,7 @@ mixin ChainableSelectors<T extends Widget> {
         if (children.isNotEmpty) ChildFilter(children),
         if (p.isNotEmpty) ParentFilter(p),
       ],
+      includeOffstage: self?.includeOffstage,
     );
     return selector;
   }
@@ -309,6 +349,7 @@ mixin ChainableSelectors<T extends Widget> {
         if (children.isNotEmpty) ChildFilter(children),
         if (p.isNotEmpty) ParentFilter(p),
       ],
+      includeOffstage: self?.includeOffstage,
     );
     return selector;
   }
@@ -317,7 +358,6 @@ mixin ChainableSelectors<T extends Widget> {
   @useResult
   WidgetSelector<Icon> spotIcon(
     IconData icon, {
-    bool skipOffstage = true,
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
@@ -337,6 +377,7 @@ mixin ChainableSelectors<T extends Widget> {
         if (children.isNotEmpty) ChildFilter(children),
         if (p.isNotEmpty) ParentFilter(p),
       ],
+      includeOffstage: self?.includeOffstage,
     );
     return selector;
   }
@@ -346,13 +387,11 @@ mixin ChainableSelectors<T extends Widget> {
   @Deprecated('Use spotIcon().atMost(1)')
   WidgetSelector<Icon> spotSingleIcon(
     IconData icon, {
-    bool skipOffstage = true,
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
     return spotIcon(
       icon,
-      skipOffstage: skipOffstage,
       parents: parents,
       children: children,
     ).atMost(1);
@@ -363,13 +402,11 @@ mixin ChainableSelectors<T extends Widget> {
   @Deprecated('Use spotIcon()')
   WidgetSelector<Icon> spotIcons(
     IconData icon, {
-    bool skipOffstage = true,
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
     return spotIcon(
       icon,
-      skipOffstage: skipOffstage,
       parents: parents,
       children: children,
     );
@@ -398,6 +435,7 @@ mixin ChainableSelectors<T extends Widget> {
         if (children.isNotEmpty) ChildFilter(children),
         if (p.isNotEmpty) ParentFilter(p),
       ],
+      includeOffstage: self?.includeOffstage,
     );
     return selector;
   }

@@ -92,6 +92,7 @@ class WidgetTreeNode {
   /// node of the tree.
   final WidgetTreeNode? parent;
 
+  /// Whether the widget is offstage or onstage
   final bool isOffstage;
 
   /// Creates an [Element] in the element tree.

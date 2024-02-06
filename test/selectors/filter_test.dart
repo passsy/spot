@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
+import 'package:spot/src/spot/selectors.dart';
 
 void main() {
   group('first', () {
@@ -126,5 +127,48 @@ void main() {
 
     // just report nothing found
     spot<Text>().atIndex(4).doesNotExist();
+  });
+
+  testWidgets('do not select offstage widgets by default', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Row(
+          children: [
+            Text('a'),
+            Text('b'),
+            Offstage(child: Text('c')),
+          ],
+        ),
+      ),
+    );
+
+    spot<Text>().atMost(2);
+    spotText('c').doesNotExist();
+  });
+
+  testWidgets('select offstage widgets when use offstage()', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Row(
+          children: [
+            Text('a'),
+            Text('b'),
+            Offstage(child: Text('c')),
+          ],
+        ),
+      ),
+    );
+
+    spotOffstage().spot<Text>().atMost(3);
+    spotOffstage().spotText('c').existsOnce();
+    spotOffstage().onstage().spotText('c').doesNotExist();
+
+    spotText('c').doesNotExist();
+    spotText('c').offstage().existsOnce();
+    spotText('c').offstage().onstage().doesNotExist();
+    spotText('c').offstage().onstage().offstage().existsOnce();
+
+    spot<Text>().withText('c').doesNotExist();
+    spot<Text>().withText('c').offstage().existsOnce();
   });
 }

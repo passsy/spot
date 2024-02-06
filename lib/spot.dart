@@ -206,6 +206,32 @@ WidgetSelector<W> spot<W extends Widget>({
   );
 }
 
+/// Creates a [WidgetSelector] that includes offstage widgets in the selection.
+///
+/// Offstage widgets are those that are not currently visible on the screen,
+/// but are still part of the widget tree. This can be useful when you want to
+/// select and perform operations on widgets that are not currently visible to the user.
+///
+/// Returns a new [WidgetSelector] that includes offstage widgets.
+///
+/// ### Example usage:
+/// ```dart
+/// final text = spotOffstage()
+///   .spotText('text');
+/// ```
+@useResult
+WidgetSelector<Widget> spotOffstage({
+  List<WidgetSelector> parents = const [],
+  List<WidgetSelector> children = const [],
+}) {
+  return _global
+      .spot<Widget>(
+        parents: parents,
+        children: children,
+      )
+      .offstage();
+}
+
 /// Creates a [WidgetSelector] that finds [widget] by identity and returns all
 /// occurrences of it in the widget tree
 ///
@@ -379,7 +405,6 @@ WidgetSelector<W> spotTexts<W extends Widget>(
 @Deprecated('Use spotIcon<W>().atMost(1)')
 WidgetSelector<Icon> spotSingleIcon(
   IconData icon, {
-  bool skipOffstage = true,
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {
@@ -411,7 +436,6 @@ WidgetSelector<Icon> spotIcon(
 @Deprecated('Use spotIcon()')
 WidgetSelector<Icon> spotIcons(
   IconData icon, {
-  bool skipOffstage = true,
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {

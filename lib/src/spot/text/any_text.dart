@@ -238,6 +238,7 @@ class AnyTextWidgetSelector extends WidgetSelector<AnyText> {
   /// - `parents`: Parent selectors to include in the match.
   AnyTextWidgetSelector({
     required super.stages,
+    super.includeOffstage,
   }) : super(mapElementToWidget: _mapElementToAnyText);
 
   static AnyText _mapElementToAnyText(Element element) {
