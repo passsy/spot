@@ -2,7 +2,7 @@ import 'package:dartx/dartx.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
-import 'package:spot/src/spot/selectors.dart';
+import 'package:spot/src/spot/widget_selector.dart';
 
 /// A type alias for a snapshot that can contain multiple widgets.
 @Deprecated('Use WidgetSnapshot')
@@ -62,7 +62,6 @@ class WidgetSnapshot<W extends Widget> {
 ///
 /// Provides convenience methods to transform a widget snapshot into matchers
 /// for single or multiple widgets.
-// TODO make WidgetSnapshot implement WidgetMatcher and MultiWidgetMatcher
 extension ToWidgetMatcher<W extends Widget> on WidgetSnapshot<W> {
   /// Converts the snapshot to a [MultiWidgetMatcher],
   /// which can match multiple widgets.

@@ -1,5 +1,40 @@
 # Changelog
 
+## 0.10.0
+
+### High-level API changes
+
+- **Breaking** `spotText('dash')` can now return multiple widgets
+- New: `.atLeast(n)` and `.atMost(n)` and `.amount(n)` to force the number of expected widgets. 
+  `.atMost(0)` can be used to test that a widget does not exist!
+- Deprecated: `spotSingle<W>()` is now deprecated. Use `spot<W>()` instead, or `spot<W>().atMost(1)` to indicate that only a single widget is expected.
+- Fix: `.first()` and `.last()`
+- New: `.atIndex(n)` allows to get the widget at a specific index (when multiple are found)
+- Deprecate: `allWidgets` in favor of `spotAllWidgets()` to avoid conflicts with local variables
+- New: `getDiagnosticProp<T>('name')` for easy access to the values of a diagnostic property #40
+- New: `hasEffectiveTextStyle`, `withEffectiveTextStyleMatching()`, `withEffectiveTextStyle()` #36, #38
+- Improve: `WidgetSelector.toString()` has been improved, has now separators for stages and adds braces.
+  Example: `Center with child SizedBox ❯ with parent (Scaffold ᗕ Row)`
+- Added tons of documentation and examples
+
+### Advanced API changes
+
+Those changes can be breaking for packages that depend on `spot` or advanced usages, but should not affect most users.
+
+- **Breaking** `WidgetSelector` now has `List<ElementFilter> stages`, replacing the previous `props`, `parents`, `children` and `elementFilters`.
+- **Breaking** `WidgetSelector` constructor and `copyWith` signature changed, reflecting the new properties. 
+  `createElementFilters()`, `createCandidateGenerator()` and `toStringWithoutParents()` have been removed.
+- `WidgetSelector` now has a `quantityConstraint` property (deprecates `expectedQuantity`) that allows setting the `min` and `max` number of expected widgets.
+- `WidgetSelector` replaces `SingleWidgetSelector` and `MultiWidgetSelector`
+- **Breaking** Quantity assertions like `.doesNotExist()` or `.existsOnce()` now return `WidgetMatcher`/`MultiWidgetMatcher` instead of `WidgetSnapshot`. 
+  To get the `WidgetSnapshot` use `snapshot()` instead.
+- **Breaking** Remove `WidgetSelector.cast` because it lost information and was untested
+- **Breaking** `PropFilter` has been renamed to `PredicateFilter`
+- **Breaking** `PredicateWithDescription` has been removed
+- **Breaking** `CandidateGenerator` has been removed
+- Explicitly export all classes/extensions/functions to prevent accidental leaks of internal APIs
+
+
 ## 0.10.0-beta.3
 
 This release contains breaking changes to the "internal" `WidgetSelector` API.
