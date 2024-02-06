@@ -31,10 +31,8 @@ extension SpotToFinder<W extends Widget> on WidgetSelector<W> {
   @useResult
   WidgetSelector<T> spotFinder<T extends Widget>(Finder finder) {
     return WidgetSelector<T>(
-      stages: [
-        FinderFilter(finder),
-        ParentFilter([this]),
-      ],
+      stages: [FinderFilter(finder)],
+      parents: [this],
     );
   }
 }

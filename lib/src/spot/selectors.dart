@@ -50,14 +50,12 @@ mixin ChainableSelectors<T extends Widget> {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    final p = [if (self != null) self!, ...parents];
     final selector = WidgetSelector<W>(
       stages: [
         WidgetTypeFilter<W>(),
-        if (children.isNotEmpty) ChildFilter(children),
-        if (p.isNotEmpty) ParentFilter(p),
       ],
-      includeOffstage: self?.includeOffstage,
+      parents: [if (self != null) self!, ...parents],
+      children: children,
     );
     return selector;
   }
@@ -130,7 +128,6 @@ mixin ChainableSelectors<T extends Widget> {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    final p = [if (self != null) self!, ...parents];
     final selector = WidgetSelector<W>(
       stages: [
         WidgetTypeFilter<W>(),
@@ -138,10 +135,9 @@ mixin ChainableSelectors<T extends Widget> {
           predicate: (Element e) => identical(e.widget, widget),
           description: 'Widget === $widget',
         ),
-        if (children.isNotEmpty) ChildFilter(children),
-        if (p.isNotEmpty) ParentFilter(p),
       ],
-      includeOffstage: self?.includeOffstage,
+      parents: [if (self != null) self!, ...parents],
+      children: children,
     );
     return selector;
   }
@@ -184,7 +180,6 @@ mixin ChainableSelectors<T extends Widget> {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    final p = [if (self != null) self!, ...parents];
     final selector = WidgetSelector<W>(
       stages: [
         WidgetTypeFilter<W>(),
@@ -192,10 +187,9 @@ mixin ChainableSelectors<T extends Widget> {
           predicate: (Element e) => identical(e, element),
           description: 'Element === $element',
         ),
-        if (children.isNotEmpty) ChildFilter(children),
-        if (p.isNotEmpty) ParentFilter(p),
       ],
-      includeOffstage: self?.includeOffstage,
+      parents: [if (self != null) self!, ...parents],
+      children: children,
     );
     return selector;
   }
@@ -271,17 +265,15 @@ mixin ChainableSelectors<T extends Widget> {
           match(subject);
           return describe(subject).map((it) => it.trim()).toList().join(' ');
         }();
-    final p = [if (self != null) self!, ...parents];
     final selector = AnyTextWidgetSelector(
       stages: [
         MatchTextFilter(
           match: (it) => match(it),
           description: 'Widget with text $name',
         ),
-        if (children.isNotEmpty) ChildFilter(children),
-        if (p.isNotEmpty) ParentFilter(p),
       ],
-      includeOffstage: self?.includeOffstage,
+      parents: [if (self != null) self!, ...parents],
+      children: children,
     );
     return selector;
   }
@@ -320,7 +312,6 @@ mixin ChainableSelectors<T extends Widget> {
     List<WidgetSelector> children = const [],
     bool findRichText = false,
   }) {
-    final p = [if (self != null) self!, ...parents];
     final selector = WidgetSelector<W>(
       stages: [
         WidgetTypeFilter<W>(),
@@ -346,10 +337,9 @@ mixin ChainableSelectors<T extends Widget> {
           },
           description: 'Widget with exact text: "$text"',
         ),
-        if (children.isNotEmpty) ChildFilter(children),
-        if (p.isNotEmpty) ParentFilter(p),
       ],
-      includeOffstage: self?.includeOffstage,
+      parents: [if (self != null) self!, ...parents],
+      children: children,
     );
     return selector;
   }
@@ -361,7 +351,6 @@ mixin ChainableSelectors<T extends Widget> {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    final p = [if (self != null) self!, ...parents];
     final selector = WidgetSelector<Icon>(
       stages: [
         WidgetTypeFilter<Icon>(),
@@ -374,10 +363,9 @@ mixin ChainableSelectors<T extends Widget> {
           },
           description: 'Widget with icon: "$icon"',
         ),
-        if (children.isNotEmpty) ChildFilter(children),
-        if (p.isNotEmpty) ParentFilter(p),
       ],
-      includeOffstage: self?.includeOffstage,
+      parents: [if (self != null) self!, ...parents],
+      children: children,
     );
     return selector;
   }
@@ -424,7 +412,6 @@ mixin ChainableSelectors<T extends Widget> {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    final p = [if (self != null) self!, ...parents];
     final selector = WidgetSelector<W>(
       stages: [
         WidgetTypeFilter<W>(),
@@ -432,10 +419,9 @@ mixin ChainableSelectors<T extends Widget> {
           predicate: (Element e) => e.widget.key == key,
           description: 'with key: "$key"',
         ),
-        if (children.isNotEmpty) ChildFilter(children),
-        if (p.isNotEmpty) ParentFilter(p),
       ],
-      includeOffstage: self?.includeOffstage,
+      parents: [if (self != null) self!, ...parents],
+      children: children,
     );
     return selector;
   }
@@ -877,7 +863,7 @@ extension RelativeSelectors<W extends Widget> on WidgetSelector<W> {
   /// - [withChildren] requires [children] to be children of the widget to match.
   @useResult
   WidgetSelector<W> withParent(WidgetSelector parent) {
-    return addStage(ParentFilter([parent]));
+    return copyWith(parents: [...parents, parent]);
   }
 
   /// Returns a [WidgetSelector] that requires [parents] to be parents of the
@@ -894,7 +880,7 @@ extension RelativeSelectors<W extends Widget> on WidgetSelector<W> {
   /// - [withChildren] requires [children] to be children of the widget to match.
   @useResult
   WidgetSelector<W> withParents(List<WidgetSelector> parents) {
-    return addStage(ParentFilter(parents));
+    return copyWith(parents: [...this.parents, ...parents]);
   }
 
   /// Returns a [WidgetSelector] that requires [child] to be a child of the
@@ -911,7 +897,7 @@ extension RelativeSelectors<W extends Widget> on WidgetSelector<W> {
   /// - [withChildren] requires [children] to be children of the widget to match.
   @useResult
   WidgetSelector<W> withChild(WidgetSelector child) {
-    return addStage(ChildFilter([child]));
+    return copyWith(children: [...children, child]);
   }
 
   /// Returns a [WidgetSelector] that requires [children] to be children of the
@@ -928,6 +914,6 @@ extension RelativeSelectors<W extends Widget> on WidgetSelector<W> {
   /// - [withChild] requires [child] to be a child of the widget to match.
   @useResult
   WidgetSelector<W> withChildren(List<WidgetSelector> children) {
-    return addStage(ChildFilter(children));
+    return copyWith(children: [...this.children, ...children]);
   }
 }

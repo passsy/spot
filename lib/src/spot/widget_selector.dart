@@ -46,12 +46,16 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
   /// Allows specifying various parameters for customizing the selection criteria.
   WidgetSelector({
     required List<ElementFilter> stages,
+    List<WidgetSelector>? parents,
+    List<WidgetSelector>? children,
     @Deprecated('Use quantityConstraint instead')
     ExpectedQuantity expectedQuantity = ExpectedQuantity.multi,
     QuantityConstraint? quantityConstraint,
     bool? includeOffstage,
     W Function(Element element)? mapElementToWidget,
-  })  : stages = List.unmodifiable(stages),
+  })  : parents = parents ?? [],
+        children = children ?? [],
+        stages = List.unmodifiable(stages),
         includeOffstage = includeOffstage ?? false,
         quantityConstraint = quantityConstraint ??
             // ignore: deprecated_member_use_from_same_package
@@ -70,6 +74,19 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
   /// - [PredicateFilter]
   /// - [WidgetTypeFilter]
   final List<ElementFilter> stages;
+
+  /// A list of parent selectors used to define a hierarchical
+  /// context for the selection.
+  ///
+  /// These selectors specify the parent widgets in the tree that the current
+  /// selector's widget must be a descendant of.
+  final List<WidgetSelector> parents;
+
+  /// A list of child selectors used to filter widgets based on their children.
+  ///
+  /// These selectors are applied to the children of the widget being matched,
+  /// allowing for selection based on child widget properties.
+  final List<WidgetSelector> children;
 
   /// Whether this selector expects to find a single or multiple widgets
   @Deprecated('Use quantityConstraint instead')
@@ -97,11 +114,29 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
   /// Whether to include offstage widgets in the selection
   final bool includeOffstage;
 
+  bool isAnyOffstage() {
+    if (includeOffstage) {
+      return true;
+    }
+    for (final parent in parents) {
+      if (parent.isAnyOffstage()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   @override
   String toString() {
     final sb = StringBuffer();
-    for (int i = 0; i < stages.length; i++) {
-      final stage = stages[i];
+    final s = [
+      ...stages,
+      if (children.isNotEmpty) ChildFilter(children),
+      if (parents.isNotEmpty) ParentFilter(parents),
+    ];
+
+    for (int i = 0; i < s.length; i++) {
+      final stage = s[i];
       if (stage is ParentFilter) {
         var desc = stage.parents.first.toString();
         if (desc.contains(' with parent ') || desc.contains(' with child ')) {
@@ -131,7 +166,7 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
         }
       }
 
-      final isLast = i == stages.length - 1;
+      final isLast = i == s.length - 1;
       if (stage is WidgetTypeFilter) {
         sb.write(' ');
       } else if (!isLast) {
@@ -149,8 +184,14 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
   /// hierarchy of the selection.
   String toStringBreadcrumb() {
     var sb = StringBuffer();
-    for (int i = 0; i < stages.length; i++) {
-      final stage = stages[i];
+    final s = [
+      ...stages,
+      if (children.isNotEmpty) ChildFilter(children),
+      if (parents.isNotEmpty) ParentFilter(parents),
+    ];
+
+    for (int i = 0; i < s.length; i++) {
+      final stage = s[i];
       if (stage is ParentFilter) {
         var child = sb.toString();
         if (child.endsWith(stageSeparator)) {
@@ -201,7 +242,7 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
         }
       }
 
-      final isLast = i == stages.length - 1;
+      final isLast = i == s.length - 1;
       if (stage is WidgetTypeFilter) {
         if (!sb.toString().endsWith(' ')) {
           sb.write(' ');
@@ -259,12 +300,20 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
     QuantityConstraint? quantityConstraint,
     bool? includeOffstage,
     W Function(Element element)? mapElementToWidget,
+    List<WidgetSelector>? parents,
+    List<WidgetSelector>? children,
   }) {
     return WidgetSelector<W>(
-      stages: stages ?? this.stages,
+      stages: stages ??
+          this
+              .stages
+              .where((it) => it is! ChildFilter && it is! ParentFilter)
+              .toList(),
       quantityConstraint: quantityConstraint ?? this.quantityConstraint,
       includeOffstage: includeOffstage ?? this.includeOffstage,
       mapElementToWidget: mapElementToWidget ?? this.mapElementToWidget,
+      parents: parents ?? this.parents,
+      children: children ?? this.children,
     );
   }
 }

@@ -141,6 +141,7 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
   TestAsyncUtils.guardSync();
 
   final treeSnapshot = currentWidgetTreeSnapshot();
+
   final List<WidgetTreeNode> candidates = treeSnapshot.allNodes;
 
   // an easy to debug list of all filters and their individual results
@@ -151,14 +152,27 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
     ),
   ];
 
-  if (!selector.includeOffstage) {
-    final stage = OnstageFilter();
-    final before = stageResults.last.candidates.toUnmodifiable();
-    final after = stage.filter(before).toList().toUnmodifiable();
-    stageResults.add((filter: stage, candidates: after));
-  }
+  final offstage = selector.isAnyOffstage();
 
-  for (final stage in selector.stages) {
+  if (selector.stages.any((e) => e is ParentFilter)) {
+    throw ArgumentError(
+      'ParentFilter is not allowed in stages. Use the parents parameter instead.',
+    );
+  }
+  if (selector.stages.any((e) => e is ChildFilter)) {
+    throw ArgumentError(
+      'ChildFilter is not allowed in stages. Use the children parameter instead.',
+    );
+  }
+  final stages = [
+    if (!offstage) OnstageFilter(),
+    ...selector.stages,
+    if (selector.children.isNotEmpty) ChildFilter(selector.children),
+    // sort ParentFilter last for better performance
+    if (selector.parents.isNotEmpty) ParentFilter(selector.parents),
+  ];
+
+  for (final stage in stages) {
     // using unmodifiable copies to prevent accidental modification during filtering
     final before = stageResults.last.candidates.toUnmodifiable();
     final after = stage.filter(before).toList().toUnmodifiable();
@@ -506,6 +520,10 @@ extension LessSpecificSelectors<W extends Widget> on WidgetSelector<W> {
     final List<WidgetSelector<W> Function(WidgetSelector<W>)> criteria = [
       for (final stage in stages)
         (s) => s.copyWith(stages: [...s.stages, stage]),
+      for (final child in children)
+        (s) => s.copyWith(children: [...s.children, child]),
+      for (final parent in parents)
+        (s) => s.copyWith(parents: [...s.parents, parent]),
     ];
     if (criteria.length <= 1) {
       return;
