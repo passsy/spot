@@ -47,11 +47,13 @@ WidgetTreeSnapshot createWidgetTreeSnapshot() {
     );
 
     for (final child in element.children) {
-      snapshot.addChild(build(
-        child,
-        parent: snapshot,
-        isOffstage: isOffstageElement,
-      ));
+      snapshot.addChild(
+        build(
+          child,
+          parent: snapshot,
+          isOffstage: isOffstageElement,
+        ),
+      );
     }
     return snapshot;
   }
