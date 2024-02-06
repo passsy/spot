@@ -63,7 +63,6 @@ class WidgetSnapshot<W extends Widget> {
 ///
 /// Provides convenience methods to transform a widget snapshot into matchers
 /// for single or multiple widgets.
-// TODO make WidgetSnapshot implement WidgetMatcher and MultiWidgetMatcher
 extension ToWidgetMatcher<W extends Widget> on WidgetSnapshot<W> {
   /// Converts the snapshot to a [MultiWidgetMatcher],
   /// which can match multiple widgets.
