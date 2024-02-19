@@ -1,4 +1,3 @@
-import 'package:checks/checks.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 import 'package:spot/src/checks/checks_nullability.dart';
@@ -29,43 +28,41 @@ extension WidgetSelectorProp<W extends Widget> on WidgetSelector<W> {
   /// ```
   @useResult
   WidgetSelector<W> withProp<T>({
-    @Deprecated('use elementSelector instead')
-    Subject<T> Function(ConditionSubject<Element>)? selector,
-    Subject<T> Function(ConditionSubject<Element>)? elementSelector,
+    Subject<T> Function(Subject<Element>)? elementSelector,
     Subject<T> Function(Subject<W>)? widgetSelector,
     required MatchProp<T> match,
   }) {
-    final ConditionSubject<Element> elementSubject = it<Element>();
-    final Subject<T> subject = () {
-      if (selector != null) {
-        return selector(elementSubject);
-      }
-      if (elementSelector != null) {
-        return elementSelector(elementSubject);
-      }
-      if (widgetSelector != null) {
-        final Subject<W> widgetSubject = elementSubject.context.nest<W>(
-          () => [],
-          (element) {
-            final widget = mapElementToWidget(element);
-            return Extracted.value(widget);
-          },
-        );
-        return widgetSelector.call(widgetSubject);
-      }
-
+    if (elementSelector == null && widgetSelector == null) {
       throw ArgumentError(
         'Either elementSelector (former selector) or widgetSelector must be set',
       );
-    }();
+    }
+    void widgetSelectorCondition(Subject<Element> subject) {
+      final Subject<W> widgetSubject = subject.context.nest<W>(
+        () => [],
+        (element) {
+          final widget = mapElementToWidget(element);
+          return Extracted.value(widget);
+        },
+      );
+      final value = widgetSelector!(widgetSubject);
+      match(value);
+    }
 
-    match(subject);
-    final name =
-        describe(elementSubject).map((it) => it.trim()).toList().join(' ');
+    void elementSelectorCondition(Subject<Element> subject) {
+      final value = elementSelector!(subject);
+      match(value);
+    }
+
+    final void Function(Subject<Element>) condition = elementSelector != null
+        ? elementSelectorCondition
+        : widgetSelectorCondition;
+
+    final name = describe(condition).map((it) => it.trim()).toList().join(' ');
 
     return whereElement(
       (element) {
-        final failure = softCheckHideNull(element, elementSubject);
+        final failure = softCheckHideNull(element, condition);
         if (failure != null) {
           return false;
         }
