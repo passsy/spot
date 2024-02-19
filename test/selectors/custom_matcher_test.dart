@@ -27,6 +27,16 @@ void main() {
       ),
     );
 
+    final undecidedCheckbox = MaterialApp(
+      home: Scaffold(
+        body: Checkbox(
+          value: null,
+          tristate: true,
+          onChanged: (_) {},
+        ),
+      ),
+    );
+
     final uncheckedPaddedCheckbox = MaterialApp(
       home: Scaffold(
         body: Checkbox(
@@ -212,6 +222,8 @@ void main() {
       checkbox.existsOnce().hasCheckedValueWhere((it) => it.isTrue());
       await widgetTester.pumpWidget(uncheckedCheckbox);
       checkbox.existsOnce().hasCheckedValueWhere((it) => it.isFalse());
+      await widgetTester.pumpWidget(undecidedCheckbox);
+      checkbox.existsOnce().hasCheckedValueWhere((it) => it.isNull());
     });
   });
 }
