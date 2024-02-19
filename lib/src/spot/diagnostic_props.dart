@@ -1,4 +1,3 @@
-import 'package:checks/checks.dart';
 import 'package:dartx/dartx.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -40,14 +39,15 @@ extension DiagnosticPropWidgetSelector<W extends Widget> on WidgetSelector<W> {
     String propName,
     MatchProp<T> match,
   ) {
-    final ConditionSubject<T> nameSubject = it();
-    nameSubject.context.nest<T>(
-      () => ['with prop "$propName"'],
-      (value) => Extracted.value(value),
-    );
-    match(nameSubject);
-    final name =
-        describe(nameSubject).map((it) => it.trim()).toList().join(' ');
+    void condition(Subject<T?> subject) {
+      subject.hideNullability().context.nest<T>(
+            () => ['with prop "$propName"'],
+            (value) => Extracted.value(value),
+          );
+      match(subject.hideNullability());
+    }
+
+    final name = describe(condition).map((it) => it.trim()).toList().join(' ');
 
     return whereElement(
       (element) {
@@ -60,29 +60,31 @@ extension DiagnosticPropWidgetSelector<W extends Widget> on WidgetSelector<W> {
             overrideQuantityConstraint(QuantityConstraint.unconstrained);
         final actual = prop?.value as T? ?? prop?.getDefaultValue<T>();
 
-        final ConditionSubject<T?> conditionSubject = it<T?>();
-        final Subject<T> subject = conditionSubject.context.nest<T>(
-          () => [
-            unconstrainedSelector.toStringBreadcrumb(),
-            'with prop "$propName"',
-          ],
-          (value) {
-            if (prop == null) {
-              return Extracted.rejection(which: ['Has no prop "$propName"']);
-            }
-            if (value is! T) {
-              return Extracted.rejection(
-                which: [
-                  'Has no prop "$propName" of type "$T", the type is "${prop.value.runtimeType}"',
-                ],
-              );
-            }
+        void condition(Subject<T?> subject) {
+          subject.context.nest<T>(
+            () => [
+              unconstrainedSelector.toStringBreadcrumb(),
+              'with prop "$propName"',
+            ],
+            (value) {
+              if (prop == null) {
+                return Extracted.rejection(which: ['Has no prop "$propName"']);
+              }
+              if (value is! T) {
+                return Extracted.rejection(
+                  which: [
+                    'Has no prop "$propName" of type "$T", the type is "${prop.value.runtimeType}"',
+                  ],
+                );
+              }
 
-            return Extracted.value(actual as T);
-          },
-        );
-        match(subject);
-        final failure = softCheckHideNull(actual, conditionSubject);
+              return Extracted.value(actual as T);
+            },
+          );
+          match(subject.hideNullability());
+        }
+
+        final failure = softCheckHideNull(actual, condition);
         if (failure != null) {
           return false;
         }
@@ -128,29 +130,31 @@ extension DiagnosticPropWidgetMatcher<W extends Widget> on WidgetMatcher<W> {
         selector.overrideQuantityConstraint(QuantityConstraint.unconstrained);
     final actual = prop?.value as T? ?? prop?.getDefaultValue<T>();
 
-    final ConditionSubject<T?> conditionSubject = it<T?>();
-    final Subject<T> subject = conditionSubject.context.nest<T>(
-      () => [
-        unconstrainedSelector.toStringBreadcrumb(),
-        'with property $propName',
-      ],
-      (value) {
-        if (prop == null) {
-          return Extracted.rejection(which: ['Has no prop "$propName"']);
-        }
-        if (value is! T) {
-          return Extracted.rejection(
-            which: [
-              'Has no prop "$propName" of type "$T", the type is "${prop.value.runtimeType}"',
-            ],
-          );
-        }
-        return Extracted.value(value);
-      },
-    );
-    match(subject);
-    final failure = softCheckHideNull(actual, conditionSubject);
-    failure.throwPropertyCheckFailure(conditionSubject, element);
+    void condition(Subject<T?> subject) {
+      subject.context.nest<T>(
+        () => [
+          unconstrainedSelector.toStringBreadcrumb(),
+          'with property $propName',
+        ],
+        (value) {
+          if (prop == null) {
+            return Extracted.rejection(which: ['Has no prop "$propName"']);
+          }
+          if (value is! T) {
+            return Extracted.rejection(
+              which: [
+                'Has no prop "$propName" of type "$T", the type is "${prop.value.runtimeType}"',
+              ],
+            );
+          }
+          return Extracted.value(value);
+        },
+      );
+      match(subject.hideNullability());
+    }
+
+    final failure = softCheckHideNull(actual, condition);
+    failure.throwPropertyCheckFailure(condition, element);
     return this;
   }
 }

@@ -10,7 +10,7 @@ environment:
 
 dependencies:
   collection: ^1.17.0
-  checks: ^0.2.2
+  checks: ^0.3.0
   dartx: ^1.1.0
   flutter:
     sdk: flutter

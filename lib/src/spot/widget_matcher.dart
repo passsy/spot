@@ -1,4 +1,3 @@
-import 'package:checks/checks.dart';
 import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -97,41 +96,38 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
   /// }
   /// ```
   WidgetMatcher<W> hasProp<T>({
-    @Deprecated('use elementSelector instead')
-    Subject<T> Function(ConditionSubject<Element>)? selector,
-    Subject<T> Function(ConditionSubject<Element>)? elementSelector,
+    Subject<T> Function(Subject<Element>)? elementSelector,
     Subject<T> Function(Subject<W>)? widgetSelector,
     required MatchProp<T> match,
   }) {
-    final ConditionSubject<Element> conditionSubject = it<Element>();
-    final Subject<T> subject = () {
-      if (selector != null) {
-        return selector(conditionSubject);
-      }
-      if (elementSelector != null) {
-        return elementSelector(conditionSubject);
-      }
-      assert(widgetSelector != null);
-
-      if (widgetSelector != null) {
-        final Subject<W> widgetSubject = conditionSubject.context.nest<W>(
-          () => ['widget $W'],
-          (element) {
-            final widget = this.selector.mapElementToWidget(element);
-            return Extracted.value(widget);
-          },
-        );
-        return widgetSelector.call(widgetSubject);
-      }
-
+    if (elementSelector == null && widgetSelector == null) {
       throw ArgumentError(
         'Either elementSelector (former selector) or widgetSelector must be set',
       );
-    }();
+    }
+    void widgetSelectorCondition(Subject<Element> subject) {
+      final Subject<W> widgetSubject = subject.context.nest<W>(
+        () => ['widget $W'],
+        (element) {
+          final widget = selector.mapElementToWidget(element);
+          return Extracted.value(widget);
+        },
+      );
+      final value = widgetSelector!(widgetSubject);
+      match(value);
+    }
 
-    match(subject);
-    final failure = softCheckHideNull(element, conditionSubject);
-    failure.throwPropertyCheckFailure(conditionSubject, element);
+    void elementSelectorCondition(Subject<Element> subject) {
+      final value = elementSelector!(subject);
+      match(value);
+    }
+
+    final void Function(Subject<Element>) condition = elementSelector != null
+        ? elementSelectorCondition
+        : widgetSelectorCondition;
+
+    final failure = softCheckHideNull(element, condition);
+    failure.throwPropertyCheckFailure(condition, element);
     return this;
   }
 
@@ -160,18 +156,19 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
     required NamedWidgetProp<W, T?> prop,
     required MatchProp<T> match,
   }) {
-    final ConditionSubject<Element> conditionSubject = it<Element>();
-    final Subject<T> subject = conditionSubject.context.nest<T?>(
-      () => ['$W', "with prop '${prop.name}'"],
-      (element) {
-        final value = getWidgetProp(prop);
-        return Extracted.value(value);
-      },
-    ).hideNullability();
+    void condition(Subject<Element> subject) {
+      final value = subject.context.nest<T?>(
+        () => ['$W', "with prop '${prop.name}'"],
+        (element) {
+          final value = getWidgetProp(prop);
+          return Extracted.value(value);
+        },
+      ).hideNullability();
+      match(value);
+    }
 
-    match(subject);
-    final failure = softCheckHideNull(element, conditionSubject);
-    failure.throwPropertyCheckFailure(conditionSubject, element);
+    final failure = softCheckHideNull(element, condition);
+    failure.throwPropertyCheckFailure(condition, element);
     return this;
   }
 
@@ -199,18 +196,20 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
     required NamedElementProp<T?> prop,
     required MatchProp<T> match,
   }) {
-    final ConditionSubject<Element> conditionSubject = it<Element>();
-    final Subject<T> subject = conditionSubject.context.nest<T?>(
-      () => ['Element of $W', "with prop '${prop.name}'"],
-      (element) {
-        final value = getElementProp(prop);
-        return Extracted.value(value);
-      },
-    ).hideNullability();
+    void condition(Subject<Element> subject) {
+      final Subject<T> value = subject.context.nest<T?>(
+        () => ['Element of $W', "with prop '${prop.name}'"],
+        (element) {
+          final value = getElementProp(prop);
+          return Extracted.value(value);
+        },
+      ).hideNullability();
 
-    match(subject);
-    final failure = softCheckHideNull(element, conditionSubject);
-    failure.throwPropertyCheckFailure(conditionSubject, element);
+      match(value);
+    }
+
+    final failure = softCheckHideNull(element, condition);
+    failure.throwPropertyCheckFailure(condition, element);
     return this;
   }
 
@@ -245,18 +244,20 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
     required NamedRenderObjectProp<R, T?> prop,
     required MatchProp<T> match,
   }) {
-    final ConditionSubject<Element> conditionSubject = it<Element>();
-    final Subject<T> subject = conditionSubject.context.nest<T?>(
-      () => ['RenderObject of $W', "with prop '${prop.name}'"],
-      (element) {
-        final value = getRenderObjectProp(prop);
-        return Extracted.value(value);
-      },
-    ).hideNullability();
+    void condition(Subject<Element> subject) {
+      final Subject<T> value = subject.context.nest<T?>(
+        () => ['RenderObject of $W', "with prop '${prop.name}'"],
+        (element) {
+          final value = getRenderObjectProp(prop);
+          return Extracted.value(value);
+        },
+      ).hideNullability();
 
-    match(subject);
-    final failure = softCheckHideNull(element, conditionSubject);
-    failure.throwPropertyCheckFailure(conditionSubject, element);
+      match(value);
+    }
+
+    final failure = softCheckHideNull(element, condition);
+    failure.throwPropertyCheckFailure(condition, element);
     return this;
   }
 }
@@ -382,14 +383,13 @@ extension MultiWidgetMatcherExtensions<W extends Widget>
 extension ThrowCheckFailure on CheckFailure? {
   /// Throws a [PropertyCheckFailure] if the [CheckFailure] is not `null`.
   void throwPropertyCheckFailure<T>(
-    ConditionSubject<T> conditionSubject,
+    Condition<T> condition,
     Object? actual,
   ) {
     if (this == null) {
       return;
     }
-    final errorParts =
-        describe(conditionSubject).map((it) => it.trim()).toList();
+    final errorParts = describe(condition).map((it) => it.trim()).toList();
     final errorMessage = errorParts.join(' ');
     throw PropertyCheckFailure(
       'Failed to match widget: $errorMessage, actual: ${this!.rejection.actual.joinToString()}',

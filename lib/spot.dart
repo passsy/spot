@@ -11,17 +11,9 @@ export 'package:checks/checks.dart'
         FutureChecks,
         // async checks are not useful for spot
         StreamChecks,
-        WithQueueExtension,
-        it;
+        WithQueueExtension;
 export 'package:checks/context.dart'
-    show
-        Condition,
-        ConditionSubject,
-        Context,
-        ContextExtension,
-        Extracted,
-        Rejection,
-        Subject;
+    show Condition, Context, ContextExtension, Extracted, Rejection, Subject;
 export 'package:meta/meta.dart' show useResult;
 export 'package:spot/src/act/act.dart' show Act, act;
 export 'package:spot/src/screenshot/screenshot.dart'
