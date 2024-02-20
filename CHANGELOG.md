@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.11.0
+
+- Add support for Flutter 3.20
+- Update `checks` to 0.3.0 #48
+- Remove deprecated property `selector` from `withProp()` and `hasProp()`. Use `elementSelector` instead 
+- Widen `test_api` version range to include `0.7.X`
+
 ## 0.10.0
 
 ### High-level API changes

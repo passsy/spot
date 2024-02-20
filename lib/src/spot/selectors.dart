@@ -1,4 +1,3 @@
-import 'package:checks/checks.dart';
 import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:spot/spot.dart';
@@ -267,9 +266,7 @@ mixin ChainableSelectors<T extends Widget> {
   }) {
     final String name = description ??
         () {
-          final ConditionSubject<String> subject = it();
-          match(subject);
-          return describe(subject).map((it) => it.trim()).toList().join(' ');
+          return describe(match).map((it) => it.trim()).toList().join(' ');
         }();
     final p = [if (self != null) self!, ...parents];
     final selector = AnyTextWidgetSelector(

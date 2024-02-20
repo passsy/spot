@@ -1,9 +1,8 @@
-import 'package:checks/checks.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:spot/spot.dart';
 import 'package:spot/src/checks/checks_nullability.dart';
-import 'package:spot/src/spot/widget_selector.dart';
 
 /// A union type for any text widget that can be found in the widget tree.
 /// Specifically this includes:
@@ -289,9 +288,7 @@ class MatchTextFilter implements ElementFilter {
   bool _match(Element element) {
     try {
       final actual = _extractTextData(element);
-      final subject = it<String?>();
-      match(subject.hideNullability());
-      final failure = softCheck(actual, subject);
+      final failure = softCheck(actual, match.hideNullability());
       return failure == null;
     } on _UnsupportedWidgetTypeException {
       return false;

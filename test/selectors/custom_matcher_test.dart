@@ -27,6 +27,16 @@ void main() {
       ),
     );
 
+    final undecidedCheckbox = MaterialApp(
+      home: Scaffold(
+        body: Checkbox(
+          value: null,
+          tristate: true,
+          onChanged: (_) {},
+        ),
+      ),
+    );
+
     final uncheckedPaddedCheckbox = MaterialApp(
       home: Scaffold(
         body: Checkbox(
@@ -37,28 +47,6 @@ void main() {
       ),
     );
     final checkbox = spot<Checkbox>();
-
-    testWidgets('hasProp selector', (widgetTester) async {
-      await widgetTester.pumpWidget(checkedCheckbox);
-      checkbox.existsOnce().hasProp(
-            // ignore: deprecated_member_use_from_same_package
-            selector: (e) => e.context.nest(
-              () => ['Checkbox', 'value'],
-              (e) => Extracted.value((e.widget as Checkbox).value),
-            ),
-            match: (it) => it.equals(true),
-          );
-
-      await widgetTester.pumpWidget(uncheckedCheckbox);
-      checkbox.existsOnce().hasProp(
-            // ignore: deprecated_member_use_from_same_package
-            selector: (e) => e.context.nest(
-              () => ['Checkbox', 'value'],
-              (e) => Extracted.value((e.widget as Checkbox).value),
-            ),
-            match: (it) => it.equals(false),
-          );
-    });
 
     testWidgets('hasProp elementSelector', (widgetTester) async {
       await widgetTester.pumpWidget(checkedCheckbox);
@@ -220,32 +208,6 @@ void main() {
           .existsOnce();
     });
 
-    testWidgets('withProp selector', (widgetTester) async {
-      await widgetTester.pumpWidget(checkedCheckbox);
-      checkbox
-          .withProp(
-            // ignore: deprecated_member_use_from_same_package
-            selector: (e) => e.context.nest(
-              () => ['Checkbox', 'value'],
-              (e) => Extracted.value((e.widget as Checkbox).value),
-            ),
-            match: (it) => it.equals(true),
-          )
-          .existsOnce();
-
-      await widgetTester.pumpWidget(uncheckedCheckbox);
-      checkbox
-          .withProp(
-            // ignore: deprecated_member_use_from_same_package
-            selector: (e) => e.context.nest(
-              () => ['Checkbox', 'value'],
-              (e) => Extracted.value((e.widget as Checkbox).value),
-            ),
-            match: (it) => it.equals(false),
-          )
-          .existsOnce();
-    });
-
     testWidgets('extracted hasCheckedValue', (widgetTester) async {
       await widgetTester.pumpWidget(checkedCheckbox);
       checkbox.existsOnce().hasCheckedValue(true);
@@ -260,6 +222,8 @@ void main() {
       checkbox.existsOnce().hasCheckedValueWhere((it) => it.isTrue());
       await widgetTester.pumpWidget(uncheckedCheckbox);
       checkbox.existsOnce().hasCheckedValueWhere((it) => it.isFalse());
+      await widgetTester.pumpWidget(undecidedCheckbox);
+      checkbox.existsOnce().hasCheckedValueWhere((it) => it.isNull());
     });
   });
 }
