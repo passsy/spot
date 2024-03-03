@@ -34,6 +34,21 @@ mixin ChainableSelectors<T extends Widget> {
   /// This is `null` for the root of the chain.
   WidgetSelector<T>? get self;
 
+  List<ElementFilter> _childAndParentFilters(
+    List<WidgetSelector> children,
+    List<WidgetSelector> parents,
+  ) {
+    final List<ElementFilter> filters = [];
+    if (children.isNotEmpty) {
+      filters.add(ChildFilter(children));
+    }
+    final list = [if (self != null) self!, ...parents];
+    if (list.isNotEmpty) {
+      filters.add(ParentFilter(list));
+    }
+    return filters;
+  }
+
   /// Creates a [WidgetSelector] that matches a all Widgets of
   /// type [W] that are in the scope of the parent [WidgetSelector].
   ///
@@ -53,9 +68,8 @@ mixin ChainableSelectors<T extends Widget> {
     final selector = WidgetSelector<W>(
       stages: [
         WidgetTypeFilter<W>(),
+        ..._childAndParentFilters(children, parents),
       ],
-      parents: [if (self != null) self!, ...parents],
-      children: children,
     );
     return selector;
   }
@@ -71,11 +85,38 @@ mixin ChainableSelectors<T extends Widget> {
   /// ### Example usage:
   /// ```dart
   /// final text = spotText('text')
-  ///   .offstage();
+  ///   .overrideIncludeOffstage();
   /// ```
   @useResult
-  WidgetSelector<T> offstage() {
-    return self!.copyWith(includeOffstage: true);
+  WidgetSelector<T> overrideIncludeOffstage(bool offstage) {
+    if (offstage == self!.includeOffstage) {
+      return self!;
+    }
+    return self!.copyWith(includeOffstage: offstage);
+  }
+
+  /// Creates a [WidgetSelector] that includes offstage widgets in the selection.
+  ///
+  /// Offstage widgets are those that are not currently visible on the screen,
+  /// but are still part of the widget tree. This can be useful when you want to
+  /// select and perform operations on widgets that are not currently visible to the user.
+  ///
+  /// Returns a new [WidgetSelector] that includes offstage widgets.
+  ///
+  /// ### Example usage:
+  /// ```dart
+  /// final text = spotOffstage()
+  ///   .spotText('text');
+  /// ```
+  @useResult
+  WidgetSelector<Widget> spotOffstage({
+    List<WidgetSelector> parents = const [],
+    List<WidgetSelector> children = const [],
+  }) {
+    return WidgetSelector(
+      includeOffstage: true,
+      stages: _childAndParentFilters(children, parents),
+    );
   }
 
   /// Creates a [WidgetSelector] that excludes offstage widgets from the selection.
@@ -135,9 +176,8 @@ mixin ChainableSelectors<T extends Widget> {
           predicate: (Element e) => identical(e.widget, widget),
           description: 'Widget === $widget',
         ),
+        ..._childAndParentFilters(children, parents),
       ],
-      parents: [if (self != null) self!, ...parents],
-      children: children,
     );
     return selector;
   }
@@ -187,9 +227,8 @@ mixin ChainableSelectors<T extends Widget> {
           predicate: (Element e) => identical(e, element),
           description: 'Element === $element',
         ),
+        ..._childAndParentFilters(children, parents),
       ],
-      parents: [if (self != null) self!, ...parents],
-      children: children,
     );
     return selector;
   }
@@ -271,9 +310,8 @@ mixin ChainableSelectors<T extends Widget> {
           match: (it) => match(it),
           description: 'Widget with text $name',
         ),
+        ..._childAndParentFilters(children, parents),
       ],
-      parents: [if (self != null) self!, ...parents],
-      children: children,
     );
     return selector;
   }
@@ -337,9 +375,8 @@ mixin ChainableSelectors<T extends Widget> {
           },
           description: 'Widget with exact text: "$text"',
         ),
+        ..._childAndParentFilters(children, parents),
       ],
-      parents: [if (self != null) self!, ...parents],
-      children: children,
     );
     return selector;
   }
@@ -363,9 +400,8 @@ mixin ChainableSelectors<T extends Widget> {
           },
           description: 'Widget with icon: "$icon"',
         ),
+        ..._childAndParentFilters(children, parents),
       ],
-      parents: [if (self != null) self!, ...parents],
-      children: children,
     );
     return selector;
   }
@@ -419,9 +455,8 @@ mixin ChainableSelectors<T extends Widget> {
           predicate: (Element e) => e.widget.key == key,
           description: 'with key: "$key"',
         ),
+        ..._childAndParentFilters(children, parents),
       ],
-      parents: [if (self != null) self!, ...parents],
-      children: children,
     );
     return selector;
   }
@@ -863,7 +898,7 @@ extension RelativeSelectors<W extends Widget> on WidgetSelector<W> {
   /// - [withChildren] requires [children] to be children of the widget to match.
   @useResult
   WidgetSelector<W> withParent(WidgetSelector parent) {
-    return copyWith(parents: [...parents, parent]);
+    return addStage(ParentFilter([parent]));
   }
 
   /// Returns a [WidgetSelector] that requires [parents] to be parents of the
@@ -880,7 +915,7 @@ extension RelativeSelectors<W extends Widget> on WidgetSelector<W> {
   /// - [withChildren] requires [children] to be children of the widget to match.
   @useResult
   WidgetSelector<W> withParents(List<WidgetSelector> parents) {
-    return copyWith(parents: [...this.parents, ...parents]);
+    return addStage(ParentFilter(parents));
   }
 
   /// Returns a [WidgetSelector] that requires [child] to be a child of the
@@ -897,7 +932,7 @@ extension RelativeSelectors<W extends Widget> on WidgetSelector<W> {
   /// - [withChildren] requires [children] to be children of the widget to match.
   @useResult
   WidgetSelector<W> withChild(WidgetSelector child) {
-    return copyWith(children: [...children, child]);
+    return addStage(ChildFilter([child]));
   }
 
   /// Returns a [WidgetSelector] that requires [children] to be children of the
@@ -914,6 +949,6 @@ extension RelativeSelectors<W extends Widget> on WidgetSelector<W> {
   /// - [withChild] requires [child] to be a child of the widget to match.
   @useResult
   WidgetSelector<W> withChildren(List<WidgetSelector> children) {
-    return copyWith(children: [...this.children, ...children]);
+    return addStage(ChildFilter(children));
   }
 }

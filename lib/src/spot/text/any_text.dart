@@ -238,8 +238,6 @@ class AnyTextWidgetSelector extends WidgetSelector<AnyText> {
   /// - `parents`: Parent selectors to include in the match.
   AnyTextWidgetSelector({
     required super.stages,
-    required super.children,
-    required super.parents,
   }) : super(mapElementToWidget: _mapElementToAnyText);
 
   static AnyText _mapElementToAnyText(Element element) {
@@ -307,6 +305,11 @@ class MatchTextFilter implements ElementFilter {
       return (e.widget as RichText).text.toPlainText();
     }
     throw _UnsupportedWidgetTypeException(e.widget);
+  }
+
+  @override
+  String toString() {
+    return 'MatchTextFilter which keeps $description';
   }
 }
 

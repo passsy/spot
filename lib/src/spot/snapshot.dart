@@ -1,4 +1,5 @@
 import 'package:dartx/dartx.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
@@ -125,6 +126,25 @@ extension WidgetSnapshotShorthands<W extends Widget> on WidgetSnapshot<W> {
       discovered.map((e) => e.element).toList();
 }
 
+/// prints debug information during [snapshot] that can be enabled in the
+/// assert block
+void _snapshotDebugPrint(String text) {
+  // always false in production, because asserts are not executed
+  bool enableDebugPrint = false;
+  assert(() {
+    // switch here to enable debug print
+    enableDebugPrint = false; // <-- Switch!
+    return true;
+  }());
+
+  if (kDebugMode && enableDebugPrint) {
+    // ignore: avoid_print
+    print('${''.padLeft(_depth * 4)}$text');
+  }
+}
+
+int _depth = -1;
+
 /// Creates a snapshot of widgets that match the specified [selector].
 ///
 /// This function captures the current state of widgets that match the criteria
@@ -141,56 +161,78 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
   TestAsyncUtils.guardSync();
 
   final treeSnapshot = currentWidgetTreeSnapshot();
-
   final List<WidgetTreeNode> candidates = treeSnapshot.allNodes;
 
+  final isAnyOffstage = selector.isAnyOffstage();
+
   // an easy to debug list of all filters and their individual results
-  final stageResults = [
-    (
-      filter: WidgetSelector.all.stages.first,
-      candidates: candidates.toUnmodifiable(),
-    ),
-  ];
+  final initialStage = _StageResult(
+    index: -1,
+    filter: WidgetSelector.all.stages.first,
+    candidates: candidates.toUnmodifiable(),
+  );
 
-  final offstage = selector.isAnyOffstage();
+  final List<_StageResult> stageResults = [initialStage];
 
-  if (selector.stages.any((e) => e is ParentFilter)) {
-    throw ArgumentError(
-      'ParentFilter is not allowed in stages. Use the parents parameter instead.',
-    );
-  }
-  if (selector.stages.any((e) => e is ChildFilter)) {
-    throw ArgumentError(
-      'ChildFilter is not allowed in stages. Use the children parameter instead.',
-    );
-  }
+  _depth++;
+  _snapshotDebugPrint('$selector, offstage ${selector.includeOffstage}');
   final stages = [
-    if (!offstage) OnstageFilter(),
+    if (!isAnyOffstage) OnstageFilter(),
     ...selector.stages,
-    if (selector.children.isNotEmpty) ChildFilter(selector.children),
-    // sort ParentFilter last for better performance
-    if (selector.parents.isNotEmpty) ParentFilter(selector.parents),
   ];
 
-  for (final stage in stages) {
+  for (int i = 0; i < stages.length; i++) {
+    final stage = stages[i];
     // using unmodifiable copies to prevent accidental modification during filtering
-    final before = stageResults.last.candidates.toUnmodifiable();
-    final after = stage.filter(before).toList().toUnmodifiable();
-    stageResults.add((filter: stage, candidates: after));
+    final remainingCandidatesFromPreviousStage =
+        stageResults.last.candidates.toUnmodifiable();
+
+    _snapshotDebugPrint(
+      "+ Stage $i: $stage, "
+      "input-candidates: ${remainingCandidatesFromPreviousStage.length}",
+    );
+    final after = stage
+        .filter(remainingCandidatesFromPreviousStage)
+        .toList()
+        .toUnmodifiable();
+    _snapshotDebugPrint("- Stage $i: $stage, "
+        "output-candidates: ${after.length}");
+    stageResults.add(_StageResult(index: i, filter: stage, candidates: after));
   }
 
+  _snapshotDebugPrint(
+    '$selector, ${stageResults.last.candidates.length} matches',
+  );
   final snapshot = WidgetSnapshot<W>(
     selector: selector,
     discovered: stageResults.last.candidates,
     scope: treeSnapshot,
     debugCandidates: candidates.map((element) => element.element).toList(),
   );
+  _depth--;
 
   if (validateQuantity) {
     snapshot.validateQuantity();
   }
 
   return snapshot;
+}
+
+class _StageResult {
+  final int index;
+  final ElementFilter filter;
+  final List<WidgetTreeNode> candidates;
+
+  const _StageResult({
+    required this.index,
+    required this.filter,
+    required this.candidates,
+  });
+
+  @override
+  String toString() {
+    return 'StageResult(#$index, candidates: ${candidates.length}, filter: $filter)';
+  }
 }
 
 /// Extension on [WidgetSnapshot]<W> providing methods to validate the quantity of discovered widgets.
@@ -520,10 +562,6 @@ extension LessSpecificSelectors<W extends Widget> on WidgetSelector<W> {
     final List<WidgetSelector<W> Function(WidgetSelector<W>)> criteria = [
       for (final stage in stages)
         (s) => s.copyWith(stages: [...s.stages, stage]),
-      for (final child in children)
-        (s) => s.copyWith(children: [...s.children, child]),
-      for (final parent in parents)
-        (s) => s.copyWith(parents: [...s.parents, parent]),
     ];
     if (criteria.length <= 1) {
       return;

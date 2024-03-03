@@ -26,6 +26,7 @@ class ParentFilter implements ElementFilter {
     final List<WidgetSnapshot<Widget>> parentSnapshots =
         parents.map((selector) {
       final WidgetSnapshot<Widget> widgetSnapshot = snapshot(selector);
+      // TODO unnecessary? snapshot does this by default already
       widgetSnapshot.validateQuantity();
       return widgetSnapshot;
     }).toList();
@@ -83,6 +84,6 @@ class ParentFilter implements ElementFilter {
 
   @override
   String toString() {
-    return 'ParentFilter $description';
+    return 'ParentFilter which keeps $description Widget';
   }
 }

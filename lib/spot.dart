@@ -229,7 +229,7 @@ WidgetSelector<Widget> spotOffstage({
         parents: parents,
         children: children,
       )
-      .offstage();
+      .overrideIncludeOffstage(true);
 }
 
 /// Creates a [WidgetSelector] that finds [widget] by identity and returns all
