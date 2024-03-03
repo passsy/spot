@@ -175,8 +175,7 @@ void main() {
     spot<Text>().withText('c').overrideIncludeOffstage(true).existsOnce();
   });
 
-  testWidgets('only include offstage widget in the parts that mattes',
-      (tester) async {
+  testWidgets('filter offstage in subtree of parent', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Row(
@@ -211,20 +210,64 @@ void main() {
     spotText('a').existsExactlyNTimes(1);
     spotText('b').existsExactlyNTimes(0);
 
-    spotOffstage().spotText('a').existsExactlyNTimes(2);
+    spotOffstage().spotText('a').existsExactlyNTimes(1);
     spotOffstage().spotText('b').existsExactlyNTimes(2);
 
     // ignores offstage Scaffold
     spot<Scaffold>().spotText('a').existsExactlyNTimes(1);
 
-    // includes the offstage Scaffold
-    spotOffstage().spot<Scaffold>().spotText('a').existsExactlyNTimes(2);
+    // only search the offstage scaffold
+    spotOffstage().spotText('b').existsExactlyNTimes(2);
 
-    //only search for widgets within the onstage Scaffold
+    spotOffstage().spot<Scaffold>().existsExactlyNTimes(1);
+    spotOffstage().spotText('b').existsExactlyNTimes(2);
+    spotOffstage().spot<Scaffold>().spotText('a').existsExactlyNTimes(1);
+
+    // only search for widgets within the onstage Scaffold
     spot<Scaffold>().spotText('a').existsExactlyNTimes(1);
-    spot<Scaffold>().spotOffstage().spotText('a').existsExactlyNTimes(1);
 
     // find offstage widgets within the onstage Scaffold only!
+    spot<Scaffold>().spotOffstage().spotText('a').existsExactlyNTimes(0);
     spot<Scaffold>().spotOffstage().spotText('b').existsExactlyNTimes(1);
+  });
+
+  testWidgets('filter offstage in subtree of child', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Row(
+          children: [
+            Expanded(
+              child: Scaffold(
+                body: Column(
+                  children: [
+                    Text('a'),
+                    Text('b'),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: Scaffold(
+                body: Column(
+                  children: [
+                    Text('a'),
+                    Offstage(child: Text('b')),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    spot<Expanded>().existsExactlyNTimes(2);
+
+    spot<Expanded>().withChild(spotText('a')).existsExactlyNTimes(2);
+    spot<Expanded>().withChild(spotText('b')).existsOnce();
+
+    // find onstage Expanded, with offstage Text b
+    spot<Expanded>().withChild(spotOffstage().spotText('b')).existsOnce();
+    spot<Expanded>().withChild(spotOffstage().spotText('a')).doesNotExist();
   });
 }

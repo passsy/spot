@@ -175,9 +175,12 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
   final List<_StageResult> stageResults = [initialStage];
 
   _depth++;
-  _snapshotDebugPrint('$selector, offstage ${selector.includeOffstage}');
+  _snapshotDebugPrint(
+    'snapshot() ${selector.toStringBreadcrumb()}, '
+    'offstage ${selector.includeOffstage}',
+  );
   final stages = [
-    if (!isAnyOffstage) OnstageFilter(),
+    if (isAnyOffstage) OffstageFilter() else OnstageFilter(),
     ...selector.stages,
   ];
 
@@ -201,7 +204,7 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
   }
 
   _snapshotDebugPrint(
-    '$selector, ${stageResults.last.candidates.length} matches',
+    '${selector.toStringBreadcrumb()}, ${stageResults.last.candidates.length} matches',
   );
   final snapshot = WidgetSnapshot<W>(
     selector: selector,

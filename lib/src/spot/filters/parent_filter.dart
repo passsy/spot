@@ -31,28 +31,43 @@ class ParentFilter implements ElementFilter {
       return widgetSnapshot;
     }).toList();
 
-    // Take a snapshot from each parent and get the snapshots of all nodes that match
     final List<Map<WidgetTreeNode, List<WidgetSnapshot>>> discoveryByParent =
-        parentSnapshots.map((WidgetSnapshot<Widget> parentSnapshot) {
+        [];
+
+    for (final parentSnapshot in parentSnapshots) {
       final Map<WidgetTreeNode, List<WidgetSnapshot>> groups = {};
       if (parentSnapshot.discovered.isEmpty) {
-        return groups;
+        discoveryByParent.add(groups);
+        continue;
       }
 
       for (final WidgetTreeNode node in parentSnapshot.discovered) {
+        groups[node] ??= [];
+        // final s2 =
+        //     snapshot(spotAllWidgets().withParent(parentSnapshot.selector));
+        // groups[node]!.add(s2);
+
+        // TODO what's the difference between s1 and s2?
+        // s2 works but is slow, s1 is fast but doesn't work
+
+        final root = node.isOffstage ? spotOffstage() : spotAllWidgets();
+
         final subtree = tree.scope(node);
-        final snapshot = WidgetSnapshot(
-          selector: WidgetSelector.all.withParent(parentSnapshot.selector),
-          discovered: subtree.allNodes,
+        final s1 = WidgetSnapshot(
+          selector: root.withParent(parentSnapshot.selector),
+          discovered: [
+            // TODO is returning the root correct?
+            node,
+            ...subtree.allNodes,
+          ],
           scope: subtree,
           debugCandidates: candidates.map((it) => it.element).toList(),
         );
-        groups[node] ??= [];
-        groups[node]!.add(snapshot);
+        groups[node]!.add(s1);
       }
 
-      return groups;
-    }).toList();
+      discoveryByParent.add(groups);
+    }
 
     final List<WidgetSnapshot> discoveredSnapshots =
         discoveryByParent.map((it) => it.values).flatten().flatten().toList();
@@ -77,9 +92,13 @@ class ParentFilter implements ElementFilter {
       });
     }).toList();
 
-    return elementsInAllParents.mapNotNull((e) {
-      return candidates.firstOrNullWhere((node) => node.element == e);
+    final remaining = elementsInAllParents.mapNotNull((e) {
+      return candidates.firstOrNullWhere((node) {
+        return node.element == e;
+      });
     }).toList();
+
+    return remaining;
   }
 
   @override

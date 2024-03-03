@@ -4,14 +4,14 @@ import 'package:spot/src/spot/widget_selector.dart';
 class OnstageFilter implements ElementFilter {
   @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
-    final List<WidgetTreeNode> matchingChildNodes = [];
+    final List<WidgetTreeNode> onstage = [];
 
     for (final WidgetTreeNode candidate in candidates) {
       if (!candidate.isOffstage) {
-        matchingChildNodes.add(candidate);
+        onstage.add(candidate);
       }
     }
-    return matchingChildNodes;
+    return onstage;
   }
 
   @override
@@ -22,5 +22,30 @@ class OnstageFilter implements ElementFilter {
   @override
   String toString() {
     return 'OnstageFilter which $description';
+  }
+}
+
+/// Removes all [WidgetTreeNode] that are onstage
+class OffstageFilter implements ElementFilter {
+  @override
+  Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
+    final List<WidgetTreeNode> offstage = [];
+
+    for (final WidgetTreeNode candidate in candidates) {
+      if (candidate.isOffstage) {
+        offstage.add(candidate);
+      }
+    }
+    return offstage;
+  }
+
+  @override
+  String get description {
+    return 'keeps only offstage elements';
+  }
+
+  @override
+  String toString() {
+    return 'OffstageFilter which $description';
   }
 }
