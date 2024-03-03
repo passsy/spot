@@ -216,12 +216,15 @@ WidgetSelector<Widget> spotOffstage({
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {
-  return _global
-      .spot<Widget>(
-        parents: parents,
-        children: children,
-      )
-      .overrideIncludeOffstage(true);
+  return WidgetSelector(
+    stages: [
+      PredicateFilter(
+        predicate: (e) => true,
+        description: 'any Offstage Widget',
+      ),
+    ],
+    includeOffstage: true,
+  );
 }
 
 /// Creates a [WidgetSelector] that finds [widget] by identity and returns all

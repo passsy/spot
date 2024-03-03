@@ -41,22 +41,28 @@ class ParentFilter implements ElementFilter {
         continue;
       }
 
-      for (final WidgetTreeNode node in parentSnapshot.discovered) {
+      // remove elements when the parent is already in the list. This prevents searching all element of a subtree, resulting in always the same items
+      final rootNodes = parentSnapshot.discovered
+          .whereNot(
+            (element) => parentSnapshot.discovered.contains(element.parent),
+          )
+          .toList();
+
+      for (final WidgetTreeNode node in rootNodes) {
         groups[node] ??= [];
 
         final root = node.isOffstage ? spotOffstage() : spotAllWidgets();
         final subtree = tree.scope(node);
-        final s1 = WidgetSnapshot(
-          selector: root.withParent(parentSnapshot.selector),
+        final snapshot = WidgetSnapshot(
+          selector: root.withParent(spotElement(node.element)),
           discovered: [
-            // TODO is returning the root correct?
             node,
             ...subtree.allNodes,
           ],
           scope: subtree,
           debugCandidates: candidates.map((it) => it.element).toList(),
         );
-        groups[node]!.add(s1);
+        groups[node]!.add(snapshot);
       }
 
       discoveryByParent.add(groups);
