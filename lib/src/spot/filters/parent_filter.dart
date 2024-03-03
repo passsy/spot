@@ -43,15 +43,8 @@ class ParentFilter implements ElementFilter {
 
       for (final WidgetTreeNode node in parentSnapshot.discovered) {
         groups[node] ??= [];
-        // final s2 =
-        //     snapshot(spotAllWidgets().withParent(parentSnapshot.selector));
-        // groups[node]!.add(s2);
-
-        // TODO what's the difference between s1 and s2?
-        // s2 works but is slow, s1 is fast but doesn't work
 
         final root = node.isOffstage ? spotOffstage() : spotAllWidgets();
-
         final subtree = tree.scope(node);
         final s1 = WidgetSnapshot(
           selector: root.withParent(parentSnapshot.selector),
