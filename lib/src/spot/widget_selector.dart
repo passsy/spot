@@ -306,8 +306,6 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
     QuantityConstraint? quantityConstraint,
     bool? includeOffstage,
     W Function(Element element)? mapElementToWidget,
-    List<WidgetSelector>? parents,
-    List<WidgetSelector>? children,
   }) {
     return WidgetSelector<W>(
       stages: stages ?? this.stages,
