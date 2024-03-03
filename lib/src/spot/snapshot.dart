@@ -194,6 +194,7 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
       "+ Stage $i: $stage, "
       "input-candidates: ${remainingCandidatesFromPreviousStage.length}",
     );
+
     final after = stage
         .filter(remainingCandidatesFromPreviousStage)
         .toList()

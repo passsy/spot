@@ -145,7 +145,8 @@ void main() {
     spotText('c').doesNotExist();
   });
 
-  testWidgets('select offstage widgets when use offstage()', (tester) async {
+  testWidgets('select offstage widgets when use .overrideIncludeOffstage(true)',
+      (tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Row(
@@ -160,14 +161,18 @@ void main() {
 
     spotOffstage().spot<Text>().atMost(3);
     spotOffstage().spotText('c').existsOnce();
-    spotOffstage().onstage().spotText('c').doesNotExist();
+    spotOffstage().overrideIncludeOffstage(false).spotText('c').doesNotExist();
 
     spotText('c').doesNotExist();
     spotText('c').overrideIncludeOffstage(true).existsOnce();
-    spotText('c').overrideIncludeOffstage(true).onstage().doesNotExist();
+    spotOffstage().spotText('c').existsOnce();
     spotText('c')
         .overrideIncludeOffstage(true)
-        .onstage()
+        .overrideIncludeOffstage(false)
+        .doesNotExist();
+    spotText('c')
+        .overrideIncludeOffstage(true)
+        .overrideIncludeOffstage(false)
         .overrideIncludeOffstage(true)
         .existsOnce();
 

@@ -120,25 +120,6 @@ mixin ChainableSelectors<T extends Widget> {
 
   /// Creates a [WidgetSelector] that excludes offstage widgets from the selection.
   ///
-  /// This is the default behavior of a [WidgetSelector], but this method can be useful
-  /// if you have previously called `offstage` on the selector and want to revert back
-  /// to only selecting widgets that are currently visible on the screen.
-  ///
-  /// Returns a new [WidgetSelector] that excludes offstage widgets.
-  ///
-  /// ### Example usage:
-  /// ```dart
-  /// final text = spotText('text')
-  ///   .offstage()
-  ///   .onstage();
-  /// ```
-  @useResult
-  WidgetSelector<T> onstage() {
-    return self!.copyWith(includeOffstage: false);
-  }
-
-  /// Creates a [WidgetSelector] that excludes offstage widgets from the selection.
-  ///
   /// This selector compares the Widgets by runtimeType rather than by super
   /// type (see [WidgetTypeFilter]). This makes sure that e.g. `spot<Align>()`
   /// does not accidentally match a [Center] Widget, that extends [Align].
