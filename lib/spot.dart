@@ -198,7 +198,7 @@ WidgetSelector<W> spot<W extends Widget>({
   );
 }
 
-/// Creates a [WidgetSelector] that includes offstage widgets in the selection.
+/// Creates a [WidgetSelector] that includes only offstage widgets in the selection.
 ///
 /// Offstage widgets are those that are not currently visible on the screen,
 /// but are still part of the widget tree. This can be useful when you want to
@@ -221,7 +221,7 @@ WidgetSelector<Widget> spotOffstage({
         parents: parents,
         children: children,
       )
-      .offstage();
+      .overrideIncludeOffstage(true);
 }
 
 /// Creates a [WidgetSelector] that finds [widget] by identity and returns all

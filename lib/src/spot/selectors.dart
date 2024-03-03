@@ -33,6 +33,21 @@ mixin ChainableSelectors<T extends Widget> {
   /// This is `null` for the root of the chain.
   WidgetSelector<T>? get self;
 
+  List<ElementFilter> _childAndParentFilters(
+    List<WidgetSelector> children,
+    List<WidgetSelector> parents,
+  ) {
+    final List<ElementFilter> filters = [];
+    if (children.isNotEmpty) {
+      filters.add(ChildFilter(children));
+    }
+    final list = [if (self != null) self!, ...parents];
+    if (list.isNotEmpty) {
+      filters.add(ParentFilter(list));
+    }
+    return filters;
+  }
+
   /// Creates a [WidgetSelector] that matches a all Widgets of
   /// type [W] that are in the scope of the parent [WidgetSelector].
   ///
@@ -49,14 +64,11 @@ mixin ChainableSelectors<T extends Widget> {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    final p = [if (self != null) self!, ...parents];
     final selector = WidgetSelector<W>(
       stages: [
         WidgetTypeFilter<W>(),
-        if (children.isNotEmpty) ChildFilter(children),
-        if (p.isNotEmpty) ParentFilter(p),
+        ..._childAndParentFilters(children, parents),
       ],
-      includeOffstage: self?.includeOffstage,
     );
     return selector;
   }
@@ -72,11 +84,38 @@ mixin ChainableSelectors<T extends Widget> {
   /// ### Example usage:
   /// ```dart
   /// final text = spotText('text')
-  ///   .offstage();
+  ///   .overrideIncludeOffstage();
   /// ```
   @useResult
-  WidgetSelector<T> offstage() {
-    return self!.copyWith(includeOffstage: true);
+  WidgetSelector<T> overrideIncludeOffstage(bool offstage) {
+    if (offstage == self!.includeOffstage) {
+      return self!;
+    }
+    return self!.copyWith(includeOffstage: offstage);
+  }
+
+  /// Creates a [WidgetSelector] that includes offstage widgets in the selection.
+  ///
+  /// Offstage widgets are those that are not currently visible on the screen,
+  /// but are still part of the widget tree. This can be useful when you want to
+  /// select and perform operations on widgets that are not currently visible to the user.
+  ///
+  /// Returns a new [WidgetSelector] that includes offstage widgets.
+  ///
+  /// ### Example usage:
+  /// ```dart
+  /// final text = spotOffstage()
+  ///   .spotText('text');
+  /// ```
+  @useResult
+  WidgetSelector<Widget> spotOffstage({
+    List<WidgetSelector> parents = const [],
+    List<WidgetSelector> children = const [],
+  }) {
+    return WidgetSelector(
+      includeOffstage: true,
+      stages: _childAndParentFilters(children, parents),
+    );
   }
 
   /// Creates a [WidgetSelector] that excludes offstage widgets from the selection.
@@ -129,7 +168,6 @@ mixin ChainableSelectors<T extends Widget> {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    final p = [if (self != null) self!, ...parents];
     final selector = WidgetSelector<W>(
       stages: [
         WidgetTypeFilter<W>(),
@@ -137,10 +175,8 @@ mixin ChainableSelectors<T extends Widget> {
           predicate: (Element e) => identical(e.widget, widget),
           description: 'Widget === $widget',
         ),
-        if (children.isNotEmpty) ChildFilter(children),
-        if (p.isNotEmpty) ParentFilter(p),
+        ..._childAndParentFilters(children, parents),
       ],
-      includeOffstage: self?.includeOffstage,
     );
     return selector;
   }
@@ -183,7 +219,6 @@ mixin ChainableSelectors<T extends Widget> {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    final p = [if (self != null) self!, ...parents];
     final selector = WidgetSelector<W>(
       stages: [
         WidgetTypeFilter<W>(),
@@ -191,10 +226,8 @@ mixin ChainableSelectors<T extends Widget> {
           predicate: (Element e) => identical(e, element),
           description: 'Element === $element',
         ),
-        if (children.isNotEmpty) ChildFilter(children),
-        if (p.isNotEmpty) ParentFilter(p),
+        ..._childAndParentFilters(children, parents),
       ],
-      includeOffstage: self?.includeOffstage,
     );
     return selector;
   }
@@ -268,17 +301,14 @@ mixin ChainableSelectors<T extends Widget> {
         () {
           return describe(match).map((it) => it.trim()).toList().join(' ');
         }();
-    final p = [if (self != null) self!, ...parents];
     final selector = AnyTextWidgetSelector(
       stages: [
         MatchTextFilter(
           match: (it) => match(it),
           description: 'Widget with text $name',
         ),
-        if (children.isNotEmpty) ChildFilter(children),
-        if (p.isNotEmpty) ParentFilter(p),
+        ..._childAndParentFilters(children, parents),
       ],
-      includeOffstage: self?.includeOffstage,
     );
     return selector;
   }
@@ -317,7 +347,6 @@ mixin ChainableSelectors<T extends Widget> {
     List<WidgetSelector> children = const [],
     bool findRichText = false,
   }) {
-    final p = [if (self != null) self!, ...parents];
     final selector = WidgetSelector<W>(
       stages: [
         WidgetTypeFilter<W>(),
@@ -343,10 +372,8 @@ mixin ChainableSelectors<T extends Widget> {
           },
           description: 'Widget with exact text: "$text"',
         ),
-        if (children.isNotEmpty) ChildFilter(children),
-        if (p.isNotEmpty) ParentFilter(p),
+        ..._childAndParentFilters(children, parents),
       ],
-      includeOffstage: self?.includeOffstage,
     );
     return selector;
   }
@@ -358,7 +385,6 @@ mixin ChainableSelectors<T extends Widget> {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    final p = [if (self != null) self!, ...parents];
     final selector = WidgetSelector<Icon>(
       stages: [
         WidgetTypeFilter<Icon>(),
@@ -371,10 +397,8 @@ mixin ChainableSelectors<T extends Widget> {
           },
           description: 'Widget with icon: "$icon"',
         ),
-        if (children.isNotEmpty) ChildFilter(children),
-        if (p.isNotEmpty) ParentFilter(p),
+        ..._childAndParentFilters(children, parents),
       ],
-      includeOffstage: self?.includeOffstage,
     );
     return selector;
   }
@@ -421,7 +445,6 @@ mixin ChainableSelectors<T extends Widget> {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    final p = [if (self != null) self!, ...parents];
     final selector = WidgetSelector<W>(
       stages: [
         WidgetTypeFilter<W>(),
@@ -429,10 +452,8 @@ mixin ChainableSelectors<T extends Widget> {
           predicate: (Element e) => e.widget.key == key,
           description: 'with key: "$key"',
         ),
-        if (children.isNotEmpty) ChildFilter(children),
-        if (p.isNotEmpty) ParentFilter(p),
+        ..._childAndParentFilters(children, parents),
       ],
-      includeOffstage: self?.includeOffstage,
     );
     return selector;
   }

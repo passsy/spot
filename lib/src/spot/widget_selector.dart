@@ -1,3 +1,4 @@
+import 'package:dartx/dartx.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 import 'package:spot/src/spot/filters/child_filter.dart';
@@ -97,13 +98,45 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
   /// Whether to include offstage widgets in the selection
   final bool includeOffstage;
 
+  /// All parent selectors of all stages this widget selector depends on
+  List<WidgetSelector> get parents {
+    return stages.whereType<ParentFilter>().flatMap((e) => e.parents).toList();
+  }
+
+  /// All child selectors of all stages this widget selector depends on
+  List<WidgetSelector> get children {
+    return stages
+        .whereType<ChildFilter>()
+        .flatMap((e) => e.childSelectors)
+        .toList();
+  }
+
+  /// Recursively checks if this or any parent selector includes offstage widgets
+  bool isAnyOffstage() {
+    if (includeOffstage) {
+      return true;
+    }
+    for (final parent in parents) {
+      if (parent.isAnyOffstage()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   @override
   String toString() {
     final sb = StringBuffer();
+
     for (int i = 0; i < stages.length; i++) {
       final stage = stages[i];
       if (stage is ParentFilter) {
-        var desc = stage.parents.first.toString();
+        String desc;
+        if (stages.length == 1 && includeOffstage) {
+          desc = 'find offstage Widgets';
+        } else {
+          desc = stage.parents.first.toString();
+        }
         if (desc.contains(' with parent ') || desc.contains(' with child ')) {
           desc = '($desc)';
         }
@@ -138,9 +171,13 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
         sb.write(stageSeparator);
       }
     }
-    final parts =
-        [sb.toString().trim(), _quantityToString()].where((e) => e != null);
-    return parts.join(' ');
+    final parts = [
+      sb.toString().trim(),
+      _quantityToString(),
+      if (includeOffstage) '(include offstage)',
+    ].where((e) => e != null);
+    final out = parts.join(' ');
+    return out;
   }
 
   /// Generates a breadcrumb-like string representation of this selector.
@@ -149,10 +186,16 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
   /// hierarchy of the selection.
   String toStringBreadcrumb() {
     var sb = StringBuffer();
+
     for (int i = 0; i < stages.length; i++) {
       final stage = stages[i];
       if (stage is ParentFilter) {
-        var child = sb.toString();
+        String child;
+        if (stages.length == 1 && includeOffstage) {
+          child = 'find offstage Widgets';
+        } else {
+          child = sb.toString();
+        }
         if (child.endsWith(stageSeparator)) {
           // Remove stage separator from the end
           child = child.substring(0, child.length - stageSeparator.length);
@@ -214,9 +257,13 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
       }
     }
 
-    final parts =
-        [sb.toString().trim(), _quantityToString()].where((e) => e != null);
-    return parts.join(' ');
+    final parts = [
+      sb.toString().trim(),
+      _quantityToString(),
+      if (includeOffstage) '(include offstage)',
+    ].where((e) => e != null);
+    final out = parts.join(' ');
+    return out;
   }
 
   /// Generates a string representation of the quantity constraints.
@@ -259,6 +306,8 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
     QuantityConstraint? quantityConstraint,
     bool? includeOffstage,
     W Function(Element element)? mapElementToWidget,
+    List<WidgetSelector>? parents,
+    List<WidgetSelector>? children,
   }) {
     return WidgetSelector<W>(
       stages: stages ?? this.stages,
