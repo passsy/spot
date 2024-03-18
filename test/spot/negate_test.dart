@@ -53,4 +53,30 @@ void main() {
       returnsNormally,
     );
   });
+
+  testWidgets('negate parent - throws UnimplementedError', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ListView(),
+        ),
+      ),
+    );
+    spot<Scaffold>().existsOnce();
+    spot<ListView>().withParent(spot<Scaffold>()).existsOnce();
+
+    // negates do not work yet
+    expect(
+      () => spot<ListView>()
+          .withParent(spot<Scaffold>().atMost(0))
+          .doesNotExist(),
+      throwsUnimplementedError,
+    );
+    expect(
+      () => spot<ListView>()
+          .withParent(spot<Placeholder>().atMost(0))
+          .existsOnce(),
+      throwsUnimplementedError,
+    );
+  });
 }

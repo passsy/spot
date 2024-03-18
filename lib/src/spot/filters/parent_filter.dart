@@ -23,13 +23,22 @@ class ParentFilter implements ElementFilter {
   @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
     final tree = currentWidgetTreeSnapshot();
-    final List<WidgetSnapshot<Widget>> parentSnapshots =
-        parents.map((selector) {
-      final WidgetSnapshot<Widget> widgetSnapshot = snapshot(selector);
-      // TODO unnecessary? snapshot does this by default already
-      widgetSnapshot.validateQuantity();
-      return widgetSnapshot;
-    }).toList();
+
+    final List<WidgetSnapshot<Widget>> parentSnapshots = [];
+    for (final selector in parents) {
+      final WidgetSnapshot<Widget> widgetSnapshot =
+          snapshot(selector, validateQuantity: false);
+
+      // handle negates
+      if (selector.quantityConstraint.max == 0) {
+        throw UnimplementedError(
+          'Parents can not be negated, yet. Please upvote https://github.com/passsy/spot/issues/49',
+        );
+      } else {
+        widgetSnapshot.validateQuantity();
+        parentSnapshots.add(widgetSnapshot);
+      }
+    }
 
     final List<Map<WidgetTreeNode, List<WidgetSnapshot>>> discoveryByParent =
         [];
