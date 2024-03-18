@@ -23,19 +23,32 @@ class ParentFilter implements ElementFilter {
   @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
     final tree = currentWidgetTreeSnapshot();
-    final List<WidgetSnapshot<Widget>> parentSnapshots =
-        parents.map((selector) {
-      final WidgetSnapshot<Widget> widgetSnapshot = snapshot(selector);
-      // TODO unnecessary? snapshot does this by default already
-      widgetSnapshot.validateQuantity();
-      return widgetSnapshot;
-    }).toList();
+
+    final List<WidgetSnapshot<Widget>> parentSnapshots = [];
+    for (final selector in parents) {
+      final WidgetSnapshot<Widget> widgetSnapshot =
+          snapshot(selector, validateQuantity: false);
+
+      // handle negates
+      if (selector.quantityConstraint.max == 0) {
+        if (widgetSnapshot.discovered.isNotEmpty) {
+          // found items
+          // TODO what if the items are found, but are part of a different subtree?
+          return [];
+        }
+      } else {
+        widgetSnapshot.validateQuantity();
+        parentSnapshots.add(widgetSnapshot);
+      }
+    }
 
     final List<Map<WidgetTreeNode, List<WidgetSnapshot>>> discoveryByParent =
         [];
 
     for (final parentSnapshot in parentSnapshots) {
       final Map<WidgetTreeNode, List<WidgetSnapshot>> groups = {};
+      final isNegate = parentSnapshot.selector.quantityConstraint.max == 0;
+
       if (parentSnapshot.discovered.isEmpty) {
         discoveryByParent.add(groups);
         continue;
@@ -51,18 +64,32 @@ class ParentFilter implements ElementFilter {
       for (final WidgetTreeNode node in rootNodes) {
         groups[node] ??= [];
 
-        final root = node.isOffstage ? spotOffstage() : spotAllWidgets();
-        final subtree = tree.scope(node);
-        final snapshot = WidgetSnapshot(
-          selector: root.withParent(spotElement(node.element)),
-          discovered: [
-            node,
-            ...subtree.allNodes,
-          ],
-          scope: subtree,
-          debugCandidates: candidates.map((it) => it.element).toList(),
-        );
-        groups[node]!.add(snapshot);
+        if (isNegate) {
+          final List<WidgetTreeNode> subtree = tree.scope(node).allNodes;
+          final List<WidgetTreeNode> all = tree.allNodes;
+          final remaining = all - subtree - [node];
+
+          final snapshot = WidgetSnapshot(
+            selector: spotAllWidgets().withChild(parentSnapshot.selector),
+            discovered: remaining,
+            scope: tree,
+            debugCandidates: candidates.map((it) => it.element).toList(),
+          );
+          groups[node]!.add(snapshot);
+        } else {
+          final root = node.isOffstage ? spotOffstage() : spotAllWidgets();
+          final subtree = tree.scope(node);
+          final snapshot = WidgetSnapshot(
+            selector: root.withParent(spotElement(node.element)),
+            discovered: [
+              node,
+              ...subtree.allNodes,
+            ],
+            scope: subtree,
+            debugCandidates: candidates.map((it) => it.element).toList(),
+          );
+          groups[node]!.add(snapshot);
+        }
       }
 
       discoveryByParent.add(groups);

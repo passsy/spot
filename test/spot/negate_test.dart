@@ -53,4 +53,39 @@ void main() {
       returnsNormally,
     );
   });
+
+  testWidgets('negate parent', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ListView(),
+        ),
+      ),
+    );
+    // spot<Scaffold>().existsOnce();
+    // spot<ListView>().withParent(spot<Scaffold>()).existsOnce();
+
+    spot<ListView>().withParent(spot<Scaffold>().atMost(0)).doesNotExist();
+
+    spot<ListView>().withParent(spot<Placeholder>().atMost(0)).existsOnce();
+  });
+
+  testWidgets('negate parent offstage test', (tester) async {
+    await tester.pumpWidget(MaterialApp(home: Placeholder()));
+
+    final activeOffstages = spot<Offstage>().whereWidgetProp(
+      widgetProp('isOffstage', (widget) {
+        return widget.offstage;
+      }),
+      (value) => value == true,
+    )..doesNotExist();
+
+    spotAllWidgets().existsExactlyNTimes(133);
+    // Could not find Offstage isOffstage (amount: 0) ᗕ any Widget in widget tree, expected at least 1
+    final onstage = spotAllWidgets().withParent(activeOffstages.amount(0));
+    onstage.existsAtLeastOnce();
+
+    onstage.spotText('foo').existsOnce();
+    onstage.spotText('foobar').existsOnce();
+  });
 }
