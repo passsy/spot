@@ -280,5 +280,44 @@ void main() {
       spot<Expanded>().withChild(spotOffstage().spotText('b')).existsOnce();
       spot<Expanded>().withChild(spotOffstage().spotText('a')).doesNotExist();
     });
+
+    testWidgets('fullscreenDialog', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Center(
+            child: ElevatedButton(
+              onPressed: () {
+                final navigator =
+                    Navigator.of(tester.element(find.byType(ElevatedButton)));
+                navigator.push(
+                  MaterialPageRoute(
+                    // fullscreenDialog: true,
+                    builder: (context) {
+                      return AlertDialog(
+                        content: Text('dialog content'),
+                      );
+                    },
+                  ),
+                );
+              },
+              child: Text('open dialog'),
+            ),
+          ),
+        ),
+      );
+
+      spotText('open dialog').existsOnce();
+      spotText('dialog content').doesNotExist();
+      spotOffstage().spotText('dialog content').doesNotExist();
+
+      await tester.tap(find.text('open dialog'));
+      await tester.pumpAndSettle();
+
+      spot<AlertDialog>().existsOnce();
+      spotText('dialog content').existsOnce();
+
+      spotText('open dialog').doesNotExist();
+      spotOffstage().spotText('open dialog').existsOnce();
+    });
   });
 }
