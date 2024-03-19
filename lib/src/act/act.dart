@@ -18,6 +18,45 @@ const act = Act._();
 class Act {
   const Act._();
 
+  /// Enters a text into the nearest descendant of [selector] that is an [EditableText].
+  Future<void> enterText(WidgetSelector selector, String text) async {
+    // Check if widget is in the widget tree. Throws if not.
+    selector.snapshot().existsOnce();
+
+    final skipOffstage = selector.finder.skipOffstage;
+
+    return TestAsyncUtils.guard<void>(() async {
+      final binding = WidgetsBinding.instance as TestWidgetsFlutterBinding;
+
+      final editableText = find.descendant(
+        of: selector.finder,
+        matching: find.byType(EditableText, skipOffstage: skipOffstage),
+        matchRoot: true,
+      );
+
+      final element = editableText.evaluate().single;
+      final EditableTextState editableTextState;
+
+      if (element is StatefulElement && element.state is EditableTextState) {
+        editableTextState = element.state as EditableTextState;
+      } else {
+        throw TestFailure(
+          "Widget '${selector.toStringBreadcrumb()}' is not a descendant of EditableText.",
+        );
+      }
+
+      // Setting focusedEditable causes the binding to call requestKeyboard()
+      // on the EditableTextState, which itself eventually calls TextInput.attach
+      // to establish the connection.
+      binding.focusedEditable = editableTextState;
+      await binding.pump();
+
+      final testTextInput = binding.testTextInput;
+      testTextInput.enterText(text);
+      await binding.pump();
+    });
+  }
+
   /// Triggers a tap event on a given widget.
   Future<void> tap(WidgetSelector selector) async {
     // Check if widget is in the widget tree. Throws if not.
