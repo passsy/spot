@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/spot/snapshot.dart';
 import 'package:spot/src/spot/tree_snapshot.dart';
+import 'package:spot/src/spot/widget_selector.dart';
 
 /// A filter that checks if the candidates are children of all [parents]
 class ParentFilter implements ElementFilter {
@@ -57,10 +58,16 @@ class ParentFilter implements ElementFilter {
           )
           .toList();
 
+      final visibilityMode = parentSnapshot.selector.visibilityMode;
+
       for (final WidgetTreeNode node in rootNodes) {
         groups[node] ??= [];
 
-        final root = node.isOffstage ? spotOffstage() : spotAllWidgets();
+        final WidgetSelector root = switch (visibilityMode) {
+          VisibilityMode.onstage => spot(),
+          VisibilityMode.offstage => spotOffstage(),
+          VisibilityMode.combined => spotAllWidgets(),
+        };
         final subtree = tree.scope(node);
         final snapshot = WidgetSnapshot(
           selector: root.withParent(spotElement(node.element)),

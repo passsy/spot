@@ -61,7 +61,7 @@ void main() {
       );
       expect(
         lessSpecificSelectors[1].toStringBreadcrumb(),
-        WidgetSelector.all.withParent(spot<Center>()).toStringBreadcrumb(),
+        spot().withParent(spot<Center>()).toStringBreadcrumb(),
       );
     });
 

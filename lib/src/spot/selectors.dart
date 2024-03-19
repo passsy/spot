@@ -5,6 +5,7 @@ import 'package:spot/src/checks/checks_nullability.dart';
 import 'package:spot/src/spot/snapshot.dart' as snapshot_file show snapshot;
 import 'package:spot/src/spot/snapshot.dart';
 import 'package:spot/src/spot/text/any_text.dart';
+import 'package:spot/src/spot/widget_selector.dart';
 
 export 'package:checks/context.dart';
 
@@ -66,7 +67,13 @@ mixin ChainableSelectors<T extends Widget> {
   }) {
     final selector = WidgetSelector<W>(
       stages: [
-        WidgetTypeFilter<W>(),
+        if (W == Widget)
+          PredicateFilter(
+            predicate: (e) => true,
+            description: 'any Widget',
+          )
+        else
+          WidgetTypeFilter<W>(),
         ..._childAndParentFilters(children, parents),
       ],
     );
@@ -84,14 +91,14 @@ mixin ChainableSelectors<T extends Widget> {
   /// ### Example usage:
   /// ```dart
   /// final text = spotText('text')
-  ///   .overrideIncludeOffstage();
+  ///   .overrideVisibilityMode(VisibilityMode.combined);
   /// ```
   @useResult
-  WidgetSelector<T> overrideIncludeOffstage(bool offstage) {
-    if (offstage == self!.includeOffstage) {
+  WidgetSelector<T> overrideVisibilityMode(VisibilityMode mode) {
+    if (mode == self!.visibilityMode) {
       return self!;
     }
-    return self!.copyWith(includeOffstage: offstage);
+    return self!.copyWith(visibilityMode: mode);
   }
 
   /// Creates a [WidgetSelector] that includes offstage widgets in the selection.
@@ -113,7 +120,7 @@ mixin ChainableSelectors<T extends Widget> {
     List<WidgetSelector> children = const [],
   }) {
     return WidgetSelector(
-      includeOffstage: true,
+      visibilityMode: VisibilityMode.offstage,
       stages: _childAndParentFilters(children, parents),
     );
   }

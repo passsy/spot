@@ -164,6 +164,7 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
   final List<WidgetTreeNode> candidates = treeSnapshot.allNodes;
 
   final isAnyOffstage = selector.isAnyOffstage();
+  final isAnyCombined = selector.isAnyCombined();
 
   // an easy to debug list of all filters and their individual results
   final initialStage = _StageResult(
@@ -177,10 +178,13 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
   _depth++;
   _snapshotDebugPrint(
     'snapshot() ${selector.toStringBreadcrumb()}, '
-    'offstage ${selector.includeOffstage}',
+    'visibility-mode ${selector.visibilityMode}',
   );
   final stages = [
-    if (isAnyOffstage) OffstageFilter() else OnstageFilter(),
+    if (!isAnyCombined && isAnyOffstage)
+      OffstageFilter()
+    else if (!isAnyCombined && !isAnyOffstage)
+      OnstageFilter(),
     ...selector.stages,
   ];
 

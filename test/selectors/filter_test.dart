@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
+import 'package:spot/src/spot/widget_selector.dart';
 
 void main() {
   group('first', () {
@@ -146,8 +147,31 @@ void main() {
       spotText('c').doesNotExist();
     });
 
+    testWidgets('do not select onstage widgets when spot offstage',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Row(
+            children: [
+              Text('a'),
+              Text('b'),
+              Offstage(child: Text('c')),
+            ],
+          ),
+        ),
+      );
+
+      spot<Text>().atMost(2);
+      spotText('a').existsExactlyNTimes(1);
+      spotText('c').doesNotExist();
+
+      spotOffstage().spot<Text>().atMost(1);
+      spotOffstage().spotText('a').doesNotExist();
+      spotOffstage().spotText('c').existsOnce();
+    });
+
     testWidgets(
-        'select offstage widgets when use .overrideIncludeOffstage(true)',
+        'select offstage widgets when use .overrideVisibilityMode(VisibilityMode.offstage)',
         (tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -162,27 +186,124 @@ void main() {
       );
 
       spotOffstage().spot<Text>().atMost(3);
+      spotOffstage().spotText('a').doesNotExist();
       spotOffstage().spotText('c').existsOnce();
       spotOffstage()
-          .overrideIncludeOffstage(false)
+          .overrideVisibilityMode(VisibilityMode.onstage)
+          .spotText('a')
+          .existsOnce();
+      spotOffstage()
+          .overrideVisibilityMode(VisibilityMode.onstage)
           .spotText('c')
           .doesNotExist();
 
+      spotText('a').existsOnce();
       spotText('c').doesNotExist();
-      spotText('c').overrideIncludeOffstage(true).existsOnce();
-      spotOffstage().spotText('c').existsOnce();
-      spotText('c')
-          .overrideIncludeOffstage(true)
-          .overrideIncludeOffstage(false)
+      spotText('a')
+          .overrideVisibilityMode(VisibilityMode.offstage)
           .doesNotExist();
       spotText('c')
-          .overrideIncludeOffstage(true)
-          .overrideIncludeOffstage(false)
-          .overrideIncludeOffstage(true)
+          .overrideVisibilityMode(VisibilityMode.offstage)
           .existsOnce();
 
+      spotOffstage().spotText('a').doesNotExist();
+      spotOffstage().spotText('c').existsOnce();
+      spotText('a')
+          .overrideVisibilityMode(VisibilityMode.offstage)
+          .overrideVisibilityMode(VisibilityMode.onstage)
+          .existsOnce();
+      spotText('c')
+          .overrideVisibilityMode(VisibilityMode.offstage)
+          .overrideVisibilityMode(VisibilityMode.onstage)
+          .doesNotExist();
+      spotText('a')
+          .overrideVisibilityMode(VisibilityMode.offstage)
+          .overrideVisibilityMode(VisibilityMode.onstage)
+          .overrideVisibilityMode(VisibilityMode.offstage)
+          .doesNotExist();
+      spotText('c')
+          .overrideVisibilityMode(VisibilityMode.offstage)
+          .overrideVisibilityMode(VisibilityMode.onstage)
+          .overrideVisibilityMode(VisibilityMode.offstage)
+          .existsOnce();
+
+      spot<Text>().withText('a').existsOnce();
       spot<Text>().withText('c').doesNotExist();
-      spot<Text>().withText('c').overrideIncludeOffstage(true).existsOnce();
+      spot<Text>()
+          .withText('a')
+          .overrideVisibilityMode(VisibilityMode.offstage)
+          .doesNotExist();
+      spot<Text>()
+          .withText('c')
+          .overrideVisibilityMode(VisibilityMode.offstage)
+          .existsOnce();
+    });
+
+    testWidgets(
+        'select offstage widgets when use .overrideVisibilityMode(VisibilityMode.combined)',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Row(
+            children: [
+              Text('a'),
+              Text('b'),
+              Offstage(child: Text('c')),
+            ],
+          ),
+        ),
+      );
+
+      spotAllWidgets().spot<Text>().atMost(3);
+      spotAllWidgets().spotText('a').existsOnce();
+      spotAllWidgets().spotText('c').existsOnce();
+      spotAllWidgets()
+          .overrideVisibilityMode(VisibilityMode.onstage)
+          .spotText('a')
+          .existsOnce();
+      spotAllWidgets()
+          .overrideVisibilityMode(VisibilityMode.onstage)
+          .spotText('c')
+          .doesNotExist();
+
+      spotText('a').existsOnce();
+      spotText('c').doesNotExist();
+      spotText('a')
+          .overrideVisibilityMode(VisibilityMode.combined)
+          .existsOnce();
+      spotText('c')
+          .overrideVisibilityMode(VisibilityMode.combined)
+          .existsOnce();
+
+      spotAllWidgets().spotText('a').existsOnce();
+      spotAllWidgets().spotText('c').existsOnce();
+      spotText('a')
+          .overrideVisibilityMode(VisibilityMode.offstage)
+          .overrideVisibilityMode(VisibilityMode.combined)
+          .existsOnce();
+      spotText('c')
+          .overrideVisibilityMode(VisibilityMode.offstage)
+          .overrideVisibilityMode(VisibilityMode.combined)
+          .existsOnce();
+      spotText('a')
+          .overrideVisibilityMode(VisibilityMode.onstage)
+          .overrideVisibilityMode(VisibilityMode.combined)
+          .existsOnce();
+      spotText('c')
+          .overrideVisibilityMode(VisibilityMode.onstage)
+          .overrideVisibilityMode(VisibilityMode.combined)
+          .existsOnce();
+
+      spot<Text>().withText('a').existsOnce();
+      spot<Text>().withText('c').doesNotExist();
+      spot<Text>()
+          .withText('a')
+          .overrideVisibilityMode(VisibilityMode.combined)
+          .existsOnce();
+      spot<Text>()
+          .withText('c')
+          .overrideVisibilityMode(VisibilityMode.combined)
+          .existsOnce();
     });
 
     testWidgets('filter offstage in subtree of parent', (tester) async {
