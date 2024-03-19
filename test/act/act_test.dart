@@ -57,7 +57,8 @@ void actTests() {
       } catch (e) {
         check(e).isA<FlutterError>().has((it) => it.message, 'message')
           ..contains(
-              'You must use "await" with all Future-returning test APIs.')
+            'You must use "await" with all Future-returning test APIs.',
+          )
           ..contains('The guarded method "tap" from class Act was called from')
           ..contains('act_test.dart');
       }
