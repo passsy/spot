@@ -41,6 +41,9 @@ void main() {
     // Interact with widgets using `act`
     final button = spot<FloatingActionButton>();
     await act.tap(button);
+    
+    final text = spot<TextField>();
+    await act.enterText(text, 'Hello World');
   });
 }
 
