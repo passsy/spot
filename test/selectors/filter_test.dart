@@ -171,7 +171,7 @@ void main() {
     });
 
     testWidgets(
-        'select offstage widgets when use .overrideVisibilityMode(VisibilityMode.offstage)',
+        'select offstage widgets when use .overrideWidgetPresence(VisibilityMode.offstage)',
         (tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -189,58 +189,58 @@ void main() {
       spotOffstage().spotText('a').doesNotExist();
       spotOffstage().spotText('c').existsOnce();
       spotOffstage()
-          .overrideVisibilityMode(VisibilityMode.onstage)
+          .overrideWidgetPresence(WidgetPresence.onstage)
           .spotText('a')
           .existsOnce();
       spotOffstage()
-          .overrideVisibilityMode(VisibilityMode.onstage)
+          .overrideWidgetPresence(WidgetPresence.onstage)
           .spotText('c')
           .doesNotExist();
 
       spotText('a').existsOnce();
       spotText('c').doesNotExist();
       spotText('a')
-          .overrideVisibilityMode(VisibilityMode.offstage)
+          .overrideWidgetPresence(WidgetPresence.offstage)
           .doesNotExist();
       spotText('c')
-          .overrideVisibilityMode(VisibilityMode.offstage)
+          .overrideWidgetPresence(WidgetPresence.offstage)
           .existsOnce();
 
       spotOffstage().spotText('a').doesNotExist();
       spotOffstage().spotText('c').existsOnce();
       spotText('a')
-          .overrideVisibilityMode(VisibilityMode.offstage)
-          .overrideVisibilityMode(VisibilityMode.onstage)
+          .overrideWidgetPresence(WidgetPresence.offstage)
+          .overrideWidgetPresence(WidgetPresence.onstage)
           .existsOnce();
       spotText('c')
-          .overrideVisibilityMode(VisibilityMode.offstage)
-          .overrideVisibilityMode(VisibilityMode.onstage)
+          .overrideWidgetPresence(WidgetPresence.offstage)
+          .overrideWidgetPresence(WidgetPresence.onstage)
           .doesNotExist();
       spotText('a')
-          .overrideVisibilityMode(VisibilityMode.offstage)
-          .overrideVisibilityMode(VisibilityMode.onstage)
-          .overrideVisibilityMode(VisibilityMode.offstage)
+          .overrideWidgetPresence(WidgetPresence.offstage)
+          .overrideWidgetPresence(WidgetPresence.onstage)
+          .overrideWidgetPresence(WidgetPresence.offstage)
           .doesNotExist();
       spotText('c')
-          .overrideVisibilityMode(VisibilityMode.offstage)
-          .overrideVisibilityMode(VisibilityMode.onstage)
-          .overrideVisibilityMode(VisibilityMode.offstage)
+          .overrideWidgetPresence(WidgetPresence.offstage)
+          .overrideWidgetPresence(WidgetPresence.onstage)
+          .overrideWidgetPresence(WidgetPresence.offstage)
           .existsOnce();
 
       spot<Text>().withText('a').existsOnce();
       spot<Text>().withText('c').doesNotExist();
       spot<Text>()
           .withText('a')
-          .overrideVisibilityMode(VisibilityMode.offstage)
+          .overrideWidgetPresence(WidgetPresence.offstage)
           .doesNotExist();
       spot<Text>()
           .withText('c')
-          .overrideVisibilityMode(VisibilityMode.offstage)
+          .overrideWidgetPresence(WidgetPresence.offstage)
           .existsOnce();
     });
 
     testWidgets(
-        'select offstage widgets when use .overrideVisibilityMode(VisibilityMode.combined)',
+        'select offstage widgets when use .overrideWidgetPresence(VisibilityMode.combined)',
         (tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -258,51 +258,51 @@ void main() {
       spotAllWidgets().spotText('a').existsOnce();
       spotAllWidgets().spotText('c').existsOnce();
       spotAllWidgets()
-          .overrideVisibilityMode(VisibilityMode.onstage)
+          .overrideWidgetPresence(WidgetPresence.onstage)
           .spotText('a')
           .existsOnce();
       spotAllWidgets()
-          .overrideVisibilityMode(VisibilityMode.onstage)
+          .overrideWidgetPresence(WidgetPresence.onstage)
           .spotText('c')
           .doesNotExist();
 
       spotText('a').existsOnce();
       spotText('c').doesNotExist();
       spotText('a')
-          .overrideVisibilityMode(VisibilityMode.combined)
+          .overrideWidgetPresence(WidgetPresence.combined)
           .existsOnce();
       spotText('c')
-          .overrideVisibilityMode(VisibilityMode.combined)
+          .overrideWidgetPresence(WidgetPresence.combined)
           .existsOnce();
 
       spotAllWidgets().spotText('a').existsOnce();
       spotAllWidgets().spotText('c').existsOnce();
       spotText('a')
-          .overrideVisibilityMode(VisibilityMode.offstage)
-          .overrideVisibilityMode(VisibilityMode.combined)
+          .overrideWidgetPresence(WidgetPresence.offstage)
+          .overrideWidgetPresence(WidgetPresence.combined)
           .existsOnce();
       spotText('c')
-          .overrideVisibilityMode(VisibilityMode.offstage)
-          .overrideVisibilityMode(VisibilityMode.combined)
+          .overrideWidgetPresence(WidgetPresence.offstage)
+          .overrideWidgetPresence(WidgetPresence.combined)
           .existsOnce();
       spotText('a')
-          .overrideVisibilityMode(VisibilityMode.onstage)
-          .overrideVisibilityMode(VisibilityMode.combined)
+          .overrideWidgetPresence(WidgetPresence.onstage)
+          .overrideWidgetPresence(WidgetPresence.combined)
           .existsOnce();
       spotText('c')
-          .overrideVisibilityMode(VisibilityMode.onstage)
-          .overrideVisibilityMode(VisibilityMode.combined)
+          .overrideWidgetPresence(WidgetPresence.onstage)
+          .overrideWidgetPresence(WidgetPresence.combined)
           .existsOnce();
 
       spot<Text>().withText('a').existsOnce();
       spot<Text>().withText('c').doesNotExist();
       spot<Text>()
           .withText('a')
-          .overrideVisibilityMode(VisibilityMode.combined)
+          .overrideWidgetPresence(WidgetPresence.combined)
           .existsOnce();
       spot<Text>()
           .withText('c')
-          .overrideVisibilityMode(VisibilityMode.combined)
+          .overrideWidgetPresence(WidgetPresence.combined)
           .existsOnce();
     });
 

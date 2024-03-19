@@ -91,14 +91,14 @@ mixin ChainableSelectors<T extends Widget> {
   /// ### Example usage:
   /// ```dart
   /// final text = spotText('text')
-  ///   .overrideVisibilityMode(VisibilityMode.combined);
+  ///   .overrideWidgetPresence(WidgetPresence.combined);
   /// ```
   @useResult
-  WidgetSelector<T> overrideVisibilityMode(VisibilityMode mode) {
-    if (mode == self!.visibilityMode) {
+  WidgetSelector<T> overrideWidgetPresence(WidgetPresence presence) {
+    if (presence == self!.widgetPresence) {
       return self!;
     }
-    return self!.copyWith(visibilityMode: mode);
+    return self!.copyWith(widgetPresence: presence);
   }
 
   /// Creates a [WidgetSelector] that includes offstage widgets in the selection.
@@ -120,7 +120,7 @@ mixin ChainableSelectors<T extends Widget> {
     List<WidgetSelector> children = const [],
   }) {
     return WidgetSelector(
-      visibilityMode: VisibilityMode.offstage,
+      widgetPresence: WidgetPresence.offstage,
       stages: _childAndParentFilters(children, parents),
     );
   }

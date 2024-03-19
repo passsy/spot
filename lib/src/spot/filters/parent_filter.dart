@@ -58,15 +58,15 @@ class ParentFilter implements ElementFilter {
           )
           .toList();
 
-      final visibilityMode = parentSnapshot.selector.visibilityMode;
+      final visibilityMode = parentSnapshot.selector.widgetPresence;
 
       for (final WidgetTreeNode node in rootNodes) {
         groups[node] ??= [];
 
         final WidgetSelector root = switch (visibilityMode) {
-          VisibilityMode.onstage => spot(),
-          VisibilityMode.offstage => spotOffstage(),
-          VisibilityMode.combined => spotAllWidgets(),
+          WidgetPresence.onstage => spot(),
+          WidgetPresence.offstage => spotOffstage(),
+          WidgetPresence.combined => spotAllWidgets(),
         };
         final subtree = tree.scope(node);
         final snapshot = WidgetSnapshot(

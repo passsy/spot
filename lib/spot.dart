@@ -224,7 +224,7 @@ WidgetSelector<Widget> spotOffstage({
         description: 'any Offstage Widget',
       ),
     ],
-    visibilityMode: VisibilityMode.offstage,
+    widgetPresence: WidgetPresence.offstage,
   );
 }
 

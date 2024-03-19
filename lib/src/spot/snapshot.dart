@@ -178,7 +178,7 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
   _depth++;
   _snapshotDebugPrint(
     'snapshot() ${selector.toStringBreadcrumb()}, '
-    'visibility-mode ${selector.visibilityMode}',
+    'visibility-mode ${selector.widgetPresence}',
   );
   final stages = [
     if (!isAnyCombined && isAnyOffstage)
