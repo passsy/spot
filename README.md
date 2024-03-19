@@ -123,6 +123,46 @@ final WidgetSelector<TextField> usernameTextField =
 A `WidgetSelector` may return 0, 1 or N widgets.
 Depending on how many widgets you expect to find, you should use the corresponding matchers.
 
+### WidgetPresence
+
+By default, spot only finds widgets that are onstage.
+You can also change the widget presence to `offstage` or `combined` to find widgets that are only offstage or both.
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:spot/spot.dart';
+
+void main() {
+  testWidgets('Spot offstage and combined widgets', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Row(
+          children: [
+            Text('a'),
+            Text('b'),
+            Offstage(child: Text('c')),
+          ],
+        ),
+      ),
+    );
+    
+    spot<Text>().withText('a').existsOnce();
+    spot<Text>().withText('c').doesNotExist();
+    spot<Text>().withText('c').overrideWidgetPresence(WidgetPresence.offstage).existsOnce();
+    
+    spotOffstage().spot<Text>().atMost(3);
+    spotOffstage().spotText('c').existsOnce();
+    spotOffstage().overrideWidgetPresence(WidgetPresence.onstage).spotText('c').doesNotExist();
+    
+    spotAllWidgets().spotText('a').existsOnce();
+    spotAllWidgets().spotText('c').existsOnce();
+    spotOffstage().overrideWidgetPresence(WidgetPresence.combined).spotText('a').existsOnce();
+    spotOffstage().overrideWidgetPresence(WidgetPresence.combined).spotText('c').existsOnce();
+  });
+}
+```
+
 ### Matchers
 
 After creating a selector, you want to assert the widgets it found. 
