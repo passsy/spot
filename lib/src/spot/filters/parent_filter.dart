@@ -2,7 +2,7 @@ import 'package:dartx/dartx.dart';
 import 'package:flutter/widgets.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/spot/snapshot.dart';
-import 'package:spot/src/spot/tree_snapshot.dart';
+import 'package:spot/src/spot/widget_selector.dart';
 
 /// A filter that checks if the candidates are children of all [parents]
 class ParentFilter implements ElementFilter {
@@ -40,28 +40,48 @@ class ParentFilter implements ElementFilter {
       }
     }
 
-    // Take a snapshot from each parent and get the snapshots of all nodes that match
     final List<Map<WidgetTreeNode, List<WidgetSnapshot>>> discoveryByParent =
-        parentSnapshots.map((WidgetSnapshot<Widget> parentSnapshot) {
+        [];
+
+    for (final parentSnapshot in parentSnapshots) {
       final Map<WidgetTreeNode, List<WidgetSnapshot>> groups = {};
       if (parentSnapshot.discovered.isEmpty) {
-        return groups;
+        discoveryByParent.add(groups);
+        continue;
       }
 
-      for (final WidgetTreeNode node in parentSnapshot.discovered) {
+      // remove elements when the parent is already in the list. This prevents searching all element of a subtree, resulting in always the same items
+      final rootNodes = parentSnapshot.discovered
+          .whereNot(
+            (element) => parentSnapshot.discovered.contains(element.parent),
+          )
+          .toList();
+
+      final visibilityMode = parentSnapshot.selector.widgetPresence;
+
+      for (final WidgetTreeNode node in rootNodes) {
+        groups[node] ??= [];
+
+        final WidgetSelector root = switch (visibilityMode) {
+          WidgetPresence.onstage => spot(),
+          WidgetPresence.offstage => spotOffstage(),
+          WidgetPresence.combined => spotAllWidgets(),
+        };
         final subtree = tree.scope(node);
         final snapshot = WidgetSnapshot(
-          selector: WidgetSelector.all.withParent(parentSnapshot.selector),
-          discovered: subtree.allNodes,
+          selector: root.withParent(spotElement(node.element)),
+          discovered: [
+            node,
+            ...subtree.allNodes,
+          ],
           scope: subtree,
           debugCandidates: candidates.map((it) => it.element).toList(),
         );
-        groups[node] ??= [];
         groups[node]!.add(snapshot);
       }
 
-      return groups;
-    }).toList();
+      discoveryByParent.add(groups);
+    }
 
     final List<WidgetSnapshot> discoveredSnapshots =
         discoveryByParent.map((it) => it.values).flatten().flatten().toList();
@@ -86,13 +106,17 @@ class ParentFilter implements ElementFilter {
       });
     }).toList();
 
-    return elementsInAllParents.mapNotNull((e) {
-      return candidates.firstOrNullWhere((node) => node.element == e);
+    final remaining = elementsInAllParents.mapNotNull((e) {
+      return candidates.firstOrNullWhere((node) {
+        return node.element == e;
+      });
     }).toList();
+
+    return remaining;
   }
 
   @override
   String toString() {
-    return 'ParentFilter $description';
+    return 'ParentFilter which keeps $description Widget';
   }
 }

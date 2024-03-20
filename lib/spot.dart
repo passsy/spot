@@ -4,6 +4,7 @@ library spot;
 import 'package:flutter/material.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/spot/selectors.dart' show Spot;
+import 'package:spot/src/spot/widget_selector.dart';
 
 export 'package:checks/checks.dart'
     hide
@@ -187,6 +188,10 @@ WidgetSelector<W> spotSingle<W extends Widget>({
 /// This selector compares the Widgets by runtimeType rather than by super
 /// type (see [WidgetTypeFilter]). This makes sure that e.g. `spot<Align>()`
 /// does not accidentally match a [Center] Widget, that extends [Align].
+///
+/// [spot] ignores Offstage widgets.
+/// To find offstage widgets, use `spotOffstage().spot<MyWidget>()`.
+/// See [spotOffstage] and [spotAllWidgets]
 @useResult
 WidgetSelector<W> spot<W extends Widget>({
   List<WidgetSelector> parents = const [],
@@ -195,6 +200,35 @@ WidgetSelector<W> spot<W extends Widget>({
   return _global.spot<W>(
     parents: parents,
     children: children,
+  );
+}
+
+/// Creates a [WidgetSelector] that includes only offstage widgets in the selection.
+///
+/// Offstage widgets are those that are not currently visible on the screen,
+/// but are still part of the widget tree. This can be useful when you want to
+/// select and perform operations on widgets that are not currently visible to the user.
+///
+/// Returns a new [WidgetSelector] that includes offstage widgets.
+///
+/// ### Example usage:
+/// ```dart
+/// final text = spotOffstage()
+///   .spotText('text');
+/// ```
+@useResult
+WidgetSelector<Widget> spotOffstage({
+  List<WidgetSelector> parents = const [],
+  List<WidgetSelector> children = const [],
+}) {
+  return WidgetSelector(
+    stages: [
+      PredicateFilter(
+        predicate: (e) => true,
+        description: 'any Offstage Widget',
+      ),
+    ],
+    widgetPresence: WidgetPresence.offstage,
   );
 }
 
@@ -371,7 +405,6 @@ WidgetSelector<W> spotTexts<W extends Widget>(
 @Deprecated('Use spotIcon<W>().atMost(1)')
 WidgetSelector<Icon> spotSingleIcon(
   IconData icon, {
-  bool skipOffstage = true,
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {
@@ -403,7 +436,6 @@ WidgetSelector<Icon> spotIcon(
 @Deprecated('Use spotIcon()')
 WidgetSelector<Icon> spotIcons(
   IconData icon, {
-  bool skipOffstage = true,
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {

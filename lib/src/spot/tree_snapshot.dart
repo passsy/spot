@@ -23,19 +23,44 @@ WidgetTreeSnapshot createWidgetTreeSnapshot() {
   // ignore: deprecated_member_use
   final rootElement = WidgetsBinding.instance.renderViewElement!;
 
-  WidgetTreeNode build(Element element, {WidgetTreeNode? parent}) {
-    final snapshot = WidgetTreeNode(
+  WidgetTreeNode buildTreeNode(
+    Element element, {
+    WidgetTreeNode? parent,
+    bool isParentOffstage = false,
+  }) {
+    final node = WidgetTreeNode(
       element: element,
       parent: parent,
+      isOffstage: isParentOffstage,
     );
 
-    for (final child in element.children) {
-      snapshot.addChild(build(child, parent: snapshot));
+    // children contains onstage and offstage children
+    final children = element.children.toList();
+
+    for (final child in children) {
+      // Once a part of the widget tree is offstage, all children are offstage, too.
+      // There is now way a child might become onstage again
+      final isOffstage = isParentOffstage ||
+          () {
+            final onstageOnly = element.onstageChildren.toList();
+            final offstageOnly = element.children
+                .where((it) => !onstageOnly.contains(it))
+                .toList();
+            return offstageOnly.contains(child);
+          }();
+
+      final childNode = buildTreeNode(
+        child,
+        parent: node,
+        isParentOffstage: isOffstage,
+      );
+      node.addChild(childNode);
     }
-    return snapshot;
+    return node;
   }
 
-  final origin = build(rootElement);
+  // TODO replace recursion with iteration to prevent stack overflow for giant widget trees
+  final origin = buildTreeNode(rootElement);
 
   return WidgetTreeSnapshot(
     origin: origin,
@@ -71,12 +96,16 @@ class WidgetTreeNode {
   /// node of the tree.
   final WidgetTreeNode? parent;
 
+  /// Whether the widget is offstage or onstage
+  final bool isOffstage;
+
   /// Creates an [Element] in the element tree.
   ///
   /// Do not forget to call [addChild] manually after creation!
   WidgetTreeNode({
     required this.element,
     required this.parent,
+    required this.isOffstage,
   });
 
   @override

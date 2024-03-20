@@ -303,6 +303,11 @@ class MatchTextFilter implements ElementFilter {
     }
     throw _UnsupportedWidgetTypeException(e.widget);
   }
+
+  @override
+  String toString() {
+    return 'MatchTextFilter which keeps $description';
+  }
 }
 
 class _UnsupportedWidgetTypeException implements Exception {

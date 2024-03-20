@@ -1,3 +1,4 @@
+import 'package:dartx/dartx.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 import 'package:spot/src/spot/filters/child_filter.dart';
@@ -15,6 +16,7 @@ export 'package:spot/src/spot/tree_snapshot.dart';
 class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
   /// Matches any widget currently mounted
   static final WidgetSelector all = WidgetSelector(
+    widgetPresence: WidgetPresence.combined,
     stages: [
       PredicateFilter(
         predicate: (e) => true,
@@ -49,8 +51,10 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
     @Deprecated('Use quantityConstraint instead')
     ExpectedQuantity expectedQuantity = ExpectedQuantity.multi,
     QuantityConstraint? quantityConstraint,
+    WidgetPresence? widgetPresence,
     W Function(Element element)? mapElementToWidget,
   })  : stages = List.unmodifiable(stages),
+        widgetPresence = widgetPresence ?? WidgetPresence.onstage,
         quantityConstraint = quantityConstraint ??
             // ignore: deprecated_member_use_from_same_package
             (expectedQuantity == ExpectedQuantity.single
@@ -92,13 +96,64 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
   /// The runtime type of the widget this selector is intended for.
   Type get type => W;
 
+  /// Whether to include offstage widgets in the selection
+  final WidgetPresence widgetPresence;
+
+  /// All parent selectors of all stages this widget selector depends on
+  List<WidgetSelector> get parents {
+    return stages.whereType<ParentFilter>().flatMap((e) => e.parents).toList();
+  }
+
+  /// All child selectors of all stages this widget selector depends on
+  List<WidgetSelector> get children {
+    return stages
+        .whereType<ChildFilter>()
+        .flatMap((e) => e.childSelectors)
+        .toList();
+  }
+
+  /// Recursively checks if this or any parent selector includes offstage widgets
+  bool isAnyOffstage() {
+    if (widgetPresence == WidgetPresence.offstage) {
+      return true;
+    }
+    for (final parent in parents) {
+      if (parent.isAnyOffstage()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /// Recursively checks if this or any parent selector includes onstage and offstage widgets
+  bool isAnyCombined() {
+    if (widgetPresence == WidgetPresence.combined) {
+      return true;
+    }
+    for (final parent in parents) {
+      if (parent.isAnyCombined()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   @override
   String toString() {
     final sb = StringBuffer();
+
     for (int i = 0; i < stages.length; i++) {
       final stage = stages[i];
       if (stage is ParentFilter) {
-        var desc = stage.parents.first.toString();
+        String desc;
+        if (stages.length == 1 && (widgetPresence == WidgetPresence.offstage)) {
+          desc = 'find only offstage Widgets';
+        } else if (stages.length == 1 &&
+            (widgetPresence == WidgetPresence.combined)) {
+          desc = 'find onstage and offstage Widgets';
+        } else {
+          desc = stage.parents.first.toString();
+        }
         if (desc.contains(' with parent ') || desc.contains(' with child ')) {
           desc = '($desc)';
         }
@@ -133,9 +188,14 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
         sb.write(stageSeparator);
       }
     }
-    final parts =
-        [sb.toString().trim(), _quantityToString()].where((e) => e != null);
-    return parts.join(' ');
+    final parts = [
+      sb.toString().trim(),
+      _quantityToString(),
+      if (widgetPresence == WidgetPresence.offstage) '(only offstage)',
+      if (widgetPresence == WidgetPresence.combined) '(onstage and offstage)',
+    ].where((e) => e != null);
+    final out = parts.join(' ');
+    return out;
   }
 
   /// Generates a breadcrumb-like string representation of this selector.
@@ -144,10 +204,19 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
   /// hierarchy of the selection.
   String toStringBreadcrumb() {
     var sb = StringBuffer();
+
     for (int i = 0; i < stages.length; i++) {
       final stage = stages[i];
       if (stage is ParentFilter) {
-        var child = sb.toString();
+        String child;
+        if (stages.length == 1 && (widgetPresence == WidgetPresence.offstage)) {
+          child = 'find only offstage Widgets';
+        } else if (stages.length == 1 &&
+            (widgetPresence == WidgetPresence.combined)) {
+          child = 'find onstage and offstage Widgets';
+        } else {
+          child = sb.toString();
+        }
         if (child.endsWith(stageSeparator)) {
           // Remove stage separator from the end
           child = child.substring(0, child.length - stageSeparator.length);
@@ -209,9 +278,14 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
       }
     }
 
-    final parts =
-        [sb.toString().trim(), _quantityToString()].where((e) => e != null);
-    return parts.join(' ');
+    final parts = [
+      sb.toString().trim(),
+      _quantityToString(),
+      if (widgetPresence == WidgetPresence.offstage) '(only offstage)',
+      if (widgetPresence == WidgetPresence.combined) '(onstage and offstage)',
+    ].where((e) => e != null);
+    final out = parts.join(' ');
+    return out;
   }
 
   /// Generates a string representation of the quantity constraints.
@@ -252,11 +326,13 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
     // ignore: deprecated_member_use_from_same_package
     ExpectedQuantity? expectedQuantity,
     QuantityConstraint? quantityConstraint,
+    WidgetPresence? widgetPresence,
     W Function(Element element)? mapElementToWidget,
   }) {
     return WidgetSelector<W>(
       stages: stages ?? this.stages,
       quantityConstraint: quantityConstraint ?? this.quantityConstraint,
+      widgetPresence: widgetPresence ?? this.widgetPresence,
       mapElementToWidget: mapElementToWidget ?? this.mapElementToWidget,
     );
   }
@@ -373,4 +449,17 @@ enum ExpectedQuantity {
 
   /// A selector that matches multiple widgets
   multi,
+}
+
+/// Specifies whether a [WidgetSelector] should search for onstage, offstage,
+/// or both types of widgets
+enum WidgetPresence {
+  /// Only widgets that are currently onstage
+  onstage,
+
+  /// Only widgets that are currently offstage, meaning wrapped with [Offstage]
+  offstage,
+
+  /// All widgets, both onstage and offstage
+  combined,
 }

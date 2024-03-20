@@ -21,11 +21,20 @@ extension ElementExtensions on Element {
     }
   }
 
-  /// Returns all children of [Element] in depth first order from the closest
-  /// to the leaves
+  /// Returns all children of [Element], only direct children
   Iterable<Element> get children sync* {
     final List<Element> found = [];
     visitChildren(found.add);
+    yield* found;
+  }
+
+  /// Returns only onstage children of [Element], only direct children
+  ///
+  /// Children of [Offstage] or [Overlay] are eventually not returned,
+  /// thus marking them as offstage
+  Iterable<Element> get onstageChildren sync* {
+    final List<Element> found = [];
+    debugVisitOnstageChildren(found.add);
     yield* found;
   }
 }
