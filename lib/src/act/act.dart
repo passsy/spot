@@ -23,18 +23,10 @@ class Act {
     // Check if widget is in the widget tree. Throws if not.
     selector.snapshot().existsOnce();
 
-    final skipOffstage = selector.finder.skipOffstage;
-
     return TestAsyncUtils.guard<void>(() async {
       final binding = WidgetsBinding.instance as TestWidgetsFlutterBinding;
 
-      final editableText = find.descendant(
-        of: selector.finder,
-        matching: find.byType(EditableText, skipOffstage: skipOffstage),
-        matchRoot: true,
-      );
-
-      final element = editableText.evaluate().single;
+      final element = spot<EditableText>(parents: [selector]).snapshotElement();
       final EditableTextState editableTextState;
 
       if (element is StatefulElement && element.state is EditableTextState) {
