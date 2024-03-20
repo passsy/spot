@@ -188,6 +188,10 @@ WidgetSelector<W> spotSingle<W extends Widget>({
 /// This selector compares the Widgets by runtimeType rather than by super
 /// type (see [WidgetTypeFilter]). This makes sure that e.g. `spot<Align>()`
 /// does not accidentally match a [Center] Widget, that extends [Align].
+///
+/// [spot] ignores Offstage widgets.
+/// To find offstage widgets, use `spotOffstage().spot<MyWidget>()`.
+/// See [spotOffstage] and [spotAllWidgets]
 @useResult
 WidgetSelector<W> spot<W extends Widget>({
   List<WidgetSelector> parents = const [],
