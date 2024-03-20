@@ -451,12 +451,13 @@ enum ExpectedQuantity {
   multi,
 }
 
-/// A filter that matches widgets based on a predicate function.
+/// Specifies whether a [WidgetSelector] should search for onstage, offstage,
+/// or both types of widgets
 enum WidgetPresence {
   /// Only widgets that are currently onstage
   onstage,
 
-  /// Only widgets that are currently offstage
+  /// Only widgets that are currently offstage, meaning wrapped with [Offstage]
   offstage,
 
   /// All widgets, both onstage and offstage
