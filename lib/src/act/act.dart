@@ -18,6 +18,57 @@ const act = Act._();
 class Act {
   const Act._();
 
+  /// Enters a text into the first [EditableText] child of [selector].
+  ///
+  /// ```dart
+  /// final emailTextField = spot<Form>()
+  ///     .spot<TextField>()
+  ///     .whereWidgetProp(
+  ///       widgetProp('labelText', (textField) => textField.decoration?.labelText),
+  ///       (label) => label == 'Email',
+  ///     )..existsOnce();
+  /// await act.enterText(emailTextField, 'alfred@phntm.xyz');
+  /// ```
+  Future<void> enterText(WidgetSelector selector, String text) async {
+    // Check if widget is in the widget tree. Throws if not.
+    selector.snapshot().existsOnce();
+
+    return TestAsyncUtils.guard<void>(() async {
+      final binding = WidgetsBinding.instance as TestWidgetsFlutterBinding;
+
+      final editableText = spot<EditableText>().withParent(selector);
+      final element = editableText.snapshot().discoveredElement;
+      final EditableTextState editableTextState;
+
+      if (element is! StatefulElement || element.state is! EditableTextState) {
+        throw TestFailure(
+          "Widget '${selector.toStringBreadcrumb()}' is not a descendant of EditableText.",
+        );
+      } else {
+        editableTextState = element.state as EditableTextState;
+      }
+
+      // Setting focusedEditable causes the binding to call requestKeyboard()
+      // on the EditableTextState, which itself eventually calls TextInput.attach
+      // to establish the connection.
+      binding.focusedEditable = editableTextState;
+      await binding.pump();
+
+      if (!kIsWeb) {
+        // Fix for enterText() not working in release mode on real iOS devices.
+        // See https://github.com/flutter/flutter/pull/89703
+        // Also a fix for enterText() not being able to interact with the same
+        // textfield 2 times in the same test.
+        // See https://github.com/flutter/flutter/issues/134604
+        binding.testTextInput.register();
+      }
+
+      final testTextInput = binding.testTextInput;
+      testTextInput.enterText(text);
+      await binding.pump();
+    });
+  }
+
   /// Triggers a tap event on a given widget.
   Future<void> tap(WidgetSelector selector) async {
     // Check if widget is in the widget tree. Throws if not.

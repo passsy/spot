@@ -21,10 +21,10 @@ void main() {
     // Create widget selectors for elements in the widget tree
     final scaffold = spot<MaterialApp>().spot<Scaffold>();
     final appBar = scaffold.spot<AppBar>();
-    
+
     // Assert for values of widgets
     appBar.spotText('Dash').hasFontSize(14).hasFontColor(Colors.black87);
-    
+
     // Find widgets based on child widgets
     appBar
         .spot<IconButton>(children: [spotIcon(Icons.home)])
@@ -41,6 +41,9 @@ void main() {
     // Interact with widgets using `act`
     final button = spot<FloatingActionButton>();
     await act.tap(button);
+
+    final text = spot<TextField>();
+    await act.enterText(text, 'Hello World');
   });
 }
 
@@ -75,8 +78,8 @@ void main() {
 
 ### Chain selectors
 
-You know exactly where your widgets are. 
-Like a button in the AppBar or a Text in a Dialog. 
+You know exactly where your widgets are.
+Like a button in the AppBar or a Text in a Dialog.
 Spot allows you to chain matchers, narrowing down the search space.
 
 Chaining allows spot to create better error messages for you.
@@ -95,11 +98,11 @@ The second allows checking for multiple parents, which is only required for rare
 
 Spot has two features, creating **selectors** and asserting on them with **matchers**.
 
-A selector is a query to find a set of widgets. 
-Like a SQL query, or a CSS selector. 
+A selector is a query to find a set of widgets.
+Like a SQL query, or a CSS selector.
 It is only a description of what to search for, without actually doing the search.
 
-Selectors can be rather complex, it is therefore recommended to **reuse** them. 
+Selectors can be rather complex, it is therefore recommended to **reuse** them.
 You can even save them top-level and reuse them across multiple tests.
 
 ```dart
@@ -125,7 +128,7 @@ Depending on how many widgets you expect to find, you should use the correspondi
 
 ### Matchers
 
-After creating a selector, you want to assert the widgets it found. 
+After creating a selector, you want to assert the widgets it found.
 The `snapshot()` method creates a `WidgetSnapshot` of the widget tree at that point in time and finds all widgets that match the selector.
 
 #### Quantity matchers
@@ -178,7 +181,7 @@ spot<AppBar>().spot<Tooltip>().existsAtLeastOnce()
 ### Selectors vs Matchers
 
 It is recommended to use matchers instead of selectors once you have narrowed down the search space to the widget you want to assert on.
-This makes the error messages much clearer. 
+This makes the error messages much clearer.
 Instead of `widget not found` you'll get `Found ToolTip with message 'Settings' but expected 'Favorite'` as error message.
 
 ```dart
@@ -251,9 +254,9 @@ expect(find.byIcon(Icons.settings), findsOneWidget);
 >>>    Which: means none were found but one was expected
 ```
 
-The error message above is not really helpful, because the actual error is not that there's no icon, but the `Icons.home` instead of `Icons.settings`. 
+The error message above is not really helpful, because the actual error is not that there's no icon, but the `Icons.home` instead of `Icons.settings`.
 
-spot prints the entire widget tree and shows that there is an `Icon`, but the wrong one (`IconData(U+0E318)`). 
+spot prints the entire widget tree and shows that there is an `Icon`, but the wrong one (`IconData(U+0E318)`).
 That's much more helpful!
 
 In the future, spot will only print the widget tree from the last node found node (`spot<AppBar>`).
@@ -312,7 +315,7 @@ Could not find 'icon "IconData(U+0E57F)"' as child of [type "MaterialApp" > 'typ
 - ✅ Allow manually printing a screenshot at certain points
 - ✅ Negate child matchers
 - ✅ Simplify `WidgetSelector` API
-- ⬜️ Become the de facto Widget selector API for [patrol](https://pub.dev/packages/patrol) 
+- ⬜️ Become the de facto Widget selector API for [patrol](https://pub.dev/packages/patrol)
 - ⬜️ Combine multiple WidgetSelectors with `and`
 - ⬜️ More `act` features
 - ⬜️ Print only widget tree of the parent scope when test fails
