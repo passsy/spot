@@ -26,15 +26,16 @@ class Act {
     return TestAsyncUtils.guard<void>(() async {
       final binding = WidgetsBinding.instance as TestWidgetsFlutterBinding;
 
-      final element = spot<EditableText>(parents: [selector]).snapshotElement();
+      final editableText = spot<EditableText>().withParent(selector);
+      final element = editableText.snapshot().discoveredElement;
       final EditableTextState editableTextState;
 
-      if (element is StatefulElement && element.state is EditableTextState) {
-        editableTextState = element.state as EditableTextState;
-      } else {
+      if (element is! StatefulElement || element.state is! EditableTextState) {
         throw TestFailure(
           "Widget '${selector.toStringBreadcrumb()}' is not a descendant of EditableText.",
         );
+      } else {
+        editableTextState = element.state as EditableTextState;
       }
 
       // Setting focusedEditable causes the binding to call requestKeyboard()

@@ -258,6 +258,36 @@ void actTests() {
         await act.enterText(spot<TextField>(), 'hello');
         spotText('hello').existsOnce();
       });
+
+      testWidgets('spot a non existing widget throws an error', (tester) async {
+        await tester.pumpWidget(
+          const Directionality(
+            textDirection: TextDirection.ltr,
+            child: Text("any text"),
+          ),
+        );
+        await expectLater(
+          () => act.enterText(spot<TextField>(), 'hello'),
+          throwsSpotErrorContaining([
+            "Could not find TextField in widget tree",
+          ]),
+        );
+      });
+
+      testWidgets('spot a non editable text throws an error', (tester) async {
+        await tester.pumpWidget(
+          const Directionality(
+            textDirection: TextDirection.ltr,
+            child: Text("any text"),
+          ),
+        );
+        await expectLater(
+          () => act.enterText(spot<Text>(), 'hello'),
+          throwsSpotErrorContaining([
+            "Widget 'Text' is not a descendant of EditableText.",
+          ]),
+        );
+      });
     });
   });
 }
