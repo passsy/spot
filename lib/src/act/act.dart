@@ -18,7 +18,17 @@ const act = Act._();
 class Act {
   const Act._();
 
-  /// Enters a text into the nearest descendant of [selector] that is an [EditableText].
+  /// Enters a text into the first [EditableText] child of [selector].
+  ///
+  /// ```dart
+  /// final emailTextField = spot<Form>()
+  ///     .spot<TextField>()
+  ///     .whereWidgetProp(
+  ///       widgetProp('labelText', (textField) => textField.decoration?.labelText),
+  ///       (label) => label == 'Email',
+  ///     )..existsOnce();
+  /// await act.enterText(emailTextField, 'alfred@phntm.xyz');
+  /// ```
   Future<void> enterText(WidgetSelector selector, String text) async {
     // Check if widget is in the widget tree. Throws if not.
     selector.snapshot().existsOnce();
