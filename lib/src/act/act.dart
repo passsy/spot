@@ -34,7 +34,7 @@ class Act {
     selector.snapshot().existsOnce();
 
     return TestAsyncUtils.guard<void>(() async {
-      final binding = WidgetsBinding.instance as TestWidgetsFlutterBinding;
+      final binding = TestWidgetsFlutterBinding.instance;
 
       final editableText = spot<EditableText>().withParent(selector);
       final element = editableText.snapshot().discoveredElement;
@@ -106,7 +106,7 @@ class Act {
           snapshot: snapshot,
         );
 
-        final binding = WidgetsBinding.instance;
+        final binding = TestWidgetsFlutterBinding.instance;
 
         // Finally, tap the widget by sending a down and up event.
         final downEvent = PointerDownEvent(position: centerPosition);
@@ -114,6 +114,8 @@ class Act {
 
         final upEvent = PointerUpEvent(position: centerPosition);
         binding.handlePointerEvent(upEvent);
+
+        await binding.pump();
       });
     });
   }

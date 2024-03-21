@@ -38,6 +38,24 @@ void actTests() {
       expect(i, 2);
     });
 
+    testWidgets('tap pumps a new frame', (tester) async {
+      await tester.pumpWidget(const ColorToggleApp());
+
+      final app = spot<MaterialApp>();
+      app.existsOnce().hasWidgetProp(
+            prop: widgetProp('color', (w) => w.color),
+            match: (it) => it.equals(Colors.blue),
+          );
+      final button = spot<ElevatedButton>();
+
+      await act.tap(button);
+      // without the automatic pump() inside tap(), the color would not have change
+      app.existsOnce().hasWidgetProp(
+            prop: widgetProp('color', (w) => w.color),
+            match: (it) => it.equals(Colors.red),
+          );
+    });
+
     testWidgets('tap must be awaited', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -290,6 +308,34 @@ void actTests() {
       });
     });
   });
+}
+
+class ColorToggleApp extends StatefulWidget {
+  const ColorToggleApp({super.key});
+
+  @override
+  State<ColorToggleApp> createState() => _ColorToggleAppState();
+}
+
+class _ColorToggleAppState extends State<ColorToggleApp> {
+  bool _red = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      color: _red ? Colors.red : Colors.blue,
+      home: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            setState(() {
+              _red = !_red;
+            });
+          },
+          child: null,
+        ),
+      ),
+    );
+  }
 }
 
 class _NonCartesianWidget extends StatelessWidget {
