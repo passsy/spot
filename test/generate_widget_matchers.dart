@@ -32,39 +32,39 @@ void main() {
   _generateWidget<Row>(builder: () => Row());
   _generateWidget<Wrap>(
     builder: () => Wrap(),
-    imports: " import 'package:flutter/rendering.dart';\n"
+    imports: "import 'package:flutter/rendering.dart';\n"
         "import 'package:flutter/widgets.dart';",
   );
   _generateWidget<SizedBox>(
     builder: () => _child,
-    imports: " import 'package:flutter/rendering.dart';\n"
+    imports: "import 'package:flutter/rendering.dart';\n"
         "import 'package:flutter/widgets.dart';",
   );
   _generateWidget<Align>(
     builder: () => Align(),
-    imports: " import 'package:flutter/rendering.dart';\n"
+    imports: "import 'package:flutter/rendering.dart';\n"
         "import 'package:flutter/widgets.dart';",
   );
   _generateWidget<SafeArea>(builder: () => SafeArea(child: _child));
   _generateWidget<Opacity>(
     builder: () => Opacity(opacity: 0),
-    imports: " import 'package:flutter/rendering.dart';\n"
+    imports: "import 'package:flutter/rendering.dart';\n"
         "import 'package:flutter/widgets.dart';",
   );
   _generateWidget<Column>(
     builder: () => Column(),
-    imports: " import 'package:flutter/rendering.dart';\n"
+    imports: "import 'package:flutter/rendering.dart';\n"
         "import 'package:flutter/widgets.dart';",
   );
   _generateWidget<Row>(
     builder: () => Row(),
-    imports: " import 'package:flutter/rendering.dart';\n"
+    imports: "import 'package:flutter/rendering.dart';\n"
         "import 'package:flutter/widgets.dart';",
   );
   _generateWidget<Icon>(builder: () => Icon(Icons.add));
   _generateWidget<ConstrainedBox>(
     builder: () => ConstrainedBox(constraints: BoxConstraints.tightFor()),
-    imports: " import 'package:flutter/rendering.dart';\n"
+    imports: "import 'package:flutter/rendering.dart';\n"
         "import 'package:flutter/widgets.dart';",
   );
   _generateWidget<WidgetsApp>(builder: () => _partOfMaterialApp);
