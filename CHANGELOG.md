@@ -1,6 +1,10 @@
 # Changelog
 
 ## 0.12.0
+- Support for Flutter 3.22
+- Remove unused dependencies #55
+
+## 0.12.0
 - **Breaking** `Offstage` support. By default `Offstage` widgets are not found by `spot<W>()`. Use `spotOffstage().spot<W>()` to find them. `spotAllWidgets()` returns onstage and offstage widgets. Use `.overrideWidgetPresence(WidgetPresence.offstage)` to modify a `WidgetSelector` to search for `offstage`, `onstage` or `combined` #45
 - New: `act.enterText(spot<TextField>(), 'Hello World!')` allows to enter text into a `EditableText` #51
 - Negating parents is not yet supported (`spot<ListView>().withParent(spot<Scaffold>().atMost(0))`). It now throws to prevent unexpected behavior. #50
