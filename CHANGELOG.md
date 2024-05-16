@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.3
+
+- Widen test_api range to support Flutter 3.22
+
 ## 0.3.2
 - Export all types from `checks.dart` which are required to use `hasProp` 
 
