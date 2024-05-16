@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.3
+
+- Remove unused dependencies. Fixes incompatibility with latest test_api versions #55
+
 ## 0.4.2
 
 - Switch to `renderView.size` to get the window size 
