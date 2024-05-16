@@ -168,6 +168,12 @@ Eventually **Breaking**, but only the class names. The end user API stays the sa
 - Fix: `hasProp` matcher can now check for null values with `(it) => it.isNull()` #18
 - Improvement: `withDiagnosticProp` now falls back to the default value of a `DiagnosticNode` #18
 
+## 0.4.3
+- Remove unused dependencies. Fixes incompatibility with latest test_api versions #55
+
+## 0.4.2
+- Switch to `renderView.size` to get the window size
+
 ## 0.4.1
 - Added screenshot methods #14
   ```dart
@@ -189,6 +195,9 @@ Eventually **Breaking**, but only the class names. The end user API stays the sa
 - Raise min Flutter version to 3.10.0
 - Switch to the official [`checks`](https://pub.dev/packages/checks) package #12
 - Rename `SingleWidgetSnapshot.discoveredElements` -> `SingleWidgetSnapshot.discoveredElement` #11
+
+## 0.3.3
+- Widen test_api range to support Flutter 3.22
 
 ## 0.3.2
 - Export all types from `checks.dart` which are required to use `hasProp` 
