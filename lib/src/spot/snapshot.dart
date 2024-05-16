@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:dartx/dartx.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -241,7 +240,7 @@ extension MultiWidgetSelectorMatcher<W extends Widget>
           'expected at most $max',
         );
 
-        discovered.forEachIndexed((index, candidate) {
+        discovered.forEachIndexed((candidate, index) {
           errorBuilder.writeln("Possible match #$index:");
           errorBuilder.writeln(candidate.element.widget.toStringDeep());
         });
@@ -405,7 +404,7 @@ Element findCommonAncestor(Iterable<Element> elements) {
   final allOtherParents =
       elements.exceptElement(highestElement).map((e) => e.parents);
 
-  final commonAncestor = highestElement.parents.firstWhereOrNull(
+  final commonAncestor = highestElement.parents.firstOrNullWhere(
     (parent) => allOtherParents.every((parents) => parents.contains(parent)),
   );
 
