@@ -71,11 +71,10 @@ class Act {
 
   /// Triggers a tap event on a given widget.
   Future<void> tap(WidgetSelector selector) async {
-    // Check if the widget is in the widget tree. Throws if not.
+    // Check if widget is in the widget tree. Throws if not.
     final snapshot = selector.snapshot()..existsOnce();
-    Offset? hitPosition;
-    Element? hitElement;
-    final guard = TestAsyncUtils.guard<void>(() async {
+
+    return TestAsyncUtils.guard<void>(() async {
       return _alwaysPropagateDevicePointerEvents(() async {
         // Find the associated RenderObject to get the position of the element on the screen
         final element = snapshot.discoveredElement!;
@@ -88,7 +87,7 @@ class Act {
         }
         if (renderObject is! RenderBox) {
           throw TestFailure(
-            "Widget '${selector.toStringBreadcrumb()}' is associated with $renderObject which "
+            "Widget '${selector.toStringBreadcrumb()}' is associated to $renderObject which "
             "is not a RenderObject in the 2D Cartesian coordinate system "
             "(implements RenderBox).\n"
             "Spot does not know how to hit test such a widget.",
@@ -109,7 +108,7 @@ class Act {
 
         final binding = TestWidgetsFlutterBinding.instance;
 
-        // Perform the tap by sending a down and up event on the original widget
+        // Finally, tap the widget by sending a down and up event.
         final downEvent = PointerDownEvent(position: centerPosition);
         binding.handlePointerEvent(downEvent);
 
@@ -117,17 +116,13 @@ class Act {
         binding.handlePointerEvent(upEvent);
 
         await binding.pump();
-        hitPosition = centerPosition;
-        hitElement = element;
+
+        await takeScreenshot(
+          element: element,
+          hitPosition: centerPosition,
+        );
       });
     });
-    await guard;
-    if (hitPosition != null && hitElement != null) {
-      await takeScreenshot(
-        element: hitElement,
-        hitPosition: hitPosition,
-      );
-    }
   }
 
   // Validates that the widget is at least partially visible in the viewport.

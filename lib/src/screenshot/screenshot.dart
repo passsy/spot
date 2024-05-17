@@ -8,7 +8,6 @@ import 'package:dartx/dartx_io.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meta/meta.dart';
 import 'package:nanoid2/nanoid2.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/screenshot/screenshot.dart' as self
@@ -115,10 +114,15 @@ Future<Screenshot> takeScreenshot({
     bytes = byteData.buffer.asUint8List();
   });
 
+  Future<Uint8List?> bytesWithHitMarker() async {
+    return binding.runAsync(() async {
+      return _overlayRedDotOnImage(image, hitPosition!);
+    });
+  }
+
   // Overlay the red dot on the screenshot if centerPosition is available
-  final modifiedImage = hitPosition != null
-      ? await _overlayRedDotOnImage(image, hitPosition)
-      : bytes;
+  final Uint8List modifiedImage =
+      (hitPosition != null ? await bytesWithHitMarker() : null) ?? bytes;
 
   final spotTempDir = Directory.systemTemp.directory('spot');
   if (!spotTempDir.existsSync()) {
@@ -160,7 +164,9 @@ Future<Screenshot> takeScreenshot({
 }
 
 Future<Uint8List> _overlayRedDotOnImage(
-    ui.Image image, Offset centerPosition) async {
+  ui.Image image,
+  Offset centerPosition,
+) async {
   final recorder = ui.PictureRecorder();
   final canvas = Canvas(recorder);
 
