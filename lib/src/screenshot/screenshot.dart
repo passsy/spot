@@ -116,7 +116,7 @@ Future<Screenshot> takeScreenshot({
 
   Future<Uint8List?> bytesWithHitMarker() async {
     return binding.runAsync(() async {
-      return _overlayRedDotOnImage(image, hitPosition!);
+      return _overlayCrosshairOnImage(image, hitPosition!);
     });
   }
 
@@ -163,7 +163,7 @@ Future<Screenshot> takeScreenshot({
   return Screenshot(file: file, initiator: frame);
 }
 
-Future<Uint8List> _overlayRedDotOnImage(
+Future<Uint8List> _overlayCrosshairOnImage(
   ui.Image image,
   Offset centerPosition,
 ) async {
@@ -173,9 +173,31 @@ Future<Uint8List> _overlayRedDotOnImage(
   // Draw the original image
   canvas.drawImage(image, Offset.zero, Paint());
 
-  // Draw the red dot
-  final paint = Paint()..color = const Color(0xFFFF0000); // Red color
-  canvas.drawCircle(centerPosition, 5.0, paint); // Radius of the red dot is 5.0
+  // Define the paint for the crosshair
+  final paint = Paint()
+    ..color = const Color(0xFF00FFFF) // Cyan color
+    ..strokeWidth = 2.0;
+
+  // Draw vertical line
+  canvas.drawLine(
+    Offset(centerPosition.dx, centerPosition.dy - 10),
+    Offset(centerPosition.dx, centerPosition.dy + 10),
+    paint,
+  );
+
+  // Draw horizontal line
+  canvas.drawLine(
+    Offset(centerPosition.dx - 10, centerPosition.dy),
+    Offset(centerPosition.dx + 10, centerPosition.dy),
+    paint,
+  );
+
+  // Draw the circle intersecting the lines at half length
+  final circlePaint = Paint()
+    ..color = const Color(0xFF00FFFF) // Cyan color
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 2.0;
+  canvas.drawCircle(centerPosition, 5.0, circlePaint);
 
   final picture = recorder.endRecording();
   final finalImage = await picture.toImage(image.width, image.height);
