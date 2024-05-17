@@ -46,6 +46,7 @@ void main() {
     );
 
     spot<MaterialApp>().spot<Center>().existsOnce();
+    await takeScreenshot();
     spot<Center>(
       parents: [spot<MaterialApp>()],
       children: [spot<Padding>()],

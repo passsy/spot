@@ -8,6 +8,7 @@ import 'package:dartx/dartx_io.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:meta/meta.dart';
 import 'package:nanoid2/nanoid2.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/screenshot/screenshot.dart' as self
@@ -48,8 +49,9 @@ Future<Screenshot> takeScreenshot({
   WidgetSnapshot? snapshot,
   WidgetSelector? selector,
   String? name,
+  Offset? hitPosition,
 }) async {
-  final TestWidgetsFlutterBinding binding = TestWidgetsFlutterBinding.instance;
+  final binding = TestWidgetsFlutterBinding.instance;
   final Frame? frame = _caller();
 
   // Element that is currently active in the widget tree, to take a screenshot of
@@ -65,7 +67,7 @@ Future<Screenshot> takeScreenshot({
       final elements = snapshot.discovered;
       if (elements.length > 1) {
         throw StateError(
-          'Screenshots can only be taken of a single elements. '
+          'Screenshots can only be taken of a single element. '
           'The snapshot of ${snapshot.selector} contains ${elements.length} elements. '
           'Use a more specific selector to narrow down the scope of the screenshot.',
         );
@@ -73,13 +75,13 @@ Future<Screenshot> takeScreenshot({
       final element = elements.first.element;
       if (!element.mounted) {
         throw StateError(
-          'Can not take a screenshot of snapshot $snapshot, because it is not mounted anymore. '
+          'Cannot take a screenshot of snapshot $snapshot, because it is not mounted anymore. '
           'Only Elements that are currently mounted can be screenshotted.',
         );
       }
       if (snapshot.discoveredWidget != element.widget) {
         throw StateError(
-          'Can not take a screenshot of snapshot $snapshot, because the Element has been updated since the snapshot was taken. '
+          'Cannot take a screenshot of snapshot $snapshot, because the Element has been updated since the snapshot was taken. '
           'This happens when the widget tree is rebuilt.',
         );
       }
@@ -89,7 +91,7 @@ Future<Screenshot> takeScreenshot({
     if (element != null) {
       if (!element.mounted) {
         throw StateError(
-          'Can not take a screenshot of Element $element, because it is not mounted anymore. '
+          'Cannot take a screenshot of Element $element, because it is not mounted anymore. '
           'Only Elements that are currently mounted can be screenshotted.',
         );
       }
@@ -97,21 +99,26 @@ Future<Screenshot> takeScreenshot({
     }
 
     // fallback to screenshotting the entire app
-    // Deprecated, but as of today there is no multi window support for widget tests
+    // Deprecated, but as of today there is no multi-window support for widget tests
     // ignore: deprecated_member_use
     return binding.renderViewElement!;
   }();
 
   late final Uint8List bytes;
+  late final ui.Image image;
   await binding.runAsync(() async {
-    final image = await _captureImage(liveElement);
+    image = await _captureImage(liveElement);
     final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
     if (byteData == null) {
-      return 'Could not take screenshot';
+      throw 'Could not take screenshot';
     }
     bytes = byteData.buffer.asUint8List();
-    image.dispose();
   });
+
+  // Overlay the red dot on the screenshot if centerPosition is available
+  final modifiedImage = hitPosition != null
+      ? await _overlayRedDotOnImage(image, hitPosition)
+      : bytes;
 
   final spotTempDir = Directory.systemTemp.directory('spot');
   if (!spotTempDir.existsSync()) {
@@ -143,13 +150,32 @@ Future<Screenshot> takeScreenshot({
     return '$n-$uniqueId.png';
   }();
   final file = spotTempDir.file(screenshotFileName);
-  file.writeAsBytesSync(bytes);
+  file.writeAsBytesSync(modifiedImage);
   // ignore: avoid_print
   core.print(
     'Screenshot file://${file.path}\n'
     '  taken at ${frame?.member} ${frame?.uri}:${frame?.line}:${frame?.column}',
   );
   return Screenshot(file: file, initiator: frame);
+}
+
+Future<Uint8List> _overlayRedDotOnImage(
+    ui.Image image, Offset centerPosition) async {
+  final recorder = ui.PictureRecorder();
+  final canvas = Canvas(recorder);
+
+  // Draw the original image
+  canvas.drawImage(image, Offset.zero, Paint());
+
+  // Draw the red dot
+  final paint = Paint()..color = const Color(0xFFFF0000); // Red color
+  canvas.drawCircle(centerPosition, 5.0, paint); // Radius of the red dot is 5.0
+
+  final picture = recorder.endRecording();
+  final finalImage = await picture.toImage(image.width, image.height);
+
+  final byteData = await finalImage.toByteData(format: ui.ImageByteFormat.png);
+  return byteData!.buffer.asUint8List();
 }
 
 /// Provides the ability to create screenshots of a [WidgetSelector]
