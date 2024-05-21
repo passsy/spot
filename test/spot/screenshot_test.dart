@@ -92,7 +92,7 @@ void main() {
     await expectLater(
       takeScreenshot(snapshot: containerSnapshot),
       throwsErrorContaining<StateError>([
-        'Can not take a screenshot of snapshot',
+        'Cannot take a screenshot of snapshot',
         'not mounted anymore',
         'Only Elements that are currently mounted can be screenshotted.',
       ]),
@@ -141,7 +141,7 @@ void main() {
     await expectLater(
       takeScreenshot(element: containerElement),
       throwsErrorContaining<StateError>([
-        'Can not take a screenshot of Element',
+        'Cannot take a screenshot of Element',
         'not mounted anymore',
         'Only Elements that are currently mounted can be screenshotted.',
       ]),
