@@ -4,6 +4,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
+import 'package:spot/src/screenshot/screenshot.dart';
 import 'package:spot/src/spot/snapshot.dart';
 
 /// Top level entry point to interact with widgets on the screen.
@@ -70,7 +71,12 @@ class Act {
   }
 
   /// Triggers a tap event on a given widget.
-  Future<void> tap(WidgetSelector selector) async {
+  /// If [showTapPosition] is true, a crosshair is drawn on the screenshot at
+  /// the position of the tap.
+  Future<void> tap(
+    WidgetSelector selector, {
+    bool? showTapPosition,
+  }) async {
     // Check if widget is in the widget tree. Throws if not.
     final snapshot = selector.snapshot()..existsOnce();
 
@@ -117,10 +123,12 @@ class Act {
 
         await binding.pump();
 
-        await takeScreenshot(
-          element: element,
-          hitPosition: centerPosition,
-        );
+        if (showTapPosition == true) {
+          await takeScreenshotWithCrosshair(
+            element: element,
+            crosshairPosition: centerPosition,
+          );
+        }
       });
     });
   }
