@@ -147,17 +147,17 @@ Future<Screenshot> _createScreenshot({
     return binding.renderViewElement!;
   }();
 
-  late final Uint8List image;
+  late final Uint8List imageBytes;
   await binding.runAsync(() async {
-    final plainImage = await _captureImage(liveElement);
+    final baseImage = await _captureImage(liveElement);
     final ui.Image imageToCapture =
-        await annotator?.annotate(plainImage) ?? plainImage;
+        await annotator?.annotate(baseImage) ?? baseImage;
     final byteData =
         await imageToCapture.toByteData(format: ui.ImageByteFormat.png);
     if (byteData == null) {
       throw 'Could not take screenshot';
     }
-    image = byteData.buffer.asUint8List();
+    imageBytes = byteData.buffer.asUint8List();
   });
 
   final spotTempDir = Directory.systemTemp.directory('spot');
@@ -191,7 +191,7 @@ Future<Screenshot> _createScreenshot({
   }();
 
   final file = spotTempDir.file(screenshotFileName);
-  file.writeAsBytesSync(image);
+  file.writeAsBytesSync(imageBytes);
   // ignore: avoid_print
   core.print(
     'Screenshot file://${file.path}\n'
