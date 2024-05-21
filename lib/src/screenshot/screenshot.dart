@@ -117,14 +117,16 @@ Future<Screenshot> _createScreenshot({
       }
       final element = elements.first.element;
       if (!element.mounted) {
+        final reason = annotator == null ? '' : ' with ${annotator.name}';
         throw StateError(
-          'Cannot take a screenshot of snapshot $snapshot, because it is not mounted anymore. '
+          'Cannot take a screenshot of snapshot$reason, because it is not mounted anymore. '
           'Only Elements that are currently mounted can be screenshotted.',
         );
       }
       if (snapshot.discoveredWidget != element.widget) {
+        final reason = annotator == null ? '' : ' with ${annotator.name}';
         throw StateError(
-          'Cannot take a screenshot of snapshot $snapshot, because the Element has been updated since the snapshot was taken. '
+          'Cannot take a screenshot of snapshot$reason, because the Element has been updated since the snapshot was taken. '
           'This happens when the widget tree is rebuilt.',
         );
       }
@@ -133,8 +135,9 @@ Future<Screenshot> _createScreenshot({
 
     if (element != null) {
       if (!element.mounted) {
+        final reason = annotator == null ? '' : ' with ${annotator.name}';
         throw StateError(
-          'Cannot take a screenshot of Element $element, because it is not mounted anymore. '
+          'Cannot take a screenshot of Element$reason, because it is not mounted anymore. '
           'Only Elements that are currently mounted can be screenshotted.',
         );
       }
@@ -147,17 +150,17 @@ Future<Screenshot> _createScreenshot({
     return binding.renderViewElement!;
   }();
 
-  late final Uint8List imageBytes;
+  late final Uint8List image;
   await binding.runAsync(() async {
-    final baseImage = await _captureImage(liveElement);
+    final plainImage = await _captureImage(liveElement);
     final ui.Image imageToCapture =
-        await annotator?.annotate(baseImage) ?? baseImage;
+        await annotator?.annotate(plainImage) ?? plainImage;
     final byteData =
         await imageToCapture.toByteData(format: ui.ImageByteFormat.png);
     if (byteData == null) {
       throw 'Could not take screenshot';
     }
-    imageBytes = byteData.buffer.asUint8List();
+    image = byteData.buffer.asUint8List();
   });
 
   final spotTempDir = Directory.systemTemp.directory('spot');
@@ -180,19 +183,17 @@ Future<Screenshot> _createScreenshot({
   final String screenshotFileName = () {
     final String n;
     if (name != null) {
-      // escape /
       n = Uri.encodeQueryComponent(name);
     } else {
       n = callerFileName();
     }
-    // always append a unique id to avoid name collisions
     final uniqueId = nanoid(length: 5);
     return '$n-$uniqueId.png';
   }();
 
   final file = spotTempDir.file(screenshotFileName);
-  file.writeAsBytesSync(imageBytes);
-  // ignore: avoid_print
+  file.writeAsBytesSync(image);
+
   core.print(
     'Screenshot file://${file.path}\n'
     '  taken at ${frame?.member} ${frame?.uri}:${frame?.line}:${frame?.column}',

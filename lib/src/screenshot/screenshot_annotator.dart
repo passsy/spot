@@ -6,12 +6,18 @@ import 'package:flutter/rendering.dart';
 abstract class ScreenshotAnnotator {
   /// Annotate the [image] with additional graphics.
   Future<ui.Image> annotate(ui.Image image);
+
+  /// The name of the annotator.
+  String get name;
 }
 
 /// Annotator that draws a crosshair at a given position.
 class CrosshairAnnotator implements ScreenshotAnnotator {
   /// The center position of the crosshair.
   final Offset centerPosition;
+
+  @override
+  String get name => 'Crosshair Annotator';
 
   /// Creates a [CrosshairAnnotator] with a [centerPosition].
   const CrosshairAnnotator({required this.centerPosition});
