@@ -12,6 +12,7 @@ import 'package:nanoid2/nanoid2.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/screenshot/screenshot.dart' as self
     show takeScreenshot;
+import 'package:spot/src/screenshot/screenshot_annotator.dart';
 import 'package:stack_trace/stack_trace.dart';
 
 export 'package:stack_trace/stack_trace.dart' show Frame;
@@ -48,7 +49,50 @@ Future<Screenshot> takeScreenshot({
   WidgetSnapshot? snapshot,
   WidgetSelector? selector,
   String? name,
-  Offset? hitPosition,
+}) async {
+  return _createScreenshot(
+    element: element,
+    snapshot: snapshot,
+    selector: selector,
+    name: name,
+  );
+}
+
+/// Takes a screenshot of the entire screen or a single widget and annotates it
+/// with a tap marker in form of a crosshair at the specified [crosshairPosition].
+///
+/// Provide an [element], [snapshot], or [selector] to specify what to capture.
+/// - [element]: The specific element to capture.
+/// - [snapshot]: A snapshot of the widget to capture.
+/// - [selector]: A selector to determine the widget to capture.
+/// - [name]: The name of the screenshot file.
+/// - [tapPosition]: The position where the tap marker should be placed.
+///
+/// The screenshot will have a crosshair painted at the [hitPosition].
+///
+/// Returns a [Screenshot] object containing the file and initiator frame.
+Future<Screenshot> takeScreenshotWithCrosshair({
+  Element? element,
+  WidgetSnapshot? snapshot,
+  WidgetSelector? selector,
+  String? name,
+  required Offset crosshairPosition,
+}) async {
+  return _createScreenshot(
+    element: element,
+    snapshot: snapshot,
+    selector: selector,
+    name: name,
+    annotator: CrosshairAnnotator(centerPosition: crosshairPosition),
+  );
+}
+
+Future<Screenshot> _createScreenshot({
+  Element? element,
+  WidgetSnapshot? snapshot,
+  WidgetSelector? selector,
+  String? name,
+  ScreenshotAnnotator? annotator,
 }) async {
   final binding = TestWidgetsFlutterBinding.instance;
   final Frame? frame = _caller();
@@ -103,31 +147,24 @@ Future<Screenshot> takeScreenshot({
     return binding.renderViewElement!;
   }();
 
-  late final Uint8List bytes;
-  late final ui.Image image;
+  late final Uint8List image;
   await binding.runAsync(() async {
-    image = await _captureImage(liveElement);
-    final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+    final plainImage = await _captureImage(liveElement);
+    final ui.Image imageToCapture =
+        await annotator?.annotate(plainImage) ?? plainImage;
+    final byteData =
+        await imageToCapture.toByteData(format: ui.ImageByteFormat.png);
     if (byteData == null) {
       throw 'Could not take screenshot';
     }
-    bytes = byteData.buffer.asUint8List();
+    image = byteData.buffer.asUint8List();
   });
-
-  Future<Uint8List?> bytesWithHitMarker() async {
-    return binding.runAsync(() async {
-      return _overlayCrosshairOnImage(image, hitPosition!);
-    });
-  }
-
-  // Overlay the red dot on the screenshot if centerPosition is available
-  final Uint8List modifiedImage =
-      (hitPosition != null ? await bytesWithHitMarker() : null) ?? bytes;
 
   final spotTempDir = Directory.systemTemp.directory('spot');
   if (!spotTempDir.existsSync()) {
     spotTempDir.createSync();
   }
+
   String callerFileName() {
     final file = frame?.uri.pathSegments.last.replaceFirst('.dart', '');
     final line = frame?.line;
@@ -148,62 +185,20 @@ Future<Screenshot> takeScreenshot({
     } else {
       n = callerFileName();
     }
-
     // always append a unique id to avoid name collisions
     final uniqueId = nanoid(length: 5);
     return '$n-$uniqueId.png';
   }();
+
   final file = spotTempDir.file(screenshotFileName);
-  file.writeAsBytesSync(modifiedImage);
+  file.writeAsBytesSync(image);
   // ignore: avoid_print
   core.print(
     'Screenshot file://${file.path}\n'
     '  taken at ${frame?.member} ${frame?.uri}:${frame?.line}:${frame?.column}',
   );
+
   return Screenshot(file: file, initiator: frame);
-}
-
-Future<Uint8List> _overlayCrosshairOnImage(
-  ui.Image image,
-  Offset centerPosition,
-) async {
-  final recorder = ui.PictureRecorder();
-  final canvas = Canvas(recorder);
-
-  // Draw the original image
-  canvas.drawImage(image, Offset.zero, Paint());
-
-  // Define the paint for the crosshair
-  final paint = Paint()
-    ..color = const Color(0xFF00FFFF) // Cyan color
-    ..strokeWidth = 2.0;
-
-  // Draw vertical line
-  canvas.drawLine(
-    Offset(centerPosition.dx, centerPosition.dy - 10),
-    Offset(centerPosition.dx, centerPosition.dy + 10),
-    paint,
-  );
-
-  // Draw horizontal line
-  canvas.drawLine(
-    Offset(centerPosition.dx - 10, centerPosition.dy),
-    Offset(centerPosition.dx + 10, centerPosition.dy),
-    paint,
-  );
-
-  // Draw the circle intersecting the lines at half length
-  final circlePaint = Paint()
-    ..color = const Color(0xFF00FFFF) // Cyan color
-    ..style = PaintingStyle.stroke
-    ..strokeWidth = 2.0;
-  canvas.drawCircle(centerPosition, 5.0, circlePaint);
-
-  final picture = recorder.endRecording();
-  final finalImage = await picture.toImage(image.width, image.height);
-
-  final byteData = await finalImage.toByteData(format: ui.ImageByteFormat.png);
-  return byteData!.buffer.asUint8List();
 }
 
 /// Provides the ability to create screenshots of a [WidgetSelector]
