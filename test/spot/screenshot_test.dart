@@ -8,8 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image/image.dart' as img;
 import 'package:spot/spot.dart';
-import 'package:spot/src/screenshot/screenshot.dart';
-
 import '../util/assert_error.dart';
 
 void main() {
@@ -278,7 +276,7 @@ void main() {
       );
 
       final shot = await takeScreenshotWithCrosshair(
-        crosshairPosition: Offset(105, 105),
+        centerPosition: Offset(105, 105),
       );
       expect(shot.file.existsSync(), isTrue);
 
@@ -302,7 +300,7 @@ void main() {
 
       final container = await takeScreenshotWithCrosshair(
         selector: spot<Container>(),
-        crosshairPosition: Offset(100, 100),
+        centerPosition: Offset(100, 100),
       );
       expect(container.file.existsSync(), isTrue);
 
@@ -327,7 +325,7 @@ void main() {
 
       final container = await takeScreenshotWithCrosshair(
         snapshot: containerSnapshot,
-        crosshairPosition: Offset(100, 100),
+        centerPosition: Offset(100, 100),
       );
       expect(container.file.existsSync(), isTrue);
 
@@ -358,7 +356,7 @@ void main() {
         await expectLater(
           takeScreenshotWithCrosshair(
             snapshot: containerSnapshot,
-            crosshairPosition: Offset(100, 100),
+            centerPosition: Offset(100, 100),
           ),
           throwsErrorContaining<StateError>([
             'Cannot take a screenshot of snapshot with Crosshair Annotator',
@@ -385,7 +383,7 @@ void main() {
 
       final container = await takeScreenshotWithCrosshair(
         element: containerElement,
-        crosshairPosition: Offset(100, 100),
+        centerPosition: Offset(100, 100),
       );
       expect(container.file.existsSync(), isTrue);
 
@@ -416,7 +414,7 @@ void main() {
       await expectLater(
         takeScreenshotWithCrosshair(
           element: containerElement,
-          crosshairPosition: Offset(100, 100),
+          centerPosition: Offset(100, 100),
         ),
         throwsErrorContaining<StateError>([
           'Cannot take a screenshot of Element with Crosshair Annotator',

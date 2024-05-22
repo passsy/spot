@@ -126,7 +126,7 @@ class Act {
         if (showTapPosition == true) {
           await takeScreenshotWithCrosshair(
             element: element,
-            crosshairPosition: centerPosition,
+            centerPosition: centerPosition,
           );
         }
       });

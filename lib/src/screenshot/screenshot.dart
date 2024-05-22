@@ -59,7 +59,7 @@ Future<Screenshot> takeScreenshot({
 }
 
 /// Takes a screenshot of the entire screen or a single widget and annotates it
-/// with a tap marker in form of a crosshair at the specified [crosshairPosition].
+/// with a tap marker in form of a crosshair at the specified [centerPosition].
 ///
 /// Provide an [element], [snapshot], or [selector] to specify what to capture.
 /// - [element]: The specific element to capture.
@@ -76,14 +76,14 @@ Future<Screenshot> takeScreenshotWithCrosshair({
   WidgetSnapshot? snapshot,
   WidgetSelector? selector,
   String? name,
-  required Offset crosshairPosition,
+  required Offset centerPosition,
 }) async {
   return _createScreenshot(
     element: element,
     snapshot: snapshot,
     selector: selector,
     name: name,
-    annotator: CrosshairAnnotator(centerPosition: crosshairPosition),
+    annotator: CrosshairAnnotator(centerPosition: centerPosition),
   );
 }
 
@@ -171,6 +171,7 @@ Future<Screenshot> _createScreenshot({
   String callerFileName() {
     final file = frame?.uri.pathSegments.last.replaceFirst('.dart', '');
     final line = frame?.line;
+    // escape /
     if (file != null && line != null) {
       return '$file:$line';
     }
@@ -187,13 +188,14 @@ Future<Screenshot> _createScreenshot({
     } else {
       n = callerFileName();
     }
+    // always append a unique id to avoid name collisions
     final uniqueId = nanoid(length: 5);
     return '$n-$uniqueId.png';
   }();
 
   final file = spotTempDir.file(screenshotFileName);
   file.writeAsBytesSync(image);
-
+// ignore: avoid_print
   core.print(
     'Screenshot file://${file.path}\n'
     '  taken at ${frame?.member} ${frame?.uri}:${frame?.line}:${frame?.column}',
