@@ -84,6 +84,7 @@ Future<Screenshot> takeScreenshotWithCrosshair({
     selector: selector,
     name: name,
     annotator: CrosshairAnnotator(centerPosition: centerPosition),
+    printToConsole: false,
   );
 }
 
@@ -93,6 +94,7 @@ Future<Screenshot> _createScreenshot({
   WidgetSelector? selector,
   String? name,
   ScreenshotAnnotator? annotator,
+  bool printToConsole = true,
 }) async {
   final binding = TestWidgetsFlutterBinding.instance;
   final Frame? frame = _caller();
@@ -195,11 +197,14 @@ Future<Screenshot> _createScreenshot({
 
   final file = spotTempDir.file(screenshotFileName);
   file.writeAsBytesSync(image);
-// ignore: avoid_print
-  core.print(
-    'Screenshot file://${file.path}\n'
-    '  taken at ${frame?.member} ${frame?.uri}:${frame?.line}:${frame?.column}',
-  );
+
+  if (printToConsole) {
+    // ignore: avoid_print
+    core.print(
+      'Screenshot file://${file.path}\n'
+      '  taken at ${frame?.member} ${frame?.uri}:${frame?.line}:${frame?.column}',
+    );
+  }
 
   return Screenshot(file: file, initiator: frame);
 }
@@ -274,6 +279,7 @@ Frame? _caller({StackTrace? stack}) {
     if (line.isCore) return false;
     final url = line.uri.toString();
     if (url.contains('package:spot')) return false;
+    if (url.startsWith('package:flutter_test')) return false;
     return true;
   }).toList();
   final Frame? bestGuess = relevantLines.firstOrNull;
