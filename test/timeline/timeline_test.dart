@@ -5,9 +5,9 @@ import 'package:spot/src/timeline/timeline.dart';
 
 void main() {
   testWidgets('Automatically take screenshots for timeline', (tester) async {
-    liveTimeline();
+    startLiveTimeline();
     stopTimeline();
-    printTimelineOnError();
+    startOnErrorTimeline();
     int counter = 0;
     await tester.pumpWidget(
       MaterialApp(
