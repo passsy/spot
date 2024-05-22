@@ -8,27 +8,30 @@ import 'package:test_api/src/backend/live_test.dart';
 final Map<LiveTest, Timeline> _timelines = {};
 
 /// Starts the timeline recording and prints events as they happen.
-void startLiveTimeline() {
+Timeline liveTimeline() {
   // ignore: avoid_print
   print('🔴 - Recording timeline with live output');
   final timeline = currentTimeline();
-  timeline.mode = TimelineMode.live;
+  timeline.startLiveTimeline();
+  return timeline;
 }
 
 /// Records the timeline but only prints it in case of an error.
-void startOnErrorTimeline() {
+Timeline startOnErrorTimeline() {
   // ignore: avoid_print
   print('🔴 - Recording timeline for error output');
   final timeline = currentTimeline();
-  timeline.mode = TimelineMode.record;
+  timeline.startOnErrorTimeLine();
+  return timeline;
 }
 
 /// Stops the timeline recording.
-void stopTimeline() {
+Timeline stopTimeline() {
   // ignore: avoid_print
   print('⏸︎ - Timeline stopped');
   final timeline = currentTimeline();
-  timeline.mode = TimelineMode.off;
+  timeline.stopTimeLine();
+  return timeline;
 }
 
 /// Returns the current timeline for the test or creates a new one if
@@ -61,8 +64,29 @@ Timeline currentTimeline() {
 class Timeline {
   final List<TimelineEvent> _events = [];
 
+  /// The events that occurred during the test.
+  List<TimelineEvent> get events => _events;
+
   /// The mode of the timeline. Defaults to [TimelineMode.off].
-  TimelineMode mode = TimelineMode.off;
+  TimelineMode _mode = TimelineMode.off;
+
+  /// The current mode of the timeline.
+  TimelineMode get mode => _mode;
+
+  /// Stops the timeline recording and printing.
+  void stopTimeLine() {
+    _mode = TimelineMode.off;
+  }
+
+  /// Starts the timeline recording and prints events as they happen.
+  void startLiveTimeline() {
+    _mode = TimelineMode.live;
+  }
+
+  /// Records the timeline but only prints it in case of an error.
+  void startOnErrorTimeLine() {
+    _mode = TimelineMode.record;
+  }
 
   /// Adds a screenshot to the timeline.
   void addScreenshot(Screenshot screenshot, {String? name}) {

@@ -23,8 +23,7 @@ export 'package:spot/src/screenshot/screenshot.dart'
         Screenshot,
         SelectorScreenshotExtension,
         SnapshotScreenshotExtension,
-        takeScreenshot,
-        takeScreenshotWithCrosshair;
+        takeScreenshot;
 export 'package:spot/src/spot/default_selectors.dart'
     show DefaultWidgetMatchers, DefaultWidgetSelectors;
 export 'package:spot/src/spot/diagnostic_props.dart'
