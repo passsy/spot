@@ -7,155 +7,160 @@ import 'package:spot/src/timeline/timeline.dart';
 
 Iterable<RegExpMatch> _screenshotMessageMatcher(String outPut) =>
     RegExp('Screenshot: file:').allMatches(outPut);
-
+final _addButtonSelector = spotIcon(Icons.add);
+final _subtractButtonSelector = spotIcon(Icons.remove);
+final _clearButtonSelector = spotIcon(Icons.clear);
 void main() {
   testWidgets('Live timeline', (tester) async {
-    final addButtonSelector = spotIcon(Icons.add);
-    final subtractButtonSelector = spotIcon(Icons.remove);
-
-    final output = await captureConsoleOutput(() async {
+    final output = await _captureConsoleOutput(() async {
       startLiveTimeline();
-      int counter = 0;
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.blueAccent,
-              title: const Text('Home'),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.add),
-                  onPressed: () {
-                    counter++;
-                  },
-                ),
-                IconButton(
-                  icon: const Icon(Icons.remove),
-                  onPressed: () {
-                    counter--;
-                  },
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-      addButtonSelector.existsOnce();
-      await act.tap(addButtonSelector);
-      expect(counter, 1);
-      await act.tap(subtractButtonSelector);
-      expect(counter, 0);
+      await tester.pumpWidget(const _TimelineTestWidget());
+      _addButtonSelector.existsOnce();
+      spotText('Counter: 3').existsOnce();
+      await act.tap(_addButtonSelector);
+      spotText('Counter: 4').existsOnce();
+      await act.tap(_subtractButtonSelector);
+      spotText('Counter: 3').existsOnce();
     });
 
     expect(output, contains('🔴 - Recording timeline with live output'));
-    expect(output, contains('Tap ${addButtonSelector.toStringBreadcrumb()}'));
+    expect(output, contains('Tap ${_addButtonSelector.toStringBreadcrumb()}'));
     expect(
       output,
-      contains('Tap ${subtractButtonSelector.toStringBreadcrumb()}'),
+      contains('Tap ${_subtractButtonSelector.toStringBreadcrumb()}'),
     );
     expect(_screenshotMessageMatcher(output).length, 2);
   });
   testWidgets('OnError timeline', (tester) async {
-    final addButtonSelector = spotIcon(Icons.add);
-    final subtractButtonSelector = spotIcon(Icons.remove);
-
-    final output = await captureConsoleOutput(() async {
+    final output = await _captureConsoleOutput(() async {
       startOnErrorTimeline();
-      int counter = 0;
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.blueAccent,
-              title: const Text('Home'),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.add),
-                  onPressed: () {
-                    counter++;
-                  },
-                ),
-                IconButton(
-                  icon: const Icon(Icons.remove),
-                  onPressed: () {
-                    counter--;
-                  },
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-      addButtonSelector.existsOnce();
-      await act.tap(addButtonSelector);
-      expect(counter, 1);
-      await act.tap(subtractButtonSelector);
-      expect(counter, 0);
+
+      await tester.pumpWidget(const _TimelineTestWidget());
+      _addButtonSelector.existsOnce();
+      spotText('Counter: 3').existsOnce();
+      await act.tap(_addButtonSelector);
+      spotText('Counter: 4').existsOnce();
+      await act.tap(_subtractButtonSelector);
+      spotText('Counter: 3').existsOnce();
     });
 
     expect(output, contains('🔴 - Recording timeline for error output'));
     expect(
       output,
-      isNot(contains('Tap ${addButtonSelector.toStringBreadcrumb()}')),
+      isNot(contains('Tap ${_addButtonSelector.toStringBreadcrumb()}')),
     );
     expect(
       output,
-      isNot(contains('Tap ${subtractButtonSelector.toStringBreadcrumb()}')),
+      isNot(contains('Tap ${_subtractButtonSelector.toStringBreadcrumb()}')),
     );
     expect(_screenshotMessageMatcher(output).length, 0);
   });
-  testWidgets('Timeline Mode off', (tester) async {
-    final addButtonSelector = spotIcon(Icons.add);
-    final subtractButtonSelector = spotIcon(Icons.remove);
-
-    final output = await captureConsoleOutput(() async {
+  testWidgets('Start with Timeline Mode off', (tester) async {
+    final output = await _captureConsoleOutput(() async {
       stopTimeline();
-      int counter = 0;
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.blueAccent,
-              title: const Text('Home'),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.add),
-                  onPressed: () {
-                    counter++;
-                  },
-                ),
-                IconButton(
-                  icon: const Icon(Icons.remove),
-                  onPressed: () {
-                    counter--;
-                  },
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-      addButtonSelector.existsOnce();
-      await act.tap(addButtonSelector);
-      expect(counter, 1);
-      await act.tap(subtractButtonSelector);
-      expect(counter, 0);
+      await tester.pumpWidget(const _TimelineTestWidget());
+      _addButtonSelector.existsOnce();
+      spotText('Counter: 3').existsOnce();
+      await act.tap(_addButtonSelector);
+      spotText('Counter: 4').existsOnce();
+      await act.tap(_subtractButtonSelector);
+      spotText('Counter: 3').existsOnce();
     });
 
     expect(output, contains('⏸︎ - Timeline stopped'));
     expect(
       output,
-      isNot(contains('Tap ${addButtonSelector.toStringBreadcrumb()}')),
+      isNot(contains('Tap ${_addButtonSelector.toStringBreadcrumb()}')),
     );
     expect(
       output,
-      isNot(contains('Tap ${subtractButtonSelector.toStringBreadcrumb()}')),
+      isNot(contains('Tap ${_subtractButtonSelector.toStringBreadcrumb()}')),
     );
     expect(_screenshotMessageMatcher(output).length, 0);
   });
+  testWidgets('Turn timeline mode off during test', (tester) async {
+    final output = await _captureConsoleOutput(() async {
+      startLiveTimeline();
+      await tester.pumpWidget(
+        const _TimelineTestWidget(),
+      );
+      spotText('Counter: 3').existsOnce();
+      _addButtonSelector.existsOnce();
+      await act.tap(_addButtonSelector);
+      spotText('Counter: 4').existsOnce();
+      await act.tap(_subtractButtonSelector);
+      spotText('Counter: 3').existsOnce();
+      stopTimeline();
+      await act.tap(_clearButtonSelector);
+      spotText('Counter: 0').existsOnce();
+    });
+    expect(output, contains('🔴 - Recording timeline with live output'));
+    expect(output, contains('Tap ${_addButtonSelector.toStringBreadcrumb()}'));
+    expect(
+      output,
+      contains('Tap ${_subtractButtonSelector.toStringBreadcrumb()}'),
+    );
+    expect(output, contains('⏸︎ - Timeline stopped'));
+    // No further events were added to the timeline, including screenshots
+    expect(
+      output,
+      isNot(contains('Tap ${_clearButtonSelector.toStringBreadcrumb()}')),
+    );
+    expect(_screenshotMessageMatcher(output).length, 2);
+  });
 }
 
-Future<String> captureConsoleOutput(
+class _TimelineTestWidget extends StatefulWidget {
+  const _TimelineTestWidget();
+
+  @override
+  State<_TimelineTestWidget> createState() => _TimelineTestWidgetState();
+}
+
+class _TimelineTestWidgetState extends State<_TimelineTestWidget> {
+  int _counter = 3;
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.blueAccent,
+          title: const Text('Home'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () {
+                setState(() {
+                  _counter++;
+                });
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.remove),
+              onPressed: () {
+                setState(() {
+                  _counter--;
+                });
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.clear),
+              onPressed: () {
+                setState(() {
+                  _counter = 0;
+                });
+              },
+            ),
+          ],
+        ),
+        body: Center(child: Text('Counter: $_counter')),
+      ),
+    );
+  }
+}
+
+Future<String> _captureConsoleOutput(
     Future<void> Function() testFunction) async {
   final StringBuffer buffer = StringBuffer();
   final ZoneSpecification spec = ZoneSpecification(
