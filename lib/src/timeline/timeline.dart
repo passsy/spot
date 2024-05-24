@@ -9,20 +9,26 @@ final Map<LiveTest, Timeline> _timelines = {};
 
 /// Starts the timeline recording and prints events as they happen.
 Timeline liveTimeline() {
+  // ignore: avoid_print
+  print('🔴 - Recording timeline with live output');
   final timeline = currentTimeline();
-  timeline.startWithLiveOutput();
+  timeline.startLiveTimeline();
   return timeline;
 }
 
 /// Records the timeline but only prints it in case of an error.
-Timeline onErrorTimeline() {
+Timeline startOnErrorTimeline() {
+  // ignore: avoid_print
+  print('🔴 - Recording timeline for error output');
   final timeline = currentTimeline();
-  timeline.startWithErrorOutput();
+  timeline.startOnErrorTimeLine();
   return timeline;
 }
 
 /// Stops the timeline recording.
-Timeline stoppedTimeLine() {
+Timeline stopTimeline() {
+  // ignore: avoid_print
+  print('⏸︎ - Timeline stopped');
   final timeline = currentTimeline();
   timeline.stopTimeLine();
   return timeline;
@@ -69,22 +75,16 @@ class Timeline {
 
   /// Stops the timeline recording and printing.
   void stopTimeLine() {
-    // ignore: avoid_print
-    print('⏸︎ - Timeline stopped');
     _mode = TimelineMode.off;
   }
 
   /// Starts the timeline recording and prints events as they happen.
-  void startWithLiveOutput() {
-    // ignore: avoid_print
-    print('🔴 - Recording timeline with live output');
+  void startLiveTimeline() {
     _mode = TimelineMode.live;
   }
 
   /// Records the timeline but only prints it in case of an error.
-  void startWithErrorOutput() {
-    // ignore: avoid_print
-    print('🔴 - Recording timeline for error output');
+  void startOnErrorTimeLine() {
     _mode = TimelineMode.record;
   }
 
