@@ -55,6 +55,55 @@ void main() {
     );
     expect(_screenshotMessageMatcher(output).length, 2);
   });
+  testWidgets('OnError timeline', (tester) async {
+    final addButtonSelector = spotIcon(Icons.add);
+    final subtractButtonSelector = spotIcon(Icons.remove);
+
+    final output = await captureConsoleOutput(() async {
+      startOnErrorTimeline();
+      int counter = 0;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.blueAccent,
+              title: const Text('Home'),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.add),
+                  onPressed: () {
+                    counter++;
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.remove),
+                  onPressed: () {
+                    counter--;
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+      addButtonSelector.existsOnce();
+      await act.tap(addButtonSelector);
+      expect(counter, 1);
+      await act.tap(subtractButtonSelector);
+      expect(counter, 0);
+    });
+
+    expect(output, contains('🔴 - Recording timeline for error output'));
+    expect(
+      output,
+      isNot(contains('Tap ${addButtonSelector.toStringBreadcrumb()}')),
+    );
+    expect(
+      output,
+      isNot(contains('Tap ${subtractButtonSelector.toStringBreadcrumb()}')),
+    );
+    expect(_screenshotMessageMatcher(output).length, 0);
+  });
 }
 
 Future<String> captureConsoleOutput(
