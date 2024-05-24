@@ -104,6 +104,55 @@ void main() {
     );
     expect(_screenshotMessageMatcher(output).length, 0);
   });
+  testWidgets('Timeline Mode off', (tester) async {
+    final addButtonSelector = spotIcon(Icons.add);
+    final subtractButtonSelector = spotIcon(Icons.remove);
+
+    final output = await captureConsoleOutput(() async {
+      stopTimeline();
+      int counter = 0;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.blueAccent,
+              title: const Text('Home'),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.add),
+                  onPressed: () {
+                    counter++;
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.remove),
+                  onPressed: () {
+                    counter--;
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+      addButtonSelector.existsOnce();
+      await act.tap(addButtonSelector);
+      expect(counter, 1);
+      await act.tap(subtractButtonSelector);
+      expect(counter, 0);
+    });
+
+    expect(output, contains('⏸︎ - Timeline stopped'));
+    expect(
+      output,
+      isNot(contains('Tap ${addButtonSelector.toStringBreadcrumb()}')),
+    );
+    expect(
+      output,
+      isNot(contains('Tap ${subtractButtonSelector.toStringBreadcrumb()}')),
+    );
+    expect(_screenshotMessageMatcher(output).length, 0);
+  });
 }
 
 Future<String> captureConsoleOutput(
