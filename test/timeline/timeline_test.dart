@@ -145,11 +145,11 @@ void main() async {
 }
 ''';
 
-      final testParts = [importPart, widgetPart, testPart].join('\n');
+      final testAsString = [importPart, widgetPart, testPart].join('\n');
 
       final tempDir = Directory.systemTemp.createTempSync();
       final tempTestFile = File('${tempDir.path}/temp_test.dart');
-      await tempTestFile.writeAsString(testParts);
+      await tempTestFile.writeAsString(testAsString);
 
       final testProcess =
           await TestProcess.start('flutter', ['test', tempTestFile.path]);

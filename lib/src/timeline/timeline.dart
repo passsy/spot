@@ -24,7 +24,7 @@ void startOnErrorTimeline() {
   timeline.mode = TimelineMode.record;
 }
 
-/// Stops the timeline recording.
+/// Stops the timeline from recording.
 void stopTimeline() {
   // ignore: avoid_print
   print('⏸︎ - Timeline stopped');
