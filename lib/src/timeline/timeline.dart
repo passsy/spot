@@ -1,3 +1,4 @@
+// ignore_for_file: depend_on_referenced_packages
 import 'package:spot/src/screenshot/screenshot.dart';
 import 'package:spot/src/spot/tree_snapshot.dart';
 //ignore: implementation_imports
