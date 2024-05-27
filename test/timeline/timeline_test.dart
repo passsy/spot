@@ -1,20 +1,25 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/timeline/timeline.dart';
+import 'package:test_process/test_process.dart';
+
+import 'timeline_test_widget.dart';
 
 Iterable<RegExpMatch> _screenshotMessageMatcher(String outPut) =>
     RegExp('Screenshot: file:').allMatches(outPut);
 final _addButtonSelector = spotIcon(Icons.add);
 final _subtractButtonSelector = spotIcon(Icons.remove);
 final _clearButtonSelector = spotIcon(Icons.clear);
+
 void main() {
   testWidgets('Live timeline', (tester) async {
     final output = await _captureConsoleOutput(() async {
       startLiveTimeline();
-      await tester.pumpWidget(const _TimelineTestWidget());
+      await tester.pumpWidget(const TimelineTestWidget());
       _addButtonSelector.existsOnce();
       spotText('Counter: 3').existsOnce();
       await act.tap(_addButtonSelector);
@@ -31,34 +36,10 @@ void main() {
     );
     expect(_screenshotMessageMatcher(output).length, 2);
   });
-  testWidgets('OnError timeline', (tester) async {
-    final output = await _captureConsoleOutput(() async {
-      startOnErrorTimeline();
-
-      await tester.pumpWidget(const _TimelineTestWidget());
-      _addButtonSelector.existsOnce();
-      spotText('Counter: 3').existsOnce();
-      await act.tap(_addButtonSelector);
-      spotText('Counter: 4').existsOnce();
-      await act.tap(_subtractButtonSelector);
-      spotText('Counter: 3').existsOnce();
-    });
-
-    expect(output, contains('🔴 - Recording timeline for error output'));
-    expect(
-      output,
-      isNot(contains('Tap ${_addButtonSelector.toStringBreadcrumb()}')),
-    );
-    expect(
-      output,
-      isNot(contains('Tap ${_subtractButtonSelector.toStringBreadcrumb()}')),
-    );
-    expect(_screenshotMessageMatcher(output).length, 0);
-  });
   testWidgets('Start with Timeline Mode off', (tester) async {
     final output = await _captureConsoleOutput(() async {
       stopTimeline();
-      await tester.pumpWidget(const _TimelineTestWidget());
+      await tester.pumpWidget(const TimelineTestWidget());
       _addButtonSelector.existsOnce();
       spotText('Counter: 3').existsOnce();
       await act.tap(_addButtonSelector);
@@ -82,7 +63,7 @@ void main() {
     final output = await _captureConsoleOutput(() async {
       startLiveTimeline();
       await tester.pumpWidget(
-        const _TimelineTestWidget(),
+        const TimelineTestWidget(),
       );
       spotText('Counter: 3').existsOnce();
       _addButtonSelector.existsOnce();
@@ -108,60 +89,125 @@ void main() {
     );
     expect(_screenshotMessageMatcher(output).length, 2);
   });
+
+  group('onError timeline', () {
+    testWidgets('OnError timeline - without error', (tester) async {
+      final output = await _captureConsoleOutput(() async {
+        startOnErrorTimeline();
+
+        await tester.pumpWidget(const TimelineTestWidget());
+        _addButtonSelector.existsOnce();
+        spotText('Counter: 3').existsOnce();
+        await act.tap(_addButtonSelector);
+        spotText('Counter: 4').existsOnce();
+        await act.tap(_subtractButtonSelector);
+        spotText('Counter: 3').existsOnce();
+      });
+
+      expect(output, contains('🔴 - Recording timeline for error output'));
+      expect(
+        output,
+        isNot(contains('Tap ${_addButtonSelector.toStringBreadcrumb()}')),
+      );
+      expect(
+        output,
+        isNot(contains('Tap ${_subtractButtonSelector.toStringBreadcrumb()}')),
+      );
+      expect(_screenshotMessageMatcher(output).length, 0);
+    });
+
+    test('OnError timeline - with error, prints timeline', () async {
+      const importPart = '''
+import 'package:flutter_test/flutter_test.dart';
+import 'package:spot/spot.dart';
+import 'package:spot/src/timeline/timeline.dart';
+''';
+
+      final widgetPart =
+          File('test/timeline/timeline_test_widget.dart').readAsStringSync();
+
+      const testPart = '''
+void main() async {
+  final addButtonSelector = spotIcon(Icons.add);
+  final subtractButtonSelector = spotIcon(Icons.remove);
+  testWidgets('OnError timeline with error', (WidgetTester tester) async {
+    startOnErrorTimeline();
+    await tester.pumpWidget(const TimelineTestWidget());
+      addButtonSelector.existsOnce();
+      spotText('Counter: 3').existsOnce();
+      await act.tap(addButtonSelector);
+      spotText('Counter: 4').existsOnce();
+      await act.tap(subtractButtonSelector);
+      spotText('Counter: 3').existsOnce();
+      // Make test fail intentionally
+      spotText('Counter: 99').existsOnce();
+  });
 }
+''';
 
-class _TimelineTestWidget extends StatefulWidget {
-  const _TimelineTestWidget();
+      final testParts = [importPart, widgetPart, testPart].join('\n');
 
-  @override
-  State<_TimelineTestWidget> createState() => _TimelineTestWidgetState();
-}
+      final tempDir = Directory.systemTemp.createTempSync();
+      final tempTestFile = File('${tempDir.path}/temp_test.dart');
+      await tempTestFile.writeAsString(testParts);
 
-class _TimelineTestWidgetState extends State<_TimelineTestWidget> {
-  int _counter = 3;
+      final testProcess =
+          await TestProcess.start('flutter', ['test', tempTestFile.path]);
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.blueAccent,
-          title: const Text('Home'),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: () {
-                setState(() {
-                  _counter++;
-                });
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.remove),
-              onPressed: () {
-                setState(() {
-                  _counter--;
-                });
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.clear),
-              onPressed: () {
-                setState(() {
-                  _counter = 0;
-                });
-              },
-            ),
-          ],
+      final stdoutBuffer = StringBuffer();
+
+      bool write = false;
+      await for (final line in testProcess.stdoutStream()) {
+        if (line == 'Timeline') {
+          write = true;
+        }
+        if (line.startsWith('To run this test again:')) {
+          write = false;
+        }
+        if (write) {
+          stdoutBuffer.writeln(line);
+        }
+      }
+
+      await testProcess.shouldExit();
+
+      tempDir.deleteSync(recursive: true);
+
+      final stdout = stdoutBuffer.toString();
+
+      final timeline = stdout.split('\n');
+      expect(timeline.first, 'Timeline');
+      expect(
+        timeline[1].startsWith(
+          'Tap Icon Widget with icon: "IconData(U+0E047)" at main.<fn> file:///',
         ),
-        body: Center(child: Text('Counter: $_counter')),
-      ),
-    );
-  }
+        isTrue,
+      );
+      expect(
+        timeline[2].startsWith(
+          'Screenshot: file:///',
+        ),
+        isTrue,
+      );
+      expect(
+        timeline[3].startsWith(
+          'Tap Icon Widget with icon: "IconData(U+0E516)" at main.<fn> file:///',
+        ),
+        isTrue,
+      );
+      expect(
+        timeline[4].startsWith(
+          'Screenshot: file:///',
+        ),
+        isTrue,
+      );
+    });
+  });
 }
 
 Future<String> _captureConsoleOutput(
-    Future<void> Function() testFunction) async {
+  Future<void> Function() testFunction,
+) async {
   final StringBuffer buffer = StringBuffer();
   final ZoneSpecification spec = ZoneSpecification(
     print: (self, parent, zone, line) {
