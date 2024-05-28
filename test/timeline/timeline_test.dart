@@ -180,25 +180,19 @@ void main() async {
       tempDir.deleteSync(recursive: true);
 
       final stdout = stdoutBuffer.toString();
-
       final timeline = stdout.split('\n');
+
       expect(timeline.first, 'Timeline');
       expect(
-        timeline[1].startsWith(
-          'Tap Icon Widget with icon: "IconData(U+0E047)" at main.<fn> file:///',
-        ),
-        isTrue,
+        timeline[1],
+        '==================== Timeline Event ====================',
       );
       expect(
-        timeline[2].startsWith(
-          'Screenshot: file:///',
-        ),
-        isTrue,
+        timeline[2],
+        'Event: Tap Icon Widget with icon: "IconData(U+0E047)"',
       );
       expect(
-        timeline[3].startsWith(
-          'Tap Icon Widget with icon: "IconData(U+0E516)" at main.<fn> file:///',
-        ),
+        timeline[3].startsWith('Caller: at main.<fn> file:///'),
         isTrue,
       );
       expect(
@@ -206,6 +200,16 @@ void main() async {
           'Screenshot: file:///',
         ),
         isTrue,
+      );
+      expect(
+        timeline[5].startsWith(
+          'Timestamp:',
+        ),
+        isTrue,
+      );
+      expect(
+        timeline[6],
+        '========================================================',
       );
     });
   });

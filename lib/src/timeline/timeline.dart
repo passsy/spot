@@ -123,15 +123,18 @@ class Timeline {
         ? 'at ${frame.member} ${frame.uri}:${frame.line}:${frame.column}'
         : null;
 
-    buffer.write('${event.name}');
+    buffer.writeln('==================== Timeline Event ====================');
+    buffer.writeln('Event: ${event.name}');
     if (caller != null) {
-      buffer.write(' $caller');
+      buffer.writeln('Caller: $caller');
     }
-
     if (event.screenshot != null) {
-      buffer.write('\nScreenshot: file://${event.screenshot!.file.path}');
+      buffer.writeln('Screenshot: file://${event.screenshot!.file.path}');
     }
-// ignore: avoid_print
+    buffer.writeln('Timestamp: ${event.timestamp.toIso8601String()}');
+    buffer.writeln('========================================================');
+
+    // ignore: avoid_print
     print(buffer);
   }
 }
