@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
-import 'package:spot/src/timeline/timeline.dart';
 import 'package:test_process/test_process.dart';
 
 import 'timeline_test_widget.dart';
