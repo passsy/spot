@@ -8,27 +8,33 @@ import 'package:test_api/src/backend/live_test.dart';
 
 final Map<LiveTest, Timeline> _timelines = {};
 
-/// Starts the timeline recording and prints events as they happen.
-void startLiveTimeline() {
-  // ignore: avoid_print
-  print('🔴 - Recording timeline with live output');
+/// Records the timeline and prints events as they happen.
+void recordLiveTimeline() {
   final timeline = currentTimeline();
+  final isRecordingLive = timeline.mode == TimelineMode.live;
+  final message = isRecordingLive ? 'Already recording' : 'Now recording';
+  // ignore: avoid_print
+  print('🔴 - $message live timeline');
   timeline.mode = TimelineMode.live;
 }
 
 /// Records the timeline but only prints it in case of an error.
-void startOnErrorTimeline() {
-  // ignore: avoid_print
-  print('🔴 - Recording timeline for error output');
+void recordOnErrorTimeline() {
   final timeline = currentTimeline();
+  final isRecordingError = timeline.mode == TimelineMode.record;
+  final message = isRecordingError ? 'Already' : 'Now';
+  // ignore: avoid_print
+  print('🔴 - $message recording error output timeline');
   timeline.mode = TimelineMode.record;
 }
 
 /// Stops the timeline from recording.
-void stopTimeline() {
-  // ignore: avoid_print
-  print('⏸︎ - Timeline stopped');
+void stopRecordingTimeline() {
   final timeline = currentTimeline();
+  final isRecording = timeline.mode != TimelineMode.off;
+  final message = isRecording ? 'stopped' : 'is off';
+  // ignore: avoid_print
+  print('⏸︎ - Timeline recording $message');
   timeline.mode = TimelineMode.off;
 }
 
@@ -58,7 +64,21 @@ Timeline currentTimeline() {
   return newTimeline;
 }
 
-/// A timeline of events that occurred during a test.
+/// Records a timeline of events during a test.
+///
+/// Usage:
+/// ```dart
+/// testWidgets('Live timeline', (tester) async {
+///   recordOnErrorTimeline(); // start recording the timeline, output on Error
+///   recordLiveTimeline(); // start recording the timeline with live output
+///   await tester.pumpWidget(const IncrementCounter());
+///   spotText('Counter: 0').existsOnce();
+///   final addButton = spotIcon(Icons.add)..existsOnce();
+///   await act.tap(addButton);
+///   spotText('Counter: 1').existsOnce();
+///   stopRecordingTimeline(); // stops recording the timeline
+/// });
+/// ```
 class Timeline {
   final List<TimelineEvent> _events = [];
 

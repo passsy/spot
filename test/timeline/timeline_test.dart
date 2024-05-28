@@ -18,7 +18,7 @@ final _clearButtonSelector = spotIcon(Icons.clear);
 void main() {
   testWidgets('Live timeline', (tester) async {
     final output = await _captureConsoleOutput(() async {
-      startLiveTimeline();
+      recordLiveTimeline();
       await tester.pumpWidget(const TimelineTestWidget());
       _addButtonSelector.existsOnce();
       spotText('Counter: 3').existsOnce();
@@ -26,19 +26,21 @@ void main() {
       spotText('Counter: 4').existsOnce();
       await act.tap(_subtractButtonSelector);
       spotText('Counter: 3').existsOnce();
+      // Notify that the timeline of this type is already recording.
+      recordLiveTimeline();
     });
-
-    expect(output, contains('🔴 - Recording timeline with live output'));
+    expect(output, contains('🔴 - Now recording live timeline'));
     expect(output, contains('Tap ${_addButtonSelector.toStringBreadcrumb()}'));
     expect(
       output,
       contains('Tap ${_subtractButtonSelector.toStringBreadcrumb()}'),
     );
+    expect(output, contains('🔴 - Already recording live timeline'));
     expect(_screenshotMessageMatcher(output).length, 2);
   });
   testWidgets('Start with Timeline Mode off', (tester) async {
     final output = await _captureConsoleOutput(() async {
-      stopTimeline();
+      stopRecordingTimeline();
       await tester.pumpWidget(const TimelineTestWidget());
       _addButtonSelector.existsOnce();
       spotText('Counter: 3').existsOnce();
@@ -48,7 +50,7 @@ void main() {
       spotText('Counter: 3').existsOnce();
     });
 
-    expect(output, contains('⏸︎ - Timeline stopped'));
+    expect(output, contains('⏸︎ - Timeline recording is off'));
     expect(
       output,
       isNot(contains('Tap ${_addButtonSelector.toStringBreadcrumb()}')),
@@ -61,7 +63,7 @@ void main() {
   });
   testWidgets('Turn timeline mode off during test', (tester) async {
     final output = await _captureConsoleOutput(() async {
-      startLiveTimeline();
+      recordLiveTimeline();
       await tester.pumpWidget(
         const TimelineTestWidget(),
       );
@@ -71,30 +73,33 @@ void main() {
       spotText('Counter: 4').existsOnce();
       await act.tap(_subtractButtonSelector);
       spotText('Counter: 3').existsOnce();
-      stopTimeline();
+      // Notify that the recording stopped
+      stopRecordingTimeline();
       await act.tap(_clearButtonSelector);
       spotText('Counter: 0').existsOnce();
+      // Notify that the recording is off
+      stopRecordingTimeline();
     });
-    expect(output, contains('🔴 - Recording timeline with live output'));
+    expect(output, contains('🔴 - Now recording live timeline'));
     expect(output, contains('Tap ${_addButtonSelector.toStringBreadcrumb()}'));
     expect(
       output,
       contains('Tap ${_subtractButtonSelector.toStringBreadcrumb()}'),
     );
-    expect(output, contains('⏸︎ - Timeline stopped'));
+    expect(output, contains('⏸︎ - Timeline recording stopped'));
     // No further events were added to the timeline, including screenshots
     expect(
       output,
       isNot(contains('Tap ${_clearButtonSelector.toStringBreadcrumb()}')),
     );
     expect(_screenshotMessageMatcher(output).length, 2);
+    expect(output, contains('⏸︎ - Timeline recording is off'));
   });
 
   group('onError timeline', () {
     testWidgets('OnError timeline - without error', (tester) async {
       final output = await _captureConsoleOutput(() async {
-        startOnErrorTimeline();
-
+        recordOnErrorTimeline();
         await tester.pumpWidget(const TimelineTestWidget());
         _addButtonSelector.existsOnce();
         spotText('Counter: 3').existsOnce();
@@ -102,9 +107,10 @@ void main() {
         spotText('Counter: 4').existsOnce();
         await act.tap(_subtractButtonSelector);
         spotText('Counter: 3').existsOnce();
+        // Notify that the timeline of this type is already recording.
+        recordOnErrorTimeline();
       });
-
-      expect(output, contains('🔴 - Recording timeline for error output'));
+      expect(output, contains('🔴 - Now recording error output timeline'));
       expect(
         output,
         isNot(contains('Tap ${_addButtonSelector.toStringBreadcrumb()}')),
@@ -114,6 +120,7 @@ void main() {
         isNot(contains('Tap ${_subtractButtonSelector.toStringBreadcrumb()}')),
       );
       expect(_screenshotMessageMatcher(output).length, 0);
+      expect(output, contains('🔴 - Already recording error output timeline'));
     });
 
     test('OnError timeline - with error, prints timeline', () async {
@@ -131,7 +138,7 @@ void main() async {
   final addButtonSelector = spotIcon(Icons.add);
   final subtractButtonSelector = spotIcon(Icons.remove);
   testWidgets('OnError timeline with error', (WidgetTester tester) async {
-    startOnErrorTimeline();
+    recordOnErrorTimeline();
     await tester.pumpWidget(const TimelineTestWidget());
       addButtonSelector.existsOnce();
       spotText('Counter: 3').existsOnce();
