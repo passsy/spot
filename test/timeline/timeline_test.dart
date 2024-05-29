@@ -36,7 +36,7 @@ void main() {
       contains('Event: Tap ${_subtractButtonSelector.toStringBreadcrumb()}'),
     );
     expect(output, contains('🔴 - Already recording live timeline'));
-    _testTimeLineContent(output);
+    _testTimeLineContent(output: output, eventCount: 2);
   });
   testWidgets('Start with Timeline Mode off', (tester) async {
     final output = await _captureConsoleOutput(() async {
@@ -59,7 +59,7 @@ void main() {
       output,
       isNot(contains('Tap ${_subtractButtonSelector.toStringBreadcrumb()}')),
     );
-    _testTimeLineContent(output, eventCount: 0);
+    _testTimeLineContent(output: output, eventCount: 0);
   });
   testWidgets('Turn timeline mode off during test', (tester) async {
     final output = await _captureConsoleOutput(() async {
@@ -92,7 +92,7 @@ void main() {
       output,
       isNot(contains('Tap ${_clearButtonSelector.toStringBreadcrumb()}')),
     );
-    _testTimeLineContent(output);
+    _testTimeLineContent(output: output, eventCount: 2);
     expect(output, contains('⏸︎ - Timeline recording is off'));
   });
 
@@ -120,7 +120,7 @@ void main() {
         isNot(contains('Tap ${_subtractButtonSelector.toStringBreadcrumb()}')),
       );
       expect(output, contains('🔴 - Already recording error output timeline'));
-      _testTimeLineContent(output, eventCount: 0);
+      _testTimeLineContent(output: output, eventCount: 0);
     });
 
     test('OnError timeline - with error, prints timeline', () async {
@@ -216,7 +216,10 @@ void main() async {
   });
 }
 
-void _testTimeLineContent(String output, {int eventCount = 2}) {
+void _testTimeLineContent({
+  required String output,
+  required int eventCount,
+}) {
   expect(
     RegExp('==================== Timeline Event ====================')
         .allMatches(output)
