@@ -66,9 +66,7 @@ Future<Screenshot> takeScreenshot({
 /// - [snapshot]: A snapshot of the widget to capture.
 /// - [selector]: A selector to determine the widget to capture.
 /// - [name]: The name of the screenshot file.
-/// - [tapPosition]: The position where the tap marker should be placed.
-///
-/// The screenshot will have a crosshair painted at the [hitPosition].
+/// - [centerPosition]: The position where the tap marker should be placed.
 ///
 /// Returns a [Screenshot] object containing the file and initiator frame.
 Future<Screenshot> takeScreenshotWithCrosshair({
