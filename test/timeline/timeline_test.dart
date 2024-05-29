@@ -8,8 +8,6 @@ import 'package:test_process/test_process.dart';
 
 import 'timeline_test_widget.dart';
 
-Iterable<RegExpMatch> _screenshotMessageMatcher(String outPut) =>
-    RegExp('Screenshot: file:').allMatches(outPut);
 final _addButtonSelector = spotIcon(Icons.add);
 final _subtractButtonSelector = spotIcon(Icons.remove);
 final _clearButtonSelector = spotIcon(Icons.clear);
@@ -29,13 +27,16 @@ void main() {
       recordLiveTimeline();
     });
     expect(output, contains('🔴 - Now recording live timeline'));
-    expect(output, contains('Tap ${_addButtonSelector.toStringBreadcrumb()}'));
     expect(
       output,
-      contains('Tap ${_subtractButtonSelector.toStringBreadcrumb()}'),
+      contains('Event: Tap ${_addButtonSelector.toStringBreadcrumb()}'),
+    );
+    expect(
+      output,
+      contains('Event: Tap ${_subtractButtonSelector.toStringBreadcrumb()}'),
     );
     expect(output, contains('🔴 - Already recording live timeline'));
-    expect(_screenshotMessageMatcher(output).length, 2);
+    _testTimeLineContent(output);
   });
   testWidgets('Start with Timeline Mode off', (tester) async {
     final output = await _captureConsoleOutput(() async {
@@ -58,7 +59,7 @@ void main() {
       output,
       isNot(contains('Tap ${_subtractButtonSelector.toStringBreadcrumb()}')),
     );
-    expect(_screenshotMessageMatcher(output).length, 0);
+    _testTimeLineContent(output, eventCount: 0);
   });
   testWidgets('Turn timeline mode off during test', (tester) async {
     final output = await _captureConsoleOutput(() async {
@@ -91,7 +92,7 @@ void main() {
       output,
       isNot(contains('Tap ${_clearButtonSelector.toStringBreadcrumb()}')),
     );
-    expect(_screenshotMessageMatcher(output).length, 2);
+    _testTimeLineContent(output);
     expect(output, contains('⏸︎ - Timeline recording is off'));
   });
 
@@ -118,8 +119,8 @@ void main() {
         output,
         isNot(contains('Tap ${_subtractButtonSelector.toStringBreadcrumb()}')),
       );
-      expect(_screenshotMessageMatcher(output).length, 0);
       expect(output, contains('🔴 - Already recording error output timeline'));
+      _testTimeLineContent(output, eventCount: 0);
     });
 
     test('OnError timeline - with error, prints timeline', () async {
@@ -213,6 +214,31 @@ void main() async {
       );
     });
   });
+}
+
+void _testTimeLineContent(String output, {int eventCount = 2}) {
+  expect(
+    RegExp('==================== Timeline Event ====================')
+        .allMatches(output)
+        .length,
+    eventCount,
+  );
+  expect(
+    RegExp('Event: Tap Icon Widget with icon:').allMatches(output).length,
+    eventCount,
+  );
+  expect(
+    RegExp('Caller: at main.<fn>.<fn> file:///').allMatches(output).length,
+    eventCount,
+  );
+  expect(
+    RegExp('Screenshot: file:').allMatches(output).length,
+    eventCount,
+  );
+  expect(
+    RegExp('Timestamp: ').allMatches(output).length,
+    eventCount,
+  );
 }
 
 Future<String> _captureConsoleOutput(
