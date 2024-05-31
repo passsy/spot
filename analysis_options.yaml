@@ -3,6 +3,8 @@ include: package:lint/package.yaml
 
 # You might want to exclude auto-generated files from dart analysis
 analyzer:
+  enable-experiment:
+    - macros
   exclude:
     - 'lib/src/checks/**.dart'
     - 'test/checks/**.dart'

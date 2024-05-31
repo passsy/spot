@@ -38,6 +38,8 @@ export 'package:spot/src/spot/filters/widget_type_filter.dart'
     show WidgetTypeFilter;
 export 'package:spot/src/spot/finder_interop.dart'
     show FinderFilter, FinderToSpot, SpotToFinder;
+export 'package:spot/src/spot/macros/widget_selector_and_matcher_macro.dart'
+    show WidgetSelectorAndMatcherMacro;
 export 'package:spot/src/spot/matcher_generator.dart' show CreateMatchers;
 export 'package:spot/src/spot/props.dart'
     show
