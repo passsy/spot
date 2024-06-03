@@ -14,10 +14,11 @@ void main() {
         home: Center(
           child: ElevatedButton(
             onPressed: onPressed,
-            child: const MacroTextTestWidget(
+            child:  MacroTextTestWidget(
               age: 12,
               name: 'name',
               username: 'username',
+              onPressed: (){},
             ),
           ),
         ),
