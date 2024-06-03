@@ -19,6 +19,7 @@ void main() {
               name: 'name',
               username: 'username',
               onPressed: (){},
+              onLongPressed: (value){},
             ),
           ),
         ),

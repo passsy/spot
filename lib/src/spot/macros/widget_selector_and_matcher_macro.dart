@@ -27,7 +27,7 @@ macro class WidgetSelectorAndMatcherMacro implements ClassDeclarationsMacro {
     for (final field in fields) {
       final fieldName = field.identifier.name;
       if (field.type is NamedTypeAnnotation || field.type is FunctionTypeAnnotation) {
-        final fieldType = _fieldType(field.type);
+        final fieldType = _fieldType(field);
         builder.declareInLibrary(
           DeclarationCode.fromString('''
             WidgetMatcher<$className> has${fieldName.capitalize()}({required $fieldType $fieldName}) {
@@ -54,7 +54,7 @@ macro class WidgetSelectorAndMatcherMacro implements ClassDeclarationsMacro {
     for (final field in fields) {
       final fieldName = field.identifier.name;
       if (field.type is NamedTypeAnnotation || field.type is FunctionTypeAnnotation) {
-        final fieldType = _fieldType(field.type);
+        final fieldType = _fieldType(field);
         builder.declareInLibrary(
           DeclarationCode.fromString('''
             WidgetSelector<$className> where${fieldName.capitalize()}({required $fieldType $fieldName}) {
@@ -73,13 +73,56 @@ macro class WidgetSelectorAndMatcherMacro implements ClassDeclarationsMacro {
     ]));
   }
 
-  String _fieldType(TypeAnnotation annotation ){
-if(annotation is NamedTypeAnnotation) {
-  return annotation.identifier.name;
-} else if(annotation is FunctionTypeAnnotation) {
-  return 'void Function()';
-} else {
-  return 'dynamic';
-}
+  String _fieldType(FieldDeclaration declaration) {
+    StringBuffer buffer = StringBuffer();
+    final declarationType = declaration.type;
+
+    if (declarationType is NamedTypeAnnotation) {
+      buffer.writeln(declarationType.identifier.name);
+    } else if (declarationType is FunctionTypeAnnotation) {
+      final returnType = declarationType.returnType;
+      final returnTypeString = _typeAnnotationToString(returnType);
+
+      final positionalParams = declarationType.positionalParameters;
+      final namedParams = declarationType.namedParameters;
+
+      buffer.write('$returnTypeString Function(');
+
+      if (positionalParams.isNotEmpty) {
+        buffer.write(positionalParams.map((param) => _parameterTypeString(param)).join(', '));
+      }
+
+      if (namedParams.isNotEmpty) {
+        if (positionalParams.isNotEmpty) {
+          buffer.write(', ');
+        }
+        buffer.write('{');
+        buffer.write(namedParams.map((param) => _parameterTypeString(param)).join(', '));
+        buffer.write('}');
+      }
+
+      buffer.write(')');
+
+      if (declarationType.isNullable) {
+        buffer.write('?');
+      }
+    }
+
+    return buffer.toString();
+  }
+
+  String _typeAnnotationToString(TypeAnnotation typeAnnotation) {
+    if (typeAnnotation is NamedTypeAnnotation) {
+      return typeAnnotation.identifier.name;
+    } else if (typeAnnotation is FunctionTypeAnnotation) {
+      return _fieldType(typeAnnotation as FieldDeclaration);
+    }
+    return 'dynamic'; // Default case, if the type is not recognized
+  }
+
+  String _parameterTypeString(FormalParameter param) {
+    final typeString = _typeAnnotationToString(param.type);
+    final nameString = param.name != null ? ' ${param.name}' : '';
+    return '$typeString$nameString';
   }
 }

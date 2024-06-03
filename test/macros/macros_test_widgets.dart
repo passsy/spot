@@ -9,12 +9,14 @@ class MacroTextTestWidget extends StatelessWidget {
     required this.name,
     required this.username,
 required this.onPressed,
+required this.onLongPressed,
   });
 
   final int age;
   final String name;
   final String username;
 final void Function() onPressed;
+final void Function(bool) onLongPressed;
 
 
   @override
