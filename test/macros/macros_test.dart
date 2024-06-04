@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
@@ -11,33 +9,47 @@ void main() {
     int i = 0;
     void onPressed() => i++;
 
-    void printTest() => print('printed');
+    void printOnPress() => debugPrint('printed');
 
-    void Function(bool) printOnTrue = (value) => print(value);
+    void printOnLongPress(bool value) => debugPrint("$value");
 
     await tester.pumpWidget(
       MaterialApp(
         home: Center(
           child: ElevatedButton(
             onPressed: onPressed,
-            child:  MacroTextTestWidget(
+            child: MacroTextTestWidget(
               age: 12,
               color: Colors.red,
               name: 'name',
               username: 'username',
-              onPressed: printTest,
-              onLongPressed: printOnTrue, testEnum: TestEnum.test1,
+              onPressed: printOnPress,
+              onLongPressed: printOnLongPress,
+              testEnum: TestEnum.test1,
             ),
           ),
         ),
       ),
     );
+
     // final WidgetSelector<MacroTextTestWidget> selector =
-    //     spot<MacroTextTestWidget>().whereAge(12);
-    // selector.existsOnce().hasAge(12);
-    // selector.existsOnce().hasSecondEnum(null);
-    // selector.whereSecondEnum(null).existsOnce();
-    // selector.existsOnce().hasOnPressed(printTest);
-    // selector.existsOnce().hasOnLongPressed(printOnTrue);
+    //     spot<MacroTextTestWidget>();
+    //
+    // selector.whereAge(12).existsOnce().hasAge(12);
+    // selector.whereColor(Colors.red).existsOnce().hasColor(Colors.red);
+    // selector.whereName('name').existsOnce().hasName('name');
+    // selector
+    //     .whereTestEnum(TestEnum.test1)
+    //     .existsOnce()
+    //     .hasTestEnum(TestEnum.test1);
+    // selector.whereSecondEnum(null).existsOnce().hasSecondEnum(null);
+    // selector
+    //     .whereOnPressed(printOnPress)
+    //     .existsOnce()
+    //     .hasOnPressed(printOnPress);
+    // selector
+    //     .whereOnLongPressed(printOnLongPress)
+    //     .existsOnce()
+    //     .hasOnLongPressed(printOnLongPress);
   });
 }

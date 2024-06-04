@@ -3,7 +3,8 @@ import 'dart:io';
 import 'package:dartx/dartx.dart';
 import 'package:macros/macros.dart';
 
-macro class WidgetSelectorAndMatcherMacro implements ClassDeclarationsMacro{
+/// A macro that generates extension methods for [WidgetSelector] and [WidgetMatcher] for a given widget class.
+macro class WidgetSelectorAndMatcherMacro implements ClassDeclarationsMacro {
   const WidgetSelectorAndMatcherMacro();
 
   @override
@@ -14,36 +15,38 @@ macro class WidgetSelectorAndMatcherMacro implements ClassDeclarationsMacro{
     // Find better way to boil down
     final allImports = readImports(clazz.library.uri.path);
 
-    builder.declareInLibrary(DeclarationCode.fromParts(['''
+    builder.declareInLibrary(
+      DeclarationCode.fromParts(['''
 // ignore_for_file: unused_import
 // ignore_for_file: duplicate_import
 import 'package:spot/src/checks/checks_nullability.dart';
 import 'package:spot/spot.dart';
 $allImports
-    '''
-    ]));
+'''
+      ]),
+    );
     _buildWidgetMatcher(className, fields, builder);
     builder.declareInLibrary(DeclarationCode.fromString('\n'));
     _buildWidgetSelector(className, fields, builder);
   }
 
   Future<void> _buildWidgetMatcher(String className, List<FieldDeclaration> fields, MemberDeclarationBuilder builder) async {
-
-    builder.declareInLibrary(DeclarationCode.fromParts([
-      'extension ${className}Matcher on WidgetMatcher<$className> {',
-    ]));
+    builder.declareInLibrary(
+      DeclarationCode.fromParts([
+        'extension ${className}Matcher on WidgetMatcher<$className> {',
+      ]),
+    );
 
     for (final FieldDeclaration field in fields) {
-
       if (field.type is NamedTypeAnnotation || field.type is FunctionTypeAnnotation) {
-      final fieldName = field.identifier.name;
+        final fieldName = field.identifier.name;
 
-      final String matcher = (){
-        if(field.type.isNullable){
-          return "$fieldName == null ? it.isNull() : it.equals($fieldName)";
-        }
-        return "it.equals($fieldName)";
-      }();
+        final String matcher = (){
+          if(field.type.isNullable){
+            return "$fieldName == null ? it.isNull() : it.equals($fieldName)";
+          }
+          return "it.equals($fieldName)";
+        }();
 
         final fieldType = _fieldType(field);
         builder.declareInLibrary(
@@ -59,15 +62,15 @@ $allImports
       }
     }
 
-    builder.declareInLibrary(DeclarationCode.fromParts([
-      '}',
-    ]));
+    builder.declareInLibrary(DeclarationCode.fromParts(['}']));
   }
 
   void _buildWidgetSelector(String className, List<FieldDeclaration> fields, MemberDeclarationBuilder builder) {
-    builder.declareInLibrary(DeclarationCode.fromParts([
-      'extension ${className}Selector on WidgetSelector<$className> {',
-    ]));
+    builder.declareInLibrary(
+        DeclarationCode.fromParts([
+        'extension ${className}Selector on WidgetSelector<$className> {',
+      ]),
+    );
 
     for (final field in fields) {
       final fieldName = field.identifier.name;
@@ -86,46 +89,46 @@ $allImports
       }
     }
 
-    builder.declareInLibrary(DeclarationCode.fromParts([
-      '}',
-    ]));
+    builder.declareInLibrary(DeclarationCode.fromParts(['}']));
   }
 
   String _fieldType(FieldDeclaration declaration) {
-    StringBuffer buffer = StringBuffer();
+    final buffer = StringBuffer();
     final declarationType = declaration.type;
 
-    if (declarationType is NamedTypeAnnotation) {
-      final paramPrefix = declarationType.isNullable ? '?' : '';
-      final name = '${declarationType.identifier.name}$paramPrefix';
-      buffer.writeln(name);
-    } else if (declarationType is FunctionTypeAnnotation) {
-      final returnType = declarationType.returnType;
-      final returnTypeString = _typeAnnotationToString(returnType);
-      final positionalParams = declarationType.positionalParameters;
-      final namedParams = declarationType.namedParameters;
+    switch(declarationType) {
+      case NamedTypeAnnotation():
+        final paramSuffix = declarationType.isNullable ? '?' : '';
+        final name = '${declarationType.identifier.name}$paramSuffix';
+        buffer.writeln(name);
 
-      buffer.write('$returnTypeString Function(');
+      case FunctionTypeAnnotation():
+        final returnType = declarationType.returnType;
+        final returnTypeString = _typeAnnotationToString(returnType);
+        final positionalParams = declarationType.positionalParameters;
+        final namedParams = declarationType.namedParameters;
 
-      if (positionalParams.isNotEmpty) {
-        buffer.write(positionalParams.map((param) => _parameterTypeString(param)).join(', '));
-      }
+        buffer.write('$returnTypeString Function(');
 
-      if (namedParams.isNotEmpty) {
         if (positionalParams.isNotEmpty) {
-          buffer.write(', ');
+          buffer.write(positionalParams.map((param) => _parameterTypeString(param)).join(', '));
         }
-        buffer.write('{');
-        // Check nullability of callback params
-        buffer.write(namedParams.map((param) => _parameterTypeString(param)).join(', '));
-        buffer.write('}');
-      }
 
-      buffer.write(')');
+        if (namedParams.isNotEmpty) {
+          if (positionalParams.isNotEmpty) {
+            buffer.write(', ');
+          }
+          buffer.write('{');
+          // Check nullability of callback params
+          buffer.write(namedParams.map((param) => _parameterTypeString(param)).join(', '));
+          buffer.write('}');
+        }
 
-      if (declarationType.isNullable) {
-        buffer.write('?');
-      }
+        buffer.write(')');
+
+        if (declarationType.isNullable) {
+          buffer.write('?');
+        }
     }
 
     return buffer.toString();
@@ -163,12 +166,14 @@ $allImports
     final rest = lines.sublist(lastLine);
     final endLine = rest.indexWhere((line) => line.contains(';'));
 
+    final allImports = [];
+
     // Capture all lines between the first and last import statements
-    final firstPart = lines.sublist(firstLine, lastLine);
+    allImports.addAll(lines.sublist(firstLine, lastLine));
     // Capture the lines from the last import to the semicolon
-    final endPart = rest.sublist(0, endLine + 1);
+    allImports.addAll(rest.sublist(0, endLine + 1));
 
     // Combine the parts correctly
-    return firstPart.join('\n') + '\n' + endPart.join('\n') + '\n';
+    return '${allImports.join('\n')}\n';
   }
 }
