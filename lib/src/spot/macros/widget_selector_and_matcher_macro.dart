@@ -14,9 +14,11 @@ macro class WidgetSelectorAndMatcherMacro implements ClassDeclarationsMacro{
     // Find better way to boil down
     final allImports = _readImports(clazz.library.uri.path);
 
-    builder.declareInLibrary(DeclarationCode.fromParts([
-      '''import 'package:spot/spot.dart';
-$allImports\n
+    builder.declareInLibrary(DeclarationCode.fromParts(['''
+// ignore_for_file: unused_import
+// ignore_for_file: duplicate_import
+import 'package:spot/spot.dart';
+$allImports
     '''
     ]));
     _buildWidgetMatcher(className, fields, builder);
