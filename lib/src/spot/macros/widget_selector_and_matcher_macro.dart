@@ -133,11 +133,29 @@ $allImports
     return '$typeString$nameString';
   }
 
-  String _readImports(String filePath) {
+  static String readImports(String filePath) {
     final file = File(filePath);
     final lines = file.readAsLinesSync();
-    final importLines = lines.where((line) => line.trim().startsWith('import')).join('\n');
 
-    return importLines;
+    // Find the first import statement
+    final firstLine = lines.indexWhere((line) => line.startsWith('import'));
+    if (firstLine == -1) {
+      return '';
+    }
+
+    // Find the last import statement
+    final lastLine = lines.lastIndexWhere((line) => line.startsWith('import'));
+
+    // All lines, starting from the last import statement, until the first semicolon is found
+    final rest = lines.sublist(lastLine);
+    final endLine = rest.indexWhere((line) => line.contains(';'));
+
+    // Capture all lines between the first and last import statements
+    final firstPart = lines.sublist(firstLine, lastLine);
+    // Capture the lines from the last import to the semicolon
+    final endPart = rest.sublist(0, endLine + 1);
+
+    // Combine the parts correctly
+    return firstPart.join('\n') + '\n' + endPart.join('\n') + '\n';
   }
 }
