@@ -15,6 +15,7 @@ required this.onPressed,
 required this.onLongPressed,
     required this.testEnum,
 required this.color,
+    this.secondEnum,
   });
 
   final int age;
@@ -24,6 +25,7 @@ final void Function() onPressed;
 final void Function(bool) onLongPressed;
 final TestEnum testEnum;
 final Color color;
+final TestEnum? secondEnum;
 
 
 
@@ -35,7 +37,7 @@ final Color color;
 
 
 void main (){
-  spot<MacroTextTestWidget>().whereAge(age: 12);
+  spot<MacroTextTestWidget>().whereAge(12);
   final myTest = TestClass(age: 12, name: 'name', username: 'username', testClassTwo: TestClassTwo(12, 'name'));
   myTest.toJson();
 }
