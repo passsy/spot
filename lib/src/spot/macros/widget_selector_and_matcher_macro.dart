@@ -12,11 +12,12 @@ macro class WidgetSelectorAndMatcherMacro implements ClassDeclarationsMacro{
     final fields = await builder.fieldsOf(clazz);
 
     // Find better way to boil down
-    final allImports = _readImports(clazz.library.uri.path);
+    final allImports = readImports(clazz.library.uri.path);
 
     builder.declareInLibrary(DeclarationCode.fromParts(['''
 // ignore_for_file: unused_import
 // ignore_for_file: duplicate_import
+import 'package:spot/src/checks/checks_nullability.dart';
 import 'package:spot/spot.dart';
 $allImports
     '''
@@ -33,15 +34,24 @@ $allImports
     ]));
 
     for (final FieldDeclaration field in fields) {
-      final fieldName = field.identifier.name;
+
       if (field.type is NamedTypeAnnotation || field.type is FunctionTypeAnnotation) {
+      final fieldName = field.identifier.name;
+
+      final String matcher = (){
+        if(field.type.isNullable){
+          return "$fieldName == null ? it.isNull() : it.equals($fieldName)";
+        }
+        return "it.equals($fieldName)";
+      }();
+
         final fieldType = _fieldType(field);
         builder.declareInLibrary(
           DeclarationCode.fromString('''
-          WidgetMatcher<$className> has${fieldName.capitalize()}({required $fieldType $fieldName}) {             
+          WidgetMatcher<$className> has${fieldName.capitalize()}($fieldType $fieldName) {             
               return hasWidgetProp(
                 prop: widgetProp('$fieldName', ($className widget) => widget.$fieldName),
-                match: (it) => it.equals($fieldName),
+                match: (it) => $matcher,
               );
             }''',
           ),
@@ -65,7 +75,7 @@ $allImports
         final fieldType = _fieldType(field);
         builder.declareInLibrary(
           DeclarationCode.fromString('''
-            WidgetSelector<$className> where${fieldName.capitalize()}({required $fieldType $fieldName}) {
+            WidgetSelector<$className> where${fieldName.capitalize()}($fieldType $fieldName) {
               return whereWidgetProp(
                 widgetProp('$fieldName', ($className widget) => widget.$fieldName),
                 ($fieldType value) => value == $fieldName,
@@ -86,7 +96,9 @@ $allImports
     final declarationType = declaration.type;
 
     if (declarationType is NamedTypeAnnotation) {
-      buffer.writeln(declarationType.identifier.name);
+      final paramPrefix = declarationType.isNullable ? '?' : '';
+      final name = '${declarationType.identifier.name}$paramPrefix';
+      buffer.writeln(name);
     } else if (declarationType is FunctionTypeAnnotation) {
       final returnType = declarationType.returnType;
       final returnTypeString = _typeAnnotationToString(returnType);
@@ -104,6 +116,7 @@ $allImports
           buffer.write(', ');
         }
         buffer.write('{');
+        // Check nullability of callback params
         buffer.write(namedParams.map((param) => _parameterTypeString(param)).join(', '));
         buffer.write('}');
       }
@@ -129,10 +142,10 @@ $allImports
 
   String _parameterTypeString(FormalParameter param) {
     final typeString = _typeAnnotationToString(param.type);
-    final nameString = param.name != null ? ' ${param.name}' : '';
-    return '$typeString$nameString';
+    return '$typeString value';
   }
 
+  /// Reads the imports of the file where the annotated class lives
   static String readImports(String filePath) {
     final file = File(filePath);
     final lines = file.readAsLinesSync();
