@@ -1,5 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:spot/spot.dart';
+import 'package:spot/src/widgets/test_class.dart';
+import 'package:spot/src/widgets/test_class_two.dart';
+
 
 @WidgetSelectorAndMatcherMacro()
 class MacroTextTestWidget extends StatelessWidget {
@@ -10,6 +13,8 @@ class MacroTextTestWidget extends StatelessWidget {
     required this.username,
 required this.onPressed,
 required this.onLongPressed,
+    required this.testEnum,
+required this.color,
   });
 
   final int age;
@@ -17,6 +22,9 @@ required this.onLongPressed,
   final String username;
 final void Function() onPressed;
 final void Function(bool) onLongPressed;
+final TestEnum testEnum;
+final Color color;
+
 
 
   @override
@@ -27,5 +35,14 @@ final void Function(bool) onLongPressed;
 
 
 void main (){
-  spot<MacroTextTestWidget>();
+  spot<MacroTextTestWidget>().whereAge(age: 12);
+  final myTest = TestClass(age: 12, name: 'name', username: 'username', testClassTwo: TestClassTwo(12, 'name'));
+  myTest.toJson();
+}
+
+
+enum TestEnum {
+  test1,
+  test2,
+  test3,
 }

@@ -1,8 +1,9 @@
+import 'dart:async';
+import 'dart:io';
 import 'package:dartx/dartx.dart';
-import 'package:flutter/widgets.dart';
 import 'package:macros/macros.dart';
 
-macro class WidgetSelectorAndMatcherMacro implements ClassDeclarationsMacro {
+macro class WidgetSelectorAndMatcherMacro implements ClassDeclarationsMacro{
   const WidgetSelectorAndMatcherMacro();
 
   @override
@@ -10,27 +11,32 @@ macro class WidgetSelectorAndMatcherMacro implements ClassDeclarationsMacro {
     final className = clazz.identifier.name;
     final fields = await builder.fieldsOf(clazz);
 
-    builder.declareInLibrary(DeclarationCode.fromParts([
-      "import 'package:spot/spot.dart';\n",
-    ]));
+    // Find better way to boil down
+    final allImports = _readImports(clazz.library.uri.path);
 
+    builder.declareInLibrary(DeclarationCode.fromParts([
+      '''import 'package:spot/spot.dart';
+$allImports\n
+    '''
+    ]));
     _buildWidgetMatcher(className, fields, builder);
     builder.declareInLibrary(DeclarationCode.fromString('\n'));
     _buildWidgetSelector(className, fields, builder);
   }
 
-  void _buildWidgetMatcher(String className, List<FieldDeclaration> fields, MemberDeclarationBuilder builder) {
+  Future<void> _buildWidgetMatcher(String className, List<FieldDeclaration> fields, MemberDeclarationBuilder builder) async {
+
     builder.declareInLibrary(DeclarationCode.fromParts([
       'extension ${className}Matcher on WidgetMatcher<$className> {',
     ]));
 
-    for (final field in fields) {
+    for (final FieldDeclaration field in fields) {
       final fieldName = field.identifier.name;
       if (field.type is NamedTypeAnnotation || field.type is FunctionTypeAnnotation) {
         final fieldType = _fieldType(field);
         builder.declareInLibrary(
           DeclarationCode.fromString('''
-            WidgetMatcher<$className> has${fieldName.capitalize()}({required $fieldType $fieldName}) {
+          WidgetMatcher<$className> has${fieldName.capitalize()}({required $fieldType $fieldName}) {             
               return hasWidgetProp(
                 prop: widgetProp('$fieldName', ($className widget) => widget.$fieldName),
                 match: (it) => it.equals($fieldName),
@@ -82,7 +88,6 @@ macro class WidgetSelectorAndMatcherMacro implements ClassDeclarationsMacro {
     } else if (declarationType is FunctionTypeAnnotation) {
       final returnType = declarationType.returnType;
       final returnTypeString = _typeAnnotationToString(returnType);
-
       final positionalParams = declarationType.positionalParameters;
       final namedParams = declarationType.namedParameters;
 
@@ -124,5 +129,13 @@ macro class WidgetSelectorAndMatcherMacro implements ClassDeclarationsMacro {
     final typeString = _typeAnnotationToString(param.type);
     final nameString = param.name != null ? ' ${param.name}' : '';
     return '$typeString$nameString';
+  }
+
+  String _readImports(String filePath) {
+    final file = File(filePath);
+    final lines = file.readAsLinesSync();
+    final importLines = lines.where((line) => line.trim().startsWith('import')).join('\n');
+
+    return importLines;
   }
 }
