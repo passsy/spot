@@ -21,12 +21,11 @@ macro class WidgetSelectorAndMatcherMacro implements ClassDeclarationsMacro {
 // ignore_for_file: duplicate_import
 import 'package:spot/src/checks/checks_nullability.dart';
 import 'package:spot/spot.dart';
-$allImports
-'''
+$allImports'''
       ]),
     );
     _buildWidgetMatcher(className, fields, builder);
-    builder.declareInLibrary(DeclarationCode.fromString('\n'));
+    builder.declareInLibrary(DeclarationCode.fromString(''));
     _buildWidgetSelector(className, fields, builder);
   }
 
@@ -51,12 +50,12 @@ $allImports
         final fieldType = _fieldType(field);
         builder.declareInLibrary(
           DeclarationCode.fromString('''
-          WidgetMatcher<$className> has${fieldName.capitalize()}($fieldType $fieldName) {             
-              return hasWidgetProp(
-                prop: widgetProp('$fieldName', ($className widget) => widget.$fieldName),
-                match: (it) => $matcher,
-              );
-            }''',
+  WidgetMatcher<$className> has${fieldName.capitalize()}($fieldType $fieldName) {             
+    return hasWidgetProp(
+      prop: widgetProp('$fieldName', ($className widget) => widget.$fieldName),
+      match: (it) => $matcher,
+    );
+  }''',
           ),
         );
       }
@@ -78,12 +77,12 @@ $allImports
         final fieldType = _fieldType(field);
         builder.declareInLibrary(
           DeclarationCode.fromString('''
-            WidgetSelector<$className> where${fieldName.capitalize()}($fieldType $fieldName) {
-              return whereWidgetProp(
-                widgetProp('$fieldName', ($className widget) => widget.$fieldName),
-                ($fieldType value) => value == $fieldName,
-              );
-            }''',
+  WidgetSelector<$className> where${fieldName.capitalize()}($fieldType $fieldName) {
+    return whereWidgetProp(
+      widgetProp('$fieldName', ($className widget) => widget.$fieldName),
+      ($fieldType value) => value == $fieldName,
+    );
+  }''',
           ),
         );
       }
@@ -100,7 +99,7 @@ $allImports
       case NamedTypeAnnotation():
         final paramSuffix = declarationType.isNullable ? '?' : '';
         final name = '${declarationType.identifier.name}$paramSuffix';
-        buffer.writeln(name);
+        buffer.write(name);
 
       case FunctionTypeAnnotation():
         final returnType = declarationType.returnType;
