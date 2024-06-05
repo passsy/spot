@@ -13,3 +13,4 @@ coverage
 .DS_Store
 .flutter-plugins
 .flutter-plugins-dependencies
+.fvm
