@@ -14,3 +14,4 @@ coverage
 .flutter-plugins
 .flutter-plugins-dependencies
 .fvm
+.fvmrc
