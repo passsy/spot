@@ -1,6 +1,7 @@
 # Files and directories created by pub.
 .dart_tool/
 .packages
+.fvm/
 
 # Conventional directory for build outputs.
 build/
@@ -13,5 +14,4 @@ coverage
 .DS_Store
 .flutter-plugins
 .flutter-plugins-dependencies
-.fvm
 .fvmrc
