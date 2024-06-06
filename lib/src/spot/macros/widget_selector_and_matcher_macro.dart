@@ -75,9 +75,16 @@ $allImports'''
       final fieldName = field.identifier.name;
       if (field.type is NamedTypeAnnotation || field.type is FunctionTypeAnnotation) {
         final fieldType = _fieldType(field);
+        final selectorName = 'where${fieldName.capitalize()}';
         builder.declareInLibrary(
           DeclarationCode.fromString('''
-  WidgetSelector<$className> where${fieldName.capitalize()}($fieldType $fieldName) {
+  /// Creates a [WidgetSelector] that finds all [$className] where [$fieldName] equals (==) [value].
+  ///
+  /// #### Example usage:
+  /// ```dart
+  /// spot<$className>().$selectorName($fieldType $fieldName).existsOnce();
+  /// ```
+  WidgetSelector<$className> $selectorName($fieldType $fieldName) {
     return whereWidgetProp(
       widgetProp('$fieldName', ($className widget) => widget.$fieldName),
       ($fieldType value) => value == $fieldName,
