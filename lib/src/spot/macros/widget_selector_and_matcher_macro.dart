@@ -11,6 +11,8 @@ macro class WidgetSelectorAndMatcherMacro implements ClassDeclarationsMacro {
   Future<void> buildDeclarationsForClass(ClassDeclaration clazz, MemberDeclarationBuilder builder) async {
     final className = clazz.identifier.name;
     final fields = await builder.fieldsOf(clazz);
+    // TODO decide whether to use for example values in documentation
+    // final enums = await builder.typesOf(clazz.library).then((types) => types.whereType<EnumDeclaration>().toList());
 
     // Find better way to boil down
     final allImports = readImports(clazz.library.uri.path);
