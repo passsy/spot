@@ -48,9 +48,16 @@ $allImports'''
         }();
 
         final fieldType = _fieldType(field);
+        final matcherName = 'has${fieldName.capitalize()}';
         builder.declareInLibrary(
           DeclarationCode.fromString('''
-  WidgetMatcher<$className> has${fieldName.capitalize()}($fieldType $fieldName) {             
+  /// Expects that $fieldName of [$className] equals (==) [value].
+  ///
+  /// #### Example usage:
+  /// ```dart
+  /// spot<$className>().existsOnce().$matcherName($fieldType value);
+  /// ```
+  WidgetMatcher<$className> $matcherName($fieldType $fieldName) {             
     return hasWidgetProp(
       prop: widgetProp('$fieldName', ($className widget) => widget.$fieldName),
       match: (it) => $matcher,
