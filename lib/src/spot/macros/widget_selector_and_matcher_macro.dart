@@ -5,10 +5,32 @@ import 'package:macros/macros.dart';
 
 /// A macro that generates extension methods for [WidgetSelector] and [WidgetMatcher] for a given widget class.
 macro class WidgetSelectorAndMatcherMacro implements ClassDeclarationsMacro {
+  /// A macro that generates extension methods for [WidgetSelector] and [WidgetMatcher] for a given widget class.
   const WidgetSelectorAndMatcherMacro();
+
+  Future<void> _checkIsWidget(ClassDeclaration clazz, MemberDeclarationBuilder builder) async {
+    final type = await builder.resolve(NamedTypeAnnotationCode(name: clazz.identifier));
+    final Identifier widgetIdentifier = await builder.resolveIdentifier(
+      Uri.parse('package:flutter/src/widgets/framework.dart'),
+      'Widget',
+    );
+    final widget = await builder.resolve(NamedTypeAnnotationCode(name: widgetIdentifier));
+    final isWidget = await type.isSubtypeOf(widget);
+
+    if (!isWidget) {
+      builder.report(Diagnostic(DiagnosticMessage(
+        'Only classes that extend `Widget` can be annotated with `@WidgetSelectorAndMatcher`.',
+      ),
+        Severity.error,
+      ),
+      );
+    }
+  }
 
   @override
   Future<void> buildDeclarationsForClass(ClassDeclaration clazz, MemberDeclarationBuilder builder) async {
+    await _checkIsWidget(clazz, builder);
+
     final className = clazz.identifier.name;
     final fields = await builder.fieldsOf(clazz);
     // TODO decide whether to use for example values in documentation
