@@ -25,6 +25,7 @@ void main() {
               onLongPressed: printOnLongPress,
               onNullableLongPressed: printOnLongPress,
               testEnum: TestEnum.test1,
+              alignment: Alignment.topCenter,
             ),
           ),
         ),
@@ -54,6 +55,10 @@ void main() {
         .whereOnNullableLongPressed(printOnLongPress)
         .existsOnce()
         .hasOnNullableLongPressed(printOnLongPress);
+    selector
+        .whereAlignment(Alignment.topCenter)
+        .existsOnce()
+        .hasAlignment(Alignment.topCenter);
   });
 }
 
@@ -69,6 +74,7 @@ class MacroTextTestWidget extends StatelessWidget {
     required this.onNullableLongPressed,
     required this.testEnum,
     required this.color,
+    required this.alignment,
     this.secondEnum,
   });
 
@@ -80,11 +86,12 @@ class MacroTextTestWidget extends StatelessWidget {
   final void Function(bool) onNullableLongPressed;
   final TestEnum testEnum;
   final Color color;
+  final AlignmentGeometry alignment;
   final TestEnum? secondEnum;
 
   @override
   Widget build(BuildContext context) {
-    return Text(age.toString() + name + username);
+    return SizedBox();
   }
 }
 
