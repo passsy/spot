@@ -112,6 +112,7 @@ class Act {
           timeline.addScreenshot(
             screenshot,
             name: 'Tap ${selector.toStringBreadcrumb()}',
+            eventType: TimelineEventType.tap,
           );
         }
 
