@@ -379,6 +379,15 @@ void createTimelineHtmlFile(List<TimelineEvent> events) {
   htmlBuffer.writeln('    modal.style.display = "none";');
   htmlBuffer.writeln('  }');
   htmlBuffer.writeln('}');
+  htmlBuffer.writeln('window.addEventListener("keydown", function(event) {');
+  htmlBuffer.writeln('  if (event.key === "ArrowLeft") {');
+  htmlBuffer.writeln('    showPrev();');
+  htmlBuffer.writeln('  } else if (event.key === "ArrowRight") {');
+  htmlBuffer.writeln('    showNext();');
+  htmlBuffer.writeln('  } else if (event.key === "Escape") {');
+  htmlBuffer.writeln('    closeModal();');
+  htmlBuffer.writeln('  }');
+  htmlBuffer.writeln('});');
   htmlBuffer.writeln('</script>');
   htmlBuffer.writeln('</head>');
   htmlBuffer.writeln('<body>');
