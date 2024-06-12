@@ -1,6 +1,7 @@
 // ignore_for_file: depend_on_referenced_packages
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:nanoid2/nanoid2.dart';
 import 'package:path/path.dart' as path;
 import 'package:spot/src/screenshot/screenshot.dart';
@@ -176,8 +177,236 @@ class Timeline {
     for (final event in _events) {
       _printEvent(event);
     }
+    _createTimelineHtmlFile();
+  }
 
-    createTimelineHtmlFile(_events);
+  void _createTimelineHtmlFile() {
+    final htmlBuffer = StringBuffer();
+
+    htmlBuffer.writeln('<html>');
+    htmlBuffer.writeln('<head>');
+    htmlBuffer.writeln('<title>Timeline Events</title>');
+    htmlBuffer.writeln('<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">');
+    htmlBuffer.writeln('<style>');
+    htmlBuffer.writeln('body {');
+    htmlBuffer.writeln('  box-sizing: border-box;');
+    htmlBuffer.writeln('  background-color: #F0FCFF;');
+    htmlBuffer.writeln('  color: #4a4a4a;');
+    htmlBuffer.writeln('  overflow-wrap: anywhere;');
+    htmlBuffer.writeln('  font-family: "Google Sans Text","Google Sans","Roboto",sans-serif;');
+    htmlBuffer.writeln('  -webkit-font-smoothing: antialiased;');
+    htmlBuffer.writeln('}');
+    htmlBuffer.writeln('.header { display: flex; align-items: center; padding: 10px; }');
+    htmlBuffer.writeln('h1 {');
+    htmlBuffer.writeln('  color: #4a4a4a;');
+    htmlBuffer.writeln('  overflow-wrap: anywhere;');
+    htmlBuffer.writeln('  -webkit-font-smoothing: antialiased;');
+    htmlBuffer.writeln('  font-variant-ligatures: none;');
+    htmlBuffer.writeln('  font-feature-settings: "liga" 0;');
+    htmlBuffer.writeln('  box-sizing: border-box;');
+    htmlBuffer.writeln('  font-weight: 400;');
+    htmlBuffer.writeln('  font-family: "Google Sans Display","Google Sans","Roboto",sans-serif;');
+    htmlBuffer.writeln('  margin: 0;');
+    htmlBuffer.writeln('  font-size: 36px;');
+    htmlBuffer.writeln('  padding-left: 10px;');
+    htmlBuffer.writeln('}');
+    htmlBuffer.writeln('.event {');
+    htmlBuffer.writeln('  display: flex;');
+    htmlBuffer.writeln('  border: 2px solid #557783;');
+    htmlBuffer.writeln('  margin: 10px;');
+    htmlBuffer.writeln('  padding: 10px;');
+    htmlBuffer.writeln('  background-color: #ffffff;');
+    htmlBuffer.writeln('}');
+    htmlBuffer.writeln('.event-details {');
+    htmlBuffer.writeln('  margin-left: 20px;');
+    htmlBuffer.writeln('}');
+    htmlBuffer.writeln('.thumbnail {');
+    htmlBuffer.writeln('  height: 150px;');
+    htmlBuffer.writeln('  cursor: pointer;');
+    htmlBuffer.writeln('  border: 1px solid #557783;');
+    htmlBuffer.writeln('  object-fit: contain;');
+    htmlBuffer.writeln('}');
+    htmlBuffer.writeln('.modal {');
+    htmlBuffer.writeln('  display: none;');
+    htmlBuffer.writeln('  position: fixed;');
+    htmlBuffer.writeln('  z-index: 1;');
+    htmlBuffer.writeln('  left: 0;');
+    htmlBuffer.writeln('  top: 0;');
+    htmlBuffer.writeln('  width: 100%;');
+    htmlBuffer.writeln('  height: 100%;');
+    htmlBuffer.writeln('  overflow: auto;');
+    htmlBuffer.writeln('  background-color: rgba(0,0,0,0.9);');
+    htmlBuffer.writeln('}');
+    htmlBuffer.writeln('.modal-content {');
+    htmlBuffer.writeln('  margin: auto;');
+    htmlBuffer.writeln('  display: block;');
+    htmlBuffer.writeln('  max-width: 80%;');
+    htmlBuffer.writeln('  height: auto;');
+    htmlBuffer.writeln('}');
+    htmlBuffer.writeln('.close {');
+    htmlBuffer.writeln('  position: absolute;');
+    htmlBuffer.writeln('  top: 15px;');
+    htmlBuffer.writeln('  right: 35px;');
+    htmlBuffer.writeln('  color: #f1f1f1;');
+    htmlBuffer.writeln('  font-size: 40px;');
+    htmlBuffer.writeln('  font-weight: bold;');
+    htmlBuffer.writeln('}');
+    htmlBuffer.writeln('.close:hover, .close:focus {');
+    htmlBuffer.writeln('  color: #C97B2D;');
+    htmlBuffer.writeln('  text-decoration: none;');
+    htmlBuffer.writeln('  cursor: pointer;');
+    htmlBuffer.writeln('}');
+    htmlBuffer.writeln('.nav {');
+    htmlBuffer.writeln('  padding: 10px;');
+    htmlBuffer.writeln('  color: white;');
+    htmlBuffer.writeln('  font-weight: bold;');
+    htmlBuffer.writeln('  font-size: 30px;');
+    htmlBuffer.writeln('  cursor: pointer;');
+    htmlBuffer.writeln('  user-select: none;');
+    htmlBuffer.writeln('}');
+    htmlBuffer.writeln('.nav:hover {');
+    htmlBuffer.writeln('  color: #C97B2D;');
+    htmlBuffer.writeln('}');
+    htmlBuffer.writeln('.nav-left {');
+    htmlBuffer.writeln('  position: absolute;');
+    htmlBuffer.writeln('  left: 0;');
+    htmlBuffer.writeln('  top: 50%;');
+    htmlBuffer.writeln('  transform: translateY(-50%);');
+    htmlBuffer.writeln('}');
+    htmlBuffer.writeln('.nav-right {');
+    htmlBuffer.writeln('  position: absolute;');
+    htmlBuffer.writeln('  right: 0;');
+    htmlBuffer.writeln('  top: 50%;');
+    htmlBuffer.writeln('  transform: translateY(-50%);');
+    htmlBuffer.writeln('}');
+    htmlBuffer.writeln('#caption {');
+    htmlBuffer.writeln('  text-align: center;');
+    htmlBuffer.writeln('  color: #ccc;');
+    htmlBuffer.writeln('  padding: 10px 0;');
+    htmlBuffer.writeln('  height: 150px;');
+    htmlBuffer.writeln('}');
+    htmlBuffer.writeln('    .horizontal-spacer {');
+    htmlBuffer.writeln('      border-bottom: 1px solid #C97B2D;');
+    htmlBuffer.writeln('      padding-top: 25px;');
+    htmlBuffer.writeln('    }');
+    htmlBuffer.writeln('    .horizontal-spacer h2 {');
+    htmlBuffer.writeln('      margin: 0;');
+    htmlBuffer.writeln('      padding: 0;');
+    htmlBuffer.writeln('    }');
+    htmlBuffer.writeln('</style>');
+    htmlBuffer.writeln('<script>');
+    htmlBuffer.writeln('let currentIndex = 0;');
+    htmlBuffer.writeln('const events = [');
+    for (int i = 0; i < _events.length; i++) {
+      final screenshot = _events[i].screenshot;
+      final type = _events[i].eventType?.label ?? "Event ${i + 1}";
+      if (screenshot != null) {
+        htmlBuffer.writeln('  {src: "file://${screenshot.file.path}", title: "$type"},');
+      }
+    }
+    htmlBuffer.writeln('];');
+    htmlBuffer.writeln('function openModal(index) {');
+    htmlBuffer.writeln('  currentIndex = index;');
+    htmlBuffer.writeln('  var modal = document.getElementById("myModal");');
+    htmlBuffer.writeln('  var modalImg = document.getElementById("img01");');
+    htmlBuffer.writeln('  var captionText = document.getElementById("captionText");');
+    htmlBuffer.writeln('  modal.style.display = "block";');
+    htmlBuffer.writeln('  modalImg.src = events[index].src;');
+    htmlBuffer.writeln('  captionText.innerHTML = events[index].title;');
+    htmlBuffer.writeln('}');
+    htmlBuffer.writeln('function closeModal() {');
+    htmlBuffer.writeln('  var modal = document.getElementById("myModal");');
+    htmlBuffer.writeln('  modal.style.display = "none";');
+    htmlBuffer.writeln('}');
+    htmlBuffer.writeln('function showPrev() {');
+    htmlBuffer.writeln('  currentIndex = (currentIndex + events.length - 1) % events.length;');
+    htmlBuffer.writeln('  updateModal();');
+    htmlBuffer.writeln('}');
+    htmlBuffer.writeln('function showNext() {');
+    htmlBuffer.writeln('  currentIndex = (currentIndex + 1) % events.length;');
+    htmlBuffer.writeln('  updateModal();');
+    htmlBuffer.writeln('}');
+    htmlBuffer.writeln('function updateModal() {');
+    htmlBuffer.writeln('  var modalImg = document.getElementById("img01");');
+    htmlBuffer.writeln('  var captionText = document.getElementById("captionText");');
+    htmlBuffer.writeln('  modalImg.src = events[currentIndex].src;');
+    htmlBuffer.writeln('  captionText.innerHTML = events[currentIndex].title;');
+    htmlBuffer.writeln('}');
+    htmlBuffer.writeln('window.onclick = function(event) {');
+    htmlBuffer.writeln('  var modal = document.getElementById("myModal");');
+    htmlBuffer.writeln('  if (event.target == modal) {');
+    htmlBuffer.writeln('    modal.style.display = "none";');
+    htmlBuffer.writeln('  }');
+    htmlBuffer.writeln('}');
+    htmlBuffer.writeln('window.addEventListener("keydown", function(event) {');
+    htmlBuffer.writeln('  if (event.key === "ArrowLeft") {');
+    htmlBuffer.writeln('    showPrev();');
+    htmlBuffer.writeln('  } else if (event.key === "ArrowRight") {');
+    htmlBuffer.writeln('    showNext();');
+    htmlBuffer.writeln('  } else if (event.key === "Escape") {');
+    htmlBuffer.writeln('    closeModal();');
+    htmlBuffer.writeln('  }');
+    htmlBuffer.writeln('});');
+    htmlBuffer.writeln('</script>');
+    htmlBuffer.writeln('</head>');
+    htmlBuffer.writeln('<body>');
+    htmlBuffer.writeln('<div class="header">');
+    htmlBuffer.writeln('<img src="https://user-images.githubusercontent.com/1096485/188243198-7abfc785-8ecd-40cb-bb28-5561610432a4.png" height="100px">');
+    htmlBuffer.writeln('<h1>Timeline</h1>');
+    htmlBuffer.writeln('</div>');
+
+    final nameWithHierarchy = testNameWithHierarchy();
+
+    htmlBuffer.writeln('<div class = "horizontal-spacer"><h2>General</h2></div>');
+    htmlBuffer.writeln('<p><strong>Name:</strong> $nameWithHierarchy</p>');
+
+    if(_events.isNotEmpty){
+      htmlBuffer.writeln('<div class = "horizontal-spacer"><h2>Events</h2></div>');
+    }
+    for (int i = 0; i < _events.length; i++) {
+      final event = _events[i];
+      final caller = event.initiator != null
+          ? 'at ${event.initiator!.member} ${event.initiator!.uri}:${event.initiator!.line}:${event.initiator!.column}'
+          : 'N/A';
+      final type = event.eventType != null ? event.eventType!.label : "Unknown event type";
+      htmlBuffer.writeln('<h2>#${i + 1}</h2>');
+      htmlBuffer.writeln('<div class="event">');
+      if (event.screenshot != null) {
+        final screenshotPath = event.screenshot!.file.path;
+        htmlBuffer.writeln('<img src="file://$screenshotPath" class="thumbnail" alt="Screenshot" onclick="openModal($i)">');
+      }
+      htmlBuffer.writeln('<div class="event-details">');
+      htmlBuffer.writeln('<p><strong>Name:</strong> ${event.name ?? "Unnamed Event"}</p>');
+      htmlBuffer.writeln('<p><strong>Event Type:</strong> $type</p>');
+      htmlBuffer.writeln('<p><strong>Timestamp:</strong> ${event.timestamp.toIso8601String()}</p>');
+      htmlBuffer.writeln('<p><strong>Caller:</strong> $caller</p>');
+      htmlBuffer.writeln('</div>');
+      htmlBuffer.writeln('</div>');
+    }
+
+    htmlBuffer.writeln('<div id="myModal" class="modal">');
+    htmlBuffer.writeln('<span class="close" onclick="closeModal()">&times;</span>');
+    htmlBuffer.writeln('<img class="modal-content" id="img01">');
+    htmlBuffer.writeln('<div id="caption">');
+    htmlBuffer.writeln('<a class="nav nav-left" onclick="showPrev()">&#10094;</a>');
+    htmlBuffer.writeln('<div id="captionText" class="text"></div>');
+    htmlBuffer.writeln('<a class="nav nav-right" onclick="showNext()">&#10095;</a>');
+    htmlBuffer.writeln('</div>');
+    htmlBuffer.writeln('</div>');
+    htmlBuffer.writeln('</body>');
+    htmlBuffer.writeln('</html>');
+
+    final spotTempDir = Directory.systemTemp.createTempSync();
+    if (!spotTempDir.existsSync()) {
+      spotTempDir.createSync();
+    }
+    // always append a unique id to avoid name collisions
+    final uniqueId = nanoid(length: 5);
+    final htmlFile = File(path.join(spotTempDir.path, 'timeline_events_$uniqueId.html'));
+    htmlFile.writeAsStringSync(htmlBuffer.toString());
+
+    //ignore: avoid_print
+    print('View time line here: file://${htmlFile.path}');
   }
 
   void _printEvent(TimelineEvent event) {
@@ -277,223 +506,4 @@ enum TimelineMode {
 
   /// The timeline is not recording.
   off,
-}
-
-
-
-
-/// Creates
-
-
-void createTimelineHtmlFile(List<TimelineEvent> events) {
-  final htmlBuffer = StringBuffer();
-
-  htmlBuffer.writeln('<html>');
-  htmlBuffer.writeln('<head>');
-  htmlBuffer.writeln('<title>Timeline Events</title>');
-  htmlBuffer.writeln('<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">');
-  htmlBuffer.writeln('<style>');
-  htmlBuffer.writeln('body {');
-  htmlBuffer.writeln('  box-sizing: border-box;');
-  htmlBuffer.writeln('  background-color: #F0FCFF;');
-  htmlBuffer.writeln('  color: #4a4a4a;');
-  htmlBuffer.writeln('  overflow-wrap: anywhere;');
-  htmlBuffer.writeln('  font-family: "Google Sans Text","Google Sans","Roboto",sans-serif;');
-  htmlBuffer.writeln('  -webkit-font-smoothing: antialiased;');
-  htmlBuffer.writeln('}');
-  htmlBuffer.writeln('.header { display: flex; align-items: center; padding: 10px; }');
-  htmlBuffer.writeln('h1 {');
-  htmlBuffer.writeln('  color: #4a4a4a;');
-  htmlBuffer.writeln('  overflow-wrap: anywhere;');
-  htmlBuffer.writeln('  -webkit-font-smoothing: antialiased;');
-  htmlBuffer.writeln('  font-variant-ligatures: none;');
-  htmlBuffer.writeln('  font-feature-settings: "liga" 0;');
-  htmlBuffer.writeln('  box-sizing: border-box;');
-  htmlBuffer.writeln('  font-weight: 400;');
-  htmlBuffer.writeln('  font-family: "Google Sans Display","Google Sans","Roboto",sans-serif;');
-  htmlBuffer.writeln('  margin: 0;');
-  htmlBuffer.writeln('  font-size: 36px;');
-  htmlBuffer.writeln('  padding-left: 10px;');
-  htmlBuffer.writeln('}');
-  htmlBuffer.writeln('.event {');
-  htmlBuffer.writeln('  display: flex;');
-  htmlBuffer.writeln('  border: 2px solid #557783;');
-  htmlBuffer.writeln('  margin: 10px;');
-  htmlBuffer.writeln('  padding: 10px;');
-  htmlBuffer.writeln('  background-color: #ffffff;');
-  htmlBuffer.writeln('}');
-  htmlBuffer.writeln('.event-details {');
-  htmlBuffer.writeln('  margin-left: 20px;');
-  htmlBuffer.writeln('}');
-  htmlBuffer.writeln('.thumbnail {');
-  htmlBuffer.writeln('  height: 150px;');
-  htmlBuffer.writeln('  cursor: pointer;');
-  htmlBuffer.writeln('  border: 1px solid #557783;');
-  htmlBuffer.writeln('  object-fit: contain;');
-  htmlBuffer.writeln('}');
-  htmlBuffer.writeln('.modal {');
-  htmlBuffer.writeln('  display: none;');
-  htmlBuffer.writeln('  position: fixed;');
-  htmlBuffer.writeln('  z-index: 1;');
-  htmlBuffer.writeln('  left: 0;');
-  htmlBuffer.writeln('  top: 0;');
-  htmlBuffer.writeln('  width: 100%;');
-  htmlBuffer.writeln('  height: 100%;');
-  htmlBuffer.writeln('  overflow: auto;');
-  htmlBuffer.writeln('  background-color: rgba(0,0,0,0.9);');
-  htmlBuffer.writeln('}');
-  htmlBuffer.writeln('.modal-content {');
-  htmlBuffer.writeln('  margin: auto;');
-  htmlBuffer.writeln('  display: block;');
-  htmlBuffer.writeln('  max-width: 80%;');
-  htmlBuffer.writeln('  height: auto;');
-  htmlBuffer.writeln('}');
-  htmlBuffer.writeln('.close {');
-  htmlBuffer.writeln('  position: absolute;');
-  htmlBuffer.writeln('  top: 15px;');
-  htmlBuffer.writeln('  right: 35px;');
-  htmlBuffer.writeln('  color: #f1f1f1;');
-  htmlBuffer.writeln('  font-size: 40px;');
-  htmlBuffer.writeln('  font-weight: bold;');
-  htmlBuffer.writeln('}');
-  htmlBuffer.writeln('.close:hover, .close:focus {');
-  htmlBuffer.writeln('  color: #C97B2D;');
-  htmlBuffer.writeln('  text-decoration: none;');
-  htmlBuffer.writeln('  cursor: pointer;');
-  htmlBuffer.writeln('}');
-  htmlBuffer.writeln('.nav {');
-  htmlBuffer.writeln('  padding: 10px;');
-  htmlBuffer.writeln('  color: white;');
-  htmlBuffer.writeln('  font-weight: bold;');
-  htmlBuffer.writeln('  font-size: 30px;');
-  htmlBuffer.writeln('  cursor: pointer;');
-  htmlBuffer.writeln('  user-select: none;');
-  htmlBuffer.writeln('}');
-  htmlBuffer.writeln('.nav:hover {');
-  htmlBuffer.writeln('  color: #C97B2D;');
-  htmlBuffer.writeln('}');
-  htmlBuffer.writeln('.nav-left {');
-  htmlBuffer.writeln('  position: absolute;');
-  htmlBuffer.writeln('  left: 0;');
-  htmlBuffer.writeln('  top: 50%;');
-  htmlBuffer.writeln('  transform: translateY(-50%);');
-  htmlBuffer.writeln('}');
-  htmlBuffer.writeln('.nav-right {');
-  htmlBuffer.writeln('  position: absolute;');
-  htmlBuffer.writeln('  right: 0;');
-  htmlBuffer.writeln('  top: 50%;');
-  htmlBuffer.writeln('  transform: translateY(-50%);');
-  htmlBuffer.writeln('}');
-  htmlBuffer.writeln('#caption {');
-  htmlBuffer.writeln('  text-align: center;');
-  htmlBuffer.writeln('  color: #ccc;');
-  htmlBuffer.writeln('  padding: 10px 0;');
-  htmlBuffer.writeln('  height: 150px;');
-  htmlBuffer.writeln('}');
-  htmlBuffer.writeln('</style>');
-  htmlBuffer.writeln('<script>');
-  htmlBuffer.writeln('let currentIndex = 0;');
-  htmlBuffer.writeln('const events = [');
-  for (int i = 0; i < events.length; i++) {
-    final screenshot = events[i].screenshot;
-    final type = events[i].eventType?.label ?? "Event ${i + 1}";
-    if (screenshot != null) {
-      htmlBuffer.writeln('  {src: "file://${screenshot.file.path}", title: "$type"},');
-    }
-  }
-  htmlBuffer.writeln('];');
-  htmlBuffer.writeln('function openModal(index) {');
-  htmlBuffer.writeln('  currentIndex = index;');
-  htmlBuffer.writeln('  var modal = document.getElementById("myModal");');
-  htmlBuffer.writeln('  var modalImg = document.getElementById("img01");');
-  htmlBuffer.writeln('  var captionText = document.getElementById("captionText");');
-  htmlBuffer.writeln('  modal.style.display = "block";');
-  htmlBuffer.writeln('  modalImg.src = events[index].src;');
-  htmlBuffer.writeln('  captionText.innerHTML = events[index].title;');
-  htmlBuffer.writeln('}');
-  htmlBuffer.writeln('function closeModal() {');
-  htmlBuffer.writeln('  var modal = document.getElementById("myModal");');
-  htmlBuffer.writeln('  modal.style.display = "none";');
-  htmlBuffer.writeln('}');
-  htmlBuffer.writeln('function showPrev() {');
-  htmlBuffer.writeln('  currentIndex = (currentIndex + events.length - 1) % events.length;');
-  htmlBuffer.writeln('  updateModal();');
-  htmlBuffer.writeln('}');
-  htmlBuffer.writeln('function showNext() {');
-  htmlBuffer.writeln('  currentIndex = (currentIndex + 1) % events.length;');
-  htmlBuffer.writeln('  updateModal();');
-  htmlBuffer.writeln('}');
-  htmlBuffer.writeln('function updateModal() {');
-  htmlBuffer.writeln('  var modalImg = document.getElementById("img01");');
-  htmlBuffer.writeln('  var captionText = document.getElementById("captionText");');
-  htmlBuffer.writeln('  modalImg.src = events[currentIndex].src;');
-  htmlBuffer.writeln('  captionText.innerHTML = events[currentIndex].title;');
-  htmlBuffer.writeln('}');
-  htmlBuffer.writeln('window.onclick = function(event) {');
-  htmlBuffer.writeln('  var modal = document.getElementById("myModal");');
-  htmlBuffer.writeln('  if (event.target == modal) {');
-  htmlBuffer.writeln('    modal.style.display = "none";');
-  htmlBuffer.writeln('  }');
-  htmlBuffer.writeln('}');
-  htmlBuffer.writeln('window.addEventListener("keydown", function(event) {');
-  htmlBuffer.writeln('  if (event.key === "ArrowLeft") {');
-  htmlBuffer.writeln('    showPrev();');
-  htmlBuffer.writeln('  } else if (event.key === "ArrowRight") {');
-  htmlBuffer.writeln('    showNext();');
-  htmlBuffer.writeln('  } else if (event.key === "Escape") {');
-  htmlBuffer.writeln('    closeModal();');
-  htmlBuffer.writeln('  }');
-  htmlBuffer.writeln('});');
-  htmlBuffer.writeln('</script>');
-  htmlBuffer.writeln('</head>');
-  htmlBuffer.writeln('<body>');
-  htmlBuffer.writeln('<div class="header">');
-  htmlBuffer.writeln('<img src="https://user-images.githubusercontent.com/1096485/188243198-7abfc785-8ecd-40cb-bb28-5561610432a4.png" height="100px">');
-  htmlBuffer.writeln('<h1>Timeline Events</h1>');
-  htmlBuffer.writeln('</div>');
-
-  for (int i = 0; i < events.length; i++) {
-    final event = events[i];
-    final caller = event.initiator != null
-        ? 'at ${event.initiator!.member} ${event.initiator!.uri}:${event.initiator!.line}:${event.initiator!.column}'
-        : 'N/A';
-    final type = event.eventType != null ? event.eventType!.label : "Unknown event type";
-    htmlBuffer.writeln('<h2>#${i + 1}</h2>');
-    htmlBuffer.writeln('<div class="event">');
-    if (event.screenshot != null) {
-      final screenshotPath = event.screenshot!.file.path;
-      htmlBuffer.writeln('<img src="file://$screenshotPath" class="thumbnail" alt="Screenshot" onclick="openModal($i)">');
-    }
-    htmlBuffer.writeln('<div class="event-details">');
-    htmlBuffer.writeln('<p><strong>Name:</strong> ${event.name ?? "Unnamed Event"}</p>');
-    htmlBuffer.writeln('<p><strong>Event Type:</strong> $type</p>');
-    htmlBuffer.writeln('<p><strong>Timestamp:</strong> ${event.timestamp.toIso8601String()}</p>');
-    htmlBuffer.writeln('<p><strong>Caller:</strong> $caller</p>');
-    htmlBuffer.writeln('</div>');
-    htmlBuffer.writeln('</div>');
-  }
-
-  htmlBuffer.writeln('<div id="myModal" class="modal">');
-  htmlBuffer.writeln('<span class="close" onclick="closeModal()">&times;</span>');
-  htmlBuffer.writeln('<img class="modal-content" id="img01">');
-  htmlBuffer.writeln('<div id="caption">');
-  htmlBuffer.writeln('<a class="nav nav-left" onclick="showPrev()">&#10094;</a>');
-  htmlBuffer.writeln('<div id="captionText" class="text"></div>');
-  htmlBuffer.writeln('<a class="nav nav-right" onclick="showNext()">&#10095;</a>');
-  htmlBuffer.writeln('</div>');
-  htmlBuffer.writeln('</div>');
-  htmlBuffer.writeln('</body>');
-  htmlBuffer.writeln('</html>');
-
-  final spotTempDir = Directory.systemTemp.createTempSync();
-  if (!spotTempDir.existsSync()) {
-  spotTempDir.createSync();
-}
-  // always append a unique id to avoid name collisions
-  final uniqueId = nanoid(length: 5);
-  final htmlFile = File(path.join(spotTempDir.path, 'timeline_events_$uniqueId.html'));
-  htmlFile.writeAsStringSync(htmlBuffer.toString());
-
-  //ignore: avoid_print
-  print('View time line here: file://${htmlFile.path}');
 }
