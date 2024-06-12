@@ -182,7 +182,6 @@ void main() async {
 
       final stdout = stdoutBuffer.toString();
       final timeline = stdout.split('\n');
-
       expect(timeline.first, 'Timeline');
       expect(
         timeline[1],

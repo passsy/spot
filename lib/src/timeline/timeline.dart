@@ -2,6 +2,7 @@
 import 'dart:io';
 
 import 'package:nanoid2/nanoid2.dart';
+import 'package:path/path.dart' as path;
 import 'package:spot/src/screenshot/screenshot.dart';
 import 'package:spot/src/spot/tree_snapshot.dart';
 //ignore: implementation_imports
@@ -9,7 +10,6 @@ import 'package:test_api/src/backend/invoker.dart';
 //ignore: implementation_imports
 import 'package:test_api/src/backend/live_test.dart';
 
-import 'package:path/path.dart' as path;
 
 final Map<LiveTest, Timeline> _timelines = {};
 
@@ -421,20 +421,14 @@ void createTimelineHtmlFile(List<TimelineEvent> events) {
   htmlBuffer.writeln('</html>');
 
   final spotTempDir = Directory.systemTemp.createTempSync();
-  final htmlFile = File(path.join(spotTempDir.path, 'timeline_events.html'));
+  if (!spotTempDir.existsSync()) {
+  spotTempDir.createSync();
+}
+  // always append a unique id to avoid name collisions
+  final uniqueId = nanoid(length: 5);
+  final htmlFile = File(path.join(spotTempDir.path, 'timeline_events_$uniqueId.html'));
   htmlFile.writeAsStringSync(htmlBuffer.toString());
 
-  // Printing the file URL to console
+  //ignore: avoid_print
   print('View time line here: file://${htmlFile.path}');
 }
-// htmlBuffer.writeln('</body>');
-// htmlBuffer.writeln('</html>');
-//
-// final spotTempDir = Directory.systemTemp.createTempSync();
-// if (!spotTempDir.existsSync()) {
-// spotTempDir.createSync();
-// }
-// // always append a unique id to avoid name collisions
-// final uniqueId = nanoid(length: 5);
-//
-// final htmlFile = File(path.join(spotTempDir.path, 'timeline_events_$uniqueId.html'));
