@@ -1,3 +1,8 @@
+
+// language=javascript
+/// The script used in the HTML file that is generated for the timeline.
+const String timelineJS = r'''
+
 let currentIndex = 0;
 const events = [
   {{events}}
@@ -7,9 +12,7 @@ const events = [
  * Copies the test command to the clipboard and shows a SnackBar with the result.
  */
 function copyTestCommandToClipboard() {
-    var testName = "Test Name";  // Replace with appropriate value
-    console.log("Re-running test: " + testName);
-    var command = `flutter test --plain-name="\${testName}"`;
+    var command = `flutter test --plain-name="{testName}"`;
     navigator.clipboard.writeText(command).then(function() {
         showSnackbar("Test command copied to clipboard");
     }, function(err) {
@@ -102,3 +105,4 @@ window.addEventListener("keydown", function(event) {
         closeModal();
     }
 });
+''';

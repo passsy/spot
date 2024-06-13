@@ -5,6 +5,8 @@ import 'package:nanoid2/nanoid2.dart';
 import 'package:path/path.dart' as path;
 import 'package:spot/src/screenshot/screenshot.dart';
 import 'package:spot/src/spot/tree_snapshot.dart';
+import 'package:spot/src/timeline/script.js.dart';
+import 'package:spot/src/timeline/styles.css.dart';
 //ignore: implementation_imports
 import 'package:test_api/src/backend/invoker.dart';
 //ignore: implementation_imports
@@ -225,20 +227,17 @@ class Timeline {
     htmlBuffer.writeln('<title>Timeline Events</title>');
     htmlBuffer.writeln('<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">');
 
-    final timelinePath = '${Directory.current.path}/lib/src/timeline/';
-
     final String eventsForScript = _events.where((event) => event.screenshot != null).map((event) {
       return '{src: "file://${event.screenshot!.file.path}", title: "${event.eventType?.label ?? "Event ${_events.indexOf(event) + 1}"}"}';
     }).join(',\n  ');
 
-    final script = File('$timelinePath/script.js').readAsStringSync().replaceAll('{{events}}', eventsForScript);
     htmlBuffer.writeln('<script>');
+    final script = timelineJS.replaceAll('{{events}}', eventsForScript).replaceAll('{testName}', Invoker.current!.liveTest.test.name);
     htmlBuffer.write(script);
     htmlBuffer.writeln('</script>');
 
-    final css = File('$timelinePath/styles.css').readAsLinesSync();
     htmlBuffer.writeln('<style>');
-    htmlBuffer.writeAll(css);
+    htmlBuffer.write(timelineCSS);
     htmlBuffer.writeln('</style>');
 
     htmlBuffer.writeln('</head>');
@@ -291,10 +290,10 @@ class Timeline {
 
     htmlBuffer.writeln('<div id="myModal" class="modal">');
     htmlBuffer.writeln('<span class="close" onclick="closeModal()">&times;</span>');
-    htmlBuffer.writeln('<img class="modal-content" id="img01">');
+    htmlBuffer.writeln('<img class="modal-content" id="img01"  alt="Screenshot of the Event"/>');
     htmlBuffer.writeln('<div id="caption">');
     htmlBuffer.writeln('<a class="nav nav-left" onclick="showPrev()">&#10094;</a>');
-    htmlBuffer.writeln('<div id="captionText" class="text"></div>');
+    htmlBuffer.writeln('<div id="captionText"></div>');
     htmlBuffer.writeln('<a class="nav nav-right" onclick="showNext()">&#10095;</a>');
     htmlBuffer.writeln('</div>');
     htmlBuffer.writeln('</div>');
