@@ -181,7 +181,7 @@ void main() async {
       tempDir.deleteSync(recursive: true);
 
       final stdout = stdoutBuffer.toString();
-      final timeline = stdout.split('\n');
+      final timeline = stdout.split('\n')..removeWhere((line) => line.isEmpty);
       expect(timeline.first, 'Timeline');
       expect(
         timeline[1],
@@ -210,6 +210,10 @@ void main() async {
       expect(
         timeline[6],
         '========================================================',
+      );
+      expect(
+        timeline.last,
+        startsWith('View time line here:'),
       );
     });
   });
