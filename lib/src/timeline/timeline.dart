@@ -222,6 +222,7 @@ class Timeline {
     final nameWithHierarchy = testNameWithHierarchy();
     const style = '''
 <style>
+
 body {
   box-sizing: border-box;
   background-color: #F0FCFF;
@@ -230,11 +231,13 @@ body {
   font-family: "Google Sans Text","Google Sans","Roboto",sans-serif;
   -webkit-font-smoothing: antialiased;
 }
+
 .header { 
   display: flex; 
   align-items: center; 
   padding: 10px; 
 }
+
 h1 {
   color: #4a4a4a;
   overflow-wrap: anywhere;
@@ -248,6 +251,7 @@ h1 {
   font-size: 36px;
   padding-left: 10px;
 }
+
 .event {
   display: flex;
   border: 2px solid #557783;
@@ -255,15 +259,18 @@ h1 {
   padding: 10px;
   background-color: #ffffff;
 }
+
 .event-details {
   margin-left: 20px;
 }
+
 .thumbnail {
   height: 150px;
   cursor: pointer;
   border: 1px solid #557783;
   object-fit: contain;
 }
+
 .modal {
   display: none;
   position: fixed;
@@ -275,12 +282,14 @@ h1 {
   overflow: auto;
   background-color: rgba(0,0,0,0.9);
 }
+
 .modal-content {
   margin: auto;
   display: block;
   max-width: 80%;
   height: auto;
 }
+
 .close {
   position: absolute;
   top: 15px;
@@ -289,11 +298,13 @@ h1 {
   font-size: 40px;
   font-weight: bold;
 }
+
 .close:hover, .close:focus {
   color: #C97B2D;
   text-decoration: none;
   cursor: pointer;
 }
+
 .nav {
   padding: 10px;
   color: white;
@@ -302,34 +313,98 @@ h1 {
   cursor: pointer;
   user-select: none;
 }
+
 .nav:hover {
   color: #C97B2D;
 }
+
 .nav-left {
   position: absolute;
   left: 0;
   top: 50%;
   transform: translateY(-50%);
 }
+
 .nav-right {
   position: absolute;
   right: 0;
   top: 50%;
   transform: translateY(-50%);
 }
+
 #caption {
   text-align: center;
   color: #ccc;
   padding: 10px 0;
   height: 150px;
 }
+
 .horizontal-spacer {
   border-bottom: 1px solid #C97B2D;
   padding-top: 25px;
 }
+
 .horizontal-spacer h2 {
   margin: 0;
   padding: 0;
+}
+
+.button-spot {
+    background-color: #557783; 
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px; 
+    font-family: 'Arial', sans-serif;
+    font-size: 16px; 
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.button-spot:hover {
+    background-color: #C97B2D; 
+}
+
+.snackbar {
+    display: none;
+    min-width: 250px;
+    margin-left: -125px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 2px;
+    padding: 16px;
+    position: fixed;
+    z-index: 1;
+    left: 50%;
+    bottom: 30px;
+    font-size: 17px;
+}
+
+.snackbar.show {
+    display: block;
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+@-webkit-keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+}
+
+@keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
 }
 </style>
 ''';
@@ -344,47 +419,104 @@ const events = [
       return '{src: "file://${event.screenshot!.file.path}", title: "${event.eventType?.label ?? "Event ${_events.indexOf(event) + 1}"}"},';
     },).join('\n  ')}
 ];
+/**
+ * Copies the test command to the clipboard and shows a SnackBar with the result.
+ */
+function copyTestCommandToClipboard() {
+    var testName = "${Invoker.current?.liveTest.test.name}";
+    console.log("Re-running test: " + testName);
+    var command = `flutter test --plain-name="\${testName}"`;
+    navigator.clipboard.writeText(command).then(function() {
+        showSnackbar("Test command copied to clipboard");
+    }, function(err) {
+        showSnackbar("Failed to copy test command");
+    });
+}
+
+/**
+ * Displays a SnackBar with a specified message.
+ * @param {string} message - The message to display in the SnackBar.
+ */
+function showSnackbar(message) {
+    var snackbar = document.getElementById("snackbar");
+    snackbar.textContent = message;
+    snackbar.className = "snackbar show";
+    setTimeout(function() {
+        snackbar.className = snackbar.className.replace("show", "");
+    }, 3000);
+}
+
+/**
+ * Opens a modal to display an image and its caption.
+ * @param {number} index - The index of the image to display.
+ */
 function openModal(index) {
-  currentIndex = index;
-  var modal = document.getElementById("myModal");
-  var modalImg = document.getElementById("img01");
-  var captionText = document.getElementById("captionText");
-  modal.style.display = "block";
-  modalImg.src = events[index].src;
-  captionText.innerHTML = events[index].title;
+    currentIndex = index;
+    var modal = document.getElementById("myModal");
+    var modalImg = document.getElementById("img01");
+    var captionText = document.getElementById("captionText");
+    modal.style.display = "block";
+    modalImg.src = events[index].src;
+    captionText.innerHTML = events[index].title;
 }
+
+/**
+ * Closes the modal.
+ */
 function closeModal() {
-  var modal = document.getElementById("myModal");
-  modal.style.display = "none";
-}
-function showPrev() {
-  currentIndex = (currentIndex + events.length - 1) % events.length;
-  updateModal();
-}
-function showNext() {
-  currentIndex = (currentIndex + 1) % events.length;
-  updateModal();
-}
-function updateModal() {
-  var modalImg = document.getElementById("img01");
-  var captionText = document.getElementById("captionText");
-  modalImg.src = events[currentIndex].src;
-  captionText.innerHTML = events[currentIndex].title;
-}
-window.onclick = function(event) {
-  var modal = document.getElementById("myModal");
-  if (event.target == modal) {
+    var modal = document.getElementById("myModal");
     modal.style.display = "none";
-  }
 }
+
+/**
+ * Shows the previous image in the modal.
+ */
+function showPrev() {
+    currentIndex = (currentIndex + events.length - 1) % events.length;
+    updateModal();
+}
+
+/**
+ * Shows the next image in the modal.
+ */
+function showNext() {
+    currentIndex = (currentIndex + 1) % events.length;
+    updateModal();
+}
+
+/**
+ * Updates the modal content to display the current image and caption.
+ */
+function updateModal() {
+    var modalImg = document.getElementById("img01");
+    var captionText = document.getElementById("captionText");
+    modalImg.src = events[currentIndex].src;
+    captionText.innerHTML = events[currentIndex].title;
+}
+
+/**
+ * Closes the modal when clicking outside of it.
+ * @param {Event} event - The event triggered by the click.
+ */
+window.onclick = function(event) {
+    var modal = document.getElementById("myModal");
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+
+/**
+ * Adds keyboard navigation for the modal.
+ * @param {Event} event - The event triggered by the key press.
+ */
 window.addEventListener("keydown", function(event) {
-  if (event.key === "ArrowLeft") {
-    showPrev();
-  } else if (event.key === "ArrowRight") {
-    showNext();
-  } else if (event.key === "Escape") {
-    closeModal();
-  }
+    if (event.key === "ArrowLeft") {
+        showPrev();
+    } else if (event.key === "ArrowRight") {
+        showNext();
+    } else if (event.key === "Escape") {
+        closeModal();
+    }
 });
 </script>
 ''';
@@ -416,7 +548,6 @@ window.addEventListener("keydown", function(event) {
       }
       return eventBuffer.toString();
     }();
-
     htmlBuffer.writeln('<html>');
     htmlBuffer.writeln('<head>');
     htmlBuffer.writeln('<title>Timeline Events</title>');
@@ -430,9 +561,12 @@ window.addEventListener("keydown", function(event) {
     htmlBuffer.writeln('<h1>Timeline</h1>');
     htmlBuffer.writeln('</div>');
 
-    htmlBuffer.writeln('<div class = "horizontal-spacer"><h2>General</h2></div>');
+    htmlBuffer.writeln('<div class = "horizontal-spacer"><h2>Info</h2></div>');
 
-    htmlBuffer.writeln('<p><strong>Name:</strong> $nameWithHierarchy</p>');
+    htmlBuffer.writeln('<p><strong>Test:</strong> $nameWithHierarchy</p>');
+    htmlBuffer.writeln('<button class="button-spot" onclick="copyTestCommandToClipboard()">Copy test command</button>');
+    htmlBuffer.writeln('<div id="snackbar"></div>');
+
     if(_events.isNotEmpty){
       htmlBuffer.writeln('<div class = "horizontal-spacer"><h2>Events</h2></div>');
     }
