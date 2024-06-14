@@ -106,10 +106,13 @@ h1 {
   height: 100%;
   overflow: auto;
   background-color: var(--modal-background-color);
+  justify-content: center; 
+  align-items: center;
 }
 
 .modal img {
-max-width: 800px;
+  max-width: 100%;
+  height: auto;
 }
 
 .modal span {
@@ -118,11 +121,13 @@ max-width: 800px;
 
 .modal-content {
   margin: auto;
-  display: block;
+  display: flex;
+  flex-direction: column;
   max-width: 80%;
   height: auto;
   background-color: transparent;
   border: none;
+  position: relative;
 }
 
 .close {
@@ -151,6 +156,7 @@ max-width: 800px;
   background-color: var(--nav-background-color);
   transform: translateY(-50%);
   padding: 10px;
+  margin: 0 5px; 
 }
 
 .nav:hover {
@@ -158,11 +164,11 @@ max-width: 800px;
 }
 
 .nav-left {
-  left: 0;
+  left: -50px;
 }
 
 .nav-right {
-  right: 0;
+  right: -50px;
 }
 
 #caption {

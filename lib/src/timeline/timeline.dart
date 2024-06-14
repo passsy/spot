@@ -260,17 +260,17 @@ class Timeline {
     htmlBuffer.writeln('<div id="myModal" class="modal">');
     htmlBuffer
         .writeln('<span class="close" onclick="closeModal()">&times;</span>');
-    htmlBuffer.writeln(
-      '<img class="modal-content" id="img01"  alt="Screenshot of the Event"/>',
-    );
+    htmlBuffer.writeln('<div class="modal-content">');
+    htmlBuffer.writeln('<img id="img01" alt="Screenshot of the Event"/>');
     htmlBuffer.writeln('<div id="caption">');
     htmlBuffer
         .writeln('<a class="nav nav-left" onclick="showPrev()">&#10094;</a>');
     htmlBuffer.writeln('<div id="captionText"></div>');
     htmlBuffer
         .writeln('<a class="nav nav-right" onclick="showNext()">&#10095;</a>');
-    htmlBuffer.writeln('</div>');
-    htmlBuffer.writeln('</div>');
+    htmlBuffer.writeln('</div>'); // close caption
+    htmlBuffer.writeln('</div>'); // close modal-content
+    htmlBuffer.writeln('</div>'); // close modal
     htmlBuffer.writeln('</body>');
     htmlBuffer.writeln('</html>');
 

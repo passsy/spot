@@ -171,7 +171,6 @@ Future<Screenshot> _createScreenshot({
   String callerFileName() {
     final file = frame?.uri.pathSegments.last.replaceFirst('.dart', '');
     final line = frame?.line;
-    // escape /
     if (file != null && line != null) {
       return '$file:$line';
     }
@@ -184,6 +183,7 @@ Future<Screenshot> _createScreenshot({
   final String screenshotFileName = () {
     final String n;
     if (name != null) {
+      // escape /
       n = Uri.encodeQueryComponent(name);
     } else {
       n = callerFileName();
