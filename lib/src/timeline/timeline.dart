@@ -117,9 +117,14 @@ Timeline currentTimeline() {
   final newTimeline = Timeline();
 
   Invoker.current!.addTearDown(() {
-    if (newTimeline.mode == TimelineMode.record &&
-        !test.state.result.isPassing) {
-      newTimeline.printToConsole();
+    if (!test.state.result.isPassing) {
+      if (newTimeline.mode == TimelineMode.record ||
+          newTimeline.mode == TimelineMode.live) {
+        newTimeline.printToConsole();
+        newTimeline.printHTML();
+      }
+    } else if (newTimeline.mode == TimelineMode.live) {
+      newTimeline.printHTML();
     }
   });
   _timelines[test] = newTimeline;
@@ -174,17 +179,17 @@ class Timeline {
     }
   }
 
-  /// Prints the timeline to the console.
+  /// Prints the complete timeline to the console.
   void printToConsole() {
     // ignore: avoid_print
     print('Timeline');
     for (final event in _events) {
       _printEvent(event);
     }
-    _printHTML();
   }
 
-  void _printHTML() {
+  /// Prints the timeline as an HTML file.
+  void printHTML() {
     final spotTempDir = Directory.systemTemp.createTempSync();
     final String name = (Invoker.current?.liveTest.test.name ?? '')
         .trim()
