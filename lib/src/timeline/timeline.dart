@@ -117,13 +117,13 @@ Timeline currentTimeline() {
   final newTimeline = Timeline();
 
   Invoker.current!.addTearDown(() {
-    if (!test.state.result.isPassing) {
-      if (newTimeline.mode == TimelineMode.record ||
-          newTimeline.mode == TimelineMode.live) {
-        newTimeline.printToConsole();
-        newTimeline.printHTML();
-      }
+    if (!test.state.result.isPassing &&
+        newTimeline.mode == TimelineMode.record) {
+      newTimeline.printToConsole();
+      newTimeline.printHTML();
     } else if (newTimeline.mode == TimelineMode.live) {
+      // printToConsole() here would lead to duplicate output since
+      // the timeline is already being printed live
       newTimeline.printHTML();
     }
   });
