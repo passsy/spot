@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
@@ -98,7 +99,7 @@ void main() {
     expect(output, contains('⏸︎ - Timeline recording is off'));
   });
 
-  group('onError timeline', () {
+  group('Print on teardown', () {
     testWidgets('OnError timeline - without error', (tester) async {
       final output = await _captureConsoleOutput(() async {
         recordOnErrorTimeline();
@@ -176,7 +177,7 @@ void main() async {
         }
       }
 
-      await testProcess.shouldExit();
+      await testProcess.shouldExit(1);
       tempDir.deleteSync(recursive: true);
 
       final stdout = stdoutBuffer.toString();
@@ -220,6 +221,101 @@ void main() async {
       );
       final htmlName = htmlLine.split('/').last;
       expect(htmlName, 'timeline_onerror_timeline_with_error.html');
+    });
+    test('Live timeline - without error, prints HTML', () async {
+      const importPart = '''
+import 'package:flutter_test/flutter_test.dart';
+import 'package:spot/spot.dart';
+import 'package:spot/src/timeline/timeline.dart';
+''';
+
+      final widgetPart =
+          File('test/timeline/timeline_test_widget.dart').readAsStringSync();
+
+      const testPart = '''
+void main() async {
+  final addButtonSelector = spotIcon(Icons.add);
+  final subtractButtonSelector = spotIcon(Icons.remove);
+  testWidgets('Live timeline without error prints html', (WidgetTester tester) async {
+    recordLiveTimeline();
+    await tester.pumpWidget(const TimelineTestWidget());
+      addButtonSelector.existsOnce();
+      spotText('Counter: 3').existsOnce();
+      await act.tap(addButtonSelector);
+      spotText('Counter: 4').existsOnce();
+      await act.tap(subtractButtonSelector);
+      spotText('Counter: 3').existsOnce();
+  });
+}
+''';
+
+      final testAsString = [importPart, widgetPart, testPart].join('\n');
+
+      final tempDir = Directory.systemTemp.createTempSync();
+      final tempTestFile = File('${tempDir.path}/temp_test.dart');
+      await tempTestFile.writeAsString(testAsString);
+
+      final testProcess =
+          await TestProcess.start('flutter', ['test', tempTestFile.path]);
+
+      final stdoutBuffer = StringBuffer();
+
+      bool write = false;
+      await for (final line in testProcess.stdoutStream()) {
+        if (line.isEmpty) continue;
+
+        if (!write) {
+          if (line == _header) {
+            write = true;
+          }
+        }
+
+        if (write) {
+          stdoutBuffer.writeln(line);
+        }
+      }
+
+      // Error does not happen
+      await testProcess.shouldExit(0);
+      tempDir.deleteSync(recursive: true);
+
+      final stdout = stdoutBuffer.toString();
+      final timeline = stdout.split('\n');
+
+      // Does not start with 'Timeline', this only happens on error
+      expect(timeline.first, _header);
+      expect(
+        timeline.second,
+        'Event: Tap Icon Widget with icon: "IconData(U+0E047)"',
+      );
+      expect(
+        timeline[2].startsWith('Caller: at main.<fn> file:///'),
+        isTrue,
+      );
+      expect(
+        timeline[3].startsWith(
+          'Screenshot: file:///',
+        ),
+        isTrue,
+      );
+      expect(
+        timeline[4].startsWith(
+          'Timestamp:',
+        ),
+        isTrue,
+      );
+      expect(
+        timeline[5],
+        _separator,
+      );
+      final htmlLine = timeline
+          .firstWhere((line) => line.startsWith('View time line here:'));
+      expect(
+        htmlLine.endsWith(
+          'timeline_live_timeline_without_error_prints_html.html',
+        ),
+        isTrue,
+      );
     });
   });
 }
