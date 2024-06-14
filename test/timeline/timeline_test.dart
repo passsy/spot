@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:test_process/test_process.dart';
-
 import 'timeline_test_widget.dart';
 
 final _addButtonSelector = spotIcon(Icons.add);
@@ -151,47 +150,37 @@ void main() async {
   });
 }
 ''';
+
       final testAsString = [importPart, widgetPart, testPart].join('\n');
-      String result = "";
+
       final tempDir = Directory.systemTemp.createTempSync();
-      try {
-        final tempTestFile = File('${tempDir.path}/temp_test.dart');
-        await tempTestFile.writeAsString(testAsString);
+      final tempTestFile = File('${tempDir.path}/temp_test.dart');
+      await tempTestFile.writeAsString(testAsString);
 
-        final testProcess = await TestProcess.start(
-          'flutter',
-          ['test', tempTestFile.path],
-        );
+      final testProcess =
+          await TestProcess.start('flutter', ['test', tempTestFile.path]);
 
-        final stdoutBuffer = StringBuffer();
+      final stdoutBuffer = StringBuffer();
 
-        bool write = false;
-        await for (final line in testProcess.stdoutStream()) {
-          if (line == 'Timeline') {
-            write = true;
-          }
-          if (line.startsWith('To run this test again:')) {
-            write = false;
-          }
-          if (write) {
-            stdoutBuffer.writeln(line);
-          }
+      bool write = false;
+      await for (final line in testProcess.stdoutStream()) {
+        if (line == 'Timeline') {
+          write = true;
         }
-
-        await testProcess.shouldExit(1);
-        result = stdoutBuffer.toString();
-      } catch (_, __) {}
-
-      if (tempDir.existsSync()) {
-        tempDir.deleteSync(recursive: true);
+        if (line.startsWith('To run this test again:')) {
+          write = false;
+        }
+        if (write) {
+          stdoutBuffer.writeln(line);
+        }
       }
 
-      if (result.isEmpty) {
-        throw TestFailure('No output from test process');
-      }
+      await testProcess.shouldExit();
 
-      final timeline = result.split('\n')..removeWhere((line) => line.isEmpty);
+      tempDir.deleteSync(recursive: true);
 
+      final stdout = stdoutBuffer.toString();
+      final timeline = stdout.split('\n')..removeWhere((line) => line.isEmpty);
       expect(timeline.first, 'Timeline');
       expect(
         timeline[1],
@@ -221,6 +210,8 @@ void main() async {
         timeline[6],
         '========================================================',
       );
+      // ignore: avoid_print
+      print('timeline: $timeline');
     });
   });
 }
@@ -268,4 +259,11 @@ Future<String> _captureConsoleOutput(
   });
 
   return buffer.toString();
+}
+
+String _fileUrlToPath(String fileUrl) {
+  if (fileUrl.startsWith('file:///')) {
+    return Uri.decodeFull(fileUrl.substring(7));
+  }
+  return fileUrl;
 }
