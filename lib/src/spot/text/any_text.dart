@@ -1,4 +1,4 @@
-import 'package:collection/collection.dart';
+import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:spot/spot.dart';
@@ -203,7 +203,7 @@ class AnyText extends LeafRenderObjectWidget {
     textStyle?.debugFillProperties(properties, prefix: 'font_');
 
     // set default value for font_size
-    final textSize = properties.properties.firstWhereOrNull((it) {
+    final textSize = properties.properties.firstOrNullWhere((it) {
       return it.name == 'font_size';
     }) as DoubleProperty?;
     if (textSize != null) {
