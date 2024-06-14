@@ -231,7 +231,7 @@ class Timeline {
     htmlBuffer.writeln('<head>');
     htmlBuffer.writeln('<title>Timeline Events</title>');
     htmlBuffer.writeln(
-        '<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">');
+        '<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">',);
 
     final String eventsForScript =
         _events.where((event) => event.screenshot != null).map((event) {
@@ -253,7 +253,7 @@ class Timeline {
     htmlBuffer.writeln('<body>');
     htmlBuffer.writeln('<div class="header">');
     htmlBuffer.writeln(
-        '<img src="https://user-images.githubusercontent.com/1096485/188243198-7abfc785-8ecd-40cb-bb28-5561610432a4.png" height="100px">');
+        '<img src="https://user-images.githubusercontent.com/1096485/188243198-7abfc785-8ecd-40cb-bb28-5561610432a4.png" height="100px">',);
     htmlBuffer.writeln('<h1>Timeline</h1>');
     htmlBuffer.writeln('</div>');
 
@@ -261,7 +261,7 @@ class Timeline {
 
     htmlBuffer.writeln('<p><strong>Test:</strong> $nameWithHierarchy</p>');
     htmlBuffer.writeln(
-        '<button class="button-spot" onclick="copyTestCommandToClipboard()">Copy test command</button>');
+        '<button class="button-spot" onclick="copyTestCommandToClipboard()">Copy test command</button>',);
     htmlBuffer.writeln('<div id="snackbar"></div>');
 
     if (_events.isNotEmpty) {
@@ -308,7 +308,7 @@ class Timeline {
     htmlBuffer
         .writeln('<span class="close" onclick="closeModal()">&times;</span>');
     htmlBuffer.writeln(
-        '<img class="modal-content" id="img01"  alt="Screenshot of the Event"/>');
+        '<img class="modal-content" id="img01"  alt="Screenshot of the Event"/>',);
     htmlBuffer.writeln('<div id="caption">');
     htmlBuffer
         .writeln('<a class="nav nav-left" onclick="showPrev()">&#10094;</a>');
