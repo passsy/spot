@@ -13,63 +13,6 @@ import 'package:test_api/src/backend/live_test.dart';
 
 final Map<LiveTest, Timeline> _timelines = {};
 
-/// Returns the test name including the group hierarchy.
-String testNameWithHierarchy() {
-  final test = Invoker.current?.liveTest;
-  if (test == null) {
-    return 'No test found';
-  }
-
-  // Group names are concatenated with the name of the previous group
-  final rawGroupNames = Invoker.current?.liveTest.groups
-          .map((group) {
-            if (group.name.isEmpty) {
-              return null;
-            }
-            return group.name;
-          })
-          .whereNotNull()
-          .toList() ??
-      [];
-
-  List<String> removeRedundantParts(List<String> inputList) {
-    if (inputList.length < 2) {
-      return inputList;
-    }
-
-    final List<String> outputList = [];
-    for (int i = 0; i < inputList.length - 1; i++) {
-      outputList.add(inputList[i]);
-    }
-
-    String lastElement = inputList.last;
-    final String previousElement = inputList[inputList.length - 2];
-
-    // Remove the part of the last element that is included in the previous one
-    if (lastElement.startsWith(previousElement)) {
-      lastElement = lastElement.substring(previousElement.length).trim();
-    }
-
-    if (lastElement.isNotEmpty) {
-      outputList.add(lastElement);
-    }
-
-    return outputList;
-  }
-
-  final cleanedGroups = removeRedundantParts(rawGroupNames);
-  if (cleanedGroups.isNotEmpty) {
-    final joinedGroups = cleanedGroups.join(' ');
-
-    final List<String> fullNameParts = [joinedGroups, test.test.name];
-    final String finalTestName = removeRedundantParts(fullNameParts).last;
-    final String groupHierarchy = cleanedGroups.join(' => ');
-    return '$finalTestName in group(s): $groupHierarchy';
-  } else {
-    return test.test.name;
-  }
-}
-
 /// Records the timeline and prints events as they happen.
 void recordLiveTimeline() {
   final timeline = currentTimeline();
@@ -120,11 +63,11 @@ Timeline currentTimeline() {
     if (!test.state.result.isPassing &&
         newTimeline.mode == TimelineMode.record) {
       newTimeline.printToConsole();
-      newTimeline.printHTML();
+      newTimeline._printHTML();
     } else if (newTimeline.mode == TimelineMode.live) {
       // printToConsole() here would lead to duplicate output since
       // the timeline is already being printed live
-      newTimeline.printHTML();
+      newTimeline._printHTML();
     }
   });
   _timelines[test] = newTimeline;
@@ -158,7 +101,7 @@ class Timeline {
     String? name,
     TimelineEventType? eventType,
   }) {
-    addEvent(
+    _addEvent(
       TimelineEvent.now(
         name: name,
         screenshot: screenshot,
@@ -169,7 +112,7 @@ class Timeline {
   }
 
   /// Adds an event to the timeline.
-  void addEvent(TimelineEvent event) {
+  void _addEvent(TimelineEvent event) {
     if (mode == TimelineMode.off) {
       return;
     }
@@ -189,7 +132,7 @@ class Timeline {
   }
 
   /// Prints the timeline as an HTML file.
-  void printHTML() {
+  void _printHTML() {
     final spotTempDir = Directory.systemTemp.createTempSync();
     final String name = (Invoker.current?.liveTest.test.name ?? '')
         .trim()
@@ -232,7 +175,7 @@ class Timeline {
   /// Returns the events in the timeline as an HTML string.
   String _timelineAsHTML() {
     final htmlBuffer = StringBuffer();
-    final nameWithHierarchy = testNameWithHierarchy();
+    final nameWithHierarchy = _testNameWithHierarchy();
 
     htmlBuffer.writeln('<html>');
     htmlBuffer.writeln('<head>');
@@ -410,4 +353,61 @@ enum TimelineMode {
 
   /// The timeline is not recording.
   off,
+}
+
+/// Returns the test name including the group hierarchy.
+String _testNameWithHierarchy() {
+  final test = Invoker.current?.liveTest;
+  if (test == null) {
+    return 'No test found';
+  }
+
+  // Group names are concatenated with the name of the previous group
+  final rawGroupNames = Invoker.current?.liveTest.groups
+          .map((group) {
+            if (group.name.isEmpty) {
+              return null;
+            }
+            return group.name;
+          })
+          .whereNotNull()
+          .toList() ??
+      [];
+
+  List<String> removeRedundantParts(List<String> inputList) {
+    if (inputList.length < 2) {
+      return inputList;
+    }
+
+    final List<String> outputList = [];
+    for (int i = 0; i < inputList.length - 1; i++) {
+      outputList.add(inputList[i]);
+    }
+
+    String lastElement = inputList.last;
+    final String previousElement = inputList[inputList.length - 2];
+
+    // Remove the part of the last element that is included in the previous one
+    if (lastElement.startsWith(previousElement)) {
+      lastElement = lastElement.substring(previousElement.length).trim();
+    }
+
+    if (lastElement.isNotEmpty) {
+      outputList.add(lastElement);
+    }
+
+    return outputList;
+  }
+
+  final cleanedGroups = removeRedundantParts(rawGroupNames);
+  if (cleanedGroups.isNotEmpty) {
+    final joinedGroups = cleanedGroups.join(' ');
+
+    final List<String> fullNameParts = [joinedGroups, test.test.name];
+    final String finalTestName = removeRedundantParts(fullNameParts).last;
+    final String groupHierarchy = cleanedGroups.join(' => ');
+    return '$finalTestName in group(s): $groupHierarchy';
+  } else {
+    return test.test.name;
+  }
 }
