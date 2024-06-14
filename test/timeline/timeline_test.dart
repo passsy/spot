@@ -5,6 +5,7 @@ import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
+import 'package:spot/src/timeline/timeline.dart';
 import 'package:test_process/test_process.dart';
 import 'timeline_test_widget.dart';
 
@@ -14,6 +15,47 @@ final _clearButtonSelector = spotIcon(Icons.clear);
 
 const _header = '==================== Timeline Event ====================';
 const _separator = '========================================================';
+
+String _testAsString({
+  required String title,
+  required TimelineMode timelineMode,
+  bool shouldFail = false,
+}) {
+  final String methodForMode = () {
+    switch (timelineMode) {
+      case TimelineMode.live:
+        return 'recordLiveTimeline()';
+      case TimelineMode.record:
+        return 'recordOnErrorTimeline()';
+      case TimelineMode.off:
+        return 'stopRecordingTimeline()';
+    }
+  }();
+
+  final widgetPart =
+      File('test/timeline/timeline_test_widget.dart').readAsStringSync();
+  return '''
+import 'package:flutter_test/flutter_test.dart';
+import 'package:spot/spot.dart';
+import 'package:spot/src/timeline/timeline.dart';\n
+$widgetPart\n
+void main() async {
+  final addButtonSelector = spotIcon(Icons.add);
+  final subtractButtonSelector = spotIcon(Icons.remove);
+  testWidgets("$title", (WidgetTester tester) async {
+    $methodForMode;
+    await tester.pumpWidget(const TimelineTestWidget());
+      addButtonSelector.existsOnce();
+      spotText('Counter: 3').existsOnce();
+      await act.tap(addButtonSelector);
+      spotText('Counter: 4').existsOnce();
+      await act.tap(subtractButtonSelector);
+      spotText('Counter: 3').existsOnce();
+      ${shouldFail ? 'spotText("Counter: 99").existsOnce();' : ''}
+  });
+}
+''';
+}
 
 void main() {
   testWidgets('Live timeline', (tester) async {
@@ -127,39 +169,15 @@ void main() {
     });
 
     test('OnError timeline - with error, prints timeline', () async {
-      const importPart = '''
-import 'package:flutter_test/flutter_test.dart';
-import 'package:spot/spot.dart';
-import 'package:spot/src/timeline/timeline.dart';
-''';
-
-      final widgetPart =
-          File('test/timeline/timeline_test_widget.dart').readAsStringSync();
-
-      const testPart = '''
-void main() async {
-  final addButtonSelector = spotIcon(Icons.add);
-  final subtractButtonSelector = spotIcon(Icons.remove);
-  testWidgets('OnError timeline with error', (WidgetTester tester) async {
-    recordOnErrorTimeline();
-    await tester.pumpWidget(const TimelineTestWidget());
-      addButtonSelector.existsOnce();
-      spotText('Counter: 3').existsOnce();
-      await act.tap(addButtonSelector);
-      spotText('Counter: 4').existsOnce();
-      await act.tap(subtractButtonSelector);
-      spotText('Counter: 3').existsOnce();
-      // Make test fail intentionally
-      spotText('Counter: 99').existsOnce();
-  });
-}
-''';
-
-      final testAsString = [importPart, widgetPart, testPart].join('\n');
-
       final tempDir = Directory.systemTemp.createTempSync();
       final tempTestFile = File('${tempDir.path}/temp_test.dart');
-      await tempTestFile.writeAsString(testAsString);
+      await tempTestFile.writeAsString(
+        _testAsString(
+          title: 'OnError timeline with error',
+          timelineMode: TimelineMode.record,
+          shouldFail: true,
+        ),
+      );
 
       final testProcess =
           await TestProcess.start('flutter', ['test', tempTestFile.path]);
@@ -177,6 +195,7 @@ void main() async {
         }
       }
 
+      // Error happens
       await testProcess.shouldExit(1);
       tempDir.deleteSync(recursive: true);
 
@@ -212,48 +231,24 @@ void main() async {
         timeline[6],
         _separator,
       );
-      final htmlLine = timeline[timeline.lastIndexOf(_separator) + 1];
+      final htmlLine = timeline
+          .firstWhere((line) => line.startsWith('View time line here:'));
       expect(
-        htmlLine.startsWith(
-          'View time line here:',
+        htmlLine.endsWith(
+          'timeline_onerror_timeline_with_error.html',
         ),
         isTrue,
       );
-      final htmlName = htmlLine.split('/').last;
-      expect(htmlName, 'timeline_onerror_timeline_with_error.html');
     });
     test('Live timeline - without error, prints HTML', () async {
-      const importPart = '''
-import 'package:flutter_test/flutter_test.dart';
-import 'package:spot/spot.dart';
-import 'package:spot/src/timeline/timeline.dart';
-''';
-
-      final widgetPart =
-          File('test/timeline/timeline_test_widget.dart').readAsStringSync();
-
-      const testPart = '''
-void main() async {
-  final addButtonSelector = spotIcon(Icons.add);
-  final subtractButtonSelector = spotIcon(Icons.remove);
-  testWidgets('Live timeline without error prints html', (WidgetTester tester) async {
-    recordLiveTimeline();
-    await tester.pumpWidget(const TimelineTestWidget());
-      addButtonSelector.existsOnce();
-      spotText('Counter: 3').existsOnce();
-      await act.tap(addButtonSelector);
-      spotText('Counter: 4').existsOnce();
-      await act.tap(subtractButtonSelector);
-      spotText('Counter: 3').existsOnce();
-  });
-}
-''';
-
-      final testAsString = [importPart, widgetPart, testPart].join('\n');
-
       final tempDir = Directory.systemTemp.createTempSync();
       final tempTestFile = File('${tempDir.path}/temp_test.dart');
-      await tempTestFile.writeAsString(testAsString);
+      await tempTestFile.writeAsString(
+        _testAsString(
+          title: 'Live timeline without error prints html',
+          timelineMode: TimelineMode.live,
+        ),
+      );
 
       final testProcess =
           await TestProcess.start('flutter', ['test', tempTestFile.path]);
@@ -281,7 +276,6 @@ void main() async {
 
       final stdout = stdoutBuffer.toString();
       final timeline = stdout.split('\n');
-
       // Does not start with 'Timeline', this only happens on error
       expect(timeline.first, _header);
       expect(
