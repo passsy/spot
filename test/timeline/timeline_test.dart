@@ -11,6 +11,9 @@ final _addButtonSelector = spotIcon(Icons.add);
 final _subtractButtonSelector = spotIcon(Icons.remove);
 final _clearButtonSelector = spotIcon(Icons.clear);
 
+const _header = '==================== Timeline Event ====================';
+const _separator = '========================================================';
+
 void main() {
   testWidgets('Live timeline', (tester) async {
     final output = await _captureConsoleOutput(() async {
@@ -164,11 +167,9 @@ void main() async {
 
       bool write = false;
       await for (final line in testProcess.stdoutStream()) {
+        if (line.isEmpty) continue;
         if (line == 'Timeline') {
           write = true;
-        }
-        if (line.startsWith('To run this test again:')) {
-          write = false;
         }
         if (write) {
           stdoutBuffer.writeln(line);
@@ -176,15 +177,15 @@ void main() async {
       }
 
       await testProcess.shouldExit();
-
       tempDir.deleteSync(recursive: true);
 
       final stdout = stdoutBuffer.toString();
-      final timeline = stdout.split('\n')..removeWhere((line) => line.isEmpty);
+      final timeline = stdout.split('\n');
+
       expect(timeline.first, 'Timeline');
       expect(
         timeline[1],
-        '==================== Timeline Event ====================',
+        _header,
       );
       expect(
         timeline[2],
@@ -208,10 +209,17 @@ void main() async {
       );
       expect(
         timeline[6],
-        '========================================================',
+        _separator,
       );
-      // ignore: avoid_print
-      print('timeline: $timeline');
+      final htmlLine = timeline[timeline.lastIndexOf(_separator) + 1];
+      expect(
+        htmlLine.startsWith(
+          'View time line here:',
+        ),
+        isTrue,
+      );
+      final htmlName = htmlLine.split('/').last;
+      expect(htmlName, 'timeline_onerror_timeline_with_error.html');
     });
   });
 }
@@ -221,9 +229,7 @@ void _testTimeLineContent({
   required int eventCount,
 }) {
   expect(
-    RegExp('==================== Timeline Event ====================')
-        .allMatches(output)
-        .length,
+    RegExp(_header).allMatches(output).length,
     eventCount,
   );
   expect(
@@ -259,11 +265,4 @@ Future<String> _captureConsoleOutput(
   });
 
   return buffer.toString();
-}
-
-String _fileUrlToPath(String fileUrl) {
-  if (fileUrl.startsWith('file:///')) {
-    return Uri.decodeFull(fileUrl.substring(7));
-  }
-  return fileUrl;
 }

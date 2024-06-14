@@ -1,7 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages
 import 'dart:io';
 import 'package:collection/collection.dart';
-import 'package:nanoid2/nanoid2.dart';
 import 'package:path/path.dart' as path;
 import 'package:spot/src/screenshot/screenshot.dart';
 import 'package:spot/src/spot/tree_snapshot.dart';
@@ -187,13 +186,16 @@ class Timeline {
 
   void _printHTML() {
     final spotTempDir = Directory.systemTemp.createTempSync();
+    final String name = (Invoker.current?.liveTest.test.name ?? '')
+        .trim()
+        .toLowerCase()
+        .replaceAll(' ', '_');
+    if (name.isEmpty) return;
     if (!spotTempDir.existsSync()) {
       spotTempDir.createSync();
     }
-    // always append a unique id to avoid name collisions
-    final uniqueId = nanoid(length: 5);
-    final htmlFile =
-        File(path.join(spotTempDir.path, 'timeline_events_$uniqueId.html'));
+
+    final htmlFile = File(path.join(spotTempDir.path, 'timeline_$name.html'));
     final content = _timelineAsHTML();
     htmlFile.writeAsStringSync(content);
     //ignore: avoid_print
