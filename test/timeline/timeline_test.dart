@@ -152,38 +152,50 @@ void main() async {
 }
 ''';
       final testAsString = [importPart, widgetPart, testPart].join('\n');
+String result = "";
+        final tempDir = Directory.systemTemp.createTempSync();
+      try{
+        final tempTestFile = File('${tempDir.path}/temp_test.dart');
+        await tempTestFile.writeAsString(testAsString);
 
-      final tempDir = Directory.systemTemp.createTempSync();
-      final tempTestFile = File('${tempDir.path}/temp_test.dart');
-      await tempTestFile.writeAsString(testAsString);
+        final testProcess = await TestProcess.start(
+          'flutter',
+          ['test', tempTestFile.path],
+          runInShell: true,
+        );
 
-      final testProcess = await TestProcess.start(
-        'flutter',
-        ['test', tempTestFile.path],
-        runInShell: true,
-      );
+        final stdoutBuffer = StringBuffer();
 
-      final stdoutBuffer = StringBuffer();
-
-      bool write = false;
-      await for (final line in testProcess.stdoutStream()) {
-        if (line == 'Timeline') {
-          write = true;
+        bool write = false;
+        await for (final line in testProcess.stdoutStream()) {
+          if (line == 'Timeline') {
+            write = true;
+          }
+          if (line.startsWith('To run this test again:')) {
+            write = false;
+          }
+          if (write) {
+            stdoutBuffer.writeln(line);
+          }
         }
-        if (line.startsWith('To run this test again:')) {
-          write = false;
-        }
-        if (write) {
-          stdoutBuffer.writeln(line);
-        }
+
+        await testProcess.shouldExit(1);
+        result = stdoutBuffer.toString();
+      }catch(_, __){
+
       }
 
-      await testProcess.shouldExit(1);
+      if(tempDir.existsSync()){
+        tempDir.deleteSync(recursive: true);
+      }
 
-      tempDir.deleteSync(recursive: true);
 
-      final stdout = stdoutBuffer.toString();
-      final timeline = stdout.split('\n')..removeWhere((line) => line.isEmpty);
+      if(result.isEmpty) {
+        throw TestFailure('No output from test process');
+      }
+
+      final timeline = result.split('\n')..removeWhere((line) => line.isEmpty);
+ 
       expect(timeline.first, 'Timeline');
       expect(
         timeline[1],
