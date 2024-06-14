@@ -151,7 +151,6 @@ void main() async {
   });
 }
 ''';
-
       final testAsString = [importPart, widgetPart, testPart].join('\n');
 
       final tempDir = Directory.systemTemp.createTempSync();
@@ -159,7 +158,7 @@ void main() async {
       await tempTestFile.writeAsString(testAsString);
 
       final testProcess =
-          await TestProcess.start('flutter', ['test', tempTestFile.path]);
+          await TestProcess.start('flutter', ['test', tempTestFile.path], runInShell: true,);
 
       final stdoutBuffer = StringBuffer();
 
@@ -176,7 +175,7 @@ void main() async {
         }
       }
 
-      await testProcess.shouldExit();
+      await testProcess.shouldExit(1);
 
       tempDir.deleteSync(recursive: true);
 
