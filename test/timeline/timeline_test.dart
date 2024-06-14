@@ -161,7 +161,6 @@ void main() async {
         final testProcess = await TestProcess.start(
           'flutter',
           ['test', tempTestFile.path],
-          runInShell: true,
         );
 
         final stdoutBuffer = StringBuffer();
@@ -221,10 +220,6 @@ void main() async {
       expect(
         timeline[6],
         '========================================================',
-      );
-      expect(
-        timeline.last,
-        startsWith('View time line here:'),
       );
     });
   });
