@@ -12,7 +12,6 @@ import 'package:test_api/src/backend/invoker.dart';
 //ignore: implementation_imports
 import 'package:test_api/src/backend/live_test.dart';
 
-
 final Map<LiveTest, Timeline> _timelines = {};
 
 /// Returns the test name including the group hierarchy.
@@ -24,14 +23,15 @@ String testNameWithHierarchy() {
 
   // Group names are concatenated with the name of the previous group
   final rawGroupNames = Invoker.current?.liveTest.groups
-      .map((group) {
-    if (group.name.isEmpty) {
-      return null;
-    }
-    return group.name;
-  })
-      .whereNotNull()
-      .toList() ?? [];
+          .map((group) {
+            if (group.name.isEmpty) {
+              return null;
+            }
+            return group.name;
+          })
+          .whereNotNull()
+          .toList() ??
+      [];
 
   List<String> removeRedundantParts(List<String> inputList) {
     if (inputList.length < 2) {
@@ -149,7 +149,11 @@ class Timeline {
   TimelineMode mode = TimelineMode.off;
 
   /// Adds a screenshot to the timeline.
-  void addScreenshot(Screenshot screenshot, {String? name, TimelineEventType? eventType,}) {
+  void addScreenshot(
+    Screenshot screenshot, {
+    String? name,
+    TimelineEventType? eventType,
+  }) {
     addEvent(
       TimelineEvent.now(
         name: name,
@@ -188,7 +192,8 @@ class Timeline {
     }
     // always append a unique id to avoid name collisions
     final uniqueId = nanoid(length: 5);
-    final htmlFile = File(path.join(spotTempDir.path, 'timeline_events_$uniqueId.html'));
+    final htmlFile =
+        File(path.join(spotTempDir.path, 'timeline_events_$uniqueId.html'));
     final content = _timelineAsHTML();
     htmlFile.writeAsStringSync(content);
     //ignore: avoid_print
@@ -218,21 +223,25 @@ class Timeline {
   }
 
   /// Returns the events in the timeline as an HTML string.
-  String _timelineAsHTML(){
+  String _timelineAsHTML() {
     final htmlBuffer = StringBuffer();
     final nameWithHierarchy = testNameWithHierarchy();
-    
+
     htmlBuffer.writeln('<html>');
     htmlBuffer.writeln('<head>');
     htmlBuffer.writeln('<title>Timeline Events</title>');
-    htmlBuffer.writeln('<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">');
+    htmlBuffer.writeln(
+        '<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">');
 
-    final String eventsForScript = _events.where((event) => event.screenshot != null).map((event) {
+    final String eventsForScript =
+        _events.where((event) => event.screenshot != null).map((event) {
       return '{src: "file://${event.screenshot!.file.path}", title: "${event.eventType?.label ?? "Event ${_events.indexOf(event) + 1}"}"}';
     }).join(',\n  ');
 
     htmlBuffer.writeln('<script>');
-    final script = timelineJS.replaceAll('{{events}}', eventsForScript).replaceAll('{testName}', Invoker.current!.liveTest.test.name);
+    final script = timelineJS
+        .replaceAll('{{events}}', eventsForScript)
+        .replaceAll('{testName}', Invoker.current!.liveTest.test.name);
     htmlBuffer.write(script);
     htmlBuffer.writeln('</script>');
 
@@ -243,21 +252,24 @@ class Timeline {
     htmlBuffer.writeln('</head>');
     htmlBuffer.writeln('<body>');
     htmlBuffer.writeln('<div class="header">');
-    htmlBuffer.writeln('<img src="https://user-images.githubusercontent.com/1096485/188243198-7abfc785-8ecd-40cb-bb28-5561610432a4.png" height="100px">');
+    htmlBuffer.writeln(
+        '<img src="https://user-images.githubusercontent.com/1096485/188243198-7abfc785-8ecd-40cb-bb28-5561610432a4.png" height="100px">');
     htmlBuffer.writeln('<h1>Timeline</h1>');
     htmlBuffer.writeln('</div>');
 
     htmlBuffer.writeln('<div class = "horizontal-spacer"><h2>Info</h2></div>');
 
     htmlBuffer.writeln('<p><strong>Test:</strong> $nameWithHierarchy</p>');
-    htmlBuffer.writeln('<button class="button-spot" onclick="copyTestCommandToClipboard()">Copy test command</button>');
+    htmlBuffer.writeln(
+        '<button class="button-spot" onclick="copyTestCommandToClipboard()">Copy test command</button>');
     htmlBuffer.writeln('<div id="snackbar"></div>');
 
-    if(_events.isNotEmpty){
-      htmlBuffer.writeln('<div class = "horizontal-spacer"><h2>Events</h2></div>');
+    if (_events.isNotEmpty) {
+      htmlBuffer
+          .writeln('<div class = "horizontal-spacer"><h2>Events</h2></div>');
     }
 
-    final events = (){
+    final events = () {
       final eventBuffer = StringBuffer();
       for (final event in _events) {
         final part = () {
@@ -265,8 +277,12 @@ class Timeline {
           final caller = event.initiator != null
               ? 'at ${event.initiator!.member} ${event.initiator!.uri}:${event.initiator!.line}:${event.initiator!.column}'
               : 'N/A';
-          final type = event.eventType != null ? event.eventType!.label : "Unknown event type";
-          final screenshot = event.screenshot != null ? '<img src="file://${event.screenshot!.file.path}" class="thumbnail" alt="Screenshot" onclick="openModal($index)">' : '';
+          final type = event.eventType != null
+              ? event.eventType!.label
+              : "Unknown event type";
+          final screenshot = event.screenshot != null
+              ? '<img src="file://${event.screenshot!.file.path}" class="thumbnail" alt="Screenshot" onclick="openModal($index)">'
+              : '';
 
           return '''
 <h2>#${index + 1}</h2>
@@ -289,12 +305,16 @@ class Timeline {
     htmlBuffer.write(events);
 
     htmlBuffer.writeln('<div id="myModal" class="modal">');
-    htmlBuffer.writeln('<span class="close" onclick="closeModal()">&times;</span>');
-    htmlBuffer.writeln('<img class="modal-content" id="img01"  alt="Screenshot of the Event"/>');
+    htmlBuffer
+        .writeln('<span class="close" onclick="closeModal()">&times;</span>');
+    htmlBuffer.writeln(
+        '<img class="modal-content" id="img01"  alt="Screenshot of the Event"/>');
     htmlBuffer.writeln('<div id="caption">');
-    htmlBuffer.writeln('<a class="nav nav-left" onclick="showPrev()">&#10094;</a>');
+    htmlBuffer
+        .writeln('<a class="nav nav-left" onclick="showPrev()">&#10094;</a>');
     htmlBuffer.writeln('<div id="captionText"></div>');
-    htmlBuffer.writeln('<a class="nav nav-right" onclick="showNext()">&#10095;</a>');
+    htmlBuffer
+        .writeln('<a class="nav nav-right" onclick="showNext()">&#10095;</a>');
     htmlBuffer.writeln('</div>');
     htmlBuffer.writeln('</div>');
     htmlBuffer.writeln('</body>');
@@ -310,9 +330,10 @@ enum TimelineEventType {
   tap(
     'Tap Event (crosshair indicator)',
   );
+
   const TimelineEventType(this.label);
 
-/// The name of the event.
+  /// The name of the event.
   final String label;
 }
 

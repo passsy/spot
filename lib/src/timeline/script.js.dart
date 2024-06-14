@@ -1,4 +1,3 @@
-
 // language=javascript
 /// The script used in the HTML file that is generated for the timeline.
 const String timelineJS = '''
