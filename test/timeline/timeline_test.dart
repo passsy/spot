@@ -152,9 +152,9 @@ void main() async {
 }
 ''';
       final testAsString = [importPart, widgetPart, testPart].join('\n');
-String result = "";
-        final tempDir = Directory.systemTemp.createTempSync();
-      try{
+      String result = "";
+      final tempDir = Directory.systemTemp.createTempSync();
+      try {
         final tempTestFile = File('${tempDir.path}/temp_test.dart');
         await tempTestFile.writeAsString(testAsString);
 
@@ -181,21 +181,18 @@ String result = "";
 
         await testProcess.shouldExit(1);
         result = stdoutBuffer.toString();
-      }catch(_, __){
+      } catch (_, __) {}
 
-      }
-
-      if(tempDir.existsSync()){
+      if (tempDir.existsSync()) {
         tempDir.deleteSync(recursive: true);
       }
 
-
-      if(result.isEmpty) {
+      if (result.isEmpty) {
         throw TestFailure('No output from test process');
       }
 
       final timeline = result.split('\n')..removeWhere((line) => line.isEmpty);
- 
+
       expect(timeline.first, 'Timeline');
       expect(
         timeline[1],
