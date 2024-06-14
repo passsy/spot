@@ -157,8 +157,11 @@ void main() async {
       final tempTestFile = File('${tempDir.path}/temp_test.dart');
       await tempTestFile.writeAsString(testAsString);
 
-      final testProcess =
-          await TestProcess.start('flutter', ['test', tempTestFile.path], runInShell: true,);
+      final testProcess = await TestProcess.start(
+        'flutter',
+        ['test', tempTestFile.path],
+        runInShell: true,
+      );
 
       final stdoutBuffer = StringBuffer();
 
