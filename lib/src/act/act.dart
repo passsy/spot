@@ -93,7 +93,7 @@ class Act {
             "Spot does not know how to hit test such a widget.",
           );
         }
-        _validateViewBounds(renderObject, selector: selector);
+        _isInBounds(renderObject, selector: selector);
 
         final centerPosition =
             renderObject.localToGlobal(renderObject.size.center(Offset.zero));
@@ -120,10 +120,78 @@ class Act {
     });
   }
 
+  Future<void> dragUntilVisible(
+      WidgetSelector selector, Offset startOffset, Offset endOffset,
+      {Duration duration = const Duration(milliseconds: 300)}) async {
+    // Check if widget is in the widget tree. Throws if not.
+    final snapshot = selector.snapshot()..existsOnce();
+
+    return TestAsyncUtils.guard<void>(() async {
+      return _alwaysPropagateDevicePointerEvents(() async {
+        // Find the associated RenderObject to get the position of the element on the screen
+        final element = snapshot.discoveredElement!;
+        final renderObject = element.renderObject;
+        if (renderObject == null) {
+          throw TestFailure(
+            "Widget '${selector.toStringBreadcrumb()}' has no associated RenderObject.\n"
+            "Spot does not know where the widget is located on the screen.",
+          );
+        }
+        if (renderObject is! RenderBox) {
+          throw TestFailure(
+            "Widget '${selector.toStringBreadcrumb()}' is associated to $renderObject which "
+            "is not a RenderObject in the 2D Cartesian coordinate system "
+            "(implements RenderBox).\n"
+            "Spot does not know how to hit test such a widget.",
+          );
+        }
+
+        final binding = TestWidgetsFlutterBinding.instance;
+        bool isVisible = _isInBounds(
+          renderObject,
+          selector: selector,
+          throwIfOutsideOfBounds: false,
+        );
+
+        while (!isVisible) {
+          final pointer = TestPointer(1);
+
+          binding.handlePointerEvent(PointerDownEvent(
+            pointer: pointer.pointer,
+            position: startOffset,
+          ));
+          await binding.pump();
+
+          binding.handlePointerEvent(PointerMoveEvent(
+            pointer: pointer.pointer,
+            position: endOffset,
+          ));
+          await binding.pump();
+
+          binding.handlePointerEvent(PointerUpEvent(
+            pointer: pointer.pointer,
+            position: endOffset,
+          ));
+          await binding.pump();
+
+          isVisible = _isInBounds(renderObject, selector: selector);
+        }
+      });
+    });
+  }
+
+  bool _isRenderObjectVisible(RenderBox renderObject, Size viewportSize) {
+    final objectRect =
+        renderObject.localToGlobal(Offset.zero) & renderObject.size;
+    final viewportRect = Offset.zero & viewportSize;
+    return viewportRect.overlaps(objectRect);
+  }
+
   // Validates that the widget is at least partially visible in the viewport.
-  void _validateViewBounds(
+  bool _isInBounds(
     RenderBox renderBox, {
     required WidgetSelector selector,
+    bool throwIfOutsideOfBounds = true,
   }) {
     // ignore: deprecated_member_use
     final view = WidgetsBinding.instance.renderView;
@@ -132,13 +200,14 @@ class Act {
         renderBox.localToGlobal(Offset.zero) & renderBox.paintBounds.size;
 
     final intersection = viewport.intersect(location);
-    if (intersection.width < 0 || intersection.height < 0) {
+    final isInsideOfViewport =
+        intersection.width >= 0 && intersection.height >= 0;
+    if (!isInsideOfViewport && throwIfOutsideOfBounds) {
       throw TestFailure(
         "Widget '${selector.toStringBreadcrumb()}' is located outside the viewport ($location).",
       );
     }
-    // TODO handle case when location is partially outside viewport
-    // TODO what if the center is outside the viewport, should we move the touch location or error?
+    return intersection.width > 0 && intersection.height > 0;
   }
 
   /// Checks if the widget is visible and not covered by another widget
