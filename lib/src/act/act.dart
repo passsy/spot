@@ -1,17 +1,13 @@
-import 'dart:ui';
-
 import 'package:dartx/dartx.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
+import 'package:spot/src/act/drag.dart';
 import 'package:spot/src/screenshot/screenshot.dart';
 import 'package:spot/src/spot/snapshot.dart';
 import 'package:spot/src/timeline/timeline.dart';
-
-import 'drag.dart';
 
 /// Top level entry point to interact with widgets on the screen.
 ///
@@ -109,7 +105,6 @@ class Act {
 
         final centerPosition =
             renderObject.localToGlobal(renderObject.size.center(Offset.zero));
-        print('centerPosition: $centerPosition');
         final timeline = currentTimeline();
         if (timeline.mode != TimelineMode.off) {
           final screenshot = await takeScreenshotWithCrosshair(

@@ -23,9 +23,8 @@ void main() {
 }
 
 class _ScrollableTestWidget extends StatelessWidget {
-  const _ScrollableTestWidget({super.key});
+  const _ScrollableTestWidget();
 
-  // Random color based on index
   Color getRandomColor(int index) {
     return index.isEven ? Colors.red : Colors.blue;
   }

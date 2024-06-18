@@ -143,8 +143,12 @@ class Gestures {
 
               // The vector from the edge of the box to the horizontal extension of the horizontal edge.
               await gesture.moveBy(Offset(diffX2, diffY2));
-              await gesture.moveBy(Offset(
-                  offsetX - diffX2 - signedSlopX, offsetY - signedSlopY));
+              await gesture.moveBy(
+                Offset(
+                  offsetX - diffX2 - signedSlopX,
+                  offsetY - signedSlopY,
+                ),
+              );
             }
           } else {
             assert(offsetY.abs() > touchSlopY);
@@ -164,8 +168,12 @@ class Gestures {
 
               // The vector from the edge of the box to the vertical extension of the vertical edge.
               await gesture.moveBy(Offset(diffX2, diffY2));
-              await gesture.moveBy(Offset(
-                  offsetX - signedSlopX, offsetY - diffY2 - signedSlopY));
+              await gesture.moveBy(
+                Offset(
+                  offsetX - signedSlopX,
+                  offsetY - diffY2 - signedSlopY,
+                ),
+              );
             }
           }
         } else {
