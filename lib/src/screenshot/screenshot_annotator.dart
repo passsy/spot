@@ -1,6 +1,6 @@
 import 'dart:core';
 import 'dart:ui' as ui;
-import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 
 /// An annotator that can draw on a screenshot image.
 abstract class ScreenshotAnnotator {
@@ -22,8 +22,26 @@ class CrosshairAnnotator implements ScreenshotAnnotator {
   /// Creates a [CrosshairAnnotator] with a [centerPosition].
   const CrosshairAnnotator({required this.centerPosition});
 
+  Offset _translateOffset(ui.Image image) {
+    // ignore: deprecated_member_use
+    final view = WidgetsBinding.instance.renderView.size;
+    final imageHeight = image.height;
+    final imageWidth = image.width;
+    // Calculate the relative position in the view
+    final double relativeX = centerPosition.dx / view.width;
+    final double relativeY = centerPosition.dy / view.height;
+
+    // Calculate the new offset in the image dimensions
+    final double newDx = relativeX * imageWidth;
+    final double newDy = relativeY * imageHeight;
+
+    return Offset(newDx, newDy);
+  }
+
   @override
   Future<ui.Image> annotate(ui.Image image) async {
+    final position = _translateOffset(image);
+
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder);
 
@@ -34,14 +52,14 @@ class CrosshairAnnotator implements ScreenshotAnnotator {
       ..strokeWidth = 2.0;
 
     canvas.drawLine(
-      Offset(centerPosition.dx, centerPosition.dy - 20),
-      Offset(centerPosition.dx, centerPosition.dy + 20),
+      Offset(position.dx, position.dy - 20),
+      Offset(position.dx, position.dy + 20),
       paint,
     );
 
     canvas.drawLine(
-      Offset(centerPosition.dx - 20, centerPosition.dy),
-      Offset(centerPosition.dx + 20, centerPosition.dy),
+      Offset(position.dx - 20, position.dy),
+      Offset(position.dx + 20, position.dy),
       paint,
     );
 
@@ -49,7 +67,7 @@ class CrosshairAnnotator implements ScreenshotAnnotator {
       ..color = const Color(0xFF00FFFF)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0;
-    canvas.drawCircle(centerPosition, 10.0, circlePaint);
+    canvas.drawCircle(position, 10.0, circlePaint);
 
     final picture = recorder.endRecording();
     return picture.toImage(image.width, image.height);
