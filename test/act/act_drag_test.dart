@@ -11,7 +11,8 @@ void main() {
       recordLiveTimeline();
 
       final firstItem = spotText('Item at index: 3', exact: true)..existsOnce();
-      final secondItem = spotText('Item at index: 27', exact: true);
+      final secondItem = spotText('Item at index: 27', exact: true)
+        ..doesNotExist();
       await act.dragUntilVisible(
         dragStart: firstItem,
         dragTarget: secondItem,
@@ -31,6 +32,14 @@ class _ScrollableTestWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final items = List.generate(
+      30,
+      (index) => Container(
+        height: 100,
+        color: index.isEven ? Colors.red : Colors.blue,
+        child: Center(child: Text('Item at index: $index')),
+      ),
+    );
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -45,17 +54,11 @@ class _ScrollableTestWidget extends StatelessWidget {
                   maxWidth: 500,
                   maxHeight: 450,
                 ),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: List.generate(
-                      30,
-                      (index) => Container(
-                        height: 100,
-                        color: index.isEven ? Colors.red : Colors.blue,
-                        child: Center(child: Text('Item at index: $index')),
-                      ),
-                    ),
-                  ),
+                child: ListView.builder(
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    return items[index];
+                  },
                 ),
               ),
             ),
