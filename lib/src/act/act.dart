@@ -71,11 +71,6 @@ class Act {
   }
 
   /// Triggers a tap event on a given widget.
-  /// If a [Timeline] is running, an annotated screenshot, indicating the tap
-  /// position, is added to the timeline.
-  ///
-  /// See also:
-  /// - [Timeline]
   Future<void> tap(WidgetSelector selector) async {
     // Check if widget is in the widget tree. Throws if not.
     final snapshot = selector.snapshot()..existsOnce();
