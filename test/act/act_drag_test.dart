@@ -8,7 +8,6 @@ void main() {
       await tester.pumpWidget(
         const _ScrollableTestWidget(),
       );
-      recordLiveTimeline();
 
       final firstItem = spotText('Item at index: 3', exact: true)..existsOnce();
       final secondItem = spotText('Item at index: 27', exact: true)
@@ -17,26 +16,37 @@ void main() {
         dragStart: firstItem,
         dragTarget: secondItem,
         maxIteration: 30,
+        moveStep: const Offset(0, -100),
       );
       secondItem.existsOnce();
     });
-    testWidgets('Throws if not found', (tester) async {
+
+    testWidgets('Throws TestFailure if not found', (tester) async {
       await tester.pumpWidget(
         const _ScrollableTestWidget(),
       );
-      recordLiveTimeline();
 
       final firstItem = spotText('Item at index: 3', exact: true)..existsOnce();
       final secondItem = spotText('Item at index: 27', exact: true)
         ..doesNotExist();
+
+      const expectedErrorMessage =
+          'Widget with text with text "Item at index: 27" is not visible after dragging 10 times and a total dragged offset of Offset(0.0, -1000.0).';
 
       await expectLater(
         () => act.dragUntilVisible(
           dragStart: firstItem,
           dragTarget: secondItem,
           maxIteration: 10,
+          moveStep: const Offset(0, -100),
         ),
-        throwsA(isA<TestFailure>()),
+        throwsA(
+          isA<TestFailure>().having(
+            (error) => error.message,
+            'message',
+            expectedErrorMessage,
+          ),
+        ),
       );
     });
   });
