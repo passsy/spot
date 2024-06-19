@@ -4,7 +4,7 @@ import 'package:spot/spot.dart';
 
 void main() {
   group('Drag Events', () {
-    testWidgets('dragUntilVisible', (tester) async {
+    testWidgets('Finds widget after dragging', (tester) async {
       await tester.pumpWidget(
         const _ScrollableTestWidget(),
       );
@@ -19,6 +19,25 @@ void main() {
         maxIteration: 30,
       );
       secondItem.existsOnce();
+    });
+    testWidgets('Throws if not found', (tester) async {
+      await tester.pumpWidget(
+        const _ScrollableTestWidget(),
+      );
+      recordLiveTimeline();
+
+      final firstItem = spotText('Item at index: 3', exact: true)..existsOnce();
+      final secondItem = spotText('Item at index: 27', exact: true)
+        ..doesNotExist();
+
+      await expectLater(
+        () => act.dragUntilVisible(
+          dragStart: firstItem,
+          dragTarget: secondItem,
+          maxIteration: 10,
+        ),
+        throwsA(isA<TestFailure>()),
+      );
     });
   });
 }
