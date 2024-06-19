@@ -4,6 +4,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
+import 'package:spot/src/act/gestures.dart';
 import 'package:spot/src/screenshot/screenshot.dart';
 import 'package:spot/src/spot/snapshot.dart';
 import 'package:spot/src/timeline/timeline.dart';
@@ -83,27 +84,11 @@ class Act {
 
     return TestAsyncUtils.guard<void>(() async {
       return _alwaysPropagateDevicePointerEvents(() async {
-        // Find the associated RenderObject to get the position of the element on the screen
-        final element = snapshot.discoveredElement!;
-        final renderObject = element.renderObject;
-        if (renderObject == null) {
-          throw TestFailure(
-            "Widget '${selector.toStringBreadcrumb()}' has no associated RenderObject.\n"
-            "Spot does not know where the widget is located on the screen.",
-          );
-        }
-        if (renderObject is! RenderBox) {
-          throw TestFailure(
-            "Widget '${selector.toStringBreadcrumb()}' is associated to $renderObject which "
-            "is not a RenderObject in the 2D Cartesian coordinate system "
-            "(implements RenderBox).\n"
-            "Spot does not know how to hit test such a widget.",
-          );
-        }
-        _validateViewBounds(renderObject, selector: selector);
+        final renderBox = _getRenderBoxOrThrow(selector);
+        _validateViewBounds(renderBox, selector: selector);
 
         final centerPosition =
-            renderObject.localToGlobal(renderObject.size.center(Offset.zero));
+            renderBox.localToGlobal(renderBox.size.center(Offset.zero));
 
         final timeline = currentTimeline();
         if (timeline.mode != TimelineMode.off) {
@@ -120,7 +105,7 @@ class Act {
         // covered by another widget, or outside the viewport.
         _pokeRenderObject(
           position: centerPosition,
-          target: renderObject,
+          target: renderBox,
           snapshot: snapshot,
         );
 
@@ -138,10 +123,118 @@ class Act {
     });
   }
 
+  /// Repeatedly drags at the position of `dragStart` by `moveStep` until `dragTarget` is visible.
+  ///
+  /// Between each drag, advances the clock by `duration`.
+  ///
+  /// Throws a [TestFailure] if `dragTarget` is not found after `maxIteration`
+  /// drags.
+  ///
+  /// usage:
+  /// ```dart
+  /// final firstItem = spotText('Item at index: 3', exact: true)..existsOnce();
+  /// final secondItem = spotText('Item at index: 27', exact: true)..doesNotExist();
+  /// await act.dragUntilVisible(
+  ///   dragStart: firstItem,
+  ///   dragTarget: secondItem,
+  ///   maxIteration: 30,
+  ///   moveStep: const Offset(0, -100),
+  /// );
+  /// secondItem.existsOnce();
+  /// ```
+  Future<void> dragUntilVisible({
+    required WidgetSelector<Widget> dragStart,
+    required WidgetSelector<Widget> dragTarget,
+    required Offset moveStep,
+    int maxIteration = 50,
+    Duration duration = const Duration(milliseconds: 50),
+  }) {
+    // Check if widget is in the widget tree. Throws if not.
+    dragStart.snapshot().existsOnce();
+
+    return TestAsyncUtils.guard<void>(() async {
+      return _alwaysPropagateDevicePointerEvents(() async {
+        final renderBox = _getRenderBoxOrThrow(dragStart);
+
+        final binding = TestWidgetsFlutterBinding.instance;
+
+        bool isTargetVisible() {
+          final renderObject = _renderObjectFromSelector(dragTarget);
+          if (renderObject is RenderBox) {
+            return _validateViewBounds(
+              renderObject,
+              selector: dragTarget,
+              throwIfInvisible: false,
+            );
+          } else {
+            return false;
+          }
+        }
+
+        final dragPosition =
+            renderBox.localToGlobal(renderBox.size.center(Offset.zero));
+
+        final targetName = dragTarget.toStringBreadcrumb();
+
+        bool isVisible = isTargetVisible();
+
+        if (isVisible) {
+          return;
+        }
+
+        int iterations = 0;
+        while (iterations < maxIteration && !isVisible) {
+          await gestures.drag(dragPosition, moveStep);
+          await binding.pump(duration);
+          iterations++;
+          isVisible = isTargetVisible();
+        }
+
+        final totalDragged = moveStep * iterations.toDouble();
+
+        if (!isVisible) {
+          throw TestFailure(
+            "$targetName is not visible after dragging $iterations times and a total dragged offset of $totalDragged.",
+          );
+        }
+      });
+    });
+  }
+
+  /// Returns the `RenderBox` of a widget based on the given selector.
+  /// Throws `TestFailure` if the widget's render object is null or not a `RenderBox`.
+  RenderBox _getRenderBoxOrThrow(WidgetSelector<Widget> selector) {
+    final renderObject = _renderObjectFromSelector(selector);
+    if (renderObject == null) {
+      throw TestFailure(
+        "Widget '${selector.toStringBreadcrumb()}' has no associated RenderObject.\n"
+        "Spot does not know where the widget is located on the screen.",
+      );
+    }
+    if (renderObject is! RenderBox) {
+      throw TestFailure(
+        "Widget '${selector.toStringBreadcrumb()}' is associated to $renderObject which "
+        "is not a RenderObject in the 2D Cartesian coordinate system "
+        "(implements RenderBox).\n"
+        "Spot does not know how to hit test such a widget.",
+      );
+    }
+    return renderObject;
+  }
+
+  /// Returns the `RenderObject` of a widget based on the given selector.
+  /// Returns `null` if the widget's render object is null.
+  RenderObject? _renderObjectFromSelector(WidgetSelector<Widget> selector) {
+    final snapshot = selector.snapshot();
+    final element = snapshot.discoveredElement;
+    return element?.renderObject;
+  }
+
   // Validates that the widget is at least partially visible in the viewport.
-  void _validateViewBounds(
+  bool _validateViewBounds(
     RenderBox renderBox, {
     required WidgetSelector selector,
+    bool throwIfInvisible = true,
   }) {
     // ignore: deprecated_member_use
     final view = WidgetsBinding.instance.renderView;
@@ -150,11 +243,13 @@ class Act {
         renderBox.localToGlobal(Offset.zero) & renderBox.paintBounds.size;
 
     final intersection = viewport.intersect(location);
-    if (intersection.width < 0 || intersection.height < 0) {
+    final isNotVisible = intersection.width < 0 || intersection.height < 0;
+    if (isNotVisible && throwIfInvisible) {
       throw TestFailure(
         "Widget '${selector.toStringBreadcrumb()}' is located outside the viewport ($location).",
       );
     }
+    return !isNotVisible;
     // TODO handle case when location is partially outside viewport
     // TODO what if the center is outside the viewport, should we move the touch location or error?
   }
