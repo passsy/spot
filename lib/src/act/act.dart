@@ -123,7 +123,12 @@ class Act {
     });
   }
 
+  /// Repeatedly drags at the position of `dragStart` by `moveStep` until `dragTarget` is visible.
   ///
+  /// Between each drag, advances the clock by `duration`.
+  ///
+  /// Throws a [TestFailure] if `dragTarget` is not found after `maxIteration`
+  /// drags.
   Future<void> dragUntilVisible({
     required WidgetSelector<Widget> dragStart,
     required WidgetSelector<Widget> dragTarget,
@@ -153,14 +158,16 @@ class Act {
           }
         }
 
+        final dragPosition =
+            renderBox.localToGlobal(renderBox.size.center(Offset.zero));
+
         Future<void> addDragEvent({
           required String name,
-          required Offset offset,
         }) async {
           final timeline = currentTimeline();
           if (timeline.mode != TimelineMode.off) {
             final screenshot = await takeScreenshotWithCrosshair(
-              centerPosition: offset,
+              centerPosition: dragPosition,
             );
             timeline.addScreenshot(
               screenshot,
@@ -170,9 +177,6 @@ class Act {
           }
         }
 
-        final dragPosition =
-            renderBox.localToGlobal(renderBox.size.center(Offset.zero));
-
         final targetName = dragTarget.toStringBreadcrumb();
 
         bool isVisible = isTargetVisible();
@@ -180,14 +184,12 @@ class Act {
         if (isVisible) {
           await addDragEvent(
             name: 'Widget $targetName found without dragging.',
-            offset: dragPosition,
           );
           return;
         }
 
         await addDragEvent(
           name: 'Starting to drag $targetName at $dragPosition',
-          offset: dragPosition,
         );
 
         int iterations = 0;
@@ -200,15 +202,12 @@ class Act {
 
         final totalDragged = moveStep * iterations.toDouble();
         final resultString = isVisible ? '' : 'not';
-        final msg =
+        final message =
             "Target $targetName $resultString found after $iterations drags. "
             "Total dragged offset: $totalDragged";
 
-        await addDragEvent(
-          name: msg,
-          offset: dragPosition + totalDragged,
-        );
-        await binding.pump();
+        await addDragEvent(name: message);
+
         if (!isVisible) {
           throw TestFailure(
             "$targetName is not visible after dragging $iterations times and a total dragged offset of $totalDragged.",
