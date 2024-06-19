@@ -127,7 +127,7 @@ class Act {
   Future<void> dragUntilVisible({
     required WidgetSelector<Widget> dragStart,
     required WidgetSelector<Widget> dragTarget,
-    Offset moveStep = const Offset(0, -100),
+    required Offset moveStep,
     int maxIteration = 50,
     Duration duration = const Duration(milliseconds: 50),
   }) {
