@@ -84,27 +84,11 @@ class Act {
 
     return TestAsyncUtils.guard<void>(() async {
       return _alwaysPropagateDevicePointerEvents(() async {
-        // Find the associated RenderObject to get the position of the element on the screen
-        final element = snapshot.discoveredElement!;
-        final renderObject = element.renderObject;
-        if (renderObject == null) {
-          throw TestFailure(
-            "Widget '${selector.toStringBreadcrumb()}' has no associated RenderObject.\n"
-            "Spot does not know where the widget is located on the screen.",
-          );
-        }
-        if (renderObject is! RenderBox) {
-          throw TestFailure(
-            "Widget '${selector.toStringBreadcrumb()}' is associated to $renderObject which "
-            "is not a RenderObject in the 2D Cartesian coordinate system "
-            "(implements RenderBox).\n"
-            "Spot does not know how to hit test such a widget.",
-          );
-        }
-        _validateViewBounds(renderObject, selector: selector);
+        final renderBox = _getRenderBoxOrThrow(selector);
+        _validateViewBounds(renderBox, selector: selector);
 
         final centerPosition =
-            renderObject.localToGlobal(renderObject.size.center(Offset.zero));
+            renderBox.localToGlobal(renderBox.size.center(Offset.zero));
         final timeline = currentTimeline();
         if (timeline.mode != TimelineMode.off) {
           final screenshot = await takeScreenshotWithCrosshair(
@@ -121,7 +105,7 @@ class Act {
         // covered by another widget, or outside the viewport.
         _pokeRenderObject(
           position: centerPosition,
-          target: renderObject,
+          target: renderBox,
           snapshot: snapshot,
         );
 
@@ -147,47 +131,33 @@ class Act {
     int maxIteration = 50,
     Duration duration = const Duration(milliseconds: 50),
   }) {
-    final startSnapshot = dragStart.snapshot()..existsOnce();
+    // Check if widget is in the widget tree. Throws if not.
+    dragStart.snapshot().existsOnce();
+
     return TestAsyncUtils.guard<void>(() async {
       return _alwaysPropagateDevicePointerEvents(() async {
-        final element = startSnapshot.discoveredElement!;
-        final startRenderObject = element.renderObject;
-        if (startRenderObject == null) {
-          throw TestFailure(
-            "Widget '${dragStart.toStringBreadcrumb()}' has no associated RenderObject.\n"
-            "Spot does not know where the widget is located on the screen.",
-          );
-        }
-        if (startRenderObject is! RenderBox) {
-          throw TestFailure(
-            "Widget '${dragStart.toStringBreadcrumb()}' is associated to $startRenderObject which "
-            "is not a RenderObject in the 2D Cartesian coordinate system "
-            "(implements RenderBox).\n"
-            "Spot does not know how to hit test such a widget.",
-          );
-        }
+        final renderBox = _getRenderBoxOrThrow(dragStart);
 
         final binding = TestWidgetsFlutterBinding.instance;
 
         bool isTargetVisible() {
-          try {
-            final endSnapshot = dragTarget.snapshot();
-            final endElement = endSnapshot.discoveredElement;
-            if (endElement == null) return false;
-            final endRenderObject = endElement.renderObject;
-            if (endRenderObject is! RenderBox) return false;
-            return _validateViewBounds(endRenderObject, selector: dragTarget);
-          } catch (_) {
+          final renderObject = _renderObjectFromSelector(dragTarget);
+          if (renderObject is RenderBox) {
+            return _validateViewBounds(
+              renderObject,
+              selector: dragTarget,
+              throwIfInvisible: false,
+            );
+          } else {
             return false;
           }
         }
 
-        final timeline = currentTimeline();
-
-        Future<void> addEvent({
+        Future<void> addDragEvent({
           required String name,
           required Offset offset,
         }) async {
+          final timeline = currentTimeline();
           if (timeline.mode != TimelineMode.off) {
             final screenshot = await takeScreenshotWithCrosshair(
               centerPosition: offset,
@@ -200,41 +170,81 @@ class Act {
           }
         }
 
-        final dragPosition = startRenderObject
-            .localToGlobal(startRenderObject.size.center(Offset.zero));
-        int iterations = 0;
-        await addEvent(
-          name: 'Starting to drag at offset: $dragPosition',
-          offset: dragPosition,
-        );
+        final dragPosition =
+            renderBox.localToGlobal(renderBox.size.center(Offset.zero));
+
+        final targetName = dragTarget.toStringBreadcrumb();
+
         bool isVisible = isTargetVisible();
+
         if (isVisible) {
+          await addDragEvent(
+            name: 'Widget $targetName found without dragging.',
+            offset: dragPosition,
+          );
           return;
         }
+
+        await addDragEvent(
+          name: 'Starting to drag $targetName at $dragPosition',
+          offset: dragPosition,
+        );
+
+        int iterations = 0;
         while (iterations < maxIteration && !isVisible) {
           await gestures.drag(dragPosition, moveStep);
           await binding.pump(duration);
           iterations++;
-          await addEvent(
-            name:
-                'Dragged $iterations times. Total dragged offset is: ${moveStep * iterations.toDouble()}.',
-            offset: dragPosition + moveStep * iterations.toDouble(),
-          );
           isVisible = isTargetVisible();
         }
-        await Scrollable.ensureVisible(dragTarget.snapshotElement());
-        if (isVisible) {
-          await addEvent(
-            name: 'Found target after $iterations drags.',
-            offset: dragPosition + moveStep * iterations.toDouble(),
-          );
-        } else {
+
+        final totalDragged = moveStep * iterations.toDouble();
+        final resultString = isVisible ? '' : 'not';
+        final msg =
+            "Target $targetName $resultString found after $iterations drags. "
+            "Total dragged offset: $totalDragged";
+
+        await addDragEvent(
+          name: msg,
+          offset: dragPosition + totalDragged,
+        );
+        await binding.pump();
+        if (!isVisible) {
           throw TestFailure(
-            "Widget '${dragTarget.toStringBreadcrumb()}' is not visible after dragging $iterations times.",
+            "$targetName is not visible after dragging $iterations times and a total dragged offset of $totalDragged.",
           );
         }
       });
     });
+  }
+
+  /// Returns the `RenderBox` of a widget based on the given selector.
+  /// Throws `TestFailure` if the widget's render object is null or not a `RenderBox`.
+  RenderBox _getRenderBoxOrThrow(WidgetSelector<Widget> selector) {
+    final renderObject = _renderObjectFromSelector(selector);
+    if (renderObject == null) {
+      throw TestFailure(
+        "Widget '${selector.toStringBreadcrumb()}' has no associated RenderObject.\n"
+        "Spot does not know where the widget is located on the screen.",
+      );
+    }
+    if (renderObject is! RenderBox) {
+      throw TestFailure(
+        "Widget '${selector.toStringBreadcrumb()}' is associated to $renderObject which "
+        "is not a RenderObject in the 2D Cartesian coordinate system "
+        "(implements RenderBox).\n"
+        "Spot does not know how to hit test such a widget.",
+      );
+    }
+    return renderObject;
+  }
+
+  /// Returns the `RenderObject` of a widget based on the given selector.
+  /// Returns `null` if the widget's render object is null.
+  RenderObject? _renderObjectFromSelector(WidgetSelector<Widget> selector) {
+    final snapshot = selector.snapshot();
+    final element = snapshot.discoveredElement;
+    return element?.renderObject;
   }
 
   // Validates that the widget is at least partially visible in the viewport.
