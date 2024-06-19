@@ -1,6 +1,6 @@
 name: spot
 description: Chainable powerful widget selector API, screenshots and assertions for awesome widget tests.
-version: 0.12.1
+version: 0.13.0
 repository: https://github.com/passsy/spot
 issue_tracker: https://github.com/passsy/spot/issues
 

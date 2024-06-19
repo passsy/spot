@@ -1,6 +1,9 @@
 # Changelog
 
-## 0.12.0
+## 0.13.0
+- Add `act.dragUntilVisible()` #59
+
+## 0.12.1
 - Support for Flutter 3.22
 - Remove unused dependencies #55
 
