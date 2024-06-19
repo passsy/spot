@@ -283,6 +283,11 @@ enum TimelineEventType {
   /// A tap event.
   tap(
     'Tap Event (crosshair indicator)',
+  ),
+
+  /// A drag event.
+  drag(
+    'Drag Event (crosshair indicator)',
   );
 
   const TimelineEventType(this.label);

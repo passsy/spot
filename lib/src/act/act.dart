@@ -89,11 +89,11 @@ class Act {
 
         final centerPosition =
             renderBox.localToGlobal(renderBox.size.center(Offset.zero));
-
         final timeline = currentTimeline();
         if (timeline.mode != TimelineMode.off) {
-          final screenshot =
-              await takeScreenshotWithCrosshair(centerPosition: centerPosition);
+          final screenshot = await takeScreenshotWithCrosshair(
+            centerPosition: centerPosition,
+          );
           timeline.addScreenshot(
             screenshot,
             name: 'Tap ${selector.toStringBreadcrumb()}',
@@ -174,13 +174,36 @@ class Act {
         final dragPosition =
             renderBox.localToGlobal(renderBox.size.center(Offset.zero));
 
+        Future<void> addDragEvent({
+          required String name,
+        }) async {
+          final timeline = currentTimeline();
+          if (timeline.mode != TimelineMode.off) {
+            final screenshot = await takeScreenshotWithCrosshair(
+              centerPosition: dragPosition,
+            );
+            timeline.addScreenshot(
+              screenshot,
+              name: name,
+              eventType: TimelineEventType.drag,
+            );
+          }
+        }
+
         final targetName = dragTarget.toStringBreadcrumb();
 
         bool isVisible = isTargetVisible();
 
         if (isVisible) {
+          await addDragEvent(
+            name: 'Widget $targetName found without dragging.',
+          );
           return;
         }
+
+        await addDragEvent(
+          name: 'Starting to drag $targetName at $dragPosition',
+        );
 
         int iterations = 0;
         while (iterations < maxIteration && !isVisible) {
@@ -191,6 +214,12 @@ class Act {
         }
 
         final totalDragged = moveStep * iterations.toDouble();
+        final resultString = isVisible ? '' : 'not';
+        final message =
+            "Target $targetName $resultString found after $iterations drags. "
+            "Total dragged offset: $totalDragged";
+
+        await addDragEvent(name: message);
 
         if (!isVisible) {
           throw TestFailure(
