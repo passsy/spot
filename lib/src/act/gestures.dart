@@ -2,18 +2,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Top level entry point for gestures on the screen.
-///
-/// ```dart
-/// final firstItem = spotText('Item at index: 3', exact: true)..existsOnce();
-///final secondItem = spotText('Item at index: 27', exact: true)..doesNotExist();
-/// await act.dragUntilVisible(
-/// dragStart: firstItem,
-/// dragTarget: secondItem,
-/// maxIteration: 30,
-/// moveStep: const Offset(0, -100),
-/// );
-/// secondItem.existsOnce();
-/// ```
 const gestures = Gestures._();
 
 /// A class that provides methods for simulating gestures in tests.

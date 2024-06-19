@@ -111,6 +111,19 @@ class Act {
   ///
   /// Throws a [TestFailure] if `dragTarget` is not found after `maxIteration`
   /// drags.
+  ///
+  /// usage:
+  /// ```dart
+  /// final firstItem = spotText('Item at index: 3', exact: true)..existsOnce();
+  /// final secondItem = spotText('Item at index: 27', exact: true)..doesNotExist();
+  /// await act.dragUntilVisible(
+  ///   dragStart: firstItem,
+  ///   dragTarget: secondItem,
+  ///   maxIteration: 30,
+  ///   moveStep: const Offset(0, -100),
+  /// );
+  /// secondItem.existsOnce();
+  /// ```
   Future<void> dragUntilVisible({
     required WidgetSelector<Widget> dragStart,
     required WidgetSelector<Widget> dragTarget,
