@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-/// Top level entry point to drag widgets on the screen.
+/// Top level entry point for gestures on the screen.
 ///
 /// ```dart
 /// final firstItem = spotText('Item at index: 3', exact: true)..existsOnce();
@@ -16,7 +16,7 @@ import 'package:flutter_test/flutter_test.dart';
 /// ```
 const gestures = Gestures._();
 
-/// Drag stuff
+/// A class that provides methods for simulating gestures in tests.
 class Gestures {
   const Gestures._();
 
@@ -37,17 +37,6 @@ class Gestures {
   /// Attempts to drag the given widget by the given offset, by
   /// starting a drag in the middle of the widget.
   ///
-  /// {@macro flutter.flutter_test.WidgetController.tap.warnIfMissed}
-  ///
-  /// If you want the drag to end with a speed so that the gesture recognition
-  /// system identifies the gesture as a fling, consider using [fling] instead.
-  ///
-  /// The operation happens at once. If you want the drag to last for a period
-  /// of time, consider using [timedDrag].
-  ///
-  /// {@macro flutter.flutter_test.WidgetController.fling.offset}
-  ///
-  /// {@template flutter.flutter_test.WidgetController.drag}
   /// By default, if the x or y component of offset is greater than
   /// [kDragSlopDefault], the gesture is broken up into two separate moves
   /// calls. Changing `touchSlopX` or `touchSlopY` will change the minimum
@@ -63,7 +52,6 @@ class Gestures {
   /// To force this function to a send a single move event, the `touchSlopX` and
   /// `touchSlopY` variables should be set to 0. However, generally, these values
   /// should be left to their default values.
-  /// {@endtemplate}
   Future<void> drag(
     Offset position,
     Offset offset, {
@@ -87,15 +75,6 @@ class Gestures {
 
   /// Attempts a drag gesture consisting of a pointer down, a move by
   /// the given offset, and a pointer up.
-  ///
-  /// If you want the drag to end with a speed so that the gesture recognition
-  /// system identifies the gesture as a fling, consider using [flingFrom]
-  /// instead.
-  ///
-  /// The operation happens at once. If you want the drag to last for a period
-  /// of time, consider using [timedDragFrom].
-  ///
-  /// {@macro flutter.flutter_test.WidgetController.drag}
   Future<void> dragFrom(
     Offset startLocation,
     Offset offset, {
