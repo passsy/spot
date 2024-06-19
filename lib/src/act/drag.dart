@@ -4,8 +4,15 @@ import 'package:flutter_test/flutter_test.dart';
 /// Top level entry point to drag widgets on the screen.
 ///
 /// ```dart
-/// final button = spotSingle<FloatingActionButton>();
-/// act.tap(button);
+/// final firstItem = spotText('Item at index: 3', exact: true)..existsOnce();
+///final secondItem = spotText('Item at index: 27', exact: true)..doesNotExist();
+/// await act.dragUntilVisible(
+/// dragStart: firstItem,
+/// dragTarget: secondItem,
+/// maxIteration: 30,
+/// moveStep: const Offset(0, -100),
+/// );
+/// secondItem.existsOnce();
 /// ```
 const gestures = Gestures._();
 
@@ -143,8 +150,12 @@ class Gestures {
 
               // The vector from the edge of the box to the horizontal extension of the horizontal edge.
               await gesture.moveBy(Offset(diffX2, diffY2));
-              await gesture.moveBy(Offset(
-                  offsetX - diffX2 - signedSlopX, offsetY - signedSlopY));
+              await gesture.moveBy(
+                Offset(
+                  offsetX - diffX2 - signedSlopX,
+                  offsetY - signedSlopY,
+                ),
+              );
             }
           } else {
             assert(offsetY.abs() > touchSlopY);
@@ -164,8 +175,12 @@ class Gestures {
 
               // The vector from the edge of the box to the vertical extension of the vertical edge.
               await gesture.moveBy(Offset(diffX2, diffY2));
-              await gesture.moveBy(Offset(
-                  offsetX - signedSlopX, offsetY - diffY2 - signedSlopY));
+              await gesture.moveBy(
+                Offset(
+                  offsetX - signedSlopX,
+                  offsetY - diffY2 - signedSlopY,
+                ),
+              );
             }
           }
         } else {
