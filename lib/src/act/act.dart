@@ -205,25 +205,25 @@ class Act {
           name: 'Starting to drag from $dragPosition towards $targetName.',
         );
 
-        int iterations = 0;
-        while (iterations < maxIteration && !isVisible) {
+        int dragCount = 0;
+        while (dragCount < maxIteration && !isVisible) {
           await gestures.drag(dragPosition, moveStep);
           await binding.pump(duration);
-          iterations++;
+          dragCount++;
           isVisible = isTargetVisible();
         }
 
-        final totalDragged = moveStep * iterations.toDouble();
-        final resultString = isVisible ? '' : 'not';
+        final totalDragged = moveStep * dragCount.toDouble();
+        final resultString = isVisible ? 'found' : 'not found';
         final message =
-            "Target $targetName $resultString found after $iterations drags. "
+            "Target $targetName $resultString after $dragCount drags. "
             "Total dragged offset: $totalDragged";
 
         await addDragEvent(name: message);
 
         if (!isVisible) {
           throw TestFailure(
-            "$targetName is not visible after dragging $iterations times and a total dragged offset of $totalDragged.",
+            "$targetName is not visible after dragging $dragCount times and a total dragged offset of $totalDragged.",
           );
         }
       });
