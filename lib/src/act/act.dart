@@ -202,7 +202,7 @@ class Act {
         }
 
         await addDragEvent(
-          name: 'Starting to drag $targetName at $dragPosition',
+          name: 'Starting to drag from $dragPosition towards $targetName.',
         );
 
         int iterations = 0;

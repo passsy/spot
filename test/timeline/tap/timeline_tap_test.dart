@@ -7,7 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/timeline/timeline.dart';
 import 'package:test_process/test_process.dart';
-import 'timeline_test_widget.dart';
+import 'timeline_tap_test_widget.dart';
 
 final _addButtonSelector = spotIcon(Icons.add);
 final _subtractButtonSelector = spotIcon(Icons.remove);
@@ -32,8 +32,8 @@ String _testAsString({
     }
   }();
 
-  final widgetPart =
-      File('test/timeline/timeline_test_widget.dart').readAsStringSync();
+  final widgetPart = File('test/timeline/tap/timeline_tap_test_widget.dart')
+      .readAsStringSync();
   return '''
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
