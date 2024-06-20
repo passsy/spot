@@ -1,22 +1,16 @@
-import 'dart:async';
 import 'dart:io';
 
-import 'package:dartx/dartx.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/timeline/timeline.dart';
-import 'package:test_process/test_process.dart';
+import '../../util/capture_console_output.dart';
 import 'drag_until_visible_test_widget.dart';
 
 final _firstItemSelector = spotText('Item at index: 3', exact: true);
 final _secondItemSelector = spotText('Item at index: 27', exact: true);
-final _addButtonSelector = spotIcon(Icons.add);
-final _subtractButtonSelector = spotIcon(Icons.remove);
-final _clearButtonSelector = spotIcon(Icons.clear);
 
-const _header = '==================== Timeline Event ====================';
-const _separator = '========================================================';
+// const _header = '==================== Timeline Event ====================';
+// const _separator = '========================================================';
 
 String _testAsString({
   required String title,
@@ -65,7 +59,7 @@ void main() async {
 
 void main() {
   testWidgets('Drag Until Visible - Live timeline', (tester) async {
-    final output = await _captureConsoleOutput(() async {
+    final output = await captureConsoleOutput(() async {
       recordLiveTimeline();
       await tester.pumpWidget(const DragUntilVisibleTestWidget());
       _firstItemSelector.existsOnce();
@@ -88,35 +82,42 @@ void main() {
     expect(
       output,
       contains(
-          'Target Widget with text with text "Item at index: 27"  found after 23 drags. Total dragged offset:'),
+        'Target Widget with text with text "Item at index: 27"  found after 23 drags. Total dragged offset:',
+      ),
     );
     expect(output, contains('🔴 - Already recording live timeline'));
   });
-  // testWidgets('Start with Timeline Mode off', (tester) async {
-  //   final output = await _captureConsoleOutput(() async {
-  //     stopRecordingTimeline();
-  //     await tester.pumpWidget(const TimelineTestWidget());
-  //     _addButtonSelector.existsOnce();
-  //     spotText('Counter: 3').existsOnce();
-  //     await act.tap(_addButtonSelector);
-  //     spotText('Counter: 4').existsOnce();
-  //     await act.tap(_subtractButtonSelector);
-  //     spotText('Counter: 3').existsOnce();
-  //   });
-  //
-  //   expect(output, contains('⏸︎ - Timeline recording is off'));
-  //   expect(
-  //     output,
-  //     isNot(contains('Tap ${_addButtonSelector.toStringBreadcrumb()}')),
-  //   );
-  //   expect(
-  //     output,
-  //     isNot(contains('Tap ${_subtractButtonSelector.toStringBreadcrumb()}')),
-  //   );
-  //   _testTimeLineContent(output: output, eventCount: 0);
-  // });
+  testWidgets('Start with Timeline Mode off', (tester) async {
+    final output = await captureConsoleOutput(() async {
+      stopRecordingTimeline();
+      await tester.pumpWidget(const DragUntilVisibleTestWidget());
+      _firstItemSelector.existsOnce();
+      _secondItemSelector.doesNotExist();
+      await act.dragUntilVisible(
+        dragStart: _firstItemSelector,
+        dragTarget: _secondItemSelector,
+        maxIteration: 30,
+        moveStep: const Offset(0, -100),
+      );
+      _secondItemSelector.existsOnce();
+    });
+
+    expect(output, contains('⏸︎ - Timeline recording is off'));
+    expect(
+      output,
+      isNot(contains('Event: Starting to drag from')),
+    );
+    expect(
+      output,
+      isNot(
+        contains(
+          'Target Widget with text with text "Item at index: 27"  found after 23 drags. Total dragged offset:',
+        ),
+      ),
+    );
+  });
   // testWidgets('Turn timeline mode off during test', (tester) async {
-  //   final output = await _captureConsoleOutput(() async {
+  //   final output = await captureConsoleOutput(() async {
   //     recordLiveTimeline();
   //     await tester.pumpWidget(
   //       const TimelineTestWidget(),
@@ -152,7 +153,7 @@ void main() {
   //
   // group('Print on teardown', () {
   //   testWidgets('OnError timeline - without error', (tester) async {
-  //     final output = await _captureConsoleOutput(() async {
+  //     final output = await captureConsoleOutput(() async {
   //       recordOnErrorTimeline();
   //       await tester.pumpWidget(const DragUntilVisibleTestWidget());
   //       _addButtonSelector.existsOnce();
@@ -395,45 +396,28 @@ void main() {
   // });
 }
 
-void _testTimeLineContent({
-  required String output,
-  required int eventCount,
-}) {
-  expect(
-    RegExp(_header).allMatches(output).length,
-    eventCount,
-  );
-  expect(
-    RegExp('Event: Tap Icon Widget with icon:').allMatches(output).length,
-    eventCount,
-  );
-  expect(
-    RegExp('Caller: at main.<fn>.<fn> file:///').allMatches(output).length,
-    eventCount,
-  );
-  expect(
-    RegExp('Screenshot: file:').allMatches(output).length,
-    eventCount,
-  );
-  expect(
-    RegExp('Timestamp: ').allMatches(output).length,
-    eventCount,
-  );
-}
-
-Future<String> _captureConsoleOutput(
-  Future<void> Function() testFunction,
-) async {
-  final StringBuffer buffer = StringBuffer();
-  final ZoneSpecification spec = ZoneSpecification(
-    print: (self, parent, zone, line) {
-      buffer.writeln(line);
-    },
-  );
-
-  await Zone.current.fork(specification: spec).run(() async {
-    await testFunction();
-  });
-
-  return buffer.toString();
-}
+// void _testTimeLineContent({
+//   required String output,
+//   required int eventCount,
+// }) {
+//   expect(
+//     RegExp(_header).allMatches(output).length,
+//     eventCount,
+//   );
+//   expect(
+//     RegExp('Event: Tap Icon Widget with icon:').allMatches(output).length,
+//     eventCount,
+//   );
+//   expect(
+//     RegExp('Caller: at main.<fn>.<fn> file:///').allMatches(output).length,
+//     eventCount,
+//   );
+//   expect(
+//     RegExp('Screenshot: file:').allMatches(output).length,
+//     eventCount,
+//   );
+//   expect(
+//     RegExp('Timestamp: ').allMatches(output).length,
+//     eventCount,
+//   );
+// }

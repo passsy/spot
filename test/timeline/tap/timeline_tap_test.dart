@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:dartx/dartx.dart';
@@ -7,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/timeline/timeline.dart';
 import 'package:test_process/test_process.dart';
+import '../../util/capture_console_output.dart';
 import 'timeline_tap_test_widget.dart';
 
 final _addButtonSelector = spotIcon(Icons.add);
@@ -59,7 +59,7 @@ void main() async {
 
 void main() {
   testWidgets('Live timeline', (tester) async {
-    final output = await _captureConsoleOutput(() async {
+    final output = await captureConsoleOutput(() async {
       recordLiveTimeline();
       await tester.pumpWidget(const TimelineTestWidget());
       _addButtonSelector.existsOnce();
@@ -84,7 +84,7 @@ void main() {
     _testTimeLineContent(output: output, eventCount: 2);
   });
   testWidgets('Start with Timeline Mode off', (tester) async {
-    final output = await _captureConsoleOutput(() async {
+    final output = await captureConsoleOutput(() async {
       stopRecordingTimeline();
       await tester.pumpWidget(const TimelineTestWidget());
       _addButtonSelector.existsOnce();
@@ -107,7 +107,7 @@ void main() {
     _testTimeLineContent(output: output, eventCount: 0);
   });
   testWidgets('Turn timeline mode off during test', (tester) async {
-    final output = await _captureConsoleOutput(() async {
+    final output = await captureConsoleOutput(() async {
       recordLiveTimeline();
       await tester.pumpWidget(
         const TimelineTestWidget(),
@@ -143,7 +143,7 @@ void main() {
 
   group('Print on teardown', () {
     testWidgets('OnError timeline - without error', (tester) async {
-      final output = await _captureConsoleOutput(() async {
+      final output = await captureConsoleOutput(() async {
         recordOnErrorTimeline();
         await tester.pumpWidget(const TimelineTestWidget());
         _addButtonSelector.existsOnce();
@@ -410,21 +410,4 @@ void _testTimeLineContent({
     RegExp('Timestamp: ').allMatches(output).length,
     eventCount,
   );
-}
-
-Future<String> _captureConsoleOutput(
-  Future<void> Function() testFunction,
-) async {
-  final StringBuffer buffer = StringBuffer();
-  final ZoneSpecification spec = ZoneSpecification(
-    print: (self, parent, zone, line) {
-      buffer.writeln(line);
-    },
-  );
-
-  await Zone.current.fork(specification: spec).run(() async {
-    await testFunction();
-  });
-
-  return buffer.toString();
 }
