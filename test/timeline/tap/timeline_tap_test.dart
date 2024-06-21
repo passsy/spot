@@ -197,7 +197,10 @@ void main() {
 
       // Error happens
       await testProcess.shouldExit(1);
-      tempDir.deleteSync(recursive: true);
+
+      if (tempDir.existsSync()) {
+        tempDir.deleteSync(recursive: true);
+      }
 
       final stdout = stdoutBuffer.toString();
       final timeline = stdout.split('\n');
@@ -272,7 +275,10 @@ void main() {
 
       // Error does not happen
       await testProcess.shouldExit(0);
-      tempDir.deleteSync(recursive: true);
+
+      if (tempDir.existsSync()) {
+        tempDir.deleteSync(recursive: true);
+      }
 
       final stdout = stdoutBuffer.toString();
       final timeline = stdout.split('\n');
@@ -344,7 +350,10 @@ void main() {
 
       // Error does not happen
       await testProcess.shouldExit(1);
-      tempDir.deleteSync(recursive: true);
+
+      if (tempDir.existsSync()) {
+        tempDir.deleteSync(recursive: true);
+      }
 
       final stdout = stdoutBuffer.toString();
       final timeline = stdout.split('\n');

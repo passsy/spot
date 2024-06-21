@@ -1,8 +1,10 @@
+import 'dart:io';
+
 import 'package:dartx/dartx.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
-// import 'package:spot/src/timeline/timeline.dart';
-// import 'package:test_process/test_process.dart';
+import 'package:spot/src/timeline/timeline.dart';
+import 'package:test_process/test_process.dart';
 import '../../util/capture_console_output.dart';
 import 'drag_until_visible_test_widget.dart';
 
@@ -12,50 +14,48 @@ final _secondItemSelector = spotText('Item at index: 27', exact: true);
 const _header = '==================== Timeline Event ====================';
 // const _separator = '========================================================';
 
-// String _testAsString({
-//   required String title,
-//   required TimelineMode timelineMode,
-//   bool shouldFail = false,
-// }) {
-//   final String methodForMode = () {
-//     switch (timelineMode) {
-//       case TimelineMode.live:
-//         return 'recordLiveTimeline()';
-//       case TimelineMode.record:
-//         return 'recordOnErrorTimeline()';
-//       case TimelineMode.off:
-//         return 'stopRecordingTimeline()';
-//     }
-//   }();
-//
-//   final widgetPart =
-//       File('test/timeline/drag/drag_until_visible_test_widget.dart')
-//           .readAsStringSync();
-//   return '''
-// import 'package:flutter_test/flutter_test.dart';
-// import 'package:spot/spot.dart';
-// import 'package:spot/src/timeline/timeline.dart';\n
-// $widgetPart\n
-// void main() async {
-//   final addButtonSelector = spotIcon(Icons.add);
-//   final subtractButtonSelector = spotIcon(Icons.remove);
-//   testWidgets("$title", (WidgetTester tester) async {
-//     $methodForMode;
-//     await tester.pumpWidget(const DragUntilVisibleTestWidget());
-//       final firstItem = spotText('Item at index: 3', exact: true)..existsOnce();
-//       final secondItem = spotText('Item at index: 27', exact: true)
-//         ..doesNotExist();
-//       await act.dragUntilVisible(
-//         dragStart: firstItem,
-//         dragTarget: secondItem,
-//         maxIteration: 30,
-//         moveStep: const Offset(0, -100),
-//       );
-//       secondItem.existsOnce();
-//   });
-// }
-// ''';
-// }
+String _testAsString({
+  required String title,
+  required TimelineMode timelineMode,
+  bool shouldFail = false,
+}) {
+  final String methodForMode = () {
+    switch (timelineMode) {
+      case TimelineMode.live:
+        return 'recordLiveTimeline()';
+      case TimelineMode.record:
+        return 'recordOnErrorTimeline()';
+      case TimelineMode.off:
+        return 'stopRecordingTimeline()';
+    }
+  }();
+
+  final widgetPart =
+      File('test/timeline/drag/drag_until_visible_test_widget.dart')
+          .readAsStringSync();
+  return '''
+import 'package:flutter_test/flutter_test.dart';
+import 'package:spot/spot.dart';
+import 'package:spot/src/timeline/timeline.dart';\n
+$widgetPart\n
+void main() async {
+  testWidgets("$title", (WidgetTester tester) async {
+    $methodForMode;
+    await tester.pumpWidget(const DragUntilVisibleTestWidget());
+      final firstItem = spotText('Item at index: 3', exact: true)..existsOnce();
+      final secondItem = spotText('Item at index: 27', exact: true)
+        ..doesNotExist();
+      await act.dragUntilVisible(
+        dragStart: firstItem,
+        dragTarget: secondItem,
+        maxIteration: ${shouldFail ? '10' : '30'},
+        moveStep: const Offset(0, -100),
+      );
+      secondItem.existsOnce();
+  });
+}
+''';
+}
 
 void main() {
   group('Drag Timeline Test', () {
@@ -78,8 +78,6 @@ void main() {
       expect(output, contains('🔴 - Now recording live timeline'));
       _testTimeLineContent(
         output: output,
-        dragEvents: 2,
-        targetSelector: _secondItemSelector,
         totalExpectedOffset: const Offset(0, -2300),
         drags: 23,
       );
@@ -125,8 +123,6 @@ void main() {
       expect(output, contains('🔴 - Now recording live timeline'));
       _testTimeLineContent(
         output: output,
-        dragEvents: 2,
-        targetSelector: _secondItemSelector,
         totalExpectedOffset: const Offset(0, -2300),
         drags: 23,
       );
@@ -157,73 +153,58 @@ void main() {
         expect(splitted.first, '🔴 - Now recording error output timeline');
         expect(splitted.second, '🔴 - Already recording error output timeline');
       });
-      // test('OnError timeline - with error, prints timeline', () async {
-      //   final tempDir = Directory.systemTemp.createTempSync();
-      //   final tempTestFile = File('${tempDir.path}/temp_test.dart');
-      //   await tempTestFile.writeAsString(
-      //     _testAsString(
-      //       title: 'OnError timeline with error',
-      //       timelineMode: TimelineMode.record,
-      //       shouldFail: true,
-      //     ),
-      //   );
-      //   final testProcess =
-      //       await TestProcess.start('flutter', ['test', tempTestFile.path]);
-      //   final stdoutBuffer = StringBuffer();
-      //   bool write = false;
-      //   await for (final line in testProcess.stdoutStream()) {
-      //     if (line.isEmpty) continue;
-      //     if (line == 'Timeline') {
-      //       write = true;
-      //     }
-      //     if (write) {
-      //       stdoutBuffer.writeln(line);
-      //     }
-      //     // Error happens
-      //     await testProcess.shouldExit(1);
-      //     tempDir.deleteSync(recursive: true);
-      //     final stdout = stdoutBuffer.toString();
-      //     final timeline = stdout.split('\n');
-      //
-      //     expect(timeline.first, 'Timeline');
-      //     expect(
-      //       timeline[1],
-      //       _header,
-      //     );
-      //     expect(
-      //       timeline[2],
-      //       'Event: Tap Icon Widget with icon: "IconData(U+0E047)"',
-      //     );
-      //     expect(
-      //       timeline[3].startsWith('Caller: at main.<fn> file:///'),
-      //       isTrue,
-      //     );
-      //     expect(
-      //       timeline[4].startsWith(
-      //         'Screenshot: file:///',
-      //       ),
-      //       isTrue,
-      //     );
-      //     expect(
-      //       timeline[5].startsWith(
-      //         'Timestamp:',
-      //       ),
-      //       isTrue,
-      //     );
-      //     expect(
-      //       timeline[6],
-      //       _separator,
-      //     );
-      //     final htmlLine = timeline
-      //         .firstWhere((line) => line.startsWith('View time line here:'));
-      //     expect(
-      //       htmlLine.endsWith(
-      //         'timeline_onerror_timeline_with_error.html',
-      //       ),
-      //       isTrue,
-      //     );
-      //   }
-      // });
+      test('OnError timeline - with error, prints timeline', () async {
+        final tempDir = Directory.systemTemp.createTempSync();
+        final tempTestFile = File('${tempDir.path}/temp_test.dart');
+        await tempTestFile.writeAsString(
+          _testAsString(
+            title: 'Drag - OnError timeline with error',
+            timelineMode: TimelineMode.record,
+            shouldFail: true,
+          ),
+        );
+        final testProcess =
+            await TestProcess.start('flutter', ['test', tempTestFile.path]);
+        final stdoutBuffer = StringBuffer();
+        bool write = false;
+
+        await for (final line in testProcess.stdoutStream()) {
+          if (line.isEmpty) continue;
+
+          if (!write) {
+            if (line == 'Timeline') {
+              write = true;
+            }
+          }
+
+          if (write) {
+            stdoutBuffer.writeln(line);
+          }
+        }
+        // Error happens
+        await testProcess.shouldExit(1);
+        if (tempDir.existsSync()) {
+          tempDir.deleteSync(recursive: true);
+        }
+        final stdout = stdoutBuffer.toString();
+        _testTimeLineContent(
+          output: stdout,
+          drags: 10,
+          totalExpectedOffset: const Offset(0, -1000),
+          findsWidget: false,
+        );
+
+        final htmlLine = stdout
+            .split('\n')
+            .firstWhere((line) => line.startsWith('View time line here:'));
+
+        expect(
+          htmlLine.endsWith(
+            'timeline_drag_-_onerror_timeline_with_error.html',
+          ),
+          isTrue,
+        );
+      });
       // test('Live timeline - without error, prints HTML', () async {
       //   final tempDir = Directory.systemTemp.createTempSync();
       //   final tempTestFile = File('${tempDir.path}/temp_test.dart');
@@ -357,27 +338,25 @@ void main() {
 
 void _testTimeLineContent({
   required String output,
-  required int dragEvents,
   bool findsWidget = true,
-  required WidgetSelector targetSelector,
   required Offset totalExpectedOffset,
-  int? drags,
+  required int drags,
 }) {
   final eventLines =
       output.split('\n').where((line) => line.startsWith('Event:'));
   final startEvent = _replaceOffsetWithDxDy(eventLines.first);
   final endEvent =
-      'Event: Target ${targetSelector.toStringBreadcrumb()} ${findsWidget ? 'found' : ''} after $drags drags. Total dragged offset: $totalExpectedOffset';
+      'Event: Target ${_secondItemSelector.toStringBreadcrumb()} ${findsWidget ? 'found' : 'not found'} after $drags drags. Total dragged offset: $totalExpectedOffset';
 
   for (int i = 0; i < 2; i++) {
     expect(
       RegExp(_header).allMatches(output).length,
-      dragEvents,
+      2,
     );
     if (i == 0) {
       expect(
         startEvent,
-        'Event: Starting to drag from Offset(dx,dy) towards ${targetSelector.toStringBreadcrumb()}.',
+        'Event: Starting to drag from Offset(dx,dy) towards ${_secondItemSelector.toStringBreadcrumb()}.',
       );
     } else {
       expect(
@@ -386,18 +365,16 @@ void _testTimeLineContent({
       );
     }
     expect(
-      RegExp('Caller: at main.<fn>.<fn>.<fn> file:///')
-          .allMatches(output)
-          .length,
-      dragEvents,
+      RegExp('Caller: at main').allMatches(output).length,
+      2,
     );
     expect(
       RegExp('Screenshot: file:').allMatches(output).length,
-      dragEvents,
+      2,
     );
     expect(
       RegExp('Timestamp: ').allMatches(output).length,
-      dragEvents,
+      2,
     );
   }
 }
