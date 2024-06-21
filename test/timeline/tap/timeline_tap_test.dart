@@ -6,7 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/timeline/timeline.dart';
 import 'package:test_process/test_process.dart';
-import '../../util/timeline_test_helpers.dart';
+import '../../util/timeline_test_helpers.dart' as helpers;
 import 'timeline_tap_test_widget.dart';
 
 final _addButtonSelector = spotIcon(Icons.add);
@@ -21,17 +21,6 @@ String _testAsString({
   required TimelineMode timelineMode,
   bool shouldFail = false,
 }) {
-  final String methodForMode = () {
-    switch (timelineMode) {
-      case TimelineMode.live:
-        return 'recordLiveTimeline()';
-      case TimelineMode.record:
-        return 'recordOnErrorTimeline()';
-      case TimelineMode.off:
-        return 'stopRecordingTimeline()';
-    }
-  }();
-
   final widgetPart = File('test/timeline/tap/timeline_tap_test_widget.dart')
       .readAsStringSync();
   return '''
@@ -43,7 +32,7 @@ void main() async {
   final addButtonSelector = spotIcon(Icons.add);
   final subtractButtonSelector = spotIcon(Icons.remove);
   testWidgets("$title", (WidgetTester tester) async {
-    $methodForMode;
+    ${helpers.timelineInitiatorForModeAsString(timelineMode)};
     await tester.pumpWidget(const TimelineTestWidget());
       addButtonSelector.existsOnce();
       spotText('Counter: 3').existsOnce();
@@ -59,7 +48,7 @@ void main() async {
 
 void main() {
   testWidgets('Live timeline', (tester) async {
-    final output = await captureConsoleOutput(() async {
+    final output = await helpers.captureConsoleOutput(() async {
       recordLiveTimeline();
       await tester.pumpWidget(const TimelineTestWidget());
       _addButtonSelector.existsOnce();
@@ -84,7 +73,7 @@ void main() {
     _testTimeLineContent(output: output, eventCount: 2);
   });
   testWidgets('Start with Timeline Mode off', (tester) async {
-    final output = await captureConsoleOutput(() async {
+    final output = await helpers.captureConsoleOutput(() async {
       stopRecordingTimeline();
       await tester.pumpWidget(const TimelineTestWidget());
       _addButtonSelector.existsOnce();
@@ -107,7 +96,7 @@ void main() {
     _testTimeLineContent(output: output, eventCount: 0);
   });
   testWidgets('Turn timeline mode off during test', (tester) async {
-    final output = await captureConsoleOutput(() async {
+    final output = await helpers.captureConsoleOutput(() async {
       recordLiveTimeline();
       await tester.pumpWidget(
         const TimelineTestWidget(),
@@ -143,7 +132,7 @@ void main() {
 
   group('Print on teardown', () {
     testWidgets('OnError timeline - without error', (tester) async {
-      final output = await captureConsoleOutput(() async {
+      final output = await helpers.captureConsoleOutput(() async {
         recordOnErrorTimeline();
         await tester.pumpWidget(const TimelineTestWidget());
         _addButtonSelector.existsOnce();

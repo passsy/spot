@@ -5,11 +5,16 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/timeline/timeline.dart';
 import 'package:test_process/test_process.dart';
-import '../../util/timeline_test_helpers.dart';
+import '../../util/timeline_test_helpers.dart' as helpers;
 import 'drag_until_visible_test_widget.dart';
 
 final _firstItemSelector = spotText('Item at index: 3', exact: true);
 final _secondItemSelector = spotText('Item at index: 27', exact: true);
+
+const _failingDragAmount = 10;
+const _failingOffset = Offset(0, -1000);
+const _passingDragAmount = 23;
+const _passingOffset = Offset(0, -2300);
 
 const _header = '==================== Timeline Event ====================';
 // const _separator = '========================================================';
@@ -17,19 +22,8 @@ const _header = '==================== Timeline Event ====================';
 String _testAsString({
   required String title,
   required TimelineMode timelineMode,
-  bool shouldFail = false,
+  required int drags,
 }) {
-  final String methodForMode = () {
-    switch (timelineMode) {
-      case TimelineMode.live:
-        return 'recordLiveTimeline()';
-      case TimelineMode.record:
-        return 'recordOnErrorTimeline()';
-      case TimelineMode.off:
-        return 'stopRecordingTimeline()';
-    }
-  }();
-
   final widgetPart =
       File('test/timeline/drag/drag_until_visible_test_widget.dart')
           .readAsStringSync();
@@ -40,7 +34,7 @@ import 'package:spot/src/timeline/timeline.dart';\n
 $widgetPart\n
 void main() async {
   testWidgets("$title", (WidgetTester tester) async {
-    $methodForMode;
+  ${helpers.timelineInitiatorForModeAsString(timelineMode)};
     await tester.pumpWidget(const DragUntilVisibleTestWidget());
       final firstItem = spotText('Item at index: 3', exact: true)..existsOnce();
       final secondItem = spotText('Item at index: 27', exact: true)
@@ -48,7 +42,7 @@ void main() async {
       await act.dragUntilVisible(
         dragStart: firstItem,
         dragTarget: secondItem,
-        maxIteration: ${shouldFail ? '10' : '30'},
+        maxIteration: $drags,
         moveStep: const Offset(0, -100),
       );
       secondItem.existsOnce();
@@ -57,111 +51,92 @@ void main() async {
 ''';
 }
 
+Future<void> _testBody(WidgetTester tester) async {
+  await tester.pumpWidget(const DragUntilVisibleTestWidget());
+  _firstItemSelector.existsOnce();
+  _secondItemSelector.doesNotExist();
+  await act.dragUntilVisible(
+    dragStart: _firstItemSelector,
+    dragTarget: _secondItemSelector,
+    moveStep: const Offset(0, -100),
+    maxIteration: _passingDragAmount,
+  );
+  _secondItemSelector.existsOnce();
+}
+
 void main() {
   group('Drag Timeline Test', () {
-    testWidgets('Drag Until Visible - Live timeline', (tester) async {
-      final output = await captureConsoleOutput(() async {
-        recordLiveTimeline();
-        await tester.pumpWidget(const DragUntilVisibleTestWidget());
-        _firstItemSelector.existsOnce();
-        _secondItemSelector.doesNotExist();
-        await act.dragUntilVisible(
-          dragStart: _firstItemSelector,
-          dragTarget: _secondItemSelector,
-          maxIteration: 30,
-          moveStep: const Offset(0, -100),
+    group('Without error', () {
+      testWidgets('Drag Until Visible - Live timeline', (tester) async {
+        final output = await helpers.captureConsoleOutput(() async {
+          recordLiveTimeline();
+          await _testBody(tester);
+          // Notify that the timeline of this type is already recording.
+          recordLiveTimeline();
+        });
+        expect(output, contains('🔴 - Now recording live timeline'));
+        _testTimeLineContent(
+          output: output,
+          totalExpectedOffset: _passingOffset,
+          drags: _passingDragAmount,
         );
-        _secondItemSelector.existsOnce();
-        // Notify that the timeline of this type is already recording.
-        recordLiveTimeline();
+        expect(output, contains('🔴 - Already recording live timeline'));
       });
-      expect(output, contains('🔴 - Now recording live timeline'));
-      _testTimeLineContent(
-        output: output,
-        totalExpectedOffset: const Offset(0, -2300),
-        drags: 23,
-      );
-      expect(output, contains('🔴 - Already recording live timeline'));
-    });
-    testWidgets('Start with Timeline Mode off', (tester) async {
-      final output = await captureConsoleOutput(() async {
-        stopRecordingTimeline();
-        await tester.pumpWidget(const DragUntilVisibleTestWidget());
-        _firstItemSelector.existsOnce();
-        _secondItemSelector.doesNotExist();
-        await act.dragUntilVisible(
-          dragStart: _firstItemSelector,
-          dragTarget: _secondItemSelector,
-          maxIteration: 30,
-          moveStep: const Offset(0, -100),
-        );
-        _secondItemSelector.existsOnce();
-      });
-      final splitted = output.split('\n')..removeWhere((line) => line.isEmpty);
-      const expectedOutput = '⏸︎ - Timeline recording is off';
-      expect(splitted.length, 1);
-      expect(splitted.first, expectedOutput);
-    });
-    testWidgets('Turn timeline mode off during test', (tester) async {
-      final output = await captureConsoleOutput(() async {
-        recordLiveTimeline();
-        await tester.pumpWidget(const DragUntilVisibleTestWidget());
-        _firstItemSelector.existsOnce();
-        _secondItemSelector.doesNotExist();
-        await act.dragUntilVisible(
-          dragStart: _firstItemSelector,
-          dragTarget: _secondItemSelector,
-          maxIteration: 30,
-          moveStep: const Offset(0, -100),
-        );
-        _secondItemSelector.existsOnce();
-
-        // Notify that the recording is off
-        stopRecordingTimeline();
-        stopRecordingTimeline();
-      });
-      expect(output, contains('🔴 - Now recording live timeline'));
-      _testTimeLineContent(
-        output: output,
-        totalExpectedOffset: const Offset(0, -2300),
-        drags: 23,
-      );
-
-      expect(output, contains('⏸︎ - Timeline recording stopped'));
-      expect(output, contains('⏸︎ - Timeline recording is off'));
-    });
-
-    group('act.drag: Print on teardown', () {
-      testWidgets('act.drag: OnError timeline - without error', (tester) async {
-        final output = await captureConsoleOutput(() async {
-          recordOnErrorTimeline();
-          await tester.pumpWidget(const DragUntilVisibleTestWidget());
-          _firstItemSelector.existsOnce();
-          _secondItemSelector.doesNotExist();
-          await act.dragUntilVisible(
-            dragStart: _firstItemSelector,
-            dragTarget: _secondItemSelector,
-            maxIteration: 30,
-            moveStep: const Offset(0, -100),
-          );
-          _secondItemSelector.existsOnce();
-          recordOnErrorTimeline();
+      testWidgets('Start with Timeline Mode off', (tester) async {
+        final output = await helpers.captureConsoleOutput(() async {
+          stopRecordingTimeline();
+          await _testBody(tester);
         });
         final splitted = output.split('\n')
           ..removeWhere((line) => line.isEmpty);
-        expect(splitted.length, 2);
-        expect(splitted.first, '🔴 - Now recording error output timeline');
-        expect(splitted.second, '🔴 - Already recording error output timeline');
+        const expectedOutput = '⏸︎ - Timeline recording is off';
+        expect(splitted.length, 1);
+        expect(splitted.first, expectedOutput);
       });
-      test('act.drag: OnError timeline - with error, prints timeline',
-          () async {
+      testWidgets('Turn timeline mode off during test', (tester) async {
+        final output = await helpers.captureConsoleOutput(() async {
+          recordLiveTimeline();
+          await _testBody(tester);
+          // Notify that the recording is off
+          stopRecordingTimeline();
+          stopRecordingTimeline();
+        });
+        expect(output, contains('🔴 - Now recording live timeline'));
+
+        _testTimeLineContent(
+          output: output,
+          totalExpectedOffset: _passingOffset,
+          drags: _passingDragAmount,
+        );
+
+        expect(output, contains('⏸︎ - Timeline recording stopped'));
+        expect(output, contains('⏸︎ - Timeline recording is off'));
+      });
+      testWidgets('act.drag: OnError timeline - without error', (tester) async {
+        final output = await helpers.captureConsoleOutput(() async {
+          recordOnErrorTimeline();
+          await _testBody(tester);
+          recordOnErrorTimeline();
+        });
+        final lines = output.split('\n')..removeWhere((line) => line.isEmpty);
+        expect(lines.first, '🔴 - Now recording error output timeline');
+        expect(lines.second, '🔴 - Already recording error output timeline');
+
+        // Neither timeline output nor HTML link when onError timeline is
+        // recorded and no error occurs.
+        expect(lines.length, 2);
+      });
+    });
+    group('Teardown test', () {
+      test('OnError timeline - with error, prints timeline and html', () async {
         final tempDir = Directory.systemTemp.createTempSync();
         final tempTestFile = File('${tempDir.path}/temp_test.dart');
+
         await tempTestFile.writeAsString(
           _testAsString(
-            title: 'Drag - OnError timeline with error',
+            title: 'OnError timeline - with error, prints timeline',
             timelineMode: TimelineMode.record,
-            shouldFail: true,
+            drags: _failingDragAmount,
           ),
         );
         final testProcess =
@@ -184,15 +159,17 @@ void main() {
         }
         // Error happens
         await testProcess.shouldExit(1);
+
         if (tempDir.existsSync()) {
           tempDir.deleteSync(recursive: true);
         }
+
         final stdout = stdoutBuffer.toString();
         _testTimeLineContent(
           output: stdout,
-          drags: 10,
-          totalExpectedOffset: const Offset(0, -1000),
-          findsWidget: false,
+          drags: _failingDragAmount,
+          totalExpectedOffset: _failingOffset,
+          runInTestProcess: true,
         );
 
         final htmlLine = stdout
@@ -201,18 +178,19 @@ void main() {
 
         expect(
           htmlLine.endsWith(
-            'timeline-drag-onerror-timeline-with-error.html',
+            'timeline-onerror-timeline-with-error-prints-timeline.html',
           ),
           isTrue,
         );
       });
-      test('act.drag: Live timeline - without error, prints HTML', () async {
+      test('Live timeline - without error, prints HTML', () async {
         final tempDir = Directory.systemTemp.createTempSync();
         final tempTestFile = File('${tempDir.path}/temp_test.dart');
         await tempTestFile.writeAsString(
           _testAsString(
-            title: 'act.drag: Live timeline - without error, prints HTML',
+            title: 'Live timeline - without error, prints HTML',
             timelineMode: TimelineMode.live,
+            drags: _passingDragAmount,
           ),
         );
         final testProcess =
@@ -247,8 +225,9 @@ void main() {
 
         _testTimeLineContent(
           output: stdout,
-          drags: 23,
-          totalExpectedOffset: const Offset(0, -2300),
+          drags: _passingDragAmount,
+          totalExpectedOffset: _passingOffset,
+          runInTestProcess: true,
         );
 
         final htmlLine = stdout
@@ -257,74 +236,11 @@ void main() {
 
         expect(
           htmlLine.endsWith(
-            'timeline-actdrag-live-timeline-without-error-prints-html.html',
+            'timeline-live-timeline-without-error-prints-html.html',
           ),
           isTrue,
         );
       });
-      // test('Live timeline - without error, prints HTML', () async {
-      //   final tempDir = Directory.systemTemp.createTempSync();
-      //   final tempTestFile = File('${tempDir.path}/temp_test.dart');
-      //   await tempTestFile.writeAsString(
-      //     _testAsString(
-      //       title: 'Live timeline without error prints html',
-      //       timelineMode: TimelineMode.live,
-      //     ),
-      //   );
-      //   final testProcess =
-      //       await TestProcess.start('flutter', ['test', tempTestFile.path]);
-      //   final stdoutBuffer = StringBuffer();
-      //   bool write = false;
-      //   await for (final line in testProcess.stdoutStream()) {
-      //     if (line.isEmpty) continue;
-      //     if (!write) {
-      //       if (line == _header) {
-      //         write = true;
-      //       }
-      //       if (write) {
-      //         stdoutBuffer.writeln(line);
-      //       } // Error does not happen
-      //     }
-      //     await testProcess.shouldExit(0);
-      //     tempDir.deleteSync(recursive: true);
-      //     final stdout = stdoutBuffer.toString();
-      //     final timeline = stdout.split('\n');
-      //     // Does not start with 'Timeline', this only happens on error
-      //     expect(timeline.first, _header);
-      //     expect(
-      //       timeline.second,
-      //       'Event: Tap Icon Widget with icon: "IconData(U+0E047)"',
-      //     );
-      //     expect(
-      //       timeline[2].startsWith('Caller: at main.<fn> file:///'),
-      //       isTrue,
-      //     );
-      //     expect(
-      //       timeline[3].startsWith(
-      //         'Screenshot: file:///',
-      //       ),
-      //       isTrue,
-      //     );
-      //     expect(
-      //       timeline[4].startsWith(
-      //         'Timestamp:',
-      //       ),
-      //       isTrue,
-      //     );
-      //     expect(
-      //       timeline[5],
-      //       _separator,
-      //     );
-      //     final htmlLine = timeline
-      //         .firstWhere((line) => line.startsWith('View time line here:'));
-      //     expect(
-      //       htmlLine.endsWith(
-      //         'timeline_live_timeline_without_error_prints_html.html',
-      //       ),
-      //       isTrue,
-      //     );
-      //   }
-      // });
       // test('Live timeline - with error, no duplicates, prints HTML', () async {
       //   final tempDir = Directory.systemTemp.createTempSync();
       //   final tempTestFile = File('${tempDir.path}/temp_test.dart');
@@ -395,11 +311,12 @@ void main() {
 
 void _testTimeLineContent({
   required String output,
-  bool findsWidget = true,
   required Offset totalExpectedOffset,
   required int drags,
+  bool runInTestProcess = false,
 }) {
   final isGoingDown = totalExpectedOffset.dy < 0;
+  final findsWidget = drags == _passingDragAmount;
   final eventLines =
       output.split('\n').where((line) => line.startsWith('Event:'));
   final startEvent = _replaceOffsetWithDxDy(eventLines.first);
@@ -423,7 +340,9 @@ void _testTimeLineContent({
       );
     }
     expect(
-      RegExp('Caller: at main').allMatches(output).length,
+      RegExp('Caller: at ${runInTestProcess ? 'main' : '_testBody'}')
+          .allMatches(output)
+          .length,
       2,
     );
     expect(

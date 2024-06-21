@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:spot/src/timeline/timeline.dart';
+
 Future<String> captureConsoleOutput(
   Future<void> Function() testFunction,
 ) async {
@@ -15,4 +17,15 @@ Future<String> captureConsoleOutput(
   });
 
   return buffer.toString();
+}
+
+String timelineInitiatorForModeAsString(TimelineMode timelineMode) {
+  switch (timelineMode) {
+    case TimelineMode.live:
+      return 'recordLiveTimeline()';
+    case TimelineMode.record:
+      return 'recordOnErrorTimeline()';
+    case TimelineMode.off:
+      return 'stopRecordingTimeline()';
+  }
 }
