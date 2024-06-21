@@ -342,6 +342,7 @@ void _testTimeLineContent({
   required Offset totalExpectedOffset,
   required int drags,
 }) {
+  final isGoingDown = totalExpectedOffset.dy < 0;
   final eventLines =
       output.split('\n').where((line) => line.startsWith('Event:'));
   final startEvent = _replaceOffsetWithDxDy(eventLines.first);
@@ -356,7 +357,7 @@ void _testTimeLineContent({
     if (i == 0) {
       expect(
         startEvent,
-        'Event: Starting to drag from Offset(dx,dy) towards ${_secondItemSelector.toStringBreadcrumb()}.',
+        'Event: Scrolling ${isGoingDown ? 'downwards' : 'upwards'} from Offset(dx,dy) in order to find ${_secondItemSelector.toStringBreadcrumb()}.',
       );
     } else {
       expect(

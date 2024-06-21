@@ -201,8 +201,11 @@ class Act {
           return;
         }
 
+        final direction = moveStep.dy < 0 ? 'downwards' : 'upwards';
+
         await addDragEvent(
-          name: 'Starting to drag from $dragPosition towards $targetName.',
+          name:
+              'Scrolling $direction from $dragPosition in order to find $targetName.',
         );
 
         int dragCount = 0;
