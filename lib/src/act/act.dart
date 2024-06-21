@@ -336,7 +336,7 @@ class Act {
         if (globalPosition != initialPosition) {
           // ignore: avoid_print
           print(
-            'Warning: The widget is not interactable at the center but is interactable at $globalPosition',
+            'Warning: The widget is not interactable at the center but was interactable at $globalPosition',
           );
         }
         return globalPosition;
@@ -361,6 +361,12 @@ class Act {
           target: renderBox,
           snapshot: snapshot,
         )) {
+          if (globalPosition != initialPosition) {
+            // ignore: avoid_print
+            print(
+              'Warning: The widget is not interactable at the center but was interactable at $globalPosition',
+            );
+          }
           return globalPosition;
         }
       }
