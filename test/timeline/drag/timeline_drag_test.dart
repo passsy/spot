@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/timeline/timeline.dart';
 import 'package:test_process/test_process.dart';
-import '../../util/capture_console_output.dart';
+import '../../util/timeline_test_helpers.dart';
 import 'drag_until_visible_test_widget.dart';
 
 final _firstItemSelector = spotText('Item at index: 3', exact: true);
@@ -131,8 +131,8 @@ void main() {
       expect(output, contains('⏸︎ - Timeline recording is off'));
     });
 
-    group('Print on teardown', () {
-      testWidgets('OnError timeline - without error', (tester) async {
+    group('act.drag: Print on teardown', () {
+      testWidgets('act.drag: OnError timeline - without error', (tester) async {
         final output = await captureConsoleOutput(() async {
           recordOnErrorTimeline();
           await tester.pumpWidget(const DragUntilVisibleTestWidget());
@@ -153,7 +153,8 @@ void main() {
         expect(splitted.first, '🔴 - Now recording error output timeline');
         expect(splitted.second, '🔴 - Already recording error output timeline');
       });
-      test('OnError timeline - with error, prints timeline', () async {
+      test('act.drag: OnError timeline - with error, prints timeline',
+          () async {
         final tempDir = Directory.systemTemp.createTempSync();
         final tempTestFile = File('${tempDir.path}/temp_test.dart');
         await tempTestFile.writeAsString(
@@ -200,7 +201,63 @@ void main() {
 
         expect(
           htmlLine.endsWith(
-            'timeline_drag_-_onerror_timeline_with_error.html',
+            'timeline-drag-onerror-timeline-with-error.html',
+          ),
+          isTrue,
+        );
+      });
+      test('act.drag: Live timeline - without error, prints HTML', () async {
+        final tempDir = Directory.systemTemp.createTempSync();
+        final tempTestFile = File('${tempDir.path}/temp_test.dart');
+        await tempTestFile.writeAsString(
+          _testAsString(
+            title: 'act.drag: Live timeline - without error, prints HTML',
+            timelineMode: TimelineMode.live,
+          ),
+        );
+        final testProcess =
+            await TestProcess.start('flutter', ['test', tempTestFile.path]);
+        final stdoutBuffer = StringBuffer();
+        bool write = false;
+
+        await for (final line in testProcess.stdoutStream()) {
+          if (line.isEmpty) continue;
+
+          if (!write) {
+            if (line == 'Timeline' || line == _header) {
+              write = true;
+            }
+          }
+
+          if (write) {
+            stdoutBuffer.writeln(line);
+          }
+        }
+
+        await testProcess.shouldExit(0);
+
+        if (tempDir.existsSync()) {
+          tempDir.deleteSync(recursive: true);
+        }
+
+        final stdout = stdoutBuffer.toString();
+
+        // Does not start with 'Timeline', this only happens on error
+        expect(stdout.startsWith('Timeline'), isFalse);
+
+        _testTimeLineContent(
+          output: stdout,
+          drags: 23,
+          totalExpectedOffset: const Offset(0, -2300),
+        );
+
+        final htmlLine = stdout
+            .split('\n')
+            .firstWhere((line) => line.startsWith('View time line here:'));
+
+        expect(
+          htmlLine.endsWith(
+            'timeline-actdrag-live-timeline-without-error-prints-html.html',
           ),
           isTrue,
         );

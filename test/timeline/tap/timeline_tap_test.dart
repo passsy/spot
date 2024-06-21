@@ -6,7 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/timeline/timeline.dart';
 import 'package:test_process/test_process.dart';
-import '../../util/capture_console_output.dart';
+import '../../util/timeline_test_helpers.dart';
 import 'timeline_tap_test_widget.dart';
 
 final _addButtonSelector = spotIcon(Icons.add);
@@ -173,7 +173,7 @@ void main() {
       final tempTestFile = File('${tempDir.path}/temp_test.dart');
       await tempTestFile.writeAsString(
         _testAsString(
-          title: 'OnError timeline with error',
+          title: 'OnError timeline - with error, prints timeline',
           timelineMode: TimelineMode.record,
           shouldFail: true,
         ),
@@ -238,7 +238,7 @@ void main() {
           .firstWhere((line) => line.startsWith('View time line here:'));
       expect(
         htmlLine.endsWith(
-          'timeline_onerror_timeline_with_error.html',
+          'timeline-onerror-timeline-with-error-prints-timeline.html',
         ),
         isTrue,
       );
@@ -312,7 +312,7 @@ void main() {
           .firstWhere((line) => line.startsWith('View time line here:'));
       expect(
         htmlLine.endsWith(
-          'timeline_live_timeline_without_error_prints_html.html',
+          'timeline-live-timeline-without-error-prints-html.html',
         ),
         isTrue,
       );
@@ -387,7 +387,7 @@ void main() {
           .firstWhere((line) => line.startsWith('View time line here:'));
       expect(
         htmlLine.endsWith(
-          'live_timeline_-_with_error,_no_duplicates,_prints_html.html',
+          'live-timeline-with-error-no-duplicates-prints-html.html',
         ),
         isTrue,
       );

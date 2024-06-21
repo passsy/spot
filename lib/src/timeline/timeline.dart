@@ -134,16 +134,41 @@ class Timeline {
   /// Prints the timeline as an HTML file.
   void _printHTML() {
     final spotTempDir = Directory.systemTemp.createTempSync();
-    final String name = (Invoker.current?.liveTest.test.name ?? '')
-        .trim()
-        .toLowerCase()
-        .replaceAll(' ', '_');
-    if (name.isEmpty) return;
+    String name = Invoker.current?.liveTest.test.name ?? '';
+    if (name.isEmpty) {
+      name = 'Unnamed test';
+    }
     if (!spotTempDir.existsSync()) {
       spotTempDir.createSync();
     }
 
-    final htmlFile = File(path.join(spotTempDir.path, 'timeline_$name.html'));
+    final String nameForHtml = () {
+      String name = Invoker.current?.liveTest.test.name ?? '';
+
+      if (name.isEmpty) {
+        name = 'Unnamed test';
+      }
+
+      // Replace spaces and underscores with hyphens
+      name = name.replaceAll(RegExp('[ _]'), '-');
+
+      // Remove problematic characters
+      name = name.replaceAll(RegExp('[^a-zA-Z0-9-]'), '');
+
+      // Collapse multiple hyphens into a single hyphen
+      name = name.replaceAll(RegExp('-+'), '-');
+
+      // Convert to lowercase
+      name = name.toLowerCase();
+
+      // Remove leading or trailing hyphens
+      name = name.replaceAll(RegExp(r'^-+|-+$'), '');
+
+      // Append .html extension
+      return 'timeline-$name.html';
+    }();
+
+    final htmlFile = File(path.join(spotTempDir.path, nameForHtml));
     final content = _timelineAsHTML();
     htmlFile.writeAsStringSync(content);
     //ignore: avoid_print
