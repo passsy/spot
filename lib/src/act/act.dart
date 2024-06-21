@@ -139,45 +139,60 @@ class Act {
         final renderBox = _getRenderBoxOrThrow(dragStart);
 
         final binding = TestWidgetsFlutterBinding.instance;
+        final snapShot = dragStart.snapshot();
 
-        bool isTargetVisible() {
-          final renderObject = _renderObjectFromSelector(dragTarget);
-          if (renderObject is RenderBox) {
-            return _validateViewBounds(
-              renderObject,
-              selector: dragTarget,
-              throwIfInvisible: false,
-            );
-          } else {
-            return false;
-          }
-        }
+        final dragPosition = _findPokablePosition(
+          widgetSelector: dragStart,
+          snapshot: snapShot,
+        );
 
-        final dragPosition =
-            renderBox.localToGlobal(renderBox.size.center(Offset.zero));
-
-        final targetName = dragTarget.toStringBreadcrumb();
-
-        bool isVisible = isTargetVisible();
-
-        if (isVisible) {
-          return;
-        }
-
-        int iterations = 0;
-        while (iterations < maxIteration && !isVisible) {
-          await gestures.drag(dragPosition, moveStep);
-          await binding.pump(duration);
-          iterations++;
-          isVisible = isTargetVisible();
-        }
-
-        final totalDragged = moveStep * iterations.toDouble();
-
-        if (!isVisible) {
-          throw TestFailure(
-            "$targetName is not visible after dragging $iterations times and a total dragged offset of $totalDragged.",
+        // This will throw an accurate error about why the center is not
+        // interactable
+        if (dragPosition == null) {
+          final centerPosition =
+              renderBox.localToGlobal(renderBox.size.center(Offset.zero));
+          _pokeRenderObject(
+            position: centerPosition,
+            target: renderBox,
+            snapshot: snapShot,
           );
+        } else {
+          final targetName = dragTarget.toStringBreadcrumb();
+
+          bool isTargetVisible() {
+            final renderObject = _renderObjectFromSelector(dragTarget);
+            if (renderObject is RenderBox) {
+              return _validateViewBounds(
+                renderObject,
+                selector: dragTarget,
+                throwIfInvisible: false,
+              );
+            } else {
+              return false;
+            }
+          }
+
+          bool isVisible = isTargetVisible();
+
+          if (isVisible) {
+            return;
+          }
+
+          int iterations = 0;
+          while (iterations < maxIteration && !isVisible) {
+            await gestures.drag(dragPosition, moveStep);
+            await binding.pump(duration);
+            iterations++;
+            isVisible = isTargetVisible();
+          }
+
+          final totalDragged = moveStep * iterations.toDouble();
+
+          if (!isVisible) {
+            throw TestFailure(
+              "$targetName is not visible after dragging $iterations times and a total dragged offset of $totalDragged.",
+            );
+          }
         }
       });
     });
@@ -275,6 +290,142 @@ class Act {
       "The common ancestor of both widgets is:\n"
       "${commonAncestor.toStringDeep()}",
     );
+  }
+
+  /// Finds a pokable position on a specified widget by first checking
+  /// high-probability interaction points followed by a detailed zigzag grid
+  /// search if necessary.
+  ///
+  /// Initially, this function checks a set of predefined likely interaction
+  /// points such as the widget's center, corners, and midpoints of each edge.
+  /// If none of these points are interactable, it proceeds to perform a more
+  /// exhaustive search using a zigzag pattern across the widget's area. This
+  /// dual-phase approach optimizes for speed in typical cases while ensuring
+  /// thoroughness when required.
+  ///
+  /// Returns an Offset representing a global position on the screen that can be
+  /// interacted with, or null if no such position exists within the widget's
+  /// bounds.
+  Offset? _findPokablePosition({
+    required WidgetSelector<Widget> widgetSelector,
+    required WidgetSnapshot snapshot,
+  }) {
+    final RenderBox renderBox = _getRenderBoxOrThrow(widgetSelector);
+
+    final initialPosition = renderBox.size.center(Offset.zero);
+
+    final List<Offset> mostLikelyHitRegions = [
+      initialPosition,
+      renderBox.size.topCenter(Offset.zero),
+      renderBox.size.bottomCenter(Offset.zero),
+      renderBox.size.centerLeft(Offset.zero),
+      renderBox.size.topLeft(Offset.zero),
+      renderBox.size.bottomLeft(Offset.zero),
+      renderBox.size.centerRight(Offset.zero),
+      renderBox.size.topRight(Offset.zero),
+      renderBox.size.bottomRight(Offset.zero),
+    ];
+
+    for (final localPosition in mostLikelyHitRegions) {
+      final Offset globalPosition = renderBox.localToGlobal(localPosition);
+      if (_canBePoked(
+        position: globalPosition,
+        target: renderBox,
+        snapshot: snapshot,
+      )) {
+        if (globalPosition != initialPosition) {
+          // ignore: avoid_print
+          print(
+            'Warning: The widget is not interactable at the center but is interactable at $globalPosition',
+          );
+        }
+        return globalPosition;
+      }
+    }
+
+    // No luck with the most likely hit regions, let's try a grid pattern
+    final int horizontalSteps = (renderBox.size.width / 8).ceil();
+    final int verticalSteps = (renderBox.size.height / 8).ceil();
+
+    final List<Offset> checkOrder =
+        _generateCheckOrder(horizontalSteps, verticalSteps);
+
+    for (final gridPosition in checkOrder) {
+      final Offset localPosition =
+          Offset(gridPosition.dx * 8, gridPosition.dy * 8);
+      if (localPosition.dx < renderBox.size.width &&
+          localPosition.dy < renderBox.size.height) {
+        final Offset globalPosition = renderBox.localToGlobal(localPosition);
+        if (_canBePoked(
+          position: globalPosition,
+          target: renderBox,
+          snapshot: snapshot,
+        )) {
+          return globalPosition;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  List<Offset> _generateCheckOrder(int horizontalSteps, int verticalSteps) {
+    final List<Offset> order = [];
+    // Start with the center if it's an odd number of steps, add edge centers
+    if (horizontalSteps % 2 != 0 && verticalSteps % 2 != 0) {
+      order.add(
+        Offset(
+          (horizontalSteps ~/ 2).toDouble(),
+          (verticalSteps ~/ 2).toDouble(),
+        ),
+      );
+    }
+    order.addAll([
+      Offset.zero, // Top-left
+      Offset(horizontalSteps - 1, 0), // Top-right
+      Offset(0, verticalSteps - 1), // Bottom-left
+      Offset(horizontalSteps - 1, verticalSteps - 1), // Bottom-right
+    ]);
+    // Zigzag through the grid to cover all positions in a skipping pattern
+    for (int y = 0; y < verticalSteps; y++) {
+      if (y.isEven) {
+        for (int x = 0; x < horizontalSteps; x++) {
+          order.add(Offset(x.toDouble(), y.toDouble()));
+        }
+      } else {
+        for (int x = horizontalSteps - 1; x >= 0; x--) {
+          order.add(Offset(x.toDouble(), y.toDouble()));
+        }
+      }
+    }
+
+    return order;
+  }
+
+  /// Checks if the widget is visible and not covered by another widget
+  ///
+  /// This test fails when the widget does not react to hit tests
+  bool _canBePoked({
+    required Offset position,
+    required RenderObject target,
+    required WidgetSnapshot snapshot,
+  }) {
+    final binding = WidgetsBinding.instance;
+
+    // do the tap, hit test the position of [target]
+    final HitTestResult result = HitTestResult();
+    // ignore: deprecated_member_use
+    binding.hitTest(result, position);
+    final hitTestEntries = result.path.toList();
+
+    // Check if [target] received the tap event
+    for (final HitTestEntry entry in hitTestEntries) {
+      if (entry.target == target) {
+        // Success, target was hit by hitTest
+        return true;
+      }
+    }
+    return false;
   }
 
   /// Throws when the widget is wrapped in an AbsorbPointer that is absorbing
