@@ -80,13 +80,21 @@ class Act {
         final renderBox = _getRenderBoxOrThrow(selector);
         _validateViewBounds(renderBox, selector: selector);
 
-        final centerPosition =
-            renderBox.localToGlobal(renderBox.size.center(Offset.zero));
+        final tappedPosition = _findPokablePosition(
+          widgetSelector: selector,
+          snapshot: snapshot,
+        );
+
+        if (tappedPosition == null) {
+          throw TestFailure(
+            "Widget '${selector.toStringBreadcrumb()}' is not interactable.",
+          );
+        }
 
         // Before tapping the widget, we need to make sure that the widget is not
         // covered by another widget, or outside the viewport.
         _pokeRenderObject(
-          position: centerPosition,
+          position: tappedPosition,
           target: renderBox,
           snapshot: snapshot,
         );
@@ -94,10 +102,10 @@ class Act {
         final binding = TestWidgetsFlutterBinding.instance;
 
         // Finally, tap the widget by sending a down and up event.
-        final downEvent = PointerDownEvent(position: centerPosition);
+        final downEvent = PointerDownEvent(position: tappedPosition);
         binding.handlePointerEvent(downEvent);
 
-        final upEvent = PointerUpEvent(position: centerPosition);
+        final upEvent = PointerUpEvent(position: tappedPosition);
         binding.handlePointerEvent(upEvent);
 
         await binding.pump();
@@ -325,22 +333,30 @@ class Act {
       renderBox.size.topRight(Offset.zero),
       renderBox.size.bottomRight(Offset.zero),
     ];
-
+    int iterations = 0;
+    final firstPosition = renderBox.localToGlobal(initialPosition);
     for (final localPosition in mostLikelyHitRegions) {
+      if (iterations == 1) {
+        // ignore: avoid_print
+        print(
+          "Widget failed hit test at its center ($firstPosition). Trying to find passing region within the widget's boundaries.",
+        );
+      }
       final Offset globalPosition = renderBox.localToGlobal(localPosition);
       if (_canBePoked(
         position: globalPosition,
         target: renderBox,
         snapshot: snapshot,
       )) {
-        if (globalPosition != initialPosition) {
+        if (globalPosition != firstPosition) {
           // ignore: avoid_print
           print(
-            'Warning: The widget is not interactable at the center but was interactable at $globalPosition',
+            'Found hit testable position of widget at $globalPosition',
           );
         }
         return globalPosition;
       }
+      iterations++;
     }
 
     // No luck with the most likely hit regions, let's try a grid pattern
@@ -361,10 +377,10 @@ class Act {
           target: renderBox,
           snapshot: snapshot,
         )) {
-          if (globalPosition != initialPosition) {
+          if (globalPosition != firstPosition) {
             // ignore: avoid_print
             print(
-              'Warning: The widget is not interactable at the center but was interactable at $globalPosition',
+              'Found hit testable position of widget at $globalPosition.',
             );
           }
           return globalPosition;
