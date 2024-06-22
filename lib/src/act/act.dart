@@ -81,19 +81,14 @@ class Act {
         _validateViewBounds(renderBox, selector: selector);
 
         final tappedPosition = _findPokablePosition(
-          widgetSelector: selector,
-          snapshot: snapshot,
-        );
+              widgetSelector: selector,
+              snapshot: snapshot,
+            ) ??
+            renderBox.localToGlobal(renderBox.size.center(Offset.zero));
 
-        if (tappedPosition == null) {
-          throw TestFailure(
-            "Widget '${selector.toStringBreadcrumb()}' is not interactable.",
-          );
-        }
-
-        // Before tapping the widget, we need to make sure that the widget is not
-        // covered by another widget, or outside the viewport.
-        _pokeRenderObject(
+        // Before tapping the widget, we need to make sure that the widget is
+        // not covered by another widget, or outside the viewport.
+        _validatePokePosition(
           position: tappedPosition,
           target: renderBox,
           snapshot: snapshot,
@@ -159,7 +154,7 @@ class Act {
         if (dragPosition == null) {
           final centerPosition =
               renderBox.localToGlobal(renderBox.size.center(Offset.zero));
-          _pokeRenderObject(
+          _validatePokePosition(
             position: centerPosition,
             target: renderBox,
             snapshot: snapShot,
@@ -262,7 +257,7 @@ class Act {
   /// Checks if the widget is visible and not covered by another widget
   ///
   /// This test fails when the widget does not react to hit tests
-  void _pokeRenderObject({
+  void _validatePokePosition({
     required Offset position,
     required RenderObject target,
     required WidgetSnapshot snapshot,

@@ -9,7 +9,7 @@ class PokeTestWidget extends StatefulWidget {
     required this.setup,
   });
 
-  final PokeTestSetup setup;
+  final PokeTestWidgetSetup setup;
   final Widget child;
 
   @override
@@ -66,16 +66,16 @@ class _PokeTestWidgetState extends State<PokeTestWidget> {
   }
 }
 
-class PokeTestSetup {
+class PokeTestWidgetSetup {
   final int rows;
   final int columns;
-  final int pokableAtRowIndex;
-  final int pokableAtColumnIndex;
+  final int? pokableAtRowIndex;
+  final int? pokableAtColumnIndex;
 
-  const PokeTestSetup({
+  const PokeTestWidgetSetup({
     required this.rows,
     required this.columns,
-    required this.pokableAtColumnIndex,
-    required this.pokableAtRowIndex,
+    this.pokableAtColumnIndex,
+    this.pokableAtRowIndex,
   });
 }
