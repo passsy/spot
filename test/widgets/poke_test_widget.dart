@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../util/measure_size.dart';
 
+/// Allows for simulating a widget's ability to receive tap events by covering
+/// it entirely or partially. Coverage can be customized via
+/// [PokeTestWidgetSetup]. Since the child's size is being calculated by
+/// [MeasureSize], it's important to allow the widget to layout properly via
+/// `await tester.pump()` before making any assertions.
 class PokeTestWidget extends StatefulWidget {
   const PokeTestWidget({
     super.key,
@@ -66,6 +71,10 @@ class _PokeTestWidgetState extends State<PokeTestWidget> {
   }
 }
 
+/// Setup for [PokeTestWidget].
+/// Allows for defining a grid of squares that will cover `PokeTestWidget`'s
+/// child. `pokeableAtRowIndex` and `pokeableAtColumnIndex` can be
+/// used to define a single square that will allow taps to pass through.
 class PokeTestWidgetSetup {
   final int rows;
   final int columns;
