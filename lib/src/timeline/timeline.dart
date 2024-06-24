@@ -11,11 +11,8 @@ import 'package:test_api/src/backend/invoker.dart';
 //ignore: implementation_imports
 import 'package:test_api/src/backend/live_test.dart';
 
-final Map<LiveTest, Timeline> _timelines = {};
-
 /// Records the timeline and prints events as they happen.
 void recordLiveTimeline() {
-  final timeline = currentTimeline();
   final isRecordingLive = timeline.mode == TimelineMode.live;
   final message = isRecordingLive ? 'Already recording' : 'Now recording';
   // ignore: avoid_print
@@ -25,7 +22,6 @@ void recordLiveTimeline() {
 
 /// Records the timeline but only prints it in case of an error.
 void recordOnErrorTimeline() {
-  final timeline = currentTimeline();
   final isRecordingError = timeline.mode == TimelineMode.record;
   final message = isRecordingError ? 'Already' : 'Now';
   // ignore: avoid_print
@@ -35,7 +31,6 @@ void recordOnErrorTimeline() {
 
 /// Stops the timeline from recording.
 void stopRecordingTimeline() {
-  final timeline = currentTimeline();
   final isRecording = timeline.mode != TimelineMode.off;
   final message = isRecording ? 'stopped' : 'is off';
   // ignore: avoid_print
@@ -43,12 +38,44 @@ void stopRecordingTimeline() {
   timeline.mode = TimelineMode.off;
 }
 
+/// Use to set the timeline mode for all tests in a test file.
+///
+/// ```dart
+/// void main() {
+///  globalTimelineMode = TimelineMode.live;
+///
+///  testWidgets('Test 1', (tester) async {
+///    // ...
+///  });
+///
+///  testWidgets('Test 2', (tester) async {
+///    // ...
+///  });
+/// }
+/// ```
+TimelineMode globalTimelineMode =
+    getTimelineModeFromEnv() ?? TimelineMode.record;
+
+/// Use --dart-define=SPOT_TIMELINE_MODE=live|record|off to set the [TimlineMode]
+/// for all tests
+TimelineMode? getTimelineModeFromEnv() {
+  final mode = const String.fromEnvironment('SPOT_TIMELINE_MODE').toLowerCase();
+  return switch (mode) {
+    'live' => TimelineMode.live,
+    'record' => TimelineMode.record,
+    'off' => TimelineMode.off,
+    _ => null,
+  };
+}
+
+final Map<LiveTest, Timeline> _timelines = {};
+
 /// Returns the current timeline for the test or creates a new one if
 /// it doesn't exist.
-Timeline currentTimeline() {
+Timeline get timeline {
   final test = Invoker.current?.liveTest;
   if (test == null) {
-    throw StateError('currentTimeline() must be called within a test');
+    throw StateError('timeline must be called within a test');
   }
   final timeline = _timelines[test];
   if (timeline != null) {
@@ -58,6 +85,7 @@ Timeline currentTimeline() {
 
   // create new timeline
   final newTimeline = Timeline();
+  newTimeline.mode = globalTimelineMode;
 
   Invoker.current!.addTearDown(() {
     if (!test.state.result.isPassing &&
@@ -69,7 +97,9 @@ Timeline currentTimeline() {
       // the timeline is already being printed live
       newTimeline._printHTML();
     }
+    _timelines.remove(test);
   });
+
   _timelines[test] = newTimeline;
   return newTimeline;
 }

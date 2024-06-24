@@ -89,7 +89,6 @@ class Act {
 
         final centerPosition =
             renderBox.localToGlobal(renderBox.size.center(Offset.zero));
-        final timeline = currentTimeline();
         if (timeline.mode != TimelineMode.off) {
           final screenshot = await takeScreenshotWithCrosshair(
             centerPosition: centerPosition,
@@ -177,7 +176,6 @@ class Act {
         Future<void> addDragEvent({
           required String name,
         }) async {
-          final timeline = currentTimeline();
           if (timeline.mode != TimelineMode.off) {
             final screenshot = await takeScreenshotWithCrosshair(
               centerPosition: dragPosition,
