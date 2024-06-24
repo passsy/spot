@@ -6,6 +6,7 @@ import 'package:spot/src/screenshot/screenshot.dart';
 import 'package:spot/src/spot/tree_snapshot.dart';
 import 'package:spot/src/timeline/script.js.dart';
 import 'package:spot/src/timeline/styles.css.dart';
+import 'package:stack_trace/stack_trace.dart';
 //ignore: implementation_imports
 import 'package:test_api/src/backend/invoker.dart';
 //ignore: implementation_imports
@@ -131,7 +132,7 @@ class Timeline {
     String? name,
     TimelineEventType? eventType,
   }) {
-    _addEvent(
+    addRawEvent(
       TimelineEvent.now(
         name: name,
         screenshot: screenshot,
@@ -142,7 +143,29 @@ class Timeline {
   }
 
   /// Adds an event to the timeline.
-  void _addEvent(TimelineEvent event) {
+  void addEvent({
+    String? name,
+    Frame? initiator,
+    Screenshot? screenshot,
+    String? eventType,
+    String? description,
+  }) {
+    addRawEvent(
+      TimelineEvent(
+        name: name,
+        screenshot: screenshot,
+        initiator:
+            initiator ?? screenshot?.initiator ?? Trace.current().frames[1],
+        timestamp: DateTime.now(),
+        treeSnapshot: currentWidgetTreeSnapshot(),
+        eventType:
+            eventType != null ? TimelineEventType(label: eventType) : null,
+      ),
+    );
+  }
+
+  /// Adds an event to the timeline.
+  void addRawEvent(TimelineEvent event) {
     if (mode == TimelineMode.off) {
       return;
     }
@@ -334,33 +357,28 @@ class Timeline {
 }
 
 /// The type of event that occurred during a test.
-enum TimelineEventType {
-  /// A tap event.
-  tap(
-    'Tap Event (crosshair indicator)',
-  ),
-
-  /// A drag event.
-  drag(
-    'Drag Event (crosshair indicator)',
-  );
-
-  const TimelineEventType(this.label);
-
+class TimelineEventType {
   /// The name of the event.
   final String label;
+
+  // TODO add styling information like color?
+
+  const TimelineEventType({
+    required this.label,
+  });
 }
 
 /// An event that occurred during a test.
 class TimelineEvent {
   /// Creates a new timeline event.
   const TimelineEvent({
-    this.screenshot,
-    this.name,
-    this.initiator,
-    this.eventType,
     required this.timestamp,
     required this.treeSnapshot,
+    this.name,
+    this.eventType,
+    this.description,
+    this.initiator,
+    this.screenshot,
   });
 
   /// Creates a new timeline event with the current time and widget tree snapshot.
@@ -397,6 +415,9 @@ class TimelineEvent {
 
   /// The frame that initiated the event.
   final Frame? initiator;
+
+  /// Custom plain-text information about the event.
+  final String? description;
 }
 
 /// The mode of the timeline.

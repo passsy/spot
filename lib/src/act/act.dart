@@ -96,7 +96,7 @@ class Act {
           timeline.addScreenshot(
             screenshot,
             name: 'Tap ${selector.toStringBreadcrumb()}',
-            eventType: TimelineEventType.tap,
+            eventType: const TimelineEventType(label: 'tap'),
           );
         }
 
@@ -183,7 +183,7 @@ class Act {
             timeline.addScreenshot(
               screenshot,
               name: name,
-              eventType: TimelineEventType.drag,
+              eventType: const TimelineEventType(label: 'drag'),
             );
           }
         }
