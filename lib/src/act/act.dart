@@ -330,11 +330,16 @@ class Act {
     ];
     int iterations = 0;
     final firstPosition = renderBox.localToGlobal(initialPosition);
+    final name = widgetSelector.toStringBreadcrumb();
+    String successMessage(Offset location) {
+      return 'Found interactable area of $name at $location.';
+    }
+
     for (final localPosition in mostLikelyHitRegions) {
       if (iterations == 1) {
         // ignore: avoid_print
         print(
-          "Widget failed hit test at its center ($firstPosition). Trying to find passing region within the widget's boundaries.",
+          "WARNING: Hit test at the center of $name, located at $firstPosition, failed. Attempting to identify and use an interactable area within the boundaries of $name.",
         );
       }
       final Offset globalPosition = renderBox.localToGlobal(localPosition);
@@ -345,9 +350,7 @@ class Act {
       )) {
         if (globalPosition != firstPosition) {
           // ignore: avoid_print
-          print(
-            'Found hit testable position of widget at $globalPosition',
-          );
+          print(successMessage(globalPosition));
         }
         return globalPosition;
       }
@@ -374,14 +377,16 @@ class Act {
         )) {
           if (globalPosition != firstPosition) {
             // ignore: avoid_print
-            print(
-              'Found hit testable position of widget at $globalPosition.',
-            );
+            print(successMessage(globalPosition));
           }
           return globalPosition;
         }
       }
     }
+    // ignore: avoid_print
+    print(
+      "WARNING: Failed to identify an interactable area within the boundaries of $name.",
+    );
 
     return null;
   }
