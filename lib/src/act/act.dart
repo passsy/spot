@@ -295,6 +295,7 @@ class Act {
     );
   }
 
+  // TODO replace prints with events once timeline is incorporated
   /// Finds a pokable position on a specified widget by first checking
   /// high-probability interaction points followed by a detailed zigzag grid
   /// search if necessary.
