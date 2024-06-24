@@ -5,8 +5,15 @@ import 'package:spot/spot.dart';
 import '../util/assert_error.dart';
 import '../widgets/poke_test_widget.dart';
 
+final _buttonStyle = ButtonStyle(
+  minimumSize: WidgetStateProperty.all<Size>(const Size(150, 50)),
+  backgroundColor: WidgetStateProperty.all<Color>(Colors.green),
+  foregroundColor: WidgetStateProperty.all<Color>(Colors.green),
+);
+
 void main() {
-  testWidgets('Poke test widget throws without defined tappable spots',
+  testWidgets(
+      'Poke test widget can cover complete child by not defining pokable area',
       (tester) async {
     bool gotTapped = false;
     await tester.pumpWidget(
@@ -20,11 +27,8 @@ void main() {
             onPressed: () {
               gotTapped = !gotTapped;
             },
-            style: ButtonStyle(
-              minimumSize: WidgetStateProperty.all<Size>(const Size(150, 50)),
-              backgroundColor: WidgetStateProperty.all<Color>(Colors.green),
-            ),
-            child: const Text('Click Me'),
+            style: _buttonStyle,
+            child: const Center(child: Text('Click Me')),
           ),
         ),
       ),
@@ -51,17 +55,16 @@ void main() {
             columns: 5,
             rows: 5,
             pokableAtColumnIndex: 3,
-            pokableAtRowIndex: 2,
+            pokableAtRowIndex: 4,
           ),
           child: ElevatedButton(
             onPressed: () {
               gotTapped = !gotTapped;
             },
-            style: ButtonStyle(
-              minimumSize: WidgetStateProperty.all<Size>(const Size(150, 50)),
-              backgroundColor: WidgetStateProperty.all<Color>(Colors.green),
+            style: _buttonStyle,
+            child: const Center(
+              child: Text('Click me!'),
             ),
-            child: const Text('Click Me'),
           ),
         ),
       ),
