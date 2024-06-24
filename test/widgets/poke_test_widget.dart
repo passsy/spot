@@ -10,19 +10,19 @@ import '../util/measure_size.dart';
 class PokeTestWidget extends StatefulWidget {
   const PokeTestWidget({
     super.key,
-    required this.child,
+    required this.widgetToCover,
     required this.setup,
   });
 
   final PokeTestWidgetSetup setup;
-  final Widget child;
+  final Widget widgetToCover;
 
   @override
   State<PokeTestWidget> createState() => _PokeTestWidgetState();
 }
 
 class _PokeTestWidgetState extends State<PokeTestWidget> {
-  Size? childSize;
+  Size? coverSize;
 
   @override
   Widget build(BuildContext context) {
@@ -31,16 +31,16 @@ class _PokeTestWidgetState extends State<PokeTestWidget> {
         MeasureSize(
           onChange: (size) {
             setState(() {
-              childSize = size;
+              coverSize = size;
             });
           },
-          child: widget.child,
+          child: widget.widgetToCover,
         ),
-        if (childSize != null)
+        if (coverSize != null)
           ConstrainedBox(
             constraints: BoxConstraints(
-              maxWidth: childSize!.width,
-              maxHeight: childSize!.height,
+              maxWidth: coverSize!.width,
+              maxHeight: coverSize!.height,
             ),
             child: Column(
               children: List.generate(widget.setup.rows, (row) {
@@ -52,8 +52,8 @@ class _PokeTestWidgetState extends State<PokeTestWidget> {
                     return IgnorePointer(
                       ignoring: isTappable,
                       child: Container(
-                        width: childSize!.width / widget.setup.columns,
-                        height: childSize!.height / widget.setup.rows,
+                        width: coverSize!.width / widget.setup.columns,
+                        height: coverSize!.height / widget.setup.rows,
                         color: isTappable
                             ? Colors.transparent
                             : ((row + col).isEven

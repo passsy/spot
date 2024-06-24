@@ -17,7 +17,7 @@ void main() {
             columns: 5,
             rows: 5,
           ),
-          child: _TestButton(
+          widgetToCover: _TestButton(
             onTap: () {
               gotTapped = !gotTapped;
             },
@@ -49,7 +49,7 @@ void main() {
             pokableAtColumnIndex: 3,
             pokableAtRowIndex: 4,
           ),
-          child: _TestButton(
+          widgetToCover: _TestButton(
             onTap: () {
               gotTapped = !gotTapped;
             },
@@ -78,7 +78,7 @@ void main() {
               pokableAtColumnIndex: 3,
               pokableAtRowIndex: 4,
             ),
-            child: _TestButton(
+            widgetToCover: _TestButton(
               onTap: () {
                 gotTapped = !gotTapped;
               },
