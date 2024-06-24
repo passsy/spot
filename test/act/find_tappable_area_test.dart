@@ -6,12 +6,6 @@ import '../util/assert_error.dart';
 import '../util/capture_console_output.dart';
 import '../widgets/poke_test_widget.dart';
 
-final _buttonStyle = ButtonStyle(
-  minimumSize: WidgetStateProperty.all<Size>(const Size(150, 50)),
-  backgroundColor: WidgetStateProperty.all<Color>(Colors.green),
-  foregroundColor: WidgetStateProperty.all<Color>(Colors.green),
-);
-
 void main() {
   testWidgets('Widget entirely covered, finds no tappable area.',
       (tester) async {
@@ -23,24 +17,22 @@ void main() {
             columns: 5,
             rows: 5,
           ),
-          child: ElevatedButton(
-            onPressed: () {
+          child: _TestButton(
+            onTap: () {
               gotTapped = !gotTapped;
             },
-            style: _buttonStyle,
-            child: const Center(child: Text('Click Me')),
           ),
         ),
       ),
     );
     // Allow MeasureSize in PokeTestWidget calculate the cover
     await tester.pump();
-    final WidgetSelector button = spot<ElevatedButton>()..existsOnce();
+    final WidgetSelector button = spot<_TestButton>()..existsOnce();
 
     await expectLater(
       () => act.tap(button),
       throwsSpotErrorContaining([
-        "Widget 'ElevatedButton' is covered by 'ColoredBox'",
+        "Widget '_TestButton' is covered by 'ColoredBox'",
         "Stack(",
       ]),
     );
@@ -57,21 +49,17 @@ void main() {
             pokableAtColumnIndex: 3,
             pokableAtRowIndex: 4,
           ),
-          child: ElevatedButton(
-            onPressed: () {
+          child: _TestButton(
+            onTap: () {
               gotTapped = !gotTapped;
             },
-            style: _buttonStyle,
-            child: const Center(
-              child: Text('Click me!'),
-            ),
           ),
         ),
       ),
     );
     // Allow MeasureSize in PokeTestWidget calculate the cover
     await tester.pump();
-    final WidgetSelector button = spot<ElevatedButton>()..existsOnce();
+    final WidgetSelector button = spot<_TestButton>()..existsOnce();
     await act.tap(button);
     expect(gotTapped, isTrue);
   });
@@ -90,21 +78,17 @@ void main() {
               pokableAtColumnIndex: 3,
               pokableAtRowIndex: 4,
             ),
-            child: ElevatedButton(
-              onPressed: () {
+            child: _TestButton(
+              onTap: () {
                 gotTapped = !gotTapped;
               },
-              style: _buttonStyle,
-              child: const Center(
-                child: Text('Click me!'),
-              ),
             ),
           ),
         ),
       );
       // Allow MeasureSize in PokeTestWidget calculate the cover
       await tester.pump();
-      final WidgetSelector button = spot<ElevatedButton>()..existsOnce();
+      final WidgetSelector button = spot<_TestButton>()..existsOnce();
       await act.tap(button);
     });
     expect(gotTapped, isTrue);
@@ -113,12 +97,12 @@ void main() {
     final warning = _replaceOffsetWithDxDy(lines.first);
     expect(
       warning,
-      "WARNING: Hit test at the center of ElevatedButton, located at Offset(dx,dy), failed. Attempting to identify and use an interactable area within the boundaries of ElevatedButton.",
+      "WARNING: Hit test at the center of _TestButton, located at Offset(dx,dy), failed. Attempting to identify and use an interactable area within the boundaries of _TestButton.",
     );
     final success = _replaceOffsetWithDxDy(lines.last);
     expect(
       success,
-      "Found interactable area of ElevatedButton at Offset(dx,dy).",
+      "Found interactable area of _TestButton at Offset(dx,dy).",
     );
   });
 }
@@ -126,4 +110,26 @@ void main() {
 String _replaceOffsetWithDxDy(String originalString) {
   final RegExp offsetPattern = RegExp(r'Offset\([^)]*\)');
   return originalString.replaceAll(offsetPattern, 'Offset(dx,dy)');
+}
+
+class _TestButton extends StatelessWidget {
+  const _TestButton({required this.onTap});
+
+  final void Function() onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 150,
+        height: 50,
+        decoration: BoxDecoration(
+          color: Colors.green,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: const Text('Press Me'),
+      ),
+    );
+  }
 }
