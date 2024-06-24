@@ -78,29 +78,33 @@ class Act {
     return TestAsyncUtils.guard<void>(() async {
       return _alwaysPropagateDevicePointerEvents(() async {
         final renderBox = _getRenderBoxOrThrow(selector);
-        _validateViewBounds(renderBox, selector: selector);
-
-        final tappedPosition = _findPokablePosition(
-              widgetSelector: selector,
-              snapshot: snapshot,
-            ) ??
-            renderBox.localToGlobal(renderBox.size.center(Offset.zero));
 
         // Before tapping the widget, we need to make sure that the widget is
-        // not covered by another widget, or outside the viewport.
-        _validatePokePosition(
-          position: tappedPosition,
-          target: renderBox,
+        // not outside the viewport or covered by another widget.
+        _validateViewBounds(renderBox, selector: selector);
+        final positionToTap = _findPokablePosition(
+          widgetSelector: selector,
           snapshot: snapshot,
         );
+
+        if (positionToTap == null) {
+          final centerPosition =
+              renderBox.localToGlobal(renderBox.size.center(Offset.zero));
+          _throwHitTestFailureReport(
+            position: centerPosition,
+            target: renderBox,
+            snapshot: snapshot,
+          );
+          return;
+        }
 
         final binding = TestWidgetsFlutterBinding.instance;
 
         // Finally, tap the widget by sending a down and up event.
-        final downEvent = PointerDownEvent(position: tappedPosition);
+        final downEvent = PointerDownEvent(position: positionToTap);
         binding.handlePointerEvent(downEvent);
 
-        final upEvent = PointerUpEvent(position: tappedPosition);
+        final upEvent = PointerUpEvent(position: positionToTap);
         binding.handlePointerEvent(upEvent);
 
         await binding.pump();
@@ -135,67 +139,67 @@ class Act {
     Duration duration = const Duration(milliseconds: 50),
   }) {
     // Check if widget is in the widget tree. Throws if not.
-    dragStart.snapshot().existsOnce();
+    final snapshot = dragStart.snapshot()..existsOnce();
 
     return TestAsyncUtils.guard<void>(() async {
       return _alwaysPropagateDevicePointerEvents(() async {
         final renderBox = _getRenderBoxOrThrow(dragStart);
 
         final binding = TestWidgetsFlutterBinding.instance;
-        final snapShot = dragStart.snapshot();
 
+        // Before dragging, we need to make sure that `dragStart` is
+        // not outside the viewport or covered by another widget.
+        _validateViewBounds(renderBox, selector: dragStart);
         final dragPosition = _findPokablePosition(
           widgetSelector: dragStart,
-          snapshot: snapShot,
+          snapshot: snapshot,
         );
 
-        // This will throw an accurate error about why the center is not
-        // interactable
         if (dragPosition == null) {
           final centerPosition =
               renderBox.localToGlobal(renderBox.size.center(Offset.zero));
-          _validatePokePosition(
+          _throwHitTestFailureReport(
             position: centerPosition,
             target: renderBox,
-            snapshot: snapShot,
+            snapshot: snapshot,
           );
-        } else {
-          final targetName = dragTarget.toStringBreadcrumb();
+          return;
+        }
+        final targetName = dragTarget.toStringBreadcrumb();
 
-          bool isTargetVisible() {
-            final renderObject = _renderObjectFromSelector(dragTarget);
-            if (renderObject is RenderBox) {
-              return _validateViewBounds(
-                renderObject,
-                selector: dragTarget,
-                throwIfInvisible: false,
-              );
-            } else {
-              return false;
-            }
-          }
-
-          bool isVisible = isTargetVisible();
-
-          if (isVisible) {
-            return;
-          }
-
-          int iterations = 0;
-          while (iterations < maxIteration && !isVisible) {
-            await gestures.drag(dragPosition, moveStep);
-            await binding.pump(duration);
-            iterations++;
-            isVisible = isTargetVisible();
-          }
-
-          final totalDragged = moveStep * iterations.toDouble();
-
-          if (!isVisible) {
-            throw TestFailure(
-              "$targetName is not visible after dragging $iterations times and a total dragged offset of $totalDragged.",
+        bool isTargetVisible() {
+          final renderObject = _renderObjectFromSelector(dragTarget);
+          if (renderObject is RenderBox) {
+            return _validateViewBounds(
+              renderObject,
+              selector: dragTarget,
+              throwIfInvisible: false,
             );
+          } else {
+            return false;
           }
+        }
+
+        bool isVisible = isTargetVisible();
+
+        if (isVisible) {
+          return;
+        }
+
+        int iterations = 0;
+        while (iterations < maxIteration && !isVisible) {
+          await gestures.drag(dragPosition, moveStep);
+          await binding.pump(duration);
+          iterations++;
+          isVisible = isTargetVisible();
+        }
+
+        final totalDragged = moveStep * iterations.toDouble();
+
+        if (!isVisible) {
+          throw TestFailure(
+            "$targetName is not visible after dragging $iterations times and a total dragged offset of $totalDragged.",
+          );
         }
       });
     });
@@ -257,7 +261,7 @@ class Act {
   /// Checks if the widget is visible and not covered by another widget
   ///
   /// This test fails when the widget does not react to hit tests
-  void _validatePokePosition({
+  void _throwHitTestFailureReport({
     required Offset position,
     required RenderObject target,
     required WidgetSnapshot snapshot,
@@ -269,14 +273,6 @@ class Act {
     // ignore: deprecated_member_use
     binding.hitTest(result, position);
     final hitTestEntries = result.path.toList();
-
-    // Check if [target] received the tap event
-    for (final HitTestEntry entry in hitTestEntries) {
-      if (entry.target == target) {
-        // Success, target was hit by hitTest
-        return;
-      }
-    }
 
     final List<Element> hitTargetElements =
         hitTestEntries.mapNotNull((e) => e.element).toList();
@@ -426,8 +422,6 @@ class Act {
   }
 
   /// Checks if the widget is visible and not covered by another widget
-  ///
-  /// This test fails when the widget does not react to hit tests
   bool _canBePoked({
     required Offset position,
     required RenderObject target,
