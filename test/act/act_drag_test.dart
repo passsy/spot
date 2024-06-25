@@ -1,12 +1,13 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
+import 'package:spot/src/timeline/timeline.dart';
 
 import '../timeline/drag/drag_until_visible_test_widget.dart';
 
 void main() {
   group('Drag Events', () {
     testWidgets('Finds widget after dragging', (tester) async {
-      recordLiveTimeline();
+      localTimelineMode = TimelineMode.live;
       await tester.pumpWidget(
         const DragUntilVisibleTestWidget(),
       );

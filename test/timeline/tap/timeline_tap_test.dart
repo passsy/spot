@@ -47,11 +47,19 @@ void main() async {
 }
 
 void main() {
-  globalTimelineMode = TimelineMode.off;
-  group('Manage timeline mode within test', () {
+  group('Initial Values', () {
+    test('global timeline', () {
+      expect(globalTimelineMode, TimelineMode.record);
+    });
+    test('local timeline', () {
+      expect(localTimelineMode, isNull);
+    });
+  });
+
+  group('Override global timeline', () {
     testWidgets('Live timeline', (tester) async {
       final output = await helpers.captureConsoleOutput(() async {
-        recordLiveTimeline();
+        localTimelineMode = TimelineMode.live;
         await tester.pumpWidget(const TimelineTestWidget());
         _addButtonSelector.existsOnce();
         spotText('Counter: 3').existsOnce();
@@ -59,10 +67,11 @@ void main() {
         spotText('Counter: 4').existsOnce();
         await act.tap(_subtractButtonSelector);
         spotText('Counter: 3').existsOnce();
-        // Notify that the timeline of this type is already recording.
-        recordLiveTimeline();
+        // Notify that the timeline mode is already set to live
+        localTimelineMode = TimelineMode.live;
       });
-      expect(output, contains('🔴 - Now recording live timeline'));
+      print('output: $output');
+      expect(output, contains('🔴 - Recording live timeline'));
       expect(
         output,
         contains('Event: Tap ${_addButtonSelector.toStringBreadcrumb()}'),
@@ -71,12 +80,12 @@ void main() {
         output,
         contains('Event: Tap ${_subtractButtonSelector.toStringBreadcrumb()}'),
       );
-      expect(output, contains('🔴 - Already recording live timeline'));
+      expect(output, contains('Timeline mode is already set to "live"'));
       _testTimeLineContent(output: output, eventCount: 2);
     });
     testWidgets('Start with Timeline Mode off', (tester) async {
       final output = await helpers.captureConsoleOutput(() async {
-        stopRecordingTimeline();
+        localTimelineMode = TimelineMode.off;
         await tester.pumpWidget(const TimelineTestWidget());
         _addButtonSelector.existsOnce();
         spotText('Counter: 3').existsOnce();
@@ -99,7 +108,7 @@ void main() {
     });
     testWidgets('Turn timeline mode off during test', (tester) async {
       final output = await helpers.captureConsoleOutput(() async {
-        recordLiveTimeline();
+        localTimelineMode = TimelineMode.live;
         await tester.pumpWidget(
           const TimelineTestWidget(),
         );
@@ -110,20 +119,20 @@ void main() {
         await act.tap(_subtractButtonSelector);
         spotText('Counter: 3').existsOnce();
         // Notify that the recording stopped
-        stopRecordingTimeline();
+        localTimelineMode = TimelineMode.off;
         await act.tap(_clearButtonSelector);
         spotText('Counter: 0').existsOnce();
-        // Notify that the recording is off
-        stopRecordingTimeline();
+        // Notify that the recording is already off
+        localTimelineMode = TimelineMode.off;
       });
-      expect(output, contains('🔴 - Now recording live timeline'));
+      print('output: $output');
+      expect(output, contains('🔴 - Recording live timeline'));
       expect(
           output, contains('Tap ${_addButtonSelector.toStringBreadcrumb()}'));
       expect(
         output,
         contains('Tap ${_subtractButtonSelector.toStringBreadcrumb()}'),
       );
-      expect(output, contains('⏸︎ - Timeline recording stopped'));
       // No further events were added to the timeline, including screenshots
       expect(
         output,
@@ -131,6 +140,7 @@ void main() {
       );
       _testTimeLineContent(output: output, eventCount: 2);
       expect(output, contains('⏸︎ - Timeline recording is off'));
+      expect(output, contains('Timeline mode is already set to "off"'));
     });
   });
 //  globalTimelineMode = defaultTimelineMode();
@@ -138,7 +148,7 @@ void main() {
   group('Print on teardown', () {
     testWidgets('OnError timeline - without error', (tester) async {
       final output = await helpers.captureConsoleOutput(() async {
-        recordOnErrorTimeline();
+        localTimelineMode = TimelineMode.record;
         await tester.pumpWidget(const TimelineTestWidget());
         _addButtonSelector.existsOnce();
         spotText('Counter: 3').existsOnce();
@@ -147,7 +157,7 @@ void main() {
         await act.tap(_subtractButtonSelector);
         spotText('Counter: 3').existsOnce();
         // Notify that the timeline of this type is already recording.
-        recordOnErrorTimeline();
+        localTimelineMode = TimelineMode.record;
       });
       expect(output, contains('🔴 - Now recording error output timeline'));
       expect(

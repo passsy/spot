@@ -12,33 +12,6 @@ import 'package:test_api/src/backend/invoker.dart';
 //ignore: implementation_imports
 import 'package:test_api/src/backend/live_test.dart';
 
-/// Records the timeline and prints events as they happen.
-void recordLiveTimeline() {
-  final isRecordingLive = timeline.mode == TimelineMode.live;
-  final message = isRecordingLive ? 'Already recording' : 'Now recording';
-  // ignore: avoid_print
-  print('🔴 - $message live timeline');
-  timeline.mode = TimelineMode.live;
-}
-
-/// Records the timeline but only prints it in case of an error.
-void recordOnErrorTimeline() {
-  final isRecordingError = timeline.mode == TimelineMode.record;
-  final message = isRecordingError ? 'Already' : 'Now';
-  // ignore: avoid_print
-  print('🔴 - $message recording error output timeline');
-  timeline.mode = TimelineMode.record;
-}
-
-/// Stops the timeline from recording.
-void stopRecordingTimeline() {
-  final isRecording = timeline.mode != TimelineMode.off;
-  final message = isRecording ? 'stopped' : 'is off';
-  // ignore: avoid_print
-  print('⏸︎ - Timeline recording $message');
-  timeline.mode = TimelineMode.off;
-}
-
 /// Use to set the timeline mode for all tests in a test file.
 ///
 /// ```dart
@@ -54,11 +27,29 @@ void stopRecordingTimeline() {
 ///  });
 /// }
 /// ```
-TimelineMode globalTimelineMode = defaultTimelineMode();
+TimelineMode globalTimelineMode =
+    getTimelineModeFromEnv() ?? TimelineMode.record;
 
-/// Returns the default timeline mode.
-TimelineMode defaultTimelineMode() {
-  return getTimelineModeFromEnv() ?? TimelineMode.record;
+/// ...
+TimelineMode? _localTimelineMode;
+
+/// Returns the local timeline mode used within a test.
+TimelineMode? get localTimelineMode => _localTimelineMode;
+
+/// Sets the local timeline mode used within a test.
+set localTimelineMode(TimelineMode? value) {
+  if (value != null) {
+    // ignore: avoid_print
+    if (_localTimelineMode != null && value == timeline.mode) {
+      // ignore: avoid_print
+      print('Timeline mode is already set to "${value.name}"');
+    } else {
+      // ignore: avoid_print
+      print(value.message);
+    }
+    _localTimelineMode = value;
+    timeline.mode = value;
+  }
 }
 
 /// Use --dart-define=SPOT_TIMELINE_MODE=live|record|off to set the [TimlineMode]
@@ -90,7 +81,7 @@ Timeline get timeline {
 
   // create new timeline
   final newTimeline = Timeline();
-  newTimeline.mode = globalTimelineMode;
+  newTimeline.mode = _localTimelineMode ?? globalTimelineMode;
 
   Invoker.current!.addTearDown(() {
     if (!test.state.result.isPassing &&
@@ -103,6 +94,7 @@ Timeline get timeline {
       newTimeline._printHTML();
     }
     _timelines.remove(test);
+    _localTimelineMode = null;
   });
 
   _timelines[test] = newTimeline;
@@ -431,13 +423,18 @@ class TimelineEvent {
 /// - [TimelineMode.off] - The timeline is not recording.
 enum TimelineMode {
   /// The timeline is recording and printing events as they happen.
-  live,
+  live('🔴 - Recording live timeline'),
 
   /// The timeline is recording but not printing events unless the test fails.
-  record,
+  record('🔴 - Recording error output timeline'),
 
   /// The timeline is not recording.
-  off,
+  off('⏸︎ - Timeline recording is off');
+
+  const TimelineMode(this.message);
+
+  /// The message to display when the timeline mode is set.
+  final String message;
 }
 
 /// Returns the test name including the group hierarchy.
