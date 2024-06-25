@@ -4,7 +4,7 @@ import 'package:dartx/dartx.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:test_process/test_process.dart';
-import '../../util/timeline_test_helpers.dart' as helpers;
+import '../../util/timeline_test_helpers.dart';
 import 'drag_until_visible_test_widget.dart';
 
 final _firstItemSelector = spotText('Item at index: 3', exact: true);
@@ -33,7 +33,7 @@ import 'package:spot/src/timeline/timeline.dart';\n
 $widgetPart\n
 void main() async {
   testWidgets("$title", (WidgetTester tester) async {
-  ${helpers.timelineInitiatorForModeAsString(timelineMode)};
+  ${TimelineTestHelpers.timelineInitiatorForModeAsString(timelineMode)};
     await tester.pumpWidget(const DragUntilVisibleTestWidget());
       final firstItem = spotText('Item at index: 3', exact: true)..existsOnce();
       final secondItem = spotText('Item at index: 27', exact: true)
@@ -67,7 +67,7 @@ void main() {
   group('Drag Timeline Test', () {
     group('Without error', () {
       testWidgets('Drag Until Visible - Live timeline', (tester) async {
-        final output = await helpers.captureConsoleOutput(() async {
+        final output = await TimelineTestHelpers.captureConsoleOutput(() async {
           localTimelineMode = TimelineMode.live;
           await _testBody(tester);
           // Notify that the timeline of this type is already recording.
@@ -82,7 +82,7 @@ void main() {
         expect(output, contains('🔴 - Already recording live timeline'));
       });
       testWidgets('Start with Timeline Mode off', (tester) async {
-        final output = await helpers.captureConsoleOutput(() async {
+        final output = await TimelineTestHelpers.captureConsoleOutput(() async {
           localTimelineMode = TimelineMode.off;
           await _testBody(tester);
         });
@@ -93,7 +93,7 @@ void main() {
         expect(splitted.first, expectedOutput);
       });
       testWidgets('Turn timeline mode off during test', (tester) async {
-        final output = await helpers.captureConsoleOutput(() async {
+        final output = await TimelineTestHelpers.captureConsoleOutput(() async {
           localTimelineMode = TimelineMode.record;
           await _testBody(tester);
           // Notify that the recording is off
@@ -112,7 +112,7 @@ void main() {
         expect(output, contains('⏸︎ - Timeline recording is off'));
       });
       testWidgets('act.drag: OnError timeline - without error', (tester) async {
-        final output = await helpers.captureConsoleOutput(() async {
+        final output = await TimelineTestHelpers.captureConsoleOutput(() async {
           localTimelineMode = TimelineMode.record;
           await _testBody(tester);
           localTimelineMode = TimelineMode.record;
