@@ -27,8 +27,24 @@ import 'package:test_api/src/backend/live_test.dart';
 ///  });
 /// }
 /// ```
-TimelineMode globalTimelineMode =
+TimelineMode _globalTimelineMode =
     getTimelineModeFromEnv() ?? TimelineMode.record;
+
+/// Returns the global timeline mode than can be used across multiple tests
+TimelineMode get globalTimelineMode => _globalTimelineMode;
+
+set globalTimelineMode(TimelineMode value) {
+  // ignore: avoid_print
+  if (value == _globalTimelineMode) {
+    // ignore: avoid_print
+    print('Timeline mode is already set to "${value.name}"');
+    return;
+  } else if (_globalTimelineMode != value) {
+    // ignore: avoid_print
+    print(value.message);
+  }
+  _globalTimelineMode = value;
+}
 
 /// ...
 TimelineMode? _localTimelineMode;
@@ -42,9 +58,11 @@ set localTimelineMode(TimelineMode? value) {
   _localTimelineMode = value;
   if (value != null) {
     // ignore: avoid_print
-    if (currentTimelineMode != null && value == timeline.mode) {
+    if (value == globalTimelineMode ||
+        (currentTimelineMode != null && value == timeline.mode)) {
       // ignore: avoid_print
       print('Timeline mode is already set to "${value.name}"');
+      return;
     } else if (currentTimelineMode != null && currentTimelineMode != value) {
       // ignore: avoid_print
       print(value.message);
@@ -82,7 +100,7 @@ Timeline get timeline {
 
   // create new timeline
   final newTimeline = Timeline();
-  newTimeline.mode = _localTimelineMode ?? globalTimelineMode;
+  newTimeline.mode = _localTimelineMode ?? _globalTimelineMode;
   // ignore: avoid_print
   print(newTimeline.mode.message);
 
