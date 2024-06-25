@@ -47,88 +47,93 @@ void main() async {
 }
 
 void main() {
-  testWidgets('Live timeline', (tester) async {
-    final output = await helpers.captureConsoleOutput(() async {
-      recordLiveTimeline();
-      await tester.pumpWidget(const TimelineTestWidget());
-      _addButtonSelector.existsOnce();
-      spotText('Counter: 3').existsOnce();
-      await act.tap(_addButtonSelector);
-      spotText('Counter: 4').existsOnce();
-      await act.tap(_subtractButtonSelector);
-      spotText('Counter: 3').existsOnce();
-      // Notify that the timeline of this type is already recording.
-      recordLiveTimeline();
-    });
-    expect(output, contains('🔴 - Now recording live timeline'));
-    expect(
-      output,
-      contains('Event: Tap ${_addButtonSelector.toStringBreadcrumb()}'),
-    );
-    expect(
-      output,
-      contains('Event: Tap ${_subtractButtonSelector.toStringBreadcrumb()}'),
-    );
-    expect(output, contains('🔴 - Already recording live timeline'));
-    _testTimeLineContent(output: output, eventCount: 2);
-  });
-  testWidgets('Start with Timeline Mode off', (tester) async {
-    final output = await helpers.captureConsoleOutput(() async {
-      stopRecordingTimeline();
-      await tester.pumpWidget(const TimelineTestWidget());
-      _addButtonSelector.existsOnce();
-      spotText('Counter: 3').existsOnce();
-      await act.tap(_addButtonSelector);
-      spotText('Counter: 4').existsOnce();
-      await act.tap(_subtractButtonSelector);
-      spotText('Counter: 3').existsOnce();
-    });
-
-    expect(output, contains('⏸︎ - Timeline recording is off'));
-    expect(
-      output,
-      isNot(contains('Tap ${_addButtonSelector.toStringBreadcrumb()}')),
-    );
-    expect(
-      output,
-      isNot(contains('Tap ${_subtractButtonSelector.toStringBreadcrumb()}')),
-    );
-    _testTimeLineContent(output: output, eventCount: 0);
-  });
-  testWidgets('Turn timeline mode off during test', (tester) async {
-    final output = await helpers.captureConsoleOutput(() async {
-      recordLiveTimeline();
-      await tester.pumpWidget(
-        const TimelineTestWidget(),
+  globalTimelineMode = TimelineMode.off;
+  group('Manage timeline mode within test', () {
+    testWidgets('Live timeline', (tester) async {
+      final output = await helpers.captureConsoleOutput(() async {
+        recordLiveTimeline();
+        await tester.pumpWidget(const TimelineTestWidget());
+        _addButtonSelector.existsOnce();
+        spotText('Counter: 3').existsOnce();
+        await act.tap(_addButtonSelector);
+        spotText('Counter: 4').existsOnce();
+        await act.tap(_subtractButtonSelector);
+        spotText('Counter: 3').existsOnce();
+        // Notify that the timeline of this type is already recording.
+        recordLiveTimeline();
+      });
+      expect(output, contains('🔴 - Now recording live timeline'));
+      expect(
+        output,
+        contains('Event: Tap ${_addButtonSelector.toStringBreadcrumb()}'),
       );
-      spotText('Counter: 3').existsOnce();
-      _addButtonSelector.existsOnce();
-      await act.tap(_addButtonSelector);
-      spotText('Counter: 4').existsOnce();
-      await act.tap(_subtractButtonSelector);
-      spotText('Counter: 3').existsOnce();
-      // Notify that the recording stopped
-      stopRecordingTimeline();
-      await act.tap(_clearButtonSelector);
-      spotText('Counter: 0').existsOnce();
-      // Notify that the recording is off
-      stopRecordingTimeline();
+      expect(
+        output,
+        contains('Event: Tap ${_subtractButtonSelector.toStringBreadcrumb()}'),
+      );
+      expect(output, contains('🔴 - Already recording live timeline'));
+      _testTimeLineContent(output: output, eventCount: 2);
     });
-    expect(output, contains('🔴 - Now recording live timeline'));
-    expect(output, contains('Tap ${_addButtonSelector.toStringBreadcrumb()}'));
-    expect(
-      output,
-      contains('Tap ${_subtractButtonSelector.toStringBreadcrumb()}'),
-    );
-    expect(output, contains('⏸︎ - Timeline recording stopped'));
-    // No further events were added to the timeline, including screenshots
-    expect(
-      output,
-      isNot(contains('Tap ${_clearButtonSelector.toStringBreadcrumb()}')),
-    );
-    _testTimeLineContent(output: output, eventCount: 2);
-    expect(output, contains('⏸︎ - Timeline recording is off'));
+    testWidgets('Start with Timeline Mode off', (tester) async {
+      final output = await helpers.captureConsoleOutput(() async {
+        stopRecordingTimeline();
+        await tester.pumpWidget(const TimelineTestWidget());
+        _addButtonSelector.existsOnce();
+        spotText('Counter: 3').existsOnce();
+        await act.tap(_addButtonSelector);
+        spotText('Counter: 4').existsOnce();
+        await act.tap(_subtractButtonSelector);
+        spotText('Counter: 3').existsOnce();
+      });
+
+      expect(output, contains('⏸︎ - Timeline recording is off'));
+      expect(
+        output,
+        isNot(contains('Tap ${_addButtonSelector.toStringBreadcrumb()}')),
+      );
+      expect(
+        output,
+        isNot(contains('Tap ${_subtractButtonSelector.toStringBreadcrumb()}')),
+      );
+      _testTimeLineContent(output: output, eventCount: 0);
+    });
+    testWidgets('Turn timeline mode off during test', (tester) async {
+      final output = await helpers.captureConsoleOutput(() async {
+        recordLiveTimeline();
+        await tester.pumpWidget(
+          const TimelineTestWidget(),
+        );
+        spotText('Counter: 3').existsOnce();
+        _addButtonSelector.existsOnce();
+        await act.tap(_addButtonSelector);
+        spotText('Counter: 4').existsOnce();
+        await act.tap(_subtractButtonSelector);
+        spotText('Counter: 3').existsOnce();
+        // Notify that the recording stopped
+        stopRecordingTimeline();
+        await act.tap(_clearButtonSelector);
+        spotText('Counter: 0').existsOnce();
+        // Notify that the recording is off
+        stopRecordingTimeline();
+      });
+      expect(output, contains('🔴 - Now recording live timeline'));
+      expect(
+          output, contains('Tap ${_addButtonSelector.toStringBreadcrumb()}'));
+      expect(
+        output,
+        contains('Tap ${_subtractButtonSelector.toStringBreadcrumb()}'),
+      );
+      expect(output, contains('⏸︎ - Timeline recording stopped'));
+      // No further events were added to the timeline, including screenshots
+      expect(
+        output,
+        isNot(contains('Tap ${_clearButtonSelector.toStringBreadcrumb()}')),
+      );
+      _testTimeLineContent(output: output, eventCount: 2);
+      expect(output, contains('⏸︎ - Timeline recording is off'));
+    });
   });
+//  globalTimelineMode = defaultTimelineMode();
 
   group('Print on teardown', () {
     testWidgets('OnError timeline - without error', (tester) async {
@@ -396,8 +401,12 @@ void _testTimeLineContent({
     RegExp('Event: Tap Icon Widget with icon:').allMatches(output).length,
     eventCount,
   );
+  final callerParts = output.split('\n').where((line) {
+    return line.startsWith('Caller: at main') && line.contains('file://');
+  }).toList();
+
   expect(
-    RegExp('Caller: at main.<fn>.<fn> file:///').allMatches(output).length,
+    callerParts.length,
     eventCount,
   );
   expect(

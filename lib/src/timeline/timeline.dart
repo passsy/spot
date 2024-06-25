@@ -54,8 +54,12 @@ void stopRecordingTimeline() {
 ///  });
 /// }
 /// ```
-TimelineMode globalTimelineMode =
-    getTimelineModeFromEnv() ?? TimelineMode.record;
+TimelineMode globalTimelineMode = defaultTimelineMode();
+
+/// Returns the default timeline mode.
+TimelineMode defaultTimelineMode() {
+  return getTimelineModeFromEnv() ?? TimelineMode.record;
+}
 
 /// Use --dart-define=SPOT_TIMELINE_MODE=live|record|off to set the [TimlineMode]
 /// for all tests
