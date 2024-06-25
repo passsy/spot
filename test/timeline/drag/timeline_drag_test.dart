@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:dartx/dartx.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
-import 'package:spot/src/timeline/timeline.dart';
 import 'package:test_process/test_process.dart';
 import '../../util/timeline_test_helpers.dart' as helpers;
 import 'drag_until_visible_test_widget.dart';

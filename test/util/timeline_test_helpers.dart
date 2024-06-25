@@ -22,10 +22,10 @@ Future<String> captureConsoleOutput(
 String timelineInitiatorForModeAsString(TimelineMode timelineMode) {
   switch (timelineMode) {
     case TimelineMode.live:
-      return 'recordLiveTimeline()';
+      return 'localTimelineMode = TimelineMode.live;';
     case TimelineMode.record:
-      return 'recordOnErrorTimeline()';
+      return 'localTimelineMode = TimelineMode.record;';
     case TimelineMode.off:
-      return 'stopRecordingTimeline()';
+      return 'localTimelineMode = TimelineMode.off;';
   }
 }

@@ -4,7 +4,6 @@ import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
-import 'package:spot/src/timeline/timeline.dart';
 import 'package:test_process/test_process.dart';
 import '../../util/timeline_test_helpers.dart' as helpers;
 import 'timeline_tap_test_widget.dart';
@@ -70,7 +69,6 @@ void main() {
         // Notify that the timeline mode is already set to live
         localTimelineMode = TimelineMode.live;
       });
-      print('output: $output');
       expect(output, contains('🔴 - Recording live timeline'));
       expect(
         output,
@@ -125,10 +123,11 @@ void main() {
         // Notify that the recording is already off
         localTimelineMode = TimelineMode.off;
       });
-      print('output: $output');
       expect(output, contains('🔴 - Recording live timeline'));
       expect(
-          output, contains('Tap ${_addButtonSelector.toStringBreadcrumb()}'));
+        output,
+        contains('Tap ${_addButtonSelector.toStringBreadcrumb()}'),
+      );
       expect(
         output,
         contains('Tap ${_subtractButtonSelector.toStringBreadcrumb()}'),
@@ -143,7 +142,6 @@ void main() {
       expect(output, contains('Timeline mode is already set to "off"'));
     });
   });
-//  globalTimelineMode = defaultTimelineMode();
 
   group('Print on teardown', () {
     testWidgets('OnError timeline - without error', (tester) async {
@@ -159,7 +157,7 @@ void main() {
         // Notify that the timeline of this type is already recording.
         localTimelineMode = TimelineMode.record;
       });
-      expect(output, contains('🔴 - Now recording error output timeline'));
+      expect(output, contains('🔴 - Recording error output timeline'));
       expect(
         output,
         isNot(contains('Tap ${_addButtonSelector.toStringBreadcrumb()}')),
@@ -168,7 +166,7 @@ void main() {
         output,
         isNot(contains('Tap ${_subtractButtonSelector.toStringBreadcrumb()}')),
       );
-      expect(output, contains('🔴 - Already recording error output timeline'));
+      expect(output, contains('Timeline mode is already set to "record"'));
       _testTimeLineContent(output: output, eventCount: 0);
     });
 

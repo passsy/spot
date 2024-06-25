@@ -38,16 +38,17 @@ TimelineMode? get localTimelineMode => _localTimelineMode;
 
 /// Sets the local timeline mode used within a test.
 set localTimelineMode(TimelineMode? value) {
+  final currentTimelineMode = _localTimelineMode;
+  _localTimelineMode = value;
   if (value != null) {
     // ignore: avoid_print
-    if (_localTimelineMode != null && value == timeline.mode) {
+    if (currentTimelineMode != null && value == timeline.mode) {
       // ignore: avoid_print
       print('Timeline mode is already set to "${value.name}"');
-    } else {
+    } else if (currentTimelineMode != null && currentTimelineMode != value) {
       // ignore: avoid_print
       print(value.message);
     }
-    _localTimelineMode = value;
     timeline.mode = value;
   }
 }
@@ -82,6 +83,8 @@ Timeline get timeline {
   // create new timeline
   final newTimeline = Timeline();
   newTimeline.mode = _localTimelineMode ?? globalTimelineMode;
+  // ignore: avoid_print
+  print(newTimeline.mode.message);
 
   Invoker.current!.addTearDown(() {
     if (!test.state.result.isPassing &&
@@ -358,7 +361,7 @@ class TimelineEventType {
   final String label;
 
   // TODO add styling information like color?
-
+  /// Creates a new timeline event type.
   const TimelineEventType({
     required this.label,
   });
