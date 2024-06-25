@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:dartx/dartx.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -270,14 +273,36 @@ class Act {
       return ignorePointerFailure;
     }
 
+    final cover = hitTargetElements.first;
     final Element commonAncestor = findCommonAncestor(
       [hitTargetElements.first, snapshot.discoveredElement!],
     );
+    final chain = snapshot.discoveredElement!.debugGetDiagnosticChain();
+    final coverChain = cover.debugGetDiagnosticChain().dropLast(chain.length);
+
+    final splitterLocation = commonAncestor.debugGetDiagnosticChain();
+    final firstUsefulParent = splitterLocation
+        .drop(1)
+        .where((e) => e.debugWidgetLocation?.isUserCode ?? false)
+        .firstOrNull;
 
     return TestFailure(
-      "Widget '${snapshot.selector.toStringBreadcrumb()}' is covered by '${hitTargetElements.first.widget.toStringShort()}' and can't be tapped.\n"
-      "The common ancestor of both widgets is:\n"
-      "${commonAncestor.toStringDeep()}",
+      "Selector '${snapshot.selector.toStringBreadcrumb()}' can not be tapped directly, because another widget (${cover.toStringShort()}) inside $firstUsefulParent is completely covering it and consumes all tap events.\n"
+      "\n"
+      "Try tapping the $firstUsefulParent which contains '${snapshot.selector}' instead.\n\n"
+      "Example:\n"
+      "  // BAD: Taps the Text inside ElevatedButton\n"
+      "  WidgetSelector<AnyText> selector = spot<ElevatedButton>().spotText('Tap me');\n"
+      "  await act.tap(selector);\n"
+      "\n"
+      "  // GOOD: Taps the ElevatedButton which contains text 'Tap me'\n"
+      "  WidgetSelector<ElevatedButton> selector = spot<ElevatedButton>().withChild(spotText('Tap me'));\n"
+      "  await act.tap(selector);\n"
+      "\n"
+      "Path from $firstUsefulParent to cover ${cover.toStringShort()} is:\n"
+      "${coverChain.reversed.joinToString(separator: ' -> ', transform: (it) => it.toStringShort())}\n",
+      // TODO fix coverChain to include firstUsefulParent in the beginning
+      // TODO print link to firstUsefulParent widget
     );
   }
 
@@ -529,6 +554,48 @@ T _alwaysPropagateDevicePointerEvents<T>(T Function() block) {
   }
 }
 
+extension WidgetLocationExt on Element {
+  /// Returns where the widget was created in code
+  WidgetLocation? get debugWidgetLocation {
+    final diagnosticNodes = debugTransformDebugCreator([
+      DiagnosticsDebugCreator(DebugCreator(this)),
+    ]).firstOrNull as DiagnosticsBlock?;
+    if (diagnosticNodes == null) {
+      return null;
+    }
+    final errorDescription =
+        diagnosticNodes.getChildren().firstOrNull as ErrorDescription?;
+    if (errorDescription == null) {
+      return null;
+    }
+    final location = errorDescription.value.first.toString();
+    // _Location .toString() looks something like this:
+    // IgnorePointer IgnorePointer:file:///Users/pascalwelsch/Projects/passsy/spot/test/act/act_test.dart:142:18
+    final matches = RegExp('.*(file:///.*)').allMatches(location);
+    final filePath = matches.first.group(1);
+
+    return WidgetLocation(File(filePath.toString()));
+  }
+}
+
+class WidgetLocation {
+  final File file;
+
+  WidgetLocation(this.file);
+
+  bool get isUserCode {
+    if (file.path.contains('packages/flutter/')) {
+      return false;
+    }
+    return true;
+  }
+
+  @override
+  String toString() {
+    return 'WidgetLocation{$file}';
+  }
+}
+
 /// Workaround to the the location of a widget in code
 ///
 /// This method is a workaround to call `_getCreationLocation()` which is private
@@ -538,8 +605,11 @@ String? getCreationLocation(Element element) {
     return null;
   }
   final block =
-      debugTransformDebugCreator([DiagnosticsDebugCreator(debugCreator)]).first
-          as DiagnosticsBlock;
+      debugTransformDebugCreator([DiagnosticsDebugCreator(debugCreator)])
+          .firstOrNull as DiagnosticsBlock?;
+  if (block == null) {
+    return null;
+  }
   final description = block.getChildren().first as ErrorDescription;
   final location = description.value.first.toString();
   // _Location .toString() looks something like this:

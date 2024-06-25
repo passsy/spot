@@ -105,6 +105,67 @@ void main() {
       "Found interactable area of _TestButton at Offset(dx,dy).",
     );
   });
+  testWidgets('InkWell can be tapped', (tester) async {
+    int tapps = 0;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: _InkWellAboveTextButton(
+              text: 'Press Me',
+              onTap: () {
+                tapps++;
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+    final button = spot<_InkWellAboveTextButton>()..existsOnce();
+    await act.tap(button);
+    await tester.pump();
+    expect(tapps, 1);
+
+    final buttonWithText = spot<_InkWellAboveTextButton>()
+        .withChild(spotText('Press Me'))
+      ..existsOnce();
+    await act.tap(buttonWithText);
+    // Fails with:
+    // Widget 'Widget with text contains text "Press Me"' is covered by 'Listener' and can't be tapped.
+    expect(tapps, 2);
+
+    final text = spotText('Press Me')..existsOnce();
+    await act.tap(text);
+    // Fails with:
+    // Widget 'Widget with text contains text "Press Me"' is covered by 'Listener' and can't be tapped.
+    expect(tapps, 3);
+  });
+}
+
+class _InkWellAboveTextButton extends StatelessWidget {
+  const _InkWellAboveTextButton({this.onTap, required this.text});
+
+  final void Function()? onTap;
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Text(text),
+        // Ripple effect on top of the text
+        Positioned.fill(
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: onTap,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 String _replaceOffsetWithDxDy(String originalString) {
