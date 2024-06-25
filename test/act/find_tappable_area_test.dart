@@ -9,24 +9,20 @@ import '../widgets/poke_test_widget.dart';
 void main() {
   testWidgets('Widget entirely covered, finds no tappable area.',
       (tester) async {
-    bool gotTapped = false;
+    bool tapped = false;
     await tester.pumpWidget(
       MaterialApp(
         home: PokeTestWidget(
-          setup: const PokeTestWidgetSetup(
-            columns: 5,
-            rows: 5,
-          ),
+          columns: 5,
+          rows: 5,
           widgetToCover: _TestButton(
             onTap: () {
-              gotTapped = !gotTapped;
+              tapped = !tapped;
             },
           ),
         ),
       ),
     );
-    // Allow MeasureSize in PokeTestWidget calculate the cover
-    await tester.pump();
     final WidgetSelector button = spot<_TestButton>()..existsOnce();
 
     await expectLater(
@@ -36,64 +32,60 @@ void main() {
         "Stack(",
       ]),
     );
-    expect(gotTapped, isFalse);
+
+    expect(tapped, isFalse);
   });
   testWidgets('Widget partially covered, finds tappable area', (tester) async {
-    bool gotTapped = false;
+    bool tapped = false;
     await tester.pumpWidget(
       MaterialApp(
         home: PokeTestWidget(
-          setup: const PokeTestWidgetSetup(
-            columns: 5,
-            rows: 5,
-            pokableAtColumnIndex: 3,
-            pokableAtRowIndex: 4,
-          ),
+          columns: 5,
+          rows: 5,
+          pokableAtColumnIndex: 3,
+          pokableAtRowIndex: 4,
           widgetToCover: _TestButton(
             onTap: () {
-              gotTapped = !gotTapped;
+              tapped = !tapped;
             },
           ),
         ),
       ),
     );
-    // Allow MeasureSize in PokeTestWidget calculate the cover
-    await tester.pump();
     final WidgetSelector button = spot<_TestButton>()..existsOnce();
+
     await act.tap(button);
-    expect(gotTapped, isTrue);
+
+    expect(tapped, isTrue);
   });
 
   testWidgets('Warn about using and finding alternative tappable area.',
       (tester) async {
-    bool gotTapped = false;
-
+    bool tapped = false;
     final outPut = await captureConsoleOutput(() async {
       await tester.pumpWidget(
         MaterialApp(
           home: PokeTestWidget(
-            setup: const PokeTestWidgetSetup(
-              columns: 5,
-              rows: 5,
-              pokableAtColumnIndex: 3,
-              pokableAtRowIndex: 4,
-            ),
+            columns: 5,
+            rows: 5,
+            pokableAtColumnIndex: 3,
+            pokableAtRowIndex: 4,
             widgetToCover: _TestButton(
               onTap: () {
-                gotTapped = !gotTapped;
+                tapped = !tapped;
               },
             ),
           ),
         ),
       );
-      // Allow MeasureSize in PokeTestWidget calculate the cover
-      await tester.pump();
       final WidgetSelector button = spot<_TestButton>()..existsOnce();
+
       await act.tap(button);
     });
-    expect(gotTapped, isTrue);
-    final lines = outPut.split('\n')..removeWhere((line) => line.isEmpty);
 
+    expect(tapped, isTrue);
+
+    final lines = outPut.split('\n')..removeWhere((line) => line.isEmpty);
     final warning = _replaceOffsetWithDxDy(lines.first);
     expect(
       warning,
@@ -124,11 +116,19 @@ class _TestButton extends StatelessWidget {
       child: Container(
         width: 150,
         height: 50,
+        alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: Colors.green,
+          color: Colors.blue,
           borderRadius: BorderRadius.circular(8),
         ),
-        child: const Text('Press Me'),
+        child: const Text(
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 12,
+          ),
+          'Press me',
+          textAlign: TextAlign.center,
+        ),
       ),
     );
   }
