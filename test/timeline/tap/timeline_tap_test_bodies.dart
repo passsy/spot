@@ -23,7 +23,7 @@ Future<void> recordWithoutError({
 }) async {
   final output = await captureConsoleOutput(() async {
     if (!isGlobalMode) {
-      localTimelineMode = TimelineMode.record;
+      timeline.mode = TimelineMode.record;
     }
     await tester.pumpWidget(const TimelineTestWidget());
     _addButtonSelector.existsOnce();
@@ -33,7 +33,7 @@ Future<void> recordWithoutError({
     await act.tap(_subtractButtonSelector);
     spotText('Counter: 3').existsOnce();
 // Notify that the timeline of this type is already recording.
-    localTimelineMode = TimelineMode.record;
+    timeline.mode = TimelineMode.record;
   });
   expect(output, contains('🔴 - Recording error output timeline'));
   expect(
@@ -109,6 +109,7 @@ Future<void> liveWithoutErrorPrintsHtml({
     timelineMode: TimelineMode.live,
     isGlobalMode: isGlobalMode,
   );
+
   final timeline = stdout.split('\n');
 // Does not start with 'Timeline', this only happens on error
   expect(timeline.first, shared.timelineHeader);
@@ -201,7 +202,7 @@ Future<void> offWithoutError({
 }) async {
   final output = await captureConsoleOutput(() async {
     if (!isGlobalMode) {
-      localTimelineMode = TimelineMode.off;
+      timeline.mode = TimelineMode.off;
     }
     await tester.pumpWidget(const TimelineTestWidget());
     _addButtonSelector.existsOnce();
@@ -230,7 +231,7 @@ Future<void> liveTurnOffDuringTest({
 }) async {
   final output = await captureConsoleOutput(() async {
     if (!isGlobalMode) {
-      localTimelineMode = TimelineMode.live;
+      timeline.mode = TimelineMode.live;
     }
     await tester.pumpWidget(
       const TimelineTestWidget(),
@@ -245,7 +246,7 @@ Future<void> liveTurnOffDuringTest({
     if (isGlobalMode) {
       globalTimelineMode = TimelineMode.off;
     } else {
-      localTimelineMode = TimelineMode.off;
+      timeline.mode = TimelineMode.off;
     }
     await act.tap(_clearButtonSelector);
     spotText('Counter: 0').existsOnce();
@@ -253,7 +254,7 @@ Future<void> liveTurnOffDuringTest({
     if (isGlobalMode) {
       globalTimelineMode = TimelineMode.off;
     } else {
-      localTimelineMode = TimelineMode.off;
+      timeline.mode = TimelineMode.off;
     }
   });
   expect(output, contains('🔴 - Recording live timeline'));
@@ -281,7 +282,7 @@ Future<void> liveWithoutError({
 }) async {
   final output = await captureConsoleOutput(() async {
     if (!isGlobalMode) {
-      localTimelineMode = TimelineMode.live;
+      timeline.mode = TimelineMode.live;
     }
     await tester.pumpWidget(const TimelineTestWidget());
     _addButtonSelector.existsOnce();
@@ -291,7 +292,7 @@ Future<void> liveWithoutError({
     await act.tap(_subtractButtonSelector);
     spotText('Counter: 3').existsOnce();
 // Notify that the timeline mode is already set to live
-    localTimelineMode = TimelineMode.live;
+    timeline.mode = TimelineMode.live;
   });
   expect(output, contains('🔴 - Recording live timeline'));
   expect(
@@ -344,14 +345,13 @@ String _tapTestAsString({
   final testTitle = '${isGlobalMode ? 'Global: ' : 'Local: '}$title';
 
   final globalInitiator =
-      isGlobalMode ? '${shared.globalTimelineInitiator(timelineMode)};' : '';
+      isGlobalMode ? shared.globalTimelineInitiator(timelineMode) : '';
 
   final localInitiator =
-      isGlobalMode ? '' : '${shared.localTimelineInitiator(timelineMode)};';
+      isGlobalMode ? '' : shared.localTimelineInitiator(timelineMode);
 
   final widgetPart = File('test/timeline/tap/timeline_tap_test_widget.dart')
       .readAsStringSync();
-
   return '''
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';

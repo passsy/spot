@@ -6,7 +6,7 @@ import '../timeline/drag/drag_until_visible_test_widget.dart';
 void main() {
   group('Drag Events', () {
     testWidgets('Finds widget after dragging', (tester) async {
-      localTimelineMode = TimelineMode.live;
+      timeline.mode = TimelineMode.live;
       await tester.pumpWidget(
         const DragUntilVisibleTestWidget(),
       );

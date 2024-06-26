@@ -68,10 +68,10 @@ void main() {
     group('Without error', () {
       testWidgets('Drag Until Visible - Live timeline', (tester) async {
         final output = await captureConsoleOutput(() async {
-          localTimelineMode = TimelineMode.live;
+          timeline.mode = TimelineMode.live;
           await _testBody(tester);
           // Notify that the timeline of this type is already recording.
-          localTimelineMode = TimelineMode.live;
+          timeline.mode = TimelineMode.live;
         });
         expect(output, contains('🔴 - Now recording live timeline'));
         _testTimeLineContent(
@@ -83,7 +83,7 @@ void main() {
       });
       testWidgets('Start with Timeline Mode off', (tester) async {
         final output = await captureConsoleOutput(() async {
-          localTimelineMode = TimelineMode.off;
+          timeline.mode = TimelineMode.off;
           await _testBody(tester);
         });
         final splitted = output.split('\n')
@@ -94,11 +94,11 @@ void main() {
       });
       testWidgets('Turn timeline mode off during test', (tester) async {
         final output = await captureConsoleOutput(() async {
-          localTimelineMode = TimelineMode.record;
+          timeline.mode = TimelineMode.record;
           await _testBody(tester);
           // Notify that the recording is off
-          localTimelineMode = TimelineMode.off;
-          localTimelineMode = TimelineMode.off;
+          timeline.mode = TimelineMode.off;
+          timeline.mode = TimelineMode.off;
         });
         expect(output, contains('🔴 - Now recording live timeline'));
 
@@ -113,9 +113,9 @@ void main() {
       });
       testWidgets('act.drag: OnError timeline - without error', (tester) async {
         final output = await captureConsoleOutput(() async {
-          localTimelineMode = TimelineMode.record;
+          timeline.mode = TimelineMode.record;
           await _testBody(tester);
-          localTimelineMode = TimelineMode.record;
+          timeline.mode = TimelineMode.record;
         });
         final lines = output.split('\n')..removeWhere((line) => line.isEmpty);
         expect(lines.first, '🔴 - Now recording error output timeline');

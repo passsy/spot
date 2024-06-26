@@ -50,31 +50,6 @@ set globalTimelineMode(TimelineMode value) {
   }
 }
 
-/// ...
-TimelineMode? _localTimelineMode;
-
-/// Returns the local timeline mode used within a test.
-TimelineMode? get localTimelineMode => _localTimelineMode;
-
-/// Sets the local timeline mode used within a test.
-set localTimelineMode(TimelineMode? value) {
-  final currentTimelineMode = _localTimelineMode;
-  _localTimelineMode = value;
-  if (value != null) {
-    // ignore: avoid_print
-    if (value == globalTimelineMode ||
-        (currentTimelineMode != null && value == timeline.mode)) {
-      // ignore: avoid_print
-      print('Timeline mode is already set to "${value.name}"');
-      return;
-    } else if (currentTimelineMode != null && currentTimelineMode != value) {
-      // ignore: avoid_print
-      print(value.message);
-    }
-    timeline.mode = value;
-  }
-}
-
 /// Use --dart-define=SPOT_TIMELINE_MODE=live|record|off to set the [TimlineMode]
 /// for all tests
 TimelineMode? getTimelineModeFromEnv() {
@@ -104,7 +79,7 @@ Timeline get timeline {
 
   // create new timeline
   final newTimeline = Timeline();
-  newTimeline.mode = _localTimelineMode ?? _globalTimelineMode;
+  newTimeline.mode = _globalTimelineMode;
   // ignore: avoid_print
   print(newTimeline.mode.message);
 
@@ -119,7 +94,6 @@ Timeline get timeline {
       newTimeline._printHTML();
     }
     _timelines.remove(test);
-    _localTimelineMode = null;
   });
 
   _timelines[test] = newTimeline;
@@ -144,8 +118,21 @@ Timeline get timeline {
 class Timeline {
   final List<TimelineEvent> _events = [];
 
+  TimelineMode _mode = TimelineMode.off;
+
   /// The mode of the timeline. Defaults to [TimelineMode.off].
-  TimelineMode mode = TimelineMode.off;
+  TimelineMode get mode => _mode;
+
+  set mode(TimelineMode value) {
+    if (value == _mode) {
+      // ignore: avoid_print
+      print('Timeline mode is already set to "${value.name}"');
+      return;
+    }
+    _mode = value;
+    // ignore: avoid_print
+    print(value.message);
+  }
 
   /// Adds a screenshot to the timeline.
   void addScreenshot(

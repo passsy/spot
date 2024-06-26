@@ -46,7 +46,6 @@ Future<String> runTestInProcessAndCaptureOutPut({
   final stdout = stdoutBuffer.toString();
 
   _deleteTempDir(tempTestFile.parent);
-
   return stdout;
 }
 
