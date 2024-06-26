@@ -10,4 +10,11 @@ void main() {
       isGlobalMode: true,
     );
   });
+  test(
+      'Global: Live timeline - Live timeline - with error, no duplicates, prints HTML',
+      () async {
+    await TimelineTestHelpers.liveTimelineWithErrorNoDuplicatesPrintsHtml(
+      isGlobalMode: true,
+    );
+  });
 }
