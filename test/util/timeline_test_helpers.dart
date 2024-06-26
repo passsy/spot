@@ -363,6 +363,59 @@ class TimelineTestHelpers {
     _testTimeLineContent(output: output, eventCount: 0);
   }
 
+  static Future<void> liveTimelineTurnOffDuringTest({
+    required WidgetTester tester,
+    bool isGlobalMode = false,
+  }) async {
+    print('isGlobalMode: $isGlobalMode');
+    final output = await captureConsoleOutput(() async {
+      if (!isGlobalMode) {
+        localTimelineMode = TimelineMode.live;
+      }
+      await tester.pumpWidget(
+        const TimelineTestWidget(),
+      );
+      spotText('Counter: 3').existsOnce();
+      addButtonSelector.existsOnce();
+      await act.tap(addButtonSelector);
+      spotText('Counter: 4').existsOnce();
+      await act.tap(subtractButtonSelector);
+      spotText('Counter: 3').existsOnce();
+      // Notify that the recording stopped
+      if (isGlobalMode) {
+        globalTimelineMode = TimelineMode.off;
+      } else {
+        localTimelineMode = TimelineMode.off;
+      }
+      await act.tap(clearButtonSelector);
+      spotText('Counter: 0').existsOnce();
+      // Notify that the recording is already off
+      if (isGlobalMode) {
+        globalTimelineMode = TimelineMode.off;
+      } else {
+        localTimelineMode = TimelineMode.off;
+      }
+    });
+    print('output: $output');
+    expect(output, contains('🔴 - Recording live timeline'));
+    expect(
+      output,
+      contains('Tap ${addButtonSelector.toStringBreadcrumb()}'),
+    );
+    expect(
+      output,
+      contains('Tap ${subtractButtonSelector.toStringBreadcrumb()}'),
+    );
+    // No further events were added to the timeline, including screenshots
+    expect(
+      output,
+      isNot(contains('Tap ${clearButtonSelector.toStringBreadcrumb()}')),
+    );
+    _testTimeLineContent(output: output, eventCount: 2);
+    expect(output, contains('⏸︎ - Timeline recording is off'));
+    expect(output, contains('Timeline mode is already set to "off"'));
+  }
+
   static Future<void> liveTimelineTest({
     required WidgetTester tester,
     bool isGlobalMode = false,
@@ -407,9 +460,8 @@ class TimelineTestHelpers {
       eventCount,
     );
     final callerParts = output.split('\n').where((line) {
-      return line.startsWith('Caller: at main') && line.contains('file://');
+      return line.startsWith('Caller: at') && line.contains('file://');
     }).toList();
-
     expect(
       callerParts.length,
       eventCount,

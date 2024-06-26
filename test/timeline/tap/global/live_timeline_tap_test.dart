@@ -17,4 +17,10 @@ void main() {
       isGlobalMode: true,
     );
   });
+  testWidgets('Global: Turn live timeline off during test', (tester) async {
+    await TimelineTestHelpers.liveTimelineTurnOffDuringTest(
+      isGlobalMode: true,
+      tester: tester,
+    );
+  });
 }

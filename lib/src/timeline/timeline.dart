@@ -44,6 +44,10 @@ set globalTimelineMode(TimelineMode value) {
     print(value.message);
   }
   _globalTimelineMode = value;
+  final test = Invoker.current?.liveTest;
+  if (test != null) {
+    timeline.mode = value;
+  }
 }
 
 /// ...
