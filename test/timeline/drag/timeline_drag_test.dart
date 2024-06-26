@@ -33,7 +33,7 @@ import 'package:spot/src/timeline/timeline.dart';\n
 $widgetPart\n
 void main() async {
   testWidgets("$title", (WidgetTester tester) async {
-  ${TimelineTestHelpers.timelineInitiatorForModeAsString(timelineMode)};
+  ${TimelineTestHelpers.localTimelineInitiator(timelineMode)};
     await tester.pumpWidget(const DragUntilVisibleTestWidget());
       final firstItem = spotText('Item at index: 3', exact: true)..existsOnce();
       final secondItem = spotText('Item at index: 27', exact: true)
