@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:test_process/test_process.dart';
 import '../../util/capture_console_output.dart';
-import '../../util/timeline_test_helpers.dart';
+import '../timeline_test_shared.dart' as shared;
 import 'drag_until_visible_test_widget.dart';
 
 final _firstItemSelector = spotText('Item at index: 3', exact: true);
@@ -17,7 +17,6 @@ const _passingDragAmount = 23;
 const _passingOffset = Offset(0, -2300);
 
 const _header = '==================== Timeline Event ====================';
-// const _separator = '========================================================';
 
 String _testAsString({
   required String title,
@@ -34,7 +33,7 @@ import 'package:spot/src/timeline/timeline.dart';\n
 $widgetPart\n
 void main() async {
   testWidgets("$title", (WidgetTester tester) async {
-  ${TimelineTestHelpers.localTimelineInitiator(timelineMode)};
+  ${shared.localTimelineInitiator(timelineMode)};
     await tester.pumpWidget(const DragUntilVisibleTestWidget());
       final firstItem = spotText('Item at index: 3', exact: true)..existsOnce();
       final secondItem = spotText('Item at index: 27', exact: true)

@@ -1,12 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/src/timeline/timeline.dart';
-
-import '../../../util/timeline_test_helpers.dart';
+import '../timeline_tap_test_bodies.dart' as body;
 
 void main() {
   globalTimelineMode = TimelineMode.off;
   testWidgets('Global: off, without error', (tester) async {
-    await TimelineTestHelpers.offWithoutError(
+    await body.offWithoutError(
       tester: tester,
       isGlobalMode: true,
     );
