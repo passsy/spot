@@ -4,6 +4,7 @@ import 'package:dartx/dartx.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:test_process/test_process.dart';
+import '../../util/capture_console_output.dart';
 import '../../util/timeline_test_helpers.dart';
 import 'drag_until_visible_test_widget.dart';
 
@@ -67,7 +68,7 @@ void main() {
   group('Drag Timeline Test', () {
     group('Without error', () {
       testWidgets('Drag Until Visible - Live timeline', (tester) async {
-        final output = await TimelineTestHelpers.captureConsoleOutput(() async {
+        final output = await captureConsoleOutput(() async {
           localTimelineMode = TimelineMode.live;
           await _testBody(tester);
           // Notify that the timeline of this type is already recording.
@@ -82,7 +83,7 @@ void main() {
         expect(output, contains('🔴 - Already recording live timeline'));
       });
       testWidgets('Start with Timeline Mode off', (tester) async {
-        final output = await TimelineTestHelpers.captureConsoleOutput(() async {
+        final output = await captureConsoleOutput(() async {
           localTimelineMode = TimelineMode.off;
           await _testBody(tester);
         });
@@ -93,7 +94,7 @@ void main() {
         expect(splitted.first, expectedOutput);
       });
       testWidgets('Turn timeline mode off during test', (tester) async {
-        final output = await TimelineTestHelpers.captureConsoleOutput(() async {
+        final output = await captureConsoleOutput(() async {
           localTimelineMode = TimelineMode.record;
           await _testBody(tester);
           // Notify that the recording is off
@@ -112,7 +113,7 @@ void main() {
         expect(output, contains('⏸︎ - Timeline recording is off'));
       });
       testWidgets('act.drag: OnError timeline - without error', (tester) async {
-        final output = await TimelineTestHelpers.captureConsoleOutput(() async {
+        final output = await captureConsoleOutput(() async {
           localTimelineMode = TimelineMode.record;
           await _testBody(tester);
           localTimelineMode = TimelineMode.record;

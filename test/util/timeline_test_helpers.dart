@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:dartx/dartx.dart';
@@ -8,70 +7,48 @@ import 'package:spot/spot.dart';
 import 'package:test_process/test_process.dart';
 
 import '../timeline/tap/timeline_tap_test_widget.dart';
+import 'capture_console_output.dart';
 
 class TimelineTestHelpers {
-  static final WidgetSelector addButtonSelector = spotIcon(Icons.add);
-  static final subtractButtonSelector = spotIcon(Icons.remove);
-  static final clearButtonSelector = spotIcon(Icons.clear);
+  static final WidgetSelector _addButtonSelector = spotIcon(Icons.add);
+  static final _subtractButtonSelector = spotIcon(Icons.remove);
+  static final _clearButtonSelector = spotIcon(Icons.clear);
 
-  static const header =
+  static const _header =
       '==================== Timeline Event ====================';
-  static const separator =
+  static const _separator =
       '========================================================';
 
-  static Future<String> captureConsoleOutput(
-    Future<void> Function() testFunction,
-  ) async {
-    final StringBuffer buffer = StringBuffer();
-    final ZoneSpecification spec = ZoneSpecification(
-      print: (self, parent, zone, line) {
-        buffer.writeln(line);
-      },
-    );
-
-    await Zone.current.fork(specification: spec).run(() async {
-      await testFunction();
-    });
-
-    return buffer.toString();
-  }
-
   static String localTimelineInitiator(TimelineMode timelineMode) {
-    switch (timelineMode) {
-      case TimelineMode.live:
-        return 'localTimelineMode = TimelineMode.live;';
-      case TimelineMode.record:
-        return 'localTimelineMode = TimelineMode.record;';
-      case TimelineMode.off:
-        return 'localTimelineMode = TimelineMode.off;';
-    }
+    return switch (timelineMode) {
+      TimelineMode.live => 'localTimelineMode = TimelineMode.live;',
+      TimelineMode.record => 'localTimelineMode = TimelineMode.record;',
+      TimelineMode.off => 'localTimelineMode = TimelineMode.off;',
+    };
   }
 
-  static String globalTimelineInitiator(TimelineMode timelineMode) {
-    switch (timelineMode) {
-      case TimelineMode.live:
-        return 'globalTimelineMode = TimelineMode.live;';
-      case TimelineMode.record:
-        return 'globalTimelineMode = TimelineMode.record;';
-      case TimelineMode.off:
-        return 'globalTimelineMode = TimelineMode.off;';
-    }
+  static String _globalTimelineInitiator(TimelineMode timelineMode) {
+    return switch (timelineMode) {
+      TimelineMode.live => 'globalTimelineMode = TimelineMode.live;',
+      TimelineMode.record => 'globalTimelineMode = TimelineMode.record;',
+      TimelineMode.off => 'globalTimelineMode = TimelineMode.off;',
+    };
   }
 
   static Future<void> recordTimelineTestWithoutError({
     required WidgetTester tester,
     bool isGlobalMode = false,
   }) async {
-    final output = await TimelineTestHelpers.captureConsoleOutput(() async {
+    final output = await captureConsoleOutput(() async {
       if (!isGlobalMode) {
         localTimelineMode = TimelineMode.record;
       }
       await tester.pumpWidget(const TimelineTestWidget());
-      addButtonSelector.existsOnce();
+      _addButtonSelector.existsOnce();
       spotText('Counter: 3').existsOnce();
-      await act.tap(addButtonSelector);
+      await act.tap(_addButtonSelector);
       spotText('Counter: 4').existsOnce();
-      await act.tap(subtractButtonSelector);
+      await act.tap(_subtractButtonSelector);
       spotText('Counter: 3').existsOnce();
       // Notify that the timeline of this type is already recording.
       localTimelineMode = TimelineMode.record;
@@ -79,11 +56,11 @@ class TimelineTestHelpers {
     expect(output, contains('🔴 - Recording error output timeline'));
     expect(
       output,
-      isNot(contains('Tap ${addButtonSelector.toStringBreadcrumb()}')),
+      isNot(contains('Tap ${_addButtonSelector.toStringBreadcrumb()}')),
     );
     expect(
       output,
-      isNot(contains('Tap ${subtractButtonSelector.toStringBreadcrumb()}')),
+      isNot(contains('Tap ${_subtractButtonSelector.toStringBreadcrumb()}')),
     );
     expect(output, contains('Timeline mode is already set to "record"'));
     _testTimeLineContent(output: output, eventCount: 0);
@@ -97,7 +74,7 @@ class TimelineTestHelpers {
     final testTitle =
         '${isGlobalMode ? 'Global: ' : 'Local: '}OnError timeline - with error, prints timeline';
     await tempTestFile.writeAsString(
-      testAsString(
+      _tapTestAsString(
         title: testTitle,
         timelineMode: TimelineMode.record,
         shouldFail: true,
@@ -134,7 +111,7 @@ class TimelineTestHelpers {
     expect(timeline.first, 'Timeline');
     expect(
       timeline[1],
-      header,
+      _header,
     );
     expect(
       timeline[2],
@@ -158,7 +135,7 @@ class TimelineTestHelpers {
     );
     expect(
       timeline[6],
-      separator,
+      _separator,
     );
     final prefix = isGlobalMode ? 'global' : 'local';
     final htmlLine =
@@ -179,7 +156,7 @@ class TimelineTestHelpers {
     final testTitle =
         '${isGlobalMode ? 'Global: ' : 'Local: '}Live timeline without error prints html';
     await tempTestFile.writeAsString(
-      testAsString(
+      _tapTestAsString(
         title: testTitle,
         timelineMode: TimelineMode.live,
         isGlobalMode: isGlobalMode,
@@ -196,7 +173,7 @@ class TimelineTestHelpers {
       if (line.isEmpty) continue;
 
       if (!write) {
-        if (line == header) {
+        if (line == _header) {
           write = true;
         }
       }
@@ -216,7 +193,7 @@ class TimelineTestHelpers {
     final stdout = stdoutBuffer.toString();
     final timeline = stdout.split('\n');
     // Does not start with 'Timeline', this only happens on error
-    expect(timeline.first, header);
+    expect(timeline.first, _header);
     expect(
       timeline.second,
       'Event: Tap Icon Widget with icon: "IconData(U+0E047)"',
@@ -239,7 +216,7 @@ class TimelineTestHelpers {
     );
     expect(
       timeline[5],
-      separator,
+      _separator,
     );
     final htmlLine =
         timeline.firstWhere((line) => line.startsWith('View time line here:'));
@@ -260,7 +237,7 @@ class TimelineTestHelpers {
     final testTitle =
         '${isGlobalMode ? 'Global: ' : 'Local: '}Live timeline - with error, no duplicates, prints HTML';
     await tempTestFile.writeAsString(
-      testAsString(
+      _tapTestAsString(
         title: testTitle,
         timelineMode: TimelineMode.live,
         shouldFail: true,
@@ -278,7 +255,7 @@ class TimelineTestHelpers {
       if (line.isEmpty) continue;
 
       if (!write) {
-        if (line == header) {
+        if (line == _header) {
           write = true;
         }
       }
@@ -298,7 +275,7 @@ class TimelineTestHelpers {
     final stdout = stdoutBuffer.toString();
     final timeline = stdout.split('\n');
     // Does not start with 'Timeline', this only happens on error
-    expect(timeline.first, header);
+    expect(timeline.first, _header);
     expect(
       timeline.second,
       'Event: Tap Icon Widget with icon: "IconData(U+0E047)"',
@@ -321,7 +298,7 @@ class TimelineTestHelpers {
     );
     expect(
       timeline[5],
-      separator,
+      _separator,
     );
     final prefix = isGlobalMode ? 'global' : 'local';
     final htmlLine =
@@ -338,27 +315,27 @@ class TimelineTestHelpers {
     required WidgetTester tester,
     bool isGlobalMode = false,
   }) async {
-    final output = await TimelineTestHelpers.captureConsoleOutput(() async {
+    final output = await captureConsoleOutput(() async {
       if (!isGlobalMode) {
         localTimelineMode = TimelineMode.off;
       }
       await tester.pumpWidget(const TimelineTestWidget());
-      addButtonSelector.existsOnce();
+      _addButtonSelector.existsOnce();
       spotText('Counter: 3').existsOnce();
-      await act.tap(addButtonSelector);
+      await act.tap(_addButtonSelector);
       spotText('Counter: 4').existsOnce();
-      await act.tap(subtractButtonSelector);
+      await act.tap(_subtractButtonSelector);
       spotText('Counter: 3').existsOnce();
     });
 
     expect(output, contains('⏸︎ - Timeline recording is off'));
     expect(
       output,
-      isNot(contains('Tap ${addButtonSelector.toStringBreadcrumb()}')),
+      isNot(contains('Tap ${_addButtonSelector.toStringBreadcrumb()}')),
     );
     expect(
       output,
-      isNot(contains('Tap ${subtractButtonSelector.toStringBreadcrumb()}')),
+      isNot(contains('Tap ${_subtractButtonSelector.toStringBreadcrumb()}')),
     );
     _testTimeLineContent(output: output, eventCount: 0);
   }
@@ -367,7 +344,6 @@ class TimelineTestHelpers {
     required WidgetTester tester,
     bool isGlobalMode = false,
   }) async {
-    print('isGlobalMode: $isGlobalMode');
     final output = await captureConsoleOutput(() async {
       if (!isGlobalMode) {
         localTimelineMode = TimelineMode.live;
@@ -376,10 +352,10 @@ class TimelineTestHelpers {
         const TimelineTestWidget(),
       );
       spotText('Counter: 3').existsOnce();
-      addButtonSelector.existsOnce();
-      await act.tap(addButtonSelector);
+      _addButtonSelector.existsOnce();
+      await act.tap(_addButtonSelector);
       spotText('Counter: 4').existsOnce();
-      await act.tap(subtractButtonSelector);
+      await act.tap(_subtractButtonSelector);
       spotText('Counter: 3').existsOnce();
       // Notify that the recording stopped
       if (isGlobalMode) {
@@ -387,7 +363,7 @@ class TimelineTestHelpers {
       } else {
         localTimelineMode = TimelineMode.off;
       }
-      await act.tap(clearButtonSelector);
+      await act.tap(_clearButtonSelector);
       spotText('Counter: 0').existsOnce();
       // Notify that the recording is already off
       if (isGlobalMode) {
@@ -396,20 +372,19 @@ class TimelineTestHelpers {
         localTimelineMode = TimelineMode.off;
       }
     });
-    print('output: $output');
     expect(output, contains('🔴 - Recording live timeline'));
     expect(
       output,
-      contains('Tap ${addButtonSelector.toStringBreadcrumb()}'),
+      contains('Tap ${_addButtonSelector.toStringBreadcrumb()}'),
     );
     expect(
       output,
-      contains('Tap ${subtractButtonSelector.toStringBreadcrumb()}'),
+      contains('Tap ${_subtractButtonSelector.toStringBreadcrumb()}'),
     );
     // No further events were added to the timeline, including screenshots
     expect(
       output,
-      isNot(contains('Tap ${clearButtonSelector.toStringBreadcrumb()}')),
+      isNot(contains('Tap ${_clearButtonSelector.toStringBreadcrumb()}')),
     );
     _testTimeLineContent(output: output, eventCount: 2);
     expect(output, contains('⏸︎ - Timeline recording is off'));
@@ -420,16 +395,16 @@ class TimelineTestHelpers {
     required WidgetTester tester,
     bool isGlobalMode = false,
   }) async {
-    final output = await TimelineTestHelpers.captureConsoleOutput(() async {
+    final output = await captureConsoleOutput(() async {
       if (!isGlobalMode) {
         localTimelineMode = TimelineMode.live;
       }
       await tester.pumpWidget(const TimelineTestWidget());
-      addButtonSelector.existsOnce();
+      _addButtonSelector.existsOnce();
       spotText('Counter: 3').existsOnce();
-      await act.tap(addButtonSelector);
+      await act.tap(_addButtonSelector);
       spotText('Counter: 4').existsOnce();
-      await act.tap(subtractButtonSelector);
+      await act.tap(_subtractButtonSelector);
       spotText('Counter: 3').existsOnce();
       // Notify that the timeline mode is already set to live
       localTimelineMode = TimelineMode.live;
@@ -437,11 +412,11 @@ class TimelineTestHelpers {
     expect(output, contains('🔴 - Recording live timeline'));
     expect(
       output,
-      contains('Event: Tap ${addButtonSelector.toStringBreadcrumb()}'),
+      contains('Event: Tap ${_addButtonSelector.toStringBreadcrumb()}'),
     );
     expect(
       output,
-      contains('Event: Tap ${subtractButtonSelector.toStringBreadcrumb()}'),
+      contains('Event: Tap ${_subtractButtonSelector.toStringBreadcrumb()}'),
     );
     expect(output, contains('Timeline mode is already set to "live"'));
     _testTimeLineContent(output: output, eventCount: 2);
@@ -452,7 +427,7 @@ class TimelineTestHelpers {
     required int eventCount,
   }) {
     expect(
-      RegExp(header).allMatches(output).length,
+      RegExp(_header).allMatches(output).length,
       eventCount,
     );
     expect(
@@ -476,14 +451,14 @@ class TimelineTestHelpers {
     );
   }
 
-  static String testAsString({
+  static String _tapTestAsString({
     required String title,
     required TimelineMode timelineMode,
     bool shouldFail = false,
     bool isGlobalMode = false,
   }) {
     final globalInitiator =
-        isGlobalMode ? '${globalTimelineInitiator(timelineMode)};' : '';
+        isGlobalMode ? '${_globalTimelineInitiator(timelineMode)};' : '';
 
     final localInitiator =
         isGlobalMode ? '' : '${localTimelineInitiator(timelineMode)};';
