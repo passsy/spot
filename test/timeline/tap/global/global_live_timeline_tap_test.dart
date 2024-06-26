@@ -5,20 +5,24 @@ import '../../../util/timeline_test_helpers.dart';
 
 void main() {
   globalTimelineMode = TimelineMode.live;
-  test('Global: Live timeline - without error, prints HTML', () async {
-    await TimelineTestHelpers.liveTimelineWithoutErrorPrintsHtml(
+  testWidgets('Global: record, without error', (tester) async {
+    await TimelineTestHelpers.liveWithoutError(
+      tester: tester,
       isGlobalMode: true,
     );
   });
-  test(
-      'Global: Live timeline - Live timeline - with error, no duplicates, prints HTML',
-      () async {
-    await TimelineTestHelpers.liveTimelineWithErrorNoDuplicatesPrintsHtml(
+  test('Global: live - without error, prints HTML', () async {
+    await TimelineTestHelpers.liveWithoutErrorPrintsHtml(
       isGlobalMode: true,
     );
   });
-  testWidgets('Global: Turn live timeline off during test', (tester) async {
-    await TimelineTestHelpers.liveTimelineTurnOffDuringTest(
+  test('Global: live - with error, no duplicates, prints HTML', () async {
+    await TimelineTestHelpers.liveWithErrorNoDuplicatesPrintsHtml(
+      isGlobalMode: true,
+    );
+  });
+  testWidgets('Global: live, turn off during test', (tester) async {
+    await TimelineTestHelpers.liveTurnOffDuringTest(
       isGlobalMode: true,
       tester: tester,
     );

@@ -35,7 +35,7 @@ class TimelineTestHelpers {
     };
   }
 
-  static Future<void> recordTimelineTestWithoutError({
+  static Future<void> recordWithoutError({
     required WidgetTester tester,
     bool isGlobalMode = false,
   }) async {
@@ -66,16 +66,14 @@ class TimelineTestHelpers {
     _testTimeLineContent(output: output, eventCount: 0);
   }
 
-  static Future<void> recordTimelineTestWithError({
+  static Future<void> recordWithError({
     bool isGlobalMode = false,
   }) async {
     final tempDir = Directory.systemTemp.createTempSync();
     final tempTestFile = File('${tempDir.path}/temp_test.dart');
-    final testTitle =
-        '${isGlobalMode ? 'Global: ' : 'Local: '}OnError timeline - with error, prints timeline';
     await tempTestFile.writeAsString(
       _tapTestAsString(
-        title: testTitle,
+        title: 'OnError timeline - with error, prints timeline',
         timelineMode: TimelineMode.record,
         shouldFail: true,
         isGlobalMode: isGlobalMode,
@@ -148,16 +146,14 @@ class TimelineTestHelpers {
     );
   }
 
-  static Future<void> liveTimelineWithoutErrorPrintsHtml({
+  static Future<void> liveWithoutErrorPrintsHtml({
     bool isGlobalMode = false,
   }) async {
     final tempDir = Directory.systemTemp.createTempSync();
     final tempTestFile = File('${tempDir.path}/temp_test.dart');
-    final testTitle =
-        '${isGlobalMode ? 'Global: ' : 'Local: '}Live timeline without error prints html';
     await tempTestFile.writeAsString(
       _tapTestAsString(
-        title: testTitle,
+        title: 'Live timeline without error prints html',
         timelineMode: TimelineMode.live,
         isGlobalMode: isGlobalMode,
       ),
@@ -229,16 +225,14 @@ class TimelineTestHelpers {
     );
   }
 
-  static Future<void> liveTimelineWithErrorNoDuplicatesPrintsHtml({
+  static Future<void> liveWithErrorNoDuplicatesPrintsHtml({
     bool isGlobalMode = false,
   }) async {
     final tempDir = Directory.systemTemp.createTempSync();
     final tempTestFile = File('${tempDir.path}/temp_test.dart');
-    final testTitle =
-        '${isGlobalMode ? 'Global: ' : 'Local: '}Live timeline - with error, no duplicates, prints HTML';
     await tempTestFile.writeAsString(
       _tapTestAsString(
-        title: testTitle,
+        title: 'Live timeline - with error, no duplicates, prints HTML',
         timelineMode: TimelineMode.live,
         shouldFail: true,
         isGlobalMode: isGlobalMode,
@@ -311,7 +305,7 @@ class TimelineTestHelpers {
     );
   }
 
-  static Future<void> offTimelineTest({
+  static Future<void> offWithoutError({
     required WidgetTester tester,
     bool isGlobalMode = false,
   }) async {
@@ -340,7 +334,7 @@ class TimelineTestHelpers {
     _testTimeLineContent(output: output, eventCount: 0);
   }
 
-  static Future<void> liveTimelineTurnOffDuringTest({
+  static Future<void> liveTurnOffDuringTest({
     required WidgetTester tester,
     bool isGlobalMode = false,
   }) async {
@@ -391,7 +385,7 @@ class TimelineTestHelpers {
     expect(output, contains('Timeline mode is already set to "off"'));
   }
 
-  static Future<void> liveTimelineTest({
+  static Future<void> liveWithoutError({
     required WidgetTester tester,
     bool isGlobalMode = false,
   }) async {
@@ -457,6 +451,8 @@ class TimelineTestHelpers {
     bool shouldFail = false,
     bool isGlobalMode = false,
   }) {
+    final testTitle = '${isGlobalMode ? 'Global: ' : 'Local: '}$title';
+
     final globalInitiator =
         isGlobalMode ? '${_globalTimelineInitiator(timelineMode)};' : '';
 
@@ -475,7 +471,7 @@ void main() async {
   $globalInitiator
   final addButtonSelector = spotIcon(Icons.add);
   final subtractButtonSelector = spotIcon(Icons.remove);
-  testWidgets("$title", (WidgetTester tester) async {
+  testWidgets("$testTitle", (WidgetTester tester) async {
    $localInitiator
     await tester.pumpWidget(const TimelineTestWidget());
       addButtonSelector.existsOnce();

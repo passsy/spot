@@ -5,8 +5,8 @@ import '../../../util/timeline_test_helpers.dart';
 
 void main() {
   globalTimelineMode = TimelineMode.off;
-  testWidgets('Global timeline - Timeline off', (tester) async {
-    await TimelineTestHelpers.offTimelineTest(
+  testWidgets('Global: off, without error', (tester) async {
+    await TimelineTestHelpers.offWithoutError(
       tester: tester,
       isGlobalMode: true,
     );

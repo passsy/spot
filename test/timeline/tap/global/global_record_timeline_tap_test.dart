@@ -5,13 +5,13 @@ import '../../../util/timeline_test_helpers.dart';
 
 void main() {
   globalTimelineMode = TimelineMode.record;
-  testWidgets('Global timeline - record, without error', (tester) async {
-    await TimelineTestHelpers.recordTimelineTestWithoutError(
+  testWidgets('Global: record, without error', (tester) async {
+    await TimelineTestHelpers.recordWithoutError(
       tester: tester,
       isGlobalMode: true,
     );
   });
-  test('Global timeline - record, with error', () async {
-    await TimelineTestHelpers.recordTimelineTestWithError(isGlobalMode: true);
+  test('Global: record, with error', () async {
+    await TimelineTestHelpers.recordWithError(isGlobalMode: true);
   });
 }

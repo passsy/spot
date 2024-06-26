@@ -13,28 +13,30 @@ void main() {
   });
 
   group('Override global timeline', () {
-    testWidgets('Local: Start with Timeline Mode off', (tester) async {
-      await TimelineTestHelpers.offTimelineTest(tester: tester);
+    testWidgets('Local: live, without error', (tester) async {
+      await TimelineTestHelpers.liveWithoutError(tester: tester);
     });
-    testWidgets('Local: Turn live timeline off during test', (tester) async {
-      await TimelineTestHelpers.liveTimelineTurnOffDuringTest(tester: tester);
+    testWidgets('Local: off, without error', (tester) async {
+      await TimelineTestHelpers.offWithoutError(tester: tester);
+    });
+    testWidgets('Local: live, turn off during test', (tester) async {
+      await TimelineTestHelpers.liveTurnOffDuringTest(tester: tester);
     });
   });
 
   group('Print on teardown', () {
-    testWidgets('Local: OnError timeline - without error', (tester) async {
-      await TimelineTestHelpers.recordTimelineTestWithoutError(tester: tester);
+    testWidgets('Local: record, without error', (tester) async {
+      await TimelineTestHelpers.recordWithoutError(tester: tester);
     });
 
-    test('Local: OnError timeline - with error, prints timeline', () async {
-      await TimelineTestHelpers.recordTimelineTestWithError();
+    test('Local: record, with error', () async {
+      await TimelineTestHelpers.recordWithError();
     });
-    test('Local: Live timeline - without error, prints HTML', () async {
-      await TimelineTestHelpers.liveTimelineWithoutErrorPrintsHtml();
+    test('Local: live - without error, prints HTML', () async {
+      await TimelineTestHelpers.liveWithoutErrorPrintsHtml();
     });
-    test('Local: Live timeline - with error, no duplicates, prints HTML',
-        () async {
-      await TimelineTestHelpers.liveTimelineWithErrorNoDuplicatesPrintsHtml();
+    test('Local: live - with error, no duplicates, prints HTML', () async {
+      await TimelineTestHelpers.liveWithErrorNoDuplicatesPrintsHtml();
     });
   });
 }
