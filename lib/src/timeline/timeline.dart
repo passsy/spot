@@ -34,15 +34,6 @@ TimelineMode _globalTimelineMode =
 TimelineMode get globalTimelineMode => _globalTimelineMode;
 
 set globalTimelineMode(TimelineMode value) {
-  // ignore: avoid_print
-  if (value == _globalTimelineMode) {
-    // ignore: avoid_print
-    print('Timeline mode is already set to "${value.name}"');
-    return;
-  } else if (_globalTimelineMode != value) {
-    // ignore: avoid_print
-    print(value.message);
-  }
   _globalTimelineMode = value;
   final test = Invoker.current?.liveTest;
   if (test != null) {
@@ -79,9 +70,6 @@ Timeline get timeline {
 
   // create new timeline
   final newTimeline = Timeline();
-  newTimeline.mode = _globalTimelineMode;
-  // ignore: avoid_print
-  print(newTimeline.mode.message);
 
   Invoker.current!.addTearDown(() {
     if (!test.state.result.isPassing &&
@@ -118,20 +106,19 @@ Timeline get timeline {
 class Timeline {
   final List<TimelineEvent> _events = [];
 
-  TimelineMode _mode = TimelineMode.off;
+  TimelineMode _mode = _globalTimelineMode;
 
   /// The mode of the timeline. Defaults to [TimelineMode.off].
   TimelineMode get mode => _mode;
 
   set mode(TimelineMode value) {
     if (value == _mode) {
-      // ignore: avoid_print
-      print('Timeline mode is already set to "${value.name}"');
       return;
     }
-    _mode = value;
     // ignore: avoid_print
     print(value.message);
+
+    _mode = value;
   }
 
   /// Adds a screenshot to the timeline.

@@ -32,10 +32,8 @@ Future<void> recordWithoutError({
     spotText('Counter: 4').existsOnce();
     await act.tap(_subtractButtonSelector);
     spotText('Counter: 3').existsOnce();
-// Notify that the timeline of this type is already recording.
-    timeline.mode = TimelineMode.record;
   });
-  expect(output, contains('🔴 - Recording error output timeline'));
+  expect(output, isNot(contains('🔴 - Recording error output timeline')));
   expect(
     output,
     isNot(contains('Tap ${_addButtonSelector.toStringBreadcrumb()}')),
@@ -44,7 +42,6 @@ Future<void> recordWithoutError({
     output,
     isNot(contains('Tap ${_subtractButtonSelector.toStringBreadcrumb()}')),
   );
-  expect(output, contains('Timeline mode is already set to "record"'));
   _testTimeLineContent(output: output, eventCount: 0);
 }
 
@@ -243,21 +240,15 @@ Future<void> liveTurnOffDuringTest({
     await act.tap(_subtractButtonSelector);
     spotText('Counter: 3').existsOnce();
 // Notify that the recording stopped
-    if (isGlobalMode) {
-      globalTimelineMode = TimelineMode.off;
-    } else {
-      timeline.mode = TimelineMode.off;
-    }
+    timeline.mode = TimelineMode.off;
     await act.tap(_clearButtonSelector);
     spotText('Counter: 0').existsOnce();
-// Notify that the recording is already off
-    if (isGlobalMode) {
-      globalTimelineMode = TimelineMode.off;
-    } else {
-      timeline.mode = TimelineMode.off;
-    }
   });
-  expect(output, contains('🔴 - Recording live timeline'));
+  final containsMessage = output.contains('🔴 - Recording live timeline');
+  // Changes in local test since it's `record` by default. Globally it does not
+  // change since the global mode is already `live`.
+  expect(containsMessage, isGlobalMode ? isFalse : isTrue);
+  expect(output, contains('⏸︎ - Timeline recording is off'));
   expect(
     output,
     contains('Tap ${_addButtonSelector.toStringBreadcrumb()}'),
@@ -273,7 +264,6 @@ Future<void> liveTurnOffDuringTest({
   );
   _testTimeLineContent(output: output, eventCount: 2);
   expect(output, contains('⏸︎ - Timeline recording is off'));
-  expect(output, contains('Timeline mode is already set to "off"'));
 }
 
 Future<void> liveWithoutError({
@@ -291,10 +281,11 @@ Future<void> liveWithoutError({
     spotText('Counter: 4').existsOnce();
     await act.tap(_subtractButtonSelector);
     spotText('Counter: 3').existsOnce();
-// Notify that the timeline mode is already set to live
-    timeline.mode = TimelineMode.live;
   });
-  expect(output, contains('🔴 - Recording live timeline'));
+  final containsMessage = output.contains('🔴 - Recording live timeline');
+  // Changes in local test since it's `record` by default. Globally it does not
+  // change since the global mode is already `live`.
+  expect(containsMessage, isGlobalMode ? isFalse : isTrue);
   expect(
     output,
     contains('Event: Tap ${_addButtonSelector.toStringBreadcrumb()}'),
@@ -303,7 +294,6 @@ Future<void> liveWithoutError({
     output,
     contains('Event: Tap ${_subtractButtonSelector.toStringBreadcrumb()}'),
   );
-  expect(output, contains('Timeline mode is already set to "live"'));
   _testTimeLineContent(output: output, eventCount: 2);
 }
 

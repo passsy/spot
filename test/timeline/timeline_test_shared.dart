@@ -8,9 +8,12 @@ const String timelineSeparator =
 
 String localTimelineInitiator(TimelineMode timelineMode) {
   return switch (timelineMode) {
-    TimelineMode.live => 'timeline.mode = TimelineMode.live;',
-    TimelineMode.record => 'timeline.mode = TimelineMode.record;',
-    TimelineMode.off => 'timeline.mode = TimelineMode.off;',
+    TimelineMode.live =>
+      'timeline.mode = TimelineMode.live;\nexpect(timeline.mode, TimelineMode.live);',
+    TimelineMode.record =>
+      'timeline.mode = TimelineMode.record;\nexpect(timeline.mode, TimelineMode.record);',
+    TimelineMode.off =>
+      'timeline.mode = TimelineMode.off;\nexpect(timeline.mode, TimelineMode.off);',
   };
 }
 
