@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
+import 'package:test_process/test_process.dart';
 
 import '../timeline/tap/timeline_tap_test_widget.dart';
 
@@ -33,7 +36,7 @@ class TimelineTestHelpers {
     return buffer.toString();
   }
 
-  static String timelineInitiatorForModeAsString(TimelineMode timelineMode) {
+  static String localTimelineInitiator(TimelineMode timelineMode) {
     switch (timelineMode) {
       case TimelineMode.live:
         return 'localTimelineMode = TimelineMode.live;';
@@ -44,7 +47,18 @@ class TimelineTestHelpers {
     }
   }
 
-  static Future<void> recordTimelineTest({
+  static String globalTimelineInitiator(TimelineMode timelineMode) {
+    switch (timelineMode) {
+      case TimelineMode.live:
+        return 'globalTimelineMode = TimelineMode.live;';
+      case TimelineMode.record:
+        return 'globalTimelineMode = TimelineMode.record;';
+      case TimelineMode.off:
+        return 'globalTimelineMode = TimelineMode.off;';
+    }
+  }
+
+  static Future<void> recordTimelineTestWithoutError({
     required WidgetTester tester,
     bool isGlobalMode = false,
   }) async {
@@ -73,6 +87,169 @@ class TimelineTestHelpers {
     );
     expect(output, contains('Timeline mode is already set to "record"'));
     _testTimeLineContent(output: output, eventCount: 0);
+  }
+
+  static Future<void> recordTimelineTestWithError({
+    bool isGlobalMode = false,
+  }) async {
+    final tempDir = Directory.systemTemp.createTempSync();
+    final tempTestFile = File('${tempDir.path}/temp_test.dart');
+    final testTitle =
+        '${isGlobalMode ? 'Global: ' : 'Local: '}OnError timeline - with error, prints timeline';
+    await tempTestFile.writeAsString(
+      testAsString(
+        title: testTitle,
+        timelineMode: TimelineMode.record,
+        shouldFail: true,
+        isGlobalMode: isGlobalMode,
+      ),
+    );
+
+    final testProcess =
+        await TestProcess.start('flutter', ['test', tempTestFile.path]);
+
+    final stdoutBuffer = StringBuffer();
+
+    bool write = false;
+    await for (final line in testProcess.stdoutStream()) {
+      if (line.isEmpty) continue;
+      if (line == 'Timeline') {
+        write = true;
+      }
+      if (write) {
+        stdoutBuffer.writeln(line);
+      }
+    }
+
+    // Error happens
+    await testProcess.shouldExit(1);
+
+    if (tempDir.existsSync()) {
+      tempDir.deleteSync(recursive: true);
+    }
+
+    final stdout = stdoutBuffer.toString();
+    final timeline = stdout.split('\n');
+
+    expect(timeline.first, 'Timeline');
+    expect(
+      timeline[1],
+      header,
+    );
+    expect(
+      timeline[2],
+      'Event: Tap Icon Widget with icon: "IconData(U+0E047)"',
+    );
+    expect(
+      timeline[3].startsWith('Caller: at main.<fn> file:///'),
+      isTrue,
+    );
+    expect(
+      timeline[4].startsWith(
+        'Screenshot: file:///',
+      ),
+      isTrue,
+    );
+    expect(
+      timeline[5].startsWith(
+        'Timestamp:',
+      ),
+      isTrue,
+    );
+    expect(
+      timeline[6],
+      separator,
+    );
+    final prefix = isGlobalMode ? 'global' : 'local';
+    final htmlLine =
+        timeline.firstWhere((line) => line.startsWith('View time line here:'));
+    expect(
+      htmlLine.endsWith(
+        'timeline-$prefix-onerror-timeline-with-error-prints-timeline.html',
+      ),
+      isTrue,
+    );
+  }
+
+  static Future<void> liveTimelineWithoutErrorPrintsHtml({
+    bool isGlobalMode = false,
+  }) async {
+    final tempDir = Directory.systemTemp.createTempSync();
+    final tempTestFile = File('${tempDir.path}/temp_test.dart');
+    final testTitle =
+        '${isGlobalMode ? 'Global: ' : 'Local: '}Live timeline without error prints html';
+    await tempTestFile.writeAsString(
+      testAsString(
+        title: testTitle,
+        timelineMode: TimelineMode.live,
+        isGlobalMode: isGlobalMode,
+      ),
+    );
+
+    final testProcess =
+        await TestProcess.start('flutter', ['test', tempTestFile.path]);
+
+    final stdoutBuffer = StringBuffer();
+
+    bool write = false;
+    await for (final line in testProcess.stdoutStream()) {
+      if (line.isEmpty) continue;
+
+      if (!write) {
+        if (line == header) {
+          write = true;
+        }
+      }
+
+      if (write) {
+        stdoutBuffer.writeln(line);
+      }
+    }
+
+    // Error does not happen
+    await testProcess.shouldExit(0);
+
+    if (tempDir.existsSync()) {
+      tempDir.deleteSync(recursive: true);
+    }
+
+    final stdout = stdoutBuffer.toString();
+    final timeline = stdout.split('\n');
+    // Does not start with 'Timeline', this only happens on error
+    expect(timeline.first, header);
+    expect(
+      timeline.second,
+      'Event: Tap Icon Widget with icon: "IconData(U+0E047)"',
+    );
+    expect(
+      timeline[2].startsWith('Caller: at'),
+      isTrue,
+    );
+    expect(
+      timeline[3].startsWith(
+        'Screenshot: file:///',
+      ),
+      isTrue,
+    );
+    expect(
+      timeline[4].startsWith(
+        'Timestamp:',
+      ),
+      isTrue,
+    );
+    expect(
+      timeline[5],
+      separator,
+    );
+    final htmlLine =
+        timeline.firstWhere((line) => line.startsWith('View time line here:'));
+    final prefix = isGlobalMode ? 'global' : 'local';
+    expect(
+      htmlLine.endsWith(
+        'timeline-$prefix-live-timeline-without-error-prints-html.html',
+      ),
+      isTrue,
+    );
   }
 
   static Future<void> offTimelineTest({
@@ -163,5 +340,44 @@ class TimelineTestHelpers {
       RegExp('Timestamp: ').allMatches(output).length,
       eventCount,
     );
+  }
+
+  static String testAsString({
+    required String title,
+    required TimelineMode timelineMode,
+    bool shouldFail = false,
+    bool isGlobalMode = false,
+  }) {
+    final globalInitiator =
+        isGlobalMode ? '${globalTimelineInitiator(timelineMode)};' : '';
+
+    final localInitiator =
+        isGlobalMode ? '' : '${localTimelineInitiator(timelineMode)};';
+
+    final widgetPart = File('test/timeline/tap/timeline_tap_test_widget.dart')
+        .readAsStringSync();
+
+    return '''
+import 'package:flutter_test/flutter_test.dart';
+import 'package:spot/spot.dart';
+import 'package:spot/src/timeline/timeline.dart';\n
+$widgetPart\n
+void main() async {
+  $globalInitiator
+  final addButtonSelector = spotIcon(Icons.add);
+  final subtractButtonSelector = spotIcon(Icons.remove);
+  testWidgets("$title", (WidgetTester tester) async {
+   $localInitiator
+    await tester.pumpWidget(const TimelineTestWidget());
+      addButtonSelector.existsOnce();
+      spotText('Counter: 3').existsOnce();
+      await act.tap(addButtonSelector);
+      spotText('Counter: 4').existsOnce();
+      await act.tap(subtractButtonSelector);
+      spotText('Counter: 3').existsOnce();
+      ${shouldFail ? 'spotText("Counter: 99").existsOnce();' : ''}
+  });
+}
+''';
   }
 }

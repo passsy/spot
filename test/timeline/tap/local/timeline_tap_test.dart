@@ -31,7 +31,7 @@ void main() async {
   final addButtonSelector = spotIcon(Icons.add);
   final subtractButtonSelector = spotIcon(Icons.remove);
   testWidgets("$title", (WidgetTester tester) async {
-    ${TimelineTestHelpers.timelineInitiatorForModeAsString(timelineMode)};
+    ${TimelineTestHelpers.localTimelineInitiator(timelineMode)};
     await tester.pumpWidget(const TimelineTestWidget());
       addButtonSelector.existsOnce();
       spotText('Counter: 3').existsOnce();
@@ -100,157 +100,14 @@ void main() {
 
   group('Print on teardown', () {
     testWidgets('OnError timeline - without error', (tester) async {
-      await TimelineTestHelpers.recordTimelineTest(tester: tester);
+      await TimelineTestHelpers.recordTimelineTestWithoutError(tester: tester);
     });
 
     test('OnError timeline - with error, prints timeline', () async {
-      final tempDir = Directory.systemTemp.createTempSync();
-      final tempTestFile = File('${tempDir.path}/temp_test.dart');
-      await tempTestFile.writeAsString(
-        _testAsString(
-          title: 'OnError timeline - with error, prints timeline',
-          timelineMode: TimelineMode.record,
-          shouldFail: true,
-        ),
-      );
-
-      final testProcess =
-          await TestProcess.start('flutter', ['test', tempTestFile.path]);
-
-      final stdoutBuffer = StringBuffer();
-
-      bool write = false;
-      await for (final line in testProcess.stdoutStream()) {
-        if (line.isEmpty) continue;
-        if (line == 'Timeline') {
-          write = true;
-        }
-        if (write) {
-          stdoutBuffer.writeln(line);
-        }
-      }
-
-      // Error happens
-      await testProcess.shouldExit(1);
-
-      if (tempDir.existsSync()) {
-        tempDir.deleteSync(recursive: true);
-      }
-
-      final stdout = stdoutBuffer.toString();
-      final timeline = stdout.split('\n');
-
-      expect(timeline.first, 'Timeline');
-      expect(
-        timeline[1],
-        _header,
-      );
-      expect(
-        timeline[2],
-        'Event: Tap Icon Widget with icon: "IconData(U+0E047)"',
-      );
-      expect(
-        timeline[3].startsWith('Caller: at main.<fn> file:///'),
-        isTrue,
-      );
-      expect(
-        timeline[4].startsWith(
-          'Screenshot: file:///',
-        ),
-        isTrue,
-      );
-      expect(
-        timeline[5].startsWith(
-          'Timestamp:',
-        ),
-        isTrue,
-      );
-      expect(
-        timeline[6],
-        _separator,
-      );
-      final htmlLine = timeline
-          .firstWhere((line) => line.startsWith('View time line here:'));
-      expect(
-        htmlLine.endsWith(
-          'timeline-onerror-timeline-with-error-prints-timeline.html',
-        ),
-        isTrue,
-      );
+      await TimelineTestHelpers.recordTimelineTestWithError();
     });
     test('Live timeline - without error, prints HTML', () async {
-      final tempDir = Directory.systemTemp.createTempSync();
-      final tempTestFile = File('${tempDir.path}/temp_test.dart');
-      await tempTestFile.writeAsString(
-        _testAsString(
-          title: 'Live timeline without error prints html',
-          timelineMode: TimelineMode.live,
-        ),
-      );
-
-      final testProcess =
-          await TestProcess.start('flutter', ['test', tempTestFile.path]);
-
-      final stdoutBuffer = StringBuffer();
-
-      bool write = false;
-      await for (final line in testProcess.stdoutStream()) {
-        if (line.isEmpty) continue;
-
-        if (!write) {
-          if (line == _header) {
-            write = true;
-          }
-        }
-
-        if (write) {
-          stdoutBuffer.writeln(line);
-        }
-      }
-
-      // Error does not happen
-      await testProcess.shouldExit(0);
-
-      if (tempDir.existsSync()) {
-        tempDir.deleteSync(recursive: true);
-      }
-
-      final stdout = stdoutBuffer.toString();
-      final timeline = stdout.split('\n');
-      // Does not start with 'Timeline', this only happens on error
-      expect(timeline.first, _header);
-      expect(
-        timeline.second,
-        'Event: Tap Icon Widget with icon: "IconData(U+0E047)"',
-      );
-      expect(
-        timeline[2].startsWith('Caller: at main.<fn> file:///'),
-        isTrue,
-      );
-      expect(
-        timeline[3].startsWith(
-          'Screenshot: file:///',
-        ),
-        isTrue,
-      );
-      expect(
-        timeline[4].startsWith(
-          'Timestamp:',
-        ),
-        isTrue,
-      );
-      expect(
-        timeline[5],
-        _separator,
-      );
-      final htmlLine = timeline
-          .firstWhere((line) => line.startsWith('View time line here:'));
-      expect(
-        htmlLine.endsWith(
-          'timeline-live-timeline-without-error-prints-html.html',
-        ),
-        isTrue,
-      );
+      await TimelineTestHelpers.liveTimelineWithoutErrorPrintsHtml();
     });
     test('Live timeline - with error, no duplicates, prints HTML', () async {
       final tempDir = Directory.systemTemp.createTempSync();
