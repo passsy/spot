@@ -34,11 +34,15 @@ TimelineMode _globalTimelineMode =
 TimelineMode get globalTimelineMode => _globalTimelineMode;
 
 set globalTimelineMode(TimelineMode value) {
-  _globalTimelineMode = value;
   final test = Invoker.current?.liveTest;
   if (test != null) {
-    timeline.mode = value;
+    throw StateError('''
+Cannot change global timeline mode within a test.
+Use "timeline.mode" instead.
+Example: timeline.mode = $value;
+      ''');
   }
+  _globalTimelineMode = value;
 }
 
 /// Use --dart-define=SPOT_TIMELINE_MODE=live|record|off to set the [TimlineMode]

@@ -45,6 +45,27 @@ Future<void> recordWithoutError({
   _testTimeLineContent(output: output, eventCount: 0);
 }
 
+Future<void> throwOnGlobalTimelineChange({
+  bool isGlobalMode = false,
+  required TimelineMode initialGlobalMode,
+  required TimelineMode globalTimelineModeToSwitch,
+}) async {
+  final stdout = await _outputFromTapTestProcess(
+    title: 'Throws if global timeline mode is changed mid test',
+    timelineMode: initialGlobalMode,
+    shouldFail: true,
+    isGlobalMode: isGlobalMode,
+    captureStart: 'The following StateError was thrown running a test:',
+    globalTimelineModeToSwitch: globalTimelineModeToSwitch,
+  );
+  final expectedErrorMessage = '''
+Cannot change global timeline mode within a test.
+Use "timeline.mode" instead.
+Example: timeline.mode = $globalTimelineModeToSwitch;
+''';
+  expect(stdout, contains(expectedErrorMessage));
+}
+
 Future<void> recordWithError({
   bool isGlobalMode = false,
 }) async {
@@ -331,7 +352,13 @@ String _tapTestAsString({
   required TimelineMode timelineMode,
   bool shouldFail = false,
   bool isGlobalMode = false,
+  TimelineMode? globalTimelineModeToSwitch,
 }) {
+  final switchPart = globalTimelineModeToSwitch != null
+      ? '''
+      globalTimelineMode = TimelineMode.${globalTimelineModeToSwitch.toString().split('.').last};
+      '''
+      : '';
   final testTitle = '${isGlobalMode ? 'Global: ' : 'Local: '}$title';
 
   final globalInitiator =
@@ -352,6 +379,7 @@ void main() async {
   final addButtonSelector = spotIcon(Icons.add);
   final subtractButtonSelector = spotIcon(Icons.remove);
   testWidgets("$testTitle", (WidgetTester tester) async {
+  $switchPart
    $localInitiator
     await tester.pumpWidget(const TimelineTestWidget());
       addButtonSelector.existsOnce();
@@ -372,15 +400,18 @@ Future<String> _outputFromTapTestProcess({
   String captureStart = shared.timelineHeader,
   bool shouldFail = false,
   bool isGlobalMode = false,
+  TimelineMode? globalTimelineModeToSwitch,
 }) async {
+  final testAsString = _tapTestAsString(
+    title: title,
+    timelineMode: timelineMode,
+    shouldFail: shouldFail,
+    isGlobalMode: isGlobalMode,
+    globalTimelineModeToSwitch: globalTimelineModeToSwitch,
+  );
   return process.runTestInProcessAndCaptureOutPut(
     shouldFail: shouldFail,
-    testAsString: _tapTestAsString(
-      title: title,
-      timelineMode: timelineMode,
-      shouldFail: shouldFail,
-      isGlobalMode: isGlobalMode,
-    ),
+    testAsString: testAsString,
     captureStart: captureStart,
   );
 }
