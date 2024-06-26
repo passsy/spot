@@ -273,6 +273,8 @@ class Act {
       return ignorePointerFailure;
     }
 
+    _detectSizeZero(target, snapshot);
+
     final cover = hitTargetElements.first;
     final Element commonAncestor = findCommonAncestor(
       [hitTargetElements.first, snapshot.discoveredElement!],
@@ -514,6 +516,37 @@ class Act {
       );
     }
     return null;
+  }
+
+  /// Detects when the widget is 0x0 pixels in size and throws a `TestFailure`
+  /// containing the widget that forces it to be 0x0 pixels.
+  void _detectSizeZero(RenderObject target, WidgetSnapshot<Widget> snapshot) {
+    final renderObject = snapshot.discoveredElement?.renderObject;
+    if (renderObject == null) {
+      return;
+    }
+    final renderBox = renderObject as RenderBox;
+    final size = renderBox.size;
+    if (size == Size.zero) {
+      final parents = snapshot.discoveredElement?.parents.toList() ?? [];
+      final parentsWithSizes = parents.map(
+        (element) {
+          final renderObject = element.renderObject;
+          if (renderObject is RenderBox?) {
+            return (renderObject?.size, element);
+          }
+          return (null, element);
+        },
+      ).toList();
+      final Element shrinker =
+          parentsWithSizes.reversed.firstWhere((it) => it.$1 == Size.zero).$2;
+
+      throw TestFailure(
+        "${snapshot.discoveredElement!.toStringShort()} can't be tapped because it has size ${Size.zero}.\n"
+        "${shrinker.toStringShort()} forces ${snapshot.discoveredElement!.toStringShort()} to have the size ${Size.zero}.\n"
+        "${shrinker.toStringShort()} ${shrinker.debugWidgetLocation?.file.path}",
+      );
+    }
   }
 }
 

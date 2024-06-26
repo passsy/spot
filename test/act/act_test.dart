@@ -236,6 +236,39 @@ void actTests() {
       );
     });
 
+
+    testWidgets('tap throws when widget is wrapped in SizedBox.shrink',
+        (tester) async {
+      int tapped = 0;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Center(
+            child: SizedBox.shrink(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    tapped++;
+                  },
+                  child: const Text('Click me'),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final button = spot<ElevatedButton>()..existsOnce();
+      await expectLater(
+        () => act.tap(button),
+        throwsSpotErrorContaining([
+          "ElevatedButton can't be tapped because it has size Size(0.0, 0.0).",
+          "SizedBox.shrink forces ElevatedButton to have the size Size(0.0, 0.0)",
+          "act_test.dart:",
+        ]),
+      );
+    });
+
     testWidgets('tapping throws for non cartesian widgets', (tester) async {
       await tester.pumpWidget(_NonCartesianWidget());
       final button = spot<_NonCartesianWidget>()..existsOnce();
