@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:dartx/dartx.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 

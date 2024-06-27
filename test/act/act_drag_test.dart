@@ -23,6 +23,33 @@ void main() {
       secondItem.existsOnce();
     });
 
+    testWidgets('Finds widgets after dragging down and up', (tester) async {
+      await tester.pumpWidget(
+        const DragUntilVisibleTestWidget(),
+      );
+
+      final firstItem = spotText('Item at index: 3', exact: true)..existsOnce();
+      final secondItem = spotText('Item at index: 27', exact: true)
+        ..doesNotExist();
+      await act.dragUntilVisible(
+        dragStart: firstItem,
+        dragTarget: secondItem,
+        maxIteration: 30,
+        moveStep: const Offset(0, -100),
+      );
+      secondItem.existsOnce();
+      firstItem.doesNotExist();
+      await tester.pumpAndSettle();
+      await act.dragUntilVisible(
+        dragStart: secondItem,
+        dragTarget: firstItem,
+        moveStep: const Offset(0, 100),
+      );
+      await tester.pumpAndSettle();
+      firstItem.existsOnce();
+      secondItem.doesNotExist();
+    });
+
     testWidgets('Throws TestFailure if not found', (tester) async {
       await tester.pumpWidget(
         const DragUntilVisibleTestWidget(),

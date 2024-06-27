@@ -217,6 +217,37 @@ class AnyText extends LeafRenderObjectWidget {
   RenderObject createRenderObject(BuildContext context) {
     return RenderProxyBox();
   }
+
+  @override
+  String toStringShort() {
+    return widget.toStringShort();
+  }
+
+  @override
+  String toStringDeep({
+    String prefixLineOne = '',
+    String? prefixOtherLines,
+    DiagnosticLevel minLevel = DiagnosticLevel.debug,
+  }) {
+    return widget.toStringDeep(
+      prefixLineOne: prefixLineOne,
+      prefixOtherLines: prefixOtherLines,
+      minLevel: minLevel,
+    );
+  }
+
+  @override
+  String toStringShallow({
+    String joiner = ', ',
+    DiagnosticLevel minLevel = DiagnosticLevel.debug,
+  }) {
+    return widget.toStringShallow(joiner: joiner, minLevel: minLevel);
+  }
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return widget.toString(minLevel: minLevel);
+  }
 }
 
 /// A [WidgetSelector] that matches any text on the screen, including:

@@ -1,12 +1,9 @@
 import 'dart:io';
 
-import 'package:dartx/dartx.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:test_process/test_process.dart';
-import '../../util/capture_console_output.dart';
 import '../timeline_test_shared.dart' as shared;
-import 'drag_until_visible_test_widget.dart';
 import 'timeline_drag_test_bodies.dart';
 
 final _secondItemSelector = spotText('Item at index: 27', exact: true);
