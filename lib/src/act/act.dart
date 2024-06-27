@@ -1,5 +1,8 @@
-import 'package:dartx/dartx.dart';
+import 'dart:io';
+
+import 'package:dartx/dartx_io.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -302,15 +305,14 @@ class Act {
 
     _detectAbsorbPointer(hitTargetElements.first, snapshot);
     _detectIgnorePointer(target, snapshot);
-
-    final Element commonAncestor = findCommonAncestor(
-      [hitTargetElements.first, snapshot.discoveredElement!],
-    );
+    _detectSizeZero(target, snapshot);
+    _detectCoverWidget(target, snapshot, hitTargetElements);
 
     throw TestFailure(
-      "Widget '${snapshot.selector.toStringBreadcrumb()}' is covered by '${hitTargetElements.first.widget.toStringShort()}' and can't be tapped.\n"
-      "The common ancestor of both widgets is:\n"
-      "${commonAncestor.toStringDeep()}",
+      "Widget '${snapshot.discoveredWidget!.toStringShort()}' can not be tapped at position $position where its RenderObject $target was found.\n"
+      "The exact reason, why it doesn't receive hitTest events is unknown.\n"
+      "If you think this case needs a a better error message, create an issue https://github.com/passsy/spot for anyone else running in a similar issue.\n"
+      "A small example would be highly appreciated.",
     );
   }
 
@@ -428,10 +430,10 @@ class Act {
     if (childElement?.widget is AbsorbPointer) {
       final absorbPointer = childElement!.widget as AbsorbPointer;
       if (absorbPointer.absorbing) {
-        final location = getCreationLocation(childElement) ??
+        final location = childElement.debugWidgetLocation?.file.path ??
             childElement.debugGetCreatorChain(100);
         throw TestFailure(
-            "Widget '${snapshot.selector.toStringBreadcrumb()}' is wrapped in AbsorbPointer and doesn't receive taps.\n"
+            "Widget '${snapshot.discoveredWidget!.toStringShort()}' is wrapped in AbsorbPointer and doesn't receive taps.\n"
             "AbsorbPointer is created at $location\n"
             "The closest widget reacting to the touch event is:\n"
             "${hitTarget.toStringDeep()}");
@@ -456,13 +458,143 @@ class Act {
       },
     );
     if (ignorePointer != null) {
-      final location = getCreationLocation(ignorePointer) ??
+      final location = ignorePointer.debugWidgetLocation?.file.path ??
           targetElement.debugGetCreatorChain(100);
       throw TestFailure(
-        "Widget '${snapshot.selector.toStringBreadcrumb()}' is wrapped in IgnorePointer and doesn't receive taps. "
+        "Widget '${snapshot.discoveredWidget!.toStringShort()}' is wrapped in IgnorePointer and doesn't receive taps.\n"
         "The IgnorePointer is located at $location",
       );
     }
+  }
+
+  /// Detects when the widget is 0x0 pixels in size and throws a `TestFailure`
+  /// containing the widget that forces it to be 0x0 pixels.
+  void _detectSizeZero(RenderObject target, WidgetSnapshot<Widget> snapshot) {
+    final renderObject = snapshot.discoveredElement?.renderObject;
+    if (renderObject == null) {
+      return;
+    }
+    final renderBox = renderObject as RenderBox;
+    final size = renderBox.size;
+    if (size == Size.zero) {
+      final parents = snapshot.discoveredElement?.parents.toList() ?? [];
+      final parentsWithSizes = parents.map(
+        (element) {
+          final renderObject = element.renderObject;
+          if (renderObject is RenderBox?) {
+            return (renderObject?.size, element);
+          }
+          return (null, element);
+        },
+      ).toList();
+      final Element shrinker =
+          parentsWithSizes.reversed.firstWhere((it) => it.$1 == Size.zero).$2;
+
+      throw TestFailure(
+        "${snapshot.discoveredElement!.toStringShort()} can't be tapped because it has size ${Size.zero}.\n"
+        "${shrinker.toStringShort()} forces ${snapshot.discoveredElement!.toStringShort()} to have the size ${Size.zero}.\n"
+        "${shrinker.toStringShort()} ${shrinker.debugWidgetLocation?.file.path}",
+      );
+    }
+  }
+
+  void _detectCoverWidget(
+    RenderObject target,
+    WidgetSnapshot<Widget> snapshot,
+    List<Element> hitTargetElements,
+  ) {
+    final cover = hitTargetElements.first;
+    final Element commonAncestor = findCommonAncestor(
+      [hitTargetElements.first, snapshot.discoveredElement!],
+    );
+    final coverChain = cover
+        .debugGetDiagnosticChain()
+        .takeWhile((e) => e != commonAncestor)
+        .toList();
+    if (coverChain.isEmpty) {
+      // no widget is covering the target,
+      // target is child of the cover
+      return;
+    }
+
+    final targetChain = snapshot.discoveredElement!
+        .debugGetDiagnosticChain()
+        .takeWhile((e) => e != commonAncestor)
+        .toList();
+
+    final commonAncestorChain = commonAncestor.debugGetDiagnosticChain();
+    final usefulParents = commonAncestorChain.drop(1).where((e) {
+      return e.debugWidgetLocation?.isUserCode ?? false;
+    }).toList();
+
+    // TODO find not only the first Widget constructor call, but actually the first widget class in the user code
+    final firstUsefulParent =
+        usefulParents.firstOrNull ?? commonAncestorChain.first;
+
+    final usefulToTarget =
+        targetChain.takeWhile((e) => e != firstUsefulParent).toList();
+
+    final receiverColumn =
+        "(Cover - Received tap event)\n${coverChain.joinToString(separator: '\n', transform: (it) => it.toStringShort())}";
+    final targetColumn =
+        "(Target for tap, below Cover)\n${usefulToTarget.joinToString(separator: '\n', transform: (it) => it.toStringShort())}";
+
+    // create a string with two columns (max width 40), one for the receiver and one for the target
+    String createColumns(String receiver, String target) {
+      final receiverLines = receiver.split('\n');
+      final targetLines = target.split('\n');
+      final lines = receiverLines.length > targetLines.length
+          ? receiverLines
+          : targetLines;
+      const columnWidth = 40;
+      const columnSeparator = ' ';
+      final buffer = StringBuffer();
+      const empty = ' │';
+      for (int i = 0; i < lines.length; i++) {
+        final receiverLine =
+            receiverLines.length > i ? receiverLines[i] : empty;
+        final targetLine = targetLines.length > i ? targetLines[i] : empty;
+        buffer.write(
+          receiverLine.characters
+              .take(columnWidth)
+              .toString()
+              .padRight(columnWidth),
+        );
+        buffer.write(columnSeparator);
+        buffer.write(
+          targetLine.characters
+              .take(columnWidth)
+              .toString()
+              .padRight(columnWidth),
+        );
+        buffer.writeln();
+      }
+      return buffer.toString().trimRight();
+    }
+
+    final diagram = """
+${createColumns(receiverColumn, targetColumn)}
+ │ ┌──────────────────────────────────────┘
+${commonAncestor.toStringShort().trimRight()} (${commonAncestor.debugWidgetLocation?.file.path})
+${usefulParents.takeWhile((it) => it != firstUsefulParent).joinToString(separator: '\n', transform: (it) => it.toStringShort()).trimRight()}
+${firstUsefulParent.toStringShort()} (${firstUsefulParent.debugWidgetLocation?.file.path})
+""";
+
+    throw TestFailure(
+      "Widget '${snapshot.discoveredWidget!.toStringShort()}' can not be tapped directly, because another widget (${cover.toStringShort()}) inside ${firstUsefulParent.toStringShort()} is completely covering it and consumes all tap events.\n"
+      "\n"
+      "Try tapping the ${firstUsefulParent.toStringShort()} which contains '${snapshot.discoveredWidget!.toStringShort()}' instead.\n\n"
+      "Example:\n"
+      "  // BAD: Taps the Text inside ElevatedButton\n"
+      "  WidgetSelector<AnyText> selector = spot<ElevatedButton>().spotText('Tap me');\n"
+      "  await act.tap(selector);\n"
+      "\n"
+      "  // GOOD: Taps the ElevatedButton which contains text 'Tap me'\n"
+      "  WidgetSelector<ElevatedButton> selector = spot<ElevatedButton>().withChild(spotText('Tap me'));\n"
+      "  await act.tap(selector);\n"
+      "\n"
+      "${diagram.removeEmptyLines()}\n",
+    );
   }
 }
 
@@ -536,24 +668,69 @@ T _alwaysPropagateDevicePointerEvents<T>(T Function() block) {
   }
 }
 
-/// Workaround to the the location of a widget in code
-///
-/// This method is a workaround to call `_getCreationLocation()` which is private
-String? getCreationLocation(Element element) {
-  final debugCreator = element.renderObject?.debugCreator;
-  if (debugCreator is! DebugCreator) {
-    return null;
+/// Grants access to the location of a Widget via [WidgetInspectorService]
+extension WidgetLocationExt on Element {
+  /// Returns where the widget was created in code
+  WidgetLocation? get debugWidgetLocation {
+    try {
+      final delegate = InspectorSerializationDelegate(
+        service: WidgetInspectorService.instance,
+      );
+      final json = toDiagnosticsNode().toJsonMap(delegate);
+      final creationLocation =
+          json['creationLocation'] as Map<String, Object?>?;
+      final file = creationLocation!['file'] as String?;
+      final line = creationLocation['line'] as int?;
+      final column = creationLocation['column'] as int?;
+      final String location1 = '$file:$line:$column';
+      final createdByLocalProject = json['createdByLocalProject'] as bool?;
+
+      return WidgetLocation(
+        file: File(location1),
+        createdByLocalProject: createdByLocalProject,
+      );
+    } catch (e) {
+      return null;
+    }
   }
-  final block =
-      debugTransformDebugCreator([DiagnosticsDebugCreator(debugCreator)]).first
-          as DiagnosticsBlock;
-  final description = block.getChildren().first as ErrorDescription;
-  final location = description.value.first.toString();
-  // _Location .toString() looks something like this:
-  // IgnorePointer IgnorePointer:file:///Users/pascalwelsch/Projects/passsy/spot/test/act/act_test.dart:142:18
+}
 
-  final matches = RegExp('.*(file:///.*)').allMatches(location);
-  final filePath = matches.first.group(1);
+/// The location on the users filesystem where a Widget constructor was called
+class WidgetLocation {
+  /// The pointer to the file
+  final File file;
 
-  return filePath;
+  /// True when the [WidgetInspectorService] reports that the location is
+  /// - not within an external package
+  /// - not within the dart or flutter sdk
+  final bool? createdByLocalProject;
+
+  /// Creates a new [WidgetLocation]
+  WidgetLocation({
+    required this.file,
+    required this.createdByLocalProject,
+  });
+
+  /// Returns true, when the location is relevant for error messages, because
+  /// it is within the users project
+  bool get isUserCode {
+    if (file.path.contains('packages/flutter/')) {
+      return false;
+    }
+    if (createdByLocalProject != null) {
+      return createdByLocalProject!;
+    }
+    return true;
+  }
+
+  @override
+  String toString() {
+    return 'WidgetLocation{userCode: $isUserCode, ${file.name}';
+  }
+}
+
+extension on String {
+  String removeEmptyLines() {
+    return split('\n').where((line) => line.trim().isNotEmpty).join('\n');
+  }
 }
