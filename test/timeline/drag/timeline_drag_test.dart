@@ -7,6 +7,7 @@ import 'package:test_process/test_process.dart';
 import '../../util/capture_console_output.dart';
 import '../timeline_test_shared.dart' as shared;
 import 'drag_until_visible_test_widget.dart';
+import 'timeline_drag_test_bodies.dart';
 
 final _firstItemSelector = spotText('Item at index: 3', exact: true);
 final _secondItemSelector = spotText('Item at index: 27', exact: true);
@@ -66,22 +67,11 @@ Future<void> _testBody(WidgetTester tester) async {
 void main() {
   group('Drag Timeline Test', () {
     group('Without error', () {
-      testWidgets('Drag Until Visible - Live timeline', (tester) async {
-        final output = await captureConsoleOutput(() async {
-          timeline.mode = TimelineMode.live;
-          await _testBody(tester);
-          // Notify that the timeline of this type is already recording.
-          timeline.mode = TimelineMode.live;
-        });
-        expect(output, contains('🔴 - Now recording live timeline'));
-        _testTimeLineContent(
-          output: output,
-          totalExpectedOffset: _passingOffset,
-          drags: _passingDragAmount,
-        );
-        expect(output, contains('🔴 - Already recording live timeline'));
+      testWidgets('Local timeline. Drag: record, without error',
+          (tester) async {
+        await liveTimelineWithoutErrorsDrag(tester);
       });
-      testWidgets('Start with Timeline Mode off', (tester) async {
+      testWidgets('Local: off', (tester) async {
         final output = await captureConsoleOutput(() async {
           timeline.mode = TimelineMode.off;
           await _testBody(tester);
@@ -92,7 +82,7 @@ void main() {
         expect(splitted.length, 1);
         expect(splitted.first, expectedOutput);
       });
-      testWidgets('Turn timeline mode off during test', (tester) async {
+      testWidgets('Local: record, turn off during test', (tester) async {
         final output = await captureConsoleOutput(() async {
           timeline.mode = TimelineMode.record;
           await _testBody(tester);
@@ -111,7 +101,7 @@ void main() {
         expect(output, contains('⏸︎ - Timeline recording stopped'));
         expect(output, contains('⏸︎ - Timeline recording is off'));
       });
-      testWidgets('act.drag: OnError timeline - without error', (tester) async {
+      testWidgets('Local: record - without error', (tester) async {
         final output = await captureConsoleOutput(() async {
           timeline.mode = TimelineMode.record;
           await _testBody(tester);
@@ -127,7 +117,7 @@ void main() {
       });
     });
     group('Teardown test', () {
-      test('OnError timeline - with error, prints timeline and html', () async {
+      test('Local: record, with error, prints timeline and html', () async {
         final tempDir = Directory.systemTemp.createTempSync();
         final tempTestFile = File('${tempDir.path}/temp_test.dart');
 
@@ -182,7 +172,7 @@ void main() {
           isTrue,
         );
       });
-      test('Live timeline - without error, prints HTML', () async {
+      test('Local: live - without error, prints HTML', () async {
         final tempDir = Directory.systemTemp.createTempSync();
         final tempTestFile = File('${tempDir.path}/temp_test.dart');
         await tempTestFile.writeAsString(
