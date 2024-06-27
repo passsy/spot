@@ -314,7 +314,12 @@ class Act {
     );
   }
 
+  /// Attempts to find hittable position on the [snapshot] [RenderObject] using
+  /// an 8px grid.
   ///
+  /// It returns the results of the search as [_PokablePositions], including all
+  /// failed hit tests and a good estimate of a center point which is tappable
+  /// ([_PokablePositions.mostCenterHittablePosition]).
   _PokablePositions _findPokablePositions({
     required WidgetSelector<Widget> widgetSelector,
     required WidgetSnapshot snapshot,
