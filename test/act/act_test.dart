@@ -154,20 +154,23 @@ void actTests() {
         (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Stack(
-            children: [
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: null,
+          home: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Stack(
+              children: [
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    child: null,
+                  ),
                 ),
-              ),
-              const Positioned.fill(
-                child: ColoredBox(
-                  color: Colors.green,
+                const Positioned.fill(
+                  child: ColoredBox(
+                    color: Colors.green,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
@@ -176,8 +179,11 @@ void actTests() {
       await expectLater(
         () => act.tap(button),
         throwsSpotErrorContaining([
-          "Widget 'ElevatedButton' is covered by 'ColoredBox'",
-          "Stack(",
+          "Selector 'ElevatedButton' can not be tapped directly, because another widget (ColoredBox) inside Padding is completely covering it and consumes all tap events.",
+          "ColoredBox", // cover
+          "ElevatedButton", // target
+          "Stack (file:/",
+          "Padding (file:/",
         ]),
       );
     });
@@ -236,10 +242,93 @@ void actTests() {
       );
     });
 
+    group('Visibility', () {
+      testWidgets(
+          'tap throws when widget is hidden with Visibility (not found)',
+          (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Center(
+              child: Visibility(
+                visible: false,
+                child: ElevatedButton(
+                  onPressed: () {},
+                  child: null,
+                ),
+              ),
+            ),
+          ),
+        );
+
+        final button = spot<ElevatedButton>()..doesNotExist();
+        await expectLater(
+          () => act.tap(button),
+          throwsSpotErrorContaining([
+            "Could not find ElevatedButton in widget tree",
+          ]),
+        );
+      });
+
+      testWidgets('tap throws when Visibility is not interactive',
+          (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Center(
+              child: Visibility(
+                visible: false,
+                // ignore: avoid_redundant_argument_values
+                maintainInteractivity: false,
+                maintainSize: true,
+                maintainAnimation: true,
+                maintainSemantics: true,
+                maintainState: true,
+                child: ElevatedButton(
+                  onPressed: () {},
+                  child: const Text('Click me'),
+                ),
+              ),
+            ),
+          ),
+        );
+
+        final button = spot<ElevatedButton>()..existsOnce();
+        await expectLater(
+          () => act.tap(button),
+          throwsSpotErrorContaining([
+            "Widget 'ElevatedButton' is wrapped in IgnorePointer and doesn't receive taps",
+            "The IgnorePointer is located at",
+            "act_test.dart:",
+          ]),
+        );
+      });
+
+      testWidgets('Visibility allows tapping on hidden widgets',
+          (tester) async {
+        int tapped = 0;
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Center(
+              child: Visibility.maintain(
+                visible: false,
+                child: ElevatedButton(
+                  onPressed: () {
+                    tapped++;
+                  },
+                  child: const Text('Click me'),
+                ),
+              ),
+            ),
+          ),
+        );
+
+        final button = spot<ElevatedButton>()..existsOnce();
+        await act.tap(button);
+        expect(tapped, 1);
+      });
+    });
 
     testWidgets('tap throws when widget is wrapped in SizedBox.shrink',
         (tester) async {
-      int tapped = 0;
       await tester.pumpWidget(
         MaterialApp(
           home: Center(
@@ -247,9 +336,7 @@ void actTests() {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
-                  onPressed: () {
-                    tapped++;
-                  },
+                  onPressed: () {},
                   child: const Text('Click me'),
                 ),
               ),

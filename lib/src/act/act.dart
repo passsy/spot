@@ -1,7 +1,8 @@
 import 'dart:io';
 
-import 'package:dartx/dartx.dart';
+import 'package:dartx/dartx_io.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
@@ -260,27 +261,23 @@ class Act {
     final List<Element> hitTargetElements =
         hitTestEntries.mapNotNull((e) => e.element).toList();
 
-    final absorbPointerFailure =
-        _absorbPointerFailure(hitTargetElements.first, snapshot);
-
-    if (absorbPointerFailure != null) {
-      return absorbPointerFailure;
-    }
-
     final ignorePointerFailure = _ignorePointerFailure(target, snapshot);
-
     if (ignorePointerFailure != null) {
       return ignorePointerFailure;
     }
 
-    _detectSizeZero(target, snapshot);
+    final absorbPointerFailure =
+        _absorbPointerFailure(hitTargetElements.first, snapshot);
+    if (absorbPointerFailure != null) {
+      return absorbPointerFailure;
+    }
 
-    final cover = hitTargetElements.first;
+    _detectSizeZero(target, snapshot);
+    _detectCoverWidget(target, snapshot, hitTargetElements);
+
     final Element commonAncestor = findCommonAncestor(
       [hitTargetElements.first, snapshot.discoveredElement!],
     );
-    final chain = snapshot.discoveredElement!.debugGetDiagnosticChain();
-    final coverChain = cover.debugGetDiagnosticChain().dropLast(chain.length);
 
     final splitterLocation = commonAncestor.debugGetDiagnosticChain();
     final firstUsefulParent = splitterLocation
@@ -289,22 +286,9 @@ class Act {
         .firstOrNull;
 
     return TestFailure(
-      "Selector '${snapshot.selector.toStringBreadcrumb()}' can not be tapped directly, because another widget (${cover.toStringShort()}) inside $firstUsefulParent is completely covering it and consumes all tap events.\n"
-      "\n"
-      "Try tapping the $firstUsefulParent which contains '${snapshot.selector}' instead.\n\n"
-      "Example:\n"
-      "  // BAD: Taps the Text inside ElevatedButton\n"
-      "  WidgetSelector<AnyText> selector = spot<ElevatedButton>().spotText('Tap me');\n"
-      "  await act.tap(selector);\n"
-      "\n"
-      "  // GOOD: Taps the ElevatedButton which contains text 'Tap me'\n"
-      "  WidgetSelector<ElevatedButton> selector = spot<ElevatedButton>().withChild(spotText('Tap me'));\n"
-      "  await act.tap(selector);\n"
-      "\n"
-      "Path from $firstUsefulParent to cover ${cover.toStringShort()} is:\n"
-      "${coverChain.reversed.joinToString(separator: ' -> ', transform: (it) => it.toStringShort())}\n",
-      // TODO fix coverChain to include firstUsefulParent in the beginning
-      // TODO print link to firstUsefulParent widget
+      "Selector '${snapshot.selector.toStringBreadcrumb()}' can not be tapped at position $position where the RenderObject $target was found.\n"
+      "Sorry, that we can't tell you more.\n"
+      "Please create an issue at https://github.com/passsy/spot with an example so that we can provide a useful error message for anyone else running in a similar issue.",
     );
   }
 
@@ -511,7 +495,7 @@ class Act {
       final location = getCreationLocation(ignorePointer) ??
           targetElement.debugGetCreatorChain(100);
       return TestFailure(
-        "Widget '${snapshot.selector.toStringBreadcrumb()}' is wrapped in IgnorePointer and doesn't receive taps. "
+        "Widget '${snapshot.selector.toStringBreadcrumb()}' is wrapped in IgnorePointer and doesn't receive taps.\n"
         "The IgnorePointer is located at $location",
       );
     }
@@ -547,6 +531,102 @@ class Act {
         "${shrinker.toStringShort()} ${shrinker.debugWidgetLocation?.file.path}",
       );
     }
+  }
+
+  void _detectCoverWidget(RenderObject target, WidgetSnapshot<Widget> snapshot,
+      List<Element> hitTargetElements) {
+    final cover = hitTargetElements.first;
+    final Element commonAncestor = findCommonAncestor(
+      [hitTargetElements.first, snapshot.discoveredElement!],
+    );
+    final coverChain = cover
+        .debugGetDiagnosticChain()
+        .takeWhile((e) => e != commonAncestor)
+        .toList();
+    if (coverChain.isEmpty) {
+      // no widget is covering the target,
+      // target is child of the cover
+      return;
+    }
+
+    final targetChain = snapshot.discoveredElement!
+        .debugGetDiagnosticChain()
+        .takeWhile((e) => e != commonAncestor)
+        .toList();
+
+    final commonAncestorChain = commonAncestor.debugGetDiagnosticChain();
+    final usefulParents = commonAncestorChain.drop(1).where((e) {
+      return e.debugWidgetLocation?.isUserCode ?? false;
+    }).toList();
+
+    // TODO find not only the first Widget constructor call, but actually the first widget class in the user code
+    final firstUsefulParent =
+        usefulParents.firstOrNull ?? commonAncestorChain.first;
+
+    final usefulToTarget =
+        targetChain.takeWhile((e) => e != firstUsefulParent).toList();
+
+    final receiverColumn =
+        "(Cover - Received tap event)\n${coverChain.joinToString(separator: '\n', transform: (it) => it.toStringShort())}";
+    final targetColumn =
+        "(Target for tap, below Cover)\n${usefulToTarget.joinToString(separator: '\n', transform: (it) => it.toStringShort())}";
+
+    // create a string with two columns (max width 40), one for the receiver and one for the target
+    String createColumns(String receiver, String target) {
+      final receiverLines = receiver.split('\n');
+      final targetLines = target.split('\n');
+      final lines = receiverLines.length > targetLines.length
+          ? receiverLines
+          : targetLines;
+      const columnWidth = 40;
+      const columnSeparator = ' ';
+      final buffer = StringBuffer();
+      const empty = ' │';
+      for (int i = 0; i < lines.length; i++) {
+        final receiverLine =
+            receiverLines.length > i ? receiverLines[i] : empty;
+        final targetLine = targetLines.length > i ? targetLines[i] : empty;
+        buffer.write(
+          receiverLine.characters
+              .take(columnWidth)
+              .toString()
+              .padRight(columnWidth),
+        );
+        buffer.write(columnSeparator);
+        buffer.write(
+          targetLine.characters
+              .take(columnWidth)
+              .toString()
+              .padRight(columnWidth),
+        );
+        buffer.writeln();
+      }
+      return buffer.toString().trimRight();
+    }
+
+    final diagram = """
+${createColumns(receiverColumn, targetColumn)}
+ │ ┌──────────────────────────────────────┘
+${commonAncestor.toStringShort().trimRight()} (${commonAncestor.debugWidgetLocation?.file.path})
+${usefulParents.takeWhile((it) => it != firstUsefulParent).joinToString(separator: '\n', transform: (it) => it.toStringShort()).trimRight()}
+${firstUsefulParent.toStringShort()} (${firstUsefulParent.debugWidgetLocation?.file.path})
+""";
+
+    throw TestFailure(
+      "Selector '${snapshot.selector.toStringBreadcrumb()}' can not be tapped directly, because another widget (${cover.toStringShort()}) inside ${firstUsefulParent.toStringShort()} is completely covering it and consumes all tap events.\n"
+      "\n"
+      "Try tapping the ${firstUsefulParent.toStringShort()} which contains '${snapshot.selector}' instead.\n\n"
+      "Example:\n"
+      "  // BAD: Taps the Text inside ElevatedButton\n"
+      "  WidgetSelector<AnyText> selector = spot<ElevatedButton>().spotText('Tap me');\n"
+      "  await act.tap(selector);\n"
+      "\n"
+      "  // GOOD: Taps the ElevatedButton which contains text 'Tap me'\n"
+      "  WidgetSelector<ElevatedButton> selector = spot<ElevatedButton>().withChild(spotText('Tap me'));\n"
+      "  await act.tap(selector);\n"
+      "\n"
+      "${diagram.removeEmptyLines()}\n",
+    );
   }
 }
 
@@ -590,42 +670,53 @@ T _alwaysPropagateDevicePointerEvents<T>(T Function() block) {
 extension WidgetLocationExt on Element {
   /// Returns where the widget was created in code
   WidgetLocation? get debugWidgetLocation {
-    final diagnosticNodes = debugTransformDebugCreator([
-      DiagnosticsDebugCreator(DebugCreator(this)),
-    ]).firstOrNull as DiagnosticsBlock?;
-    if (diagnosticNodes == null) {
-      return null;
-    }
-    final errorDescription =
-        diagnosticNodes.getChildren().firstOrNull as ErrorDescription?;
-    if (errorDescription == null) {
-      return null;
-    }
-    final location = errorDescription.value.first.toString();
-    // _Location .toString() looks something like this:
-    // IgnorePointer IgnorePointer:file:///Users/pascalwelsch/Projects/passsy/spot/test/act/act_test.dart:142:18
-    final matches = RegExp('.*(file:///.*)').allMatches(location);
-    final filePath = matches.first.group(1);
+    try {
+      final delegate = InspectorSerializationDelegate(
+        service: WidgetInspectorService.instance,
+      );
+      final json = toDiagnosticsNode().toJsonMap(delegate);
+      final creationLocation =
+          json['creationLocation'] as Map<String, Object?>?;
+      final file = creationLocation!['file'] as String?;
+      final line = creationLocation['line'] as int?;
+      final column = creationLocation['column'] as int?;
+      final String location1 = '$file:$line:$column';
+      final createdByLocalProject = json['createdByLocalProject'] as bool?;
 
-    return WidgetLocation(File(filePath.toString()));
+      return WidgetLocation(
+        file: File(location1),
+        createdByLocalProject: createdByLocalProject,
+      );
+    } catch (e) {
+      return null;
+    }
   }
 }
 
+///
 class WidgetLocation {
   final File file;
 
-  WidgetLocation(this.file);
+  final bool? createdByLocalProject;
+
+  WidgetLocation({
+    required this.file,
+    required this.createdByLocalProject,
+  });
 
   bool get isUserCode {
     if (file.path.contains('packages/flutter/')) {
       return false;
+    }
+    if (createdByLocalProject != null) {
+      return createdByLocalProject!;
     }
     return true;
   }
 
   @override
   String toString() {
-    return 'WidgetLocation{$file}';
+    return 'WidgetLocation{userCode: $isUserCode, ${file.name}';
   }
 }
 
@@ -652,4 +743,10 @@ String? getCreationLocation(Element element) {
   final filePath = matches.first.group(1);
 
   return filePath;
+}
+
+extension on String {
+  String removeEmptyLines() {
+    return split('\n').where((line) => line.trim().isNotEmpty).join('\n');
+  }
 }
