@@ -8,4 +8,7 @@ void main() {
   testWidgets('Global: record, turn off during test', (tester) async {
     await recordTurnOffDuringTestDrag(tester, isGlobal: true);
   });
+  testWidgets('Global: record - without error', (tester) async {
+    await recordTurnOffDuringTestDrag(tester, isGlobal: true);
+  });
 }

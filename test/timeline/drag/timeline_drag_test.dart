@@ -77,18 +77,7 @@ void main() {
         await recordTurnOffDuringTestDrag(tester);
       });
       testWidgets('Local: record - without error', (tester) async {
-        final output = await captureConsoleOutput(() async {
-          timeline.mode = TimelineMode.record;
-          await _testBody(tester);
-          timeline.mode = TimelineMode.record;
-        });
-        final lines = output.split('\n')..removeWhere((line) => line.isEmpty);
-        expect(lines.first, '🔴 - Now recording error output timeline');
-        expect(lines.second, '🔴 - Already recording error output timeline');
-
-        // Neither timeline output nor HTML link when onError timeline is
-        // recorded and no error occurs.
-        expect(lines.length, 2);
+        await recordNoErrorsDrag(tester);
       });
     });
     group('Teardown test', () {

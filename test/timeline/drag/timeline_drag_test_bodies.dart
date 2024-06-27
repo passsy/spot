@@ -1,3 +1,4 @@
+import 'package:dartx/dartx.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 
@@ -61,6 +62,22 @@ Future<void> recordTurnOffDuringTestDrag(
   final lines = output.split('\n')..removeWhere((line) => line.isEmpty);
   expect(lines.length, 1);
   expect(lines.first, contains('⏸︎ - Timeline recording is off'));
+}
+
+Future<void> recordNoErrorsDrag(
+  WidgetTester tester, {
+  bool isGlobal = false,
+}) async {
+  final output = await captureConsoleOutput(() async {
+    // Won't change anything, since it's default. Here to make sure
+    // nothing is printed when the mode doesn't change.
+    timeline.mode = TimelineMode.record;
+    await _testBody(tester);
+  });
+  final lines = output.split('\n')..removeWhere((line) => line.isEmpty);
+  // Neither timeline output nor HTML link when onError timeline is
+  // recorded when no error occurs.
+  expect(lines.length, 0);
 }
 
 Future<void> _testBody(WidgetTester tester) async {
