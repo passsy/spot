@@ -91,6 +91,17 @@ class Act {
           snapshot: snapshot,
         );
 
+        if (positionToTap == null) {
+          final centerPosition =
+              renderBox.localToGlobal(renderBox.size.center(Offset.zero));
+          _throwHitTestFailureReport(
+            position: centerPosition,
+            target: renderBox,
+            snapshot: snapshot,
+          );
+          return;
+        }
+
         final binding = TestWidgetsFlutterBinding.instance;
 
         // Finally, tap the widget by sending a down and up event.
@@ -148,6 +159,16 @@ class Act {
           snapshot: snapshot,
         );
 
+        if (dragPosition == null) {
+          final centerPosition =
+              renderBox.localToGlobal(renderBox.size.center(Offset.zero));
+          _throwHitTestFailureReport(
+            position: centerPosition,
+            target: renderBox,
+            snapshot: snapshot,
+          );
+          return;
+        }
         final targetName = dragTarget.toStringBreadcrumb();
 
         bool isTargetVisible() {
@@ -241,18 +262,17 @@ class Act {
     // TODO what if the center is outside the viewport, should we move the touch location or error?
   }
 
-  /// Generates a `TestFailure` when the widget fails hit testing due to one of
-  /// the following reasons:
-  /// - The widget is obstructed by an `AbsorbPointer` that is absorbing taps.
-  /// - The widget is behind an `IgnorePointer` that is ignoring events.
-  /// - The widget is covered by another widget, making it non-interactable.
-  TestFailure _hitTestFailureForPosition({
+  /// Checks if the widget is visible and not covered by another widget
+  ///
+  /// This test fails when the widget does not react to hit tests
+  void _throwHitTestFailureReport({
     required Offset position,
     required RenderObject target,
     required WidgetSnapshot snapshot,
   }) {
     final binding = WidgetsBinding.instance;
 
+    // do the tap, hit test the position of [target]
     final HitTestResult result = HitTestResult();
     // ignore: deprecated_member_use
     binding.hitTest(result, position);
@@ -261,17 +281,8 @@ class Act {
     final List<Element> hitTargetElements =
         hitTestEntries.mapNotNull((e) => e.element).toList();
 
-    final ignorePointerFailure = _ignorePointerFailure(target, snapshot);
-    if (ignorePointerFailure != null) {
-      return ignorePointerFailure;
-    }
-
-    final absorbPointerFailure =
-        _absorbPointerFailure(hitTargetElements.first, snapshot);
-    if (absorbPointerFailure != null) {
-      return absorbPointerFailure;
-    }
-
+    _detectAbsorbPointer(hitTargetElements.first, snapshot);
+    _detectIgnorePointer(target, snapshot);
     _detectSizeZero(target, snapshot);
     _detectCoverWidget(target, snapshot, hitTargetElements);
 
@@ -285,7 +296,7 @@ class Act {
         .where((e) => e.debugWidgetLocation?.isUserCode ?? false)
         .firstOrNull;
 
-    return TestFailure(
+    throw TestFailure(
       "Selector '${snapshot.selector.toStringBreadcrumb()}' can not be tapped at position $position where the RenderObject $target was found.\n"
       "Sorry, that we can't tell you more.\n"
       "Please create an issue at https://github.com/passsy/spot with an example so that we can provide a useful error message for anyone else running in a similar issue.",
@@ -293,7 +304,7 @@ class Act {
   }
 
   // TODO replace prints with events once timeline is incorporated
-  /// Finds an interactable position on a specified widget by first checking
+  /// Finds a pokable position on a specified widget by first checking
   /// high-probability interaction points followed by a detailed zigzag grid
   /// search if necessary.
   ///
@@ -305,18 +316,18 @@ class Act {
   /// thoroughness when required.
   ///
   /// Returns an Offset representing a global position on the screen that can be
-  /// interacted with. Throws a `TestFailure` if no interactable position is found
-  /// within the widget's bounds, detailing the failure to locate a pokable area.
-  Offset _findPokablePosition({
+  /// interacted with, or null if no such position exists within the widget's
+  /// bounds.
+  Offset? _findPokablePosition({
     required WidgetSelector<Widget> widgetSelector,
     required WidgetSnapshot snapshot,
   }) {
     final RenderBox renderBox = _getRenderBoxOrThrow(widgetSelector);
 
-    final centerLocalPosition = renderBox.size.center(Offset.zero);
+    final initialPosition = renderBox.size.center(Offset.zero);
 
     final List<Offset> mostLikelyHitRegions = [
-      centerLocalPosition,
+      initialPosition,
       renderBox.size.topCenter(Offset.zero),
       renderBox.size.bottomCenter(Offset.zero),
       renderBox.size.centerLeft(Offset.zero),
@@ -327,7 +338,7 @@ class Act {
       renderBox.size.bottomRight(Offset.zero),
     ];
     int iterations = 0;
-    final centerGlobalPosition = renderBox.localToGlobal(centerLocalPosition);
+    final firstPosition = renderBox.localToGlobal(initialPosition);
     final name = widgetSelector.toStringBreadcrumb();
     String successMessage(Offset location) {
       return 'Found interactable area of $name at $location.';
@@ -337,7 +348,7 @@ class Act {
       if (iterations == 1) {
         // ignore: avoid_print
         print(
-          "WARNING: Hit test at the center of $name, located at $centerGlobalPosition, failed. Attempting to identify and use an interactable area within the boundaries of $name.",
+          "WARNING: Hit test at the center of $name, located at $firstPosition, failed. Attempting to identify and use an interactable area within the boundaries of $name.",
         );
       }
       final Offset globalPosition = renderBox.localToGlobal(localPosition);
@@ -346,7 +357,7 @@ class Act {
         target: renderBox,
         snapshot: snapshot,
       )) {
-        if (globalPosition != centerGlobalPosition) {
+        if (globalPosition != firstPosition) {
           // ignore: avoid_print
           print(successMessage(globalPosition));
         }
@@ -368,13 +379,12 @@ class Act {
       if (localPosition.dx < renderBox.size.width &&
           localPosition.dy < renderBox.size.height) {
         final Offset globalPosition = renderBox.localToGlobal(localPosition);
-        final pokable = _canBePoked(
+        if (_canBePoked(
           position: globalPosition,
           target: renderBox,
           snapshot: snapshot,
-        );
-        if (pokable) {
-          if (globalPosition != centerGlobalPosition) {
+        )) {
+          if (globalPosition != firstPosition) {
             // ignore: avoid_print
             print(successMessage(globalPosition));
           }
@@ -382,14 +392,12 @@ class Act {
         }
       }
     }
-
-    final hitTestFailure = _hitTestFailureForPosition(
-      position: centerGlobalPosition,
-      target: renderBox,
-      snapshot: snapshot,
+    // ignore: avoid_print
+    print(
+      "WARNING: Failed to identify an interactable area within the boundaries of $name.",
     );
 
-    throw hitTestFailure;
+    return null;
   }
 
   List<Offset> _generateCheckOrder(int horizontalSteps, int verticalSteps) {
@@ -449,11 +457,9 @@ class Act {
     return false;
   }
 
-  /// Checks if a widget is wrapped in an `AbsorbPointer` that absorbs taps and
-  /// returns a `TestFailure` if true, detailing the obstruction and its
-  /// creation location. Returns `null` if no absorbing `AbsorbPointer` is
-  /// detected.
-  TestFailure? _absorbPointerFailure(
+  /// Throws when the widget is wrapped in an AbsorbPointer that is absorbing
+  /// the taps and doesn't forward them to the child
+  void _detectAbsorbPointer(
     Element hitTarget,
     WidgetSnapshot<Widget> snapshot,
   ) {
@@ -463,20 +469,17 @@ class Act {
       if (absorbPointer.absorbing) {
         final location = getCreationLocation(childElement) ??
             childElement.debugGetCreatorChain(100);
-        return TestFailure(
+        throw TestFailure(
             "Widget '${snapshot.selector.toStringBreadcrumb()}' is wrapped in AbsorbPointer and doesn't receive taps.\n"
             "AbsorbPointer is created at $location\n"
             "The closest widget reacting to the touch event is:\n"
             "${hitTarget.toStringDeep()}");
       }
     }
-    return null;
   }
 
-  /// Evaluates whether the target widget is affected by an `IgnorePointer`
-  /// that is set to ignore events. If true, returns a `TestFailure` detailing
-  /// the issue and its location; otherwise, returns `null`
-  TestFailure? _ignorePointerFailure(
+  /// Throws if the widget is wrapped in an IgnorePointer that is not forwarding events
+  void _detectIgnorePointer(
     RenderObject target,
     WidgetSnapshot<Widget> snapshot,
   ) {
@@ -494,12 +497,11 @@ class Act {
     if (ignorePointer != null) {
       final location = getCreationLocation(ignorePointer) ??
           targetElement.debugGetCreatorChain(100);
-      return TestFailure(
+      throw TestFailure(
         "Widget '${snapshot.selector.toStringBreadcrumb()}' is wrapped in IgnorePointer and doesn't receive taps.\n"
         "The IgnorePointer is located at $location",
       );
     }
-    return null;
   }
 
   /// Detects when the widget is 0x0 pixels in size and throws a `TestFailure`
