@@ -11,4 +11,7 @@ void main() {
   testWidgets('Global: record - without error', (tester) async {
     await recordTurnOffDuringTestDrag(tester, isGlobal: true);
   });
+  test('Global: record, with error, prints timeline and html', () async {
+    await recordWithErrorPrintsHTML(isGlobal: true);
+  });
 }

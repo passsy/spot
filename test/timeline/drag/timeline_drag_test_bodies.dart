@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:dartx/dartx.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 
 import '../../util/capture_console_output.dart';
+import '../../util/run_test_in_process.dart' as process;
+import '../timeline_test_shared.dart' as shared;
 import '../timeline_test_shared.dart';
 import 'drag_until_visible_test_widget.dart';
 
@@ -80,6 +84,34 @@ Future<void> recordNoErrorsDrag(
   expect(lines.length, 0);
 }
 
+Future<void> recordWithErrorPrintsHTML({
+  bool isGlobal = false,
+}) async {
+  final stdout = await _outputFromDragTestProcess(
+    title: 'OnError timeline - with error, prints timeline',
+    timelineMode: TimelineMode.record,
+    drags: _failingDragAmount,
+    isGlobalMode: isGlobal,
+  );
+
+  _testTimeLineContent(
+    output: stdout,
+    drags: _failingDragAmount,
+    totalExpectedOffset: _failingOffset,
+  );
+
+  final htmlLine = stdout
+      .split('\n')
+      .firstWhere((line) => line.startsWith('View time line here:'));
+  final prefix = isGlobal ? 'global' : 'local';
+  expect(
+    htmlLine.endsWith(
+      'timeline-$prefix-onerror-timeline-with-error-prints-timeline.html',
+    ),
+    isTrue,
+  );
+}
+
 Future<void> _testBody(WidgetTester tester) async {
   await tester.pumpWidget(const DragUntilVisibleTestWidget());
   _firstItemSelector.existsOnce();
@@ -97,7 +129,6 @@ void _testTimeLineContent({
   required String output,
   required Offset totalExpectedOffset,
   required int drags,
-  bool runInTestProcess = false,
 }) {
   final isGoingDown = totalExpectedOffset.dy < 0;
   final findsWidget = drags == _passingDragAmount;
@@ -124,9 +155,7 @@ void _testTimeLineContent({
       );
     }
     expect(
-      RegExp('Caller: at ${runInTestProcess ? 'main' : '_testBody'}')
-          .allMatches(output)
-          .length,
+      RegExp('Caller: at').allMatches(output).length,
       2,
     );
     expect(
@@ -146,4 +175,76 @@ String _replaceOffsetWithDxDy(String originalString) {
 
   // Replace all matches with 'Offset(dx,dy)'
   return originalString.replaceAll(offsetPattern, 'Offset(dx,dy)');
+}
+
+Future<String> _outputFromDragTestProcess({
+  required String title,
+  required TimelineMode timelineMode,
+  String captureStart = shared.timelineHeader,
+  bool isGlobalMode = false,
+  TimelineMode? globalTimelineModeToSwitch,
+  required int drags,
+}) async {
+  final testAsString = _testAsString(
+    title: title,
+    timelineMode: timelineMode,
+    isGlobalMode: isGlobalMode,
+    globalTimelineModeToSwitch: globalTimelineModeToSwitch,
+    drags: drags,
+  );
+  return process.runTestInProcessAndCaptureOutPut(
+    shouldFail:
+        drags == _failingDragAmount || globalTimelineModeToSwitch != null,
+    testAsString: testAsString,
+    captureStart: captureStart,
+  );
+}
+
+String _testAsString({
+  required String title,
+  required TimelineMode timelineMode,
+  required int drags,
+  bool isGlobalMode = false,
+  TimelineMode? globalTimelineModeToSwitch,
+}) {
+  final switchPart = globalTimelineModeToSwitch != null
+      ? '''
+      globalTimelineMode = TimelineMode.${globalTimelineModeToSwitch.toString().split('.').last};
+      '''
+      : '';
+  final testTitle = '${isGlobalMode ? 'Global: ' : 'Local: '}$title';
+
+  final globalInitiator =
+      isGlobalMode ? shared.globalTimelineInitiator(timelineMode) : '';
+
+  final localInitiator =
+      isGlobalMode ? '' : shared.localTimelineInitiator(timelineMode);
+
+  final widgetPart =
+      File('test/timeline/drag/drag_until_visible_test_widget.dart')
+          .readAsStringSync();
+  return '''
+import 'package:flutter_test/flutter_test.dart';
+import 'package:spot/spot.dart';
+import 'package:spot/src/timeline/timeline.dart';\n
+$widgetPart\n
+void main() async {
+$globalInitiator
+  testWidgets("$testTitle", (WidgetTester tester) async {
+  $localInitiator
+  $switchPart
+    await tester.pumpWidget(const DragUntilVisibleTestWidget());
+      final firstItem = spotText('Item at index: 3', exact: true)..existsOnce();
+      final secondItem = spotText('Item at index: 27', exact: true)
+        ..doesNotExist();
+      await act.dragUntilVisible(
+        dragStart: firstItem,
+        dragTarget: secondItem,
+        maxIteration: $drags,
+        moveStep: const Offset(0, -100),
+      );
+      secondItem.existsOnce();
+  });
+}
+''';
 }

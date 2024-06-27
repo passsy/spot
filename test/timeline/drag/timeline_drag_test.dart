@@ -9,11 +9,7 @@ import '../timeline_test_shared.dart' as shared;
 import 'drag_until_visible_test_widget.dart';
 import 'timeline_drag_test_bodies.dart';
 
-final _firstItemSelector = spotText('Item at index: 3', exact: true);
 final _secondItemSelector = spotText('Item at index: 27', exact: true);
-
-const _failingDragAmount = 10;
-const _failingOffset = Offset(0, -1000);
 const _passingDragAmount = 23;
 const _passingOffset = Offset(0, -2300);
 
@@ -51,19 +47,6 @@ void main() async {
 ''';
 }
 
-Future<void> _testBody(WidgetTester tester) async {
-  await tester.pumpWidget(const DragUntilVisibleTestWidget());
-  _firstItemSelector.existsOnce();
-  _secondItemSelector.doesNotExist();
-  await act.dragUntilVisible(
-    dragStart: _firstItemSelector,
-    dragTarget: _secondItemSelector,
-    moveStep: const Offset(0, -100),
-    maxIteration: _passingDragAmount,
-  );
-  _secondItemSelector.existsOnce();
-}
-
 void main() {
   group('Drag Timeline Test', () {
     group('Without error', () {
@@ -82,59 +65,7 @@ void main() {
     });
     group('Teardown test', () {
       test('Local: record, with error, prints timeline and html', () async {
-        final tempDir = Directory.systemTemp.createTempSync();
-        final tempTestFile = File('${tempDir.path}/temp_test.dart');
-
-        await tempTestFile.writeAsString(
-          _testAsString(
-            title: 'OnError timeline - with error, prints timeline',
-            timelineMode: TimelineMode.record,
-            drags: _failingDragAmount,
-          ),
-        );
-        final testProcess =
-            await TestProcess.start('flutter', ['test', tempTestFile.path]);
-        final stdoutBuffer = StringBuffer();
-        bool write = false;
-
-        await for (final line in testProcess.stdoutStream()) {
-          if (line.isEmpty) continue;
-
-          if (!write) {
-            if (line == 'Timeline') {
-              write = true;
-            }
-          }
-
-          if (write) {
-            stdoutBuffer.writeln(line);
-          }
-        }
-        // Error happens
-        await testProcess.shouldExit(1);
-
-        if (tempDir.existsSync()) {
-          tempDir.deleteSync(recursive: true);
-        }
-
-        final stdout = stdoutBuffer.toString();
-        _testTimeLineContent(
-          output: stdout,
-          drags: _failingDragAmount,
-          totalExpectedOffset: _failingOffset,
-          runInTestProcess: true,
-        );
-
-        final htmlLine = stdout
-            .split('\n')
-            .firstWhere((line) => line.startsWith('View time line here:'));
-
-        expect(
-          htmlLine.endsWith(
-            'timeline-onerror-timeline-with-error-prints-timeline.html',
-          ),
-          isTrue,
-        );
+        await recordWithErrorPrintsHTML();
       });
       test('Local: live - without error, prints HTML', () async {
         final tempDir = Directory.systemTemp.createTempSync();
