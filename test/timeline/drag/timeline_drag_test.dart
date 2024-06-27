@@ -74,23 +74,7 @@ void main() {
         await offTimelineWithoutErrorsDrag(tester);
       });
       testWidgets('Local: record, turn off during test', (tester) async {
-        final output = await captureConsoleOutput(() async {
-          timeline.mode = TimelineMode.record;
-          await _testBody(tester);
-          // Notify that the recording is off
-          timeline.mode = TimelineMode.off;
-          timeline.mode = TimelineMode.off;
-        });
-        expect(output, contains('🔴 - Now recording live timeline'));
-
-        _testTimeLineContent(
-          output: output,
-          totalExpectedOffset: _passingOffset,
-          drags: _passingDragAmount,
-        );
-
-        expect(output, contains('⏸︎ - Timeline recording stopped'));
-        expect(output, contains('⏸︎ - Timeline recording is off'));
+        await recordTurnOffDuringTestDrag(tester);
       });
       testWidgets('Local: record - without error', (tester) async {
         final output = await captureConsoleOutput(() async {
