@@ -67,13 +67,13 @@ void main() {
   testWidgets('Warn about using and finding alternative tappable area.',
       (tester) async {
     bool tapped = false;
-    final outPut = await captureConsoleOutput(() async {
+    final output = await captureConsoleOutput(() async {
       await tester.pumpWidget(
         MaterialApp(
           home: PokeTestWidget(
             columns: 5,
             rows: 5,
-            pokableAtColumnIndex: 3,
+            pokableAtColumnIndex: 4,
             pokableAtRowIndex: 4,
             widgetToCover: _TestButton(
               onTap: () {
@@ -90,16 +90,62 @@ void main() {
 
     expect(tapped, isTrue);
 
-    final lines = outPut.split('\n')..removeWhere((line) => line.isEmpty);
-    final warning = _replaceOffsetWithDxDy(lines.first);
+    final lines =
+        (output.split('\n')..removeWhere((line) => line.isEmpty)).join('\n');
     expect(
-      warning,
-      "WARNING: Hit test at the center of _TestButton, located at Offset(dx,dy), failed. Attempting to identify and use an interactable area within the boundaries of _TestButton.",
+      lines,
+      "Warning: The '_TestButton' is partially covered.\n"
+      "~7% of the widget are still tappable.\n"
+      "Using Offset(457.0, 319.0).",
     );
-    final success = _replaceOffsetWithDxDy(lines.last);
+  });
+
+  testWidgets('Center of widget not tappable, finds alternative tappable area.',
+      (tester) async {
+    bool tapped = false;
+    final output = await captureConsoleOutput(() async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Stack(
+            children: [
+              Positioned.fill(
+                child: _TestButton(
+                  onTap: () {
+                    tapped = !tapped;
+                  },
+                ),
+              ),
+              Positioned.fill(
+                // covers center of _TestButton,
+                child: Center(
+                  child: Transform.translate(
+                    offset: const Offset(100, 0),
+                    child: Container(
+                      color: Colors.red.withOpacity(0.5),
+                      width: 400,
+                      height: 400,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+      final WidgetSelector button = spot<_TestButton>()..existsOnce();
+      await act.tap(button);
+    });
+
+    expect(tapped, isTrue);
+    final lines =
+        (output.split('\n')..removeWhere((line) => line.isEmpty)).join('\n');
     expect(
-      success,
-      "Found interactable area of _TestButton at Offset(dx,dy).",
+      lines,
+      contains(
+        "Warning: The '_TestButton' is partially covered.\n"
+        "~67% of the widget are still tappable.\n"
+        "Using Offset(296.0, 296.0).",
+      ),
     );
   });
   testWidgets('Custom button with InkWell can be tapped', (tester) async {

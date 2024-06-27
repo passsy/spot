@@ -86,12 +86,12 @@ class Act {
         // Before tapping the widget, we need to make sure that the widget is
         // not outside the viewport or covered by another widget.
         _validateViewBounds(renderBox, selector: selector);
-        final positionToTap = _findPokablePosition(
+        final pokablePositions = _findPokablePositions(
           widgetSelector: selector,
           snapshot: snapshot,
         );
 
-        if (positionToTap == null) {
+        if (pokablePositions.hits.isEmpty) {
           final centerPosition =
               renderBox.localToGlobal(renderBox.size.center(Offset.zero));
           _throwHitTestFailureReport(
@@ -100,6 +100,18 @@ class Act {
             snapshot: snapshot,
           );
           return;
+        }
+
+        final positionToTap = pokablePositions.mostCenterHittablePosition!;
+        if (pokablePositions.percent < 100) {
+          final roundUp = pokablePositions.percent.ceil();
+          // TODO replace prints with events once timeline is incorporated
+          // ignore: avoid_print
+          print(
+            "Warning: The '${snapshot.discoveredWidget!.toStringShort()}' is partially covered.\n"
+            "~$roundUp% of the widget are still tappable.\n"
+            "Using $positionToTap.",
+          );
         }
 
         final binding = TestWidgetsFlutterBinding.instance;
@@ -154,12 +166,12 @@ class Act {
         // Before dragging, we need to make sure that `dragStart` is
         // not outside the viewport or covered by another widget.
         _validateViewBounds(renderBox, selector: dragStart);
-        final dragPosition = _findPokablePosition(
+        final pokablePositions = _findPokablePositions(
           widgetSelector: dragStart,
           snapshot: snapshot,
         );
 
-        if (dragPosition == null) {
+        if (pokablePositions.hits.isEmpty) {
           final centerPosition =
               renderBox.localToGlobal(renderBox.size.center(Offset.zero));
           _throwHitTestFailureReport(
@@ -188,6 +200,17 @@ class Act {
 
         if (isVisible) {
           return;
+        }
+        final dragPosition = pokablePositions.mostCenterHittablePosition!;
+        if (pokablePositions.percent < 100) {
+          final roundUp = pokablePositions.percent.ceil();
+          // TODO replace prints with events once timeline is incorporated
+          // ignore: avoid_print
+          print(
+            "Warning: The '${snapshot.discoveredWidget!.toStringShort()}' is partially covered.\n"
+            "~$roundUp% of the widget are still tappable.\n"
+            "Using $dragPosition.",
+          );
         }
 
         int iterations = 0;
@@ -303,141 +326,91 @@ class Act {
     );
   }
 
-  // TODO replace prints with events once timeline is incorporated
-  /// Finds a pokable position on a specified widget by first checking
-  /// high-probability interaction points followed by a detailed zigzag grid
-  /// search if necessary.
+  /// Attempts to find hittable position on the [snapshot] [RenderObject] using
+  /// an 8px grid.
   ///
-  /// Initially, this function checks a set of predefined likely interaction
-  /// points such as the widget's center, corners, and midpoints of each edge.
-  /// If none of these points are interactable, it proceeds to perform a more
-  /// exhaustive search using a zigzag pattern across the widget's area. This
-  /// dual-phase approach optimizes for speed in typical cases while ensuring
-  /// thoroughness when required.
-  ///
-  /// Returns an Offset representing a global position on the screen that can be
-  /// interacted with, or null if no such position exists within the widget's
-  /// bounds.
-  Offset? _findPokablePosition({
+  /// It returns the results of the search as [_PokablePositions], including all
+  /// failed hit tests and a good estimate of a center point which is tappable
+  /// ([_PokablePositions.mostCenterHittablePosition]).
+  _PokablePositions _findPokablePositions({
     required WidgetSelector<Widget> widgetSelector,
     required WidgetSnapshot snapshot,
   }) {
     final RenderBox renderBox = _getRenderBoxOrThrow(widgetSelector);
 
-    final initialPosition = renderBox.size.center(Offset.zero);
-
-    final List<Offset> mostLikelyHitRegions = [
-      initialPosition,
-      renderBox.size.topCenter(Offset.zero),
-      renderBox.size.bottomCenter(Offset.zero),
-      renderBox.size.centerLeft(Offset.zero),
-      renderBox.size.topLeft(Offset.zero),
-      renderBox.size.bottomLeft(Offset.zero),
-      renderBox.size.centerRight(Offset.zero),
-      renderBox.size.topRight(Offset.zero),
-      renderBox.size.bottomRight(Offset.zero),
-    ];
-    int iterations = 0;
-    final firstPosition = renderBox.localToGlobal(initialPosition);
-    final name = widgetSelector.toStringBreadcrumb();
-    String successMessage(Offset location) {
-      return 'Found interactable area of $name at $location.';
-    }
-
-    for (final localPosition in mostLikelyHitRegions) {
-      if (iterations == 1) {
-        // ignore: avoid_print
-        print(
-          "WARNING: Hit test at the center of $name, located at $firstPosition, failed. Attempting to identify and use an interactable area within the boundaries of $name.",
-        );
-      }
-      final Offset globalPosition = renderBox.localToGlobal(localPosition);
-      if (_canBePoked(
-        position: globalPosition,
-        target: renderBox,
-        snapshot: snapshot,
-      )) {
-        if (globalPosition != firstPosition) {
-          // ignore: avoid_print
-          print(successMessage(globalPosition));
-        }
-        return globalPosition;
-      }
-      iterations++;
-    }
-
-    // No luck with the most likely hit regions, let's try a grid pattern
-    final int horizontalSteps = (renderBox.size.width / 8).ceil();
-    final int verticalSteps = (renderBox.size.height / 8).ceil();
-
-    final List<Offset> checkOrder =
-        _generateCheckOrder(horizontalSteps, verticalSteps);
-
-    for (final gridPosition in checkOrder) {
-      final Offset localPosition =
-          Offset(gridPosition.dx * 8, gridPosition.dy * 8);
-      if (localPosition.dx < renderBox.size.width &&
-          localPosition.dy < renderBox.size.height) {
+    final List<Offset> hits = [];
+    final List<Offset> flops = [];
+    const gridSize = 8;
+    for (int x = 0; x < renderBox.size.width; x += gridSize) {
+      for (int y = 0; y < renderBox.size.height; y += gridSize) {
+        final Offset localPosition = Offset(x.toDouble(), y.toDouble());
         final Offset globalPosition = renderBox.localToGlobal(localPosition);
-        if (_canBePoked(
-          position: globalPosition,
-          target: renderBox,
-          snapshot: snapshot,
-        )) {
-          if (globalPosition != firstPosition) {
-            // ignore: avoid_print
-            print(successMessage(globalPosition));
-          }
-          return globalPosition;
+        final canBePoked =
+            _canBePoked(position: globalPosition, target: renderBox);
+        if (canBePoked) {
+          hits.add(globalPosition);
+        } else {
+          flops.add(globalPosition);
         }
       }
     }
-    // ignore: avoid_print
-    print(
-      "WARNING: Failed to identify an interactable area within the boundaries of $name.",
+
+    final pos = renderBox.localToGlobal(Offset.zero);
+    final searchArea = Rect.fromLTWH(
+      pos.dx,
+      pos.dy,
+      renderBox.size.width,
+      renderBox.size.height,
     );
 
-    return null;
-  }
-
-  List<Offset> _generateCheckOrder(int horizontalSteps, int verticalSteps) {
-    final List<Offset> order = [];
-    // Start with the center if it's an odd number of steps, add edge centers
-    if (horizontalSteps % 2 != 0 && verticalSteps % 2 != 0) {
-      order.add(
-        Offset(
-          (horizontalSteps ~/ 2).toDouble(),
-          (verticalSteps ~/ 2).toDouble(),
-        ),
+    if (hits.isEmpty) {
+      return _PokablePositions(
+        searchArea: searchArea,
+        hits: hits,
+        flops: flops,
+        target: renderBox,
       );
     }
-    order.addAll([
-      Offset.zero, // Top-left
-      Offset(horizontalSteps - 1, 0), // Top-right
-      Offset(0, verticalSteps - 1), // Bottom-left
-      Offset(horizontalSteps - 1, verticalSteps - 1), // Bottom-right
-    ]);
-    // Zigzag through the grid to cover all positions in a skipping pattern
-    for (int y = 0; y < verticalSteps; y++) {
-      if (y.isEven) {
-        for (int x = 0; x < horizontalSteps; x++) {
-          order.add(Offset(x.toDouble(), y.toDouble()));
-        }
-      } else {
-        for (int x = horizontalSteps - 1; x >= 0; x--) {
-          order.add(Offset(x.toDouble(), y.toDouble()));
-        }
-      }
+
+    // Find a good point to actually tap the widget
+    // When parts of the widget are covered (like the right side) the center is
+    // the middle of the right side.
+    // This only fails when there is a hole of tappable points in the middle (which rarely happens)
+    final Offset centerOfPokablePoints = () {
+      final maxX = hits.maxBy((e) => e.dx)!.dx;
+      final minX = hits.minBy((e) => e.dx)!.dx;
+      final maxY = hits.maxBy((e) => e.dy)!.dy;
+      final minY = hits.minBy((e) => e.dy)!.dy;
+      return Offset(
+        ((maxX + minX) ~/ 2).toDouble(),
+        ((maxY + minY) ~/ 2).toDouble(),
+      );
+    }();
+    final centerCanBePoked =
+        _canBePoked(position: centerOfPokablePoints, target: renderBox);
+    final Offset? mostCenterPoint;
+    if (centerCanBePoked) {
+      mostCenterPoint = centerOfPokablePoints;
+    } else {
+      // this is point is already working, use it as fallback when the center
+      // is not tappable
+      mostCenterPoint =
+          hits.minBy((e) => (e - centerOfPokablePoints).distanceSquared);
     }
 
-    return order;
+    return _PokablePositions(
+      searchArea: searchArea,
+      hits: hits,
+      flops: flops,
+      target: renderBox,
+      mostCenterHittablePosition: mostCenterPoint,
+    );
   }
 
   /// Checks if the widget is visible and not covered by another widget
   bool _canBePoked({
     required Offset position,
     required RenderObject target,
-    required WidgetSnapshot snapshot,
   }) {
     final binding = WidgetsBinding.instance;
 
@@ -630,6 +603,39 @@ ${firstUsefulParent.toStringShort()} (${firstUsefulParent.debugWidgetLocation?.f
       "${diagram.removeEmptyLines()}\n",
     );
   }
+}
+
+/// Contains the result of hit testing an entire [RenderObject] in [_findPokablePositions]
+class _PokablePositions {
+  /// The area that was searched via hit testing
+  final Rect searchArea;
+
+  /// All points that where able to hit the [RenderObject]
+  final List<Offset> hits;
+
+  /// Points that where not able to hit the [RenderObject], but where inside [searchArea].
+  ///
+  /// Those points are covered by something and the [target] did not react
+  final List<Offset> flops;
+
+  /// The target that was used for hit testing
+  final RenderBox target;
+
+  /// The most center position that is hittable
+  ///
+  /// Returns null when no hittable position was found ([hits] is empty)
+  final Offset? mostCenterHittablePosition;
+
+  _PokablePositions({
+    required this.searchArea,
+    required this.hits,
+    required this.flops,
+    required this.target,
+    this.mostCenterHittablePosition,
+  });
+
+  /// The percentage (0-100%) of positions that were hittable
+  double get percent => hits.length / (hits.length + flops.length) * 100;
 }
 
 extension on HitTestEntry {
