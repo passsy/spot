@@ -328,11 +328,8 @@ class Act {
       for (int y = 0; y < renderBox.size.height; y += gridSize) {
         final Offset localPosition = Offset(x.toDouble(), y.toDouble());
         final Offset globalPosition = renderBox.localToGlobal(localPosition);
-        final canBePoked = _canBePoked(
-          position: globalPosition,
-          target: renderBox,
-          snapshot: snapshot,
-        );
+        final canBePoked =
+            _canBePoked(position: globalPosition, target: renderBox);
         if (canBePoked) {
           hits.add(globalPosition);
         } else {
@@ -372,11 +369,8 @@ class Act {
         ((maxY + minY) ~/ 2).toDouble(),
       );
     }();
-    final centerCanBePoked = _canBePoked(
-      position: centerOfPokablePoints,
-      target: renderBox,
-      snapshot: snapshot,
-    );
+    final centerCanBePoked =
+        _canBePoked(position: centerOfPokablePoints, target: renderBox);
     final Offset? mostCenterPoint;
     if (centerCanBePoked) {
       mostCenterPoint = centerOfPokablePoints;
@@ -400,7 +394,6 @@ class Act {
   bool _canBePoked({
     required Offset position,
     required RenderObject target,
-    required WidgetSnapshot snapshot,
   }) {
     final binding = WidgetsBinding.instance;
 

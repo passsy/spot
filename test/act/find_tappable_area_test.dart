@@ -89,7 +89,9 @@ void main() {
         (output.split('\n')..removeWhere((line) => line.isEmpty)).join('\n');
     expect(
       lines,
-      "Warning: The '_TestButton' is partially not covered and not tappable. ~7% of the widget are still tappable, using Offset(457.0, 319.0).",
+      "Warning: The '_TestButton' is partially covered.\n"
+      "~7% of the widget are still tappable.\n"
+      "Using Offset(457.0, 319.0).",
     );
   });
 
@@ -135,7 +137,9 @@ void main() {
     expect(
       lines,
       contains(
-        "Warning: The '_TestButton' is partially not covered and not tappable. ~67% of the widget are still tappable, using Offset(296.0, 296.0).",
+        "Warning: The '_TestButton' is partially covered.\n"
+        "~67% of the widget are still tappable.\n"
+        "Using Offset(296.0, 296.0).",
       ),
     );
   });
