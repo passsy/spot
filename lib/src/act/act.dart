@@ -78,26 +78,45 @@ class Act {
     return TestAsyncUtils.guard<void>(() async {
       return _alwaysPropagateDevicePointerEvents(() async {
         final renderBox = _getRenderBoxOrThrow(selector);
+
+        // Before tapping the widget, we need to make sure that the widget is
+        // not outside the viewport or covered by another widget.
         _validateViewBounds(renderBox, selector: selector);
-
-        final centerPosition =
-            renderBox.localToGlobal(renderBox.size.center(Offset.zero));
-
-        // Before tapping the widget, we need to make sure that the widget is not
-        // covered by another widget, or outside the viewport.
-        _pokeRenderObject(
-          position: centerPosition,
-          target: renderBox,
+        final pokablePositions = _findPokablePositions(
+          widgetSelector: selector,
           snapshot: snapshot,
         );
+
+        if (pokablePositions.hits.isEmpty) {
+          final centerPosition =
+              renderBox.localToGlobal(renderBox.size.center(Offset.zero));
+          _throwHitTestFailureReport(
+            position: centerPosition,
+            target: renderBox,
+            snapshot: snapshot,
+          );
+          return;
+        }
+
+        final positionToTap = pokablePositions.mostCenterHittablePosition!;
+        if (pokablePositions.percent < 100) {
+          final roundUp = pokablePositions.percent.ceil();
+          // TODO replace prints with events once timeline is incorporated
+          // ignore: avoid_print
+          print(
+            "Warning: The '${snapshot.discoveredWidget!.toStringShort()}' is partially covered.\n"
+            "~$roundUp% of the widget are still tappable.\n"
+            "Using $positionToTap.",
+          );
+        }
 
         final binding = TestWidgetsFlutterBinding.instance;
 
         // Finally, tap the widget by sending a down and up event.
-        final downEvent = PointerDownEvent(position: centerPosition);
+        final downEvent = PointerDownEvent(position: positionToTap);
         binding.handlePointerEvent(downEvent);
 
-        final upEvent = PointerUpEvent(position: centerPosition);
+        final upEvent = PointerUpEvent(position: positionToTap);
         binding.handlePointerEvent(upEvent);
 
         await binding.pump();
@@ -132,13 +151,33 @@ class Act {
     Duration duration = const Duration(milliseconds: 50),
   }) {
     // Check if widget is in the widget tree. Throws if not.
-    dragStart.snapshot().existsOnce();
+    final snapshot = dragStart.snapshot()..existsOnce();
 
     return TestAsyncUtils.guard<void>(() async {
       return _alwaysPropagateDevicePointerEvents(() async {
         final renderBox = _getRenderBoxOrThrow(dragStart);
 
         final binding = TestWidgetsFlutterBinding.instance;
+
+        // Before dragging, we need to make sure that `dragStart` is
+        // not outside the viewport or covered by another widget.
+        _validateViewBounds(renderBox, selector: dragStart);
+        final pokablePositions = _findPokablePositions(
+          widgetSelector: dragStart,
+          snapshot: snapshot,
+        );
+
+        if (pokablePositions.hits.isEmpty) {
+          final centerPosition =
+              renderBox.localToGlobal(renderBox.size.center(Offset.zero));
+          _throwHitTestFailureReport(
+            position: centerPosition,
+            target: renderBox,
+            snapshot: snapshot,
+          );
+          return;
+        }
+        final targetName = dragTarget.toStringBreadcrumb();
 
         bool isTargetVisible() {
           final renderObject = _renderObjectFromSelector(dragTarget);
@@ -153,15 +192,21 @@ class Act {
           }
         }
 
-        final dragPosition =
-            renderBox.localToGlobal(renderBox.size.center(Offset.zero));
-
-        final targetName = dragTarget.toStringBreadcrumb();
-
         bool isVisible = isTargetVisible();
 
         if (isVisible) {
           return;
+        }
+        final dragPosition = pokablePositions.mostCenterHittablePosition!;
+        if (pokablePositions.percent < 100) {
+          final roundUp = pokablePositions.percent.ceil();
+          // TODO replace prints with events once timeline is incorporated
+          // ignore: avoid_print
+          print(
+            "Warning: The '${snapshot.discoveredWidget!.toStringShort()}' is partially covered.\n"
+            "~$roundUp% of the widget are still tappable.\n"
+            "Using $dragPosition.",
+          );
         }
 
         int iterations = 0;
@@ -239,7 +284,7 @@ class Act {
   /// Checks if the widget is visible and not covered by another widget
   ///
   /// This test fails when the widget does not react to hit tests
-  void _pokeRenderObject({
+  void _throwHitTestFailureReport({
     required Offset position,
     required RenderObject target,
     required WidgetSnapshot snapshot,
@@ -251,14 +296,6 @@ class Act {
     // ignore: deprecated_member_use
     binding.hitTest(result, position);
     final hitTestEntries = result.path.toList();
-
-    // Check if [target] received the tap event
-    for (final HitTestEntry entry in hitTestEntries) {
-      if (entry.target == target) {
-        // Success, target was hit by hitTest
-        return;
-      }
-    }
 
     final List<Element> hitTargetElements =
         hitTestEntries.mapNotNull((e) => e.element).toList();
@@ -275,6 +312,110 @@ class Act {
       "The common ancestor of both widgets is:\n"
       "${commonAncestor.toStringDeep()}",
     );
+  }
+
+  /// Attempts to find hittable position on the [snapshot] [RenderObject] using
+  /// an 8px grid.
+  ///
+  /// It returns the results of the search as [_PokablePositions], including all
+  /// failed hit tests and a good estimate of a center point which is tappable
+  /// ([_PokablePositions.mostCenterHittablePosition]).
+  _PokablePositions _findPokablePositions({
+    required WidgetSelector<Widget> widgetSelector,
+    required WidgetSnapshot snapshot,
+  }) {
+    final RenderBox renderBox = _getRenderBoxOrThrow(widgetSelector);
+
+    final List<Offset> hits = [];
+    final List<Offset> flops = [];
+    const gridSize = 8;
+    for (int x = 0; x < renderBox.size.width; x += gridSize) {
+      for (int y = 0; y < renderBox.size.height; y += gridSize) {
+        final Offset localPosition = Offset(x.toDouble(), y.toDouble());
+        final Offset globalPosition = renderBox.localToGlobal(localPosition);
+        final canBePoked =
+            _canBePoked(position: globalPosition, target: renderBox);
+        if (canBePoked) {
+          hits.add(globalPosition);
+        } else {
+          flops.add(globalPosition);
+        }
+      }
+    }
+
+    final pos = renderBox.localToGlobal(Offset.zero);
+    final searchArea = Rect.fromLTWH(
+      pos.dx,
+      pos.dy,
+      renderBox.size.width,
+      renderBox.size.height,
+    );
+
+    if (hits.isEmpty) {
+      return _PokablePositions(
+        searchArea: searchArea,
+        hits: hits,
+        flops: flops,
+        target: renderBox,
+      );
+    }
+
+    // Find a good point to actually tap the widget
+    // When parts of the widget are covered (like the right side) the center is
+    // the middle of the right side.
+    // This only fails when there is a hole of tappable points in the middle (which rarely happens)
+    final Offset centerOfPokablePoints = () {
+      final maxX = hits.maxBy((e) => e.dx)!.dx;
+      final minX = hits.minBy((e) => e.dx)!.dx;
+      final maxY = hits.maxBy((e) => e.dy)!.dy;
+      final minY = hits.minBy((e) => e.dy)!.dy;
+      return Offset(
+        ((maxX + minX) ~/ 2).toDouble(),
+        ((maxY + minY) ~/ 2).toDouble(),
+      );
+    }();
+    final centerCanBePoked =
+        _canBePoked(position: centerOfPokablePoints, target: renderBox);
+    final Offset? mostCenterPoint;
+    if (centerCanBePoked) {
+      mostCenterPoint = centerOfPokablePoints;
+    } else {
+      // this is point is already working, use it as fallback when the center
+      // is not tappable
+      mostCenterPoint =
+          hits.minBy((e) => (e - centerOfPokablePoints).distanceSquared);
+    }
+
+    return _PokablePositions(
+      searchArea: searchArea,
+      hits: hits,
+      flops: flops,
+      target: renderBox,
+      mostCenterHittablePosition: mostCenterPoint,
+    );
+  }
+
+  /// Checks if the widget is visible and not covered by another widget
+  bool _canBePoked({
+    required Offset position,
+    required RenderObject target,
+  }) {
+    final binding = WidgetsBinding.instance;
+
+    // do the tap, hit test the position of [target]
+    final HitTestResult result = HitTestResult();
+    // ignore: deprecated_member_use
+    binding.hitTest(result, position);
+    final hitTestEntries = result.path.toList();
+
+    // Check if [target] received the tap event
+    for (final HitTestEntry entry in hitTestEntries) {
+      if (entry.target == target) {
+        // Success, target was hit by hitTest
+        return true;
+      }
+    }
+    return false;
   }
 
   /// Throws when the widget is wrapped in an AbsorbPointer that is absorbing
@@ -323,6 +464,39 @@ class Act {
       );
     }
   }
+}
+
+/// Contains the result of hit testing an entire [RenderObject] in [_findPokablePositions]
+class _PokablePositions {
+  /// The area that was searched via hit testing
+  final Rect searchArea;
+
+  /// All points that where able to hit the [RenderObject]
+  final List<Offset> hits;
+
+  /// Points that where not able to hit the [RenderObject], but where inside [searchArea].
+  ///
+  /// Those points are covered by something and the [target] did not react
+  final List<Offset> flops;
+
+  /// The target that was used for hit testing
+  final RenderBox target;
+
+  /// The most center position that is hittable
+  ///
+  /// Returns null when no hittable position was found ([hits] is empty)
+  final Offset? mostCenterHittablePosition;
+
+  _PokablePositions({
+    required this.searchArea,
+    required this.hits,
+    required this.flops,
+    required this.target,
+    this.mostCenterHittablePosition,
+  });
+
+  /// The percentage (0-100%) of positions that were hittable
+  double get percent => hits.length / (hits.length + flops.length) * 100;
 }
 
 extension on HitTestEntry {
