@@ -5,7 +5,7 @@ import '../timeline_drag_test_bodies.dart';
 
 void main() {
   globalTimelineMode = TimelineMode.live;
-  testWidgets('Global timeline. Drag: record, without error', (tester) async {
+  testWidgets('Global: record, without error', (tester) async {
     await liveTimelineWithoutErrorsDrag(tester, isGlobal: true);
   });
 }

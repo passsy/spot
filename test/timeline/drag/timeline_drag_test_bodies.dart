@@ -33,6 +33,23 @@ Future<void> liveTimelineWithoutErrorsDrag(
   );
 }
 
+Future<void> offTimelineWithoutErrorsDrag(
+  WidgetTester tester, {
+  bool isGlobal = false,
+}) async {
+  final output = await captureConsoleOutput(() async {
+    if (!isGlobal) {
+      timeline.mode = TimelineMode.off;
+    }
+    await _testBody(tester);
+  });
+  final lines = output.split('\n')..removeWhere((line) => line.isEmpty);
+  const expectedOutput = '⏸︎ - Timeline recording is off';
+  final hasMessage = output.contains(expectedOutput);
+  expect(hasMessage, isGlobal ? isFalse : isTrue);
+  expect(lines.length, isGlobal ? 0 : 1);
+}
+
 Future<void> _testBody(WidgetTester tester) async {
   await tester.pumpWidget(const DragUntilVisibleTestWidget());
   _firstItemSelector.existsOnce();

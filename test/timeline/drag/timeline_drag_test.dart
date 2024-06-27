@@ -67,20 +67,11 @@ Future<void> _testBody(WidgetTester tester) async {
 void main() {
   group('Drag Timeline Test', () {
     group('Without error', () {
-      testWidgets('Local timeline. Drag: record, without error',
-          (tester) async {
+      testWidgets('Local: record, without error', (tester) async {
         await liveTimelineWithoutErrorsDrag(tester);
       });
-      testWidgets('Local: off', (tester) async {
-        final output = await captureConsoleOutput(() async {
-          timeline.mode = TimelineMode.off;
-          await _testBody(tester);
-        });
-        final splitted = output.split('\n')
-          ..removeWhere((line) => line.isEmpty);
-        const expectedOutput = '⏸︎ - Timeline recording is off';
-        expect(splitted.length, 1);
-        expect(splitted.first, expectedOutput);
+      testWidgets('Local: off does not record', (tester) async {
+        await offTimelineWithoutErrorsDrag(tester);
       });
       testWidgets('Local: record, turn off during test', (tester) async {
         final output = await captureConsoleOutput(() async {
