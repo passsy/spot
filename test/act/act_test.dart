@@ -297,7 +297,7 @@ void actTests() {
           throwsSpotErrorContaining([
             "Widget 'ElevatedButton' is wrapped in IgnorePointer and doesn't receive taps",
             "The IgnorePointer is located at",
-            "act_test.dart:",
+            "widgets/visibility.dart:",
           ]),
         );
       });

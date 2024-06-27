@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:dartx/dartx_io.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
@@ -309,16 +308,6 @@ class Act {
     _detectSizeZero(target, snapshot);
     _detectCoverWidget(target, snapshot, hitTargetElements);
 
-    final Element commonAncestor = findCommonAncestor(
-      [hitTargetElements.first, snapshot.discoveredElement!],
-    );
-
-    final splitterLocation = commonAncestor.debugGetDiagnosticChain();
-    final firstUsefulParent = splitterLocation
-        .drop(1)
-        .where((e) => e.debugWidgetLocation?.isUserCode ?? false)
-        .firstOrNull;
-
     throw TestFailure(
       "Selector '${snapshot.selector.toStringBreadcrumb()}' can not be tapped at position $position where the RenderObject $target was found.\n"
       "Sorry, that we can't tell you more.\n"
@@ -440,7 +429,7 @@ class Act {
     if (childElement?.widget is AbsorbPointer) {
       final absorbPointer = childElement!.widget as AbsorbPointer;
       if (absorbPointer.absorbing) {
-        final location = getCreationLocation(childElement) ??
+        final location = childElement.debugWidgetLocation?.file.path ??
             childElement.debugGetCreatorChain(100);
         throw TestFailure(
             "Widget '${snapshot.selector.toStringBreadcrumb()}' is wrapped in AbsorbPointer and doesn't receive taps.\n"
@@ -468,7 +457,7 @@ class Act {
       },
     );
     if (ignorePointer != null) {
-      final location = getCreationLocation(ignorePointer) ??
+      final location = ignorePointer.debugWidgetLocation?.file.path ??
           targetElement.debugGetCreatorChain(100);
       throw TestFailure(
         "Widget '${snapshot.selector.toStringBreadcrumb()}' is wrapped in IgnorePointer and doesn't receive taps.\n"
@@ -508,8 +497,11 @@ class Act {
     }
   }
 
-  void _detectCoverWidget(RenderObject target, WidgetSnapshot<Widget> snapshot,
-      List<Element> hitTargetElements) {
+  void _detectCoverWidget(
+    RenderObject target,
+    WidgetSnapshot<Widget> snapshot,
+    List<Element> hitTargetElements,
+  ) {
     final cover = hitTargetElements.first;
     final Element commonAncestor = findCommonAncestor(
       [hitTargetElements.first, snapshot.discoveredElement!],
@@ -675,6 +667,7 @@ T _alwaysPropagateDevicePointerEvents<T>(T Function() block) {
   }
 }
 
+/// Grants access to the location of a Widget via [WidgetInspectorService]
 extension WidgetLocationExt on Element {
   /// Returns where the widget was created in code
   WidgetLocation? get debugWidgetLocation {
@@ -701,17 +694,24 @@ extension WidgetLocationExt on Element {
   }
 }
 
-///
+/// The location on the users filesystem where a Widget constructor was called
 class WidgetLocation {
+  /// The pointer to the file
   final File file;
 
+  /// True when the [WidgetInspectorService] reports that the location is
+  /// - not within an external package
+  /// - not within the dart or flutter sdk
   final bool? createdByLocalProject;
 
+  /// Creates a new [WidgetLocation]
   WidgetLocation({
     required this.file,
     required this.createdByLocalProject,
   });
 
+  /// Returns true, when the location is relevant for error messages, because
+  /// it is within the users project
   bool get isUserCode {
     if (file.path.contains('packages/flutter/')) {
       return false;
@@ -726,31 +726,6 @@ class WidgetLocation {
   String toString() {
     return 'WidgetLocation{userCode: $isUserCode, ${file.name}';
   }
-}
-
-/// Workaround to the the location of a widget in code
-///
-/// This method is a workaround to call `_getCreationLocation()` which is private
-String? getCreationLocation(Element element) {
-  final debugCreator = element.renderObject?.debugCreator;
-  if (debugCreator is! DebugCreator) {
-    return null;
-  }
-  final block =
-      debugTransformDebugCreator([DiagnosticsDebugCreator(debugCreator)])
-          .firstOrNull as DiagnosticsBlock?;
-  if (block == null) {
-    return null;
-  }
-  final description = block.getChildren().first as ErrorDescription;
-  final location = description.value.first.toString();
-  // _Location .toString() looks something like this:
-  // IgnorePointer IgnorePointer:file:///Users/pascalwelsch/Projects/passsy/spot/test/act/act_test.dart:142:18
-
-  final matches = RegExp('.*(file:///.*)').allMatches(location);
-  final filePath = matches.first.group(1);
-
-  return filePath;
 }
 
 extension on String {

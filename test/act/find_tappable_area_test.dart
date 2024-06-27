@@ -256,11 +256,6 @@ class _InkWellAboveTextButton extends StatelessWidget {
   }
 }
 
-String _replaceOffsetWithDxDy(String originalString) {
-  final RegExp offsetPattern = RegExp(r'Offset\([^)]*\)');
-  return originalString.replaceAll(offsetPattern, 'Offset(dx,dy)');
-}
-
 class _TestButton extends StatelessWidget {
   const _TestButton({required this.onTap});
 
