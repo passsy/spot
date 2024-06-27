@@ -100,18 +100,9 @@ class Act {
           );
           return;
         }
+        _reportPartialCoverage(pokablePositions, snapshot);
 
         final positionToTap = pokablePositions.mostCenterHittablePosition!;
-        if (pokablePositions.percent < 100) {
-          final roundUp = pokablePositions.percent.ceil();
-          // TODO replace prints with events once timeline is incorporated
-          // ignore: avoid_print
-          print(
-            "Warning: The '${snapshot.discoveredWidget!.toStringShort()}' is partially covered.\n"
-            "~$roundUp% of the widget are still tappable.\n"
-            "Using $positionToTap.",
-          );
-        }
 
         final binding = TestWidgetsFlutterBinding.instance;
 
@@ -180,6 +171,7 @@ class Act {
           );
           return;
         }
+        _reportPartialCoverage(pokablePositions, snapshot);
         final targetName = dragTarget.toStringBreadcrumb();
 
         bool isTargetVisible() {
@@ -201,16 +193,6 @@ class Act {
           return;
         }
         final dragPosition = pokablePositions.mostCenterHittablePosition!;
-        if (pokablePositions.percent < 100) {
-          final roundUp = pokablePositions.percent.ceil();
-          // TODO replace prints with events once timeline is incorporated
-          // ignore: avoid_print
-          print(
-            "Warning: The '${snapshot.discoveredWidget!.toStringShort()}' is partially covered.\n"
-            "~$roundUp% of the widget are still tappable.\n"
-            "Using $dragPosition.",
-          );
-        }
 
         int iterations = 0;
         while (iterations < maxIteration && !isVisible) {
@@ -281,7 +263,33 @@ class Act {
     }
     return !isNotVisible;
     // TODO handle case when location is partially outside viewport
-    // TODO what if the center is outside the viewport, should we move the touch location or error?
+  }
+
+  /// Throws a warning when the widget is only partially reacting to tap events
+  void _reportPartialCoverage(
+    _PokablePositions pokablePositions,
+    WidgetSnapshot snapshot,
+  ) {
+    final roundUp = pokablePositions.percent.ceil();
+    if (roundUp > 80) {
+      // Don't be pedantic when the widget is almost fully tappable
+      return;
+    }
+    // ignore: avoid_print
+    print(
+      "Warning: The '${snapshot.discoveredWidget!.toStringShort()}' is only partially reacting to tap events. "
+      "Only ~$roundUp% of the widget reacts to hitTest events.\n"
+      "\n"
+      "Possible causes:"
+      " - The widget is partially positioned out of view\n"
+      " - It is covered by another widget.\n"
+      " - It is too small (<8x8)\n"
+      "\n"
+      "Possible solutions:\n"
+      " - Scroll the widget into view using act.dragUntilVisible()\n"
+      " - Make sure no other Widget is overlapping on small screens\n"
+      " - Increase the Widget size\n",
+    );
   }
 
   /// Checks if the widget is visible and not covered by another widget
