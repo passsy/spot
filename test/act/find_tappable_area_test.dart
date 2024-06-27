@@ -28,7 +28,7 @@ void main() {
     await expectLater(
       () => act.tap(button),
       throwsSpotErrorContaining([
-        "Selector '_TestButton' can not be tapped directly, because another widget (ColoredBox) inside Center is completely covering it and consumes all tap events.",
+        "Widget '_TestButton' can not be tapped directly, because another widget (ColoredBox) inside Center is completely covering it and consumes all tap events.",
         "Try tapping the Center which contains '_TestButton' instead.",
         "Example:",
         "(Cover - Received tap event)",
@@ -149,7 +149,7 @@ void main() {
     );
   });
   testWidgets('Custom button with InkWell can be tapped', (tester) async {
-    int tapps = 0;
+    int tapCount = 0;
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -157,7 +157,7 @@ void main() {
             child: _InkWellAboveTextButton(
               text: 'Press Me',
               onTap: () {
-                tapps++;
+                tapCount++;
               },
             ),
           ),
@@ -167,7 +167,7 @@ void main() {
     final button = spot<_InkWellAboveTextButton>()..existsOnce();
     await act.tap(button);
     await tester.pump();
-    expect(tapps, 1);
+    expect(tapCount, 1);
 
     final buttonWithText = spot<_InkWellAboveTextButton>()
         .withChild(spotText('Press Me'))
@@ -175,13 +175,13 @@ void main() {
     await act.tap(buttonWithText);
     // Fails with:
     // Widget 'Widget with text contains text "Press Me"' is covered by 'Listener' and can't be tapped.
-    expect(tapps, 2);
+    expect(tapCount, 2);
 
     final text = spotText('Press Me')..existsOnce();
     await expectLater(
       () => act.tap(text),
       throwsSpotErrorContaining([
-        "Selector 'Widget with text contains text \"Press Me\"' can not be tapped directly, because another widget (Listener) inside Padding",
+        "Widget 'RichText' can not be tapped directly, because another widget (Listener) inside Padding is completely covering it and consumes all tap events.",
         "spot<ElevatedButton>().spotText('Tap me');",
         "spot<ElevatedButton>().withChild(spotText('Tap me'));",
         " │ ┌──", // diagram

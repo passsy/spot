@@ -179,7 +179,7 @@ void actTests() {
       await expectLater(
         () => act.tap(button),
         throwsSpotErrorContaining([
-          "Selector 'ElevatedButton' can not be tapped directly, because another widget (ColoredBox) inside Padding is completely covering it and consumes all tap events.",
+          "Widget 'ElevatedButton' can not be tapped directly, because another widget (ColoredBox) inside Padding is completely covering it and consumes all tap events.",
           "ColoredBox", // cover
           "ElevatedButton", // target
           "Stack (file:/",

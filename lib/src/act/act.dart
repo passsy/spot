@@ -309,9 +309,10 @@ class Act {
     _detectCoverWidget(target, snapshot, hitTargetElements);
 
     throw TestFailure(
-      "Selector '${snapshot.selector.toStringBreadcrumb()}' can not be tapped at position $position where the RenderObject $target was found.\n"
-      "Sorry, that we can't tell you more.\n"
-      "Please create an issue at https://github.com/passsy/spot with an example so that we can provide a useful error message for anyone else running in a similar issue.",
+      "Widget '${snapshot.discoveredWidget!.toStringShort()}' can not be tapped at position $position where its RenderObject $target was found.\n"
+      "The exact reason, why it doesn't receive hitTest events is unknown.\n"
+      "If you think this case needs a a better error message, create an issue https://github.com/passsy/spot for anyone else running in a similar issue.\n"
+      "A small example would be highly appreciated.",
     );
   }
 
@@ -432,7 +433,7 @@ class Act {
         final location = childElement.debugWidgetLocation?.file.path ??
             childElement.debugGetCreatorChain(100);
         throw TestFailure(
-            "Widget '${snapshot.selector.toStringBreadcrumb()}' is wrapped in AbsorbPointer and doesn't receive taps.\n"
+            "Widget '${snapshot.discoveredWidget!.toStringShort()}' is wrapped in AbsorbPointer and doesn't receive taps.\n"
             "AbsorbPointer is created at $location\n"
             "The closest widget reacting to the touch event is:\n"
             "${hitTarget.toStringDeep()}");
@@ -460,7 +461,7 @@ class Act {
       final location = ignorePointer.debugWidgetLocation?.file.path ??
           targetElement.debugGetCreatorChain(100);
       throw TestFailure(
-        "Widget '${snapshot.selector.toStringBreadcrumb()}' is wrapped in IgnorePointer and doesn't receive taps.\n"
+        "Widget '${snapshot.discoveredWidget!.toStringShort()}' is wrapped in IgnorePointer and doesn't receive taps.\n"
         "The IgnorePointer is located at $location",
       );
     }
@@ -580,9 +581,9 @@ ${firstUsefulParent.toStringShort()} (${firstUsefulParent.debugWidgetLocation?.f
 """;
 
     throw TestFailure(
-      "Selector '${snapshot.selector.toStringBreadcrumb()}' can not be tapped directly, because another widget (${cover.toStringShort()}) inside ${firstUsefulParent.toStringShort()} is completely covering it and consumes all tap events.\n"
+      "Widget '${snapshot.discoveredWidget!.toStringShort()}' can not be tapped directly, because another widget (${cover.toStringShort()}) inside ${firstUsefulParent.toStringShort()} is completely covering it and consumes all tap events.\n"
       "\n"
-      "Try tapping the ${firstUsefulParent.toStringShort()} which contains '${snapshot.selector}' instead.\n\n"
+      "Try tapping the ${firstUsefulParent.toStringShort()} which contains '${snapshot.discoveredWidget!.toStringShort()}' instead.\n\n"
       "Example:\n"
       "  // BAD: Taps the Text inside ElevatedButton\n"
       "  WidgetSelector<AnyText> selector = spot<ElevatedButton>().spotText('Tap me');\n"
