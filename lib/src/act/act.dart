@@ -8,6 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/act/gestures.dart';
+import 'package:spot/src/screenshot/screenshot.dart';
 import 'package:spot/src/spot/snapshot.dart';
 
 /// Top level entry point to interact with widgets on the screen.
@@ -74,6 +75,11 @@ class Act {
   }
 
   /// Triggers a tap event on a given widget.
+  /// If a [Timeline] is running, an annotated screenshot, indicating the tap
+  /// position, is added to the timeline.
+  ///
+  /// See also:
+  /// - [Timeline]
   Future<void> tap(WidgetSelector selector) async {
     // Check if widget is in the widget tree. Throws if not.
     final snapshot = selector.snapshot()..existsOnce();
@@ -103,6 +109,17 @@ class Act {
         _reportPartialCoverage(pokablePositions, snapshot);
 
         final positionToTap = pokablePositions.mostCenterHittablePosition!;
+
+        if (timeline.mode != TimelineMode.off) {
+          final screenshot = await takeScreenshotWithCrosshair(
+            centerPosition: positionToTap,
+          );
+          timeline.addScreenshot(
+            screenshot,
+            name: 'Tap ${selector.toStringBreadcrumb()}',
+            eventType: const TimelineEventType(label: 'tap'),
+          );
+        }
 
         final binding = TestWidgetsFlutterBinding.instance;
 
@@ -189,24 +206,56 @@ class Act {
 
         bool isVisible = isTargetVisible();
 
-        if (isVisible) {
-          return;
-        }
         final dragPosition = pokablePositions.mostCenterHittablePosition!;
 
-        int iterations = 0;
-        while (iterations < maxIteration && !isVisible) {
+        Future<void> addDragEvent({
+          required String name,
+        }) async {
+          if (timeline.mode != TimelineMode.off) {
+            final screenshot = await takeScreenshotWithCrosshair(
+              centerPosition: dragPosition,
+            );
+            timeline.addScreenshot(
+              screenshot,
+              name: name,
+              eventType: const TimelineEventType(label: 'drag'),
+            );
+          }
+        }
+
+        if (isVisible) {
+          await addDragEvent(
+            name: 'Widget $targetName found without dragging.',
+          );
+          return;
+        }
+
+        final direction = moveStep.dy < 0 ? 'downwards' : 'upwards';
+
+        await addDragEvent(
+          name:
+              'Scrolling $direction from $dragPosition in order to find $targetName.',
+        );
+
+        int dragCount = 0;
+        while (dragCount < maxIteration && !isVisible) {
           await gestures.drag(dragPosition, moveStep);
           await binding.pump(duration);
-          iterations++;
+          dragCount++;
           isVisible = isTargetVisible();
         }
 
-        final totalDragged = moveStep * iterations.toDouble();
+        final totalDragged = moveStep * dragCount.toDouble();
+        final resultString = isVisible ? 'found' : 'not found';
+        final message =
+            "Target $targetName $resultString after $dragCount drags. "
+            "Total dragged offset: $totalDragged";
+
+        await addDragEvent(name: message);
 
         if (!isVisible) {
           throw TestFailure(
-            "$targetName is not visible after dragging $iterations times and a total dragged offset of $totalDragged.",
+            "$targetName is not visible after dragging $dragCount times and a total dragged offset of $totalDragged.",
           );
         }
       });
