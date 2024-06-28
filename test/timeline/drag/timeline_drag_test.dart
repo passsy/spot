@@ -65,62 +65,7 @@ void main() {
         await recordWithErrorPrintsHTML();
       });
       test('Local: live - without error, prints HTML', () async {
-        final tempDir = Directory.systemTemp.createTempSync();
-        final tempTestFile = File('${tempDir.path}/temp_test.dart');
-        await tempTestFile.writeAsString(
-          _testAsString(
-            title: 'Live timeline - without error, prints HTML',
-            timelineMode: TimelineMode.live,
-            drags: _passingDragAmount,
-          ),
-        );
-        final testProcess =
-            await TestProcess.start('flutter', ['test', tempTestFile.path]);
-        final stdoutBuffer = StringBuffer();
-        bool write = false;
-
-        await for (final line in testProcess.stdoutStream()) {
-          if (line.isEmpty) continue;
-
-          if (!write) {
-            if (line == 'Timeline' || line == _header) {
-              write = true;
-            }
-          }
-
-          if (write) {
-            stdoutBuffer.writeln(line);
-          }
-        }
-
-        await testProcess.shouldExit(0);
-
-        if (tempDir.existsSync()) {
-          tempDir.deleteSync(recursive: true);
-        }
-
-        final stdout = stdoutBuffer.toString();
-
-        // Does not start with 'Timeline', this only happens on error
-        expect(stdout.startsWith('Timeline'), isFalse);
-
-        _testTimeLineContent(
-          output: stdout,
-          drags: _passingDragAmount,
-          totalExpectedOffset: _passingOffset,
-          runInTestProcess: true,
-        );
-
-        final htmlLine = stdout
-            .split('\n')
-            .firstWhere((line) => line.startsWith('View time line here:'));
-
-        expect(
-          htmlLine.endsWith(
-            'timeline-live-timeline-without-error-prints-html.html',
-          ),
-          isTrue,
-        );
+        await liveWithoutErrorPrintsHTML();
       });
       // test('Live timeline - with error, no duplicates, prints HTML', () async {
       //   final tempDir = Directory.systemTemp.createTempSync();

@@ -8,4 +8,7 @@ void main() {
   testWidgets('Global: record, without error', (tester) async {
     await liveTimelineWithoutErrorsDrag(tester, isGlobal: true);
   });
+  testWidgets('Global: record, without error', (tester) async {
+    await liveTimelineWithoutErrorsDrag(tester, isGlobal: true);
+  });
 }

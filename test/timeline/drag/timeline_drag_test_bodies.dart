@@ -83,6 +83,37 @@ Future<void> recordNoErrorsDrag(
   expect(lines.length, 0);
 }
 
+Future<void> liveWithoutErrorPrintsHTML({
+  bool isGlobal = false,
+}) async {
+  final stdout = await _outputFromDragTestProcess(
+    title: 'Live timeline - without error, prints HTML',
+    timelineMode: TimelineMode.live,
+    drags: _passingDragAmount,
+  );
+
+  // Does not start with 'Timeline', this only happens on error
+  expect(stdout.startsWith('Timeline'), isFalse);
+
+  _testTimeLineContent(
+    output: stdout,
+    drags: _passingDragAmount,
+    totalExpectedOffset: _passingOffset,
+  );
+
+  final htmlLine = stdout
+      .split('\n')
+      .firstWhere((line) => line.startsWith('View time line here:'));
+
+  final prefix = isGlobal ? 'global' : 'local';
+  expect(
+    htmlLine.endsWith(
+      'timeline-$prefix-live-timeline-without-error-prints-html.html',
+    ),
+    isTrue,
+  );
+}
+
 Future<void> recordWithErrorPrintsHTML({
   bool isGlobal = false,
 }) async {
