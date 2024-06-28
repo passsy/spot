@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dartx/dartx.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 
@@ -114,6 +115,46 @@ Future<void> liveWithoutErrorPrintsHTML({
   );
 }
 
+Future<void> liveWitErrorPrintsHTMLNoDuplicates({
+  bool isGlobal = false,
+}) async {
+  final stdout = await _outputFromDragTestProcess(
+    isGlobalMode: isGlobal,
+    title: 'Live timeline - with error, no duplicates, prints HTML',
+    timelineMode: TimelineMode.live,
+    drags: _failingDragAmount,
+    captureStart:
+        isGlobal ? shared.timelineHeader : '🔴 - Recording live timeline',
+  );
+
+  final lines = stdout.split('\n');
+  // In the local test, the default timeline mode is 'record'.
+  // Switching to live within the test results in a change to the mode,
+  // which is documented in the output.
+  expect(
+    lines.first,
+    isGlobal ? shared.timelineHeader : '🔴 - Recording live timeline',
+  );
+
+  _testTimeLineContent(
+    output: stdout,
+    drags: _failingDragAmount,
+    totalExpectedOffset: _failingOffset,
+  );
+
+  final htmlLine = stdout
+      .split('\n')
+      .firstWhere((line) => line.startsWith('View time line here:'));
+
+  final prefix = isGlobal ? 'global' : 'local';
+  expect(
+    htmlLine.endsWith(
+      'timeline-$prefix-live-timeline-with-error-no-duplicates-prints-html.html',
+    ),
+    isTrue,
+  );
+}
+
 Future<void> recordWithErrorPrintsHTML({
   bool isGlobal = false,
 }) async {
@@ -222,6 +263,7 @@ Future<String> _outputFromDragTestProcess({
     globalTimelineModeToSwitch: globalTimelineModeToSwitch,
     drags: drags,
   );
+  print('testAsString: $testAsString');
   return process.runTestInProcessAndCaptureOutPut(
     shouldFail:
         drags == _failingDragAmount || globalTimelineModeToSwitch != null,
@@ -247,8 +289,7 @@ String _testAsString({
   final globalInitiator =
       isGlobalMode ? shared.globalTimelineInitiator(timelineMode) : '';
 
-  final localInitiator =
-      isGlobalMode ? '' : shared.localTimelineInitiator(timelineMode);
+  final localInitiator = shared.localTimelineInitiator(timelineMode);
 
   final widgetPart =
       File('test/timeline/drag/drag_until_visible_test_widget.dart')

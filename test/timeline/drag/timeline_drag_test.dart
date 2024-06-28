@@ -67,6 +67,9 @@ void main() {
       test('Local: live - without error, prints HTML', () async {
         await liveWithoutErrorPrintsHTML();
       });
+      test('Local: live - with error, prints HTML, no duplicates', () async {
+        await liveWitErrorPrintsHTMLNoDuplicates();
+      });
       // test('Live timeline - with error, no duplicates, prints HTML', () async {
       //   final tempDir = Directory.systemTemp.createTempSync();
       //   final tempTestFile = File('${tempDir.path}/temp_test.dart');
