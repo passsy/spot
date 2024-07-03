@@ -4,7 +4,7 @@ import '../act_tap_timeline_test_bodies.dart';
 
 void main() {
   globalTimelineMode = TimelineMode.live;
-  testWidgets('Global: record, without error', (tester) async {
+  testWidgets('Global: live, without error', (tester) async {
     await ActTapTimelineTestBodies.liveWithoutError(
       tester: tester,
       isGlobalMode: true,

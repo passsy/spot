@@ -14,8 +14,6 @@ class ActTapTimelineTestBodies {
   static final WidgetSelector _addButtonSelector = spotIcon(Icons.add);
   static final _subtractButtonSelector = spotIcon(Icons.remove);
   static final _clearButtonSelector = spotIcon(Icons.clear);
-  static const String _counter3 = 'Counter: 3';
-  static const String _counter4 = 'Counter: 4';
 
   static Future<void> recordWithoutError({
     required WidgetTester tester,
@@ -27,11 +25,11 @@ class ActTapTimelineTestBodies {
       }
       await tester.pumpWidget(const TimelineTestWidget());
       _addButtonSelector.existsOnce();
-      spotText(_counter3).existsOnce();
+      spotText('Counter: 3').existsOnce();
       await act.tap(_addButtonSelector);
-      spotText(_counter4).existsOnce();
+      spotText('Counter: 4').existsOnce();
       await act.tap(_subtractButtonSelector);
-      spotText(_counter3).existsOnce();
+      spotText('Counter: 3').existsOnce();
     });
     expect(output, isNot(contains('🔴 - Recording error output timeline')));
     expect(
@@ -224,11 +222,11 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       }
       await tester.pumpWidget(const TimelineTestWidget());
       _addButtonSelector.existsOnce();
-      spotText(_counter3).existsOnce();
+      spotText('Counter: 3').existsOnce();
       await act.tap(_addButtonSelector);
-      spotText(_counter4).existsOnce();
+      spotText('Counter: 4').existsOnce();
       await act.tap(_subtractButtonSelector);
-      spotText(_counter3).existsOnce();
+      spotText('Counter: 3').existsOnce();
     });
 
     expect(output, contains('⏸︎ - Timeline recording is off'));
@@ -254,12 +252,12 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       await tester.pumpWidget(
         const TimelineTestWidget(),
       );
-      spotText(_counter3).existsOnce();
+      spotText('Counter: 3').existsOnce();
       _addButtonSelector.existsOnce();
       await act.tap(_addButtonSelector);
-      spotText(_counter4).existsOnce();
+      spotText('Counter: 4').existsOnce();
       await act.tap(_subtractButtonSelector);
-      spotText(_counter3).existsOnce();
+      spotText('Counter: 3').existsOnce();
 // Notify that the recording stopped
       timeline.mode = TimelineMode.off;
       await act.tap(_clearButtonSelector);
@@ -297,11 +295,11 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       }
       await tester.pumpWidget(const TimelineTestWidget());
       _addButtonSelector.existsOnce();
-      spotText(_counter3).existsOnce();
+      spotText('Counter: 3').existsOnce();
       await act.tap(_addButtonSelector);
-      spotText(_counter4).existsOnce();
+      spotText('Counter: 4').existsOnce();
       await act.tap(_subtractButtonSelector);
-      spotText(_counter3).existsOnce();
+      spotText('Counter: 3').existsOnce();
     });
     final containsMessage = output.contains('🔴 - Recording live timeline');
     // Changes in local test since it's `record` by default. Globally it does not
@@ -383,11 +381,11 @@ void main() async {
    $localInitiator
     await tester.pumpWidget(const TimelineTestWidget());
       addButtonSelector.existsOnce();
-      spotText(_counter3).existsOnce();
+      spotText('Counter: 3').existsOnce();
       await act.tap(addButtonSelector);
-      spotText(_counter4).existsOnce();
+      spotText('Counter: 4').existsOnce();
       await act.tap(subtractButtonSelector);
-      spotText(_counter3).existsOnce();
+      spotText('Counter: 3').existsOnce();
       ${shouldFail ? 'spotText("Counter: 99").existsOnce();' : ''}
   });
 }

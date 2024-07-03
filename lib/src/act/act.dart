@@ -109,19 +109,24 @@ class Act {
         _reportPartialCoverage(pokablePositions, snapshot);
 
         final positionToTap = pokablePositions.mostCenterHittablePosition!;
+        final binding = TestWidgetsFlutterBinding.instance;
 
         if (timeline.mode != TimelineMode.off) {
-          final screenshot = await takeScreenshotWithCrosshair(
-            centerPosition: positionToTap,
-          );
-          timeline.addScreenshot(
-            screenshot,
-            name: 'Tap ${selector.toStringBreadcrumb()}',
-            eventType: const TimelineEventType(label: 'tap'),
-          );
+          final eventName = 'Tap ${selector.toStringBreadcrumb()}';
+          const String label = 'tap';
+          if (binding is! LiveTestWidgetsFlutterBinding) {
+            final screenshot = await takeScreenshotWithCrosshair(
+              centerPosition: positionToTap,
+            );
+            timeline.addScreenshot(
+              screenshot,
+              name: eventName,
+              eventType: const TimelineEventType(label: label),
+            );
+          } else {
+            timeline.addEvent(name: eventName, eventType: label);
+          }
         }
-
-        final binding = TestWidgetsFlutterBinding.instance;
 
         // Finally, tap the widget by sending a down and up event.
         final downEvent = PointerDownEvent(position: positionToTap);
@@ -212,14 +217,19 @@ class Act {
           required String name,
         }) async {
           if (timeline.mode != TimelineMode.off) {
-            final screenshot = await takeScreenshotWithCrosshair(
-              centerPosition: dragPosition,
-            );
-            timeline.addScreenshot(
-              screenshot,
-              name: name,
-              eventType: const TimelineEventType(label: 'drag'),
-            );
+            const String label = 'drag';
+            if (binding is! LiveTestWidgetsFlutterBinding) {
+              final screenshot = await takeScreenshotWithCrosshair(
+                centerPosition: dragPosition,
+              );
+              timeline.addScreenshot(
+                screenshot,
+                name: name,
+                eventType: const TimelineEventType(label: label),
+              );
+            } else {
+              timeline.addEvent(name: name, eventType: label);
+            }
           }
         }
 
