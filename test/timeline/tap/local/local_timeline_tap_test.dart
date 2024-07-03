@@ -1,38 +1,38 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/src/timeline/timeline.dart';
-import '../timeline_tap_test_bodies.dart' as body;
+import '../act_tap_timeline_test_bodies.dart';
 
 void main() {
   group('Override global timeline', () {
     testWidgets('Local: live, without error', (tester) async {
-      await body.liveWithoutError(tester: tester);
+      await ActTapTimelineTestBodies.liveWithoutError(tester: tester);
     });
     testWidgets('Local: off, without error', (tester) async {
-      await body.offWithoutError(tester: tester);
+      await ActTapTimelineTestBodies.offWithoutError(tester: tester);
     });
     testWidgets('Local: live, turn off during test', (tester) async {
-      await body.liveTurnOffDuringTest(tester: tester);
+      await ActTapTimelineTestBodies.liveTurnOffDuringTest(tester: tester);
     });
   });
 
   group('Print on teardown', () {
     testWidgets('Local: record, without error', (tester) async {
-      await body.recordWithoutError(tester: tester);
+      await ActTapTimelineTestBodies.recordWithoutError(tester: tester);
     });
 
     test('Local: record, with error', () async {
-      await body.recordWithError();
+      await ActTapTimelineTestBodies.recordWithError();
     });
     test('Local: live - without error, prints HTML', () async {
-      await body.liveWithoutErrorPrintsHtml();
+      await ActTapTimelineTestBodies.liveWithoutErrorPrintsHtml();
     });
     test('Local: live - with error, no duplicates, prints HTML', () async {
-      await body.liveWithErrorNoDuplicatesPrintsHtml();
+      await ActTapTimelineTestBodies.liveWithErrorNoDuplicatesPrintsHtml();
     });
   });
 
   test('Throws when global mode is changed during test', () async {
-    await body.throwOnGlobalTimelineChange(
+    await ActTapTimelineTestBodies.throwOnGlobalTimelineChange(
       initialGlobalMode: TimelineMode.live,
       globalTimelineModeToSwitch: TimelineMode.record,
     );

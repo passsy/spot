@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/src/timeline/timeline.dart';
 
-import '../timeline_drag_test_bodies.dart';
+import '../act_drag_timeline_test_bodies.dart';
 
 void main() {
   globalTimelineMode = TimelineMode.off;
   testWidgets('Global: off does not record', (tester) async {
-    await offTimelineWithoutErrorsDrag(tester, isGlobal: true);
+    await ActDragTimelineTestBodies.offWithoutError(tester, isGlobal: true);
   });
 }
