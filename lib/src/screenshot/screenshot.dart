@@ -161,6 +161,7 @@ Future<Screenshot> _createScreenshot({
       throw 'Could not take screenshot';
     }
     image = byteData.buffer.asUint8List();
+    plainImage.dispose();
   });
 
   final spotTempDir = Directory.systemTemp.directory('spot');
