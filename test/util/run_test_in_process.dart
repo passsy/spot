@@ -15,7 +15,7 @@ import 'package:test_process/test_process.dart';
 /// output will be captured starting from the line that matches `captureStart`.
 Future<String> runTestInProcessAndCaptureOutPut({
   required String testAsString,
-  String? captureStart,
+  List<String> captureStart = const [],
   bool shouldFail = false,
   Iterable<String>? args,
 }) async {
@@ -29,11 +29,11 @@ Future<String> runTestInProcessAndCaptureOutPut({
 
   final testProcess = await TestProcess.start('flutter', arguments);
   final stdoutBuffer = StringBuffer();
-  bool write = captureStart == null;
+  bool write = captureStart.isEmpty;
 
   await for (final line in testProcess.stdoutStream()) {
     if (line.isEmpty) continue;
-    if (!write && line == captureStart) {
+    if (!write && captureStart.contains(line)) {
       write = true;
     }
     if (write) {

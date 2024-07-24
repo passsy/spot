@@ -53,7 +53,7 @@ class ActTapTimelineTestBodies {
       timelineMode: initialGlobalMode,
       shouldFail: true,
       isGlobalMode: isGlobalMode,
-      captureStart: 'The following StateError was thrown running a test:',
+      captureStart: ['The following StateError was thrown running a test:'],
       globalTimelineModeToSwitch: globalTimelineModeToSwitch,
     );
     final expectedErrorMessage = '''
@@ -72,7 +72,7 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       timelineMode: TimelineMode.record,
       shouldFail: true,
       isGlobalMode: isGlobalMode,
-      captureStart: 'Timeline',
+      captureStart: ['Timeline'],
     );
 
     final timeline = stdout.split('\n');
@@ -124,6 +124,7 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       title: 'Live timeline without error prints html',
       timelineMode: TimelineMode.live,
       isGlobalMode: isGlobalMode,
+      captureStart: ['Timeline', shared.timelineHeader],
     );
 
     final timeline = stdout.split('\n');
@@ -228,8 +229,8 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       await act.tap(_subtractButtonSelector);
       spotText('Counter: 3').existsOnce();
     });
-
-    expect(output, contains('⏸︎ - Timeline recording is off'));
+    final showsMessage = output.contains('⏸︎ - Timeline recording is off');
+    expect(showsMessage, isGlobalMode ? isFalse : isTrue);
     expect(
       output,
       isNot(contains('Tap ${_addButtonSelector.toStringBreadcrumb()}')),
@@ -335,10 +336,20 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       callerParts.length,
       eventCount,
     );
-    expect(
-      RegExp('Screenshot: file:').allMatches(output).length,
-      eventCount,
-    );
+    final screenshots = output.split('\n').where((line) {
+      return line.startsWith('Screenshot: file:');
+    }).toList();
+    if (WidgetsBinding.instance is! LiveTestWidgetsFlutterBinding) {
+      expect(
+        screenshots.length,
+        eventCount,
+      );
+    } else {
+      expect(
+        screenshots.length,
+        0,
+      );
+    }
     expect(
       RegExp('Timestamp: ').allMatches(output).length,
       eventCount,
@@ -395,7 +406,7 @@ void main() async {
   static Future<String> _outputFromTapTestProcess({
     required String title,
     required TimelineMode timelineMode,
-    String captureStart = shared.timelineHeader,
+    List<String> captureStart = const [shared.timelineHeader],
     bool shouldFail = false,
     bool isGlobalMode = false,
     TimelineMode? globalTimelineModeToSwitch,

@@ -90,6 +90,7 @@ class ActDragTimelineTestBodies {
       title: 'Live timeline - without error, prints HTML',
       timelineMode: TimelineMode.live,
       drags: _passingDragAmount,
+      captureStart: ['Timeline', shared.timelineHeader],
     );
 
     // Does not start with 'Timeline', this only happens on error
@@ -122,8 +123,7 @@ class ActDragTimelineTestBodies {
       title: 'Live timeline - without error, no duplicates, prints HTML',
       timelineMode: TimelineMode.live,
       drags: _passingDragAmount,
-      captureStart:
-          isGlobal ? shared.timelineHeader : '🔴 - Recording live timeline',
+      captureStart: [shared.timelineHeader, '🔴 - Recording live timeline'],
     );
 
     final lines = stdout.split('\n');
@@ -162,8 +162,9 @@ class ActDragTimelineTestBodies {
       title: 'Live timeline - with error, no duplicates, prints HTML',
       timelineMode: TimelineMode.live,
       drags: _failingDragAmount,
-      captureStart:
-          isGlobal ? shared.timelineHeader : '🔴 - Recording live timeline',
+      captureStart: [
+        if (isGlobal) shared.timelineHeader else '🔴 - Recording live timeline'
+      ],
     );
 
     final lines = stdout.split('\n');
@@ -290,7 +291,7 @@ class ActDragTimelineTestBodies {
   static Future<String> _outputFromDragTestProcess({
     required String title,
     required TimelineMode timelineMode,
-    String captureStart = shared.timelineHeader,
+    List<String> captureStart = const [shared.timelineHeader],
     bool isGlobalMode = false,
     TimelineMode? globalTimelineModeToSwitch,
     required int drags,
