@@ -27,7 +27,14 @@ Future<String> runTestInProcessAndCaptureOutPut({
     ...?args?.where((arg) => arg != 'test'),
   ];
 
-  final testProcess = await TestProcess.start('flutter', arguments);
+  // Get the path to the Flutter executable the test was started with (not from PATH)
+  // /Users/pascalwelsch/.puro/envs/3.16.9/flutter/bin/cache/artifacts/engine/darwin-x64/flutter_tester
+  final flutterTesterExe = Platform.executable;
+  final binDir = flutterTesterExe.split('/cache/')[0];
+  final flutterExe =
+      Platform.isWindows ? '$binDir\\flutter.exe' : '$binDir/flutter';
+
+  final testProcess = await TestProcess.start(flutterExe, arguments);
   final stdoutBuffer = StringBuffer();
   bool write = captureStart.isEmpty;
 
