@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:dartx/dartx_io.dart';
@@ -85,7 +86,7 @@ class Act {
     final snapshot = selector.snapshot()..existsOnce();
 
     return TestAsyncUtils.guard<void>(() async {
-      return _alwaysPropagateDevicePointerEvents(() async {
+      return await _alwaysPropagateDevicePointerEvents(() async {
         final renderBox = _getRenderBoxOrThrow(selector);
 
         // Before tapping the widget, we need to make sure that the widget is
@@ -170,7 +171,7 @@ class Act {
     final snapshot = dragStart.snapshot()..existsOnce();
 
     return TestAsyncUtils.guard<void>(() async {
-      return _alwaysPropagateDevicePointerEvents(() async {
+      return await _alwaysPropagateDevicePointerEvents(() async {
         final renderBox = _getRenderBoxOrThrow(dragStart);
 
         final binding = TestWidgetsFlutterBinding.instance;
@@ -713,7 +714,9 @@ extension on HitTestEntry {
 /// widgets and are not intercepted by [LiveTestWidgetsFlutterBinding].
 ///
 /// See [LiveTestWidgetsFlutterBinding.shouldPropagateDevicePointerEvents].
-T _alwaysPropagateDevicePointerEvents<T>(T Function() block) {
+Future<T> _alwaysPropagateDevicePointerEvents<T>(
+  FutureOr<T> Function() block,
+) async {
   final binding = WidgetsBinding.instance;
   final live = binding is LiveTestWidgetsFlutterBinding;
 
@@ -727,7 +730,7 @@ T _alwaysPropagateDevicePointerEvents<T>(T Function() block) {
     binding.shouldPropagateDevicePointerEvents = true;
   }
   try {
-    return block();
+    return await block();
   } finally {
     if (live) {
       binding.shouldPropagateDevicePointerEvents = previousPropagateValue;
