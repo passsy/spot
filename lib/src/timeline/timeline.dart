@@ -45,7 +45,7 @@ Example: timeline.mode = $value;
   _globalTimelineMode = value;
 }
 
-/// Use --dart-define=SPOT_TIMELINE_MODE=live|record|off to set the [TimlineMode]
+/// Use --dart-define=SPOT_TIMELINE_MODE=live|record|off to set the [TimelineMode]
 /// for all tests
 TimelineMode? getTimelineModeFromEnv() {
   final mode = const String.fromEnvironment('SPOT_TIMELINE_MODE').toLowerCase();

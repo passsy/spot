@@ -264,7 +264,7 @@ void main() {
     );
   });
 
-  group('Annotage Screenshot test', () {
+  group('Annotate Screenshot test', () {
     testWidgets('Take screenshot with tap marker of the entire app',
         (tester) async {
       tester.view.physicalSize = const Size(210, 210);
