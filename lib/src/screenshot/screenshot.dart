@@ -12,6 +12,7 @@ import 'package:nanoid2/nanoid2.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/screenshot/screenshot.dart' as self
     show takeScreenshot;
+import 'package:spot/src/screenshot/screenshot_annotator.dart';
 import 'package:stack_trace/stack_trace.dart';
 
 export 'package:stack_trace/stack_trace.dart' show Frame;
@@ -49,7 +50,51 @@ Future<Screenshot> takeScreenshot({
   WidgetSelector? selector,
   String? name,
 }) async {
-  final TestWidgetsFlutterBinding binding = TestWidgetsFlutterBinding.instance;
+  return _createScreenshot(
+    element: element,
+    snapshot: snapshot,
+    selector: selector,
+    name: name,
+  );
+}
+
+/// Takes a screenshot of the entire screen or a single widget and annotates it
+/// with a tap marker in form of a crosshair at the specified [centerPosition].
+///
+/// Provide an [element], [snapshot], or [selector] to specify what to capture.
+/// - [element]: The specific element to capture.
+/// - [snapshot]: A snapshot of the widget to capture.
+/// - [selector]: A selector to determine the widget to capture.
+/// - [name]: The name of the screenshot file.
+/// - [centerPosition]: The position where the tap marker should be placed.
+///
+/// Returns a [Screenshot] object containing the file and initiator frame.
+Future<Screenshot> takeScreenshotWithCrosshair({
+  Element? element,
+  WidgetSnapshot? snapshot,
+  WidgetSelector? selector,
+  String? name,
+  required Offset centerPosition,
+}) async {
+  return _createScreenshot(
+    element: element,
+    snapshot: snapshot,
+    selector: selector,
+    name: name,
+    annotator: CrosshairAnnotator(centerPosition: centerPosition),
+    printToConsole: false,
+  );
+}
+
+Future<Screenshot> _createScreenshot({
+  Element? element,
+  WidgetSnapshot? snapshot,
+  WidgetSelector? selector,
+  String? name,
+  ScreenshotAnnotator? annotator,
+  bool printToConsole = true,
+}) async {
+  final binding = TestWidgetsFlutterBinding.instance;
   final Frame? frame = _caller();
 
   // Element that is currently active in the widget tree, to take a screenshot of
@@ -65,21 +110,23 @@ Future<Screenshot> takeScreenshot({
       final elements = snapshot.discovered;
       if (elements.length > 1) {
         throw StateError(
-          'Screenshots can only be taken of a single elements. '
+          'Screenshots can only be taken of a single element. '
           'The snapshot of ${snapshot.selector} contains ${elements.length} elements. '
           'Use a more specific selector to narrow down the scope of the screenshot.',
         );
       }
       final element = elements.first.element;
       if (!element.mounted) {
+        final reason = annotator == null ? '' : ' with ${annotator.name}';
         throw StateError(
-          'Can not take a screenshot of snapshot $snapshot, because it is not mounted anymore. '
+          'Cannot take a screenshot of snapshot$reason, because it is not mounted anymore. '
           'Only Elements that are currently mounted can be screenshotted.',
         );
       }
       if (snapshot.discoveredWidget != element.widget) {
+        final reason = annotator == null ? '' : ' with ${annotator.name}';
         throw StateError(
-          'Can not take a screenshot of snapshot $snapshot, because the Element has been updated since the snapshot was taken. '
+          'Cannot take a screenshot of snapshot$reason, because the Element has been updated since the snapshot was taken. '
           'This happens when the widget tree is rebuilt.',
         );
       }
@@ -88,8 +135,9 @@ Future<Screenshot> takeScreenshot({
 
     if (element != null) {
       if (!element.mounted) {
+        final reason = annotator == null ? '' : ' with ${annotator.name}';
         throw StateError(
-          'Can not take a screenshot of Element $element, because it is not mounted anymore. '
+          'Cannot take a screenshot of Element$reason, because it is not mounted anymore. '
           'Only Elements that are currently mounted can be screenshotted.',
         );
       }
@@ -97,26 +145,30 @@ Future<Screenshot> takeScreenshot({
     }
 
     // fallback to screenshotting the entire app
-    // Deprecated, but as of today there is no multi window support for widget tests
+    // Deprecated, but as of today there is no multi-window support for widget tests
     // ignore: deprecated_member_use
     return binding.renderViewElement!;
   }();
 
-  late final Uint8List bytes;
+  late final Uint8List image;
   await binding.runAsync(() async {
-    final image = await _captureImage(liveElement);
-    final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+    final plainImage = await _captureImage(liveElement);
+    final ui.Image imageToCapture =
+        await annotator?.annotate(plainImage) ?? plainImage;
+    final byteData =
+        await imageToCapture.toByteData(format: ui.ImageByteFormat.png);
     if (byteData == null) {
-      return 'Could not take screenshot';
+      throw 'Could not take screenshot';
     }
-    bytes = byteData.buffer.asUint8List();
-    image.dispose();
+    image = byteData.buffer.asUint8List();
+    plainImage.dispose();
   });
 
   final spotTempDir = Directory.systemTemp.directory('spot');
   if (!spotTempDir.existsSync()) {
     spotTempDir.createSync();
   }
+
   String callerFileName() {
     final file = frame?.uri.pathSegments.last.replaceFirst('.dart', '');
     final line = frame?.line;
@@ -137,18 +189,22 @@ Future<Screenshot> takeScreenshot({
     } else {
       n = callerFileName();
     }
-
     // always append a unique id to avoid name collisions
     final uniqueId = nanoid(length: 5);
     return '$n-$uniqueId.png';
   }();
+
   final file = spotTempDir.file(screenshotFileName);
-  file.writeAsBytesSync(bytes);
-  // ignore: avoid_print
-  core.print(
-    'Screenshot file://${file.path}\n'
-    '  taken at ${frame?.member} ${frame?.uri}:${frame?.line}:${frame?.column}',
-  );
+  file.writeAsBytesSync(image);
+
+  if (printToConsole) {
+    // ignore: avoid_print
+    core.print(
+      'Screenshot file://${file.path}\n'
+      '  taken at ${frame?.member} ${frame?.uri}:${frame?.line}:${frame?.column}',
+    );
+  }
+
   return Screenshot(file: file, initiator: frame);
 }
 
@@ -222,6 +278,7 @@ Frame? _caller({StackTrace? stack}) {
     if (line.isCore) return false;
     final url = line.uri.toString();
     if (url.contains('package:spot')) return false;
+    if (url.startsWith('package:flutter_test')) return false;
     return true;
   }).toList();
   final Frame? bestGuess = relevantLines.firstOrNull;
