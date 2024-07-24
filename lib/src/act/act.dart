@@ -86,7 +86,7 @@ class Act {
     final snapshot = selector.snapshot()..existsOnce();
 
     return TestAsyncUtils.guard<void>(() async {
-      return await _alwaysPropagateDevicePointerEvents(() async {
+      return _alwaysPropagateDevicePointerEvents(() async {
         final renderBox = _getRenderBoxOrThrow(selector);
 
         // Before tapping the widget, we need to make sure that the widget is
@@ -171,7 +171,7 @@ class Act {
     final snapshot = dragStart.snapshot()..existsOnce();
 
     return TestAsyncUtils.guard<void>(() async {
-      return await _alwaysPropagateDevicePointerEvents(() async {
+      return _alwaysPropagateDevicePointerEvents(() async {
         final renderBox = _getRenderBoxOrThrow(dragStart);
 
         final binding = TestWidgetsFlutterBinding.instance;

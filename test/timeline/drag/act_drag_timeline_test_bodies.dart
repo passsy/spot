@@ -163,7 +163,7 @@ class ActDragTimelineTestBodies {
       timelineMode: TimelineMode.live,
       drags: _failingDragAmount,
       captureStart: [
-        if (isGlobal) shared.timelineHeader else '🔴 - Recording live timeline'
+        if (isGlobal) shared.timelineHeader else '🔴 - Recording live timeline',
       ],
     );
 
