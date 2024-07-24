@@ -128,7 +128,7 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
     );
 
     final timeline = stdout.split('\n');
-// Does not start with 'Timeline', this only happens on error
+    // Does not start with 'Timeline', this only happens on error
     expect(timeline.first, shared.timelineHeader);
     expect(
       timeline.second,
@@ -176,7 +176,7 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
     );
 
     final timeline = stdout.split('\n');
-// Does not start with 'Timeline', this only happens on error
+    // Does not start with 'Timeline', this only happens on error
     expect(timeline.first, shared.timelineHeader);
     expect(
       timeline.second,
@@ -259,7 +259,7 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       spotText('Counter: 4').existsOnce();
       await act.tap(_subtractButtonSelector);
       spotText('Counter: 3').existsOnce();
-// Notify that the recording stopped
+      // Notify that the recording stopped
       timeline.mode = TimelineMode.off;
       await act.tap(_clearButtonSelector);
       spotText('Counter: 0').existsOnce();
@@ -277,7 +277,7 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       output,
       contains('Tap ${_subtractButtonSelector.toStringBreadcrumb()}'),
     );
-// No further events were added to the timeline, including screenshots
+    // No further events were added to the timeline, including screenshots
     expect(
       output,
       isNot(contains('Tap ${_clearButtonSelector.toStringBreadcrumb()}')),

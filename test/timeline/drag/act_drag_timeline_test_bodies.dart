@@ -300,7 +300,6 @@ class ActDragTimelineTestBodies {
       title: title,
       timelineMode: timelineMode,
       isGlobalMode: isGlobalMode,
-      globalTimelineModeToSwitch: globalTimelineModeToSwitch,
       drags: drags,
     );
 
@@ -317,13 +316,7 @@ class ActDragTimelineTestBodies {
     required TimelineMode timelineMode,
     required int drags,
     bool isGlobalMode = false,
-    TimelineMode? globalTimelineModeToSwitch,
   }) {
-    final switchPart = globalTimelineModeToSwitch != null
-        ? '''
-      globalTimelineMode = TimelineMode.${globalTimelineModeToSwitch.toString().split('.').last};
-      '''
-        : '';
     final testTitle = '${isGlobalMode ? 'Global: ' : 'Local: '}$title';
 
     final globalInitiator =
@@ -343,7 +336,6 @@ void main() async {
 $globalInitiator
   testWidgets("$testTitle", (WidgetTester tester) async {
   $localInitiator
-  $switchPart
     await tester.pumpWidget(const DragUntilVisibleTestWidget());
       final firstItem = spotText('Item at index: 3', exact: true)..existsOnce();
       final secondItem = spotText('Item at index: 27', exact: true)
