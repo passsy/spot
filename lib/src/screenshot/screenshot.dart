@@ -1,5 +1,5 @@
 import 'dart:core';
-import 'dart:core' as core;
+// import 'dart:core' as core;
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
@@ -17,14 +17,18 @@ import 'package:stack_trace/stack_trace.dart';
 
 export 'package:stack_trace/stack_trace.dart' show Frame;
 
-/// A screenshot taken from a widget test.
+/// A screenshot taken from a widget
 ///
 /// May also be just a single widget, not the entire screen
 class Screenshot {
   /// Creates a [Screenshot] that points to a file on disk.
   Screenshot({
     required this.file,
+    required this.pixels,
     this.initiator,
+    required this.width,
+    required this.height,
+    required this.pixelRatio,
   });
 
   /// The file where the screenshot was saved to
@@ -32,6 +36,45 @@ class Screenshot {
 
   /// Call stack of the code that initiated the screenshot
   final Frame? initiator;
+
+  /// The image data of the screenshot in RGBA format
+  final Uint8List pixels;
+
+  /// The width of the screenshot logical pixels
+  ///
+  /// width * pixelRatio = physical pixels
+  final int width;
+
+  /// The height of the screenshot in logical pixels
+  ///
+  /// height * pixelRatio = physical pixels
+  final int height;
+
+  /// The pixel ratio of the screenshot
+  final double pixelRatio;
+
+  /// The width of the screenshot in physical pixels
+  int get physicalPixelWidth => (width * pixelRatio).round();
+
+  /// The height of the screenshot in physical pixels
+  int get physicalPixelHeight => (height * pixelRatio).round();
+
+  /// The image data
+  Future<ui.Image> get image async {
+    final buffer = await ui.ImmutableBuffer.fromUint8List(pixels);
+    final descriptor = ui.ImageDescriptor.raw(
+      buffer,
+      width: width,
+      height: height,
+      pixelFormat: ui.PixelFormat.rgba8888,
+    );
+    final codec = await descriptor.instantiateCodec();
+    codec.dispose();
+    final frame = await codec.getNextFrame();
+    final image = frame.image;
+    image.dispose();
+    return image;
+  }
 }
 
 /// Takes a screenshot of the entire screen or a single widget.
@@ -150,19 +193,26 @@ Future<Screenshot> _createScreenshot({
     return binding.renderViewElement!;
   }();
 
-  late final Uint8List image;
-  await binding.runAsync(() async {
-    final plainImage = await _captureImage(liveElement);
-    final ui.Image imageToCapture =
-        await annotator?.annotate(plainImage) ?? plainImage;
-    final byteData =
-        await imageToCapture.toByteData(format: ui.ImageByteFormat.png);
-    if (byteData == null) {
-      throw 'Could not take screenshot';
-    }
-    image = byteData.buffer.asUint8List();
-    plainImage.dispose();
+  final view = binding.platformDispatcher.implicitView;
+  final devicePixelRatio = view?.devicePixelRatio ?? 1.0;
+
+  ui.Image? image = await binding.runAsync(() async {
+    return await _captureImage(liveElement, devicePixelRatio);
   });
+  if (image == null) {
+    throw 'Could not take screenshot';
+  }
+  if (annotator != null) {
+    image = await binding.runAsync(() => annotator.annotate(image!));
+  }
+  final byteData = await binding.runAsync(() async {
+    return await image!.toByteData(format: ui.ImageByteFormat.png);
+  });
+  if (byteData == null) {
+    throw 'Could not take screenshot';
+  }
+  final Uint8List imageBytes = byteData.buffer.asUint8List();
+  image!.dispose();
 
   final spotTempDir = Directory.systemTemp.directory('spot');
   if (!spotTempDir.existsSync()) {
@@ -195,17 +245,23 @@ Future<Screenshot> _createScreenshot({
   }();
 
   final file = spotTempDir.file(screenshotFileName);
-  file.writeAsBytesSync(image);
+  file.writeAsBytesSync(imageBytes);
 
   if (printToConsole) {
     // ignore: avoid_print
-    core.print(
+    print(
       'Screenshot file://${file.path}\n'
       '  taken at ${frame?.member} ${frame?.uri}:${frame?.line}:${frame?.column}',
     );
   }
-
-  return Screenshot(file: file, initiator: frame);
+  return Screenshot(
+    file: file,
+    pixels: imageBytes,
+    initiator: frame,
+    width: image.width ~/ devicePixelRatio,
+    height: image.height ~/ devicePixelRatio,
+    pixelRatio: devicePixelRatio,
+  );
 }
 
 /// Provides the ability to create screenshots of a [WidgetSelector]
@@ -241,7 +297,7 @@ extension ElementScreenshotExtension on Element {
 /// See also:
 ///
 ///  * [OffsetLayer.toImage] which is the actual method being called.
-Future<ui.Image> _captureImage(Element element) async {
+Future<ui.Image> _captureImage(Element element, double pixelRatio) async {
   assert(element.renderObject != null);
   RenderObject renderObject = element.renderObject!;
   while (!renderObject.isRepaintBoundary) {
@@ -251,7 +307,10 @@ Future<ui.Image> _captureImage(Element element) async {
   assert(!renderObject.debugNeedsPaint);
 
   final OffsetLayer layer = renderObject.debugLayer! as OffsetLayer;
-  final ui.Image image = await layer.toImage(renderObject.paintBounds);
+  final ui.Image image = await layer.toImage(
+    renderObject.paintBounds,
+    pixelRatio: pixelRatio,
+  );
 
   if (element.renderObject is RenderBox) {
     final expectedSize = (element.renderObject as RenderBox?)!.size;

@@ -14,7 +14,7 @@ import '../util/assert_error.dart';
 void main() {
   testWidgets('Take screenshot of the entire app', (tester) async {
     tester.view.physicalSize = const Size(210, 210);
-    tester.view.devicePixelRatio = 1.0;
+    tester.view.devicePixelRatio = 3.0;
     const red = Color(0xffff0000);
     await tester.pumpWidget(
       Center(
@@ -24,9 +24,47 @@ void main() {
 
     final shot = await takeScreenshot();
     expect(shot.file.existsSync(), isTrue);
+    expect(shot.width, 210);
+    expect(shot.height, 210);
+    expect(shot.physicalPixelHeight, 630);
+    expect(shot.physicalPixelWidth, 630);
+    expect(shot.pixelRatio, 3.0);
+    expect(shot.pixels, isNotNull);
 
     final redPixelCoverage = await percentageOfPixelsWithColor(shot.file, red);
     expect(redPixelCoverage, greaterThan(0.9));
+  });
+
+  testWidgets('Accounts for devicePixelRatio', (tester) async {
+    tester.view.physicalSize = const Size(210, 210);
+    await tester.pumpWidget(
+      Center(
+        child: Container(height: 200, width: 200, color: Color(0xffff0000)),
+      ),
+    );
+
+    addTearDown(() => tester.view.resetDevicePixelRatio());
+    tester.view.devicePixelRatio = 1.0;
+    await tester.pump();
+    {
+      final shot = await takeScreenshot();
+      expect(shot.file.existsSync(), isTrue);
+      final pixels = shot.file.readAsBytesSync();
+      final image = img.decodeImage(pixels)!;
+      expect(image.width, 210);
+      expect(image.width, 210);
+    }
+
+    tester.view.devicePixelRatio = 2.0;
+    await tester.pump();
+    {
+      final shot = await takeScreenshot();
+      expect(shot.file.existsSync(), isTrue);
+      final pixels = shot.file.readAsBytesSync();
+      final image = img.decodeImage(pixels)!;
+      expect(image.width, 420);
+      expect(image.width, 420);
+    }
   });
 
   testWidgets('Take screenshot from a selector', (tester) async {
