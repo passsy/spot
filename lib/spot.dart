@@ -2,6 +2,7 @@
 library spot;
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,8 +18,7 @@ export 'package:checks/checks.dart'
         // async checks are not useful for spot
         StreamChecks,
         WithQueueExtension;
-export 'package:checks/context.dart'
-    show Condition, Context, ContextExtension, Extracted, Rejection, Subject;
+export 'package:checks/context.dart' show Condition, Context, ContextExtension, Extracted, Rejection, Subject;
 export 'package:meta/meta.dart' show useResult;
 export 'package:spot/src/act/act.dart' show Act, act;
 export 'package:spot/src/screenshot/screenshot.dart'
@@ -28,20 +28,15 @@ export 'package:spot/src/screenshot/screenshot.dart'
         SelectorScreenshotExtension,
         SnapshotScreenshotExtension,
         takeScreenshot;
-export 'package:spot/src/spot/default_selectors.dart'
-    show DefaultWidgetMatchers, DefaultWidgetSelectors;
-export 'package:spot/src/spot/diagnostic_props.dart'
-    show DiagnosticPropWidgetMatcher, DiagnosticPropWidgetSelector;
+export 'package:spot/src/spot/default_selectors.dart' show DefaultWidgetMatchers, DefaultWidgetSelectors;
+export 'package:spot/src/spot/diagnostic_props.dart' show DiagnosticPropWidgetMatcher, DiagnosticPropWidgetSelector;
 export 'package:spot/src/spot/effective/effective_text.dart'
     show EffectiveTextMatcher, EffectiveTextSelector, TextStyleSubject;
 export 'package:spot/src/spot/filters/child_filter.dart' show ChildFilter;
 export 'package:spot/src/spot/filters/parent_filter.dart' show ParentFilter;
-export 'package:spot/src/spot/filters/predicate_filter.dart'
-    show PredicateFilter;
-export 'package:spot/src/spot/filters/widget_type_filter.dart'
-    show WidgetTypeFilter;
-export 'package:spot/src/spot/finder_interop.dart'
-    show FinderFilter, FinderToSpot, SpotToFinder;
+export 'package:spot/src/spot/filters/predicate_filter.dart' show PredicateFilter;
+export 'package:spot/src/spot/filters/widget_type_filter.dart' show WidgetTypeFilter;
+export 'package:spot/src/spot/finder_interop.dart' show FinderFilter, FinderToSpot, SpotToFinder;
 export 'package:spot/src/spot/matcher_generator.dart' show CreateMatchers;
 export 'package:spot/src/spot/props.dart'
     show
@@ -75,15 +70,9 @@ export 'package:spot/src/spot/snapshot.dart'
         WidgetSnapshot,
         WidgetSnapshotShorthands;
 export 'package:spot/src/spot/text/any_text.dart' show AnyText;
-export 'package:spot/src/spot/tree_snapshot.dart'
-    show ScopedWidgetTreeSnapshot, WidgetTreeNode;
+export 'package:spot/src/spot/tree_snapshot.dart' show ScopedWidgetTreeSnapshot, WidgetTreeNode;
 export 'package:spot/src/spot/widget_matcher.dart'
-    show
-        MultiWidgetMatcher,
-        MultiWidgetMatcherExtensions,
-        PropertyCheckFailure,
-        WidgetMatcher,
-        WidgetMatcherExtensions;
+    show MultiWidgetMatcher, MultiWidgetMatcherExtensions, PropertyCheckFailure, WidgetMatcher, WidgetMatcherExtensions;
 export 'package:spot/src/spot/widget_selector.dart'
     show
         ElementFilter,
@@ -500,22 +489,36 @@ WidgetSelector<W> spotKeys<W extends Widget>(
 Future<void> loadAppFonts() async {
   TestWidgetsFlutterBinding.ensureInitialized();
   // Load the font manifest
-  final fontManifest =
-      await rootBundle.loadStructuredData<List<Map<String, dynamic>>>(
+  final fontManifest = await rootBundle.loadStructuredData<List<Map<String, dynamic>>>(
     'FontManifest.json',
     (string) async {
       // Parse and cast the JSON to List<Map<String, dynamic>>
-      return (json.decode(string) as List)
-          .map((e) => e as Map<String, dynamic>)
-          .toList();
+      return (json.decode(string) as List).map((e) => e as Map<String, dynamic>).toList();
     },
   );
-  // Loop through each font and load it
+  await loadFontsFromFontsManifest(fontManifest);
+}
+
+@visibleForTesting
+Future<void> loadFontsFromFontsManifest(List<Map<String, dynamic>> fontManifest) async {
+  // When no special fonts are defined or there is no roboto in the manifest we load it from the manifest to render standard Text widgets
+  if (fontManifest.isEmpty || fontManifest.every((element) => element['family'] != 'Roboto')) {
+    final fontLoader = FontLoader('Roboto');
+    final fontPath = Platform.executable;
+    final desiredPath = fontPath.split('/engine/')[0];
+    fontLoader.addFont(rootBundle.load('$desiredPath/material_fonts/Roboto-Regular.ttf'));
+    // fontLoader.addFont(rootBundle.load('packages/spot/assets/fonts/Roboto-Bold.ttf'));
+    // fontLoader.addFont(rootBundle.load('packages/spot/assets/fonts/Roboto-Italic.ttf'));
+    // fontLoader.addFont(rootBundle.load('packages/spot/assets/fonts/Roboto-BoldItalic.ttf'));
+    await fontLoader.load();
+  }
+
+  // Load the fonts from the manifest. These can be the ones defined in the app or in dependencies.
   for (final Map<String, dynamic> font in fontManifest) {
+    print(font);
     final fontLoader = FontLoader(derivedFontFamily(font));
     // Cast 'fonts' field to List<Map<String, dynamic>> to use in the for loop
-    final List<Map<String, dynamic>> fontsList =
-        (font['fonts'] as List).map((e) => e as Map<String, dynamic>).toList();
+    final List<Map<String, dynamic>> fontsList = (font['fonts'] as List).map((e) => e as Map<String, dynamic>).toList();
 
     for (final Map<String, dynamic> fontType in fontsList) {
       final String assetPath = fontType['asset'] as String;
@@ -526,22 +529,12 @@ Future<void> loadAppFonts() async {
   }
 }
 
-/// There is no way to easily load the Roboto or Cupertino fonts.
-/// To make them available in tests, a package needs to include their own copies of them.
-///
-/// GoldenToolkit supplies Roboto because it is free to use.
-///
-/// However, when a downstream package includes a font, the font family will be prefixed with
-/// /packages/<package name>/<fontFamily> in order to disambiguate when multiple packages include
-/// fonts with the same name.
-///
-/// Ultimately, the font loader will load whatever we tell it, so if we see a font that looks like
-/// a Material or Cupertino font family, let's treat it as the main font family
 @visibleForTesting
 String derivedFontFamily(Map<String, dynamic> fontDefinition) {
   if (!fontDefinition.containsKey('family')) {
     return '';
   }
+  print('fontDefinition: $fontDefinition');
 
   final String fontFamily = fontDefinition['family'] as String;
 
@@ -555,8 +548,7 @@ String derivedFontFamily(Map<String, dynamic> fontDefinition) {
       return fontFamilyName;
     }
   } else {
-    for (final Map<String, dynamic> fontType
-        in fontDefinition['fonts'] as List<Map<String, dynamic>>) {
+    for (final Map<String, dynamic> fontType in fontDefinition['fonts'] as List<Map<String, dynamic>>) {
       final String? asset = fontType['asset'] as String?;
       if (asset != null && asset.startsWith('packages')) {
         final packageName = asset.split('/')[1];
