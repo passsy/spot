@@ -123,7 +123,7 @@ class Timeline {
       TimelineEvent.now(
         name: name,
         screenshot: screenshot,
-        initiator: screenshot.initiator,
+        initiator: _mostRelevantCaller(fallbackFrame: screenshot.initiator),
         eventType: eventType,
       ),
     );
@@ -141,8 +141,9 @@ class Timeline {
       TimelineEvent(
         name: name,
         screenshot: screenshot,
-        initiator:
-            initiator ?? screenshot?.initiator ?? Trace.current().frames[1],
+        initiator: _mostRelevantCaller(
+          fallbackFrame: initiator ?? screenshot?.initiator,
+        ),
         timestamp: DateTime.now(),
         treeSnapshot: currentWidgetTreeSnapshot(),
         eventType:
@@ -443,7 +444,7 @@ String _testNameWithHierarchy() {
             }
             return group.name;
           })
-          .whereNotNull()
+          .nonNulls
           .toList() ??
       [];
 
@@ -483,4 +484,31 @@ String _testNameWithHierarchy() {
   } else {
     return test.test.name;
   }
+}
+
+Frame? _mostRelevantCaller({Frame? fallbackFrame}) {
+  final frames = Trace.current().frames;
+
+  final nonPackageFrames = frames.where((frame) => frame.package == null);
+
+  final testFileCaller = nonPackageFrames.firstWhereOrNull((frame) {
+    final location = frame.location;
+    return location.startsWith('test/') && location.endsWith('_test.dart');
+  });
+
+  final preferredFrame =
+      testFileCaller ?? nonPackageFrames.lastOrNull ?? fallbackFrame;
+
+  if (preferredFrame != null) {
+    // remove any '<fn>' parts
+    final memberName = preferredFrame.member?.split('.').first ?? '';
+    return Frame(
+      preferredFrame.uri,
+      preferredFrame.line,
+      preferredFrame.column,
+      memberName,
+    );
+  }
+
+  return null;
 }
