@@ -12,7 +12,8 @@ import 'package:test_api/src/backend/invoker.dart';
 //ignore: implementation_imports
 import 'package:test_api/src/backend/live_test.dart';
 
-TimelineMode _globalTimelineMode = getTimelineModeFromEnv() ?? TimelineMode.record;
+TimelineMode _globalTimelineMode =
+    getTimelineModeFromEnv() ?? TimelineMode.record;
 
 /// Returns the global timeline mode than can be used across multiple tests
 TimelineMode get globalTimelineMode => _globalTimelineMode;
@@ -60,7 +61,8 @@ Timeline get timeline {
   final newTimeline = Timeline();
 
   Invoker.current!.addTearDown(() {
-    if (!test.state.result.isPassing && newTimeline.mode == TimelineMode.record) {
+    if (!test.state.result.isPassing &&
+        newTimeline.mode == TimelineMode.record) {
       newTimeline.printToConsole();
       newTimeline._printHTML();
     } else if (newTimeline.mode == TimelineMode.live) {
@@ -139,10 +141,12 @@ class Timeline {
       TimelineEvent(
         name: name,
         screenshot: screenshot,
-        initiator: initiator ?? screenshot?.initiator ?? Trace.current().frames[1],
+        initiator:
+            initiator ?? screenshot?.initiator ?? Trace.current().frames[1],
         timestamp: DateTime.now(),
         treeSnapshot: currentWidgetTreeSnapshot(),
-        eventType: eventType != null ? TimelineEventType(label: eventType) : null,
+        eventType:
+            eventType != null ? TimelineEventType(label: eventType) : null,
       ),
     );
   }
@@ -214,7 +218,9 @@ class Timeline {
   void _printEvent(TimelineEvent event) {
     final StringBuffer buffer = StringBuffer();
     final frame = event.initiator;
-    final caller = frame != null ? 'at ${frame.member} ${frame.uri}:${frame.line}:${frame.column}' : null;
+    final caller = frame != null
+        ? 'at ${frame.member} ${frame.uri}:${frame.line}:${frame.column}'
+        : null;
 
     buffer.writeln('==================== Timeline Event ====================');
     buffer.writeln('Event: ${event.name}');
@@ -243,7 +249,8 @@ class Timeline {
       '<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">',
     );
 
-    final String eventsForScript = _events.where((event) => event.screenshot != null).map((event) {
+    final String eventsForScript =
+        _events.where((event) => event.screenshot != null).map((event) {
       return '{src: "file://${event.screenshot!.file.path}", title: "${event.eventType?.label ?? "Event ${_events.indexOf(event) + 1}"}"}';
     }).join(',\n  ');
 
@@ -276,7 +283,8 @@ class Timeline {
     htmlBuffer.writeln('<div id="snackbar"></div>');
 
     if (_events.isNotEmpty) {
-      htmlBuffer.writeln('<div class = "horizontal-spacer"><h2>Events</h2></div>');
+      htmlBuffer
+          .writeln('<div class = "horizontal-spacer"><h2>Events</h2></div>');
     }
 
     final events = () {
@@ -287,7 +295,9 @@ class Timeline {
           final caller = event.initiator != null
               ? 'at ${event.initiator!.member} ${event.initiator!.uri}:${event.initiator!.line}:${event.initiator!.column}'
               : 'N/A';
-          final type = event.eventType != null ? event.eventType!.label : "Unknown event type";
+          final type = event.eventType != null
+              ? event.eventType!.label
+              : "Unknown event type";
           final screenshot = event.screenshot != null
               ? '<img src="file://${event.screenshot!.file.path}" class="thumbnail" alt="Screenshot" onclick="openModal($index)">'
               : '';
@@ -313,13 +323,16 @@ class Timeline {
     htmlBuffer.write(events);
 
     htmlBuffer.writeln('<div id="myModal" class="modal">');
-    htmlBuffer.writeln('<span class="close" onclick="closeModal()">&times;</span>');
+    htmlBuffer
+        .writeln('<span class="close" onclick="closeModal()">&times;</span>');
     htmlBuffer.writeln('<div class="modal-content">');
     htmlBuffer.writeln('<img id="img01" alt="Screenshot of the Event"/>');
     htmlBuffer.writeln('<div id="caption">');
-    htmlBuffer.writeln('<a class="nav nav-left" onclick="showPrev()">&#10094;</a>');
+    htmlBuffer
+        .writeln('<a class="nav nav-left" onclick="showPrev()">&#10094;</a>');
     htmlBuffer.writeln('<div id="captionText"></div>');
-    htmlBuffer.writeln('<a class="nav nav-right" onclick="showNext()">&#10095;</a>');
+    htmlBuffer
+        .writeln('<a class="nav nav-right" onclick="showNext()">&#10095;</a>');
     htmlBuffer.writeln('</div>'); // close caption
     htmlBuffer.writeln('</div>'); // close modal-content
     htmlBuffer.writeln('</div>'); // close modal
