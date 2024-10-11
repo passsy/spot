@@ -87,7 +87,7 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       'Event: Tap Icon Widget with icon: "IconData(U+0E047)"',
     );
     expect(
-      timeline[3].startsWith('Caller: at main.<fn> file:///'),
+      timeline[3].startsWith('Caller: at main file:///'),
       isTrue,
     );
     expect(
@@ -183,7 +183,7 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       'Event: Tap Icon Widget with icon: "IconData(U+0E047)"',
     );
     expect(
-      timeline[2].startsWith('Caller: at main.<fn> file:///'),
+      timeline[2].startsWith('Caller: at main file:///'),
       isTrue,
     );
     expect(
