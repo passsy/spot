@@ -128,7 +128,7 @@ extension ${widgetType}Getter on WidgetMatcher<$widgetType> {
         continue;
       }
       if (prop.name == 'depth' || prop.name == 'key') {
-        // ignore default properties that are covered by general Wiget selectors
+        // ignore default properties that are covered by general Widget selectors
         continue;
       }
       if (prop.name == 'dependencies') {
