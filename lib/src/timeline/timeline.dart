@@ -1,12 +1,9 @@
 // ignore_for_file: depend_on_referenced_packages
-import 'dart:io';
+
 import 'package:collection/collection.dart';
-import 'package:path/path.dart' as path;
 import 'package:spot/src/screenshot/screenshot.dart';
 import 'package:spot/src/spot/tree_snapshot.dart';
 import 'package:spot/src/timeline/html/print_html.dart';
-import 'package:spot/src/timeline/html/script.js.dart';
-import 'package:spot/src/timeline/html/styles.css.dart';
 import 'package:stack_trace/stack_trace.dart';
 //ignore: implementation_imports
 import 'package:test_api/src/backend/invoker.dart';
@@ -114,28 +111,12 @@ class Timeline {
     _mode = value;
   }
 
-  /// Adds a screenshot to the timeline.
-  void addScreenshot(
-    Screenshot screenshot, {
-    String? name,
-    TimelineEventType? eventType,
-  }) {
-    addRawEvent(
-      TimelineEvent.now(
-        name: name,
-        screenshot: screenshot,
-        initiator: _mostRelevantCaller(fallbackFrame: screenshot.initiator),
-        eventType: eventType,
-      ),
-    );
-  }
-
   /// Adds an event to the timeline.
   void addEvent({
-    String? name,
+    required String name,
     Frame? initiator,
     Screenshot? screenshot,
-    String? eventType,
+    required String eventType,
     String? description,
   }) {
     addRawEvent(
@@ -147,8 +128,23 @@ class Timeline {
         ),
         timestamp: DateTime.now(),
         treeSnapshot: currentWidgetTreeSnapshot(),
-        eventType:
-            eventType != null ? TimelineEventType(label: eventType) : null,
+        eventType: TimelineEventType(label: eventType),
+      ),
+    );
+  }
+
+  /// Adds a screenshot to the timeline.
+  void addScreenshot(
+    Screenshot screenshot, {
+    required String name,
+    required TimelineEventType eventType,
+  }) {
+    addRawEvent(
+      TimelineEvent.now(
+        name: name,
+        screenshot: screenshot,
+        initiator: _mostRelevantCaller(fallbackFrame: screenshot.initiator),
+        eventType: eventType,
       ),
     );
   }
@@ -178,16 +174,12 @@ class Timeline {
     final frame = event.initiator;
     final caller = frame != null
         ? 'at ${frame.member} ${frame.uri}:${frame.line}:${frame.column}'
-        : null;
+        : 'N/A';
 
     buffer.writeln('==================== Timeline Event ====================');
-    if (event.eventType != null) {
-      buffer.writeln('Event Type: ${event.eventType}');
-    }
+    buffer.writeln('Event Type: ${event.eventType}');
     buffer.writeln('Name: ${event.name}');
-    if (caller != null) {
-      buffer.writeln('Caller: $caller');
-    }
+    buffer.writeln('Caller: $caller');
     if (event.screenshot != null) {
       buffer.writeln('Screenshot: file://${event.screenshot!.file.path}');
     }
@@ -222,8 +214,8 @@ class TimelineEvent {
   const TimelineEvent({
     required this.timestamp,
     required this.treeSnapshot,
-    this.name,
-    this.eventType,
+    required this.name,
+    required this.eventType,
     this.description,
     this.initiator,
     this.screenshot,
@@ -231,10 +223,10 @@ class TimelineEvent {
 
   /// Creates a new timeline event with the current time and widget tree snapshot.
   factory TimelineEvent.now({
+    required TimelineEventType eventType,
+    required String name,
     Screenshot? screenshot,
-    String? name,
     Frame? initiator,
-    TimelineEventType? eventType,
   }) {
     return TimelineEvent(
       screenshot: screenshot,
@@ -247,13 +239,13 @@ class TimelineEvent {
   }
 
   /// The type of event that occurred.
-  final TimelineEventType? eventType;
+  final TimelineEventType eventType;
 
   /// The screenshot taken at the time of the event.
   final Screenshot? screenshot;
 
   /// The name of the event.
-  final String? name;
+  final String name;
 
   /// The time at which the event occurred.
   final DateTime timestamp;
@@ -289,69 +281,11 @@ enum TimelineMode {
   final String message;
 }
 
-/// Returns the test name including the group hierarchy.
-String _testNameWithHierarchy() {
-  final test = Invoker.current?.liveTest;
-  if (test == null) {
-    return 'No test found';
-  }
-
-  // Group names are concatenated with the name of the previous group
-  final rawGroupNames = Invoker.current?.liveTest.groups
-          .map((group) {
-            if (group.name.isEmpty) {
-              return null;
-            }
-            return group.name;
-          })
-          .nonNulls
-          .toList() ??
-      [];
-
-  List<String> removeRedundantParts(List<String> inputList) {
-    if (inputList.length < 2) {
-      return inputList;
-    }
-
-    final List<String> outputList = [];
-    for (int i = 0; i < inputList.length - 1; i++) {
-      outputList.add(inputList[i]);
-    }
-
-    String lastElement = inputList.last;
-    final String previousElement = inputList[inputList.length - 2];
-
-    // Remove the part of the last element that is included in the previous one
-    if (lastElement.startsWith(previousElement)) {
-      lastElement = lastElement.substring(previousElement.length).trim();
-    }
-
-    if (lastElement.isNotEmpty) {
-      outputList.add(lastElement);
-    }
-
-    return outputList;
-  }
-
-  final cleanedGroups = removeRedundantParts(rawGroupNames);
-  if (cleanedGroups.isNotEmpty) {
-    final joinedGroups = cleanedGroups.join(' ');
-
-    final List<String> fullNameParts = [joinedGroups, test.test.name];
-    final String finalTestName = removeRedundantParts(fullNameParts).last;
-    final String groupHierarchy = cleanedGroups.join(' => ');
-    return '$finalTestName in group(s): $groupHierarchy';
-  } else {
-    return test.test.name;
-  }
-}
-
 Frame? _mostRelevantCaller({Frame? fallbackFrame}) {
   final frames = Trace.current().frames;
 
   final nonPackageFrames = frames.where((frame) => frame.package == null);
-
-  final testFileCaller = nonPackageFrames.firstWhereOrNull((frame) {
+  final testFileCaller = nonPackageFrames.lastWhereOrNull((frame) {
     final location = frame.location;
     return location.startsWith('test/') && location.endsWith('_test.dart');
   });
