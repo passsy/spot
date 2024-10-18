@@ -180,8 +180,7 @@ mixin ChainableSelectors<T extends Widget> {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    return spotWidgets<W>(widget, parents: parents, children: children)
-        .atMost(1);
+    return spotWidgets<W>(widget, parents: parents, children: children).atMost(1);
   }
 
   /// Creates a [WidgetSelector] that finds all [widget] by identity
@@ -745,8 +744,8 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostOnce] asserts that at most one widget exists.
   /// - [existsAtMostNTimes] asserts that at most `n` widgets of type [W] exist.
   MultiWidgetMatcher<W> existsAtLeastOnce() {
-    final atLeastOne =
-        copyWith(quantityConstraint: const QuantityConstraint.atLeast(1));
+    _maybeAddEvent('exists at least once');
+    final atLeastOne = copyWith(quantityConstraint: const QuantityConstraint.atLeast(1));
     return snapshot(atLeastOne).multi;
   }
 
@@ -767,6 +766,7 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtLeastNTimes] asserts that at least `n` widgets of type [W] exist.
   /// - [existsAtMostNTimes] asserts that at most `n` widgets of type [W] exist.
   WidgetMatcher<W> existsAtMostOnce() {
+    _maybeAddEvent('exists at most once');
     final atMostOne = copyWith(quantityConstraint: QuantityConstraint.single);
     return snapshot(atMostOne).single;
   }
@@ -788,6 +788,7 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostOnce] asserts that at most one widget exists.
   /// - [existsAtMostNTimes] asserts that at most `n` widgets of type [W] exist.
   void doesNotExist() {
+    _maybeAddEvent('does not exist');
     final none = copyWith(quantityConstraint: QuantityConstraint.zero);
     snapshot(none);
   }
@@ -806,8 +807,8 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostOnce] asserts that at most one widget exists.
   /// - [existsAtMostNTimes] asserts that at most `n` widgets of type [W] exist.
   WidgetMatcher<W> existsOnce() {
-    final one =
-        copyWith(quantityConstraint: const QuantityConstraint.exactly(1));
+    _maybeAddEvent('exists once');
+    final one = copyWith(quantityConstraint: const QuantityConstraint.exactly(1));
     return snapshot(one).single;
   }
 
@@ -825,8 +826,8 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostOnce] asserts that at most one widget exists.
   /// - [existsAtMostNTimes] asserts that at most [n] widgets of type [W] exist.
   MultiWidgetMatcher<W> existsExactlyNTimes(int n) {
-    final exactlyNTimes =
-        copyWith(quantityConstraint: QuantityConstraint.exactly(n));
+    _maybeAddEvent('exists exactly $n times');
+    final exactlyNTimes = copyWith(quantityConstraint: QuantityConstraint.exactly(n));
     return snapshot(exactlyNTimes).multi;
   }
 
@@ -844,6 +845,7 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostOnce] asserts that at most one widget exists.
   /// - [existsAtMostNTimes] asserts that at most [n] widgets of type [W] exist.
   MultiWidgetMatcher<W> existsAtLeastNTimes(int n) {
+    _maybeAddEvent('exists at least $n times');
     final atLeast = copyWith(quantityConstraint: QuantityConstraint.atLeast(n));
     return snapshot(atLeast).multi;
   }
@@ -862,8 +864,16 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtLeastNTimes] asserts that at least [n] widgets of type [W] exist.
   /// - [existsAtMostOnce] asserts that at most one widget exists.
   MultiWidgetMatcher<W> existsAtMostNTimes(int n) {
+    _maybeAddEvent('exists at most $n times');
     final atMostN = copyWith(quantityConstraint: QuantityConstraint.atMost(n));
     return snapshot(atMostN).multi;
+  }
+
+  void _maybeAddEvent(String description) {
+    if (timeline.mode == TimelineMode.off) return;
+    final eventName = '${toStringBreadcrumb()} $description';
+    const String label = 'Assertion';
+    timeline.addEvent(name: eventName, eventType: label);
   }
 }
 
