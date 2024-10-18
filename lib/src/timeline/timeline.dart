@@ -4,8 +4,9 @@ import 'package:collection/collection.dart';
 import 'package:path/path.dart' as path;
 import 'package:spot/src/screenshot/screenshot.dart';
 import 'package:spot/src/spot/tree_snapshot.dart';
-import 'package:spot/src/timeline/script.js.dart';
-import 'package:spot/src/timeline/styles.css.dart';
+import 'package:spot/src/timeline/html/print_html.dart';
+import 'package:spot/src/timeline/html/script.js.dart';
+import 'package:spot/src/timeline/html/styles.css.dart';
 import 'package:stack_trace/stack_trace.dart';
 //ignore: implementation_imports
 import 'package:test_api/src/backend/invoker.dart';
@@ -64,11 +65,11 @@ Timeline get timeline {
     if (!test.state.result.isPassing &&
         newTimeline.mode == TimelineMode.record) {
       newTimeline.printToConsole();
-      newTimeline._printHTML();
+      printHTML(newTimeline._events);
     } else if (newTimeline.mode == TimelineMode.live) {
       // printToConsole() here would lead to duplicate output since
       // the timeline is already being printed live
-      newTimeline._printHTML();
+      printHTML(newTimeline._events);
     }
     _timelines.remove(test);
   });
@@ -172,50 +173,6 @@ class Timeline {
     }
   }
 
-  /// Prints the timeline as an HTML file.
-  void _printHTML() {
-    final spotTempDir = Directory.systemTemp.createTempSync();
-    String name = Invoker.current?.liveTest.test.name ?? '';
-    if (name.isEmpty) {
-      name = 'Unnamed test';
-    }
-    if (!spotTempDir.existsSync()) {
-      spotTempDir.createSync();
-    }
-
-    final String nameForHtml = () {
-      String name = Invoker.current?.liveTest.test.name ?? '';
-
-      if (name.isEmpty) {
-        name = 'Unnamed test';
-      }
-
-      // Replace spaces and underscores with hyphens
-      name = name.replaceAll(RegExp('[ _]'), '-');
-
-      // Remove problematic characters
-      name = name.replaceAll(RegExp('[^a-zA-Z0-9-]'), '');
-
-      // Collapse multiple hyphens into a single hyphen
-      name = name.replaceAll(RegExp('-+'), '-');
-
-      // Convert to lowercase
-      name = name.toLowerCase();
-
-      // Remove leading or trailing hyphens
-      name = name.replaceAll(RegExp(r'^-+|-+$'), '');
-
-      // Append .html extension
-      return 'timeline-$name.html';
-    }();
-
-    final htmlFile = File(path.join(spotTempDir.path, nameForHtml));
-    final content = _timelineAsHTML();
-    htmlFile.writeAsStringSync(content);
-    //ignore: avoid_print
-    print('View time line here: file://${htmlFile.path}');
-  }
-
   void _printEvent(TimelineEvent event) {
     final StringBuffer buffer = StringBuffer();
     final frame = event.initiator;
@@ -224,7 +181,10 @@ class Timeline {
         : null;
 
     buffer.writeln('==================== Timeline Event ====================');
-    buffer.writeln('Event: ${event.name}');
+    if (event.eventType != null) {
+      buffer.writeln('Event Type: ${event.eventType}');
+    }
+    buffer.writeln('Name: ${event.name}');
     if (caller != null) {
       buffer.writeln('Caller: $caller');
     }
@@ -236,111 +196,6 @@ class Timeline {
 
     // ignore: avoid_print
     print(buffer);
-  }
-
-  /// Returns the events in the timeline as an HTML string.
-  String _timelineAsHTML() {
-    final htmlBuffer = StringBuffer();
-    final nameWithHierarchy = _testNameWithHierarchy();
-
-    htmlBuffer.writeln('<html>');
-    htmlBuffer.writeln('<head>');
-    htmlBuffer.writeln('<title>Timeline Events</title>');
-    htmlBuffer.writeln(
-      '<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">',
-    );
-
-    final String eventsForScript =
-        _events.where((event) => event.screenshot != null).map((event) {
-      return '{src: "file://${event.screenshot!.file.path}", title: "${event.eventType?.label ?? "Event ${_events.indexOf(event) + 1}"}"}';
-    }).join(',\n  ');
-
-    htmlBuffer.writeln('<script>');
-    final script = timelineJS
-        .replaceAll('{{events}}', eventsForScript)
-        .replaceAll('{testName}', Invoker.current!.liveTest.test.name);
-    htmlBuffer.write(script);
-    htmlBuffer.writeln('</script>');
-
-    htmlBuffer.writeln('<style>');
-    htmlBuffer.write(timelineCSS);
-    htmlBuffer.writeln('</style>');
-
-    htmlBuffer.writeln('</head>');
-    htmlBuffer.writeln('<body>');
-    htmlBuffer.writeln('<div class="header">');
-    htmlBuffer.writeln(
-      '<img src="https://user-images.githubusercontent.com/1096485/188243198-7abfc785-8ecd-40cb-bb28-5561610432a4.png" height="100px">',
-    );
-    htmlBuffer.writeln('<h1>Timeline</h1>');
-    htmlBuffer.writeln('</div>');
-
-    htmlBuffer.writeln('<div class = "horizontal-spacer"><h2>Info</h2></div>');
-
-    htmlBuffer.writeln('<p><strong>Test:</strong> $nameWithHierarchy</p>');
-    htmlBuffer.writeln(
-      '<button class="button-spot" onclick="copyTestCommandToClipboard()">Copy test command</button>',
-    );
-    htmlBuffer.writeln('<div id="snackbar"></div>');
-
-    if (_events.isNotEmpty) {
-      htmlBuffer
-          .writeln('<div class = "horizontal-spacer"><h2>Events</h2></div>');
-    }
-
-    final events = () {
-      final eventBuffer = StringBuffer();
-      for (final event in _events) {
-        final part = () {
-          final index = _events.indexOf(event);
-          final caller = event.initiator != null
-              ? 'at ${event.initiator!.member} ${event.initiator!.uri}:${event.initiator!.line}:${event.initiator!.column}'
-              : 'N/A';
-          final type = event.eventType != null
-              ? event.eventType!.label
-              : "Unknown event type";
-          final screenshot = event.screenshot != null
-              ? '<img src="file://${event.screenshot!.file.path}" class="thumbnail" alt="Screenshot" onclick="openModal($index)">'
-              : '';
-
-          return '''
-<h2>#${index + 1}</h2>
-<div class="event">
-  $screenshot
-  <div class="event-details">
-    <p><strong>Name:</strong> ${event.name ?? "Unnamed Event"}</p>
-    <p><strong>Event Type:</strong> $type</p>
-    <p><strong>Timestamp:</strong> ${event.timestamp.toIso8601String()}</p>
-    <p><strong>Caller:</strong> $caller</p>
-  </div>
-</div>
-''';
-        }();
-        eventBuffer.write(part);
-      }
-      return eventBuffer.toString();
-    }();
-
-    htmlBuffer.write(events);
-
-    htmlBuffer.writeln('<div id="myModal" class="modal">');
-    htmlBuffer
-        .writeln('<span class="close" onclick="closeModal()">&times;</span>');
-    htmlBuffer.writeln('<div class="modal-content">');
-    htmlBuffer.writeln('<img id="img01" alt="Screenshot of the Event"/>');
-    htmlBuffer.writeln('<div id="caption">');
-    htmlBuffer
-        .writeln('<a class="nav nav-left" onclick="showPrev()">&#10094;</a>');
-    htmlBuffer.writeln('<div id="captionText"></div>');
-    htmlBuffer
-        .writeln('<a class="nav nav-right" onclick="showNext()">&#10095;</a>');
-    htmlBuffer.writeln('</div>'); // close caption
-    htmlBuffer.writeln('</div>'); // close modal-content
-    htmlBuffer.writeln('</div>'); // close modal
-    htmlBuffer.writeln('</body>');
-    htmlBuffer.writeln('</html>');
-
-    return htmlBuffer.toString();
   }
 }
 
@@ -354,6 +209,11 @@ class TimelineEventType {
   const TimelineEventType({
     required this.label,
   });
+
+  @override
+  String toString() {
+    return label;
+  }
 }
 
 /// An event that occurred during a test.

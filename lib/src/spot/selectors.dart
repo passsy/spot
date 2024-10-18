@@ -180,7 +180,8 @@ mixin ChainableSelectors<T extends Widget> {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    return spotWidgets<W>(widget, parents: parents, children: children).atMost(1);
+    return spotWidgets<W>(widget, parents: parents, children: children)
+        .atMost(1);
   }
 
   /// Creates a [WidgetSelector] that finds all [widget] by identity
@@ -745,7 +746,8 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostNTimes] asserts that at most `n` widgets of type [W] exist.
   MultiWidgetMatcher<W> existsAtLeastOnce() {
     _maybeAddEvent('exists at least once');
-    final atLeastOne = copyWith(quantityConstraint: const QuantityConstraint.atLeast(1));
+    final atLeastOne =
+        copyWith(quantityConstraint: const QuantityConstraint.atLeast(1));
     return snapshot(atLeastOne).multi;
   }
 
@@ -808,7 +810,8 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostNTimes] asserts that at most `n` widgets of type [W] exist.
   WidgetMatcher<W> existsOnce() {
     _maybeAddEvent('exists once');
-    final one = copyWith(quantityConstraint: const QuantityConstraint.exactly(1));
+    final one =
+        copyWith(quantityConstraint: const QuantityConstraint.exactly(1));
     return snapshot(one).single;
   }
 
@@ -827,7 +830,8 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostNTimes] asserts that at most [n] widgets of type [W] exist.
   MultiWidgetMatcher<W> existsExactlyNTimes(int n) {
     _maybeAddEvent('exists exactly $n times');
-    final exactlyNTimes = copyWith(quantityConstraint: QuantityConstraint.exactly(n));
+    final exactlyNTimes =
+        copyWith(quantityConstraint: QuantityConstraint.exactly(n));
     return snapshot(exactlyNTimes).multi;
   }
 
