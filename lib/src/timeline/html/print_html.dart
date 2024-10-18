@@ -1,12 +1,12 @@
 // ignore_for_file: depend_on_referenced_packages
 import 'dart:io';
-
-import 'package:dartx/dartx_io.dart';
+import 'package:collection/collection.dart';
 import 'package:path/path.dart' as path;
-import 'package:spot/src/act/act.dart';
+import 'package:spot/src/screenshot/screenshot.dart';
 import 'package:spot/src/timeline/html/script.js.dart';
 import 'package:spot/src/timeline/html/styles.css.dart';
 import 'package:spot/src/timeline/timeline.dart';
+import 'package:stack_trace/stack_trace.dart';
 //ignore: implementation_imports
 import 'package:test_api/src/backend/invoker.dart';
 
@@ -68,7 +68,7 @@ String _timelineAsHTML({required List<TimelineEvent> timeLineEvents}) {
 
   final String eventsForScript =
       timeLineEvents.where((event) => event.screenshot != null).map((event) {
-    return '{src: "file://${event.screenshot!.file.path}", title: "${event.eventType?.label ?? "Event ${timeLineEvents.indexOf(event) + 1}"}"}';
+    return '{src: "file://${event.screenshot!.file.path}", title: "${event.eventType.label}"}';
   }).join(',\n  ');
 
   htmlBuffer.writeln('<script>');
@@ -106,13 +106,13 @@ String _timelineAsHTML({required List<TimelineEvent> timeLineEvents}) {
 
   String? projectName() {
     Directory? dir = Directory.current;
-    String? outermostIdeaDirPath;
+    String? projectDir;
 
     while (dir != null) {
       final ideaDir = Directory(path.join(dir.path, '.idea'));
       if (ideaDir.existsSync()) {
         // Update to the current directory path
-        outermostIdeaDirPath = dir.path;
+        projectDir = dir.path;
       }
 
       // Move up to the parent directory
@@ -124,57 +124,96 @@ String _timelineAsHTML({required List<TimelineEvent> timeLineEvents}) {
       dir = parentDir;
     }
 
-    if (outermostIdeaDirPath == null) return null;
-    final name = outermostIdeaDirPath.split('/').lastOrNull;
+    if (projectDir == null) return null;
+    final name = projectDir.split('/').lastOrNull;
     return name;
   }
 
-  String? eventCaller(TimelineEvent event) {
-    if (event.initiator == null) return null;
-    return 'at ${event.initiator!.member} ${event.initiator!.uri}:${event.initiator!.line}:${event.initiator!.column}';
+  String? eventCaller(Frame? initiator, {String? line}) {
+    if (initiator == null) return null;
+
+    final memberPart = initiator.member != null ? '${initiator.member} ' : '';
+    final uriPart = initiator.uri;
+    final linePart = line ?? initiator.line?.toString() ?? '0';
+    final columnPart = initiator.column?.toString() ?? '0';
+
+    return '$memberPart$uriPart:$linePart:$columnPart';
   }
 
   String? jetBrainsURL(TimelineEvent event) {
-    if (event.initiator == null) return null;
-    final line = event.initiator!.line ?? 0;
-    final clamped = line.clamp(0, line - 1);
-    final caller =
-        'at ${event.initiator!.member} ${event.initiator!.uri}:$clamped:${event.initiator!.column}';
+    final initiator = event.initiator;
+    if (initiator == null) return null;
+
+    final isIntelliJ = Platform.environment.values.any(
+      (value) => value.toLowerCase().contains('intellij'),
+    );
+    if (!isIntelliJ) return null;
+
+    final lineNumber = (initiator.line ?? 0) - 1;
+    final clampedLine = lineNumber >= 0 ? lineNumber.toString() : '0';
+
+    final caller = eventCaller(initiator, line: clampedLine);
     final name = projectName();
-    if (name == null) return null;
-    final path = caller.trim().split(name).lastOrNull;
-    if (path == null) return null;
-    final withoutLeading = path.startsWith('/') ? path.substring(1) : path;
-    return 'jetbrains://idea/navigate/reference?project=$name&path=$withoutLeading';
+    if (caller == null || name == null) return null;
+
+    final path = caller.trim().split(name).last.trim();
+    if (path.isEmpty) return null;
+
+    final normalizedPath = path.startsWith('/') ? path.substring(1) : path;
+
+    return 'jetbrains://idea/navigate/reference?project=$name&path=$normalizedPath';
+  }
+
+  final eventBuffer = StringBuffer();
+
+  void writeScreenshot(TimelineEvent event) {
+    final index = timeLineEvents.indexOf(event);
+    final screenshot = event.screenshot != null
+        ? '<img src="file://${event.screenshot!.file.path}" class="thumbnail" alt="Screenshot" onclick="openModal($index)">'
+        : '';
+    eventBuffer.writeln(screenshot);
+  }
+
+  void writeEventType(TimelineEvent event) {
+    eventBuffer
+        .writeln('<p><strong>Event Type:</strong> ${event.eventType}</p>');
+  }
+
+  void writeName(TimelineEvent event) {
+    eventBuffer.writeln('<p><strong>Name:</strong> ${event.name}</p>');
+  }
+
+  void writeTimestamp(TimelineEvent event) {
+    eventBuffer.writeln(
+        '<p><strong>Timestamp:</strong> ${event.timestamp.toIso8601String()}</p>');
+  }
+
+  void writeCaller(TimelineEvent event) {
+    final caller = eventCaller(event.initiator) ?? 'N/A';
+    eventBuffer.writeln('<p><strong>Caller:</strong> $caller</p>');
+  }
+
+  void writeJetBrainsLink(TimelineEvent event) {
+    final jetBrainsLink = jetBrainsURL(event);
+    if (jetBrainsLink == null) return;
+
+    eventBuffer.writeln(
+      '<a href="$jetBrainsLink"><button class="bn29">OPEN IN IDEA</button></a>',
+    );
   }
 
   final events = () {
-    final eventBuffer = StringBuffer();
     for (final event in timeLineEvents) {
-      final caller = eventCaller(event) ?? 'N/A';
       final index = timeLineEvents.indexOf(event);
-      final type = event.eventType != null
-          ? event.eventType!.label
-          : "Unknown event type";
-      final jetBrainsLink = jetBrainsURL(event);
-      final screenshot = event.screenshot != null
-          ? '<img src="file://${event.screenshot!.file.path}" class="thumbnail" alt="Screenshot" onclick="openModal($index)">'
-          : '';
       eventBuffer.writeln("<h2>#${index + 1}</h2>");
       eventBuffer.writeln('<div class="event">');
-      eventBuffer.writeln(screenshot);
+      writeScreenshot(event);
       eventBuffer.writeln('<div class="event-details">');
-      eventBuffer.writeln('<p><strong>Event Type:</strong> $type</p>');
-      eventBuffer.writeln(
-          '<p><strong>Name:</strong> ${event.name ?? "Unnamed Event"}</p>');
-      eventBuffer.writeln(
-          '<p><strong>Timestamp:</strong> ${event.timestamp.toIso8601String()}</p>');
-      eventBuffer.writeln('<p><strong>Caller:</strong> $caller</p>');
-      if (jetBrainsLink != null) {
-        eventBuffer.writeln(
-          '<p><strong>JetBrains:</strong> <a href="$jetBrainsLink" target="_blank">Open in JetBrains</a></p>',
-        );
-      }
+      writeEventType(event);
+      writeName(event);
+      writeTimestamp(event);
+      writeCaller(event);
+      writeJetBrainsLink(event);
       eventBuffer.writeln('</div>');
       eventBuffer.writeln('</div>');
     }
