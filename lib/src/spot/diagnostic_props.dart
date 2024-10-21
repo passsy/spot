@@ -179,5 +179,5 @@ extension on DiagnosticsNode {
 void _maybeAddAssertionEvent(String description) {
   if (timeline.mode == TimelineMode.off) return;
   const String label = 'Assertion';
-  timeline.addEvent(name: description, eventType: label);
+  timeline.addEvent(details: description, eventType: label);
 }

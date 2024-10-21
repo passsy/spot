@@ -180,7 +180,7 @@ String _timelineAsHTML({required List<TimelineEvent> timeLineEvents}) {
   }
 
   void writeName(TimelineEvent event) {
-    eventBuffer.writeln('<p><strong>Name:</strong> ${event.name}</p>');
+    eventBuffer.writeln('<p><strong>Details:</strong> ${event.details}</p>');
   }
 
   void writeTimestamp(TimelineEvent event) {

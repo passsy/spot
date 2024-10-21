@@ -113,7 +113,7 @@ class Timeline {
 
   /// Adds an event to the timeline.
   void addEvent({
-    required String name,
+    required String details,
     Frame? initiator,
     Screenshot? screenshot,
     required String eventType,
@@ -121,7 +121,7 @@ class Timeline {
   }) {
     addRawEvent(
       TimelineEvent(
-        name: name,
+        details: details,
         screenshot: screenshot,
         initiator: _mostRelevantCaller(
           fallbackFrame: initiator ?? screenshot?.initiator,
@@ -136,12 +136,12 @@ class Timeline {
   /// Adds a screenshot to the timeline.
   void addScreenshot(
     Screenshot screenshot, {
-    required String name,
+    required String details,
     required TimelineEventType eventType,
   }) {
     addRawEvent(
       TimelineEvent.now(
-        name: name,
+        details: details,
         screenshot: screenshot,
         initiator: _mostRelevantCaller(fallbackFrame: screenshot.initiator),
         eventType: eventType,
@@ -178,7 +178,7 @@ class Timeline {
 
     buffer.writeln('==================== Timeline Event ====================');
     buffer.writeln('Event Type: ${event.eventType}');
-    buffer.writeln('Name: ${event.name}');
+    buffer.writeln('Details: ${event.details}');
     buffer.writeln('Caller: $caller');
     if (event.screenshot != null) {
       buffer.writeln('Screenshot: file://${event.screenshot!.file.path}');
@@ -214,7 +214,7 @@ class TimelineEvent {
   const TimelineEvent({
     required this.timestamp,
     required this.treeSnapshot,
-    required this.name,
+    required this.details,
     required this.eventType,
     this.description,
     this.initiator,
@@ -224,13 +224,13 @@ class TimelineEvent {
   /// Creates a new timeline event with the current time and widget tree snapshot.
   factory TimelineEvent.now({
     required TimelineEventType eventType,
-    required String name,
+    required String details,
     Screenshot? screenshot,
     Frame? initiator,
   }) {
     return TimelineEvent(
       screenshot: screenshot,
-      name: name,
+      details: details,
       initiator: initiator,
       timestamp: DateTime.now(),
       treeSnapshot: currentWidgetTreeSnapshot(),
@@ -244,8 +244,8 @@ class TimelineEvent {
   /// The screenshot taken at the time of the event.
   final Screenshot? screenshot;
 
-  /// The name of the event.
-  final String name;
+  /// The details of the event.
+  final String details;
 
   /// The time at which the event occurred.
   final DateTime timestamp;

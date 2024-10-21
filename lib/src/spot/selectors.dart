@@ -875,9 +875,9 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
 
   void _maybeAddEvent(String description) {
     if (timeline.mode == TimelineMode.off) return;
-    final eventName = '${toStringBreadcrumb()} $description';
+    final eventDetails = '${toStringBreadcrumb()} $description';
     const String label = 'Assertion';
-    timeline.addEvent(name: eventName, eventType: label);
+    timeline.addEvent(details: eventDetails, eventType: label);
   }
 }
 
