@@ -2,6 +2,7 @@ import 'package:dartx/dartx.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
+import 'package:spot/spot.dart';
 import 'package:spot/src/checks/checks_nullability.dart';
 import 'package:spot/src/spot/props.dart';
 import 'package:spot/src/spot/selectors.dart';
@@ -137,6 +138,9 @@ extension DiagnosticPropWidgetMatcher<W extends Widget> on WidgetMatcher<W> {
           'with property $propName',
         ],
         (value) {
+          _maybeAddAssertionEvent(
+            "$unconstrainedSelector has $propName with value $value",
+          );
           if (prop == null) {
             return Extracted.rejection(which: ['Has no prop "$propName"']);
           }
@@ -170,4 +174,10 @@ extension on DiagnosticsNode {
     }
     return null;
   }
+}
+
+void _maybeAddAssertionEvent(String description) {
+  if (timeline.mode == TimelineMode.off) return;
+  const String label = 'Assertion';
+  timeline.addEvent(name: description, eventType: label);
 }

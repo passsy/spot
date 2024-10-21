@@ -105,6 +105,8 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
         'Either elementSelector (former selector) or widgetSelector must be set',
       );
     }
+    _maybeAddEvent("Assertion on a property ($T) of $W");
+
     void widgetSelectorCondition(Subject<Element> subject) {
       final Subject<W> widgetSubject = subject.context.nest<W>(
         () => ['widget $W'],
@@ -161,6 +163,9 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
         () => ['$W', "with prop '${prop.name}'"],
         (element) {
           final value = getWidgetProp(prop);
+          _maybeAddEvent(
+            "$W's property '${prop.name}' ($T) is '$value'",
+          );
           return Extracted.value(value);
         },
       ).hideNullability();
@@ -201,6 +206,9 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
         () => ['Element of $W', "with prop '${prop.name}'"],
         (element) {
           final value = getElementProp(prop);
+          _maybeAddEvent(
+            "$W's property '${prop.name}' ($T) is '$value'",
+          );
           return Extracted.value(value);
         },
       ).hideNullability();
@@ -249,6 +257,9 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
         () => ['RenderObject of $W', "with prop '${prop.name}'"],
         (element) {
           final value = getRenderObjectProp(prop);
+          _maybeAddEvent(
+            "$W has RenderObject ($R) with property ($T) '${prop.name}' and its value is $value",
+          );
           return Extracted.value(value);
         },
       ).hideNullability();
@@ -324,6 +335,7 @@ extension MultiWidgetMatcherExtensions<W extends Widget>
   /// one widget is expected to meet a certain condition.
   MultiWidgetMatcher<W> any(void Function(WidgetMatcher<W>) matcher) {
     TestAsyncUtils.guardSync();
+    _maybeAddEvent('Any $W meets a given condition');
     if (discovered.isEmpty) {
       throw Exception('Expected at least one match for $this, but found none');
     }
@@ -354,6 +366,7 @@ extension MultiWidgetMatcherExtensions<W extends Widget>
   /// with details of the mismatches.
   MultiWidgetMatcher<W> all(void Function(WidgetMatcher<W>) matcher) {
     TestAsyncUtils.guardSync();
+    _maybeAddEvent('All $W meet a given condition');
     if (discovered.isEmpty) {
       throw Exception('Expected at least one match for $this, but found none');
     }
@@ -412,4 +425,10 @@ class PropertyCheckFailure extends TestFailure {
 
   /// Description of the matcher that led to this failure.
   final String matcherDescription;
+}
+
+void _maybeAddEvent(String description) {
+  if (timeline.mode == TimelineMode.off) return;
+  const String label = 'Assertion';
+  timeline.addEvent(name: description, eventType: label);
 }
