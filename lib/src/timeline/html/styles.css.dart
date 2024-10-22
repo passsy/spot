@@ -72,7 +72,6 @@ h1 {
   border: var(--border-width) solid var(--border-color);
   margin: var(--event-margin);
   padding: var(--event-padding);
-  height: var(--event-box-height);
 }
 
 .event-details {
@@ -296,5 +295,65 @@ h1 {
 @keyframes fadeout {
   from {bottom: 30px; opacity: 1;}
   to {bottom: 0; opacity: 0;}
+}
+
+.content {
+ max-height: 25px; /* Adjust the initial max-height as needed */
+ overflow: hidden;
+ transition: max-height 0.3s ease; /* Add smooth transition effect */
+}
+
+.show-more {
+ cursor: pointer;
+ color: var(--spot-orange);
+ display: block;
+ background-color:linear-gradient(to bottom, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 1) 100% );
+}
+
+.secondary-button {
+    padding: 6px 24px;
+    font-size: 12px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100px;
+}
+
+.secondary-button:focus {
+    outline: 3px solid rgba(253, 99, 47, 0.5);
+    outline-offset: 2px;
+}
+
+.secondary-button--animated {
+    background-color: var(--spot-orange);
+    overflow: hidden;
+    position: relative;
+    
+    span {
+    background-color: transparent;
+    color: white;
+    }
+}
+
+.secondary-button--animated .secondary-button__text {
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.secondary-button--animated .secondary-button__icon {
+    position: absolute;
+    right: -20px;
+    transition: right 0.3s ease;
+    
+}
+
+.secondary-button--animated:hover .secondary-button__text {
+    transform: translateX(-10px);
+}
+
+.secondary-button--animated:hover .secondary-button__icon {
+    right: 20px;
 }
 ''';

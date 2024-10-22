@@ -104,4 +104,28 @@ window.addEventListener("keydown", function(event) {
         closeModal();
     }
 });
+
+/**
+ * Expands or collapses the content when clicking the "Show more" button.
+ */
+ document.addEventListener('DOMContentLoaded', function () {
+      const contentContainers = document.querySelectorAll('.content');
+      
+      contentContainers.forEach((content, index) => {
+        const showMoreButton = document.createElement('div');
+        showMoreButton.classList.add('show-more');
+        showMoreButton.innerHTML = 'Show more &#9660'; // Use &#9650; for chevron-up
+        content.parentNode.insertBefore(showMoreButton, content.nextSibling);
+
+        showMoreButton.addEventListener('click', function () {
+          if (content.style.maxHeight) {
+            content.style.maxHeight = null;
+            showMoreButton.innerHTML = 'Show more &#9660';
+          } else {
+            content.style.maxHeight = content.scrollHeight + 'px';
+            showMoreButton.innerHTML = 'Show less &#9650'; 
+          }
+        });
+      });
+    });
 ''';

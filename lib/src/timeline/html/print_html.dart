@@ -174,32 +174,53 @@ String _timelineAsHTML({required List<TimelineEvent> timeLineEvents}) {
     eventBuffer.writeln(screenshot);
   }
 
-  void writeEventType(TimelineEvent event) {
-    eventBuffer
-        .writeln('<p><strong>Event Type:</strong> ${event.eventType}</p>');
+  void writeExpandableBox({required String title, required String content}) {
+    final splitted = content.split('\n');
+
+    if (splitted.length > 1) {
+      eventBuffer.writeln('<div>');
+      eventBuffer.writeln('<div class="content">');
+    }
+    eventBuffer.writeln('<p>');
+    eventBuffer.writeln('<strong>$title:</strong> $content');
+    eventBuffer.writeln('</p>');
+
+    if (splitted.length > 1) {
+      eventBuffer.writeln('</div>');
+      eventBuffer.writeln('</div>');
+    }
   }
 
-  void writeName(TimelineEvent event) {
-    eventBuffer.writeln('<p><strong>Details:</strong> ${event.details}</p>');
+  void writeEventType(TimelineEvent event) {
+    writeExpandableBox(title: 'Event Type', content: event.eventType.label);
+  }
+
+  void writeDetails(TimelineEvent event) {
+    writeExpandableBox(title: 'Details', content: event.details);
   }
 
   void writeTimestamp(TimelineEvent event) {
-    eventBuffer.writeln(
-        '<p><strong>Timestamp:</strong> ${event.timestamp.toIso8601String()}</p>');
+    writeExpandableBox(
+      title: 'Timestamp',
+      content: event.timestamp.toIso8601String(),
+    );
   }
 
   void writeCaller(TimelineEvent event) {
     final caller = eventCaller(event.initiator) ?? 'N/A';
-    eventBuffer.writeln('<p><strong>Caller:</strong> $caller</p>');
+    writeExpandableBox(title: 'Caller', content: caller);
   }
 
   void writeJetBrainsLink(TimelineEvent event) {
     final jetBrainsLink = jetBrainsURL(event);
     if (jetBrainsLink == null) return;
-
+    eventBuffer.writeln('<a href="$jetBrainsLink">');
     eventBuffer.writeln(
-      '<a href="$jetBrainsLink"><button class="bn29">OPEN IN IDEA</button></a>',
-    );
+        '<button class="secondary-button secondary-button--animated">');
+    eventBuffer.writeln('<span class="secondary-button__text">IDEA</span>');
+    eventBuffer.writeln('<span class="secondary-button__icon">→</span>');
+    eventBuffer.writeln('</button>');
+    eventBuffer.writeln('</a>');
   }
 
   final events = () {
@@ -210,7 +231,7 @@ String _timelineAsHTML({required List<TimelineEvent> timeLineEvents}) {
       writeScreenshot(event);
       eventBuffer.writeln('<div class="event-details">');
       writeEventType(event);
-      writeName(event);
+      writeDetails(event);
       writeTimestamp(event);
       writeCaller(event);
       writeJetBrainsLink(event);
