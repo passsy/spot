@@ -1,13 +1,10 @@
 import 'package:dartx/dartx.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:meta/meta.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/checks/checks_nullability.dart';
-import 'package:spot/src/spot/props.dart';
 import 'package:spot/src/spot/selectors.dart';
 import 'package:spot/src/spot/widget_matcher.dart';
-import 'package:spot/src/spot/widget_selector.dart';
 
 /// All [DiagnosticsProperty] related selectors
 extension DiagnosticPropWidgetSelector<W extends Widget> on WidgetSelector<W> {

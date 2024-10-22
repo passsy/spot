@@ -176,10 +176,10 @@ class Timeline {
     final caller = frame != null
         ? 'at ${frame.member} ${frame.uri}:${frame.line}:${frame.column}'
         : 'N/A';
-
+    final details = event.details.split('\n').first;
     buffer.writeln('==================== Timeline Event ====================');
     buffer.writeln('Event Type: ${event.eventType}');
-    buffer.writeln('Details: ${event.details}');
+    buffer.writeln('Details: $details');
     buffer.writeln('Caller: $caller');
     if (event.screenshot != null) {
       buffer.writeln('Screenshot: file://${event.screenshot!.file.path}');
@@ -202,12 +202,13 @@ class Timeline {
   Future<void> maybeAddErrorEvent(
     Object error, {
     required String details,
+    bool withScreenshot = true,
   }) async {
     if (timeline.mode != TimelineMode.off) {
       final binding = TestWidgetsFlutterBinding.instance;
       const String eventType = 'Error';
 
-      if (binding is! LiveTestWidgetsFlutterBinding) {
+      if (binding is! LiveTestWidgetsFlutterBinding && withScreenshot) {
         final screenshot = await takeScreenshot();
         timeline.addScreenshot(
           screenshot,
