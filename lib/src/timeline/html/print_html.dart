@@ -178,16 +178,16 @@ String _timelineAsHTML({required List<TimelineEvent> timeLineEvents}) {
     final splitted = content.split('\n');
 
     if (splitted.length > 1) {
-      eventBuffer.writeln('<div>');
       eventBuffer.writeln('<div class="content">');
-    }
-    eventBuffer.writeln('<p>');
-    eventBuffer.writeln('<strong>$title:</strong> $content');
-    eventBuffer.writeln('</p>');
-
-    if (splitted.length > 1) {
+      eventBuffer.writeln('<p>');
+      eventBuffer.writeln('<strong>$title:</strong> ${splitted.first} ');
+      eventBuffer.writeln('<pre>${splitted.skip(1).join('\n')}</pre> ');
+      eventBuffer.writeln('</p>');
       eventBuffer.writeln('</div>');
-      eventBuffer.writeln('</div>');
+    } else {
+      eventBuffer.writeln('<p>');
+      eventBuffer.writeln('<strong>$title:</strong> $content ');
+      eventBuffer.writeln('</p>');
     }
   }
 

@@ -51,7 +51,7 @@ body {
   margin: 10;
 }
 
-h1, h2, h3, p {
+h1, h2, h3, p, pre {
   color: var(--font-color);
 }
 
@@ -319,11 +319,6 @@ h1 {
     cursor: pointer;
     transition: all 0.3s ease;
     width: 100px;
-}
-
-.secondary-button:focus {
-    outline: 3px solid rgba(253, 99, 47, 0.5);
-    outline-offset: 2px;
 }
 
 .secondary-button--animated {
