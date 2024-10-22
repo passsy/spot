@@ -745,6 +745,7 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostOnce] asserts that at most one widget exists.
   /// - [existsAtMostNTimes] asserts that at most `n` widgets of type [W] exist.
   MultiWidgetMatcher<W> existsAtLeastOnce() {
+    timeline.maybeAddAssertion('${toStringBreadcrumb()} exists at least once.');
     final atLeastOne =
         copyWith(quantityConstraint: const QuantityConstraint.atLeast(1));
     return snapshot(atLeastOne).multi;
@@ -767,6 +768,7 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtLeastNTimes] asserts that at least `n` widgets of type [W] exist.
   /// - [existsAtMostNTimes] asserts that at most `n` widgets of type [W] exist.
   WidgetMatcher<W> existsAtMostOnce() {
+    timeline.maybeAddAssertion('${toStringBreadcrumb()} exists at most once.');
     final atMostOne = copyWith(quantityConstraint: QuantityConstraint.single);
     return snapshot(atMostOne).single;
   }
@@ -788,6 +790,7 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostOnce] asserts that at most one widget exists.
   /// - [existsAtMostNTimes] asserts that at most `n` widgets of type [W] exist.
   void doesNotExist() {
+    timeline.maybeAddAssertion('${toStringBreadcrumb()} does not exist.');
     final none = copyWith(quantityConstraint: QuantityConstraint.zero);
     snapshot(none);
   }
@@ -806,6 +809,7 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostOnce] asserts that at most one widget exists.
   /// - [existsAtMostNTimes] asserts that at most `n` widgets of type [W] exist.
   WidgetMatcher<W> existsOnce() {
+    timeline.maybeAddAssertion('${toStringBreadcrumb()} exists once.');
     final one =
         copyWith(quantityConstraint: const QuantityConstraint.exactly(1));
     return snapshot(one).single;
@@ -825,6 +829,8 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostOnce] asserts that at most one widget exists.
   /// - [existsAtMostNTimes] asserts that at most [n] widgets of type [W] exist.
   MultiWidgetMatcher<W> existsExactlyNTimes(int n) {
+    timeline
+        .maybeAddAssertion('${toStringBreadcrumb()} exists exactly $n times.');
     final exactlyNTimes =
         copyWith(quantityConstraint: QuantityConstraint.exactly(n));
     return snapshot(exactlyNTimes).multi;
@@ -844,6 +850,8 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostOnce] asserts that at most one widget exists.
   /// - [existsAtMostNTimes] asserts that at most [n] widgets of type [W] exist.
   MultiWidgetMatcher<W> existsAtLeastNTimes(int n) {
+    timeline
+        .maybeAddAssertion('${toStringBreadcrumb()} exists at least $n times.');
     final atLeast = copyWith(quantityConstraint: QuantityConstraint.atLeast(n));
     return snapshot(atLeast).multi;
   }
@@ -862,6 +870,8 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtLeastNTimes] asserts that at least [n] widgets of type [W] exist.
   /// - [existsAtMostOnce] asserts that at most one widget exists.
   MultiWidgetMatcher<W> existsAtMostNTimes(int n) {
+    timeline
+        .maybeAddAssertion('${toStringBreadcrumb()} exists at most $n times.');
     final atMostN = copyWith(quantityConstraint: QuantityConstraint.atMost(n));
     return snapshot(atMostN).multi;
   }
