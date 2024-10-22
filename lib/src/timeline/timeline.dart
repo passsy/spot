@@ -1,6 +1,7 @@
 // ignore_for_file: depend_on_referenced_packages
 
 import 'package:collection/collection.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/src/screenshot/screenshot.dart';
 import 'package:spot/src/spot/tree_snapshot.dart';
 import 'package:spot/src/timeline/html/print_html.dart';
@@ -188,6 +189,35 @@ class Timeline {
 
     // ignore: avoid_print
     print(buffer);
+  }
+
+  /// Adds an assertion event to the timeline, if the timeline is not off.
+  void maybeAddAssertion(String description) {
+    if (timeline.mode == TimelineMode.off) return;
+    const String label = 'Assertion';
+    timeline.addEvent(details: description, eventType: label);
+  }
+
+  /// Adds an error event to the timeline, if the timeline is not off.
+  Future<void> maybeAddErrorEvent(
+    Object error, {
+    required String details,
+  }) async {
+    if (timeline.mode != TimelineMode.off) {
+      final binding = TestWidgetsFlutterBinding.instance;
+      const String eventType = 'Error';
+
+      if (binding is! LiveTestWidgetsFlutterBinding) {
+        final screenshot = await takeScreenshot();
+        timeline.addScreenshot(
+          screenshot,
+          details: details,
+          eventType: const TimelineEventType(label: eventType),
+        );
+      } else {
+        timeline.addEvent(details: details, eventType: eventType);
+      }
+    }
   }
 }
 

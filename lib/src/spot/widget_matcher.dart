@@ -100,37 +100,48 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
     Subject<T> Function(Subject<W>)? widgetSelector,
     required MatchProp<T> match,
   }) {
+    String eventDetails = "";
+
     if (elementSelector == null && widgetSelector == null) {
-      throw ArgumentError(
-        'Either elementSelector (former selector) or widgetSelector must be set',
-      );
-    }
-    _maybeAddEvent("Assertion on a property ($T) of $W");
-
-    void widgetSelectorCondition(Subject<Element> subject) {
-      final Subject<W> widgetSubject = subject.context.nest<W>(
-        () => ['widget $W'],
-        (element) {
-          final widget = selector.mapElementToWidget(element);
-          return Extracted.value(widget);
-        },
-      );
-      final value = widgetSelector!(widgetSubject);
-      match(value);
+      const errorText =
+          'Either elementSelector (former selector) or widgetSelector must be set';
+      eventDetails = errorText;
+      throw ArgumentError(errorText);
     }
 
-    void elementSelectorCondition(Subject<Element> subject) {
-      final value = elementSelector!(subject);
-      match(value);
+    try {
+      void widgetSelectorCondition(Subject<Element> subject) {
+        final Subject<W> widgetSubject = subject.context.nest<W>(
+          () => ['widget $W'],
+          (element) {
+            final widget = selector.mapElementToWidget(element);
+            return Extracted.value(widget);
+          },
+        );
+        final value = widgetSelector!(widgetSubject);
+        match(value);
+      }
+
+      void elementSelectorCondition(Subject<Element> subject) {
+        final value = elementSelector!(subject);
+        match(value);
+      }
+
+      final void Function(Subject<Element>) condition = elementSelector != null
+          ? elementSelectorCondition
+          : widgetSelectorCondition;
+
+      eventDetails = describe(condition).join();
+
+      final failure = softCheckHideNull(element, condition);
+      failure.throwPropertyCheckFailure(condition, element);
+      timeline.maybeAddAssertion(eventDetails);
+
+      return this;
+    } catch (error) {
+      timeline.maybeAddErrorEvent(error, details: eventDetails);
+      rethrow;
     }
-
-    final void Function(Subject<Element>) condition = elementSelector != null
-        ? elementSelectorCondition
-        : widgetSelectorCondition;
-
-    final failure = softCheckHideNull(element, condition);
-    failure.throwPropertyCheckFailure(condition, element);
-    return this;
   }
 
   /// Retrieves a specific property from the matched widget.
@@ -158,23 +169,32 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
     required NamedWidgetProp<W, T?> prop,
     required MatchProp<T> match,
   }) {
-    void condition(Subject<Element> subject) {
-      final value = subject.context.nest<T?>(
-        () => ['$W', "with prop '${prop.name}'"],
-        (element) {
-          final value = getWidgetProp(prop);
-          _maybeAddEvent(
-            "$W's property '${prop.name}' ($T) is '$value'",
-          );
-          return Extracted.value(value);
-        },
-      ).hideNullability();
-      match(value);
-    }
+    String eventDetails = "";
 
-    final failure = softCheckHideNull(element, condition);
-    failure.throwPropertyCheckFailure(condition, element);
-    return this;
+    try {
+      void condition(Subject<Element> subject) {
+        final value = subject.context.nest<T?>(
+          () => ['$W', "with prop '${prop.name}'"],
+          (element) {
+            final value = getWidgetProp(prop);
+            return Extracted.value(value);
+          },
+        ).hideNullability();
+        match(value);
+      }
+
+      eventDetails = describe(condition).join();
+
+      final failure = softCheckHideNull(element, condition);
+      failure.throwPropertyCheckFailure(condition, element);
+
+      timeline.maybeAddAssertion(eventDetails);
+
+      return this;
+    } catch (error) {
+      timeline.maybeAddErrorEvent(error, details: eventDetails);
+      rethrow;
+    }
   }
 
   /// Retrieves a specific property from the matched widget's element.
@@ -201,24 +221,32 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
     required NamedElementProp<T?> prop,
     required MatchProp<T> match,
   }) {
-    void condition(Subject<Element> subject) {
-      final Subject<T> value = subject.context.nest<T?>(
-        () => ['Element of $W', "with prop '${prop.name}'"],
-        (element) {
-          final value = getElementProp(prop);
-          _maybeAddEvent(
-            "$W's property '${prop.name}' ($T) is '$value'",
-          );
-          return Extracted.value(value);
-        },
-      ).hideNullability();
+    String eventDetails = '';
+    try {
+      void condition(Subject<Element> subject) {
+        final Subject<T> value = subject.context.nest<T?>(
+          () => ['Element of $W', "with prop '${prop.name}'"],
+          (element) {
+            final value = getElementProp(prop);
+            return Extracted.value(value);
+          },
+        ).hideNullability();
 
-      match(value);
+        match(value);
+      }
+
+      eventDetails = describe(condition).join();
+
+      final failure = softCheckHideNull(element, condition);
+      failure.throwPropertyCheckFailure(condition, element);
+
+      timeline.maybeAddAssertion(eventDetails);
+
+      return this;
+    } catch (error) {
+      timeline.maybeAddErrorEvent(error, details: eventDetails);
+      rethrow;
     }
-
-    final failure = softCheckHideNull(element, condition);
-    failure.throwPropertyCheckFailure(condition, element);
-    return this;
   }
 
   /// Retrieves a specific property from the matched widget's render object.
@@ -252,24 +280,32 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
     required NamedRenderObjectProp<R, T?> prop,
     required MatchProp<T> match,
   }) {
-    void condition(Subject<Element> subject) {
-      final Subject<T> value = subject.context.nest<T?>(
-        () => ['RenderObject of $W', "with prop '${prop.name}'"],
-        (element) {
-          final value = getRenderObjectProp(prop);
-          _maybeAddEvent(
-            "$W has RenderObject ($R) with property ($T) '${prop.name}' and its value is $value",
-          );
-          return Extracted.value(value);
-        },
-      ).hideNullability();
+    String eventDetails = "";
 
-      match(value);
+    try {
+      void condition(Subject<Element> subject) {
+        final Subject<T> value = subject.context.nest<T?>(
+          () => ['RenderObject of $W', "with prop '${prop.name}'"],
+          (element) {
+            final value = getRenderObjectProp(prop);
+            return Extracted.value(value);
+          },
+        ).hideNullability();
+        match(value);
+      }
+
+      eventDetails = describe(condition).join(' ');
+
+      final failure = softCheckHideNull(element, condition);
+      failure.throwPropertyCheckFailure(condition, element);
+
+      timeline.maybeAddAssertion(eventDetails);
+
+      return this;
+    } catch (error) {
+      timeline.maybeAddErrorEvent(error, details: eventDetails);
+      rethrow;
     }
-
-    final failure = softCheckHideNull(element, condition);
-    failure.throwPropertyCheckFailure(condition, element);
-    return this;
   }
 }
 
@@ -335,29 +371,40 @@ extension MultiWidgetMatcherExtensions<W extends Widget>
   /// one widget is expected to meet a certain condition.
   MultiWidgetMatcher<W> any(void Function(WidgetMatcher<W>) matcher) {
     TestAsyncUtils.guardSync();
-    _maybeAddEvent('Any $W meets a given condition');
-    if (discovered.isEmpty) {
-      throw Exception('Expected at least one match for $this, but found none');
-    }
-
-    late String matcherDescription;
-    final found = discovered.any((wm) {
-      try {
-        matcher(wm);
-        return true;
-      } catch (e) {
-        matcherDescription =
-            e is PropertyCheckFailure ? e.matcherDescription : e.toString();
-        return false;
+    String eventDetails = "Any $W meets a given condition";
+    try {
+      if (discovered.isEmpty) {
+        final noDiscoveredError =
+            'Expected at least one match for $this, but found none';
+        eventDetails = noDiscoveredError;
+        throw Exception(noDiscoveredError);
       }
-    });
 
-    if (found) {
-      return this;
+      timeline.maybeAddAssertion(eventDetails);
+
+      late String matcherDescription;
+      final found = discovered.any((wm) {
+        try {
+          matcher(wm);
+          return true;
+        } catch (e) {
+          matcherDescription =
+              e is PropertyCheckFailure ? e.matcherDescription : e.toString();
+          return false;
+        }
+      });
+
+      if (found) {
+        return this;
+      }
+      final notFoundMessage =
+          "Expected that at least one candidate fulfills matcher '$matcherDescription', but none did.";
+      eventDetails = notFoundMessage;
+      throw TestFailure(notFoundMessage);
+    } catch (error) {
+      timeline.maybeAddErrorEvent(error, details: eventDetails);
+      rethrow;
     }
-    throw TestFailure(
-      "Expected that at least one candidate fulfills matcher '$matcherDescription', but none did.",
-    );
   }
 
   /// Asserts that all widgets in the matched set fulfill the provided [matcher].
@@ -366,29 +413,46 @@ extension MultiWidgetMatcherExtensions<W extends Widget>
   /// with details of the mismatches.
   MultiWidgetMatcher<W> all(void Function(WidgetMatcher<W>) matcher) {
     TestAsyncUtils.guardSync();
-    _maybeAddEvent('All $W meet a given condition');
-    if (discovered.isEmpty) {
-      throw Exception('Expected at least one match for $this, but found none');
-    }
 
-    late String matcherDescription;
-    final missMatches = discovered.whereNot((wm) {
-      try {
-        matcher(wm);
-        return true;
-      } catch (e) {
-        matcherDescription =
-            e is PropertyCheckFailure ? e.matcherDescription : e.toString();
-        return false;
+    String eventDetails = "All $W meet a given condition";
+
+    try {
+      if (discovered.isEmpty) {
+        final noDiscoveredError =
+            'Expected at least one match for $this, but found none';
+        eventDetails = noDiscoveredError;
+        throw Exception(noDiscoveredError);
       }
-    }).toList();
 
-    if (missMatches.isEmpty) {
-      return this;
+      timeline.maybeAddAssertion(eventDetails);
+
+      late String matcherDescription;
+      final missMatches = discovered.whereNot((wm) {
+        try {
+          matcher(wm);
+          return true;
+        } catch (e) {
+          matcherDescription =
+              e is PropertyCheckFailure ? e.matcherDescription : e.toString();
+          return false;
+        }
+      }).toList();
+
+      if (missMatches.isEmpty) {
+        return this;
+      }
+
+      final errorDetails =
+          "Expected that all candidates fulfill matcher '$matcherDescription', "
+          "but only ${discovered.length - missMatches.length} of ${discovered.length} did.";
+
+      eventDetails = errorDetails;
+
+      throw TestFailure(errorDetails);
+    } catch (error) {
+      timeline.maybeAddErrorEvent(error, details: eventDetails);
+      rethrow;
     }
-    throw TestFailure(
-        "Expected that all candidates fulfill matcher '$matcherDescription', but only ${discovered.length - missMatches.length} of ${discovered.length} did.\n"
-        'Mismatches: ${missMatches.map((e) => e.element.toStringDeep()).join(', ')}');
   }
 }
 
@@ -425,10 +489,4 @@ class PropertyCheckFailure extends TestFailure {
 
   /// Description of the matcher that led to this failure.
   final String matcherDescription;
-}
-
-void _maybeAddEvent(String description) {
-  if (timeline.mode == TimelineMode.off) return;
-  const String label = 'Assertion';
-  timeline.addEvent(details: description, eventType: label);
 }
