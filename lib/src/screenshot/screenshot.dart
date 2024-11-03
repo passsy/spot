@@ -48,126 +48,46 @@ Future<Screenshot> takeScreenshot({
   Element? element,
   WidgetSnapshot? snapshot,
   WidgetSelector? selector,
+  List<ScreenshotAnnotator> annotators = const [],
   String? name,
+  bool print = true,
 }) async {
-  return _createScreenshot(
+  final screenshot = await _createScreenshot(
     element: element,
     snapshot: snapshot,
     selector: selector,
+    annotators: annotators,
     name: name,
   );
-}
 
-/// Takes a screenshot of the entire screen or a single widget and annotates it
-/// with a tap marker in form of a crosshair at the specified [centerPosition].
-///
-/// Provide an [element], [snapshot], or [selector] to specify what to capture.
-/// - [element]: The specific element to capture.
-/// - [snapshot]: A snapshot of the widget to capture.
-/// - [selector]: A selector to determine the widget to capture.
-/// - [name]: The name of the screenshot file.
-/// - [centerPosition]: The position where the tap marker should be placed.
-///
-/// Returns a [Screenshot] object containing the file and initiator frame.
-Future<Screenshot> takeScreenshotWithCrosshair({
-  Element? element,
-  WidgetSnapshot? snapshot,
-  WidgetSelector? selector,
-  String? name,
-  required Offset centerPosition,
-}) async {
-  return _createScreenshot(
-    element: element,
-    snapshot: snapshot,
-    selector: selector,
-    name: name,
-    annotator: CrosshairAnnotator(centerPosition: centerPosition),
-    printToConsole: false,
-  );
-}
-
-Future<Screenshot> _createScreenshot({
-  Element? element,
-  WidgetSnapshot? snapshot,
-  WidgetSelector? selector,
-  String? name,
-  ScreenshotAnnotator? annotator,
-  bool printToConsole = true,
-}) async {
-  final binding = TestWidgetsFlutterBinding.instance;
-  final Frame? frame = _caller();
-
-  // Element that is currently active in the widget tree, to take a screenshot of
-  final Element liveElement = () {
-    if (selector != null) {
-      // taking a fresh snapshot guarantees an element that is currently in the
-      // tree and can be screenshotted
-      final snapshot = selector.snapshot().existsOnce();
-      return snapshot.element;
-    }
-
-    if (snapshot != null) {
-      final elements = snapshot.discovered;
-      if (elements.length > 1) {
-        throw StateError(
-          'Screenshots can only be taken of a single element. '
-          'The snapshot of ${snapshot.selector} contains ${elements.length} elements. '
-          'Use a more specific selector to narrow down the scope of the screenshot.',
-        );
-      }
-      final element = elements.first.element;
-      if (!element.mounted) {
-        final reason = annotator == null ? '' : ' with ${annotator.name}';
-        throw StateError(
-          'Cannot take a screenshot of snapshot$reason, because it is not mounted anymore. '
-          'Only Elements that are currently mounted can be screenshotted.',
-        );
-      }
-      if (snapshot.discoveredWidget != element.widget) {
-        final reason = annotator == null ? '' : ' with ${annotator.name}';
-        throw StateError(
-          'Cannot take a screenshot of snapshot$reason, because the Element has been updated since the snapshot was taken. '
-          'This happens when the widget tree is rebuilt.',
-        );
-      }
-      return element;
-    }
-
-    if (element != null) {
-      if (!element.mounted) {
-        final reason = annotator == null ? '' : ' with ${annotator.name}';
-        throw StateError(
-          'Cannot take a screenshot of Element$reason, because it is not mounted anymore. '
-          'Only Elements that are currently mounted can be screenshotted.',
-        );
-      }
-      return element;
-    }
-
-    // fallback to screenshotting the entire app
-    // Deprecated, but as of today there is no multi-window support for widget tests
-    // ignore: deprecated_member_use
-    return binding.renderViewElement!;
-  }();
-
-  late final Uint8List image;
-  await binding.runAsync(() async {
-    final plainImage = await _captureImage(liveElement);
-    final ui.Image imageToCapture =
-        await annotator?.annotate(plainImage) ?? plainImage;
-    final byteData =
-        await imageToCapture.toByteData(format: ui.ImageByteFormat.png);
-    if (byteData == null) {
-      throw 'Could not take screenshot';
-    }
-    image = byteData.buffer.asUint8List();
-    plainImage.dispose();
-  });
-
-  final spotTempDir = Directory.systemTemp.directory('spot');
-  if (!spotTempDir.existsSync()) {
-    spotTempDir.createSync();
+  if (print) {
+    final frame = screenshot.initiator;
+    // ignore: avoid_print
+    core.print(
+      'Screenshot file://${screenshot.file.path}\n'
+      '  taken at ${frame?.member} ${frame?.uri}:${frame?.line}:${frame?.column}',
+    );
   }
+
+  return screenshot;
+}
+
+/// Takes a screenshot of the entire screen or a single widget.
+/// This method returns synchronously, but continuous processing the image asynchronously.
+Screenshot takeScreenshotSync({
+  Element? element,
+  WidgetSnapshot? snapshot,
+  WidgetSelector? selector,
+  String? name,
+  List<ScreenshotAnnotator>? annotators,
+}) {
+  final Frame? frame = _caller();
+  final liveElement = _findSingleElement(
+    element: element,
+    snapshot: snapshot,
+    selector: selector,
+  );
+  final ui.Image plainImage = _captureImageSync(liveElement);
 
   String callerFileName() {
     final file = frame?.uri.pathSegments.last.replaceFirst('.dart', '');
@@ -194,16 +114,102 @@ Future<Screenshot> _createScreenshot({
     return '$n-$uniqueId.png';
   }();
 
+  final spotTempDir = Directory.systemTemp.directory('spot');
+  if (!spotTempDir.existsSync()) {
+    spotTempDir.createSync();
+  }
+  final file = spotTempDir.file(screenshotFileName);
+
+  final screenshot = Screenshot(
+    file: file,
+    initiator: frame,
+  );
+
+  // At the end of the test, do the actual screenshot processing, because runAsync must be awaited or it crashes
+  addTearDown(() async {
+    final binding = TestWidgetsFlutterBinding.instance;
+    await binding.runAsync(() async {
+      ui.Image imageToCapture = plainImage;
+      for (final annotator in annotators ?? <ScreenshotAnnotator>[]) {
+        imageToCapture = await annotator.annotate(imageToCapture);
+      }
+      final byteData =
+          await imageToCapture.toByteData(format: ui.ImageByteFormat.png);
+      if (byteData == null) {
+        throw 'Could not take screenshot';
+      }
+      final image = byteData.buffer.asUint8List();
+      file.writeAsBytesSync(image);
+      plainImage.dispose();
+    });
+  });
+
+  return screenshot;
+}
+
+Future<Screenshot> _createScreenshot({
+  Element? element,
+  WidgetSnapshot? snapshot,
+  WidgetSelector? selector,
+  String? name,
+  List<ScreenshotAnnotator>? annotators,
+}) async {
+  final Frame? frame = _caller();
+  final liveElement = _findSingleElement(
+    element: element,
+    snapshot: snapshot,
+    selector: selector,
+  );
+
+  late final Uint8List image;
+
+  final binding = TestWidgetsFlutterBinding.instance;
+  await binding.runAsync(() async {
+    final ui.Image plainImage = await _captureImage(liveElement);
+    ui.Image imageToCapture = plainImage;
+    for (final annotator in annotators ?? <ScreenshotAnnotator>[]) {
+      imageToCapture = await annotator.annotate(imageToCapture);
+    }
+    final byteData =
+        await imageToCapture.toByteData(format: ui.ImageByteFormat.png);
+    if (byteData == null) {
+      throw 'Could not take screenshot';
+    }
+    image = byteData.buffer.asUint8List();
+    plainImage.dispose();
+  });
+
+  String callerFileName() {
+    final file = frame?.uri.pathSegments.last.replaceFirst('.dart', '');
+    final line = frame?.line;
+    if (file != null && line != null) {
+      return '$file:$line';
+    }
+    if (file != null) {
+      return file;
+    }
+    return 'unknown';
+  }
+
+  final String screenshotFileName = () {
+    final String n;
+    if (name != null) {
+      // escape /
+      n = Uri.encodeQueryComponent(name);
+    } else {
+      n = callerFileName();
+    }
+    // always append a unique id to avoid name collisions
+    final uniqueId = nanoid(length: 5);
+    return '$n-$uniqueId.png';
+  }();
+
+  final spotTempDir = Directory.systemTemp.directory('spot');
+  if (!spotTempDir.existsSync()) {
+    spotTempDir.createSync();
+  }
   final file = spotTempDir.file(screenshotFileName);
   file.writeAsBytesSync(image);
-
-  if (printToConsole) {
-    // ignore: avoid_print
-    core.print(
-      'Screenshot file://${file.path}\n'
-      '  taken at ${frame?.member} ${frame?.uri}:${frame?.line}:${frame?.column}',
-    );
-  }
 
   return Screenshot(file: file, initiator: frame);
 }
@@ -234,6 +240,100 @@ extension ElementScreenshotExtension on Element {
   Future<Screenshot> takeScreenshot({String? name}) {
     return self.takeScreenshot(element: this, name: name);
   }
+}
+
+/// Given either [element], [snapshot] or [selector], finds the currently single mounted [Element] in the widget tree
+///
+/// Without any of the three parameters, the entire app is screenshotted
+Element _findSingleElement({
+  Element? element,
+  WidgetSnapshot? snapshot,
+  WidgetSelector? selector,
+}) {
+  final binding = TestWidgetsFlutterBinding.instance;
+  if (selector != null) {
+    // taking a fresh snapshot guarantees an element that is currently in the
+    // tree and can be screenshotted
+    final snapshot = selector.snapshot().existsOnce();
+    return snapshot.element;
+  }
+
+  if (snapshot != null) {
+    final elements = snapshot.discovered;
+    if (elements.length > 1) {
+      throw StateError(
+        'Screenshots can only be taken of a single element. '
+        'The snapshot of ${snapshot.selector} contains ${elements.length} elements. '
+        'Use a more specific selector to narrow down the scope of the screenshot.',
+      );
+    }
+    final element = elements.first.element;
+    if (!element.mounted) {
+      throw StateError(
+        'Cannot take a screenshot of snapshot, because it is not mounted anymore. '
+        'Only Elements that are currently mounted can be screenshotted.',
+      );
+    }
+    if (snapshot.discoveredWidget != element.widget) {
+      throw StateError(
+        'Cannot take a screenshot of snapshot, because the Element has been updated since the snapshot was taken. '
+        'This happens when the widget tree is rebuilt.',
+      );
+    }
+    return element;
+  }
+
+  if (element != null) {
+    if (!element.mounted) {
+      throw StateError(
+        'Cannot take a screenshot of Element, because it is not mounted anymore. '
+        'Only Elements that are currently mounted can be screenshotted.',
+      );
+    }
+    return element;
+  }
+
+  // fallback to screenshotting the entire app
+  // Deprecated, but as of today there is no multi-window support for widget tests
+  // ignore: deprecated_member_use
+  return binding.renderViewElement!;
+}
+
+/// Render the closest [RepaintBoundary] of the [element] into an image.
+///
+/// This sync variant of [_captureImage] is known to cause memory leak issues. Prefer using the async variant.
+/// https://github.com/flutter/flutter/issues/138627
+///
+/// See also:
+///
+///  * [OffsetLayer.toImage] which is the actual method being called.
+ui.Image _captureImageSync(Element element) {
+  assert(element.renderObject != null);
+  RenderObject renderObject = element.renderObject!;
+  while (!renderObject.isRepaintBoundary) {
+    // ignore: unnecessary_cast
+    renderObject = renderObject.parent! as RenderObject;
+  }
+  assert(!renderObject.debugNeedsPaint);
+
+  final OffsetLayer layer = renderObject.debugLayer! as OffsetLayer;
+  final ui.Image image = layer.toImageSync(renderObject.paintBounds);
+
+  if (element.renderObject is RenderBox) {
+    final expectedSize = (element.renderObject as RenderBox?)!.size;
+    if (expectedSize.width != image.width ||
+        expectedSize.height != image.height) {
+      // ignore: avoid_print
+      print(
+        'Warning: The screenshot captured of ${element.toStringShort()} is '
+        'larger (${image.width}, ${image.height}) than '
+        '${element.toStringShort()} (${expectedSize.width}, ${expectedSize.height}) itself.\n'
+        'Wrap the ${element.toStringShort()} in a RepaintBoundary to be able to capture only that layer. ',
+      );
+    }
+  }
+
+  return image;
 }
 
 /// Render the closest [RepaintBoundary] of the [element] into an image.

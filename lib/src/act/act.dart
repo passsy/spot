@@ -10,6 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/act/gestures.dart';
 import 'package:spot/src/screenshot/screenshot.dart';
+import 'package:spot/src/screenshot/screenshot_annotator.dart';
 import 'package:spot/src/spot/snapshot.dart';
 
 /// Top level entry point to interact with widgets on the screen.
@@ -116,8 +117,10 @@ class Act {
           final eventDetails = 'Tap ${selector.toStringBreadcrumb()}';
           const String eventType = 'Tap Event';
           if (binding is! LiveTestWidgetsFlutterBinding) {
-            final screenshot = await takeScreenshotWithCrosshair(
-              centerPosition: positionToTap,
+            final screenshot = await takeScreenshot(
+              annotators: [
+                CrosshairAnnotator(centerPosition: positionToTap),
+              ],
             );
             timeline.addScreenshot(
               screenshot,
@@ -214,38 +217,30 @@ class Act {
 
         final dragPosition = pokablePositions.mostCenterHittablePosition!;
 
-        Future<void> addDragEvent({
-          required String details,
-        }) async {
+        void addDragEvent(String details) {
           if (timeline.mode != TimelineMode.off) {
-            const String eventType = 'Drag Event';
-            if (binding is! LiveTestWidgetsFlutterBinding) {
-              final screenshot = await takeScreenshotWithCrosshair(
-                centerPosition: dragPosition,
-              );
-              timeline.addScreenshot(
-                screenshot,
-                details: details,
-                eventType: const TimelineEventType(label: eventType),
-              );
-            } else {
-              timeline.addEvent(details: details, eventType: eventType);
-            }
+            final screenshot = takeScreenshotSync(
+              annotators: [
+                CrosshairAnnotator(centerPosition: dragPosition),
+              ],
+            );
+            timeline.addEvent(
+              eventType: 'Drag Event',
+              details: details,
+              screenshot: screenshot,
+            );
           }
         }
 
         if (isVisible) {
-          await addDragEvent(
-            details: 'Widget $targetName found without dragging.',
-          );
+          addDragEvent('Widget $targetName found without dragging.');
           return;
         }
 
         final direction = moveStep.dy < 0 ? 'downwards' : 'upwards';
 
-        await addDragEvent(
-          details:
-              'Scrolling $direction from $dragPosition in order to find $targetName.',
+        addDragEvent(
+          'Scrolling $direction from $dragPosition in order to find $targetName.',
         );
 
         int dragCount = 0;
@@ -262,7 +257,7 @@ class Act {
             "Target $targetName $resultString after $dragCount drags. "
             "Total dragged offset: $totalDragged";
 
-        await addDragEvent(details: message);
+        addDragEvent(message);
 
         if (!isVisible) {
           throw TestFailure(

@@ -79,7 +79,7 @@ class ActDragTimelineTestBodies {
     final lines = output.split('\n')..removeWhere((line) => line.isEmpty);
     // Neither timeline output nor HTML link when onError timeline is
     // recorded when no error occurs.
-    expect(lines.length, 0);
+    expect(lines.length, 0, reason: output);
   }
 
   static Future<void> liveWithoutErrorPrintsHTML({

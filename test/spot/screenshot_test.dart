@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image/image.dart' as img;
 import 'package:spot/spot.dart';
-import 'package:spot/src/screenshot/screenshot.dart';
+import 'package:spot/src/screenshot/screenshot_annotator.dart';
 import '../util/assert_error.dart';
 
 void main() {
@@ -276,8 +276,8 @@ void main() {
         ),
       );
 
-      final shot = await takeScreenshotWithCrosshair(
-        centerPosition: Offset(105, 105),
+      final shot = await takeScreenshot(
+        annotators: [CrosshairAnnotator(centerPosition: Offset(105, 105))],
       );
       expect(shot.file.existsSync(), isTrue);
 
@@ -299,9 +299,9 @@ void main() {
         ),
       );
 
-      final container = await takeScreenshotWithCrosshair(
+      final container = await takeScreenshot(
         selector: spot<Container>(),
-        centerPosition: Offset(100, 100),
+        annotators: [CrosshairAnnotator(centerPosition: Offset(100, 100))],
       );
       expect(container.file.existsSync(), isTrue);
 
@@ -324,9 +324,9 @@ void main() {
       );
       final containerSnapshot = spot<Container>().snapshot();
 
-      final container = await takeScreenshotWithCrosshair(
+      final container = await takeScreenshot(
         snapshot: containerSnapshot,
-        centerPosition: Offset(100, 100),
+        annotators: [CrosshairAnnotator(centerPosition: Offset(100, 100))],
       );
       expect(container.file.existsSync(), isTrue);
 
@@ -355,12 +355,12 @@ void main() {
         expect(containerSnapshot.discoveredElement!.mounted, isFalse);
 
         await expectLater(
-          takeScreenshotWithCrosshair(
+          takeScreenshot(
             snapshot: containerSnapshot,
-            centerPosition: Offset(100, 100),
+            annotators: [CrosshairAnnotator(centerPosition: Offset(100, 100))],
           ),
           throwsErrorContaining<StateError>([
-            'Cannot take a screenshot of snapshot with Crosshair Annotator',
+            'Cannot take a screenshot of snapshot',
             'not mounted anymore',
             'Only Elements that are currently mounted can be screenshotted.',
           ]),
@@ -382,9 +382,9 @@ void main() {
       );
       final containerElement = spot<Container>().snapshot().discoveredElement;
 
-      final container = await takeScreenshotWithCrosshair(
+      final container = await takeScreenshot(
         element: containerElement,
-        centerPosition: Offset(100, 100),
+        annotators: [CrosshairAnnotator(centerPosition: Offset(100, 100))],
       );
       expect(container.file.existsSync(), isTrue);
 
@@ -413,12 +413,12 @@ void main() {
       expect(containerElement!.mounted, isFalse);
 
       await expectLater(
-        takeScreenshotWithCrosshair(
+        takeScreenshot(
           element: containerElement,
-          centerPosition: Offset(100, 100),
+          annotators: [CrosshairAnnotator(centerPosition: Offset(100, 100))],
         ),
         throwsErrorContaining<StateError>([
-          'Cannot take a screenshot of Element with Crosshair Annotator',
+          'Cannot take a screenshot of Element',
           'not mounted anymore',
           'Only Elements that are currently mounted can be screenshotted.',
         ]),

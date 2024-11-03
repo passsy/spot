@@ -82,31 +82,31 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       shared.timelineHeader,
     );
     expect(
-      timeline[14],
+      timeline[16],
       'Event Type: Tap Event',
     );
     expect(
-      timeline[15],
+      timeline[17],
       'Details: Tap Icon Widget with icon: "IconData(U+0E047)"',
     );
     expect(
-      timeline[16].startsWith('Caller: at'),
+      timeline[18].startsWith('Caller: at'),
       isTrue,
     );
     expect(
-      timeline[17].startsWith(
+      timeline[19].startsWith(
         'Screenshot: file:///',
       ),
       isTrue,
     );
     expect(
-      timeline[18].startsWith(
+      timeline[20].startsWith(
         'Timestamp:',
       ),
       isTrue,
     );
     expect(
-      timeline[19],
+      timeline[21],
       shared.timelineSeparator,
     );
     final prefix = isGlobalMode ? 'global' : 'local';
@@ -134,31 +134,31 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
     // Does not start with 'Timeline', this only happens on error
     expect(timeline.first, shared.timelineHeader);
     expect(
-      timeline[13],
+      timeline[17],
       'Event Type: Tap Event',
     );
     expect(
-      timeline[14],
+      timeline[18],
       'Details: Tap Icon Widget with icon: "IconData(U+0E047)"',
     );
     expect(
-      timeline[15].startsWith('Caller: at'),
+      timeline[19].startsWith('Caller: at'),
       isTrue,
     );
     expect(
-      timeline[16].startsWith(
+      timeline[20].startsWith(
         'Screenshot: file:///',
       ),
       isTrue,
     );
     expect(
-      timeline[17].startsWith(
+      timeline[21].startsWith(
         'Timestamp:',
       ),
       isTrue,
     );
     expect(
-      timeline[18],
+      timeline[22],
       shared.timelineSeparator,
     );
     final htmlLine =
@@ -186,31 +186,31 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
     // Does not start with 'Timeline', this only happens on error
     expect(timeline.first, shared.timelineHeader);
     expect(
-      timeline[26],
+      timeline[33],
       'Event Type: Tap Event',
     );
     expect(
-      timeline[27],
+      timeline[34],
       'Details: Tap Icon Widget with icon: "IconData(U+0E516)"',
     );
     expect(
-      timeline[28].startsWith('Caller: at'),
+      timeline[35].startsWith('Caller: at'),
       isTrue,
     );
     expect(
-      timeline[29].startsWith(
+      timeline[36].startsWith(
         'Screenshot: file:///',
       ),
       isTrue,
     );
     expect(
-      timeline[30].startsWith(
+      timeline[37].startsWith(
         'Timestamp:',
       ),
       isTrue,
     );
     expect(
-      timeline[31],
+      timeline[38],
       shared.timelineSeparator,
     );
     final prefix = isGlobalMode ? 'global' : 'local';
@@ -393,7 +393,7 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
     if (WidgetsBinding.instance is! LiveTestWidgetsFlutterBinding) {
       expect(
         screenshots.length,
-        tapCount,
+        tapCount + assertionCount,
       );
     } else {
       expect(

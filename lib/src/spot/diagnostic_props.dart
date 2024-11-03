@@ -135,9 +135,6 @@ extension DiagnosticPropWidgetMatcher<W extends Widget> on WidgetMatcher<W> {
           'with property $propName',
         ],
         (value) {
-          _maybeAddAssertionEvent(
-            "$unconstrainedSelector has $propName with value $value",
-          );
           if (prop == null) {
             return Extracted.rejection(which: ['Has no prop "$propName"']);
           }
@@ -171,10 +168,4 @@ extension on DiagnosticsNode {
     }
     return null;
   }
-}
-
-void _maybeAddAssertionEvent(String description) {
-  if (timeline.mode == TimelineMode.off) return;
-  const String label = 'Assertion';
-  timeline.addEvent(details: description, eventType: label);
 }

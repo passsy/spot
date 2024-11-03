@@ -1,6 +1,7 @@
 import 'dart:core';
 import 'dart:ui' as ui;
 import 'package:flutter/widgets.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 /// An annotator that can draw on a screenshot image.
 abstract class ScreenshotAnnotator {
@@ -48,7 +49,7 @@ class CrosshairAnnotator implements ScreenshotAnnotator {
     canvas.drawImage(image, Offset.zero, Paint());
 
     final paint = Paint()
-      ..color = const Color(0xFF00FFFF)
+      ..color = const Color(0xFFFF00FF)
       ..strokeWidth = 2.0;
 
     canvas.drawLine(
@@ -64,10 +65,67 @@ class CrosshairAnnotator implements ScreenshotAnnotator {
     );
 
     final circlePaint = Paint()
-      ..color = const Color(0xFF00FFFF)
+      ..color = const Color(0xFFFF00FF)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0;
     canvas.drawCircle(position, 10.0, circlePaint);
+
+    final picture = recorder.endRecording();
+    return picture.toImage(image.width, image.height);
+  }
+}
+
+class HighlightAnnotator implements ScreenshotAnnotator {
+  HighlightAnnotator.rects(this.rects);
+
+  factory HighlightAnnotator.elements(List<Element> elements) {
+    final binding = TestWidgetsFlutterBinding.instance;
+    final view = binding.platformDispatcher.implicitView;
+    final devicePixelRatio = view?.devicePixelRatio ?? 1.0;
+
+    final List<Rect> rects = [];
+    for (final element in elements) {
+      final renderObject = element.renderObject;
+      if (renderObject is! RenderBox?) continue;
+      if (renderObject == null) continue;
+      final box = renderObject.size;
+      final topLeft = renderObject.localToGlobal(Offset.zero);
+      final bottomRight =
+          renderObject.localToGlobal(box.bottomRight(Offset.zero));
+      rects.add(
+        Rect.fromPoints(
+          topLeft * devicePixelRatio,
+          bottomRight * devicePixelRatio,
+        ),
+      );
+    }
+    return HighlightAnnotator.rects(rects);
+  }
+
+  factory HighlightAnnotator.element(Element element) {
+    return HighlightAnnotator.elements([element]);
+  }
+
+  final List<Rect> rects;
+
+  @override
+  String get name => 'Highlight Elements Annotator';
+
+  @override
+  Future<ui.Image> annotate(ui.Image image) async {
+    final recorder = ui.PictureRecorder();
+    final canvas = Canvas(recorder);
+
+    canvas.drawImage(image, Offset.zero, Paint());
+
+    final paint = Paint()
+      ..color = const Color(0xFFFF00FF)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 4.0;
+
+    for (final rect in rects) {
+      canvas.drawRect(rect, paint);
+    }
 
     final picture = recorder.endRecording();
     return picture.toImage(image.width, image.height);

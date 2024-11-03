@@ -59,16 +59,8 @@ Timeline get timeline {
   // create new timeline
   final newTimeline = Timeline._(test);
 
-  Invoker.current!.addTearDown(() {
-    if (!test.state.result.isPassing &&
-        newTimeline.mode == TimelineMode.record) {
-      newTimeline.printToConsole();
-      printHTML(newTimeline._events);
-    } else if (newTimeline.mode == TimelineMode.live) {
-      // printToConsole() here would lead to duplicate output since
-      // the timeline is already being printed live
-      printHTML(newTimeline._events);
-    }
+  Invoker.current!.addTearDown(() async {
+    await newTimeline._onPostTest();
     _timelines.remove(test);
   });
 
@@ -200,13 +192,6 @@ class Timeline {
     print(buffer);
   }
 
-  /// Adds an assertion event to the timeline, if the timeline is not off.
-  void maybeAddAssertion(String description) {
-    if (timeline.mode == TimelineMode.off) return;
-    const String label = 'Assertion';
-    timeline.addEvent(details: description, eventType: label);
-  }
-
   /// Adds an error event to the timeline, if the timeline is not off.
   void maybeAddErrorEvent(
     Object error, {
@@ -234,6 +219,29 @@ class Timeline {
         timeline.addEvent(details: details, eventType: eventType);
         Invoker.current!.removeOutstandingCallback();
       });
+    }
+  }
+
+  /// Event handler after the [_test] has completed.
+  ///
+  /// Prints the timeline to console, as link to a html file or plain text
+  Future<void> _onPostTest() async {
+    switch (mode) {
+      case TimelineMode.live:
+        // during live mode the events are written directly to the console.
+        // Finalize with html report
+        printHTML(_events);
+      case TimelineMode.record:
+        if (!_test.state.result.isPassing) {
+          printToConsole();
+          printHTML(_events);
+        } else {
+          // do nothing
+          break;
+        }
+      case TimelineMode.off:
+        // do nothing
+        break;
     }
   }
 }

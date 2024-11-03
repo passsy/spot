@@ -43,24 +43,30 @@ Future<String> runTestInProcessAndCaptureOutPut({
 
   final stdoutStream = testProcess.stdoutStream();
   final stderrStream = testProcess.stderrStream();
-  stdoutStream.listen((line) {
-    if (line.isEmpty) return;
-    if (!write &&
-        (captureStart.contains(line) || captureStart.any(line.contains))) {
-      write = true;
-    }
-    if (write) {
-      stdoutBuffer.writeln(line);
-    }
-  }, onDone: () {
-    stdoutCompleter.complete();
-  });
-  stderrStream.listen((line) {
-    // ignore: avoid_print
-    print("ERR: $line");
-  }, onDone: () {
-    stderrCompleter.complete();
-  });
+  stdoutStream.listen(
+    (line) {
+      if (line.isEmpty) return;
+      if (!write &&
+          (captureStart.contains(line) || captureStart.any(line.contains))) {
+        write = true;
+      }
+      if (write) {
+        stdoutBuffer.writeln(line);
+      }
+    },
+    onDone: () {
+      stdoutCompleter.complete();
+    },
+  );
+  stderrStream.listen(
+    (line) {
+      // ignore: avoid_print
+      print("ERR: $line");
+    },
+    onDone: () {
+      stderrCompleter.complete();
+    },
+  );
 
   await testProcess.shouldExit(shouldFail ? 1 : 0);
   await Future.wait([stdoutCompleter.future, stderrCompleter.future]);

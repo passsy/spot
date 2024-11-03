@@ -1,5 +1,7 @@
 // ignore_for_file: depend_on_referenced_packages
+import 'dart:convert';
 import 'dart:io';
+
 import 'package:collection/collection.dart';
 import 'package:path/path.dart' as path;
 import 'package:spot/src/screenshot/screenshot.dart';
@@ -180,13 +182,18 @@ String _timelineAsHTML({required List<TimelineEvent> timeLineEvents}) {
     if (splitted.length > 1) {
       eventBuffer.writeln('<div class="content">');
       eventBuffer.writeln('<p>');
-      eventBuffer.writeln('<strong>$title:</strong> ${splitted.first} ');
-      eventBuffer.writeln('<pre>${splitted.skip(1).join('\n')}</pre> ');
+      eventBuffer.writeln(
+        '<strong>${_htmlEscape(title)}:</strong> ${_htmlEscape(splitted.first)} ',
+      );
+      eventBuffer
+          .writeln('<pre>${_htmlEscape(splitted.skip(1).join('\n'))}</pre> ');
       eventBuffer.writeln('</p>');
       eventBuffer.writeln('</div>');
     } else {
       eventBuffer.writeln('<p>');
-      eventBuffer.writeln('<strong>$title:</strong> $content ');
+      eventBuffer.writeln(
+        '<strong>${_htmlEscape(title)}:</strong> ${_htmlEscape(content)} ',
+      );
       eventBuffer.writeln('</p>');
     }
   }
@@ -262,6 +269,11 @@ String _timelineAsHTML({required List<TimelineEvent> timeLineEvents}) {
   htmlBuffer.writeln('</html>');
 
   return htmlBuffer.toString();
+}
+
+String _htmlEscape(String text) {
+  const htmlEscape = HtmlEscape(HtmlEscapeMode.element);
+  return htmlEscape.convert(text);
 }
 
 /// Returns the test name including the group hierarchy.
