@@ -98,10 +98,16 @@ window.onclick = function(event) {
 window.addEventListener("keydown", function(event) {
     if (event.key === "ArrowLeft") {
         showPrev();
+        event.preventDefault();
+        event.stopPropagation();
     } else if (event.key === "ArrowRight") {
         showNext();
+        event.preventDefault();
+        event.stopPropagation();
     } else if (event.key === "Escape") {
         closeModal();
+        event.preventDefault();
+        event.stopPropagation();
     }
 });
 
