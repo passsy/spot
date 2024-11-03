@@ -179,7 +179,13 @@ class AnyText extends LeafRenderObjectWidget {
         defaultValue: TextAlign.start,
       ),
     );
-    properties.add(ColorProperty('selectionColor', selectionColor));
+    properties.add(
+      ColorProperty(
+        'selectionColor',
+        selectionColor,
+        defaultValue: null,
+      ),
+    );
     properties.add(
       FlagProperty(
         'softWrap',
@@ -221,32 +227,6 @@ class AnyText extends LeafRenderObjectWidget {
   @override
   String toStringShort() {
     return widget.toStringShort();
-  }
-
-  @override
-  String toStringDeep({
-    String prefixLineOne = '',
-    String? prefixOtherLines,
-    DiagnosticLevel minLevel = DiagnosticLevel.debug,
-  }) {
-    return widget.toStringDeep(
-      prefixLineOne: prefixLineOne,
-      prefixOtherLines: prefixOtherLines,
-      minLevel: minLevel,
-    );
-  }
-
-  @override
-  String toStringShallow({
-    String joiner = ', ',
-    DiagnosticLevel minLevel = DiagnosticLevel.debug,
-  }) {
-    return widget.toStringShallow(joiner: joiner, minLevel: minLevel);
-  }
-
-  @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return widget.toString(minLevel: minLevel);
   }
 }
 
