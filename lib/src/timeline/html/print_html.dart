@@ -216,7 +216,8 @@ String _timelineAsHTML({required List<TimelineEvent> timeLineEvents}) {
     if (jetBrainsLink == null) return;
     eventBuffer.writeln('<a href="$jetBrainsLink">');
     eventBuffer.writeln(
-        '<button class="secondary-button secondary-button--animated">');
+      '<button class="secondary-button secondary-button--animated">',
+    );
     eventBuffer.writeln('<span class="secondary-button__text">IDEA</span>');
     eventBuffer.writeln('<span class="secondary-button__icon">→</span>');
     eventBuffer.writeln('</button>');

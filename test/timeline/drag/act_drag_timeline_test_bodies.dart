@@ -5,7 +5,6 @@ import 'package:spot/spot.dart';
 import '../../util/capture_console_output.dart';
 import '../../util/run_test_in_process.dart' as process;
 import '../timeline_test_shared.dart' as shared;
-import '../timeline_test_shared.dart';
 import 'drag_until_visible_test_widget.dart';
 
 class ActDragTimelineTestBodies {

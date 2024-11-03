@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/checks/checks_nullability.dart';
-//ignore: implementation_imports
-import 'package:test_api/src/backend/invoker.dart';
 export 'package:checks/context.dart';
 
 /// A representation of a single [Widget] found by a [WidgetSnapshot]
