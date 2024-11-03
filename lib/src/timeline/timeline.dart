@@ -46,7 +46,7 @@ final Map<LiveTest, Timeline> _timelines = {};
 /// Returns the current timeline for the test or creates a new one if
 /// it doesn't exist.
 Timeline get timeline {
-  final test = Invoker.current?.liveTest;
+  final LiveTest? test = Invoker.current?.liveTest;
   if (test == null) {
     throw StateError('timeline must be called within a test');
   }
@@ -57,7 +57,7 @@ Timeline get timeline {
   }
 
   // create new timeline
-  final newTimeline = Timeline();
+  final newTimeline = Timeline._(test);
 
   Invoker.current!.addTearDown(() {
     if (!test.state.result.isPassing &&
@@ -95,6 +95,10 @@ Timeline get timeline {
 /// See also:
 /// - [TimelineMode] for the available modes.
 class Timeline {
+  Timeline._(this._test);
+
+  final LiveTest _test;
+
   final List<TimelineEvent> _events = [];
 
   TimelineMode _mode = _globalTimelineMode;
@@ -125,7 +129,7 @@ class Timeline {
         details: details,
         screenshot: screenshot,
         initiator: _mostRelevantCaller(
-          fallbackFrame: initiator ?? screenshot?.initiator,
+          fallback: initiator ?? screenshot?.initiator,
         ),
         timestamp: DateTime.now(),
         treeSnapshot: currentWidgetTreeSnapshot(),
@@ -144,7 +148,7 @@ class Timeline {
       TimelineEvent.now(
         details: details,
         screenshot: screenshot,
-        initiator: _mostRelevantCaller(fallbackFrame: screenshot.initiator),
+        initiator: _mostRelevantCaller(fallback: screenshot.initiator),
         eventType: eventType,
       ),
     );
@@ -164,7 +168,12 @@ class Timeline {
   /// Prints the complete timeline to the console.
   void printToConsole() {
     // ignore: avoid_print
-    print('Timeline');
+    final frame = _mostRelevantCaller(trace: _test.test.trace);
+    final location = frame != null
+        ? ' at ${frame.member} ${frame.uri}:${frame.line}:${frame.column}'
+        : '';
+    // ignore: avoid_print
+    print('Timeline of test: ${_test.test.name}$location');
     for (final event in _events) {
       _printEvent(event);
     }
@@ -319,17 +328,17 @@ enum TimelineMode {
   final String message;
 }
 
-Frame? _mostRelevantCaller({Frame? fallbackFrame}) {
-  final frames = Trace.current().frames;
+Frame? _mostRelevantCaller({Trace? trace, Frame? fallback}) {
+  final frames = (trace ?? Trace.current()).frames;
 
   final nonPackageFrames = frames.where((frame) => frame.package == null);
   final testFileCaller = nonPackageFrames.lastWhereOrNull((frame) {
-    final location = frame.location;
-    return location.startsWith('test/') && location.endsWith('_test.dart');
+    final lib = frame.library;
+    return lib.startsWith('test/') && lib.endsWith('_test.dart');
   });
 
   final preferredFrame =
-      testFileCaller ?? nonPackageFrames.lastOrNull ?? fallbackFrame;
+      testFileCaller ?? nonPackageFrames.lastOrNull ?? fallback;
 
   if (preferredFrame != null) {
     // remove any '<fn>' parts
