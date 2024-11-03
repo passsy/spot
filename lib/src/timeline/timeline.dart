@@ -199,25 +199,32 @@ class Timeline {
   }
 
   /// Adds an error event to the timeline, if the timeline is not off.
-  Future<void> maybeAddErrorEvent(
+  void maybeAddErrorEvent(
     Object error, {
     required String details,
     bool withScreenshot = true,
-  }) async {
+  }) {
     if (timeline.mode != TimelineMode.off) {
       final binding = TestWidgetsFlutterBinding.instance;
       const String eventType = 'Error';
+      if (!withScreenshot || binding is LiveTestWidgetsFlutterBinding) {
+        timeline.addEvent(details: details, eventType: eventType);
+        return;
+      }
 
-      if (binding is! LiveTestWidgetsFlutterBinding && withScreenshot) {
-        final screenshot = await takeScreenshot();
+      // schedule the screenshot to be taken at the end of the test
+      Invoker.current!.addOutstandingCallback();
+      takeScreenshot().then((screenshot) {
         timeline.addScreenshot(
           screenshot,
           details: details,
           eventType: const TimelineEventType(label: eventType),
         );
-      } else {
+        Invoker.current!.removeOutstandingCallback();
+      }).onError((e, stack) {
         timeline.addEvent(details: details, eventType: eventType);
-      }
+        Invoker.current!.removeOutstandingCallback();
+      });
     }
   }
 }

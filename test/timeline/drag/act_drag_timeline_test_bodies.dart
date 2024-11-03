@@ -243,41 +243,57 @@ class ActDragTimelineTestBodies {
   }) {
     final isGoingDown = totalExpectedOffset.dy < 0;
     final findsWidget = drags == _passingDragAmount;
-    final eventLines =
-        output.split('\n').where((line) => line.startsWith('Event:'));
-    final startEvent = _replaceOffsetWithDxDy(eventLines.first);
-    final endEvent =
-        'Event: Target ${_secondItemSelector.toStringBreadcrumb()} ${findsWidget ? 'found' : 'not found'} after $drags drags. Total dragged offset: $totalExpectedOffset';
+    final lines = output.split('\n');
+    final indexesOfDragEvents = lines
+        .asMap()
+        .entries
+        .where((entry) => entry.value.startsWith('Event Type: Drag Event'))
+        .map((entry) => entry.key)
+        .toList();
+    expect(indexesOfDragEvents.length, 2);
 
-    for (int i = 0; i < 2; i++) {
-      expect(
-        RegExp(timelineHeader).allMatches(output).length,
-        2,
-      );
-      if (i == 0) {
-        expect(
-          startEvent,
-          'Event: Scrolling ${isGoingDown ? 'downwards' : 'upwards'} from Offset(dx,dy) in order to find ${_secondItemSelector.toStringBreadcrumb()}.',
-        );
-      } else {
-        expect(
-          eventLines.last,
-          endEvent,
-        );
-      }
-      expect(
-        RegExp('Caller: at').allMatches(output).length,
-        2,
-      );
-      expect(
-        RegExp('Screenshot: file:').allMatches(output).length,
-        2,
-      );
-      expect(
-        RegExp('Timestamp: ').allMatches(output).length,
-        2,
-      );
-    }
+    // Event Type: Drag Event
+    // Details: Scrolling downwards from Offset(398.0, 451.0) in order to find Widget with text with text "Item at index: 27".
+    // Caller: at main file:///Users/pascalwelsch/Projects/passsy/spot/test/timeline/drag/local/local_timeline_drag_test.dart:8:9
+    // Screenshot: file:///var/folders/0j/p0s0zrv91tgd33zrxb88c0440000gn/T/spot/act_drag_timeline_test_bodies:230-LSyb7.png
+    // Timestamp: 2024-11-03T02:53:05.111569
+    final indexOfStart = indexesOfDragEvents[0];
+    assert(indexOfStart != -1);
+    expect(
+      _replaceOffsetWithDxDy(lines[indexOfStart + 1]),
+      'Details: Scrolling ${isGoingDown ? 'downwards' : 'upwards'} from Offset(dx,dy) in order to find ${_secondItemSelector.toStringBreadcrumb()}.',
+    );
+    expect(
+      lines[indexOfStart + 2],
+      startsWith('Caller: at main'),
+    );
+    expect(
+      lines[indexOfStart + 3],
+      startsWith('Screenshot: file://'),
+    );
+    expect(
+      lines[indexOfStart + 4],
+      startsWith('Timestamp: 20'),
+    );
+
+    final indexOfEnd = indexesOfDragEvents[1];
+    assert(indexOfEnd != -1);
+    expect(
+      lines[indexOfEnd + 1],
+      'Details: Target ${_secondItemSelector.toStringBreadcrumb()} ${findsWidget ? 'found' : 'not found'} after $drags drags. Total dragged offset: $totalExpectedOffset',
+    );
+    expect(
+      lines[indexOfEnd + 2],
+      startsWith('Caller: at main'),
+    );
+    expect(
+      lines[indexOfEnd + 3],
+      startsWith('Screenshot: file://'),
+    );
+    expect(
+      lines[indexOfEnd + 4],
+      startsWith('Timestamp: 20'),
+    );
   }
 
   static String _replaceOffsetWithDxDy(String originalString) {
