@@ -49,6 +49,7 @@ const timelineCSS = '''
 
 body {
   margin: 10;
+  padding-bottom: 50px;
 }
 
 h1, h2, h3, p, pre {
