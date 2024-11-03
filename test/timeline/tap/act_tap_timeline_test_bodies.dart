@@ -40,7 +40,7 @@ class ActTapTimelineTestBodies {
       output,
       isNot(contains('Tap ${_subtractButtonSelector.toStringBreadcrumb()}')),
     );
-    _testTimeLineContent(output: output, eventCount: 0);
+    _testTimeLineContent(output: output, tapCount: 0, assertionCount: 0);
   }
 
   static Future<void> throwOnGlobalTimelineChange({
@@ -83,27 +83,31 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       shared.timelineHeader,
     );
     expect(
-      timeline[2],
-      'Event: Tap Icon Widget with icon: "IconData(U+0E047)"',
+      timeline[14],
+      'Event Type: Tap Event',
     );
     expect(
-      timeline[3].startsWith('Caller: at main file:///'),
+      timeline[15],
+      'Details: Tap Icon Widget with icon: "IconData(U+0E047)"',
+    );
+    expect(
+      timeline[16].startsWith('Caller: at main file:///'),
       isTrue,
     );
     expect(
-      timeline[4].startsWith(
+      timeline[17].startsWith(
         'Screenshot: file:///',
       ),
       isTrue,
     );
     expect(
-      timeline[5].startsWith(
+      timeline[18].startsWith(
         'Timestamp:',
       ),
       isTrue,
     );
     expect(
-      timeline[6],
+      timeline[19],
       shared.timelineSeparator,
     );
     final prefix = isGlobalMode ? 'global' : 'local';
@@ -131,27 +135,31 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
     // Does not start with 'Timeline', this only happens on error
     expect(timeline.first, shared.timelineHeader);
     expect(
-      timeline.second,
-      'Event: Tap Icon Widget with icon: "IconData(U+0E047)"',
+      timeline[13],
+      'Event Type: Tap Event',
     );
     expect(
-      timeline[2].startsWith('Caller: at'),
+      timeline[14],
+      'Details: Tap Icon Widget with icon: "IconData(U+0E047)"',
+    );
+    expect(
+      timeline[15].startsWith('Caller: at'),
       isTrue,
     );
     expect(
-      timeline[3].startsWith(
+      timeline[16].startsWith(
         'Screenshot: file:///',
       ),
       isTrue,
     );
     expect(
-      timeline[4].startsWith(
+      timeline[17].startsWith(
         'Timestamp:',
       ),
       isTrue,
     );
     expect(
-      timeline[5],
+      timeline[18],
       shared.timelineSeparator,
     );
     final htmlLine =
@@ -179,27 +187,31 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
     // Does not start with 'Timeline', this only happens on error
     expect(timeline.first, shared.timelineHeader);
     expect(
-      timeline.second,
-      'Event: Tap Icon Widget with icon: "IconData(U+0E047)"',
+      timeline[26],
+      'Event Type: Tap Event',
     );
     expect(
-      timeline[2].startsWith('Caller: at main file:///'),
+      timeline[27],
+      'Details: Tap Icon Widget with icon: "IconData(U+0E516)"',
+    );
+    expect(
+      timeline[28].startsWith('Caller: at main file:///'),
       isTrue,
     );
     expect(
-      timeline[3].startsWith(
+      timeline[29].startsWith(
         'Screenshot: file:///',
       ),
       isTrue,
     );
     expect(
-      timeline[4].startsWith(
+      timeline[30].startsWith(
         'Timestamp:',
       ),
       isTrue,
     );
     expect(
-      timeline[5],
+      timeline[31],
       shared.timelineSeparator,
     );
     final prefix = isGlobalMode ? 'global' : 'local';
@@ -239,7 +251,7 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       output,
       isNot(contains('Tap ${_subtractButtonSelector.toStringBreadcrumb()}')),
     );
-    _testTimeLineContent(output: output, eventCount: 0);
+    _testTimeLineContent(output: output, tapCount: 0, assertionCount: 0);
   }
 
   static Future<void> liveTurnOffDuringTest({
@@ -282,7 +294,7 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       output,
       isNot(contains('Tap ${_clearButtonSelector.toStringBreadcrumb()}')),
     );
-    _testTimeLineContent(output: output, eventCount: 2);
+    _testTimeLineContent(output: output, tapCount: 2, assertionCount: 4);
     expect(output, contains('⏸︎ - Timeline recording is off'));
   }
 
@@ -306,35 +318,75 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
     // Changes in local test since it's `record` by default. Globally it does not
     // change since the global mode is already `live`.
     expect(containsMessage, isGlobalMode ? isFalse : isTrue);
+
     expect(
       output,
-      contains('Event: Tap ${_addButtonSelector.toStringBreadcrumb()}'),
+      contains(
+        'Event Type: Assertion\n'
+        'Details: ${_addButtonSelector.toStringBreadcrumb()} exists once',
+      ),
     );
     expect(
       output,
-      contains('Event: Tap ${_subtractButtonSelector.toStringBreadcrumb()}'),
+      contains(
+        'Event Type: Assertion\n'
+        'Details: ${spotText('Counter: 3')} exists once',
+      ),
     );
-    _testTimeLineContent(output: output, eventCount: 2);
+    expect(
+      output,
+      contains(
+        'Event Type: Tap Event\n'
+        'Details: Tap ${_addButtonSelector.toStringBreadcrumb()}',
+      ),
+    );
+    expect(
+      output,
+      contains(
+        'Event Type: Assertion\n'
+        'Details: ${spotText('Counter: 4')} exists once',
+      ),
+    );
+    expect(
+      output,
+      contains(
+        'Event Type: Tap Event\n'
+        'Details: Tap ${_subtractButtonSelector.toStringBreadcrumb()}',
+      ),
+    );
+    expect(
+      output,
+      contains(
+        'Event Type: Assertion\n'
+        'Details: ${spotText('Counter: 3')} exists once',
+      ),
+    );
+    _testTimeLineContent(output: output, tapCount: 2, assertionCount: 4);
   }
 
   static void _testTimeLineContent({
     required String output,
-    required int eventCount,
+    required int tapCount,
+    required int assertionCount,
   }) {
     expect(
-      RegExp(shared.timelineHeader).allMatches(output).length,
-      eventCount,
+      RegExp('Event Type: Tap Event').allMatches(output).length,
+      tapCount,
     );
     expect(
-      RegExp('Event: Tap Icon Widget with icon:').allMatches(output).length,
-      eventCount,
+      RegExp('Event Type: Assertion').allMatches(output).length,
+      assertionCount,
+    );
+    expect(
+      RegExp(shared.timelineHeader).allMatches(output).length,
+      tapCount + assertionCount,
     );
     final callerParts = output.split('\n').where((line) {
       return line.startsWith('Caller: at') && line.contains('file://');
     }).toList();
     expect(
       callerParts.length,
-      eventCount,
+      tapCount + assertionCount,
     );
     final screenshots = output.split('\n').where((line) {
       return line.startsWith('Screenshot: file:');
@@ -342,7 +394,7 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
     if (WidgetsBinding.instance is! LiveTestWidgetsFlutterBinding) {
       expect(
         screenshots.length,
-        eventCount,
+        tapCount,
       );
     } else {
       expect(
@@ -352,7 +404,7 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
     }
     expect(
       RegExp('Timestamp: ').allMatches(output).length,
-      eventCount,
+      tapCount + assertionCount,
     );
   }
 
