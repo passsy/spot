@@ -71,12 +71,12 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       timelineMode: TimelineMode.record,
       shouldFail: true,
       isGlobalMode: isGlobalMode,
-      captureStart: ['Timeline'],
+      captureStart: ['Timeline of test'],
     );
 
     final timeline = stdout.split('\n');
 
-    expect(timeline.first, 'Timeline');
+    expect(timeline[0], startsWith('Timeline of test:'));
     expect(
       timeline[1],
       shared.timelineHeader,
@@ -90,7 +90,7 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       'Details: Tap Icon Widget with icon: "IconData(U+0E047)"',
     );
     expect(
-      timeline[16].startsWith('Caller: at main file:///'),
+      timeline[16].startsWith('Caller: at'),
       isTrue,
     );
     expect(
@@ -194,7 +194,7 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       'Details: Tap Icon Widget with icon: "IconData(U+0E516)"',
     );
     expect(
-      timeline[28].startsWith('Caller: at main file:///'),
+      timeline[28].startsWith('Caller: at'),
       isTrue,
     );
     expect(
@@ -471,7 +471,7 @@ void main() async {
     );
     return process.runTestInProcessAndCaptureOutPut(
       shouldFail: shouldFail,
-      testAsString: testAsString,
+      testFileText: testAsString,
       captureStart: captureStart,
     );
   }

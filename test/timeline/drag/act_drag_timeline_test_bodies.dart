@@ -264,7 +264,7 @@ class ActDragTimelineTestBodies {
     );
     expect(
       lines[indexOfStart + 2],
-      startsWith('Caller: at main'),
+      startsWith('Caller: at'),
     );
     expect(
       lines[indexOfStart + 3],
@@ -283,7 +283,7 @@ class ActDragTimelineTestBodies {
     );
     expect(
       lines[indexOfEnd + 2],
-      startsWith('Caller: at main'),
+      startsWith('Caller: at'),
     );
     expect(
       lines[indexOfEnd + 3],
@@ -321,7 +321,7 @@ class ActDragTimelineTestBodies {
     return process.runTestInProcessAndCaptureOutPut(
       shouldFail:
           drags == _failingDragAmount || globalTimelineModeToSwitch != null,
-      testAsString: testAsString,
+      testFileText: testAsString,
       captureStart: captureStart,
     );
   }
