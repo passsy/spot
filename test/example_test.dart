@@ -63,6 +63,11 @@ void main() {
       parents: [spot<IconButton>()],
     ).doesNotExist();
 
+    appBar.spotIcon(
+      Icons.home,
+      parents: [spot<IconButton>()],
+    ).existsExactlyNTimes(2);
+
     // finder alternative
     // expect(find.byIcon(Icons.settings), findsOneWidget);
   });

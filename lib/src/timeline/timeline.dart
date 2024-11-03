@@ -116,7 +116,7 @@ class Timeline {
     required String eventType,
     String? description,
   }) {
-    addRawEvent(
+    _addRawEvent(
       TimelineEvent(
         details: details,
         screenshot: screenshot,
@@ -136,7 +136,7 @@ class Timeline {
     required String details,
     required TimelineEventType eventType,
   }) {
-    addRawEvent(
+    _addRawEvent(
       TimelineEvent.now(
         details: details,
         screenshot: screenshot,
@@ -147,7 +147,7 @@ class Timeline {
   }
 
   /// Adds an event to the timeline.
-  void addRawEvent(TimelineEvent event) {
+  void _addRawEvent(TimelineEvent event) {
     if (mode == TimelineMode.off) {
       return;
     }

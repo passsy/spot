@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
+import 'package:spot/src/screenshot/screenshot.dart';
+import 'package:spot/src/screenshot/screenshot_annotator.dart';
 import 'package:spot/src/spot/filters/onstage_filter.dart';
 import 'package:spot/src/spot/widget_selector.dart';
 
@@ -340,12 +342,20 @@ extension ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
       if (error is TestFailure) {
         message = error.message;
       }
-      timeline.maybeAddErrorEvent(
-        error,
-        details: message ??
-            'Error validating quantity of ${selector.toStringBreadcrumb()}',
-        withScreenshot: false,
-      );
+
+      if (timeline.mode != TimelineMode.off) {
+        final screenshot = takeScreenshotSync(
+          annotators: [
+            HighlightAnnotator.elements(discoveredElements),
+          ],
+        );
+        timeline.addEvent(
+          eventType: 'Error',
+          details: message ??
+              'Error validating quantity of ${selector.toStringBreadcrumb()}',
+          screenshot: screenshot,
+        );
+      }
       rethrow;
     }
   }
