@@ -322,6 +322,76 @@ void main() {
       });
     });
   });
+  group('AnyText', () {
+    testWidgets('toString TextSpan', (tester) async {
+      await tester.pumpWidget(treeRichText);
+      final text = spotText('foo').snapshotWidget();
+
+      expect(text.toStringShort(), 'RichText');
+      expect(
+        text.toString(),
+        stringContainsInOrder([
+          'RichText(',
+          'text: "foo",',
+          'softWrap: wrapping at box width,',
+          'maxLines: unlimited,',
+          'font_color: ${Colors.red},',
+        ]),
+      );
+      expect(
+        text.toStringShallow(),
+        stringContainsInOrder([
+          'RichText(',
+          'softWrap: wrapping at box width,',
+          'maxLines: unlimited,',
+          'text: "foo"',
+          'font_color: ${Colors.red},',
+        ]),
+      );
+      expect(
+        text.toStringDeep(),
+        stringContainsInOrder([
+          'RichText(text: "foo"',
+          'softWrap: wrapping at box width,',
+          'maxLines: unlimited',
+          'font_color: ${Colors.red}',
+          'font_size: null',
+        ]),
+      );
+    });
+
+    testWidgets('toString EditableText', (tester) async {
+      await tester.pumpWidget(treeEditableText);
+      final text = spotText('foo').snapshotWidget();
+
+      expect(text.toStringShort(), 'EditableText');
+      expect(
+        text.toString(),
+        stringContainsInOrder([
+          'EditableText(',
+          'text: "foo",',
+          'color: ${Colors.red},',
+        ]),
+      );
+      expect(
+        text.toStringShallow(),
+        stringContainsInOrder([
+          'EditableText(',
+          'text: "foo",',
+          'font_color: ${Colors.red},',
+        ]),
+      );
+      expect(
+        text.toStringDeep().trim(),
+        stringContainsInOrder([
+          'EditableText(text: "foo"',
+          'maxLines: unlimited',
+          'font_color: ${Colors.red}',
+          'font_size: null',
+        ]),
+      );
+    });
+  });
 }
 
 Widget _stage({required List<Widget> children}) {
