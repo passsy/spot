@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/src/screenshot/screenshot.dart';
 import 'package:spot/src/spot/tree_snapshot.dart';
 import 'package:spot/src/timeline/html/print_html.dart';
+import 'package:spot/src/timeline/print_console.dart';
 import 'package:stack_trace/stack_trace.dart';
 //ignore: implementation_imports
 import 'package:test_api/src/backend/invoker.dart';
@@ -87,10 +88,13 @@ Timeline get timeline {
 /// See also:
 /// - [TimelineMode] for the available modes.
 class Timeline {
-  Timeline._(this._test);
+  Timeline._(this.test);
 
-  final LiveTest _test;
+  /// The test that the timeline is associated with.
+  final LiveTest test;
 
+  /// The events that have recording during the test.
+  List<TimelineEvent> get events => List.unmodifiable(_events);
   final List<TimelineEvent> _events = [];
 
   TimelineMode _mode = _globalTimelineMode;
@@ -103,7 +107,14 @@ class Timeline {
       return;
     }
     // ignore: avoid_print
-    print(value.message);
+    print(
+      switch (value) {
+        TimelineMode.live => '🔴 - Recording and displaying live timeline',
+        TimelineMode.record =>
+          '🔴 - Recording, but only showing on test failure',
+        TimelineMode.off => '⏸︎ - Timeline recording is off',
+      },
+    );
 
     _mode = value;
   }
@@ -120,7 +131,7 @@ class Timeline {
       TimelineEvent(
         details: details,
         screenshot: screenshot,
-        initiator: _mostRelevantCaller(
+        initiator: mostRelevantCaller(
           fallback: initiator ?? screenshot?.initiator,
         ),
         timestamp: DateTime.now(),
@@ -140,7 +151,7 @@ class Timeline {
       TimelineEvent.now(
         details: details,
         screenshot: screenshot,
-        initiator: _mostRelevantCaller(fallback: screenshot.initiator),
+        initiator: mostRelevantCaller(fallback: screenshot.initiator),
         eventType: eventType,
       ),
     );
@@ -153,76 +164,11 @@ class Timeline {
     }
     _events.add(event);
     if (mode == TimelineMode.live) {
-      _printEvent(event);
+      printEventToConsole(event);
     }
   }
 
-  /// Prints the complete timeline to the console.
-  void printToConsole() {
-    // ignore: avoid_print
-    final frame = _mostRelevantCaller(trace: _test.test.trace);
-    final location = frame != null
-        ? ' at ${frame.member} ${frame.uri}:${frame.line}:${frame.column}'
-        : '';
-    // ignore: avoid_print
-    print('Timeline of test: ${_test.test.name}$location');
-    for (final event in _events) {
-      _printEvent(event);
-    }
-  }
-
-  void _printEvent(TimelineEvent event) {
-    final StringBuffer buffer = StringBuffer();
-    final frame = event.initiator;
-    final caller = frame != null
-        ? 'at ${frame.member} ${frame.uri}:${frame.line}:${frame.column}'
-        : 'N/A';
-    final details = event.details.split('\n').first;
-    buffer.writeln('==================== Timeline Event ====================');
-    buffer.writeln('Event Type: ${event.eventType}');
-    buffer.writeln('Details: $details');
-    buffer.writeln('Caller: $caller');
-    if (event.screenshot != null) {
-      buffer.writeln('Screenshot: file://${event.screenshot!.file.path}');
-    }
-    buffer.writeln('Timestamp: ${event.timestamp.toIso8601String()}');
-    buffer.writeln('========================================================');
-
-    // ignore: avoid_print
-    print(buffer);
-  }
-
-  /// Adds an error event to the timeline, if the timeline is not off.
-  void maybeAddErrorEvent(
-    Object error, {
-    required String details,
-    bool withScreenshot = true,
-  }) {
-    if (timeline.mode != TimelineMode.off) {
-      final binding = TestWidgetsFlutterBinding.instance;
-      const String eventType = 'Error';
-      if (!withScreenshot || binding is LiveTestWidgetsFlutterBinding) {
-        timeline.addEvent(details: details, eventType: eventType);
-        return;
-      }
-
-      // schedule the screenshot to be taken at the end of the test
-      Invoker.current!.addOutstandingCallback();
-      takeScreenshot().then((screenshot) {
-        timeline.addScreenshot(
-          screenshot,
-          details: details,
-          eventType: const TimelineEventType(label: eventType),
-        );
-        Invoker.current!.removeOutstandingCallback();
-      }).onError((e, stack) {
-        timeline.addEvent(details: details, eventType: eventType);
-        Invoker.current!.removeOutstandingCallback();
-      });
-    }
-  }
-
-  /// Event handler after the [_test] has completed.
+  /// Event handler after the [test] has completed.
   ///
   /// Prints the timeline to console, as link to a html file or plain text
   Future<void> _onPostTest() async {
@@ -230,11 +176,13 @@ class Timeline {
       case TimelineMode.live:
         // during live mode the events are written directly to the console.
         // Finalize with html report
-        printHTML(_events);
+        printHTML();
       case TimelineMode.record:
-        if (!_test.state.result.isPassing) {
+        if (!test.state.result.isPassing) {
+          // best for CI
           printToConsole();
-          printHTML(_events);
+          // best for humans
+          printHTML();
         } else {
           // do nothing
           break;
@@ -322,21 +270,17 @@ class TimelineEvent {
 /// - [TimelineMode.off] - The timeline is not recording.
 enum TimelineMode {
   /// The timeline is recording and printing events as they happen.
-  live('🔴 - Recording live timeline'),
+  live,
 
   /// The timeline is recording but not printing events unless the test fails.
-  record('🔴 - Recording error output timeline'),
+  record,
 
   /// The timeline is not recording.
-  off('⏸︎ - Timeline recording is off');
-
-  const TimelineMode(this.message);
-
-  /// The message to display when the timeline mode is set.
-  final String message;
+  off;
 }
 
-Frame? _mostRelevantCaller({Trace? trace, Frame? fallback}) {
+/// Returns the most relevant caller that is part of the user code.
+Frame? mostRelevantCaller({Trace? trace, Frame? fallback}) {
   final frames = (trace ?? Trace.current()).frames;
 
   final nonPackageFrames = frames.where((frame) => frame.package == null);

@@ -76,13 +76,16 @@ class CrosshairAnnotator implements ScreenshotAnnotator {
   }
 }
 
+/// Highlights elements on a screenshot.
 class HighlightAnnotator implements ScreenshotAnnotator {
+  /// Highlight plain rectangles on the screenshot with optional labels.
   HighlightAnnotator.rects(
     this.rects, {
     this.color = const Color(0xFFFF00FF),
     this.labels,
   }) : assert(labels == null || rects.length == labels.length);
 
+  /// Highlight elements on the screenshot
   factory HighlightAnnotator.elements(List<Element> elements) {
     final binding = TestWidgetsFlutterBinding.instance;
     final view = binding.platformDispatcher.implicitView;
@@ -110,14 +113,19 @@ class HighlightAnnotator implements ScreenshotAnnotator {
     return HighlightAnnotator.rects(rects, labels: labels);
   }
 
+  /// Highlight a single element on the screenshot
   factory HighlightAnnotator.element(Element element) {
     return HighlightAnnotator.elements([element]);
   }
 
+  /// The rectangles to highlight. They are captured at the point of creation,
+  /// because the elements change or even disappear in the next frame
   final List<Rect> rects;
 
+  /// Optional labels for the highlighted rectangles. Will be displayed below and above the rectangle.
   final List<String>? labels;
 
+  /// The color to use for highlighting.
   final Color color;
 
   @override

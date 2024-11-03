@@ -12,48 +12,52 @@ import 'package:stack_trace/stack_trace.dart';
 //ignore: implementation_imports
 import 'package:test_api/src/backend/invoker.dart';
 
-/// Prints the timeline as an HTML file.
-void printHTML(List<TimelineEvent> timeLineEvents) {
-  final spotTempDir = Directory.systemTemp.createTempSync();
-  String name = Invoker.current?.liveTest.test.name ?? '';
-  if (name.isEmpty) {
-    name = 'Unnamed test';
-  }
-  if (!spotTempDir.existsSync()) {
-    spotTempDir.createSync();
-  }
+/// Writes the timeline as an HTML file
+extension HtmlTimelinePrinter on Timeline {
+  /// Prints the timeline as an HTML file.
+  void printHTML() {
+    final spotTempDir = Directory.systemTemp.createTempSync();
 
-  final String nameForHtml = () {
-    String name = Invoker.current?.liveTest.test.name ?? '';
-
+    String name = test.test.name;
     if (name.isEmpty) {
       name = 'Unnamed test';
     }
+    if (!spotTempDir.existsSync()) {
+      spotTempDir.createSync();
+    }
 
-    // Replace spaces and underscores with hyphens
-    name = name.replaceAll(RegExp('[ _]'), '-');
+    final String nameForHtml = () {
+      String name = test.test.name;
 
-    // Remove problematic characters
-    name = name.replaceAll(RegExp('[^a-zA-Z0-9-]'), '');
+      if (name.isEmpty) {
+        name = 'Unnamed test';
+      }
 
-    // Collapse multiple hyphens into a single hyphen
-    name = name.replaceAll(RegExp('-+'), '-');
+      // Replace spaces and underscores with hyphens
+      name = name.replaceAll(RegExp('[ _]'), '-');
 
-    // Convert to lowercase
-    name = name.toLowerCase();
+      // Remove problematic characters
+      name = name.replaceAll(RegExp('[^a-zA-Z0-9-]'), '');
 
-    // Remove leading or trailing hyphens
-    name = name.replaceAll(RegExp(r'^-+|-+$'), '');
+      // Collapse multiple hyphens into a single hyphen
+      name = name.replaceAll(RegExp('-+'), '-');
 
-    // Append .html extension
-    return 'timeline-$name.html';
-  }();
+      // Convert to lowercase
+      name = name.toLowerCase();
 
-  final htmlFile = File(path.join(spotTempDir.path, nameForHtml));
-  final content = _timelineAsHTML(timeLineEvents: timeLineEvents);
-  htmlFile.writeAsStringSync(content);
-  //ignore: avoid_print
-  print('View time line here: file://${htmlFile.path}');
+      // Remove leading or trailing hyphens
+      name = name.replaceAll(RegExp(r'^-+|-+$'), '');
+
+      // Append .html extension
+      return 'timeline-$name.html';
+    }();
+
+    final htmlFile = File(path.join(spotTempDir.path, nameForHtml));
+    final content = _timelineAsHTML(timeLineEvents: events);
+    htmlFile.writeAsStringSync(content);
+    //ignore: avoid_print
+    print('View time line here: file://${htmlFile.path}');
+  }
 }
 
 /// Returns the events in the timeline as an HTML string.
