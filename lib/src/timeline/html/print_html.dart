@@ -115,6 +115,7 @@ String _timelineAsHTML({required List<TimelineEvent> timeLineEvents}) {
       if (ideaDir.existsSync()) {
         // Update to the current directory path
         projectDir = dir.path;
+        break;
       }
 
       // Move up to the parent directory
