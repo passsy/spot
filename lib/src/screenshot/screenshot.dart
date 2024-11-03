@@ -73,7 +73,7 @@ Future<Screenshot> takeScreenshot({
 }
 
 /// Takes a screenshot of the entire screen or a single widget.
-/// This method returns synchronously, but continuous processing the image asynchronously.
+/// This method returns synchronously but does not actually write the image to disk until the test is done.
 Screenshot takeScreenshotSync({
   Element? element,
   WidgetSnapshot? snapshot,
