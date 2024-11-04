@@ -276,16 +276,5 @@ Frame? mostRelevantCaller({Trace? trace, Frame? fallback}) {
   final preferredFrame =
       testFileCaller ?? nonPackageFrames.lastOrNull ?? fallback;
 
-  if (preferredFrame != null) {
-    // remove any '<fn>' parts
-    final memberName = preferredFrame.member?.split('.').first ?? '';
-    return Frame(
-      preferredFrame.uri,
-      preferredFrame.line,
-      preferredFrame.column,
-      memberName,
-    );
-  }
-
-  return null;
+  return preferredFrame;
 }
