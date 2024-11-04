@@ -1,5 +1,5 @@
 String buildPubspecString(String name, bool addFontsFolder) {
-  return '''
+  String pubspec = '''
 name: $name
 description: "A Flutter Test project."
 publish_to: 'none'
@@ -20,9 +20,16 @@ dependencies:
     
 dev_dependencies:
   test: ^1.24.0
-
-flutter:
-  assets:
-    - fonts/
 ''';
+  if (addFontsFolder) {
+    pubspec = '''$pubspec    
+    
+flutter:
+  fonts:
+    - family: Montserrat
+      fonts:
+        - asset: fonts/Montserrat-Regular.ttf
+''';
+  }
+  return pubspec;
 }

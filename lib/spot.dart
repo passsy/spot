@@ -515,13 +515,13 @@ Future<void> loadFontsFromFontsManifest(List<Map<String, dynamic>> fontManifest)
 
   // Load the fonts from the manifest. These can be the ones defined in the app or in dependencies.
   for (final Map<String, dynamic> font in fontManifest) {
-    print(font);
     final fontLoader = FontLoader(derivedFontFamily(font));
     // Cast 'fonts' field to List<Map<String, dynamic>> to use in the for loop
     final List<Map<String, dynamic>> fontsList = (font['fonts'] as List).map((e) => e as Map<String, dynamic>).toList();
 
     for (final Map<String, dynamic> fontType in fontsList) {
       final String assetPath = fontType['asset'] as String;
+      print('assetPath: $assetPath');
       fontLoader.addFont(rootBundle.load(assetPath));
     }
 
@@ -548,7 +548,8 @@ String derivedFontFamily(Map<String, dynamic> fontDefinition) {
       return fontFamilyName;
     }
   } else {
-    for (final Map<String, dynamic> fontType in fontDefinition['fonts'] as List<Map<String, dynamic>>) {
+    for (final fontType in fontDefinition['fonts'] as List<dynamic>) {
+      print('fontType: $fontType');
       final String? asset = fontType['asset'] as String?;
       if (asset != null && asset.startsWith('packages')) {
         final packageName = asset.split('/')[1];
