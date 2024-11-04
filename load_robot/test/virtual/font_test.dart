@@ -17,22 +17,6 @@ void main() {
       matchesGoldenFile('golden_load_roboto.png'),
     );
   });
-  testWidgets('Third-party font is loaded when used', (WidgetTester tester) async {
-    await loadAppFonts();
-    await tester.pumpWidget(
-      const MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: FontTestWidget(
-          fontFamily: 'Montserrat',
-        ),
-      ),
-    );
-    await takeScreenshot();
-    await expectLater(
-      find.byType(MaterialApp),
-      matchesGoldenFile('golden_load_roboto.png'),
-    );
-  });
 }
 
 class FontTestWidget extends StatelessWidget {

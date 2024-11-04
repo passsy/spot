@@ -12,45 +12,6 @@ void main() {
   test('When loadAppFonts with Montserrat', () async {
     await createTestAppWithMontserrat('test_project_with_montserrat');
   });
-
-  // testWidgets('Robot is loaded from SDK when nothing else is defined (default)', (WidgetTester tester) async {
-  //   await loadAppFonts();
-  //   await tester.pumpWidget(
-  //     const MaterialApp(
-  //       debugShowCheckedModeBanner: false,
-  //       home: FontTestWidget(),
-  //     ),
-  //   );
-  //   await takeScreenshot();
-  //   await expectLater(
-  //     find.byType(MaterialApp),
-  //     matchesGoldenFile('golden_load_roboto.png'),
-  //   );
-  // });
-  // testWidgets('Additional fonts are loaded with loadAppFonts', (WidgetTester tester) async {
-  //   final fontManifestWithMontserrat = [
-  //     {
-  //       'family': 'Montserrat',
-  //       'fonts': [
-  //         {'asset': 'fonts/Montserrat-Regular.ttf'},
-  //       ],
-  //     }
-  //   ];
-  //   await loadFontsFromFontsManifest(fontManifestWithMontserrat);
-  //   await tester.pumpWidget(
-  //     const MaterialApp(
-  //       debugShowCheckedModeBanner: false,
-  //       home: FontTestWidget(
-  //         fontFamily: 'Montserrat',
-  //       ),
-  //     ),
-  //   );
-  //   await takeScreenshot();
-  //   await expectLater(
-  //     find.byType(MaterialApp),
-  //     matchesGoldenFile('golden_load_montserrat_success.png'),
-  //   );
-  // });
 }
 
 Future<void> createTestApp(String name) async {
