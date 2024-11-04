@@ -275,7 +275,8 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       await act.tap(_clearButtonSelector);
       spotText('Counter: 0').existsOnce();
     });
-    final containsMessage = output.contains('🔴 - Recording live timeline');
+    final containsMessage =
+        output.contains('🔴 - Live! Shows all timeline events as they happen');
     // Changes in local test since it's `record` by default. Globally it does not
     // change since the global mode is already `live`.
     expect(containsMessage, isGlobalMode ? isFalse : isTrue);
@@ -313,7 +314,8 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       await act.tap(_subtractButtonSelector);
       spotText('Counter: 3').existsOnce();
     });
-    final containsMessage = output.contains('🔴 - Recording live timeline');
+    final containsMessage =
+        output.contains('🔴 - Live! Shows all timeline events as they happen');
     // Changes in local test since it's `record` by default. Globally it does not
     // change since the global mode is already `live`.
     expect(containsMessage, isGlobalMode ? isFalse : isTrue);

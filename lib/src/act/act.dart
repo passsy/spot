@@ -217,11 +217,25 @@ class Act {
 
         final dragPosition = pokablePositions.mostCenterHittablePosition!;
 
-        void addDragEvent(String details) {
+        void addDragEvent(String details, {double? direction}) {
           if (timeline.mode != TimelineMode.off) {
             final screenshot = takeScreenshotSync(
               annotators: [
                 CrosshairAnnotator(centerPosition: dragPosition),
+                if (direction != null) ...[
+                  ArrowAnnotator(
+                    start: dragPosition - const Offset(40, 0),
+                    end: dragPosition -
+                        const Offset(40, 0) +
+                        Offset(0, direction),
+                  ),
+                  ArrowAnnotator(
+                    start: dragPosition + const Offset(40, 0),
+                    end: dragPosition +
+                        const Offset(40, 0) +
+                        Offset(0, direction),
+                  ),
+                ]
               ],
             );
             timeline.addEvent(
@@ -241,6 +255,7 @@ class Act {
 
         addDragEvent(
           'Scrolling $direction from $dragPosition in order to find $targetName.',
+          direction: moveStep.dy,
         );
 
         int dragCount = 0;

@@ -109,7 +109,8 @@ class Timeline {
     // ignore: avoid_print
     print(
       switch (value) {
-        TimelineMode.live => '🔴 - Recording and displaying live timeline',
+        TimelineMode.live =>
+          '🔴 - Live! Shows all timeline events as they happen',
         TimelineMode.record =>
           '🔴 - Recording, but only showing on test failure',
         TimelineMode.off => '⏸︎ - Timeline recording is off',

@@ -238,23 +238,32 @@ String _timelineAsHTML({required List<TimelineEvent> timeLineEvents}) {
 
   final events = () {
     for (final event in timeLineEvents) {
-      final index = timeLineEvents.indexOf(event);
-      eventBuffer.writeln("<h2>#${index + 1}</h2>");
       eventBuffer.writeln('<div class="event">');
       writeScreenshot(event);
       eventBuffer.writeln('<div class="event-details">');
       writeEventType(event);
       writeDetails(event);
       writeTimestamp(event);
+
+      eventBuffer.writeln('<div class="code-location">');
       writeCaller(event);
       writeJetBrainsLink(event);
+      eventBuffer.writeln('</div>');
+
       eventBuffer.writeln('</div>');
       eventBuffer.writeln('</div>');
     }
     return eventBuffer.toString();
   }();
 
+  htmlBuffer.write('<section class="events">');
   htmlBuffer.write(events);
+  htmlBuffer.write('</section>');
+
+  // footer
+  htmlBuffer.writeln(
+    '<div>Tell us how to improve the timeline at <a href="https://github.com/passsy/spot/issues">github.com/passsy/spot</a></div>',
+  );
 
   htmlBuffer.writeln('<div id="myModal" class="modal">');
   htmlBuffer

@@ -69,7 +69,7 @@ h1 {
 
 .event {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   border: var(--border-width) solid var(--border-color);
   margin: var(--event-margin);
   padding: var(--event-padding);
@@ -80,7 +80,15 @@ h1 {
   flex-direction: column;
   justify-content: space-between;
   margin-left: var(--event-details-margin-left);
-  height: 100%;
+  min-width: 0;
+}
+
+.code-location {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  min-width: 0;
+  flex-flow: row wrap;
 }
 
 .event-details p {

@@ -26,7 +26,8 @@ class ActDragTimelineTestBodies {
       }
       await _testBody(tester);
     });
-    final hasMessage = output.contains('🔴 - Recording live timeline');
+    final hasMessage =
+        output.contains('🔴 - Live! Shows all timeline events as they happen');
 
     expect(hasMessage, isGlobal ? isFalse : isTrue);
     _testTimeLineContent(
@@ -162,7 +163,10 @@ class ActDragTimelineTestBodies {
       timelineMode: TimelineMode.live,
       drags: _failingDragAmount,
       captureStart: [
-        if (isGlobal) shared.timelineHeader else '🔴 - Recording live timeline',
+        if (isGlobal)
+          shared.timelineHeader
+        else
+          '🔴 - Live! Shows all timeline events as they happen',
       ],
     );
 
@@ -172,7 +176,9 @@ class ActDragTimelineTestBodies {
     // which is documented in the output.
     expect(
       lines.first,
-      isGlobal ? shared.timelineHeader : '🔴 - Recording live timeline',
+      isGlobal
+          ? shared.timelineHeader
+          : '🔴 - Live! Shows all timeline events as they happen',
     );
 
     _testTimeLineContent(
