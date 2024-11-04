@@ -16,8 +16,8 @@ Matcher throwsErrorContaining<E>(
     failures.add(
       isA<E>().having(
         // ignore: avoid_dynamic_calls
-        (it) => (it as dynamic).message,
-        'message',
+        (it) => (it as dynamic).toString(),
+        'toString()',
         contains(part),
       ),
     );
@@ -27,8 +27,8 @@ Matcher throwsErrorContaining<E>(
     failures.add(
       isA<E>().having(
         // ignore: avoid_dynamic_calls
-        (it) => (it as dynamic).message,
-        'message',
+        (it) => (it as dynamic).toString(),
+        'toString()',
         isNot(contains(part)),
       ),
     );

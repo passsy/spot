@@ -52,13 +52,64 @@ Future<Screenshot> takeScreenshot({
   String? name,
   bool print = true,
 }) async {
-  final screenshot = await _createScreenshot(
+  final Frame? frame = _caller();
+  final liveElement = _findSingleElement(
     element: element,
     snapshot: snapshot,
     selector: selector,
-    annotators: annotators,
-    name: name,
   );
+
+  late final Uint8List image;
+
+  final binding = TestWidgetsFlutterBinding.instance;
+  await binding.runAsync(() async {
+    final ui.Image plainImage = await _captureImage(liveElement);
+    ui.Image imageToCapture = plainImage;
+    for (final annotator in annotators) {
+      imageToCapture = await annotator.annotate(imageToCapture);
+    }
+    final byteData =
+        await imageToCapture.toByteData(format: ui.ImageByteFormat.png);
+    if (byteData == null) {
+      throw 'Could not take screenshot';
+    }
+    image = byteData.buffer.asUint8List();
+    plainImage.dispose();
+  });
+
+  String callerFileName() {
+    final file = frame?.uri.pathSegments.last.replaceFirst('.dart', '');
+    final line = frame?.line;
+    if (file != null && line != null) {
+      return '$file:$line';
+    }
+    if (file != null) {
+      return file;
+    }
+    return 'unknown';
+  }
+
+  final String screenshotFileName = () {
+    final String n;
+    if (name != null) {
+      // escape /
+      n = Uri.encodeQueryComponent(name);
+    } else {
+      n = callerFileName();
+    }
+    // always append a unique id to avoid name collisions
+    final uniqueId = nanoid(length: 5);
+    return '$n-$uniqueId.png';
+  }();
+
+  final spotTempDir = Directory.systemTemp.directory('spot');
+  if (!spotTempDir.existsSync()) {
+    spotTempDir.createSync();
+  }
+  final file = spotTempDir.file(screenshotFileName);
+  file.writeAsBytesSync(image);
+
+  final screenshot = Screenshot(file: file, initiator: frame);
 
   if (print) {
     final frame = screenshot.initiator;
@@ -145,73 +196,6 @@ Screenshot takeScreenshotSync({
   });
 
   return screenshot;
-}
-
-Future<Screenshot> _createScreenshot({
-  Element? element,
-  WidgetSnapshot? snapshot,
-  WidgetSelector? selector,
-  String? name,
-  List<ScreenshotAnnotator>? annotators,
-}) async {
-  final Frame? frame = _caller();
-  final liveElement = _findSingleElement(
-    element: element,
-    snapshot: snapshot,
-    selector: selector,
-  );
-
-  late final Uint8List image;
-
-  final binding = TestWidgetsFlutterBinding.instance;
-  await binding.runAsync(() async {
-    final ui.Image plainImage = await _captureImage(liveElement);
-    ui.Image imageToCapture = plainImage;
-    for (final annotator in annotators ?? <ScreenshotAnnotator>[]) {
-      imageToCapture = await annotator.annotate(imageToCapture);
-    }
-    final byteData =
-        await imageToCapture.toByteData(format: ui.ImageByteFormat.png);
-    if (byteData == null) {
-      throw 'Could not take screenshot';
-    }
-    image = byteData.buffer.asUint8List();
-    plainImage.dispose();
-  });
-
-  String callerFileName() {
-    final file = frame?.uri.pathSegments.last.replaceFirst('.dart', '');
-    final line = frame?.line;
-    if (file != null && line != null) {
-      return '$file:$line';
-    }
-    if (file != null) {
-      return file;
-    }
-    return 'unknown';
-  }
-
-  final String screenshotFileName = () {
-    final String n;
-    if (name != null) {
-      // escape /
-      n = Uri.encodeQueryComponent(name);
-    } else {
-      n = callerFileName();
-    }
-    // always append a unique id to avoid name collisions
-    final uniqueId = nanoid(length: 5);
-    return '$n-$uniqueId.png';
-  }();
-
-  final spotTempDir = Directory.systemTemp.directory('spot');
-  if (!spotTempDir.existsSync()) {
-    spotTempDir.createSync();
-  }
-  final file = spotTempDir.file(screenshotFileName);
-  file.writeAsBytesSync(image);
-
-  return Screenshot(file: file, initiator: frame);
 }
 
 /// Provides the ability to create screenshots of a [WidgetSelector]

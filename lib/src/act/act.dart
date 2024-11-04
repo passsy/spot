@@ -114,22 +114,16 @@ class Act {
         final binding = TestWidgetsFlutterBinding.instance;
 
         if (timeline.mode != TimelineMode.off) {
-          final eventDetails = 'Tap ${selector.toStringBreadcrumb()}';
-          const String eventType = 'Tap Event';
-          if (binding is! LiveTestWidgetsFlutterBinding) {
-            final screenshot = await takeScreenshot(
-              annotators: [
-                CrosshairAnnotator(centerPosition: positionToTap),
-              ],
-            );
-            timeline.addScreenshot(
-              screenshot,
-              details: eventDetails,
-              eventType: const TimelineEventType(label: eventType),
-            );
-          } else {
-            timeline.addEvent(details: eventDetails, eventType: eventType);
-          }
+          final screenshot = takeScreenshotSync(
+            annotators: [
+              CrosshairAnnotator(centerPosition: positionToTap),
+            ],
+          );
+          timeline.addEvent(
+            details: 'Tap ${selector.toStringBreadcrumb()}',
+            eventType: 'Tap Event',
+            screenshot: screenshot,
+          );
         }
 
         // Finally, tap the widget by sending a down and up event.

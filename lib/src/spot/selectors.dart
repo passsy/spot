@@ -866,14 +866,6 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostOnce] asserts that at most one widget exists.
   /// - [existsAtMostNTimes] asserts that at most [n] widgets of type [W] exist.
   MultiWidgetMatcher<W> existsExactlyNTimes(int n) {
-    if (timeline.mode != TimelineMode.off) {
-      final screenshot = takeScreenshotSync();
-      timeline.addEvent(
-        eventType: 'Assertion',
-        screenshot: screenshot,
-        details: '${toStringBreadcrumb()} exists exactly $n times.',
-      );
-    }
     final exactlyNTimes =
         copyWith(quantityConstraint: QuantityConstraint.exactly(n));
     return snapshot(exactlyNTimes).multi;

@@ -128,34 +128,17 @@ class Timeline {
     required String eventType,
     String? description,
   }) {
-    _addRawEvent(
-      TimelineEvent(
-        details: details,
-        screenshot: screenshot,
-        initiator: mostRelevantCaller(
-          fallback: initiator ?? screenshot?.initiator,
-        ),
-        timestamp: DateTime.now(),
-        treeSnapshot: currentWidgetTreeSnapshot(),
-        eventType: TimelineEventType(label: eventType),
+    final event = TimelineEvent(
+      details: details,
+      screenshot: screenshot,
+      initiator: mostRelevantCaller(
+        fallback: initiator ?? screenshot?.initiator,
       ),
+      timestamp: DateTime.now(),
+      treeSnapshot: currentWidgetTreeSnapshot(),
+      eventType: TimelineEventType(label: eventType),
     );
-  }
-
-  /// Adds a screenshot to the timeline.
-  void addScreenshot(
-    Screenshot screenshot, {
-    required String details,
-    required TimelineEventType eventType,
-  }) {
-    _addRawEvent(
-      TimelineEvent.now(
-        details: details,
-        screenshot: screenshot,
-        initiator: mostRelevantCaller(fallback: screenshot.initiator),
-        eventType: eventType,
-      ),
-    );
+    _addRawEvent(event);
   }
 
   /// Adds an event to the timeline.

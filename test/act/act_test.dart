@@ -13,6 +13,7 @@ void main() {
 
 /// All tests for [act]
 void actTests() {
+  globalTimelineMode = TimelineMode.live;
   group('tap', () {
     testWidgets('tap', (tester) async {
       int i = 0;

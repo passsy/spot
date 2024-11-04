@@ -265,35 +265,35 @@ extension ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
       if (minimumConstraint != null && maximumConstraint == null) {
         if (count == 0) {
           _tryMatchingLessSpecificCriteria(this);
-          throw TestFailure(
-            'Could not find ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
-            'expected at least $minimumConstraint\n'
-            '${significantWidgetTree()}'
-            'Could not find ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
-            'expected at least $minimumConstraint',
+          throw QuantityTestFailure(
+            message:
+                'Could not find ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
+                'expected at least $minimumConstraint',
+            significantWidgetTree: significantWidgetTree(),
+            snapshot: this,
           );
         }
 
         if (minimumConstraint > count) {
           _tryMatchingLessSpecificCriteria(this);
-          throw TestFailure(
-            'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
-            'expected at least $minimumConstraint\n'
-            '${significantWidgetTree()}'
-            'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
-            'expected at least $minimumConstraint',
+          throw QuantityTestFailure(
+            message:
+                'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
+                'expected at least $minimumConstraint',
+            significantWidgetTree: significantWidgetTree(),
+            snapshot: this,
           );
         }
       }
 
       if (maximumConstraint != null && minimumConstraint == null) {
         if (maximumConstraint < count) {
-          throw TestFailure(
-            'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
-            'expected at most $maximumConstraint\n'
-            '${significantWidgetTree()}'
-            'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
-            'expected at most $maximumConstraint',
+          throw QuantityTestFailure(
+            message:
+                'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
+                'expected at most $maximumConstraint',
+            significantWidgetTree: significantWidgetTree(),
+            snapshot: this,
           );
         }
       }
@@ -307,57 +307,79 @@ extension ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
           } else {
             if (count == 0) {
               _tryMatchingLessSpecificCriteria(this);
-              throw TestFailure(
-                'Could not find ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
-                'expected exactly $exactCount\n'
-                '${significantWidgetTree()}'
-                'Could not find ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
-                'expected exactly $exactCount',
+              throw QuantityTestFailure(
+                message:
+                    'Could not find ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
+                    'expected exactly $exactCount',
+                significantWidgetTree: significantWidgetTree(),
+                snapshot: this,
               );
             } else {
               _tryMatchingLessSpecificCriteria(this);
-              throw TestFailure(
-                'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
-                'expected exactly $exactCount\n'
-                '${significantWidgetTree()}'
-                'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
-                'expected exactly $exactCount',
+              throw QuantityTestFailure(
+                message:
+                    'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
+                    'expected exactly $exactCount',
+                significantWidgetTree: significantWidgetTree(),
+                snapshot: this,
               );
             }
           }
         } else {
           // out of range
-          throw TestFailure(
-            'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
-            'expected between $minimumConstraint and $maximumConstraint\n'
-            '${significantWidgetTree()}'
-            'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
-            'expected between $minimumConstraint and $maximumConstraint',
+          throw QuantityTestFailure(
+            message:
+                'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
+                'expected between $minimumConstraint and $maximumConstraint',
+            significantWidgetTree: significantWidgetTree(),
+            snapshot: this,
           );
         }
       }
     } catch (error) {
-      String? message;
-
-      if (error is TestFailure) {
-        message = error.message;
-      }
-
-      if (timeline.mode != TimelineMode.off) {
-        final screenshot = takeScreenshotSync(
-          annotators: [
-            HighlightAnnotator.elements(discoveredElements),
-          ],
-        );
-        timeline.addEvent(
-          eventType: 'Error',
-          details: message ??
-              'Error validating quantity of ${selector.toStringBreadcrumb()}',
-          screenshot: screenshot,
-        );
+      if (error is QuantityTestFailure) {
+        if (timeline.mode != TimelineMode.off) {
+          final screenshot = takeScreenshotSync(
+            annotators: [
+              HighlightAnnotator.elements(error.snapshot.discoveredElements),
+            ],
+          );
+          timeline.addEvent(
+            eventType: 'Assertion Failed',
+            details: '${error.message}\n${error.significantWidgetTree}',
+            screenshot: screenshot,
+          );
+        }
       }
       rethrow;
     }
+  }
+}
+
+/// Thrown when the quantity of discovered widgets does not match the expected quantity.
+class QuantityTestFailure implements TestFailure {
+  /// Creates a new [QuantityTestFailure] based on a snapshot.
+  QuantityTestFailure({
+    required this.message,
+    required this.significantWidgetTree,
+    required this.snapshot,
+  });
+
+  /// A plain-text message describing the failure.
+  @override
+  final String message;
+
+  /// A string representation of the relevant widget tree that contains all discovered widgets.
+  final String significantWidgetTree;
+
+  /// The snapshot that caused the failure.
+  final WidgetSnapshot snapshot;
+
+  @override
+  String toString() {
+    return '$message\n'
+        '$significantWidgetTree\n'
+        '$message';
   }
 }
 
@@ -415,9 +437,17 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
         // else fail with default message
         final errorBuilder = StringBuffer();
         errorBuilder.writeln('Could not find $selector in widget tree');
-
         _dumpWidgetTree(errorBuilder);
         errorBuilder.writeln('Could not find $selector in widget tree');
+        timeline.addEvent(
+          eventType: 'Assertion Failed',
+          details: errorBuilder.toString(),
+          screenshot: takeScreenshotSync(
+            annotators: [
+              HighlightAnnotator.elements(discoveredElements),
+            ],
+          ),
+        );
         fail(errorBuilder.toString());
       }
     }
@@ -442,16 +472,34 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
           'Found ${discovered.length} elements matching $selector in widget tree, '
           'expected at most $max',
         );
-
+        timeline.addEvent(
+          eventType: 'Assertion Failed',
+          details: errorBuilder.toString(),
+          screenshot: takeScreenshotSync(
+            annotators: [
+              HighlightAnnotator.elements(discoveredElements),
+            ],
+          ),
+        );
         fail(errorBuilder.toString());
       }
     }
 
+    timeline.addEvent(
+      eventType: 'Assertion',
+      details:
+          'Found ${discovered.length} widgets matching $selector.\nExpected: ${min != null ? "min:$min," : ''}${max != null ? "max:$max," : ''}',
+      screenshot: takeScreenshotSync(
+        annotators: [
+          HighlightAnnotator.elements(discoveredElements),
+        ],
+      ),
+    );
     return this;
   }
 }
 
-/// Throws when an elements are found which match less specific criteria
+/// Throws when elements are found which match less specific criteria
 ///
 /// Uses all permutations of the criteria (props/parents/children)
 void _tryMatchingLessSpecificCriteria(WidgetSnapshot snapshot) {
@@ -534,6 +582,21 @@ void _tryMatchingLessSpecificCriteria(WidgetSnapshot snapshot) {
       final significantTree =
           findCommonAncestor(lessSpecificSnapshot.discoveredElements.toSet())
               .toStringDeep();
+
+      if (timeline.mode != TimelineMode.off) {
+        final screenshot = takeScreenshotSync(
+          annotators: [
+            HighlightAnnotator.elements(
+              lessSpecificSnapshot.discoveredElements,
+            ),
+          ],
+        );
+        timeline.addEvent(
+          eventType: 'Assertion',
+          screenshot: screenshot,
+          details: '$errorBuilder\nFound in widget Tree:\n$significantTree',
+        );
+      }
       errorBuilder.writeln('\nFound in widget Tree:\n$significantTree');
       fail(errorBuilder.toString());
     }
