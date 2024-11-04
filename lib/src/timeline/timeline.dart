@@ -1,5 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages
 
+import 'package:clock/clock.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/src/screenshot/screenshot.dart';
@@ -134,7 +135,7 @@ class Timeline {
       initiator: mostRelevantCaller(
         fallback: initiator ?? screenshot?.initiator,
       ),
-      timestamp: DateTime.now(),
+      timestamp: clock.now(),
       treeSnapshot: currentWidgetTreeSnapshot(),
       eventType: TimelineEventType(label: eventType),
     );
