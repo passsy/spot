@@ -235,7 +235,7 @@ class Act {
                         const Offset(40, 0) +
                         Offset(0, direction),
                   ),
-                ]
+                ],
               ],
             );
             timeline.addEvent(

@@ -263,11 +263,15 @@ class ArrowAnnotator extends ScreenshotAnnotator {
 
     // Draw shadow arrow path
     final shadowPath = Path();
-    const shadowOffset = const Offset(0, 0); // Offset for the shadow
+    const shadowOffset = Offset.zero; // Offset for the shadow
     shadowPath.moveTo(
-        adjustedStart.dx + shadowOffset.dx, adjustedStart.dy + shadowOffset.dy);
+      adjustedStart.dx + shadowOffset.dx,
+      adjustedStart.dy + shadowOffset.dy,
+    );
     shadowPath.lineTo(
-        adjustedEnd.dx + shadowOffset.dx, adjustedEnd.dy + shadowOffset.dy);
+      adjustedEnd.dx + shadowOffset.dx,
+      adjustedEnd.dy + shadowOffset.dy,
+    );
 
     // Calculate shadow arrowhead points
     const arrowLength = 40.0;
@@ -295,10 +299,14 @@ class ArrowAnnotator extends ScreenshotAnnotator {
     );
 
     shadowPath.moveTo(
-        adjustedEnd.dx + shadowOffset.dx, adjustedEnd.dy + shadowOffset.dy);
+      adjustedEnd.dx + shadowOffset.dx,
+      adjustedEnd.dy + shadowOffset.dy,
+    );
     shadowPath.lineTo(shadowArrowPoint1.dx, shadowArrowPoint1.dy);
     shadowPath.moveTo(
-        adjustedEnd.dx + shadowOffset.dx, adjustedEnd.dy + shadowOffset.dy);
+      adjustedEnd.dx + shadowOffset.dx,
+      adjustedEnd.dy + shadowOffset.dy,
+    );
     shadowPath.lineTo(shadowArrowPoint2.dx, shadowArrowPoint2.dy);
 
     // Draw shadow on canvas
