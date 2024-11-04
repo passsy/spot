@@ -6,9 +6,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'test_project_files.dart';
 
 void main() {
-  // test('When loadAppFonts ', () async {
-  //   await createTestApp('test_project');
-  // });
+  test('When loadAppFonts ', () async {
+    await createTestApp('test_project');
+  });
   test('When loadAppFonts with Montserrat', () async {
     await createTestAppWithMontserrat('test_project_with_montserrat');
   });

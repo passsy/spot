@@ -16,7 +16,7 @@ dependencies:
   spot: 
     git: 
       url: https://github.com/robiness/spot.git
-      ref: main
+      ref: loadAppFonts
     
 dev_dependencies:
   test: ^1.24.0
