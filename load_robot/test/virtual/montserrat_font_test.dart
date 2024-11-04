@@ -32,7 +32,7 @@ void main() {
   //   await takeScreenshot();
   //   await expectLater(
   //     find.byType(MaterialApp),
-  //     matchesGoldenFile('golden_load_robot.png'),
+  //     matchesGoldenFile('golden_load_roboto.png'),
   //   );
   // });
 }
@@ -56,47 +56,47 @@ class FontTestWidget extends StatelessWidget {
               'Default Font',
               style: TextStyle(fontSize: 24, fontFamily: fontFamily),
             ),
-            // const SizedBox(height: 10),
-            // Text(
-            //   'Bold Text',
-            //   style: TextStyle(
-            //     fontSize: 24,
-            //     fontWeight: FontWeight.bold,
-            //     fontFamily: fontFamily,
-            //   ),
-            // ),
-            // const SizedBox(height: 10),
-            // Text(
-            //   'Italic Text',
-            //   style: TextStyle(
-            //     fontSize: 24,
-            //     fontStyle: FontStyle.italic,
-            //     fontFamily: fontFamily,
-            //   ),
-            // ),
-            // const SizedBox(height: 10),
-            // Text(
-            //   'Colored Text',
-            //   style: TextStyle(
-            //     fontSize: 24,
-            //     color: Colors.blue,
-            //     fontFamily: fontFamily,
-            //   ),
-            // ),
-            // const SizedBox(height: 10),
-            // Text(
-            //   'Underlined Text',
-            //   style: TextStyle(
-            //     fontSize: 24,
-            //     decoration: TextDecoration.underline,
-            //     fontFamily: fontFamily,
-            //   ),
-            // ),
-            // const SizedBox(height: 10),
-            // Text(
-            //   'Custom Font Size (32)',
-            //   style: TextStyle(fontSize: 32, fontFamily: fontFamily),
-            // ),
+            const SizedBox(height: 10),
+            Text(
+              'Bold Text',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                fontFamily: fontFamily,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Italic Text',
+              style: TextStyle(
+                fontSize: 24,
+                fontStyle: FontStyle.italic,
+                fontFamily: fontFamily,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Colored Text',
+              style: TextStyle(
+                fontSize: 24,
+                color: Colors.blue,
+                fontFamily: fontFamily,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Underlined Text',
+              style: TextStyle(
+                fontSize: 24,
+                decoration: TextDecoration.underline,
+                fontFamily: fontFamily,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Custom Font Size (32)',
+              style: TextStyle(fontSize: 32, fontFamily: fontFamily),
+            ),
           ],
         ),
       ),

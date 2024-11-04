@@ -24,7 +24,7 @@ void main() {
   //   await takeScreenshot();
   //   await expectLater(
   //     find.byType(MaterialApp),
-  //     matchesGoldenFile('golden_load_robot.png'),
+  //     matchesGoldenFile('golden_load_roboto.png'),
   //   );
   // });
   // testWidgets('Additional fonts are loaded with loadAppFonts', (WidgetTester tester) async {
@@ -57,7 +57,7 @@ Future<void> createTestApp(String name) async {
   int exitCode = -1;
   try {
     final testProjectDir = await Directory.systemTemp.createTemp(name);
-    final pubspec = buildPubspecString(name, true);
+    final pubspec = buildPubspecString(name, false);
 
     // Create pubspec.yaml
     final File file = File('${testProjectDir.path}/pubspec.yaml');
@@ -68,18 +68,14 @@ Future<void> createTestApp(String name) async {
     final testFolder = await Directory('${testProjectDir.path}/test').create();
     testFile.copySync('${testFolder.path}/font_test.dart');
 
-    // Move golden golden_load_robot.png
+    // Move golden golden_load_roboto.png
     final goldenFolder = await Directory('${testProjectDir.path}/test').create();
-    final goldenFile = File('${Directory.current.path}/test/virtual/golden_load_robot.png');
-    goldenFile.copySync('${goldenFolder.path}/golden_load_robot.png');
-
-    // Move golden golden_load_montserrat_success.png
-    final goldenFile2 = File('${Directory.current.path}/test/virtual/golden_load_montserrat_success.png');
-    goldenFile2.copySync('${goldenFolder.path}/golden_load_montserrat_success.png');
+    final goldenFile = File('${Directory.current.path}/test/virtual/golden_load_roboto.png');
+    goldenFile.copySync('${goldenFolder.path}/golden_load_roboto.png');
 
     // Run pub get
-    await Process.run('flutter', ['create', '--platforms=macos', '-e' '.'], workingDirectory: testProjectDir.path);
-
+    // await Process.run('flutter', ['create', '--platforms=', '-e' '.'], workingDirectory: testProjectDir.path);
+    // TODO get absolute flutter path
     // Run pub get
     await Process.run('flutter', ['pub', 'get'], workingDirectory: testProjectDir.path);
 

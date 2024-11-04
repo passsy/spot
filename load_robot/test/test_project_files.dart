@@ -14,9 +14,7 @@ dependencies:
   flutter_test:
     sdk: flutter
   spot: 
-    git: 
-      url: https://github.com/robiness/spot.git
-      ref: loadAppFonts
+    path: /Users/robin/work/spot_local
     
 dev_dependencies:
   test: ^1.24.0
