@@ -5,7 +5,7 @@ import 'package:spot/spot.dart';
 void main() {
   testWidgets('Montserrat is loaded from fonts folder when set',
       (WidgetTester tester) async {
-    await loadAppFonts();
+    await loadFonts();
     await tester.pumpWidget(
       const MaterialApp(
         debugShowCheckedModeBanner: false,

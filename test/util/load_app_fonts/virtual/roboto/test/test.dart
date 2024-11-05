@@ -5,7 +5,7 @@ import 'package:spot/spot.dart';
 void main() {
   testWidgets('Robot is loaded from SDK when nothing else is defined (default)',
       (WidgetTester tester) async {
-    await loadAppFonts();
+    await loadFonts();
     await tester.pumpWidget(
       const MaterialApp(
         debugShowCheckedModeBanner: false,

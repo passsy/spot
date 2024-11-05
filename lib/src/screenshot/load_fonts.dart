@@ -7,7 +7,7 @@ import 'package:meta/meta.dart';
 
 /// Loads the app fonts so they are readable in tests.
 /// This is especially helpful when using takeScreenshot();
-Future<void> loadAppFonts() async {
+Future<void> loadFonts() async {
   TestWidgetsFlutterBinding.ensureInitialized();
   // Load the font manifest
   final fontManifest =
