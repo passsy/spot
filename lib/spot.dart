@@ -507,9 +507,6 @@ Future<void> loadFontsFromFontsManifest(List<Map<String, dynamic>> fontManifest)
     final fontPath = Platform.executable;
     final desiredPath = fontPath.split('/engine/')[0];
     fontLoader.addFont(rootBundle.load('$desiredPath/material_fonts/Roboto-Regular.ttf'));
-    // fontLoader.addFont(rootBundle.load('packages/spot/assets/fonts/Roboto-Bold.ttf'));
-    // fontLoader.addFont(rootBundle.load('packages/spot/assets/fonts/Roboto-Italic.ttf'));
-    // fontLoader.addFont(rootBundle.load('packages/spot/assets/fonts/Roboto-BoldItalic.ttf'));
     await fontLoader.load();
   }
 

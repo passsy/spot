@@ -38,10 +38,10 @@ Future<void> createTestApp(String name) async {
     // await Process.run('flutter', ['create', '--platforms=', '-e' '.'], workingDirectory: testProjectDir.path);
     // TODO get absolute flutter path
     // Run pub get
-    await Process.run('flutter', ['pub', 'get'], workingDirectory: testProjectDir.path);
+    await Process.run(flutterPath, ['pub', 'get'], workingDirectory: testProjectDir.path);
 
     // Run tests
-    final test = await Process.start('flutter', ['test'], workingDirectory: testProjectDir.path);
+    final test = await Process.start(flutterPath, ['test'], workingDirectory: testProjectDir.path);
     test.stdout.transform(utf8.decoder).listen((event) {
       print(event);
     });
@@ -85,13 +85,13 @@ Future<void> createTestAppWithMontserrat(String name) async {
     goldenFile2.copySync('${goldenFolder.path}/golden_load_montserrat_success.png');
 
     // Run pub get
-    await Process.run('flutter', ['create', '--platforms=macos', '-e' '.'], workingDirectory: testProjectDir.path);
+    await Process.run(flutterPath, ['create', '--platforms=macos', '-e' '.'], workingDirectory: testProjectDir.path);
 
     // Run pub get
-    await Process.run('flutter', ['pub', 'get'], workingDirectory: testProjectDir.path);
+    await Process.run(flutterPath, ['pub', 'get'], workingDirectory: testProjectDir.path);
 
     // Run tests
-    final test = await Process.start('flutter', ['test'], workingDirectory: testProjectDir.path);
+    final test = await Process.start(flutterPath, ['test'], workingDirectory: testProjectDir.path);
     test.stdout.transform(utf8.decoder).listen((event) {
       print(event);
     });
@@ -108,3 +108,5 @@ Future<void> createTestAppWithMontserrat(String name) async {
     // tempDir.deleteSync(recursive: true);
   }
 }
+
+String get flutterPath => '${Platform.environment['FLUTTER_ROOT']}/bin/flutter';
