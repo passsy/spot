@@ -12,7 +12,13 @@ dependencies:
   flutter_test:
     sdk: flutter
   spot:
-    path: ../../../../../../spot
+    path: ../../../../../.
 
 dev_dependencies:
   test: ^1.24.0
+
+flutter:
+  fonts:
+    - family: Montserrat
+      fonts:
+        - asset: fonts/Montserrat-Regular.ttf

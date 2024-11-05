@@ -3,15 +3,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 
 void main() {
-  testWidgets('Montserrat is loaded from fonts folder when set',
+  testWidgets('Robot is loaded from SDK when nothing else is defined (default)',
       (WidgetTester tester) async {
     await loadFonts();
     await tester.pumpWidget(
       const MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: FontTestWidget(
-          fontFamily: 'Montserrat',
-        ),
+        home: FontTestWidget(),
       ),
     );
     await takeScreenshot();
@@ -39,13 +37,13 @@ class FontTestWidget extends StatelessWidget {
           children: [
             Text(
               'Default Font',
-              style: TextStyle(fontSize: 24, fontFamily: fontFamily),
+              style: TextStyle(fontSize: 64, fontFamily: fontFamily),
             ),
             const SizedBox(height: 10),
             Text(
               'Italic Text',
               style: TextStyle(
-                fontSize: 24,
+                fontSize: 64,
                 fontStyle: FontStyle.italic,
                 fontFamily: fontFamily,
               ),
@@ -54,7 +52,7 @@ class FontTestWidget extends StatelessWidget {
             Text(
               'Colored Text',
               style: TextStyle(
-                fontSize: 24,
+                fontSize: 64,
                 color: Colors.blue,
                 fontFamily: fontFamily,
               ),
@@ -63,7 +61,7 @@ class FontTestWidget extends StatelessWidget {
             Text(
               'Underlined Text',
               style: TextStyle(
-                fontSize: 24,
+                fontSize: 64,
                 decoration: TextDecoration.underline,
                 fontFamily: fontFamily,
               ),
@@ -71,7 +69,7 @@ class FontTestWidget extends StatelessWidget {
             const SizedBox(height: 10),
             Text(
               'Custom Font Size (32)',
-              style: TextStyle(fontSize: 32, fontFamily: fontFamily),
+              style: TextStyle(fontSize: 64, fontFamily: fontFamily),
             ),
           ],
         ),
