@@ -23,9 +23,11 @@ Future<void> loadAppFonts() async {
   await loadFontsFromFontsManifest(fontManifest);
 }
 
+/// Loads the fonts from the FontManifest content.
 @visibleForTesting
 Future<void> loadFontsFromFontsManifest(
-    List<Map<String, dynamic>> fontManifest) async {
+  List<Map<String, dynamic>> fontManifest,
+) async {
   // When no special fonts are defined or there is no roboto in the manifest we load it from the manifest to render standard Text widgets
   if (fontManifest.isEmpty ||
       fontManifest.every((element) => element['family'] != 'Roboto')) {
@@ -33,7 +35,8 @@ Future<void> loadFontsFromFontsManifest(
     final fontPath = Platform.executable;
     final desiredPath = fontPath.split('/engine/')[0];
     fontLoader.addFont(
-        rootBundle.load('$desiredPath/material_fonts/Roboto-Regular.ttf'));
+      rootBundle.load('$desiredPath/material_fonts/Roboto-Regular.ttf'),
+    );
     await fontLoader.load();
   }
 
@@ -46,7 +49,6 @@ Future<void> loadFontsFromFontsManifest(
 
     for (final Map<String, dynamic> fontType in fontsList) {
       final String assetPath = fontType['asset'] as String;
-      print('assetPath: $assetPath');
       fontLoader.addFont(rootBundle.load(assetPath));
     }
 
@@ -54,12 +56,12 @@ Future<void> loadFontsFromFontsManifest(
   }
 }
 
+/// Derives the font family from the font definition.
 @visibleForTesting
 String derivedFontFamily(Map<String, dynamic> fontDefinition) {
   if (!fontDefinition.containsKey('family')) {
     return '';
   }
-  print('fontDefinition: $fontDefinition');
 
   final String fontFamily = fontDefinition['family'] as String;
 
@@ -74,8 +76,8 @@ String derivedFontFamily(Map<String, dynamic> fontDefinition) {
     }
   } else {
     for (final fontType in fontDefinition['fonts'] as List<dynamic>) {
-      print('fontType: $fontType');
-      final String? asset = fontType['asset'] as String?;
+      final String? asset =
+          (fontType as Map<String, dynamic>)['asset'] as String?;
       if (asset != null && asset.startsWith('packages')) {
         final packageName = asset.split('/')[1];
         return 'packages/$packageName/$fontFamily';
