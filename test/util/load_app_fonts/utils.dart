@@ -8,12 +8,12 @@ extension CopyExtension on Directory {
     targetDir.createSync(recursive: true);
     listSync().forEach((element) {
       if (element is File) {
-        // if the file is _test.dart, rename to _dart.test
-        if (element.path.endsWith('_test.dart')) {
+        // if the file is test.dart, rename to _dart.test
+        if (element.path.endsWith('test.dart')) {
           element.copySync(
-            '${targetDir.path}/${element.path.split('/').last.replaceAll('_test.dart', '_test.dart')}',
+            '${targetDir.path}/${element.path.split('/').last.replaceAll('test.dart', '_test.dart')}',
           );
-        } else if (element.path.endsWith('pubspec.yaml')) {
+        } else if (element.path.endsWith('pubspec_template.yaml')) {
           final stopAbsolutePath = Platform.script.path
               .split('/')
               .sublist(0, Platform.script.path.split('/').length - 1)
@@ -21,7 +21,7 @@ extension CopyExtension on Directory {
           final test = element
               .readAsStringSync()
               .replaceAll('../../../../../.', stopAbsolutePath);
-          File('${targetDir.path}/${element.path.split('/').last.replaceAll('pubspec.yaml', 'pubspec.yaml')}')
+          File('${targetDir.path}/${element.path.split('/').last.replaceAll('pubspec_template.yaml', 'pubspec.yaml')}')
               .writeAsStringSync(test);
         } else {
           element.copySync('${targetDir.path}/${element.path.split('/').last}');
