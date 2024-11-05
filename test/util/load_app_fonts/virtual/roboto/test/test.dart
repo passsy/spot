@@ -3,20 +3,18 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 
 void main() {
-  testWidgets('Montserrat is loaded from fonts folder when set', (WidgetTester tester) async {
+  testWidgets('Robot is loaded from SDK when nothing else is defined (default)', (WidgetTester tester) async {
     await loadAppFonts();
     await tester.pumpWidget(
       const MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: FontTestWidget(
-          fontFamily: 'Montserrat',
-        ),
+        home: FontTestWidget(),
       ),
     );
     await takeScreenshot();
     await expectLater(
       find.byType(MaterialApp),
-      matchesGoldenFile('golden_load_montserrat_success.png'),
+      matchesGoldenFile('golden.png'),
     );
   });
 }
