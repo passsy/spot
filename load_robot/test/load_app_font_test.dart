@@ -25,7 +25,7 @@ Future<void> createTestApp(String name) async {
     file.writeAsStringSync(pubspec);
 
     // Create test file
-    final testFile = File('${Directory.current.path}/test/virtual/font_test.dart');
+    final testFile = File('${Directory.current.path}/test/virtual/font_test_file.dart');
     final testFolder = await Directory('${testProjectDir.path}/test').create();
     testFile.copySync('${testFolder.path}/font_test.dart');
 
@@ -70,7 +70,7 @@ Future<void> createTestAppWithMontserrat(String name) async {
     file.writeAsStringSync(pubspec);
 
     // Create test file
-    final testFile = File('${Directory.current.path}/test/virtual/montserrat_font_test.dart');
+    final testFile = File('${Directory.current.path}/test/virtual/montserrat_font_test_file.dart');
     final testFolder = await Directory('${testProjectDir.path}/test').create();
     testFile.copySync('${testFolder.path}/montserrat_font_test.dart');
 
