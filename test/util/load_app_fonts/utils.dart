@@ -10,7 +10,19 @@ extension CopyExtension on Directory {
       if (element is File) {
         // if the file is test.dart, rename to _dart.test
         if (element.path.endsWith('test.dart')) {
-          element.copySync('${targetDir.path}/${element.path.split('/').last.replaceAll('test.dart', '_test.dart')}');
+          element.copySync(
+            '${targetDir.path}/${element.path.split('/').last.replaceAll('test.dart', '_test.dart')}',
+          );
+        } else if (element.path.endsWith('pubspec_template.yaml')) {
+          final stopAbsolutePath = Platform.script.path
+              .split('/')
+              .sublist(0, Platform.script.path.split('/').length - 2)
+              .join('/');
+          final test = element
+              .readAsStringSync()
+              .replaceAll('../../../../../../spot', stopAbsolutePath);
+          File('${targetDir.path}/${element.path.split('/').last.replaceAll('pubspec_template.yaml', 'pubspec.yaml')}')
+              .writeAsStringSync(test);
         } else {
           element.copySync('${targetDir.path}/${element.path.split('/').last}');
         }

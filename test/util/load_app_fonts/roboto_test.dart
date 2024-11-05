@@ -17,7 +17,6 @@ void main() {
       Directory(
         '${Directory.current.path}/test/util/load_app_fonts/virtual/roboto',
       ).copyTo(testProjectDir);
-
       // Run pub get
       await Process.run(
         flutterPath,
