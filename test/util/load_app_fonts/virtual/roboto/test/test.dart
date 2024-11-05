@@ -3,7 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 
 void main() {
-  testWidgets('Robot is loaded from SDK when nothing else is defined (default)', (WidgetTester tester) async {
+  testWidgets('Robot is loaded from SDK when nothing else is defined (default)',
+      (WidgetTester tester) async {
     await loadAppFonts();
     await tester.pumpWidget(
       const MaterialApp(
@@ -38,15 +39,6 @@ class FontTestWidget extends StatelessWidget {
               'Default Font',
               style: TextStyle(fontSize: 24, fontFamily: fontFamily),
             ),
-            // const SizedBox(height: 10),
-            // Text(
-            //   'Bold Text',
-            //   style: TextStyle(
-            //     fontSize: 24,
-            //     fontWeight: FontWeight.bold,
-            //     fontFamily: fontFamily,
-            //   ),
-            // ),
             const SizedBox(height: 10),
             Text(
               'Italic Text',
