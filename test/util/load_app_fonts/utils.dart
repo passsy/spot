@@ -16,7 +16,7 @@ extension CopyExtension on Directory {
         } else if (element.path.endsWith('pubspec_template.yaml')) {
           final stopAbsolutePath = Platform.script.path
               .split('/')
-              .sublist(0, Platform.script.path.split('/').length - 2)
+              .sublist(0, Platform.script.path.split('/').length - 1)
               .join('/');
           final test = element
               .readAsStringSync()
