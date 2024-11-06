@@ -123,79 +123,88 @@ Future<Screenshot> takeScreenshot({
   return screenshot;
 }
 
-/// Takes a screenshot of the entire screen or a single widget.
-/// This method returns synchronously but does not actually write the image to disk until the test is done.
-Screenshot takeScreenshotSync({
-  Element? element,
-  WidgetSnapshot? snapshot,
-  WidgetSelector? selector,
-  String? name,
-  List<ScreenshotAnnotator>? annotators,
-}) {
-  final Frame? frame = _caller();
-  final liveElement = _findSingleElement(
-    element: element,
-    snapshot: snapshot,
-    selector: selector,
-  );
-  final ui.Image plainImage = _captureImageSync(liveElement);
+/// Allows taking screenshot synchronously for the [timeline]
+extension SyncScreenshot on Timeline {
+  /// Takes a screenshot of the entire screen or a single widget.
+  /// This method returns synchronously but does not actually write the image to disk until the test has completed.
+  ///
+  /// This method is only intended to be used within the [timeline]
+  Screenshot takeScreenshotSync({
+    Element? element,
+    WidgetSnapshot? snapshot,
+    WidgetSelector? selector,
+    String? name,
+    List<ScreenshotAnnotator>? annotators,
+  }) {
+    final Frame? frame = _caller();
+    final liveElement = _findSingleElement(
+      element: element,
+      snapshot: snapshot,
+      selector: selector,
+    );
+    final ui.Image plainImage = _captureImageSync(liveElement);
 
-  String callerFileName() {
-    final file = frame?.uri.pathSegments.last.replaceFirst('.dart', '');
-    final line = frame?.line;
-    if (file != null && line != null) {
-      return '$file:$line';
-    }
-    if (file != null) {
-      return file;
-    }
-    return 'unknown';
-  }
-
-  final String screenshotFileName = () {
-    final String n;
-    if (name != null) {
-      // escape /
-      n = Uri.encodeQueryComponent(name);
-    } else {
-      n = callerFileName();
-    }
-    // always append a unique id to avoid name collisions
-    final uniqueId = nanoid(length: 5);
-    return '$n-$uniqueId.png';
-  }();
-
-  final spotTempDir = Directory.systemTemp.directory('spot');
-  if (!spotTempDir.existsSync()) {
-    spotTempDir.createSync();
-  }
-  final file = spotTempDir.file(screenshotFileName);
-
-  final screenshot = Screenshot(
-    file: file,
-    initiator: frame,
-  );
-
-  // At the end of the test, do the actual screenshot processing, because runAsync must be awaited or it crashes
-  addTearDown(() async {
-    final binding = TestWidgetsFlutterBinding.instance;
-    await binding.runAsync(() async {
-      ui.Image imageToCapture = plainImage;
-      for (final annotator in annotators ?? <ScreenshotAnnotator>[]) {
-        imageToCapture = await annotator.annotate(imageToCapture);
+    String callerFileName() {
+      final file = frame?.uri.pathSegments.last.replaceFirst('.dart', '');
+      final line = frame?.line;
+      if (file != null && line != null) {
+        return '$file:$line';
       }
-      final byteData =
-          await imageToCapture.toByteData(format: ui.ImageByteFormat.png);
-      if (byteData == null) {
-        throw 'Could not take screenshot';
+      if (file != null) {
+        return file;
       }
-      final image = byteData.buffer.asUint8List();
-      file.writeAsBytesSync(image);
+      return 'unknown';
+    }
+
+    final String screenshotFileName = () {
+      final String n;
+      if (name != null) {
+        // escape /
+        n = Uri.encodeQueryComponent(name);
+      } else {
+        n = callerFileName();
+      }
+      // always append a unique id to avoid name collisions
+      final uniqueId = nanoid(length: 5);
+      return '$n-$uniqueId.png';
+    }();
+
+    final spotTempDir = Directory.systemTemp.directory('spot');
+    if (!spotTempDir.existsSync()) {
+      spotTempDir.createSync();
+    }
+    final file = spotTempDir.file(screenshotFileName);
+
+    final screenshot = Screenshot(
+      file: file,
+      initiator: frame,
+    );
+
+    // At the end of the test, do the actual screenshot processing, because runAsync must be awaited or it crashes
+    timeline.addScreenshotProcessing(() async {
+      final binding = TestWidgetsFlutterBinding.instance;
+      if (timeline.mode == TimelineMode.live ||
+          !timeline.test.state.result.isPassing) {
+        await binding.runAsync(() async {
+          ui.Image imageToCapture = plainImage;
+          for (final annotator in annotators ?? <ScreenshotAnnotator>[]) {
+            imageToCapture = await annotator.annotate(imageToCapture);
+          }
+          final byteData =
+              await imageToCapture.toByteData(format: ui.ImageByteFormat.png);
+          if (byteData == null) {
+            throw 'Could not take screenshot';
+          }
+          final image = byteData.buffer.asUint8List();
+          file.writeAsBytesSync(image);
+        });
+      }
+
       plainImage.dispose();
     });
-  });
 
-  return screenshot;
+    return screenshot;
+  }
 }
 
 /// Provides the ability to create screenshots of a [WidgetSelector]

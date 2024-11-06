@@ -1,5 +1,6 @@
 import 'package:dartx/dartx.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
@@ -339,7 +340,7 @@ extension ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
     } catch (error) {
       if (error is QuantityTestFailure) {
         if (timeline.mode != TimelineMode.off) {
-          final screenshot = takeScreenshotSync(
+          final screenshot = timeline.takeScreenshotSync(
             annotators: [
               HighlightAnnotator.elements(error.snapshot.discoveredElements),
             ],
@@ -348,6 +349,7 @@ extension ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
             eventType: 'Assertion Failed',
             details: '${error.message}\n${error.significantWidgetTree}',
             screenshot: screenshot,
+            color: Colors.red,
           );
         }
       }
@@ -442,7 +444,8 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
         timeline.addEvent(
           eventType: 'Assertion Failed',
           details: errorBuilder.toString(),
-          screenshot: takeScreenshotSync(
+          color: Colors.red,
+          screenshot: timeline.takeScreenshotSync(
             annotators: [
               HighlightAnnotator.elements(discoveredElements),
             ],
@@ -475,7 +478,8 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
         timeline.addEvent(
           eventType: 'Assertion Failed',
           details: errorBuilder.toString(),
-          screenshot: takeScreenshotSync(
+          color: Colors.red,
+          screenshot: timeline.takeScreenshotSync(
             annotators: [
               HighlightAnnotator.elements(discoveredElements),
             ],
@@ -489,7 +493,8 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
       eventType: 'Assertion',
       details:
           'Found ${discovered.length} widgets matching $selector.\nExpected: ${min != null ? "min:$min," : ''}${max != null ? "max:$max," : ''}',
-      screenshot: takeScreenshotSync(
+      color: Colors.red,
+      screenshot: timeline.takeScreenshotSync(
         annotators: [
           HighlightAnnotator.elements(discoveredElements),
         ],
@@ -584,7 +589,7 @@ void _tryMatchingLessSpecificCriteria(WidgetSnapshot snapshot) {
               .toStringDeep();
 
       if (timeline.mode != TimelineMode.off) {
-        final screenshot = takeScreenshotSync(
+        final screenshot = timeline.takeScreenshotSync(
           annotators: [
             HighlightAnnotator.elements(
               lessSpecificSnapshot.discoveredElements,
@@ -593,6 +598,7 @@ void _tryMatchingLessSpecificCriteria(WidgetSnapshot snapshot) {
         );
         timeline.addEvent(
           eventType: 'Assertion',
+          color: Colors.green,
           screenshot: screenshot,
           details: '$errorBuilder\nFound in widget Tree:\n$significantTree',
         );

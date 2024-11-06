@@ -114,15 +114,12 @@ class Act {
         final binding = TestWidgetsFlutterBinding.instance;
 
         if (timeline.mode != TimelineMode.off) {
-          final screenshot = takeScreenshotSync(
-            annotators: [
-              CrosshairAnnotator(centerPosition: positionToTap),
-            ],
-          );
+          final screenshot = timeline.takeScreenshotSync();
           timeline.addEvent(
             details: 'Tap ${selector.toStringBreadcrumb()}',
             eventType: 'Tap Event',
             screenshot: screenshot,
+            color: Colors.blue,
           );
         }
 
@@ -213,7 +210,7 @@ class Act {
 
         void addDragEvent(String details, {double? direction}) {
           if (timeline.mode != TimelineMode.off) {
-            final screenshot = takeScreenshotSync(
+            final screenshot = timeline.takeScreenshotSync(
               annotators: [
                 CrosshairAnnotator(centerPosition: dragPosition),
                 if (direction != null) ...[
@@ -236,6 +233,7 @@ class Act {
               eventType: 'Drag Event',
               details: details,
               screenshot: screenshot,
+              color: Colors.blue,
             );
           }
         }

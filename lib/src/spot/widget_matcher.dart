@@ -367,11 +367,12 @@ extension MultiWidgetMatcherExtensions<W extends Widget>
     if (discovered.isEmpty) {
       final message = 'Expected at least one match for $this, but found none';
       if (timeline.mode != TimelineMode.off) {
-        final screenshot = takeScreenshotSync();
+        final screenshot = timeline.takeScreenshotSync();
         timeline.addEvent(
-          eventType: 'Assertion',
+          eventType: 'Assertion Failed',
           details: message,
           screenshot: screenshot,
+          color: Colors.red,
         );
       }
       throw Exception(message);
@@ -391,11 +392,12 @@ extension MultiWidgetMatcherExtensions<W extends Widget>
 
     if (missMatches.isEmpty) {
       if (timeline.mode != TimelineMode.off) {
-        final screenshot = takeScreenshotSync();
+        final screenshot = timeline.takeScreenshotSync();
         timeline.addEvent(
           eventType: 'Assertion',
           details: 'All candidates $discovered match',
           screenshot: screenshot,
+          color: Colors.green,
         );
       }
       return this;
@@ -405,11 +407,12 @@ extension MultiWidgetMatcherExtensions<W extends Widget>
         "Expected that all candidates fulfill matcher '$matcherDescription', but only ${discovered.length - missMatches.length} of ${discovered.length} did.\n"
         'Mismatches: ${missMatches.map((e) => e.element.toStringDeep()).join(', ')}';
     if (timeline.mode != TimelineMode.off) {
-      final screenshot = takeScreenshotSync();
+      final screenshot = timeline.takeScreenshotSync();
       timeline.addEvent(
         eventType: 'Assertion',
         details: failMessage,
         screenshot: screenshot,
+        color: Colors.red,
       );
     }
     throw TestFailure(failMessage);
@@ -436,13 +439,14 @@ void _addAssertionToTimeline(
   if (failure != null) {
     detailsSb.writeln('Actual: ${failure.rejection.which}');
   }
-  final screenshot = takeScreenshotSync(
+  final screenshot = timeline.takeScreenshotSync(
     annotators: [HighlightAnnotator.element(element)],
   );
   timeline.addEvent(
     eventType: 'Assertion',
     details: detailsSb.toString(),
     screenshot: screenshot,
+    color: failure == null ? Colors.green : Colors.red,
   );
 }
 

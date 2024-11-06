@@ -1,9 +1,14 @@
 // ignore_for_file: depend_on_referenced_packages
 
+import 'dart:io';
+import 'dart:ui';
+
+import 'package:ci/ci.dart';
 import 'package:clock/clock.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/src/screenshot/screenshot.dart';
+import 'package:spot/src/screenshot/screenshot_annotator.dart';
 import 'package:spot/src/spot/tree_snapshot.dart';
 import 'package:spot/src/timeline/html/print_html.dart';
 import 'package:spot/src/timeline/print_console.dart';
@@ -124,9 +129,10 @@ class Timeline {
   /// Adds an event to the timeline.
   void addEvent({
     required String details,
-    Frame? initiator,
-    Screenshot? screenshot,
     required String eventType,
+    Screenshot? screenshot,
+    Frame? initiator,
+    Color? color,
     String? description,
   }) {
     final event = TimelineEvent(
@@ -137,7 +143,10 @@ class Timeline {
       ),
       timestamp: clock.now(),
       treeSnapshot: currentWidgetTreeSnapshot(),
-      eventType: TimelineEventType(label: eventType),
+      eventType: TimelineEventType(
+        label: eventType,
+        color: color,
+      ),
     );
     _addRawEvent(event);
   }
@@ -153,6 +162,26 @@ class Timeline {
     }
   }
 
+  final List<Future<void> Function()> _toBeProcessedScreenshots = [];
+
+  /// Adds a function that processes a pending [Screenshot] to be processed at a later time (or never).
+  ///
+  /// To speed up processing, the screenshots are only processed when actually needed in a report (console or html).
+  void addScreenshotProcessing(Future<void> Function() process) {
+    _toBeProcessedScreenshots.add(process);
+  }
+
+  /// Processes all pending screenshots
+  Future<void> processPendingScreenshots() async {
+    if (_toBeProcessedScreenshots.isEmpty) {
+      return;
+    }
+    for (final process in _toBeProcessedScreenshots.toList()) {
+      stdout.write('.');
+      await process();
+    }
+  }
+
   /// Event handler after the [test] has completed.
   ///
   /// Prints the timeline to console, as link to a html file or plain text
@@ -161,9 +190,13 @@ class Timeline {
       case TimelineMode.live:
         // during live mode the events are written directly to the console.
         // Finalize with html report
+        await processPendingScreenshots();
         printHTML();
       case TimelineMode.record:
         if (!test.state.result.isPassing) {
+          // ignore: avoid_print
+          print('Test failed, generating timeline report');
+          await processPendingScreenshots();
           if (isCI) {
             // best for CI, prints the full timeline and doesn't require archiving the html timeline file
             printToConsole();
@@ -185,11 +218,12 @@ class Timeline {
 class TimelineEventType {
   /// The name of the event.
   final String label;
+  final Color? color;
 
-  // TODO add styling information like color?
   /// Creates a new timeline event type.
   const TimelineEventType({
     required this.label,
+    this.color,
   });
 
   @override
