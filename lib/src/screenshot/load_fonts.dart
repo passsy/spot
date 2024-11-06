@@ -49,6 +49,7 @@ Future<void> loadFontsFromFontsManifest(
 
     for (final Map<String, dynamic> fontType in fontsList) {
       final String assetPath = fontType['asset'] as String;
+      print('Loading font: $assetPath');
       fontLoader.addFont(rootBundle.load(assetPath));
     }
 
@@ -65,15 +66,10 @@ String derivedFontFamily(Map<String, dynamic> fontDefinition) {
 
   final String fontFamily = fontDefinition['family'] as String;
 
-  if (_overridableFonts.contains(fontFamily)) {
-    return fontFamily;
-  }
-
   if (fontFamily.startsWith('packages/')) {
+    print('Font family: $fontFamily');
     final fontFamilyName = fontFamily.split('/').last;
-    if (_overridableFonts.any((font) => font == fontFamilyName)) {
-      return fontFamilyName;
-    }
+    return fontFamilyName;
   } else {
     for (final fontType in fontDefinition['fonts'] as List<dynamic>) {
       final String? asset =
@@ -86,11 +82,3 @@ String derivedFontFamily(Map<String, dynamic> fontDefinition) {
   }
   return fontFamily;
 }
-
-const List<String> _overridableFonts = [
-  'Roboto',
-  '.SF UI Display',
-  '.SF UI Text',
-  '.SF Pro Text',
-  '.SF Pro Display',
-];

@@ -12,11 +12,11 @@ void main() {
     late Directory tempDir;
     try {
       // Copy virtual/montserrat to test folder
-      tempDir = Directory.systemTemp.createTempSync('montserrat_test');
+      tempDir = Directory.systemTemp.createTempSync('app_font_test');
       final testProjectDir = tempDir.path;
 
       Directory(
-        '${Directory.current.path}/test/util/load_app_fonts/virtual/montserrat',
+        '${Directory.current.path}/test/util/load_app_fonts/virtual/app_font',
       ).copyTo(testProjectDir);
 
       // Run pub get

@@ -1,5 +1,5 @@
-name: font_load_test_app
-description: "A Flutter Test project."
+name: dependency_font
+description: "A test app using a font defined in a dependency package"
 publish_to: 'none'
 version: 0.1.0
 
@@ -13,6 +13,9 @@ dependencies:
     sdk: flutter
   spot:
     path: ../../../../../.
+  app_font:
+    path: packages/app_font
+
 
 dev_dependencies:
   test: ^1.24.0

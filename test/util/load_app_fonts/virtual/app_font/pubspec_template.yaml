@@ -1,0 +1,25 @@
+name: app_font
+description: "An app using a font defined in the pubspec.yaml file."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.4.1 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_test:
+    sdk: flutter
+  spot:
+    path: ../../../../../.
+
+
+dev_dependencies:
+  test: ^1.24.0
+
+flutter:
+  fonts:
+    - family: Montserrat
+      fonts:
+        - asset: fonts/Montserrat-Regular.ttf

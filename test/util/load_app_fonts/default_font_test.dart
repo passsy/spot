@@ -11,11 +11,11 @@ void main() {
     int exitCode = -1;
     late Directory tempDir;
     try {
-      tempDir = Directory.systemTemp.createTempSync('robot_test');
+      tempDir = Directory.systemTemp.createTempSync('default_font_test');
       // Copy virtual/robot to test folder
       final testProjectDir = tempDir.path;
       Directory(
-        '${Directory.current.path}/test/util/load_app_fonts/virtual/roboto',
+        '${Directory.current.path}/test/util/load_app_fonts/virtual/default_font',
       ).copyTo(testProjectDir);
       // Run pub get
       await Process.run(
