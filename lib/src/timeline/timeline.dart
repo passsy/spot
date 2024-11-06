@@ -164,8 +164,10 @@ class Timeline {
         printHTML();
       case TimelineMode.record:
         if (!test.state.result.isPassing) {
-          // best for CI
-          printToConsole();
+          if (isCI) {
+            // best for CI, prints the full timeline and doesn't require archiving the html timeline file
+            printToConsole();
+          }
           // best for humans
           printHTML();
         } else {

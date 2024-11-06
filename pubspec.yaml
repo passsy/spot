@@ -10,6 +10,7 @@ environment:
 
 dependencies:
   checks: ^0.3.0
+  ci: ^0.1.0
   dartx: ^1.1.0
   flutter:
     sdk: flutter
