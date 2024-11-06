@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
 import 'package:spot/src/screenshot/screenshot.dart';
 import 'package:spot/src/timeline/html/script.js.dart';
@@ -74,7 +75,11 @@ String _timelineAsHTML({required List<TimelineEvent> timeLineEvents}) {
 
   final String eventsForScript =
       timeLineEvents.where((event) => event.screenshot != null).map((event) {
-    return '{src: "file://${event.screenshot!.file.path}", title: "${event.eventType.label}"}';
+    return '{'
+        'src: "file://${event.screenshot!.file.path}", '
+        'title: "${event.eventType.label}", '
+        'color: "${event.eventType.color?.value.toRadixString(16) ?? '000000'}" '
+        '}';
   }).join(',\n  ');
 
   htmlBuffer.writeln('<script>');
@@ -238,7 +243,8 @@ String _timelineAsHTML({required List<TimelineEvent> timeLineEvents}) {
 
   final events = () {
     for (final event in timeLineEvents) {
-      eventBuffer.writeln('<div class="event">');
+      eventBuffer.writeln(
+          '<div class="event" style="border: ${event.color == Colors.grey ? '1px' : '2px'} solid ${event.color.toHex()};">');
       writeScreenshot(event);
       eventBuffer.writeln('<div class="event-details">');
       writeEventType(event);
@@ -344,5 +350,11 @@ String _testNameWithHierarchy() {
     return '$finalTestName in group(s): $groupHierarchy';
   } else {
     return test.test.name;
+  }
+}
+
+extension on Color {
+  String toHex() {
+    return '#${value.toRadixString(16).padLeft(8, '0').substring(2)}';
   }
 }

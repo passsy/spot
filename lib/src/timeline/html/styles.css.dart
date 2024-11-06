@@ -12,7 +12,6 @@ const timelineCSS = '''
   --h1-font-size: 36px;
   --h1-padding-left: 10px;
   --border-color: var(--spot-orange);
-  --border-width: 2px;
   --event-margin: 10px;
   --event-padding: 10px;
   --event-details-margin-left: 20px;
@@ -70,7 +69,6 @@ h1 {
 .event {
   display: flex;
   align-items: flex-start;
-  border: var(--border-width) solid var(--border-color);
   margin: var(--event-margin);
   padding: var(--event-padding);
 }

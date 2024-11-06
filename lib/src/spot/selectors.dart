@@ -753,7 +753,7 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
         eventType: 'Assertion',
         screenshot: screenshot,
         details: '${toStringBreadcrumb()} exists at least once.',
-        color: Colors.green,
+        color: Colors.grey,
       );
     }
     final atLeastOne =
@@ -784,7 +784,7 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
         eventType: 'Assertion',
         screenshot: screenshot,
         details: '${toStringBreadcrumb()} exists at most once.',
-        color: Colors.green,
+        color: Colors.grey,
       );
     }
     final atMostOne = copyWith(quantityConstraint: QuantityConstraint.single);
@@ -814,7 +814,7 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
         eventType: 'Assertion',
         screenshot: screenshot,
         details: '${toStringBreadcrumb()} does not exist.',
-        color: Colors.green,
+        color: Colors.grey,
       );
     }
     final none = copyWith(quantityConstraint: QuantityConstraint.zero);
@@ -849,7 +849,7 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
         eventType: 'Assertion',
         screenshot: screenshot,
         details: '${toStringBreadcrumb()} exists once.',
-        color: Colors.green,
+        color: Colors.grey,
       );
     }
 
@@ -895,7 +895,7 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
         eventType: 'Assertion',
         screenshot: screenshot,
         details: '${toStringBreadcrumb()} exists at least $n times.',
-        color: Colors.green,
+        color: Colors.grey,
       );
     }
     final atLeast = copyWith(quantityConstraint: QuantityConstraint.atLeast(n));
@@ -922,7 +922,7 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
         eventType: 'Assertion',
         screenshot: screenshot,
         details: '${toStringBreadcrumb()} exists at most $n times.',
-        color: Colors.green,
+        color: Colors.grey,
       );
     }
     final atMostN = copyWith(quantityConstraint: QuantityConstraint.atMost(n));

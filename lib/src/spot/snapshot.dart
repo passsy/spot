@@ -493,7 +493,7 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
       eventType: 'Assertion',
       details:
           'Found ${discovered.length} widgets matching $selector.\nExpected: ${min != null ? "min:$min," : ''}${max != null ? "max:$max," : ''}',
-      color: Colors.red,
+      color: Colors.grey,
       screenshot: timeline.takeScreenshotSync(
         annotators: [
           HighlightAnnotator.elements(discoveredElements),
@@ -598,7 +598,7 @@ void _tryMatchingLessSpecificCriteria(WidgetSnapshot snapshot) {
         );
         timeline.addEvent(
           eventType: 'Assertion',
-          color: Colors.green,
+          color: Colors.grey,
           screenshot: screenshot,
           details: '$errorBuilder\nFound in widget Tree:\n$significantTree',
         );

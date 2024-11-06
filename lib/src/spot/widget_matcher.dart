@@ -397,7 +397,7 @@ extension MultiWidgetMatcherExtensions<W extends Widget>
           eventType: 'Assertion',
           details: 'All candidates $discovered match',
           screenshot: screenshot,
-          color: Colors.green,
+          color: Colors.grey,
         );
       }
       return this;
@@ -446,7 +446,7 @@ void _addAssertionToTimeline(
     eventType: 'Assertion',
     details: detailsSb.toString(),
     screenshot: screenshot,
-    color: failure == null ? Colors.green : Colors.red,
+    color: failure == null ? Colors.grey : Colors.red,
   );
 }
 

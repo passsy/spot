@@ -6,6 +6,7 @@ import 'dart:ui';
 import 'package:ci/ci.dart';
 import 'package:clock/clock.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/src/screenshot/screenshot.dart';
 import 'package:spot/src/screenshot/screenshot_annotator.dart';
@@ -142,6 +143,7 @@ class Timeline {
         fallback: initiator ?? screenshot?.initiator,
       ),
       timestamp: clock.now(),
+      color: color ?? Colors.white,
       treeSnapshot: currentWidgetTreeSnapshot(),
       eventType: TimelineEventType(
         label: eventType,
@@ -243,24 +245,8 @@ class TimelineEvent {
     this.description,
     this.initiator,
     this.screenshot,
+    required this.color,
   });
-
-  /// Creates a new timeline event with the current time and widget tree snapshot.
-  factory TimelineEvent.now({
-    required TimelineEventType eventType,
-    required String details,
-    Screenshot? screenshot,
-    Frame? initiator,
-  }) {
-    return TimelineEvent(
-      screenshot: screenshot,
-      details: details,
-      initiator: initiator,
-      timestamp: DateTime.now(),
-      treeSnapshot: currentWidgetTreeSnapshot(),
-      eventType: eventType,
-    );
-  }
 
   /// The type of event that occurred.
   final TimelineEventType eventType;
@@ -282,6 +268,9 @@ class TimelineEvent {
 
   /// Custom plain-text information about the event.
   final String? description;
+
+  /// The color of the event.
+  final Color color;
 }
 
 /// The mode of the timeline.
