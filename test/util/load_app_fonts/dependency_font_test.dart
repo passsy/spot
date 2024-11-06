@@ -23,7 +23,6 @@ void main() {
       Directory(
         '${Directory.current.path}/test/util/load_app_fonts/virtual/app_font',
       ).copyTo('$testProjectDir/packages/app_font');
-      print('testProjectDir: $testProjectDir');
       // Run pub get
       await Process.run(
         flutterPath,

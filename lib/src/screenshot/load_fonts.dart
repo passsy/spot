@@ -49,7 +49,6 @@ Future<void> loadFontsFromFontsManifest(
 
     for (final Map<String, dynamic> fontType in fontsList) {
       final String assetPath = fontType['asset'] as String;
-      print('Loading font: $assetPath');
       fontLoader.addFont(rootBundle.load(assetPath));
     }
 
@@ -67,7 +66,6 @@ String derivedFontFamily(Map<String, dynamic> fontDefinition) {
   final String fontFamily = fontDefinition['family'] as String;
 
   if (fontFamily.startsWith('packages/')) {
-    print('Font family: $fontFamily');
     final fontFamilyName = fontFamily.split('/').last;
     return fontFamilyName;
   } else {
