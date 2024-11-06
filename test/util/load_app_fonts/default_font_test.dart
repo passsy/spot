@@ -22,7 +22,7 @@ void main() {
         '${Directory.current.path}/test/util/load_app_fonts/virtual/default_font',
       ).copyTo(testProjectDir);
       // Run pub get
-      final run = await Process.run(
+      await Process.run(
         flutterPath,
         ['pub', 'get'],
         workingDirectory: testProjectDir,

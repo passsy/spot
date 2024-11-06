@@ -11,7 +11,8 @@ void main() {
   test('When defined in pubspec a third-party font is loaded', () async {
     int exitCode = -1;
     late Directory tempDir;
-    late StreamSubscription s1, s2;
+    late StreamSubscription s1;
+    late StreamSubscription s2;
     try {
       // Copy virtual/montserrat to test folder
       tempDir = Directory.systemTemp.createTempSync('app_font_test');
