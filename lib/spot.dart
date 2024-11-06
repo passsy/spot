@@ -92,7 +92,14 @@ export 'package:spot/src/spot/widget_selector.dart'
         // ignore: deprecated_member_use_from_same_package
         SingleWidgetSelector,
         WidgetSelector;
-export 'package:spot/src/timeline/timeline.dart';
+export 'package:spot/src/timeline/timeline.dart'
+    show
+        Timeline,
+        TimelineEvent,
+        TimelineEventType,
+        TimelineMode,
+        globalTimelineMode,
+        timeline;
 export 'package:spot/src/widgets/align.g.dart';
 export 'package:spot/src/widgets/anytext.g.dart';
 export 'package:spot/src/widgets/circularprogressindicator.g.dart';
