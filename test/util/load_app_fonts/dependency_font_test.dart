@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -10,6 +11,8 @@ void main() {
   test('When defined in pubspec a third-party font is loaded', () async {
     int exitCode = -1;
     late Directory tempDir;
+    late StreamSubscription s1;
+    late StreamSubscription s2;
     try {
       // Copy virtual/montserrat to test folder
       tempDir = Directory.systemTemp.createTempSync('dependency_font_test');
@@ -36,20 +39,21 @@ void main() {
         ['test'],
         workingDirectory: testProjectDir,
       );
-
-      // Run tests
-      test.stdout.transform(utf8.decoder).listen((event) {
+      exitCode = await test.exitCode;
+      s1 = test.stdout.transform(utf8.decoder).listen((event) {
         debugPrint(event);
       });
-      test.stderr.transform(utf8.decoder).listen((event) {
+      s2 = test.stderr.transform(utf8.decoder).listen((event) {
+        debugPrint(event);
         throw Exception(event);
       });
-      exitCode = await test.exitCode;
     } catch (e) {
       rethrow;
     } finally {
       expect(exitCode, equals(0));
       tempDir.deleteSync(recursive: true);
+      s1.cancel();
+      s2.cancel();
     }
   });
 }
