@@ -124,7 +124,7 @@ Future<Screenshot> takeScreenshot({
 }
 
 /// Allows taking screenshot synchronously for the [timeline]
-extension SyncScreenshot on Timeline {
+extension TimelineSyncScreenshot on Timeline {
   /// Takes a screenshot of the entire screen or a single widget.
   /// This method returns synchronously but does not actually write the image to disk until the test has completed.
   ///
