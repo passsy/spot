@@ -34,7 +34,13 @@ Future<String> runTestInProcessAndCaptureOutPut({
 
   printOnFailure('$flutterExe ${arguments.join(' ')}');
 
-  final testProcess = await TestProcess.start(flutterExe, arguments);
+  final testProcess = await TestProcess.start(
+    flutterExe,
+    arguments,
+    environment: {
+      'CI': 'true',
+    },
+  );
   final stdoutBuffer = StringBuffer();
   bool write = captureStart.isEmpty;
 
