@@ -5,11 +5,9 @@ import 'package:dartx/dartx_io.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/act/gestures.dart';
-import 'package:spot/src/screenshot/screenshot.dart';
 import 'package:spot/src/screenshot/screenshot_annotator.dart';
 import 'package:spot/src/spot/snapshot.dart';
 

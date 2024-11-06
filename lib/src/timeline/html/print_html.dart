@@ -244,7 +244,11 @@ String _timelineAsHTML({required List<TimelineEvent> timeLineEvents}) {
   final events = () {
     for (final event in timeLineEvents) {
       eventBuffer.writeln(
-          '<div class="event" style="border: ${event.color == Colors.grey ? '1px' : '2px'} solid ${event.color.toHex()};">');
+        '<div '
+        'class="event" '
+        'style="border: ${event.color == Colors.grey ? '1px' : '2px'} solid ${event.color.toHex()};" '
+        '>',
+      );
       writeScreenshot(event);
       eventBuffer.writeln('<div class="event-details">');
       writeEventType(event);

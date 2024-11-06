@@ -2,7 +2,6 @@ import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/checks/checks_nullability.dart';
-import 'package:spot/src/screenshot/screenshot.dart';
 import 'package:spot/src/screenshot/screenshot_annotator.dart';
 import 'package:spot/src/spot/snapshot.dart' as snapshot_file show snapshot;
 import 'package:spot/src/spot/snapshot.dart';

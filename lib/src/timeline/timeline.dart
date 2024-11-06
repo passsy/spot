@@ -1,7 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages
 
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:ci/ci.dart';
 import 'package:clock/clock.dart';
@@ -9,7 +8,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/src/screenshot/screenshot.dart';
-import 'package:spot/src/screenshot/screenshot_annotator.dart';
 import 'package:spot/src/spot/tree_snapshot.dart';
 import 'package:spot/src/timeline/html/print_html.dart';
 import 'package:spot/src/timeline/print_console.dart';
@@ -220,6 +218,8 @@ class Timeline {
 class TimelineEventType {
   /// The name of the event.
   final String label;
+
+  /// The color of the event currently used as border in the html export but that can change
   final Color? color;
 
   /// Creates a new timeline event type.
