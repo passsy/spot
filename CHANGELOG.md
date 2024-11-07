@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.14.0
+- New: Timeline! Failing tests now print a timeline with screenshots of all interactions (actions and assertions) as HTML report #57
+- `act.tap` now checks for multiple tappable position when the center is not tappable for some reason #60
+- `act.tap` now reports a useful error when the widget is 0px/0px or invisible #61
+- Become Compatible with Flutter 3.27 and add nightly tests against `master`
+
 ## 0.13.0
 - Add `act.dragUntilVisible()` #59
 
