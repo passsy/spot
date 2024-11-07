@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:ci/ci.dart';
 import 'package:clock/clock.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/src/screenshot/screenshot.dart';
@@ -294,10 +293,10 @@ Frame? mostRelevantCaller({Trace? trace, Frame? fallback}) {
   final frames = (trace ?? Trace.current()).frames;
 
   final nonPackageFrames = frames.where((frame) => frame.package == null);
-  final testFileCaller = nonPackageFrames.lastWhereOrNull((frame) {
+  final testFileCaller = nonPackageFrames.where((frame) {
     final lib = frame.library;
     return lib.startsWith('test/') && lib.endsWith('_test.dart');
-  });
+  }).lastOrNull;
 
   final preferredFrame =
       testFileCaller ?? nonPackageFrames.lastOrNull ?? fallback;

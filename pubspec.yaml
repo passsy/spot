@@ -11,6 +11,7 @@ environment:
 dependencies:
   checks: ^0.3.0
   ci: ^0.1.0
+  clock: ^1.1.0
   dartx: ^1.1.0
   flutter:
     sdk: flutter
@@ -21,6 +22,7 @@ dependencies:
   meta: ^1.8.0
   nanoid2: ^2.0.0
   stack_trace: ^1.11.0
+  test_api: '>=0.5.0 <0.8.0'
 
 dev_dependencies:
   image: ^4.0.0

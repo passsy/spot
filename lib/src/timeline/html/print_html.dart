@@ -2,9 +2,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart' as path;
 import 'package:spot/src/screenshot/screenshot.dart';
 import 'package:spot/src/timeline/html/script.js.dart';
 import 'package:spot/src/timeline/html/styles.css.dart';
@@ -53,7 +51,7 @@ extension HtmlTimelinePrinter on Timeline {
       return 'timeline-$name.html';
     }();
 
-    final htmlFile = File(path.join(spotTempDir.path, nameForHtml));
+    final htmlFile = File('${spotTempDir.path}/$nameForHtml');
     final content = _timelineAsHTML(timeLineEvents: events);
     htmlFile.writeAsStringSync(content);
     //ignore: avoid_print
@@ -120,7 +118,7 @@ String _timelineAsHTML({required List<TimelineEvent> timeLineEvents}) {
     String? projectDir;
 
     while (dir != null) {
-      final ideaDir = Directory(path.join(dir.path, '.idea'));
+      final ideaDir = Directory('${dir.path}/.idea');
       if (ideaDir.existsSync()) {
         // Update to the current directory path
         projectDir = dir.path;
