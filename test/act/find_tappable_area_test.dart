@@ -94,14 +94,16 @@ void main() {
         (output.split('\n')..removeWhere((line) => line.isEmpty)).join('\n');
     expect(
       lines,
-      "Warning: The '_TestButton' is only partially reacting to tap events. Only ~7% of the widget reacts to hitTest events.\n"
-      'Possible causes: - The widget is partially positioned out of view\n'
-      ' - It is covered by another widget.\n'
-      ' - It is too small (<8x8)\n'
-      'Possible solutions:\n'
-      ' - Scroll the widget into view using act.dragUntilVisible()\n'
-      ' - Make sure no other Widget is overlapping on small screens\n'
-      ' - Increase the Widget size',
+      startsWith(
+        "Warning: The '_TestButton' is only partially reacting to tap events. Only ~7% of the widget reacts to hitTest events.\n"
+        'Possible causes: - The widget is partially positioned out of view\n'
+        ' - It is covered by another widget.\n'
+        ' - It is too small (<8x8)\n'
+        'Possible solutions:\n'
+        ' - Scroll the widget into view using act.dragUntilVisible()\n'
+        ' - Make sure no other Widget is overlapping on small screens\n'
+        ' - Increase the Widget size',
+      ),
     );
   });
 
