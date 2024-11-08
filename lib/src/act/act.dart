@@ -106,7 +106,12 @@ class Act {
           );
           return;
         }
-        _reportPartialCoverage(pokablePositions, snapshot);
+        final partialWarning =
+            _createPartialCoverageMessage(pokablePositions, snapshot);
+        if (partialWarning != null) {
+          // ignore: avoid_print
+          print(partialWarning);
+        }
 
         final positionToTap = pokablePositions.mostCenterHittablePosition!;
         final binding = TestWidgetsFlutterBinding.instance;
@@ -119,9 +124,10 @@ class Act {
           );
           timeline.addEvent(
             details: 'Tap ${selector.toStringBreadcrumb()}',
-            eventType: 'Tap Event',
+            eventType: 'Tap Event\n'
+                '$partialWarning',
             screenshot: screenshot,
-            color: Colors.blue,
+            color: partialWarning == null ? Colors.blue : Colors.purple,
           );
         }
 
@@ -190,7 +196,7 @@ class Act {
           );
           return;
         }
-        _reportPartialCoverage(pokablePositions, snapshot);
+        _createPartialCoverageMessage(pokablePositions, snapshot);
         final targetName = dragTarget.toStringBreadcrumb();
 
         bool isTargetVisible() {
@@ -330,30 +336,28 @@ class Act {
   }
 
   /// Throws a warning when the widget is only partially reacting to tap events
-  void _reportPartialCoverage(
+  String? _createPartialCoverageMessage(
     _PokablePositions pokablePositions,
     WidgetSnapshot snapshot,
   ) {
     final roundUp = pokablePositions.percent.ceil();
     if (roundUp > 80) {
       // Don't be pedantic when the widget is almost fully tappable
-      return;
+      return null;
     }
     // ignore: avoid_print
-    print(
-      "Warning: The '${snapshot.discoveredWidget!.toStringShort()}' is only partially reacting to tap events. "
-      "Only ~$roundUp% of the widget reacts to hitTest events.\n"
-      "\n"
-      "Possible causes:"
-      " - The widget is partially positioned out of view\n"
-      " - It is covered by another widget.\n"
-      " - It is too small (<8x8)\n"
-      "\n"
-      "Possible solutions:\n"
-      " - Scroll the widget into view using act.dragUntilVisible()\n"
-      " - Make sure no other Widget is overlapping on small screens\n"
-      " - Increase the Widget size\n",
-    );
+    return "Warning: The '${snapshot.discoveredWidget!.toStringShort()}' is only partially reacting to tap events. "
+        "Only ~$roundUp% of the widget reacts to hitTest events.\n"
+        "\n"
+        "Possible causes:"
+        " - The widget is partially positioned out of view\n"
+        " - It is covered by another widget.\n"
+        " - It is too small (<8x8)\n"
+        "\n"
+        "Possible solutions:\n"
+        " - Scroll the widget into view using act.dragUntilVisible()\n"
+        " - Make sure no other Widget is overlapping on small screens\n"
+        " - Increase the Widget size\n";
   }
 
   /// Checks if the widget is visible and not covered by another widget
