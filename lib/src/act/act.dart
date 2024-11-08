@@ -112,7 +112,11 @@ class Act {
         final binding = TestWidgetsFlutterBinding.instance;
 
         if (timeline.mode != TimelineMode.off) {
-          final screenshot = timeline.takeScreenshotSync();
+          final screenshot = timeline.takeScreenshotSync(
+            annotators: [
+              CrosshairAnnotator(centerPosition: positionToTap),
+            ],
+          );
           timeline.addEvent(
             details: 'Tap ${selector.toStringBreadcrumb()}',
             eventType: 'Tap Event',
