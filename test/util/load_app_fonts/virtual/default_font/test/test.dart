@@ -12,7 +12,7 @@ void main() {
         home: FontTestWidget(),
       ),
     );
-    await takeScreenshot();
+    await tester.pumpAndSettle();
     await expectLater(
       find.byType(MaterialApp),
       matchesGoldenFile('golden.png'),
