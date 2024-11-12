@@ -1,3 +1,4 @@
+import 'package:ci/ci.dart';
 import 'package:spot/src/timeline/timeline.dart';
 
 /// Extension that adds a method to print the timeline to the console.
@@ -23,10 +24,16 @@ extension ConsoleTimelinePrinter on Timeline {
     final caller = frame != null
         ? 'at ${frame.member} ${frame.uri}:${frame.line}:${frame.column}'
         : 'N/A';
-    final details = event.details.split('\n').first;
+    final details =
+        isCI ? event.details : event.details.split('\n').firstOrNull;
     buffer.writeln('==================== Timeline Event ====================');
     buffer.writeln('Event Type: ${event.eventType}');
-    buffer.writeln('Details: $details');
+    if (details != null) {
+      buffer.writeln('Details: $details');
+    }
+    if (event.description != null) {
+      buffer.writeln('Description: ${event.description}');
+    }
     buffer.writeln('Caller: $caller');
     if (event.screenshot != null) {
       buffer.writeln('Screenshot: file://${event.screenshot!.file.path}');
