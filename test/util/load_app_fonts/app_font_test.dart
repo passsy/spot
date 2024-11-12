@@ -13,10 +13,10 @@ void main() {
     print('flutterPath: $flutterPath');
     try {
       print('this should work right?');
-      // // Copy virtual/montserrat to test folder
-      // tempDir = Directory.systemTemp.createTempSync('app_font_test');
-      // final testProjectDir = tempDir.path;
-      //
+      // Copy virtual/montserrat to test folder
+      tempDir = Directory.systemTemp.createTempSync('app_font_test');
+      final testProjectDir = tempDir.path;
+      print('testProjectDir: $testProjectDir');
       // Directory(
       //   '${Directory.current.path}/test/util/load_app_fonts/virtual/app_font',
       // ).copyTo(testProjectDir);
