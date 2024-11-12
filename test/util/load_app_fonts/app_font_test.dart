@@ -9,14 +9,10 @@ void main() {
   test('When defined in pubspec a third-party font is loaded', () async {
     int exitCode = -1;
     late Directory tempDir;
-    print('flutterPath: ');
-    print('flutterPath: $flutterPath');
     try {
-      print('this should work right?');
       // Copy virtual/montserrat to test folder
       tempDir = Directory.systemTemp.createTempSync('app_font_test');
       final testProjectDir = tempDir.path;
-      print('testProjectDir: $testProjectDir');
       Directory(
         '${Directory.current.path}/test/util/load_app_fonts/virtual/app_font',
       ).copyTo(testProjectDir);
