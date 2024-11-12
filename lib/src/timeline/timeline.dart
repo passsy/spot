@@ -1,7 +1,5 @@
 // ignore_for_file: depend_on_referenced_packages
 
-import 'dart:io';
-
 import 'package:ci/ci.dart';
 import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
@@ -183,7 +181,6 @@ class Timeline {
       return;
     }
     for (final process in _toBeProcessedScreenshots.toList()) {
-      stdout.write('.');
       await process();
     }
   }
