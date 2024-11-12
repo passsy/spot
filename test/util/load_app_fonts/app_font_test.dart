@@ -17,30 +17,30 @@ void main() {
       tempDir = Directory.systemTemp.createTempSync('app_font_test');
       final testProjectDir = tempDir.path;
       print('testProjectDir: $testProjectDir');
-      // Directory(
-      //   '${Directory.current.path}/test/util/load_app_fonts/virtual/app_font',
-      // ).copyTo(testProjectDir);
-      //
-      // // Run pub get
-      // await Process.run(
-      //   flutterPath,
-      //   ['pub', 'get'],
-      //   workingDirectory: testProjectDir,
-      // );
-      //
-      // // Run tests
-      // final test = await Process.start(
-      //   flutterPath,
-      //   ['test'],
-      //   workingDirectory: testProjectDir,
-      // );
-      //
-      // exitCode = await test.exitCode;
+      Directory(
+        '${Directory.current.path}/test/util/load_app_fonts/virtual/app_font',
+      ).copyTo(testProjectDir);
+
+      // Run pub get
+      await Process.run(
+        flutterPath,
+        ['pub', 'get'],
+        workingDirectory: testProjectDir,
+      );
+
+      // Run tests
+      final test = await Process.start(
+        flutterPath,
+        ['test'],
+        workingDirectory: testProjectDir,
+      );
+
+      exitCode = await test.exitCode;
     } catch (e) {
       rethrow;
     } finally {
-      expect(true, true);
-      // tempDir.deleteSync(recursive: true);
+      expect(exitCode, 0);
+      tempDir.deleteSync(recursive: true);
     }
   });
 }
