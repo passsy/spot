@@ -267,7 +267,8 @@ extension ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
           throw QuantityTestFailure(
             message:
                 'Could not find ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
-                'expected at least $minimumConstraint',
+                'expected at least $minimumConstraint.\n'
+                'Check the timeline at the very bottom for more information.',
             significantWidgetTree: significantWidgetTree(),
             snapshot: this,
           );
@@ -278,7 +279,8 @@ extension ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
           throw QuantityTestFailure(
             message:
                 'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
-                'expected at least $minimumConstraint',
+                'expected at least $minimumConstraint.\n'
+                'Check the timeline at the very bottom for more information.',
             significantWidgetTree: significantWidgetTree(),
             snapshot: this,
           );
@@ -290,7 +292,8 @@ extension ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
           throw QuantityTestFailure(
             message:
                 'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
-                'expected at most $maximumConstraint',
+                'expected at most $maximumConstraint.\n'
+                'Check the timeline at the very bottom for more information.',
             significantWidgetTree: significantWidgetTree(),
             snapshot: this,
           );
@@ -309,7 +312,8 @@ extension ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
               throw QuantityTestFailure(
                 message:
                     'Could not find ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
-                    'expected exactly $exactCount',
+                    'expected exactly $exactCount.\n'
+                    'Check the timeline at the very bottom for more information.',
                 significantWidgetTree: significantWidgetTree(),
                 snapshot: this,
               );
@@ -318,7 +322,8 @@ extension ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
               throw QuantityTestFailure(
                 message:
                     'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
-                    'expected exactly $exactCount',
+                    'expected exactly $exactCount.\n'
+                    'Check the timeline at the very bottom for more information.',
                 significantWidgetTree: significantWidgetTree(),
                 snapshot: this,
               );
@@ -329,7 +334,8 @@ extension ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
           throw QuantityTestFailure(
             message:
                 'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
-                'expected between $minimumConstraint and $maximumConstraint',
+                'expected between $minimumConstraint and $maximumConstraint.\n'
+                'Check the timeline at the very bottom for more information.',
             significantWidgetTree: significantWidgetTree(),
             snapshot: this,
           );
@@ -377,9 +383,10 @@ class QuantityTestFailure implements TestFailure {
 
   @override
   String toString() {
-    return '$message\n'
-        '$significantWidgetTree\n'
-        '$message';
+    return '$message';
+    // return '$message\n'
+    //     '$significantWidgetTree\n'
+    //     '$message';
   }
 }
 
@@ -438,7 +445,6 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
         final errorBuilder = StringBuffer();
         errorBuilder.writeln('Could not find $selector in widget tree');
         _dumpWidgetTree(errorBuilder);
-        errorBuilder.writeln('Could not find $selector in widget tree');
         timeline.addEvent(
           eventType: 'Assertion Failed',
           details: errorBuilder.toString(),
@@ -449,7 +455,7 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
             ],
           ),
         );
-        fail(errorBuilder.toString());
+        fail('Could not find $selector in widget tree');
       }
     }
 
@@ -602,7 +608,6 @@ void _tryMatchingLessSpecificCriteria(WidgetSnapshot snapshot) {
           details: '$errorBuilder\nFound in widget Tree:\n$significantTree',
         );
       }
-      errorBuilder.writeln('\nFound in widget Tree:\n$significantTree');
       fail(errorBuilder.toString());
     }
   }

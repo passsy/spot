@@ -292,7 +292,13 @@ void main() {
             .whereText((text) => text.startsWith('a'))
             .existsExactlyNTimes(3),
         throwsSpotErrorContaining([
-          'Found 4 elements matching Text with prop "data" starts with \'a\' in widget tree, expected exactly 3',
+          'Found 4 elements matching Text with prop "data" starts with \'a\' in widget tree, expected exactly 3.',
+          'Check the timeline at the very bottom for more information.',
+        ]),
+      );
+      expect(
+        timeline.events.last.details,
+        stringContainsInOrder([
           'Text("aa"',
           'Text("ab"',
           'Text("ac"',
