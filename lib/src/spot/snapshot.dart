@@ -383,10 +383,7 @@ class QuantityTestFailure implements TestFailure {
 
   @override
   String toString() {
-    return '$message';
-    // return '$message\n'
-    //     '$significantWidgetTree\n'
-    //     '$message';
+    return message;
   }
 }
 
