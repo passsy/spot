@@ -10,34 +10,54 @@ extension CopyExtension on Directory {
     targetDir.createSync(recursive: true);
     print('here1');
     listSync().forEach((element) {
-      if (element is File) {
-        final fileName = p.basename(element.path);
-        print('here2');
-        if (fileName.endsWith('test.dart')) {
-          element.copySync(
-            p.join(
-              targetDir.path,
-              fileName.replaceAll('test.dart', '_test.dart'),
-            ),
-          );
-          print('here3');
-        } else if (fileName == 'pubspec_template.yaml') {
-          final repoRoot = p.dirname(Platform.script.path);
-          print('here4');
+      try {
+        if (element is File) {
+          final fileName = p.basename(element.path);
+          print('here2');
+          if (fileName.endsWith('test.dart')) {
+            print('copy test');
+            element.copySync(
+              p.join(
+                targetDir.path,
+                fileName.replaceAll('test.dart', '_test.dart'),
+              ),
+            );
+            print('finish copy test');
+          } else if (fileName == 'pubspec_template.yaml') {
+            final repoRoot = p.dirname(Platform.script.path);
+            print('copy pubspec');
 
-          final content = element
-              .readAsStringSync()
-              .replaceAll('../../../../../.', repoRoot);
-          File(p.join(targetDir.path, 'pubspec.yaml'))
-              .writeAsStringSync(content);
-          print('here5');
-        } else {
-          element.copySync(p.join(targetDir.path, fileName));
+            final content = element
+                .readAsStringSync()
+                .replaceAll('../../../../../.', repoRoot);
+            File(p.join(targetDir.path, 'pubspec.yaml'))
+                .writeAsStringSync(content);
+            print('finish copy pubspec');
+          } else {
+            print('copy normal file');
+            element.copySync(p.join(targetDir.path, fileName));
+            print('finish copy normal file');
+          }
+        } else if (element is Directory) {
+          print('copy dir');
+          element.copyTo(p.join(targetDir.path, p.basename(element.path)));
+          print('finish copy dir');
         }
-      } else if (element is Directory) {
-        element.copyTo(p.join(targetDir.path, p.basename(element.path)));
+      } catch (e, s) {
+        print(e);
+        print(s);
       }
     });
+    //   here1
+    //   here1
+    //   here2
+    //   here3
+    //   here2
+    //   here2
+    //   here4
+    //   here5
+    //   here1
+    //   here2
   }
 
 // void copyTo(String path) {
