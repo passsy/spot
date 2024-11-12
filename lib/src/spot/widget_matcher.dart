@@ -221,6 +221,54 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
     return this;
   }
 
+  /// Retrieves a specific property from the matched widget's state.
+  ///
+  /// Use this method to get a property value directly from the state of
+  /// the widget for further processing or assertions.
+  T getStateProp<T, S extends State>(NamedStateProp<T, S> prop) {
+    if (element is! StatefulElement) {
+      throw Exception('$element is not a StatefulElement');
+    }
+    final e = element as StatefulElement;
+    final state = e.state as S;
+    return prop.get(state);
+  }
+
+  /// Asserts that a state property meets a specific condition.
+  ///
+  /// This method is useful for making assertions on properties within the
+  /// [State] of the widget.
+  ///
+  /// #### Example usage:
+  /// ```dart
+  /// spot<Checkbox>().existsOnce().hasStateProp(
+  ///   prop: stateProp('value', (state) => state.value),
+  ///   match: (it) => it.isTrue(),
+  /// );
+  /// ```
+  WidgetMatcher<W> hasStateProp<T, S extends State>({
+    required NamedStateProp<T, S> prop,
+    required MatchProp<T> match,
+  }) {
+    void condition(Subject<Element> subject) {
+      final Subject<T> value = subject.context.nest<T?>(
+        () => ['State of $W', "with prop '${prop.name}'"],
+        (element) {
+          final value = getStateProp(prop);
+          return Extracted.value(value);
+        },
+      ).hideNullability();
+
+      match(value);
+    }
+
+    final failure = softCheckHideNull(element, condition);
+    _addAssertionToTimeline(failure, condition, element);
+    failure.throwPropertyCheckFailure(condition, element);
+
+    return this;
+  }
+
   /// Retrieves a specific property from the matched widget's render object.
   ///
   /// Use this method to get a property value directly from the render object
