@@ -122,10 +122,10 @@ class Act {
               CrosshairAnnotator(centerPosition: positionToTap),
             ],
           );
+          final partial = partialWarning == null ? '' : '\n$partialWarning';
           timeline.addEvent(
-            details: 'Tap ${selector.toStringBreadcrumb()}',
-            eventType: 'Tap Event\n'
-                '$partialWarning',
+            eventType: 'Tap Event',
+            details: 'Tap ${selector.toStringBreadcrumb()}$partial',
             screenshot: screenshot,
             color: partialWarning == null ? Colors.blue : Colors.purple,
           );
