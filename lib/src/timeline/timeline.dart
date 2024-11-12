@@ -17,7 +17,7 @@ import 'package:test_api/src/backend/invoker.dart';
 import 'package:test_api/src/backend/live_test.dart';
 
 TimelineMode _globalTimelineMode =
-    getTimelineModeFromEnv() ?? TimelineMode.record;
+    getTimelineModeFromEnv() ?? TimelineMode.reportOnError;
 
 /// Returns the global timeline mode than can be used across multiple tests
 TimelineMode get globalTimelineMode => _globalTimelineMode;
@@ -34,12 +34,15 @@ Example: timeline.mode = $value;
   _globalTimelineMode = value;
 }
 
-/// Use --dart-define=SPOT_TIMELINE_MODE=live|record|off to set the [TimelineMode]
+/// Use --dart-define=SPOT_TIMELINE_MODE=live|always|reportOnError|off to set the [TimelineMode]
 /// for all tests
 TimelineMode? getTimelineModeFromEnv() {
   final mode = const String.fromEnvironment('SPOT_TIMELINE_MODE').toLowerCase();
   return switch (mode) {
     'live' => TimelineMode.live,
+    'always' => TimelineMode.always,
+    'reportOnError' => TimelineMode.reportOnError,
+    // ignore: deprecated_member_use_from_same_package
     'record' => TimelineMode.record,
     'off' => TimelineMode.off,
     _ => null,
@@ -103,7 +106,7 @@ class Timeline {
 
   TimelineMode _mode = _globalTimelineMode;
 
-  /// The mode of the timeline. Defaults to [TimelineMode.off].
+  /// The mode of the timeline. Defaults to [TimelineMode.reportOnError].
   TimelineMode get mode => _mode;
 
   set mode(TimelineMode value) {
@@ -115,9 +118,10 @@ class Timeline {
       switch (value) {
         TimelineMode.live =>
           '🔴 - Live! Shows all timeline events as they happen',
+        TimelineMode.always => '🔴 - Always shows the timeline',
         TimelineMode.reportOnError =>
           '🔴 - Shows the timeline when the test fails',
-        TimelineMode.always => '🔴 - Always shows the timeline',
+        // ignore: deprecated_member_use_from_same_package
         TimelineMode.record =>
           '🔴 - Recording, but only showing on test failure',
         TimelineMode.off => '⏸︎ - Timeline recording is off',
@@ -208,10 +212,6 @@ class Timeline {
         // Finalize with html report
         await processPendingScreenshots();
         printHTML();
-      case TimelineMode.record:
-        await reportOnError();
-      case TimelineMode.reportOnError:
-        await reportOnError();
       case TimelineMode.always:
         // ignore: avoid_print
         print('Generating timeline report');
@@ -222,6 +222,11 @@ class Timeline {
         }
         // best for humans
         printHTML();
+      // ignore: deprecated_member_use_from_same_package
+      case TimelineMode.record:
+        await reportOnError();
+      case TimelineMode.reportOnError:
+        await reportOnError();
       case TimelineMode.off:
         // do nothing
         break;
@@ -288,11 +293,7 @@ class TimelineEvent {
   final Color color;
 }
 
-/// The mode of the timeline.
-/// Available modes:
-/// - [TimelineMode.live] - The timeline is recording and printing events as they happen.
-/// - [TimelineMode.record] - The timeline is recording but not printing events unless the test fails.
-/// - [TimelineMode.off] - The timeline is not recording.
+/// The mode of the [Timeline] and how it should be generated
 enum TimelineMode {
   /// The timeline is recording and printing events to the console as they happen.
   /// The timeline is also generated at the end of the test.

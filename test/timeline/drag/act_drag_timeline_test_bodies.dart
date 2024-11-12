@@ -16,10 +16,8 @@ class ActDragTimelineTestBodies {
   static const _passingDragAmount = 23;
   static const _passingOffset = Offset(0, -2300);
 
-  static Future<void> liveWithoutError(
-    WidgetTester tester, {
-    bool isGlobal = false,
-  }) async {
+  static Future<void> liveWithoutError(WidgetTester tester) async {
+    final isGlobal = timeline.mode == TimelineMode.live;
     final output = await captureConsoleOutput(() async {
       if (!isGlobal) {
         timeline.mode = TimelineMode.live;
@@ -37,10 +35,8 @@ class ActDragTimelineTestBodies {
     );
   }
 
-  static Future<void> offWithoutError(
-    WidgetTester tester, {
-    bool isGlobal = false,
-  }) async {
+  static Future<void> offWithoutError(WidgetTester tester) async {
+    final isGlobal = timeline.mode == TimelineMode.off;
     final output = await captureConsoleOutput(() async {
       if (!isGlobal) {
         timeline.mode = TimelineMode.off;
@@ -54,12 +50,12 @@ class ActDragTimelineTestBodies {
     expect(lines.length, isGlobal ? 0 : 1);
   }
 
-  static Future<void> recordTurnOff(
-    WidgetTester tester, {
-    bool isGlobal = false,
-  }) async {
+  static Future<void> recordTurnOff(WidgetTester tester) async {
+    final isGlobal = timeline.mode == TimelineMode.off;
     final output = await captureConsoleOutput(() async {
-      timeline.mode = TimelineMode.off;
+      if (!isGlobal) {
+        timeline.mode = TimelineMode.off;
+      }
       await _testBody(tester);
     });
     final lines = output.split('\n')..removeWhere((line) => line.isEmpty);
@@ -67,14 +63,14 @@ class ActDragTimelineTestBodies {
     expect(lines.first, contains('⏸︎ - Timeline recording is off'));
   }
 
-  static Future<void> recordNoError(
-    WidgetTester tester, {
-    bool isGlobal = false,
-  }) async {
+  static Future<void> recordNoError(WidgetTester tester) async {
+    final isGlobal = timeline.mode == TimelineMode.reportOnError;
     final output = await captureConsoleOutput(() async {
-      // Won't change anything, since it's default. Here to make sure
-      // nothing is printed when the mode doesn't change.
-      timeline.mode = TimelineMode.record;
+      if (!isGlobal) {
+        // Won't change anything, since it's default. Here to make sure
+        // nothing is printed when the mode doesn't change.
+        timeline.mode = TimelineMode.reportOnError;
+      }
       await _testBody(tester);
     });
     final lines = output.split('\n')..removeWhere((line) => line.isEmpty);
@@ -83,9 +79,26 @@ class ActDragTimelineTestBodies {
     expect(lines.length, 0, reason: output);
   }
 
-  static Future<void> liveWithoutErrorPrintsHTML({
-    bool isGlobal = false,
-  }) async {
+  static Future<void> alwaysNoError(WidgetTester tester) async {
+    final isGlobal = timeline.mode == TimelineMode.always;
+    final output = await captureConsoleOutput(() async {
+      if (!isGlobal) {
+        // always print the timeline
+        timeline.mode = TimelineMode.always;
+      }
+      await _testBody(tester);
+    });
+    final lines = output.split('\n')..removeWhere((line) => line.isEmpty);
+    if (!isGlobal) {
+      expect(lines.length, 1);
+      expect(lines.first, contains('🔴 - Always shows the timeline'));
+    } else {
+      expect(lines.length, 0);
+    }
+  }
+
+  static Future<void> liveWithoutErrorPrintsHTML() async {
+    final isGlobal = timeline.mode == TimelineMode.live;
     final stdout = await _outputFromDragTestProcess(
       title: 'Live timeline - without error, prints HTML',
       timelineMode: TimelineMode.live,
@@ -115,9 +128,8 @@ class ActDragTimelineTestBodies {
     );
   }
 
-  static Future<void> liveWithoutErrorPrintsHTMLNoDuplicates({
-    bool isGlobal = false,
-  }) async {
+  static Future<void> liveWithoutErrorPrintsHTMLNoDuplicates() async {
+    final isGlobal = timeline.mode == TimelineMode.live;
     final stdout = await _outputFromDragTestProcess(
       isGlobalMode: isGlobal,
       title: 'Live timeline - without error, no duplicates, prints HTML',
@@ -154,9 +166,8 @@ class ActDragTimelineTestBodies {
     );
   }
 
-  static Future<void> liveWithErrorPrintsHTMLNoDuplicates({
-    bool isGlobal = false,
-  }) async {
+  static Future<void> liveWithErrorPrintsHTMLNoDuplicates() async {
+    final isGlobal = timeline.mode == TimelineMode.live;
     final stdout = await _outputFromDragTestProcess(
       isGlobalMode: isGlobal,
       title: 'Live timeline - with error, no duplicates, prints HTML',
@@ -200,12 +211,11 @@ class ActDragTimelineTestBodies {
     );
   }
 
-  static Future<void> recordWithErrorPrintsHTML({
-    bool isGlobal = false,
-  }) async {
+  static Future<void> recordWithErrorPrintsHTML() async {
+    final isGlobal = timeline.mode == TimelineMode.reportOnError;
     final stdout = await _outputFromDragTestProcess(
       title: 'OnError timeline - with error, prints timeline',
-      timelineMode: TimelineMode.record,
+      timelineMode: TimelineMode.reportOnError,
       drags: _failingDragAmount,
       isGlobalMode: isGlobal,
     );

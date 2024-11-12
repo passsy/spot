@@ -20,7 +20,7 @@ class ActTapTimelineTestBodies {
   }) async {
     final output = await captureConsoleOutput(() async {
       if (!isGlobalMode) {
-        timeline.mode = TimelineMode.record;
+        timeline.mode = TimelineMode.reportOnError;
       }
       await tester.pumpWidget(const TimelineTestWidget());
       _addButtonSelector.existsOnce();
@@ -68,7 +68,7 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
   }) async {
     final stdout = await _outputFromTapTestProcess(
       title: 'OnError timeline - with error, prints timeline',
-      timelineMode: TimelineMode.record,
+      timelineMode: TimelineMode.reportOnError,
       shouldFail: true,
       isGlobalMode: isGlobalMode,
       captureStart: ['Timeline of test'],

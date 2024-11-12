@@ -6,6 +6,6 @@ import '../act_drag_timeline_test_bodies.dart';
 void main() {
   globalTimelineMode = TimelineMode.off;
   testWidgets('Global: off does not record', (tester) async {
-    await ActDragTimelineTestBodies.offWithoutError(tester, isGlobal: true);
+    await ActDragTimelineTestBodies.offWithoutError(tester);
   });
 }
