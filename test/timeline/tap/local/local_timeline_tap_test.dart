@@ -34,7 +34,7 @@ void main() {
   test('Throws when global mode is changed during test', () async {
     await ActTapTimelineTestBodies.throwOnGlobalTimelineChange(
       initialGlobalMode: TimelineMode.live,
-      globalTimelineModeToSwitch: TimelineMode.record,
+      globalTimelineModeToSwitch: TimelineMode.reportOnError,
     );
   });
 }

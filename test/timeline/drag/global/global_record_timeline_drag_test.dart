@@ -4,14 +4,14 @@ import 'package:spot/src/timeline/timeline.dart';
 import '../act_drag_timeline_test_bodies.dart';
 
 void main() {
-  globalTimelineMode = TimelineMode.record;
-  testWidgets('Global: record, turn off during test', (tester) async {
-    await ActDragTimelineTestBodies.recordTurnOff(tester, isGlobal: true);
+  globalTimelineMode = TimelineMode.reportOnError;
+  testWidgets('Global: reportOnError, turn off during test', (tester) async {
+    await ActDragTimelineTestBodies.recordTurnOff(tester);
   });
-  testWidgets('Global: record - without error', (tester) async {
-    await ActDragTimelineTestBodies.recordNoError(tester, isGlobal: true);
+  testWidgets('Global: reportOnError - without error', (tester) async {
+    await ActDragTimelineTestBodies.recordNoError(tester);
   });
-  test('Global: record, with error, prints timeline and html', () async {
-    await ActDragTimelineTestBodies.recordWithErrorPrintsHTML(isGlobal: true);
+  test('Global: reportOnError, with error, prints timeline and html', () async {
+    await ActDragTimelineTestBodies.recordWithErrorPrintsHTML();
   });
 }
