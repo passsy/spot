@@ -196,7 +196,8 @@ void main() {
       lines,
       contains(
         "Warning: The '_TestButton' is only partially reacting to tap events. Only ~67% of the widget reacts to hitTest events.\n"
-        'Possible causes: - The widget is partially positioned out of view\n'
+        'Possible causes:\n'
+        ' - The widget is partially positioned out of view\n'
         ' - It is covered by another widget.\n'
         ' - It is too small (<8x8)\n'
         'Possible solutions:\n'
