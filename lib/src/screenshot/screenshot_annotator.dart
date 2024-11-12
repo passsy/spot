@@ -108,12 +108,12 @@ class HighlightAnnotator implements ScreenshotAnnotator {
   /// Highlight plain rectangles on the screenshot with optional labels.
   HighlightAnnotator.rects(
     this.rects, {
-    this.color = const Color(0xFFFF00FF),
+    this.color,
     this.labels,
   }) : assert(labels == null || rects.length == labels.length);
 
   /// Highlight elements on the screenshot
-  factory HighlightAnnotator.elements(List<Element> elements) {
+  factory HighlightAnnotator.elements(List<Element> elements, {Color? color}) {
     final binding = TestWidgetsFlutterBinding.instance;
     final view = binding.platformDispatcher.implicitView;
     final devicePixelRatio = view?.devicePixelRatio ?? 1.0;
@@ -137,12 +137,12 @@ class HighlightAnnotator implements ScreenshotAnnotator {
       );
       labels.add('${element.toStringShort()} #$index');
     }
-    return HighlightAnnotator.rects(rects, labels: labels);
+    return HighlightAnnotator.rects(rects, labels: labels, color: color);
   }
 
   /// Highlight a single element on the screenshot
-  factory HighlightAnnotator.element(Element element) {
-    return HighlightAnnotator.elements([element]);
+  factory HighlightAnnotator.element(Element element, {Color? color}) {
+    return HighlightAnnotator.elements([element], color: color);
   }
 
   /// The rectangles to highlight. They are captured at the point of creation,
@@ -153,7 +153,7 @@ class HighlightAnnotator implements ScreenshotAnnotator {
   final List<String>? labels;
 
   /// The color to use for highlighting.
-  final Color color;
+  final Color? color;
 
   @override
   String get name => 'Highlight Elements Annotator';
@@ -172,6 +172,8 @@ class HighlightAnnotator implements ScreenshotAnnotator {
     final canvas = Canvas(recorder);
 
     canvas.drawImage(image, Offset.zero, Paint());
+
+    final color = this.color ?? const Color(0xFFFF00FF);
 
     final paint = Paint()
       ..color = color

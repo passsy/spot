@@ -591,12 +591,13 @@ void _tryMatchingLessSpecificCriteria(WidgetSnapshot snapshot) {
           annotators: [
             HighlightAnnotator.elements(
               lessSpecificSnapshot.discoveredElements,
+              color: Colors.cyan,
             ),
           ],
         );
         timeline.addEvent(
-          eventType: 'Assertion',
-          color: Colors.grey,
+          eventType: 'Assertion Failed',
+          color: Colors.red,
           screenshot: screenshot,
           details: '$errorBuilder\nFound in widget Tree:\n$significantTree',
         );
