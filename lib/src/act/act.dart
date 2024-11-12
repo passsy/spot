@@ -349,7 +349,7 @@ class Act {
     return "Warning: The '${snapshot.discoveredWidget!.toStringShort()}' is only partially reacting to tap events. "
         "Only ~$roundUp% of the widget reacts to hitTest events.\n"
         "\n"
-        "Possible causes:"
+        "Possible causes:\n"
         " - The widget is partially positioned out of view\n"
         " - It is covered by another widget.\n"
         " - It is too small (<8x8)\n"
