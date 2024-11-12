@@ -37,6 +37,11 @@ void main() {
         stateProp<String, _MyContainerState>('innerValue', (s) => s.innerValue),
       );
       expect(innerValue, 'stateValue');
+
+      // alternate syntax
+      spot<_MyContainer>().getStateProp(
+        stateProp('innerValue', (_MyContainerState s) => s.innerValue),
+      );
     });
 
     testWidgets('getRenderObjectProp', (tester) async {
@@ -81,9 +86,17 @@ void main() {
       await tester.pumpWidget(const _MyContainer(color: Colors.white54));
       final innerValue = spot<_MyContainer>().existsOnce().getStateProp(
             stateProp<String, _MyContainerState>(
-                'innerValue', (s) => s.innerValue),
+              'innerValue',
+              (s) => s.innerValue,
+            ),
           );
+
       expect(innerValue, 'stateValue');
+
+      // alternate syntax
+      spot<_MyContainer>().existsOnce().getStateProp(
+            stateProp('innerValue', (_MyContainerState s) => s.innerValue),
+          );
     });
 
     testWidgets('getRenderObjectProp', (tester) async {
