@@ -8,6 +8,46 @@ extension CopyExtension on Directory {
   void copyTo(String path) {
     final targetDir = Directory(path);
     targetDir.createSync(recursive: true);
+    print('Created target directory: $path');
+
+    Directory.current.listSync(recursive: true).forEach((element) {
+      try {
+        final relativePath =
+            p.relative(element.path, from: Directory.current.path);
+        final targetPath = p.join(targetDir.path, relativePath);
+
+        if (element is File) {
+          print('Copying file: ${element.path} to $targetPath');
+
+          if (element.path.endsWith('test.dart')) {
+            element.copySync(targetPath.replaceAll('test.dart', '_test.dart'));
+            print('Renamed and copied test file');
+          } else if (element.path.endsWith('pubspec_template.yaml')) {
+            final repoRoot = p.dirname(Platform.script.path);
+            final content = element
+                .readAsStringSync()
+                .replaceAll('../../../../../.', repoRoot);
+            File(targetPath.replaceAll('pubspec_template.yaml', 'pubspec.yaml'))
+                .writeAsStringSync(content);
+            print('Modified and copied pubspec file');
+          } else {
+            element.copySync(targetPath);
+            print('Copied regular file');
+          }
+        } else if (element is Directory) {
+          Directory(targetPath).createSync(recursive: true);
+          print('Created directory: $targetPath');
+        }
+      } catch (e, s) {
+        print('Error: $e');
+        print('Stack Trace: $s');
+      }
+    });
+  }
+
+  void copyTo2(String path) {
+    final targetDir = Directory(path);
+    targetDir.createSync(recursive: true);
     print('here1');
     listSync().forEach((element) {
       try {
