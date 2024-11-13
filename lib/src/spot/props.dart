@@ -73,6 +73,53 @@ extension WidgetSelectorProp<W extends Widget> on WidgetSelector<W> {
   }
 }
 
+/// Read properties directly from a selector
+extension PropGetter<W extends Widget> on WidgetSelector<W> {
+  /// Retrieves a specific property from the matched widget.
+  ///
+  /// Use this method to get a property value directly from the widget for
+  /// further processing or assertions.
+  T getWidgetProp<T>(NamedWidgetProp<W, T> prop) {
+    final matcher = existsOnce();
+    return prop.get(matcher.widget);
+  }
+
+  /// Retrieves a specific property from the matched widget's element.
+  ///
+  /// Use this method to get a property value directly from the element of
+  /// the widget for further processing or assertions.
+  T getStateProp<T, S extends State>(NamedStateProp<T, S> prop) {
+    final matcher = existsOnce();
+    final element = matcher.element;
+    if (element is! StatefulElement) {
+      throw StateError('Element is not a StatefulElement');
+    }
+    final state = element.state as S;
+    return prop.get(state);
+  }
+
+  /// Retrieves a specific property from the matched widget's element.
+  ///
+  /// Use this method to get a property value directly from the element of
+  /// the widget for further processing or assertions.
+  T getElementProp<T>(NamedElementProp<T> prop) {
+    final matcher = existsOnce();
+    return prop.get(matcher.element);
+  }
+
+  /// Retrieves a specific property from the matched widget's render object.
+  ///
+  /// Use this method to get a property value directly from the render object
+  /// of the widget for further processing or assertions.
+  T getRenderObjectProp<T, R extends RenderObject>(
+    NamedRenderObjectProp<R, T> prop,
+  ) {
+    final matcher = existsOnce();
+    final renderObject = matcher.element.renderObject! as R;
+    return prop.get(renderObject);
+  }
+}
+
 /// The newer version of [WidgetSelector.withProp] that uses [NamedWidgetProp].
 extension PropSelectorQueries<W extends Widget> on ChainableSelectors<W> {
   /// Creates a filter for the widgets of the discovered elements which is
@@ -220,6 +267,32 @@ class NamedWidgetProp<W extends Widget, T> {
   final T Function(W widget) get;
 
   NamedWidgetProp._({
+    required this.name,
+    required this.get,
+  });
+}
+
+/// A property of a [State] with a [name] that can be extracted with [get].
+///
+/// Use with [WidgetMatcherExtensions.hasElementProp] or [SelectorQueries.whereElementProp].
+NamedStateProp<T, S> stateProp<T, S extends State>(
+  String name,
+  T Function(S element) get,
+) {
+  return NamedStateProp._(name: name, get: get);
+}
+
+/// A property of a [State] that can be extracted from the element.
+///
+/// Use [stateProp] to create a [NamedStateProp].
+class NamedStateProp<T, S extends State> {
+  /// The name of the element property.
+  final String name;
+
+  /// The function that extracts the property from a [State].
+  final T Function(S state) get;
+
+  NamedStateProp._({
     required this.name,
     required this.get,
   });
