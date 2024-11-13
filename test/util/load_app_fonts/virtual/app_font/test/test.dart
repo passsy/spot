@@ -110,12 +110,10 @@ class _TolerantGoldenFileComparator extends LocalFileComparator {
 
     final passed = result.passed || result.diffPercent <= _precisionTolerance;
     if (passed) {
-      result.dispose();
       return true;
     }
 
     final error = await generateFailureOutput(result, golden, basedir);
-    result.dispose();
     throw FlutterError(error);
   }
 }
