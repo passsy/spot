@@ -9,7 +9,7 @@ import 'test_project.dart';
 void main() {
   test('When defined in pubspec a third-party font is loaded', () async {
     final testProject =
-        TestProject('test/util/load_app_fonts/virtual/app_font');
+        TestProject('test/util/load_app_fonts/templates/app_font');
     await testProject.create();
     debugPrint('Run pub get');
     await Process.run(

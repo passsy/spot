@@ -9,7 +9,7 @@ import 'test_project.dart';
 void main() {
   test('roboto is loaded per default', () async {
     final testProject =
-        TestProject('test/util/load_app_fonts/virtual/default_font');
+        TestProject('test/util/load_app_fonts/templates/default_font');
     await testProject.create();
     debugPrint('Run pub get');
     await Process.run(
