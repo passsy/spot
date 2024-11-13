@@ -27,7 +27,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: android-release-failed
+          name: 3-10-failed
           path: test/
           retention-days: 7
 
@@ -50,6 +50,6 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: android-release-failed
+          name: branches-tests-failed
           path: test/
           retention-days: 7
