@@ -118,7 +118,7 @@ class _TolerantGoldenFileComparator extends LocalFileComparator {
     final passed = result.passed || result.diffPercent <= _precisionTolerance;
     if (passed) {
       if (result.diffPercent > 0.0) {
-        print(
+        debugPrint(
           'The golden file $golden has a difference\n'
           'of ${result.diffPercent * 100}%\n'
           'which is within the tolerance of $_precisionTolerance',

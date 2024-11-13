@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 String get flutterPath => '${Platform.environment['FLUTTER_ROOT']}/bin/flutter';
 
+/// Loads a template from the `templates` directory and mounts it in a temporary folder
 class FontTestProject {
   final Directory _templateDir;
 
@@ -17,7 +18,7 @@ class FontTestProject {
     final temp = dir ?? Directory.systemTemp.createTempSync();
     _workingDir = temp;
     addTearDown(() {
-      // temp.deleteSync(recursive: true);
+      temp.deleteSync(recursive: true);
     });
     await _templateDir.copyRecursively(temp);
     for (final file in temp.listSync(recursive: true)) {
