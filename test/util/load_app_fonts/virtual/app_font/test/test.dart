@@ -11,7 +11,7 @@ void main() {
     goldenFileComparator = _TolerantGoldenFileComparator(
       // Replace with your test file path:
       Uri.parse('test/widget_test.dart'),
-      precisionTolerance: 0.02,
+      precisionTolerance: 0.011,
     );
     addTearDown(() => goldenFileComparator = previousGoldenFileComparator);
     await loadFonts();
