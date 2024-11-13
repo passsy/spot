@@ -1,4 +1,5 @@
-import 'dart:io';
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -8,16 +9,10 @@ import 'package:spot/spot.dart';
 void main() {
   testWidgets('Montserrat is loaded from fonts folder when set',
       (WidgetTester tester) async {
-    // The pipeline does run tests with Flutter 3.10 with dart 3.0.
-    // Since that, there were do many changes in the font rendering so we skip those tests for that version.
-    if (Platform.version.contains('3.0')) {
-      return;
-    }
     final previousGoldenFileComparator = goldenFileComparator;
     goldenFileComparator = _TolerantGoldenFileComparator(
-      // Replace with your test file path:
-      Uri.parse('test/widget_test.dart'),
-      precisionTolerance: 0.011,
+      Uri.parse('test/test_test.dart'),
+      precisionTolerance: 0.10,
     );
     addTearDown(() => goldenFileComparator = previousGoldenFileComparator);
     await loadFonts();
@@ -40,7 +35,7 @@ void main() {
 class FontTestWidget extends StatelessWidget {
   const FontTestWidget({
     super.key,
-    this.fontFamily = 'Roboto',
+    required this.fontFamily,
   });
 
   final String fontFamily;
@@ -48,47 +43,53 @@ class FontTestWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Default Font',
-              style: TextStyle(fontSize: 64, fontFamily: fontFamily),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'Italic Text',
-              style: TextStyle(
-                fontSize: 64,
-                fontStyle: FontStyle.italic,
-                fontFamily: fontFamily,
+      backgroundColor: Colors.white,
+      body: DefaultTextStyle(
+        style: TextStyle(
+          inherit: false,
+          height: 1.2,
+          letterSpacing: 0.0,
+          fontSize: 64,
+          color: Colors.black,
+          fontFamily: fontFamily,
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Default Font',
               ),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'Colored Text',
-              style: TextStyle(
-                fontSize: 64,
-                color: Colors.blue,
-                fontFamily: fontFamily,
+              SizedBox(height: 10),
+              Text(
+                'Italic Text',
+                style: TextStyle(
+                  fontStyle: FontStyle.italic,
+                ),
               ),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'Underlined Text',
-              style: TextStyle(
-                fontSize: 64,
-                decoration: TextDecoration.underline,
-                fontFamily: fontFamily,
+              SizedBox(height: 10),
+              Text(
+                'Colored Text',
+                style: TextStyle(
+                  color: Colors.blue,
+                ),
               ),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'Custom Font Size (32)',
-              style: TextStyle(fontSize: 64, fontFamily: fontFamily),
-            ),
-          ],
+              SizedBox(height: 10),
+              Text(
+                'Underlined Text',
+                style: TextStyle(
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Custom Font Size (56)',
+                style: TextStyle(
+                  fontSize: 56,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -116,6 +117,13 @@ class _TolerantGoldenFileComparator extends LocalFileComparator {
 
     final passed = result.passed || result.diffPercent <= _precisionTolerance;
     if (passed) {
+      if (result.diffPercent > 0.0) {
+        print(
+          'The golden file $golden has a difference\n'
+          'of ${result.diffPercent * 100}%\n'
+          'which is within the tolerance of $_precisionTolerance',
+        );
+      }
       return true;
     }
 

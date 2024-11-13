@@ -5,19 +5,19 @@ import 'package:flutter_test/flutter_test.dart';
 
 String get flutterPath => '${Platform.environment['FLUTTER_ROOT']}/bin/flutter';
 
-class TestProject {
+class FontTestProject {
   final Directory _templateDir;
 
   Directory get workingDir => _workingDir;
   late Directory _workingDir;
 
-  TestProject(String path) : _templateDir = Directory(path);
+  FontTestProject(String path) : _templateDir = Directory(path);
 
   Future<void> create({Directory? dir}) async {
     final temp = dir ?? Directory.systemTemp.createTempSync();
     _workingDir = temp;
     addTearDown(() {
-      temp.deleteSync(recursive: true);
+      // temp.deleteSync(recursive: true);
     });
     await _templateDir.copyRecursively(temp);
     for (final file in temp.listSync(recursive: true)) {

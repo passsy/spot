@@ -4,12 +4,12 @@ import 'dart:io';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'test_project.dart';
+import 'font_test_project.dart';
 
 void main() {
   test('roboto is loaded per default', () async {
     final testProject =
-        TestProject('test/util/load_app_fonts/templates/default_font');
+        FontTestProject('test/util/load_app_fonts/templates/default_font');
     await testProject.create();
     debugPrint('Run pub get');
     await Process.run(
