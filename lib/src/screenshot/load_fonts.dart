@@ -9,18 +9,12 @@ import 'package:meta/meta.dart';
 /// This is especially helpful when using takeScreenshot();
 Future<void> loadFonts() async {
   TestWidgetsFlutterBinding.ensureInitialized();
-  // Load the font manifest
-  final fontManifest =
-      await rootBundle.loadStructuredData<List<Map<String, dynamic>>>(
-    'FontManifest.json',
-    (string) async {
-      // Parse and cast the JSON to List<Map<String, dynamic>>
-      return (json.decode(string) as List)
-          .map((e) => e as Map<String, dynamic>)
-          .toList();
-    },
-  );
-  await loadFontsFromFontsManifest(fontManifest);
+  // Every Flutter app has a FontManifest.json file that contains the fonts used in the app.
+  final fontManifest = await rootBundle.loadString('FontManifest.json');
+  // Parse and cast the JSON to List<Map<String, dynamic>>
+  final list = json.decode(fontManifest) as List;
+  final data = list.map((e) => e as Map<String, dynamic>).toList();
+  await loadFontsFromFontsManifest(data);
 }
 
 /// Loads the fonts from the FontManifest content.
