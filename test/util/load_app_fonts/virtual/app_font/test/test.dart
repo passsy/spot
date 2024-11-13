@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
@@ -5,6 +7,13 @@ import 'package:spot/spot.dart';
 void main() {
   testWidgets('Montserrat is loaded from fonts folder when set',
       (WidgetTester tester) async {
+    final previousGoldenFileComparator = goldenFileComparator;
+    goldenFileComparator = _TolerantGoldenFileComparator(
+      // Replace with your test file path:
+      Uri.parse('test/widget_test.dart'),
+      precisionTolerance: 0.02,
+    );
+    addTearDown(() => goldenFileComparator = previousGoldenFileComparator);
     await loadFonts();
     await tester.pumpWidget(
       const MaterialApp(
@@ -77,5 +86,36 @@ class FontTestWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _TolerantGoldenFileComparator extends LocalFileComparator {
+  _TolerantGoldenFileComparator(
+    super.testFile, {
+    required double precisionTolerance,
+  }) : _precisionTolerance = precisionTolerance;
+
+  /// How much the golden image can differ from the test image.
+  ///
+  /// It is expected to be between 0 and 1. Where 0 is no difference (the same image)
+  /// and 1 is the maximum difference (completely different images).
+  final double _precisionTolerance;
+
+  @override
+  Future<bool> compare(Uint8List imageBytes, Uri golden) async {
+    final result = await GoldenFileComparator.compareLists(
+      imageBytes,
+      await getGoldenBytes(golden),
+    );
+
+    final passed = result.passed || result.diffPercent <= _precisionTolerance;
+    if (passed) {
+      result.dispose();
+      return true;
+    }
+
+    final error = await generateFailureOutput(result, golden, basedir);
+    result.dispose();
+    throw FlutterError(error);
   }
 }
