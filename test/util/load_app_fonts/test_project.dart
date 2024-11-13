@@ -19,6 +19,13 @@ class TestProject {
     addTearDown(() {
       temp.deleteSync(recursive: true);
     });
+    print('temp: ${temp.path}');
+    print('template: ${_templateDir.path}');
+    print('workingDir: ${_workingDir.path}');
+    print('flutter: $flutterPath');
+    print('flutter version: ${Process.runSync(flutterPath, [
+          '--version'
+        ]).stdout}');
     await _templateDir.copyRecursively(temp);
     for (final file in temp.listSync(recursive: true)) {
       if (file is File) {
