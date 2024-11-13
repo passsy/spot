@@ -1,16 +1,25 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'test_project.dart';
 
 void main() {
   test('When defined in pubspec a third-party font is loaded', () async {
+    final dependencyProject =
+        TestProject('test/util/load_app_fonts/virtual/dependency_font');
+    await dependencyProject.create();
+
     final testProject =
         TestProject('test/util/load_app_fonts/virtual/app_font');
-    await testProject.create();
+    await testProject.create(
+      dir: Directory(
+        '${dependencyProject.workingDir.path}/packages/app_font',
+      ),
+    );
+
     debugPrint('Run pub get');
     await Process.run(
       flutterPath,

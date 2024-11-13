@@ -1,15 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'test_project.dart';
 
 void main() {
-  test('When defined in pubspec a third-party font is loaded', () async {
+  test('roboto is loaded per default', () async {
     final testProject =
-        TestProject('test/util/load_app_fonts/virtual/app_font');
+        TestProject('test/util/load_app_fonts/virtual/default_font');
     await testProject.create();
     debugPrint('Run pub get');
     await Process.run(
