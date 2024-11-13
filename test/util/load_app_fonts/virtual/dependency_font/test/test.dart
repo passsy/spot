@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
@@ -5,6 +7,11 @@ import 'package:spot/spot.dart';
 void main() {
   testWidgets('Montserrat is loaded from a third party package',
       (WidgetTester tester) async {
+    // The pipeline does run tests with Flutter 3.10 with dart 3.0.
+    // Since that, there were do many changes in the font rendering so we skip those tests for that version.
+    if (Platform.version.contains('3.0')) {
+      return;
+    }
     await loadFonts();
     await tester.pumpWidget(
       const MaterialApp(

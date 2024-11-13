@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -7,6 +8,11 @@ import 'package:spot/spot.dart';
 void main() {
   testWidgets('Robot is loaded from SDK when nothing else is defined (default)',
       (WidgetTester tester) async {
+    // The pipeline does run tests with Flutter 3.10 with dart 3.0.
+    // Since that, there were do many changes in the font rendering so we skip those tests for that version.
+    if (Platform.version.contains('3.0')) {
+      return;
+    }
     final previousGoldenFileComparator = goldenFileComparator;
     goldenFileComparator = _TolerantGoldenFileComparator(
       // Replace with your test file path:
