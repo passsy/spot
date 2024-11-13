@@ -79,44 +79,58 @@ void main() {
     );
     expect(
       () => spot<Text>().existsOnce(),
-      throwsSpotErrorContaining(
-        [
-          'Found 2 elements',
-          'expected exactly 1',
-          '\nWrap(', // at the beginning of the line, common ancestor
-          'Text("World"',
-          'Text("Hello"',
-        ],
-        not: ['root'],
-      ),
+      throwsSpotErrorContaining([
+        'Found 2 elements',
+        'expected exactly 1',
+      ]),
     );
     expect(
-      () => spot<Text>().amount(1).existsOnce(),
-      throwsSpotErrorContaining(
-        [
-          'Found 2 elements',
-          'expected exactly 1',
-          '\nWrap(', // at the beginning of the line, common ancestor
-          'Text("World"',
-          'Text("Hello"',
-        ],
-        not: ['root'],
-      ),
+      timeline.events.last.details,
+      stringContainsInOrder([
+        'Found 2 elements',
+        'expected exactly 1',
+        '\nWrap(', // at the beginning of the line, common ancestor
+        'Text("Hello"',
+        'Text("World"',
+      ]),
     );
+    expect(timeline.events.last.details, isNot(contains('root')));
+    expect(
+      () => spot<Text>().amount(1).existsOnce(),
+      throwsSpotErrorContaining([
+        'Found 2 elements',
+        'expected exactly 1',
+      ]),
+    );
+    expect(
+      timeline.events.last.details,
+      stringContainsInOrder([
+        'Found 2 elements',
+        'expected exactly 1',
+        '\nWrap(', // at the beginning of the line, common ancestor
+        'Text("Hello"',
+        'Text("World"',
+      ]),
+    );
+    expect(timeline.events.last.details, isNot(contains('root')));
     expect(
       () => spot<Text>(parents: [spot<Wrap>()]).amount(1).existsOnce(),
       throwsSpotErrorContaining(
-        [
-          'Found 2 elements',
-          "Wrap ᗕ Text",
-          'expected exactly 1',
-          '\nWrap(', // at the beginning of the line, common ancestor
-          'Text("World"',
-          'Text("Hello"',
-        ],
-        not: ['root'],
+        ['Found 2 elements', "Wrap ᗕ Text", 'expected exactly 1'],
       ),
     );
+    expect(
+      timeline.events.last.details,
+      stringContainsInOrder([
+        'Found 2 elements',
+        "Wrap ᗕ Text",
+        'expected exactly 1',
+        '\nWrap(', // at the beginning of the line, common ancestor
+        'Text("Hello"',
+        'Text("World"',
+      ]),
+    );
+    expect(timeline.events.last.details, isNot(contains('root')));
   });
   testWidgets('existsOnce() finds the correct widget differentiating by props',
       (tester) async {

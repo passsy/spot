@@ -82,8 +82,8 @@ extension PropSelectorQueries<W extends Widget> on ChainableSelectors<W> {
   /// ```dart
   /// spotSingle<Checkbox>()
   ///   .whereWidgetProp(
-  ///     prop: widgetProp('isChecked', (widget) => widget.value),
-  ///     match: (value) => value == true,
+  ///     widgetProp('isChecked', (widget) => widget.value),
+  ///     (value) => value == true,
   ///   ).existsOnce();
   /// ```
   @useResult
@@ -111,8 +111,8 @@ extension PropSelectorQueries<W extends Widget> on ChainableSelectors<W> {
   /// ```dart
   /// spotSingle<Checkbox>()
   ///   .whereElementProp<bool>(
-  ///     prop: elementProp('isFocused', (element) => element.isFocused),
-  ///     match: (isFocused) => isFocused == true,
+  ///     elementProp('isFocused', (element) => element.isFocused),
+  ///     (isFocused) => isFocused == true,
   ///   ).existsOnce();
   /// ```
   @useResult
@@ -142,8 +142,8 @@ extension PropSelectorQueries<W extends Widget> on ChainableSelectors<W> {
   /// ```dart
   /// spotSingle<Checkbox>()
   ///   .whereRenderObjectProp<double, RenderBox>(
-  ///     prop: renderObjectProp('opacity', (ro) => ro.opacity),
-  ///     match: (opacity) => opacity > 0.5,
+  ///     renderObjectProp('opacity', (ro) => ro.opacity),
+  ///     (opacity) => opacity > 0.5,
   ///   ).existsOnce();
   /// ```
   @useResult

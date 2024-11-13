@@ -1,13 +1,14 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:dartx/dartx_io.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/act/gestures.dart';
+import 'package:spot/src/screenshot/screenshot_annotator.dart';
 import 'package:spot/src/spot/snapshot.dart';
 
 /// Top level entry point to interact with widgets on the screen.
@@ -74,6 +75,11 @@ class Act {
   }
 
   /// Triggers a tap event on a given widget.
+  /// If a [Timeline] is running, an annotated screenshot, indicating the tap
+  /// position, is added to the timeline.
+  ///
+  /// See also:
+  /// - [Timeline]
   Future<void> tap(WidgetSelector selector) async {
     // Check if widget is in the widget tree. Throws if not.
     final snapshot = selector.snapshot()..existsOnce();
@@ -100,11 +106,30 @@ class Act {
           );
           return;
         }
-        _reportPartialCoverage(pokablePositions, snapshot);
+        final partialWarning =
+            _createPartialCoverageMessage(pokablePositions, snapshot);
+        if (partialWarning != null) {
+          // ignore: avoid_print
+          print(partialWarning);
+        }
 
         final positionToTap = pokablePositions.mostCenterHittablePosition!;
-
         final binding = TestWidgetsFlutterBinding.instance;
+
+        if (timeline.mode != TimelineMode.off) {
+          final screenshot = timeline.takeScreenshotSync(
+            annotators: [
+              CrosshairAnnotator(centerPosition: positionToTap),
+            ],
+          );
+          final partial = partialWarning == null ? '' : '\n$partialWarning';
+          timeline.addEvent(
+            eventType: 'Tap Event',
+            details: 'Tap ${selector.toStringBreadcrumb()}$partial',
+            screenshot: screenshot,
+            color: partialWarning == null ? Colors.blue : Colors.purple,
+          );
+        }
 
         // Finally, tap the widget by sending a down and up event.
         final downEvent = PointerDownEvent(position: positionToTap);
@@ -171,7 +196,7 @@ class Act {
           );
           return;
         }
-        _reportPartialCoverage(pokablePositions, snapshot);
+        _createPartialCoverageMessage(pokablePositions, snapshot);
         final targetName = dragTarget.toStringBreadcrumb();
 
         bool isTargetVisible() {
@@ -189,24 +214,69 @@ class Act {
 
         bool isVisible = isTargetVisible();
 
-        if (isVisible) {
-          return;
-        }
         final dragPosition = pokablePositions.mostCenterHittablePosition!;
 
-        int iterations = 0;
-        while (iterations < maxIteration && !isVisible) {
+        void addDragEvent(String details, {double? direction}) {
+          if (timeline.mode != TimelineMode.off) {
+            final screenshot = timeline.takeScreenshotSync(
+              annotators: [
+                CrosshairAnnotator(centerPosition: dragPosition),
+                if (direction != null) ...[
+                  ArrowAnnotator(
+                    start: dragPosition - const Offset(40, 0),
+                    end: dragPosition -
+                        const Offset(40, 0) +
+                        Offset(0, direction),
+                  ),
+                  ArrowAnnotator(
+                    start: dragPosition + const Offset(40, 0),
+                    end: dragPosition +
+                        const Offset(40, 0) +
+                        Offset(0, direction),
+                  ),
+                ],
+              ],
+            );
+            timeline.addEvent(
+              eventType: 'Drag Event',
+              details: details,
+              screenshot: screenshot,
+              color: Colors.blue,
+            );
+          }
+        }
+
+        if (isVisible) {
+          addDragEvent('Widget $targetName found without dragging.');
+          return;
+        }
+
+        final direction = moveStep.dy < 0 ? 'downwards' : 'upwards';
+
+        addDragEvent(
+          'Scrolling $direction from $dragPosition in order to find $targetName.',
+          direction: moveStep.dy,
+        );
+
+        int dragCount = 0;
+        while (dragCount < maxIteration && !isVisible) {
           await gestures.drag(dragPosition, moveStep);
           await binding.pump(duration);
-          iterations++;
+          dragCount++;
           isVisible = isTargetVisible();
         }
 
-        final totalDragged = moveStep * iterations.toDouble();
+        final totalDragged = moveStep * dragCount.toDouble();
+        final resultString = isVisible ? 'found' : 'not found';
+        final message =
+            "Target $targetName $resultString after $dragCount drags. "
+            "Total dragged offset: $totalDragged";
+
+        addDragEvent(message);
 
         if (!isVisible) {
           throw TestFailure(
-            "$targetName is not visible after dragging $iterations times and a total dragged offset of $totalDragged.",
+            "$targetName is not visible after dragging $dragCount times and a total dragged offset of $totalDragged.",
           );
         }
       });
@@ -266,30 +336,28 @@ class Act {
   }
 
   /// Throws a warning when the widget is only partially reacting to tap events
-  void _reportPartialCoverage(
+  String? _createPartialCoverageMessage(
     _PokablePositions pokablePositions,
     WidgetSnapshot snapshot,
   ) {
     final roundUp = pokablePositions.percent.ceil();
     if (roundUp > 80) {
       // Don't be pedantic when the widget is almost fully tappable
-      return;
+      return null;
     }
     // ignore: avoid_print
-    print(
-      "Warning: The '${snapshot.discoveredWidget!.toStringShort()}' is only partially reacting to tap events. "
-      "Only ~$roundUp% of the widget reacts to hitTest events.\n"
-      "\n"
-      "Possible causes:"
-      " - The widget is partially positioned out of view\n"
-      " - It is covered by another widget.\n"
-      " - It is too small (<8x8)\n"
-      "\n"
-      "Possible solutions:\n"
-      " - Scroll the widget into view using act.dragUntilVisible()\n"
-      " - Make sure no other Widget is overlapping on small screens\n"
-      " - Increase the Widget size\n",
-    );
+    return "Warning: The '${snapshot.discoveredWidget!.toStringShort()}' is only partially reacting to tap events. "
+        "Only ~$roundUp% of the widget reacts to hitTest events.\n"
+        "\n"
+        "Possible causes:\n"
+        " - The widget is partially positioned out of view\n"
+        " - It is covered by another widget.\n"
+        " - It is too small (<8x8)\n"
+        "\n"
+        "Possible solutions:\n"
+        " - Scroll the widget into view using act.dragUntilVisible()\n"
+        " - Make sure no other Widget is overlapping on small screens\n"
+        " - Increase the Widget size\n";
   }
 
   /// Checks if the widget is visible and not covered by another widget
@@ -654,7 +722,9 @@ extension on HitTestEntry {
 /// widgets and are not intercepted by [LiveTestWidgetsFlutterBinding].
 ///
 /// See [LiveTestWidgetsFlutterBinding.shouldPropagateDevicePointerEvents].
-T _alwaysPropagateDevicePointerEvents<T>(T Function() block) {
+Future<T> _alwaysPropagateDevicePointerEvents<T>(
+  FutureOr<T> Function() block,
+) async {
   final binding = WidgetsBinding.instance;
   final live = binding is LiveTestWidgetsFlutterBinding;
 
@@ -668,7 +738,7 @@ T _alwaysPropagateDevicePointerEvents<T>(T Function() block) {
     binding.shouldPropagateDevicePointerEvents = true;
   }
   try {
-    return block();
+    return await block();
   } finally {
     if (live) {
       binding.shouldPropagateDevicePointerEvents = previousPropagateValue;

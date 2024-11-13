@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image/image.dart' as img;
 import 'package:spot/spot.dart';
-
+import 'package:spot/src/screenshot/screenshot_annotator.dart';
 import '../util/assert_error.dart';
 
 void main() {
@@ -92,7 +92,7 @@ void main() {
     await expectLater(
       takeScreenshot(snapshot: containerSnapshot),
       throwsErrorContaining<StateError>([
-        'Can not take a screenshot of snapshot',
+        'Cannot take a screenshot of snapshot',
         'not mounted anymore',
         'Only Elements that are currently mounted can be screenshotted.',
       ]),
@@ -141,7 +141,7 @@ void main() {
     await expectLater(
       takeScreenshot(element: containerElement),
       throwsErrorContaining<StateError>([
-        'Can not take a screenshot of Element',
+        'Cannot take a screenshot of Element',
         'not mounted anymore',
         'Only Elements that are currently mounted can be screenshotted.',
       ]),
@@ -262,6 +262,168 @@ void main() {
         'Wrap the RichText in a RepaintBoundary to be able to capture only that layer.',
       ),
     );
+  });
+
+  group('Annotate Screenshot test', () {
+    testWidgets('Take screenshot with tap marker of the entire app',
+        (tester) async {
+      tester.view.physicalSize = const Size(210, 210);
+      tester.view.devicePixelRatio = 1.0;
+      const red = Color(0xffff0000);
+      await tester.pumpWidget(
+        Center(
+          child: Container(height: 200, width: 200, color: red),
+        ),
+      );
+
+      final shot = await takeScreenshot(
+        annotators: [CrosshairAnnotator(centerPosition: Offset(105, 105))],
+      );
+      expect(shot.file.existsSync(), isTrue);
+
+      final cyanPixelCoverage =
+          await percentageOfPixelsWithColor(shot.file, Color(0xFF00FFFF));
+      expect(cyanPixelCoverage, greaterThan(0.0));
+    });
+
+    testWidgets('Take screenshot with tap marker from a selector',
+        (tester) async {
+      tester.view.physicalSize = const Size(1000, 1000);
+      tester.view.devicePixelRatio = 1.0;
+      const red = Color(0xffff0000);
+      await tester.pumpWidget(
+        Center(
+          child: RepaintBoundary(
+            child: Container(height: 200, width: 200, color: red),
+          ),
+        ),
+      );
+
+      final container = await takeScreenshot(
+        selector: spot<Container>(),
+        annotators: [CrosshairAnnotator(centerPosition: Offset(100, 100))],
+      );
+      expect(container.file.existsSync(), isTrue);
+
+      final cyanPixelCoverage =
+          await percentageOfPixelsWithColor(container.file, Color(0xFF00FFFF));
+      expect(cyanPixelCoverage, greaterThan(0.0));
+    });
+
+    testWidgets('Take screenshot with tap marker from a snapshot',
+        (tester) async {
+      tester.view.physicalSize = const Size(1000, 1000);
+      tester.view.devicePixelRatio = 1.0;
+      const red = Color(0xffff0000);
+      await tester.pumpWidget(
+        Center(
+          child: RepaintBoundary(
+            child: Container(height: 200, width: 200, color: red),
+          ),
+        ),
+      );
+      final containerSnapshot = spot<Container>().snapshot();
+
+      final container = await takeScreenshot(
+        snapshot: containerSnapshot,
+        annotators: [CrosshairAnnotator(centerPosition: Offset(100, 100))],
+      );
+      expect(container.file.existsSync(), isTrue);
+
+      final cyanPixelCoverage =
+          await percentageOfPixelsWithColor(container.file, Color(0xFF00FFFF));
+      expect(cyanPixelCoverage, greaterThan(0.0));
+    });
+
+    testWidgets(
+      'Take screenshot with tap marker from a snapshot throws when snapshot is outdated',
+      (tester) async {
+        tester.view.physicalSize = const Size(1000, 1000);
+        tester.view.devicePixelRatio = 1.0;
+        const red = Color(0xffff0000);
+        await tester.pumpWidget(
+          Center(
+            child: RepaintBoundary(
+              child: Container(height: 200, width: 200, color: red),
+            ),
+          ),
+        );
+        final containerSnapshot = spot<Container>().snapshot();
+
+        // Remove element that is captured in the snapshot
+        await tester.pumpWidget(Container());
+        expect(containerSnapshot.discoveredElement!.mounted, isFalse);
+
+        await expectLater(
+          takeScreenshot(
+            snapshot: containerSnapshot,
+            annotators: [CrosshairAnnotator(centerPosition: Offset(100, 100))],
+          ),
+          throwsErrorContaining<StateError>([
+            'Cannot take a screenshot of snapshot',
+            'not mounted anymore',
+            'Only Elements that are currently mounted can be screenshotted.',
+          ]),
+        );
+      },
+    );
+
+    testWidgets('Take screenshot with tap marker from an element',
+        (tester) async {
+      tester.view.physicalSize = const Size(1000, 1000);
+      tester.view.devicePixelRatio = 1.0;
+      const red = Color(0xffff0000);
+      await tester.pumpWidget(
+        Center(
+          child: RepaintBoundary(
+            child: Container(height: 200, width: 200, color: red),
+          ),
+        ),
+      );
+      final containerElement = spot<Container>().snapshot().discoveredElement;
+
+      final container = await takeScreenshot(
+        element: containerElement,
+        annotators: [CrosshairAnnotator(centerPosition: Offset(100, 100))],
+      );
+      expect(container.file.existsSync(), isTrue);
+
+      final cyanPixelCoverage =
+          await percentageOfPixelsWithColor(container.file, Color(0xFF00FFFF));
+      expect(cyanPixelCoverage, greaterThan(0.0));
+    });
+
+    testWidgets(
+        'takeScreenshotWithCrosshair throws when element does not exist anymore',
+        (tester) async {
+      tester.view.physicalSize = const Size(1000, 1000);
+      tester.view.devicePixelRatio = 1.0;
+      const red = Color(0xffff0000);
+      await tester.pumpWidget(
+        Center(
+          child: RepaintBoundary(
+            child: Container(height: 200, width: 200, color: red),
+          ),
+        ),
+      );
+      final containerElement = spot<Container>().snapshot().discoveredElement;
+
+      // Remove containerElement
+      await tester.pumpWidget(Container());
+      expect(containerElement!.mounted, isFalse);
+
+      await expectLater(
+        takeScreenshot(
+          element: containerElement,
+          annotators: [CrosshairAnnotator(centerPosition: Offset(100, 100))],
+        ),
+        throwsErrorContaining<StateError>([
+          'Cannot take a screenshot of Element',
+          'not mounted anymore',
+          'Only Elements that are currently mounted can be screenshotted.',
+        ]),
+      );
+    });
   });
 }
 

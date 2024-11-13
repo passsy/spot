@@ -2,7 +2,9 @@ import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
+import 'package:spot/src/act/act.dart';
 import 'package:spot/src/checks/checks_nullability.dart';
+import 'package:spot/src/screenshot/screenshot_annotator.dart';
 
 export 'package:checks/context.dart';
 
@@ -105,6 +107,7 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
         'Either elementSelector (former selector) or widgetSelector must be set',
       );
     }
+
     void widgetSelectorCondition(Subject<Element> subject) {
       final Subject<W> widgetSubject = subject.context.nest<W>(
         () => ['widget $W'],
@@ -127,6 +130,7 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
         : widgetSelectorCondition;
 
     final failure = softCheckHideNull(element, condition);
+    _addAssertionToTimeline(failure, condition, element);
     failure.throwPropertyCheckFailure(condition, element);
     return this;
   }
@@ -168,7 +172,9 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
     }
 
     final failure = softCheckHideNull(element, condition);
+    _addAssertionToTimeline(failure, condition, element);
     failure.throwPropertyCheckFailure(condition, element);
+
     return this;
   }
 
@@ -209,7 +215,9 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
     }
 
     final failure = softCheckHideNull(element, condition);
+    _addAssertionToTimeline(failure, condition, element);
     failure.throwPropertyCheckFailure(condition, element);
+
     return this;
   }
 
@@ -252,12 +260,13 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
           return Extracted.value(value);
         },
       ).hideNullability();
-
       match(value);
     }
 
     final failure = softCheckHideNull(element, condition);
+    _addAssertionToTimeline(failure, condition, element);
     failure.throwPropertyCheckFailure(condition, element);
+
     return this;
   }
 }
@@ -355,7 +364,17 @@ extension MultiWidgetMatcherExtensions<W extends Widget>
   MultiWidgetMatcher<W> all(void Function(WidgetMatcher<W>) matcher) {
     TestAsyncUtils.guardSync();
     if (discovered.isEmpty) {
-      throw Exception('Expected at least one match for $this, but found none');
+      final message = 'Expected at least one match for $this, but found none';
+      if (timeline.mode != TimelineMode.off) {
+        final screenshot = timeline.takeScreenshotSync();
+        timeline.addEvent(
+          eventType: 'Assertion Failed',
+          details: message,
+          screenshot: screenshot,
+          color: Colors.red,
+        );
+      }
+      throw Exception(message);
     }
 
     late String matcherDescription;
@@ -371,12 +390,63 @@ extension MultiWidgetMatcherExtensions<W extends Widget>
     }).toList();
 
     if (missMatches.isEmpty) {
+      if (timeline.mode != TimelineMode.off) {
+        final screenshot = timeline.takeScreenshotSync();
+        timeline.addEvent(
+          eventType: 'Assertion',
+          details: 'All candidates $discovered match',
+          screenshot: screenshot,
+          color: Colors.grey,
+        );
+      }
       return this;
     }
-    throw TestFailure(
+
+    final failMessage =
         "Expected that all candidates fulfill matcher '$matcherDescription', but only ${discovered.length - missMatches.length} of ${discovered.length} did.\n"
-        'Mismatches: ${missMatches.map((e) => e.element.toStringDeep()).join(', ')}');
+        'Mismatches: ${missMatches.map((e) => e.element.toStringDeep()).join(', ')}';
+    if (timeline.mode != TimelineMode.off) {
+      final screenshot = timeline.takeScreenshotSync();
+      timeline.addEvent(
+        eventType: 'Assertion',
+        details: failMessage,
+        screenshot: screenshot,
+        color: Colors.red,
+      );
+    }
+    throw TestFailure(failMessage);
   }
+}
+
+void _addAssertionToTimeline(
+  CheckFailure? failure,
+  void Function(Subject<Element>) condition,
+  Element element,
+) {
+  if (timeline.mode == TimelineMode.off) {
+    return;
+  }
+  final detailsSb = StringBuffer();
+  detailsSb.writeln(
+    'Expected: ${describe(condition).map((it) => it.trim()).join(' ')}',
+  );
+  detailsSb.writeln('Widget: $element');
+  detailsSb.writeln(
+    'Widget location: at ${element.debugWidgetLocation?.file.path}',
+  );
+
+  if (failure != null) {
+    detailsSb.writeln('Actual: ${failure.rejection.which}');
+  }
+  final screenshot = timeline.takeScreenshotSync(
+    annotators: [HighlightAnnotator.element(element)],
+  );
+  timeline.addEvent(
+    eventType: 'Assertion',
+    details: detailsSb.toString(),
+    screenshot: screenshot,
+    color: failure == null ? Colors.grey : Colors.red,
+  );
 }
 
 /// Extension which throws a [PropertyCheckFailure] when a [CheckFailure] is detected.

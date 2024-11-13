@@ -103,7 +103,7 @@ void main() {
       }),
       throwsSpotErrorContaining([
         "Expected that all candidates fulfill matcher 'property color",
-        "equals <Color(0xff000000)>', but only 0 of 2 did.",
+        "equals <${Color(0xff000000)}>', but only 0 of 2 did.",
       ]),
     );
   });
@@ -141,7 +141,7 @@ void main() {
       }),
       throwsSpotErrorContaining([
         "Expected that at least one candidate fulfills matcher 'property color",
-        "equals <Color(0xff000000)>', but none did.",
+        "equals <${const Color(0xff000000)}>', but none did.",
       ]),
     );
   });

@@ -1,6 +1,6 @@
 name: spot
 description: Chainable powerful widget selector API, screenshots and assertions for awesome widget tests.
-version: 0.13.0
+version: 0.14.0
 repository: https://github.com/passsy/spot
 issue_tracker: https://github.com/passsy/spot/issues
 
@@ -10,6 +10,8 @@ environment:
 
 dependencies:
   checks: ^0.3.0
+  ci: ^0.1.0
+  clock: ^1.1.0
   dartx: ^1.1.0
   flutter:
     sdk: flutter
@@ -20,8 +22,14 @@ dependencies:
   meta: ^1.8.0
   nanoid2: ^2.0.0
   stack_trace: ^1.11.0
+  test_api: '>=0.5.0 <0.8.0'
 
 dev_dependencies:
   image: ^4.0.0
   lint: ^2.1.0
   test: ^1.24.0
+  test_process: ^2.1.0
+
+flutter:
+  assets:
+    - lib/assets/Roboto-Regular.ttf

@@ -94,15 +94,63 @@ void main() {
         (output.split('\n')..removeWhere((line) => line.isEmpty)).join('\n');
     expect(
       lines,
-      "Warning: The '_TestButton' is only partially reacting to tap events. Only ~7% of the widget reacts to hitTest events.\n"
-      'Possible causes: - The widget is partially positioned out of view\n'
-      ' - It is covered by another widget.\n'
-      ' - It is too small (<8x8)\n'
-      'Possible solutions:\n'
-      ' - Scroll the widget into view using act.dragUntilVisible()\n'
-      ' - Make sure no other Widget is overlapping on small screens\n'
-      ' - Increase the Widget size',
+      startsWith(
+        "Warning: The '_TestButton' is only partially reacting to tap events. Only ~7% of the widget reacts to hitTest events.\n"
+        'Possible causes:\n'
+        ' - The widget is partially positioned out of view\n'
+        ' - It is covered by another widget.\n'
+        ' - It is too small (<8x8)\n'
+        'Possible solutions:\n'
+        ' - Scroll the widget into view using act.dragUntilVisible()\n'
+        ' - Make sure no other Widget is overlapping on small screens\n'
+        ' - Increase the Widget size',
+      ),
     );
+  });
+
+  testWidgets(
+      'Warn about using and finding alternative tappable area in timeline',
+      (tester) async {
+    bool tapped = false;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: PokeTestWidget(
+          columns: 5,
+          rows: 5,
+          pokableAtColumnIndex: 4,
+          pokableAtRowIndex: 4,
+          widgetToCover: _TestButton(
+            onTap: () {
+              tapped = !tapped;
+            },
+          ),
+        ),
+      ),
+    );
+    final WidgetSelector button = spot<_TestButton>()..existsOnce();
+
+    await act.tap(button);
+
+    expect(tapped, isTrue);
+    final last = timeline.events.last;
+    expect(last.eventType.label, 'Tap Event');
+    expect(
+      last.details,
+      contains(
+        "Warning: The '_TestButton' is only partially reacting to tap events. Only ~7% of the widget reacts to hitTest events.\n"
+        '\n'
+        'Possible causes:\n'
+        ' - The widget is partially positioned out of view\n'
+        ' - It is covered by another widget.\n'
+        ' - It is too small (<8x8)\n'
+        '\n'
+        'Possible solutions:\n'
+        ' - Scroll the widget into view using act.dragUntilVisible()\n'
+        ' - Make sure no other Widget is overlapping on small screens\n'
+        ' - Increase the Widget size',
+      ),
+    );
+    expect(last.eventType.color, Colors.purple);
   });
 
   testWidgets('Center of widget not tappable, finds alternative tappable area.',
@@ -148,7 +196,8 @@ void main() {
       lines,
       contains(
         "Warning: The '_TestButton' is only partially reacting to tap events. Only ~67% of the widget reacts to hitTest events.\n"
-        'Possible causes: - The widget is partially positioned out of view\n'
+        'Possible causes:\n'
+        ' - The widget is partially positioned out of view\n'
         ' - It is covered by another widget.\n'
         ' - It is too small (<8x8)\n'
         'Possible solutions:\n'
