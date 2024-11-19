@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dartx/dartx_io.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -38,6 +39,20 @@ void main() {
       debugPrint(event);
     });
     final exitCode = await test.exitCode;
+    if (exitCode != 0) {
+      final failuresDir =
+          Directory('${dependencyProject.workingDir.path}/test/failures');
+      if (failuresDir.existsSync()) {
+        final testFailureDirectory =
+            Directory('test/fonts/dependency_font_test/');
+        if (testFailureDirectory.existsSync()) {
+          testFailureDirectory.deleteSync(recursive: true);
+        } else {
+          testFailureDirectory.createSync(recursive: true);
+        }
+        await failuresDir.copyRecursively(testFailureDirectory);
+      }
+    }
     expect(exitCode, 0);
   });
 }
