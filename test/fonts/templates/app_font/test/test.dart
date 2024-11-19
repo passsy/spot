@@ -7,7 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 
 void main() {
-  testWidgets('Montserrat is loaded from fonts folder when set',
+  testWidgets('App font Montserrat is loaded from FontManifest',
       (WidgetTester tester) async {
     final previousGoldenFileComparator = goldenFileComparator;
     goldenFileComparator = _TolerantGoldenFileComparator(
@@ -16,6 +16,31 @@ void main() {
     );
     addTearDown(() => goldenFileComparator = previousGoldenFileComparator);
     await loadAppFonts();
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: FontTestWidget(
+          fontFamily: 'Montserrat',
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await expectLater(
+      find.byType(MaterialApp),
+      matchesGoldenFile('golden.png'),
+    );
+  });
+
+  testWidgets('Montserrat can be loaded with blank family name',
+      (WidgetTester tester) async {
+    final previousGoldenFileComparator = goldenFileComparator;
+    goldenFileComparator = _TolerantGoldenFileComparator(
+      Uri.parse('test/test_test.dart'),
+      precisionTolerance: 0.10,
+    );
+    addTearDown(() => goldenFileComparator = previousGoldenFileComparator);
+    await loadFont('', ['fonts/Montserrat-Regular.ttf']);
 
     await tester.pumpWidget(
       const MaterialApp(

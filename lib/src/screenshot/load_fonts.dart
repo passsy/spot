@@ -8,11 +8,12 @@ import 'package:flutter_test/flutter_test.dart';
 
 /// Loads all font from the apps FontManifest and embedded in the Flutter SDK
 ///
-/// ## App Fonts (FontManifest)
+/// ## What is loaded?
+/// ### App Fonts (FontManifest)
 /// - All fonts defined in the pubspec.yaml
 /// - All fonts of dependencies that define fonts in their pubspec.yaml
 ///
-/// ## Embedded Flutter SDK Fonts
+/// ### Embedded Flutter SDK Fonts
 /// - Roboto
 /// - RobotoCondensed
 /// - MaterialIcons
@@ -34,11 +35,34 @@ import 'package:flutter_test/flutter_test.dart';
 ///
 /// ## Depending on System fonts
 ///
-/// Sometimes you don't want to ship a font with your app, but use a system
-/// font e.g. "Segoe UI" on [TargetPlatform.windows] or "Apple Color Emoji"
-/// on [TargetPlatform.iOS].
-/// Those fonts are not loaded by [loadAppFonts], load them individually with
-/// [loadFont].
+/// Some apps do not ship their fonts, but use a system font e.g. "Segoe UI"
+/// on [TargetPlatform.windows] or "Apple Color Emoji" on [TargetPlatform.iOS].
+///
+/// Those system fonts are not loaded by [loadAppFonts], load them individually
+/// with [loadFont].
+///
+/// ## Emojis
+///
+/// Why are emojis not rendered after calling [loadAppFonts]?
+///
+/// Emojis are not part of the Roboto font.
+/// Each operating system provides their own font that handles
+/// emoji glyphs. In Flutter apps, those emoji fonts are automatically loaded
+/// by Skia (the rendering engine of Flutter) from the operating system as fallbacks
+/// when it encounters an emoji character that is covered by the defined
+/// fontFamily or fontFamilyFallback.
+///
+/// Flutter tests disable the automatic system font loading by Skia. Skia will
+/// not search for system fonts. (https://github.com/flutter/engine/blob/a842207f6d90de4fc006ea8f0b649b38d6e104a0/lib/ui/text/font_collection.cc#L148)
+///
+/// To show emojis in tests, load the system emoji font manually with [loadFont].
+/// E.g. "/System/Library/Fonts/Apple Color Emoji.ttc" on macOS.
+/// Do not forget to set "Apple Color Emoji" as fontFamilyFallback. Skia will
+/// *not* automatically fallback to "Apple Color Emoji" unless it is defined in
+/// the TextStyle.
+///
+/// Because showing emojis in test requires changes to you app code (set fallback)
+/// [loadAppFonts] does not automatically load system emoji fonts for you.
 Future<void> loadAppFonts() async {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -55,10 +79,10 @@ Future<void> loadAppFonts() async {
 ///
 /// ```dart
 /// debugDefaultTargetPlatformOverride = TargetPlatform.windows;
-/// await loadFont('Segoe UI', [
-///   r'C:\Windows\Fonts\segoeui.ttf', // Regular
-///   r'C:\Windows\Fonts\segoeuib.ttf', // Bold
-///   r'C:\Windows\Fonts\segoeuii.ttf', // Italic
+/// await loadFont('Comic Sans', [
+///   r'C:\Windows\Fonts\comic.ttf', // Regular
+///   r'C:\Windows\Fonts\comicbd.ttf', // Bold
+///   r'C:\Windows\Fonts\comici.ttf', // Italic
 /// ]);
 ///
 /// tester.pumpWidget(
@@ -67,7 +91,7 @@ Future<void> loadAppFonts() async {
 ///       child: Text(
 ///         'Loaded custom Font',
 ///         style: TextStyle(
-///           fontFamily: 'Segoe UI', // optional, Segoe UI is the default font on Windows
+///           fontFamily: 'Comic Sans',
 ///         ),
 ///       ),
 ///     ),
@@ -77,7 +101,8 @@ Future<void> loadAppFonts() async {
 ///
 /// Flutter support the following formats: .ttf, .otf, .ttc
 ///
-/// Calling [loadFont] multiple times with the same family will overwrite the previous
+/// Calling [loadFont] multiple times with the same family will overwrites the
+/// previous
 ///
 /// The [family] is optional: '' will extract the family name from the font file.
 Future<void> loadFont(String family, List<String> fontPaths) async {
