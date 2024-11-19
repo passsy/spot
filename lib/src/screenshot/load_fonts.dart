@@ -6,18 +6,39 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-/// Loads all font from the FontManifest (Asset fonts defined in pubspec.yaml and
-/// other Flutter package dependencies) and the following fonts from Flutter SDK:
+/// Loads all font from the apps FontManifest and embedded in the Flutter SDK
+///
+/// ## App Fonts (FontManifest)
+/// - All fonts defined in the pubspec.yaml
+/// - All fonts of dependencies that define fonts in their pubspec.yaml
+///
+/// ## Embedded Flutter SDK Fonts
 /// - Roboto
 /// - RobotoCondensed
 /// - MaterialIcons
 ///
-/// By default, widget tests run with [TargetPlatform.android] which
-/// uses the Roboto font by default (see [Typography]). Loading this font,
-/// although not defined as asset, allows most Flutter apps to render text.
+/// ## Why load Roboto by default?
 ///
-/// If your app depends on other system fonts (like "Segoe UI" on [TargetPlatform.windows]
-/// or "Apple Color Emoji" on [TargetPlatform.iOS]) use [loadFont].
+/// Widget test run with [TargetPlatform.android] by default. [MaterialApp] sets
+/// the Roboto fontFamily as default for [TargetPlatform.android] (see
+/// [Typography]). Loading the Roboto fontFamily therefore allows showing text
+/// in the default scenario of a Flutter app.
+/// Fortunately, Robot is part of the Flutter SDK and can be loaded right away.
+///
+/// ## Custom fonts
+///
+/// Apps that use custom fonts, should declare them in the pubspec.yaml file (https://docs.flutter.dev/cookbook/design/fonts#declare-the-font-in-the-pubspec-yaml-file).
+/// Those fonts are automatically added to the FontManifest.json file during build.
+///
+/// The [loadAppFonts] function loads all font defined in the FontManifest.json file.
+///
+/// ## Depending on System fonts
+///
+/// Sometimes you don't want to ship a font with your app, but use a system
+/// font e.g. "Segoe UI" on [TargetPlatform.windows] or "Apple Color Emoji"
+/// on [TargetPlatform.iOS].
+/// Those fonts are not loaded by [loadAppFonts], load them individually with
+/// [loadFont].
 Future<void> loadAppFonts() async {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -55,15 +76,21 @@ Future<void> loadAppFonts() async {
 /// ```
 ///
 /// Flutter support the following formats: .ttf, .otf, .ttc
+///
+/// Calling [loadFont] multiple times with the same family will overwrite the previous
+///
+/// The [family] is optional: '' will extract the family name from the font file.
 Future<void> loadFont(String family, List<String> fontPaths) async {
+  if (fontPaths.isEmpty) {
+    return;
+  }
   final fontLoader = FontLoader(family);
   for (final path in fontPaths) {
     final Uint8List bytes = File(path).readAsBytesSync();
-
-    /// TODO catch error when path loads to an unsupported font format (docx);
-    /// TODO print warning
     fontLoader.addFont(Future.sync(() => bytes.buffer.asByteData()));
   }
+  // the fontLoader is unusable after calling load().
+  // No need to cache or return it.
   await fontLoader.load();
 }
 
@@ -83,23 +110,23 @@ Future<void> _loadMaterialFontsFromSdk() async {
         (font) => fontFormats.any((element) => font.path.endsWith(element)),
       );
 
-  final robotoFonts =
-      existingFonts.where((font) => font.path.contains('Roboto-'));
-  await loadFont('Roboto', [
-    for (final font in robotoFonts) font.path,
-  ]);
+  final robotoFonts = existingFonts
+      .map((font) => font.path)
+      .where((path) => path.contains('Roboto-'))
+      .toList();
+  await loadFont('Roboto', robotoFonts);
 
-  final robotoCondensedFonts =
-      existingFonts.where((font) => font.path.contains('RobotoCondensed-'));
-  await loadFont('RobotoCondensed', [
-    for (final font in robotoCondensedFonts) font.path,
-  ]);
+  final robotoCondensedFonts = existingFonts
+      .map((font) => font.path)
+      .where((path) => path.contains('RobotoCondensed-'))
+      .toList();
+  await loadFont('RobotoCondensed', robotoCondensedFonts);
 
-  final materialIcons =
-      existingFonts.where((font) => font.path.contains('MaterialIcons-'));
-  await loadFont('MaterialIcons', [
-    for (final font in materialIcons) font.path,
-  ]);
+  final materialIcons = existingFonts
+      .map((font) => font.path)
+      .where((path) => path.contains('MaterialIcons-'))
+      .toList();
+  await loadFont('MaterialIcons', materialIcons);
 }
 
 /// Returns the Flutter SDK root directory based on the current flutter

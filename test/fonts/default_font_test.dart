@@ -1,11 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/rendering.dart';
 import 'package:dartx/dartx_io.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../spot/screenshot_test.dart';
 import 'font_test_project.dart';
 
 void main() {
