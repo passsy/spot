@@ -190,23 +190,21 @@ Future<void> _loadFontsFromFontManifest() async {
   final fontManifest = _FontManifest.fromJson(json);
 
   for (final item in fontManifest.fontFamilies) {
-    final String fontFamilyName;
-    final asset =
-        item.assets.firstOrNullWhere((it) => it.startsWith('packages'));
-    final packageName = asset?.split('/')[1];
-
-    final rawFamily = item.family;
-    if (rawFamily.startsWith('packages/')) {
-      fontFamilyName = rawFamily.split('/').last;
+    final bool isFontFromPackage = item.family.startsWith('packages/');
+    if (!isFontFromPackage) {
+      await loadFont(item.family, item.assets);
     } else {
-      fontFamilyName = rawFamily;
-    }
+      final fontFamilyName = item.family.split('/').last;
+      await loadFont(fontFamilyName, item.assets);
 
-    // Apps directly use the fontFamily name
-    await loadFont(fontFamilyName, item.assets);
-    if (packageName != null) {
-      // packages use the full path
-      await loadFont('packages/$packageName/$fontFamilyName', item.assets);
+      final packageAsset =
+          item.assets.firstOrNullWhere((it) => it.startsWith('packages'));
+      final packageName = packageAsset?.split('/')[1];
+      if (packageName != null) {
+        await loadFont('packages/$packageName/$fontFamilyName', item.assets);
+      } else {
+        // could not extract the package name, that should be impossible
+      }
     }
   }
 }
