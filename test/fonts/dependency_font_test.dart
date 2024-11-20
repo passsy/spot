@@ -22,13 +22,13 @@ void main() {
 
     debugPrint('Run pub get');
     await Process.run(
-      flutterPath,
+      flutterExe,
       ['pub', 'get'],
       workingDirectory: dependencyProject.workingDir.path,
     );
     debugPrint('Run tests');
     final test = await Process.start(
-      flutterPath,
+      flutterExe,
       ['test'],
       workingDirectory: dependencyProject.workingDir.path,
     );

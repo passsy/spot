@@ -9,7 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 
 void main() {
-  testWidgets('Robot is loaded from SDK when nothing else is defined (default)',
+  testWidgets('Roboto is from SDK when nothing else is defined (default)',
       (WidgetTester tester) async {
     final previousGoldenFileComparator = goldenFileComparator;
     goldenFileComparator = _TolerantGoldenFileComparator(

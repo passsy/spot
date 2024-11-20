@@ -2,9 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dartx/dartx.dart';
+import 'package:dartx/dartx_io.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import "package:path/path.dart" as p;
 
 /// Loads all font from the apps FontManifest and embedded in the Flutter SDK
 ///
@@ -133,23 +135,36 @@ Future<void> _loadMaterialFontsFromSdk() async {
       .whereType<File>()
       .where(
         (font) => fontFormats.any((element) => font.path.endsWith(element)),
-      );
+      )
+      .toList();
 
   final robotoFonts = existingFonts
-      .map((font) => font.path)
-      .where((path) => path.contains('Roboto-'))
+      .where((font) {
+        final name = font.name.toLowerCase();
+        return name.startsWith('Roboto-'.toLowerCase());
+      })
+      .map((file) => file.path)
       .toList();
+  if (robotoFonts.isEmpty) {
+    debugPrint("Warning: No Roboto font found in SDK");
+  }
   await loadFont('Roboto', robotoFonts);
 
   final robotoCondensedFonts = existingFonts
-      .map((font) => font.path)
-      .where((path) => path.contains('RobotoCondensed-'))
+      .where((font) {
+        final name = font.name.toLowerCase();
+        return name.startsWith('RobotoCondensed-'.toLowerCase());
+      })
+      .map((file) => file.path)
       .toList();
   await loadFont('RobotoCondensed', robotoCondensedFonts);
 
   final materialIcons = existingFonts
-      .map((font) => font.path)
-      .where((path) => path.contains('MaterialIcons-'))
+      .where((font) {
+        final name = font.name.toLowerCase();
+        return name.startsWith('MaterialIcons-'.toLowerCase());
+      })
+      .map((file) => file.path)
       .toList();
   await loadFont('MaterialIcons', materialIcons);
 }
@@ -157,9 +172,12 @@ Future<void> _loadMaterialFontsFromSdk() async {
 /// Returns the Flutter SDK root directory based on the current flutter
 /// executable running the tests.
 Directory _flutterSdkRoot() {
-  final fontPath = Platform.executable;
-  final root2 = fontPath.split('/bin/cache/')[0];
-  return Directory(root2);
+  final flutterTesterExe = Platform.executable;
+
+  final components = p.split(flutterTesterExe);
+  final path = p.posix.joinAll(components);
+  final flutterRoot = path.split('/bin/cache/')[0];
+  return Directory(flutterRoot);
 }
 
 /// Loads the fonts from the FontManifest.json file.
