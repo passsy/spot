@@ -24,6 +24,9 @@ void main() {
       messages.add(type);
       callback?.call(null);
     };
+    addTearDown(() {
+      PlatformDispatcher.instance.onPlatformMessage = null;
+    });
 
     expect(messages, isEmpty);
     await loadFont('someFont', [notAFont.path]);
