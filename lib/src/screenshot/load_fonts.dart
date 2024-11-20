@@ -112,14 +112,17 @@ Future<void> loadFont(String family, List<String> fontPaths) async {
   if (fontPaths.isEmpty) {
     return;
   }
-  final fontLoader = FontLoader(family);
-  for (final path in fontPaths) {
-    final Uint8List bytes = File(path).readAsBytesSync();
-    fontLoader.addFont(Future.sync(() => bytes.buffer.asByteData()));
-  }
-  // the fontLoader is unusable after calling load().
-  // No need to cache or return it.
-  await fontLoader.load();
+
+  await TestAsyncUtils.guard<void>(() async {
+    final fontLoader = FontLoader(family);
+    for (final path in fontPaths) {
+      final Uint8List bytes = File(path).readAsBytesSync();
+      fontLoader.addFont(Future.sync(() => bytes.buffer.asByteData()));
+    }
+    // the fontLoader is unusable after calling load().
+    // No need to cache or return it.
+    await fontLoader.load();
+  });
 }
 
 /// Loads the Roboto/RobotoCondensed/MaterialIcons fonts from the executing Flutter SDK
