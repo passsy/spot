@@ -355,7 +355,7 @@ class _TolerantGoldenFileComparator extends LocalFileComparator {
         debugPrint(
           'The golden file $golden has a difference\n'
           'of ${result.diffPercent * 100}%\n'
-          'which is within the tolerance of $_precisionTolerance',
+          'which is within the tolerance of ${_precisionTolerance * 100}%.',
         );
       }
       return true;
