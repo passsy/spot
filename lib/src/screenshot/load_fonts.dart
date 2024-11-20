@@ -67,13 +67,15 @@ import 'package:spot/src/flutter/flutter_sdk.dart';
 Future<void> loadAppFonts() async {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  // First we load the Roboto font from the Flutter SDK, which most Android apps use.
-  // In case the app defines a custom Roboto fontFamily it will be overwritten when
-  // loading the fonts from the manifest
-  await _loadMaterialFontsFromSdk();
+  await TestAsyncUtils.guard<void>(() async {
+    // First we load the Roboto font from the Flutter SDK, which most Android apps use.
+    // In case the app defines a custom Roboto fontFamily it will be overwritten when
+    // loading the fonts from the manifest
+    await _loadMaterialFontsFromSdk();
 
-  // Load all fonts defined in the FontManifest.json file
-  await _loadFontsFromFontManifest();
+    // Load all fonts defined in the FontManifest.json file
+    await _loadFontsFromFontManifest();
+  });
 }
 
 /// Loads a fontFamily consisting of multiple font files.
