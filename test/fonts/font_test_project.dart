@@ -43,7 +43,7 @@ class FontTestProject {
           );
 
           // overwrite the spot dependencies path
-          final repoRoot = File(p.joinAll(Platform.script.pathSegments)).parent.path;
+          final repoRoot = File.fromUri(Platform.script).parent.path;
           final content = pubspec
               .readAsStringSync()
               .replaceAll('../../../../../.', repoRoot);
