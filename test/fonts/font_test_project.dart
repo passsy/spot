@@ -29,9 +29,8 @@ class FontTestProject {
 
           // overwrite the spot dependencies path
           final repoRoot = File.fromUri(Platform.script).parent.path;
-          final content = pubspec
-              .readAsStringSync()
-              .replaceAll('../../../../../.', repoRoot);
+          final content =
+              pubspec.readAsStringSync().replaceAll('../../../../', repoRoot);
           pubspec.writeAsStringSync(content);
         }
         if (file.name == 'test.dart') {
