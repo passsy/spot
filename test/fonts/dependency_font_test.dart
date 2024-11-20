@@ -10,14 +10,14 @@ import 'font_test_project.dart';
 
 void main() {
   test('When defined in pubspec a third-party font is loaded', () async {
-    final dependencyProject =
+    final dependencyFontProject =
         FontTestProject('test/fonts/templates/dependency_font');
-    await dependencyProject.create();
+    await dependencyFontProject.create();
 
-    final testProject = FontTestProject('test/fonts/templates/app_font');
-    await testProject.create(
+    final appFontProject = FontTestProject('test/fonts/templates/app_font');
+    await appFontProject.create(
       dir: Directory(
-        '${dependencyProject.workingDir.path}/packages/app_font',
+        '${dependencyFontProject.workingDir.path}/packages/app_font',
       ),
     );
 
@@ -25,13 +25,13 @@ void main() {
     await Process.run(
       flutterExe,
       ['pub', 'get'],
-      workingDirectory: dependencyProject.workingDir.path,
+      workingDirectory: dependencyFontProject.workingDir.path,
     );
     debugPrint('Run tests');
     final test = await Process.start(
       flutterExe,
       ['test'],
-      workingDirectory: dependencyProject.workingDir.path,
+      workingDirectory: dependencyFontProject.workingDir.path,
     );
     test.stdout.transform(utf8.decoder).listen((event) {
       debugPrint(event);
@@ -42,7 +42,7 @@ void main() {
     final exitCode = await test.exitCode;
     if (exitCode != 0) {
       final failuresDir =
-          Directory('${dependencyProject.workingDir.path}/test/failures');
+          Directory('${dependencyFontProject.workingDir.path}/test/failures');
       if (failuresDir.existsSync()) {
         final testFailureDirectory =
             Directory('test/fonts/dependency_font_test/');
