@@ -12,7 +12,7 @@ dependencies:
   flutter_test:
     sdk: flutter
   spot:
-    path: ../../../../../.
+    path: ../../../../
   app_font:
     path: packages/app_font
 
