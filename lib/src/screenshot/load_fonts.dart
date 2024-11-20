@@ -1,12 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dartx/dartx.dart';
 import 'package:dartx/dartx_io.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import "package:path/path.dart" as p;
+import 'package:spot/src/flutter/flutter_sdk.dart';
 
 /// Loads all font from the apps FontManifest and embedded in the Flutter SDK
 ///
@@ -123,10 +122,10 @@ Future<void> loadFont(String family, List<String> fontPaths) async {
 
 /// Loads the Roboto/RobotoCondensed/MaterialIcons fonts from the executing Flutter SDK
 Future<void> _loadMaterialFontsFromSdk() async {
-  final flutterSdkRoot = _flutterSdkRoot().absolute.path;
+  final root = flutterSdkRoot().absolute.path;
 
   final materialFontsDir =
-      Directory('$flutterSdkRoot/bin/cache/artifacts/material_fonts/');
+      Directory('$root/bin/cache/artifacts/material_fonts/');
 
   final fontFormats = ['.ttf', '.otf', '.ttc'];
   final existingFonts = materialFontsDir
@@ -167,17 +166,6 @@ Future<void> _loadMaterialFontsFromSdk() async {
       .map((file) => file.path)
       .toList();
   await loadFont('MaterialIcons', materialIcons);
-}
-
-/// Returns the Flutter SDK root directory based on the current flutter
-/// executable running the tests.
-Directory _flutterSdkRoot() {
-  final flutterTesterExe = Platform.executable;
-
-  final components = p.split(flutterTesterExe);
-  final path = p.posix.joinAll(components);
-  final flutterRoot = path.split('/bin/cache/')[0];
-  return Directory(flutterRoot);
 }
 
 /// Loads the fonts from the FontManifest.json file.

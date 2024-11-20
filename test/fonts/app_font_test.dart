@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dartx/dartx_io.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:spot/src/flutter/flutter_sdk.dart';
 
 import 'font_test_project.dart';
 

@@ -2,21 +2,6 @@ import 'dart:io';
 
 import 'package:dartx/dartx_io.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:path/path.dart' as p;
-
-Directory _flutterSdkRoot() {
-  final flutterTesterExe = Platform.executable;
-
-  final components = p.split(flutterTesterExe);
-  final path = p.posix.joinAll(components);
-  final flutterRoot = path.split('/bin/cache/')[0];
-  return Directory(flutterRoot);
-}
-
-String get flutterExe {
-  final exe = Platform.isWindows ? '.bat' : '';
-  return _flutterSdkRoot().file('bin/flutter$exe').absolute.path;
-}
 
 /// Loads a template from the `templates` directory and mounts it in a temporary folder
 class FontTestProject {
@@ -43,7 +28,7 @@ class FontTestProject {
           );
 
           // overwrite the spot dependencies path
-          final repoRoot = File(p.joinAll(Platform.script.pathSegments)).parent.path;
+          final repoRoot = File.fromUri(Platform.script).parent.path;
           final content = pubspec
               .readAsStringSync()
               .replaceAll('../../../../../.', repoRoot);
