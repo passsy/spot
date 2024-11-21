@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.15.0
+- Add `loadAppFonts()` to display your app fonts on screenshots #66
+- Add `loadFont()` to load a fonts from a file. Useful when your app depends on preinstalled system fonts (`loadFont('Comic Sans', [r'C:\Windows\Fonts\comic.ttf'])`) #66
+- New direct access to properties from `WidgetSelector` #71
+  - `spot<MyWidget>().getWidgetProp(widgetProp('color', (widget) => widget.color));`
+  - `spot<_MyContainer>().getStateProp(stateProp<String, _MyContainerState>('innerValue', (s) => s.innerValue));`
+  - `spot<_MyContainer>().getRenderObjectProp(renderObjectProp<Size, RenderBox>('size', (r) => r.size));`
+- New `getStateProp` and `stateProp` to access state properties #71
+  `spot<_MyContainer>().existsOnce().getStateProp(stateProp('innerValue', (_MyContainerState s) => s.innerValue));` 
+- New `timeline` mode `TimelineMode.always` to always print a timeline after each test #68
+- Deprecate `TimelineMode.record` in favor of `TimelineMode.reportOnError` (which is the default) #68
+- Timeline now shows partial tap warnings #69
+- Never show big widget tree dumps in console, only in Timeline HTML report #70
+- `act.tap()` now shows a Crosshair on the screenshot
+- Fix code samples of `whereWidgetProp()`, `whereElementProp()` and `whereRenderObjectProp()` #67
+
 ## 0.14.0
 - New: Timeline! Failing tests now print a timeline with screenshots of all interactions (actions and assertions) as HTML report #57
 - `act.tap` now checks for multiple tappable position when the center is not tappable for some reason #60
