@@ -22,4 +22,7 @@ flutter:
   fonts:
     - family: Montserrat
       fonts:
-        - asset: fonts/Montserrat-Regular.ttf
+        - asset: packages/app_font/fonts/Montserrat-Regular.ttf
+    - family: PrivateFont
+      fonts:
+        - asset: lib/fonts/Montserrat-Regular.ttf

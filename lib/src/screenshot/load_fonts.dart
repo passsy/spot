@@ -116,8 +116,18 @@ Future<void> loadFont(String family, List<String> fontPaths) async {
   await TestAsyncUtils.guard<void>(() async {
     final fontLoader = FontLoader(family);
     for (final path in fontPaths) {
-      final Uint8List bytes = File(path).readAsBytesSync();
-      fontLoader.addFont(Future.sync(() => bytes.buffer.asByteData()));
+      try {
+        final file = File(path);
+        if (file.existsSync()) {
+          final Uint8List bytes = file.readAsBytesSync();
+          fontLoader.addFont(Future.value(bytes.buffer.asByteData()));
+        } else {
+          final data = rootBundle.load(path);
+          fontLoader.addFont(Future.value(data));
+        }
+      } catch (e, stack) {
+        debugPrint("Could not load font $path\n$e\n$stack");
+      }
     }
     // the fontLoader is unusable after calling load().
     // No need to cache or return it.
@@ -190,22 +200,25 @@ Future<void> _loadFontsFromFontManifest() async {
       await binding.runAsync(() => rootBundle.loadString('FontManifest.json'));
   final json = jsonDecode(fontManifestContent!);
   final fontManifest = _FontManifest.fromJson(json);
+
   for (final item in fontManifest.fontFamilies) {
-    final bool isFontFromPackage = item.family.startsWith('packages/');
-    if (!isFontFromPackage) {
+    final packageAsset =
+        item.assets.firstOrNullWhere((it) => it.startsWith('packages/'));
+    final packageName = packageAsset?.split('/')[1];
+
+    if (packageName == null) {
+      // font asset in pubspec.yaml references a file relative to the pubspec.yaml
+      // The font can not be used by other packages
       await loadFont(item.family, item.assets);
     } else {
+      // font uses the package notation, which resolves relative to the packages lib/* directory
+      // asset: packages/<packageName>/<somewhereInsideLib>/MyFont.ttf
+
+      // Make it accessible as "MyFont" to be used by the package itself
       final fontFamilyName = item.family.split('/').last;
       await loadFont(fontFamilyName, item.assets);
-
-      final packageAsset =
-          item.assets.firstOrNullWhere((it) => it.startsWith('packages'));
-      final packageName = packageAsset?.split('/')[1];
-      if (packageName != null) {
-        await loadFont('packages/$packageName/$fontFamilyName', item.assets);
-      } else {
-        // could not extract the package name, that should be impossible
-      }
+      // and "packages/<packageName>/MyFont" so that other packages would reference it.
+      await loadFont('packages/$packageName/$fontFamilyName', item.assets);
     }
   }
 }

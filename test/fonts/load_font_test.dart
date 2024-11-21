@@ -25,6 +25,7 @@ void main() {
       callback?.call(null);
     };
     addTearDown(() {
+      // ignore: deprecated_member_use
       PlatformDispatcher.instance.onPlatformMessage = null;
     });
 

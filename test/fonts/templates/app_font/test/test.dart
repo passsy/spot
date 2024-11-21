@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 // ignore: unnecessary_import
-import 'dart:ui';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -10,15 +10,80 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 
 void main() {
-  testWidgets('App font Montserrat is loaded from FontManifest',
-      (tester) async {
+  setUp(() {
     final previousGoldenFileComparator = goldenFileComparator;
     goldenFileComparator = _TolerantGoldenFileComparator(
       Uri.parse('test/test_test.dart'),
       precisionTolerance: 0.10,
     );
     addTearDown(() => goldenFileComparator = previousGoldenFileComparator);
+  });
+
+  testWidgets('App font PrivateFont is loaded from FontManifest',
+      (tester) async {
     await loadAppFonts();
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: FontTestWidget(
+          fontFamily: 'PrivateFont',
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await expectLater(
+      find.byType(MaterialApp),
+      matchesGoldenFile('golden.png'),
+    );
+  });
+
+  testWidgets(
+      'App font Montserrat (package format) is loaded from FontManifest',
+      (tester) async {
+    await loadAppFonts();
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: FontTestWidget(
+          fontFamily: 'Montserrat',
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await expectLater(
+      find.byType(MaterialApp),
+      matchesGoldenFile('golden.png'),
+    );
+  });
+
+  testWidgets('Montserrat can be loaded with via package reference',
+      (tester) async {
+    await loadFont(
+      'Montserrat',
+      ['packages/app_font/fonts/Montserrat-Regular.ttf'],
+    );
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: FontTestWidget(
+          fontFamily: 'Montserrat',
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await expectLater(
+      find.byType(MaterialApp),
+      matchesGoldenFile('golden.png'),
+    );
+  });
+
+  testWidgets('Montserrat can be loaded with via file reference',
+      (tester) async {
+    final fontPath = File('lib/fonts/Montserrat-Regular.ttf').absolute.path;
+    await loadFont('Montserrat', [fontPath]);
 
     await tester.pumpWidget(
       const MaterialApp(
@@ -37,13 +102,8 @@ void main() {
 
   testWidgets('Montserrat can be loaded with blank family name',
       (tester) async {
-    final previousGoldenFileComparator = goldenFileComparator;
-    goldenFileComparator = _TolerantGoldenFileComparator(
-      Uri.parse('test/test_test.dart'),
-      precisionTolerance: 0.10,
-    );
-    addTearDown(() => goldenFileComparator = previousGoldenFileComparator);
-    await loadFont('', ['fonts/Montserrat-Regular.ttf']);
+    final fontPath = File('lib/fonts/Montserrat-Regular.ttf').absolute.path;
+    await loadFont('', [fontPath]);
 
     await tester.pumpWidget(
       const MaterialApp(
@@ -59,13 +119,8 @@ void main() {
       matchesGoldenFile('golden.png'),
     );
   });
+
   testWidgets('App font is also available as package fonts', (tester) async {
-    final previousGoldenFileComparator = goldenFileComparator;
-    goldenFileComparator = _TolerantGoldenFileComparator(
-      Uri.parse('test/test_test.dart'),
-      precisionTolerance: 0.10,
-    );
-    addTearDown(() => goldenFileComparator = previousGoldenFileComparator);
     await loadAppFonts();
 
     await tester.pumpWidget(
