@@ -23,6 +23,13 @@ jobs:
           channel: any
       - run: flutter pub get
       - run: flutter test
+      - name: Archive golden test errors
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: 3-10-failed
+          path: test/
+          retention-days: 7
 
   test_channel:
     timeout-minutes: 10
@@ -39,3 +46,29 @@ jobs:
           channel: ${{ matrix.version }}
       - run: flutter pub get
       - run: flutter test
+      - name: Archive golden test errors
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: branches-tests-failed
+          path: test/
+          retention-days: 7
+
+  test_windows:
+    timeout-minutes: 10
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - run: flutter pub get
+      - run: flutter test
+      - name: Archive golden test errors
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: branches-tests-failed
+          path: test/
+          retention-days: 7

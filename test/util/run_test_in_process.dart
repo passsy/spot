@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:spot/src/flutter/flutter_sdk.dart';
 import 'package:test/test.dart';
 import 'package:test_process/test_process.dart';
 
@@ -24,13 +25,6 @@ Future<String> runTestInProcessAndCaptureOutPut({
     tempTestFile.path,
     ...?args?.where((arg) => arg != 'test'),
   ];
-
-  // Get the path to the Flutter executable the test was started with (not from PATH)
-  // /Users/pascalwelsch/.puro/envs/3.16.9/flutter/bin/cache/artifacts/engine/darwin-x64/flutter_tester
-  final flutterTesterExe = Platform.executable;
-  final binDir = flutterTesterExe.split('/cache/')[0];
-  final flutterExe =
-      Platform.isWindows ? '$binDir\\flutter.exe' : '$binDir/flutter';
 
   printOnFailure('$flutterExe ${arguments.join(' ')}');
 

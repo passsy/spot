@@ -91,20 +91,16 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       'Details: Tap Icon Widget with icon: "IconData(U+0E047)"',
     );
     expect(
-      timeline[start + 2].startsWith('Caller: at'),
-      isTrue,
+      timeline[start + 2],
+      startsWith('Caller: at'),
     );
     expect(
-      timeline[start + 3].startsWith(
-        'Screenshot: file:///',
-      ),
-      isTrue,
+      timeline[start + 3],
+      startsWith('Screenshot: file://'),
     );
     expect(
-      timeline[start + 4].startsWith(
-        'Timestamp:',
-      ),
-      isTrue,
+      timeline[start + 4],
+      startsWith('Timestamp:'),
     );
     expect(
       timeline[start + 5],
@@ -144,20 +140,16 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       'Details: Tap Icon Widget with icon: "IconData(U+0E047)"',
     );
     expect(
-      timeline[start + 2].startsWith('Caller: at'),
-      isTrue,
+      timeline[start + 2],
+      startsWith('Caller: at'),
     );
     expect(
-      timeline[start + 3].startsWith(
-        'Screenshot: file:///',
-      ),
-      isTrue,
+      timeline[start + 3],
+      startsWith('Screenshot: file://'),
     );
     expect(
-      timeline[start + 4].startsWith(
-        'Timestamp:',
-      ),
-      isTrue,
+      timeline[start + 4],
+      startsWith('Timestamp:'),
     );
     expect(
       timeline[start + 5],
@@ -199,20 +191,16 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       'Details: Tap Icon Widget with icon: "IconData(U+0E516)"',
     );
     expect(
-      timeline[start + 2].startsWith('Caller: at'),
-      isTrue,
+      timeline[start + 2],
+      startsWith('Caller: at'),
     );
     expect(
-      timeline[start + 3].startsWith(
-        'Screenshot: file:///',
-      ),
-      isTrue,
+      timeline[start + 3],
+      startsWith('Screenshot: file://'),
     );
     expect(
-      timeline[start + 4].startsWith(
-        'Timestamp:',
-      ),
-      isTrue,
+      timeline[start + 4],
+      startsWith('Timestamp:'),
     );
     expect(
       timeline[start + 5],
