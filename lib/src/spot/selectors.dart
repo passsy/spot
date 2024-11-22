@@ -681,6 +681,19 @@ extension ReadSingleSnapshot<W extends Widget> on WidgetSelector<W> {
     return snapshot_file.snapshot(this).single.widget;
   }
 
+  /// Convenience getter to access the [State] of a Widget found by the [WidgetSelector]
+  S snapshotState<S extends State>() {
+    final matcher = snapshot_file.snapshot(this).single;
+    final element = matcher.element;
+    if (element is! StatefulElement) {
+      throw StateError(
+        '${element.widget.toStringShort()} is not a StatefulWidget and does not have a State',
+      );
+    }
+    final state = element.state as S;
+    return state;
+  }
+
   /// Convenience getter to access the [Element] when evaluating the [WidgetSelector]
   Element snapshotElement() {
     return snapshot_file.snapshot(this).single.element;

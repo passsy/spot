@@ -79,4 +79,80 @@ void main() {
     final AnyText singleMap = singleSelector.mapElementToWidget(centerElement);
     expect(multiMap.runtimeType, singleMap.runtimeType);
   });
+
+  testWidgets('snapshotWidget()', (tester) async {
+    await tester.pumpWidget(const MaterialApp(home: Text('home')));
+    final widget = spotText('home').snapshotWidget();
+    expect(widget.text, 'home');
+  });
+
+  testWidgets('snapshotState()', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(home: _MyContainer(color: Colors.red)),
+    );
+    final state = spot<_MyContainer>().snapshotState<_MyContainerState>();
+    expect(state.innerValue, 'stateValue');
+    final plainState = spot<_MyContainer>().snapshotState();
+    expect(plainState.mounted, isTrue);
+    expect(
+      () => spot<DefaultTextStyle>().snapshotState(),
+      throwsA(
+        isA<StateError>().having(
+          (e) => e.message,
+          'message',
+          'DefaultTextStyle is not a StatefulWidget and does not have a State',
+        ),
+      ),
+    );
+  });
+
+  testWidgets('snapshotElement()', (tester) async {
+    await tester.pumpWidget(
+      WidgetsApp(
+        builder: (_, __) => const Center(child: Text('home')),
+        color: Colors.red,
+      ),
+    );
+    final element = spotText('home').snapshotElement();
+    expect(element.size?.height, 14);
+  });
+
+  testWidgets('snapshotRenderObject()', (tester) async {
+    await tester.pumpWidget(
+      WidgetsApp(
+        builder: (_, __) => const Center(child: Text('home')),
+        color: Colors.red,
+      ),
+    );
+    final renderObject = spotText('home').snapshotRenderObject();
+    expect(renderObject.isRepaintBoundary, isFalse);
+  });
+
+  testWidgets('snapshotRenderBox()', (tester) async {
+    await tester.pumpWidget(
+      WidgetsApp(
+        builder: (_, __) => const Center(child: Text('home')),
+        color: Colors.red,
+      ),
+    );
+    final renderBox = spotText('home').snapshotRenderBox();
+    expect(renderBox.localToGlobal(Offset.zero), const Offset(372.0, 293.0));
+  });
+}
+
+class _MyContainer extends StatefulWidget {
+  const _MyContainer({required this.color});
+
+  final Color color;
+
+  @override
+  State<_MyContainer> createState() => _MyContainerState();
+}
+
+class _MyContainerState extends State<_MyContainer> {
+  final innerValue = 'stateValue';
+  @override
+  Widget build(BuildContext context) {
+    return Placeholder(color: widget.color);
+  }
 }
