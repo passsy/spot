@@ -183,22 +183,19 @@ extension TimelineSyncScreenshot on Timeline {
     // At the end of the test, do the actual screenshot processing, because runAsync must be awaited or it crashes
     timeline.addScreenshotProcessing(() async {
       final binding = TestWidgetsFlutterBinding.instance;
-      if (timeline.mode == TimelineMode.live ||
-          !timeline.test.state.result.isPassing) {
-        await binding.runAsync(() async {
-          ui.Image imageToCapture = plainImage;
-          for (final annotator in annotators ?? <ScreenshotAnnotator>[]) {
-            imageToCapture = await annotator.annotate(imageToCapture);
-          }
-          final byteData =
-              await imageToCapture.toByteData(format: ui.ImageByteFormat.png);
-          if (byteData == null) {
-            throw 'Could not take screenshot';
-          }
-          final image = byteData.buffer.asUint8List();
-          file.writeAsBytesSync(image);
-        });
-      }
+      await binding.runAsync(() async {
+        ui.Image imageToCapture = plainImage;
+        for (final annotator in annotators ?? <ScreenshotAnnotator>[]) {
+          imageToCapture = await annotator.annotate(imageToCapture);
+        }
+        final byteData =
+            await imageToCapture.toByteData(format: ui.ImageByteFormat.png);
+        if (byteData == null) {
+          throw 'Could not take screenshot';
+        }
+        final image = byteData.buffer.asUint8List();
+        file.writeAsBytesSync(image);
+      });
 
       plainImage.dispose();
     });
