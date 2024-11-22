@@ -681,6 +681,19 @@ extension ReadSingleSnapshot<W extends Widget> on WidgetSelector<W> {
     return snapshot_file.snapshot(this).single.widget;
   }
 
+  /// Convenience getter to access the [State] of a Widget found by the [WidgetSelector]
+  S snapshotState<S extends State>() {
+    final matcher = snapshot_file.snapshot(this).single;
+    final element = matcher.element;
+    if (element is! StatefulElement) {
+      throw StateError(
+        '${element.widget.toStringShort()} is not a StatefulWidget and does not have a State',
+      );
+    }
+    final state = element.state as S;
+    return state;
+  }
+
   /// Convenience getter to access the [Element] when evaluating the [WidgetSelector]
   Element snapshotElement() {
     return snapshot_file.snapshot(this).single.element;
@@ -691,6 +704,15 @@ extension ReadSingleSnapshot<W extends Widget> on WidgetSelector<W> {
     // There is not a single Element in the Flutter SDK that returns null for `renderObject`.
     // So we can safely assume that this cast never fails.
     return snapshot_file.snapshot(this).single.element.renderObject!;
+  }
+
+  /// Convenience getter to access the [RenderBox] when evaluating the [WidgetSelector]
+  RenderBox snapshotRenderBox() {
+    final renderObject = snapshotRenderObject();
+    if (renderObject is! RenderBox) {
+      throw StateError('RenderObject $renderObject is not a RenderBox');
+    }
+    return renderObject;
   }
 }
 
