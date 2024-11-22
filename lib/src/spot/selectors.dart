@@ -692,6 +692,15 @@ extension ReadSingleSnapshot<W extends Widget> on WidgetSelector<W> {
     // So we can safely assume that this cast never fails.
     return snapshot_file.snapshot(this).single.element.renderObject!;
   }
+
+  /// Convenience getter to access the [RenderBox] when evaluating the [WidgetSelector]
+  RenderBox snapshotRenderBox() {
+    final renderObject = snapshotRenderObject();
+    if (renderObject is! RenderBox) {
+      throw StateError('RenderObject $renderObject is not a RenderBox');
+    }
+    return renderObject;
+  }
 }
 
 /// Extension on [WidgetSelector<W>] providing methods to specify the
