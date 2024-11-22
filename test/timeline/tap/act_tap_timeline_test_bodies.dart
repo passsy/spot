@@ -147,10 +147,19 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       timeline[start + 3],
       startsWith('Screenshot: file://'),
     );
-    final screenshotPath = timeline[start + 3].split('Screenshot: ').last;
-    final screenshotFile = File.fromUri(Uri.parse(screenshotPath));
-    expect(screenshotFile.existsSync(), isTrue);
-    expect(screenshotFile.readAsBytesSync(), isNotEmpty);
+    final screenshotPath =
+        timeline[start + 3].split('Screenshot: ').last.split('file://').last;
+    final screenshotFile = File(screenshotPath);
+    expect(
+      screenshotFile.existsSync(),
+      isTrue,
+      reason: 'Screenshot file does not exist at $screenshotPath',
+    );
+    expect(
+      screenshotFile.readAsBytesSync(),
+      isNotEmpty,
+      reason: 'file is empty, no data written',
+    );
 
     expect(
       timeline[start + 4],
