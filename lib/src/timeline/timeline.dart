@@ -199,7 +199,7 @@ class Timeline {
           printToConsole();
         }
         // best for humans
-        printHTML();
+        await printHTML();
       }
     }
 
@@ -208,7 +208,7 @@ class Timeline {
         // during live mode the events are written directly to the console.
         // Finalize with html report
         await processPendingScreenshots();
-        printHTML();
+        await printHTML();
       case TimelineMode.always:
         // ignore: avoid_print
         print('Generating timeline report');
@@ -218,7 +218,7 @@ class Timeline {
           printToConsole();
         }
         // best for humans
-        printHTML();
+        await printHTML();
       // ignore: deprecated_member_use_from_same_package
       case TimelineMode.record:
         await reportOnError();
