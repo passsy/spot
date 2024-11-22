@@ -469,16 +469,11 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
           errorBuilder.writeln(candidate.element.widget.toStringDeep());
         });
 
-        errorBuilder
-            .writeln(findCommonAncestor(discoveredElements).toStringDeep());
-
-        errorBuilder.writeln(
-          'Found ${discovered.length} elements matching $selector in widget tree, '
-          'expected at most $max',
-        );
+        final tree = findCommonAncestor(discoveredElements).toStringDeep();
         timeline.addEvent(
           eventType: 'Assertion Failed',
-          details: errorBuilder.toString(),
+          details: '$errorBuilder\n'
+              '$tree',
           color: Colors.red,
           screenshot: timeline.takeScreenshotSync(
             annotators: [
