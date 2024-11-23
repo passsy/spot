@@ -1,8 +1,12 @@
 import 'dart:io';
 
-import 'package:jaspr/server.dart' show Jaspr, renderComponent;
+import 'package:flutter/material.dart' as flt;
+import 'package:jaspr/server.dart';
 import 'package:spot/src/screenshot/screenshot.dart';
-import 'package:spot/src/timeline/html/components/timeline.dart';
+import 'package:spot/src/timeline/html/sources/script.js.dart';
+import 'package:spot/src/timeline/html/sources/styles.css.dart';
+import 'package:spot/src/timeline/html/web/app.dart';
+import 'package:spot/src/timeline/html/web/timeline_event.dart' as x;
 import 'package:spot/src/timeline/timeline.dart';
 import 'package:stack_trace/stack_trace.dart';
 //ignore: implementation_imports
@@ -50,16 +54,46 @@ extension HtmlTimelinePrinter on Timeline {
 
     final htmlFile = File('${spotTempDir.path}/$nameForHtml');
     try {
-      Jaspr.initializeApp(useIsolates: false);
-      final content = await renderComponent(TimelineView(timeLineEvents: events));
+      final content = await renderTimelineWithJaspr(this.events);
       htmlFile.writeAsStringSync(content);
       //ignore: avoid_print
       print('View time line here: file://${htmlFile.path}');
-    } catch (e) {
+    } catch (e, st) {
       //ignore: avoid_print
-      print('Error writing HTML file: $e');
+      print('Error writing HTML file: $e $st');
     }
   }
+}
+
+Future<String> renderTimelineWithJaspr(List<TimelineEvent> events) async {
+  // Turn off isolate rendering.
+  Jaspr.initializeApp(useIsolates: false);
+
+  final nameWithHierarchy = testNameWithHierarchy();
+
+  return await renderComponent(Document(
+    title: "Timeline Events",
+    head: [
+      link(href: "https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap", rel: "stylesheet"),
+      DomComponent(tag: 'script', child: raw(timelineJS)),
+      DomComponent(tag: 'style', child: raw(timelineCSS)),
+    ],
+    body: App(
+      testName: Invoker.current!.liveTest.test.name,
+      testNameWithHierarchy: nameWithHierarchy,
+      timelineEvents: events
+          .map((e) => x.TimelineEvent(
+                eventType: e.eventType.label,
+                details: e.details,
+                timestamp: e.timestamp.toIso8601String(),
+                screenshotUrl: e.screenshot != null ? 'file://${e.screenshot!.file.path}' : null,
+                color: e.color == flt.Colors.grey ? null : e.color.value & 0xFFFFFF,
+                caller: eventCaller(e.initiator) ?? 'N/A',
+                jetBrainsLink: jetBrainsURL(e),
+              ))
+          .toList(),
+    ),
+  ));
 }
 
 /// Returns the test name including the group hierarchy.

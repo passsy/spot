@@ -116,6 +116,10 @@ h1 {
   align-items: center;
 }
 
+.modal.show {
+  display: block;
+}
+
 .modal img {
   max-width: 100%;
   height: auto;
@@ -305,7 +309,6 @@ h1 {
 }
 
 .content {
- max-height: 25px; /* Adjust the initial max-height as needed */
  overflow: hidden;
  transition: max-height 0.3s ease; /* Add smooth transition effect */
 }
