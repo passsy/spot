@@ -4936,7 +4936,7 @@ q=p}while(true)switch(q){case 0:n=s.c,m=n.length,l=t.i,k=t.A,j=0
 case 2:if(!(j<n.length)){q=4
 break}i=n[j]
 h=i.b
-h=A.hK(new A.dj(h!=null?new A.cx(new A.dN(h),new A.aq("px",2)):new A.cx(B.E,new A.aq("px",2))),null)
+h=A.hK(new A.dj(h!=null?new A.cx(new A.dN(h),new A.aq("px",2)):new A.cx(B.E,new A.aq("px",1))),null)
 g=A.d([],l)
 f=i.c
 g.push(A.h9("Screenshot","thumbnail",A.bj(null,new A.e9(s,i),null,k,k),null,f))

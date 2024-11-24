@@ -1,3 +1,5 @@
+// ignore_for_file: public_member_api_docs
+
 /// A web compatible view on the original timeline event.
 ///
 /// This class is used to display the timeline event in the HTML file.

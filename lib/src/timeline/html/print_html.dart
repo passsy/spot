@@ -65,35 +65,48 @@ extension HtmlTimelinePrinter on Timeline {
   }
 }
 
+/// Server-side renders the HTML timeline with Jaspr
 Future<String> renderTimelineWithJaspr(List<TimelineEvent> events) async {
   // Turn off isolate rendering.
   Jaspr.initializeApp(useIsolates: false);
 
   final nameWithHierarchy = testNameWithHierarchy();
 
-  return await renderComponent(Document(
-    title: "Timeline Events",
-    head: [
-      link(href: "https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap", rel: "stylesheet"),
-      DomComponent(tag: 'script', child: raw(timelineJS)),
-      DomComponent(tag: 'style', child: raw(timelineCSS)),
-    ],
-    body: App(
-      testName: Invoker.current!.liveTest.test.name,
-      testNameWithHierarchy: nameWithHierarchy,
-      timelineEvents: events
-          .map((e) => x.TimelineEvent(
+  return await renderComponent(
+    Document(
+      title: "Timeline Events",
+      head: [
+        link(
+          href:
+              "https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap",
+          rel: "stylesheet",
+        ),
+        DomComponent(tag: 'script', child: raw(timelineJS)),
+        DomComponent(tag: 'style', child: raw(timelineCSS)),
+      ],
+      body: App(
+        testName: Invoker.current!.liveTest.test.name,
+        testNameWithHierarchy: nameWithHierarchy,
+        timelineEvents: events
+            .map(
+              (e) => x.TimelineEvent(
                 eventType: e.eventType.label,
                 details: e.details,
                 timestamp: e.timestamp.toIso8601String(),
-                screenshotUrl: e.screenshot != null ? 'file://${e.screenshot!.file.path}' : null,
-                color: e.color == flt.Colors.grey ? null : e.color.value & 0xFFFFFF,
-                caller: eventCaller(e.initiator) ?? 'N/A',
-                jetBrainsLink: jetBrainsURL(e),
-              ))
-          .toList(),
+                screenshotUrl: e.screenshot != null
+                    ? 'file://${e.screenshot!.file.path}'
+                    : null,
+                color: e.color == flt.Colors.grey
+                    ? null
+                    : e.color.value & 0xFFFFFF,
+                caller: _eventCaller(e.initiator) ?? 'N/A',
+                jetBrainsLink: _jetBrainsURL(e),
+              ),
+            )
+            .toList(),
+      ),
     ),
-  ));
+  );
 }
 
 /// Returns the test name including the group hierarchy.
@@ -153,7 +166,7 @@ String testNameWithHierarchy() {
   }
 }
 
-String? projectName() {
+String? _projectName() {
   Directory? dir = Directory.current;
   String? projectDir;
 
@@ -179,7 +192,7 @@ String? projectName() {
   return name;
 }
 
-String? eventCaller(Frame? initiator, {String? line}) {
+String? _eventCaller(Frame? initiator, {String? line}) {
   if (initiator == null) return null;
 
   final memberPart = initiator.member != null ? '${initiator.member} ' : '';
@@ -190,7 +203,7 @@ String? eventCaller(Frame? initiator, {String? line}) {
   return '$memberPart$uriPart:$linePart:$columnPart';
 }
 
-String? jetBrainsURL(TimelineEvent event) {
+String? _jetBrainsURL(TimelineEvent event) {
   final initiator = event.initiator;
   if (initiator == null) return null;
 
@@ -202,8 +215,8 @@ String? jetBrainsURL(TimelineEvent event) {
   final lineNumber = (initiator.line ?? 0) - 1;
   final clampedLine = lineNumber >= 0 ? lineNumber.toString() : '0';
 
-  final caller = eventCaller(initiator, line: clampedLine);
-  final name = projectName();
+  final caller = _eventCaller(initiator, line: clampedLine);
+  final name = _projectName();
   if (caller == null || name == null) return null;
 
   final path = caller.trim().split(name).last.trim();
