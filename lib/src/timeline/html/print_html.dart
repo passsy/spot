@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart' as flt;
 import 'package:jaspr/server.dart';
 import 'package:spot/src/screenshot/screenshot.dart';
-import 'package:spot/src/timeline/html/sources/script.js.dart';
+import 'package:spot/src/timeline/html/sources/script.js.g.dart';
 import 'package:spot/src/timeline/html/sources/styles.css.dart';
 import 'package:spot/src/timeline/html/web/app.dart';
 import 'package:spot/src/timeline/html/web/timeline_event.dart' as x;

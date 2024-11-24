@@ -1,6 +1,8 @@
 // AUTO GENERATED FILE. DO NOT MODIFY.
 
 /// The script used in the HTML file that is generated for the timeline.
+/// Generate it with `dart run tool/compile_js.dart` 
+
 // language=javascript
 const String timelineJS = r'''
 (function dartProgram(){function copyProperties(a,b){var s=Object.keys(a)
