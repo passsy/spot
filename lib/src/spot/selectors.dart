@@ -6,7 +6,6 @@ import 'package:spot/src/screenshot/screenshot_annotator.dart';
 import 'package:spot/src/spot/snapshot.dart' as snapshot_file show snapshot;
 import 'package:spot/src/spot/snapshot.dart';
 import 'package:spot/src/spot/text/any_text.dart';
-import 'package:spot/src/spot/widget_selector.dart';
 
 export 'package:checks/context.dart';
 

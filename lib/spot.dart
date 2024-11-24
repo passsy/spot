@@ -4,7 +4,6 @@ library spot;
 import 'package:flutter/material.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/spot/selectors.dart' show Spot;
-import 'package:spot/src/spot/widget_selector.dart';
 
 export 'package:checks/checks.dart'
     hide
