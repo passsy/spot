@@ -142,7 +142,7 @@ void main() {
         ),
       );
 
-      spot<Text>().atMost(2);
+      spot<Text>().existsAtMostNTimes(2);
       spotText('c').doesNotExist();
     });
 
@@ -160,11 +160,11 @@ void main() {
         ),
       );
 
-      spot<Text>().atMost(2);
+      spot<Text>().existsAtMostNTimes(2);
       spotText('a').existsExactlyNTimes(1);
       spotText('c').doesNotExist();
 
-      spotOffstage().spot<Text>().atMost(1);
+      spotOffstage().spot<Text>().existsAtMostNTimes(1);
       spotOffstage().spotText('a').doesNotExist();
       spotOffstage().spotText('c').existsOnce();
     });
@@ -184,7 +184,7 @@ void main() {
         ),
       );
 
-      spotOffstage().spot<Text>().atMost(3);
+      spotOffstage().spot<Text>().existsAtMostNTimes(3);
       spotOffstage().spotText('a').doesNotExist();
       spotOffstage().spotText('c').existsOnce();
       spotOffstage()
@@ -253,7 +253,7 @@ void main() {
         ),
       );
 
-      spotAllWidgets().spot<Text>().atMost(3);
+      spotAllWidgets().spot<Text>().existsAtMostNTimes(3);
       spotAllWidgets().spotText('a').existsOnce();
       spotAllWidgets().spotText('c').existsOnce();
       spotAllWidgets()

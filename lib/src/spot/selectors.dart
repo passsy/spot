@@ -721,16 +721,19 @@ extension ReadSingleSnapshot<W extends Widget> on WidgetSelector<W> {
 /// selection of widgets.
 extension QuantitySelectors<W extends Widget> on WidgetSelector<W> {
   /// Sets the selector to match exactly [n] widgets.
+  @useResult
   WidgetSelector<W> amount(int n) {
     return self.overrideQuantityConstraint(QuantityConstraint.exactly(n));
   }
 
   /// Sets the selector to match at least [n] widgets.
+  @useResult
   WidgetSelector<W> atLeast(int n) {
     return self.overrideQuantityConstraint(QuantityConstraint.atLeast(n));
   }
 
   /// Sets the selector to match at most [n] widgets.
+  @useResult
   WidgetSelector<W> atMost(int n) {
     return self.overrideQuantityConstraint(QuantityConstraint.atMost(n));
   }
@@ -739,6 +742,7 @@ extension QuantitySelectors<W extends Widget> on WidgetSelector<W> {
   ///
   /// This method allows for more flexible control over the number of widgets
   /// the selector should match.
+  @useResult
   WidgetSelector<W> overrideQuantityConstraint(QuantityConstraint constraint) {
     return self.copyWith(quantityConstraint: constraint);
   }

@@ -460,7 +460,7 @@ void main() {
     spot<Text>().withText('c').doesNotExist();
     spot<Text>().withText('c').overrideWidgetPresence(WidgetPresence.offstage).existsOnce();
     
-    spotOffstage().spot<Text>().atMost(3);
+    spotOffstage().spot<Text>().existsAtMostNTimes(3);
     spotOffstage().spotText('c').existsOnce();
     spotOffstage().overrideWidgetPresence(WidgetPresence.onstage).spotText('c').doesNotExist();
     
