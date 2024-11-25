@@ -1,10 +1,6 @@
-/// This library is compiled for both vm and web platforms.
-/// Therefore, this and all imported libraries need to be platform agnostic or stubbed.
-library app;
-
 import 'package:jaspr/jaspr.dart';
-import 'package:spot/src/timeline/html/web/timeline_event.dart';
 import 'package:spot/src/timeline/html/web/timeline_app.dart';
+import 'package:spot/src/timeline/html/web/timeline_event.dart';
 
 /// The main entry point for the timeline web app.
 class ServerApp extends StatefulComponent {
@@ -28,7 +24,8 @@ class ServerApp extends StatefulComponent {
   State<ServerApp> createState() => _ServerAppState();
 }
 
-class _ServerAppState extends State<ServerApp> with SyncStateMixin<ServerApp, Map<String, dynamic>> {
+class _ServerAppState extends State<ServerApp>
+    with SyncStateMixin<ServerApp, Map<String, dynamic>> {
   @override
   Map<String, dynamic> getState() {
     // This uses Jasprs sync mechanism to embed the server state into the rendered HTML.

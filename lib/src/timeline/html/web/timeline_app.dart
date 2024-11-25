@@ -1,3 +1,5 @@
+// ignore_for_file: public_member_api_docs, avoid_dynamic_calls
+
 /// This library is compiled for both vm and web platforms.
 /// Therefore, this and all imported libraries need to be platform agnostic or stubbed.
 library timeline_page;
@@ -9,6 +11,7 @@ import 'package:jaspr/jaspr.dart';
 import 'package:spot/src/timeline/html/web/timeline_event.dart';
 import 'package:web/web.dart' if (dart.library.io) 'web_stubs.dart';
 
+/// The main entry point for the timeline web app.
 class TimelineApp extends StatefulComponent {
   const TimelineApp({
     required this.testName,
@@ -32,6 +35,7 @@ class TimelineApp extends StatefulComponent {
 class _TimelineAppState extends State<TimelineApp> {
   // ignore: prefer_const_constructors
   final GlobalKey<_SnackBarState> _snackBar = GlobalKey();
+
   // ignore: prefer_const_constructors
   final GlobalKey<_ModalState> _modal = GlobalKey();
 
@@ -40,7 +44,8 @@ class _TimelineAppState extends State<TimelineApp> {
     return [
       div(classes: "header", [
         img(
-          src: "https://user-images.githubusercontent.com/1096485/188243198-7abfc785-8ecd-40cb-bb28-5561610432a4.png",
+          src:
+              "https://user-images.githubusercontent.com/1096485/188243198-7abfc785-8ecd-40cb-bb28-5561610432a4.png",
           height: 100,
         ),
         h1([text("Timeline")]),
@@ -66,7 +71,7 @@ class _TimelineAppState extends State<TimelineApp> {
       SnackBar(key: _snackBar),
       if (component.timelineEvents.isNotEmpty) ...[
         div(classes: "horizontal-spacer", [
-          h2([text("Events")])
+          h2([text("Events")]),
         ]),
         section(classes: "events", [
           Events(
@@ -79,7 +84,10 @@ class _TimelineAppState extends State<TimelineApp> {
       ],
       div([
         text("Tell us how to improve the timeline at "),
-        a(href: "https://github.com/passsy/spot/issues", [text("github.com/passsy/spot")]),
+        a(
+          href: "https://github.com/passsy/spot/issues",
+          [text("github.com/passsy/spot")],
+        ),
       ]),
       Modal(events: component.timelineEvents, key: _modal),
     ];
@@ -110,14 +118,22 @@ class _SnackBarState extends State<SnackBar> {
 
   @override
   Iterable<Component> build(BuildContext context) sync* {
-    yield div(id: "snackbar", classes: "snackbar ${_message != null ? 'show' : ''}", [
-      text(_message ?? ''),
-    ]);
+    yield div(
+      id: "snackbar",
+      classes: "snackbar ${_message != null ? 'show' : ''}",
+      [
+        text(_message ?? ''),
+      ],
+    );
   }
 }
 
 class Events extends StatelessComponent {
-  Events({required this.timeLineEvents, required this.onClick, super.key});
+  const Events({
+    required this.timeLineEvents,
+    required this.onClick,
+    super.key,
+  });
 
   final List<TimelineEvent> timeLineEvents;
   final void Function(TimelineEvent) onClick;
@@ -128,12 +144,15 @@ class Events extends StatelessComponent {
       yield div(
         classes: "event",
         styles: Styles.box(
-            border: Border.all(event.color != null
+          border: Border.all(
+            event.color != null
                 ? BorderSide(
                     color: Color.value(event.color!),
                     width: 2.px,
                   )
-                : BorderSide(color: Colors.gray, width: 2.px))),
+                : BorderSide(color: Colors.gray, width: 1.px),
+          ),
+        ),
         [
           if (event.screenshotUrl case final screenshotUrl?)
             img(
@@ -150,12 +169,15 @@ class Events extends StatelessComponent {
               ExpandableBox(title: "Caller", content: event.caller),
               if (event.jetBrainsLink case final jetBrainsLink?)
                 a(href: jetBrainsLink, [
-                  button(classes: "secondary-button secondary-button--animated", [
-                    span(classes: "secondary-button__text", [text("IDEA")]),
-                    span(classes: "secondary-button__icon", [text("→")]),
-                  ]),
+                  button(
+                    classes: "secondary-button secondary-button--animated",
+                    [
+                      span(classes: "secondary-button__text", [text("IDEA")]),
+                      span(classes: "secondary-button__icon", [text("→")]),
+                    ],
+                  ),
                 ]),
-            ])
+            ]),
           ]),
         ],
       );
@@ -165,7 +187,11 @@ class Events extends StatelessComponent {
 
 /// A box that can be expanded to show more content.
 class ExpandableBox extends StatefulComponent {
-  ExpandableBox({required this.title, required this.content, super.key});
+  const ExpandableBox({
+    required this.title,
+    required this.content,
+    super.key,
+  });
 
   final String title;
   final String content;
@@ -179,16 +205,19 @@ class _ExpandableBoxState extends State<ExpandableBox> {
 
   @override
   Iterable<Component> build(BuildContext context) sync* {
-    final splitted = component.content.split('\n');
+    final split = component.content.split('\n');
 
-    if (splitted.length > 1) {
-      yield div(classes: "content", styles: Styles.box(maxHeight: expandedTo?.px ?? 25.px), [
-        p([
-          strong([text('${component.title}:')]),
-          text(' ${splitted.first} '),
-          pre([text(splitted.skip(1).join('\n'))]),
-        ]),
-      ]);
+    if (split.length > 1) {
+      yield div(
+          classes: "content",
+          styles: Styles.box(maxHeight: expandedTo?.px ?? 25.px),
+          [
+            p([
+              strong([text('${component.title}:')]),
+              text(' ${split.first} '),
+              pre([text(split.skip(1).join('\n'))]),
+            ]),
+          ]);
       yield div(
         classes: 'show-more',
         events: {
@@ -196,10 +225,12 @@ class _ExpandableBoxState extends State<ExpandableBox> {
             if (expandedTo != null) {
               setState(() => expandedTo = null);
             } else {
-              final contentHeight = ((e.target as HTMLElement?)?.previousSibling as HTMLElement?)?.scrollHeight;
+              final contentHeight =
+                  ((e.target as HTMLElement?)?.previousSibling as HTMLElement?)
+                      ?.scrollHeight;
               setState(() => expandedTo = contentHeight);
             }
-          }
+          },
         },
         [raw(expandedTo != null ? 'Show less &#9650;' : 'Show more &#9660;')],
       );
@@ -278,38 +309,49 @@ class _ModalState extends State<Modal> {
 
   @override
   Iterable<Component> build(BuildContext context) sync* {
-    yield div(classes: "modal ${_index != null ? 'show' : ''}", events: events(onClick: close), [
-      span(classes: "close", events: events(onClick: close), [raw("&times;")]),
-      div(classes: "modal-content", [
-        img(alt: "Screenshot of the Event", src: event?.screenshotUrl ?? ""),
-        div(id: "caption", [
-          a(
-            classes: "nav nav-left",
-            events: {
-              'click': (dynamic e) {
-                e.preventDefault();
-                e.stopPropagation();
-                showPrev();
-              }
-            },
-            href: "",
-            [raw("&#10094;")],
+    yield div(
+      classes: "modal ${_index != null ? 'show' : ''}",
+      events: events(onClick: close),
+      [
+        span(
+          classes: "close",
+          events: events(onClick: close),
+          [raw("&times;")],
+        ),
+        div(classes: "modal-content", [
+          img(
+            alt: "Screenshot of the Event",
+            src: event?.screenshotUrl ?? "",
           ),
-          div(id: "captionText", [text(event?.eventType ?? '')]),
-          a(
-            classes: "nav nav-right",
-            events: {
-              'click': (dynamic e) {
-                e.preventDefault();
-                e.stopPropagation();
-                showNext();
-              }
-            },
-            href: "",
-            [raw("&#10095;")],
-          ),
+          div(id: "caption", [
+            a(
+              classes: "nav nav-left",
+              events: {
+                'click': (dynamic e) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  showPrev();
+                },
+              },
+              href: "",
+              [raw("&#10094;")],
+            ),
+            div(id: "captionText", [text(event?.eventType ?? '')]),
+            a(
+              classes: "nav nav-right",
+              events: {
+                'click': (dynamic e) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  showNext();
+                },
+              },
+              href: "",
+              [raw("&#10095;")],
+            ),
+          ]),
         ]),
-      ]),
-    ]);
+      ],
+    );
   }
 }

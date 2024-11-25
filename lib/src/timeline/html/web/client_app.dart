@@ -1,8 +1,7 @@
-import 'dart:html';
-
 import 'package:jaspr/jaspr.dart';
-import 'package:spot/src/timeline/html/web/timeline_event.dart';
 import 'package:spot/src/timeline/html/web/timeline_app.dart';
+import 'package:spot/src/timeline/html/web/timeline_event.dart';
+import 'package:web/web.dart';
 
 void main() async {
   await window.onLoad.first;
@@ -17,7 +16,8 @@ class ClientApp extends StatefulComponent {
   State<ClientApp> createState() => _ClientAppState();
 }
 
-class _ClientAppState extends State<ClientApp> with SyncStateMixin<ClientApp, Map<String, dynamic>> {
+class _ClientAppState extends State<ClientApp>
+    with SyncStateMixin<ClientApp, Map<String, dynamic>> {
   /// The name of the test.
   late final String testName;
 
@@ -30,7 +30,10 @@ class _ClientAppState extends State<ClientApp> with SyncStateMixin<ClientApp, Ma
   @override
   void updateState(Map<String, dynamic> value) {
     // This uses Jasprs sync mechanism to retrieve the synced server state from the rendered HTML.
-    timelineEvents = (value['timelineEvents'] as List).cast<Map<String, dynamic>>().map(TimelineEvent.fromMap).toList();
+    timelineEvents = (value['timelineEvents'] as List)
+        .cast<Map<String, dynamic>>()
+        .map(TimelineEvent.fromMap)
+        .toList();
     testName = value['testName'] as String;
     testNameWithHierarchy = value['testNameWithHierarchy'] as String;
   }
