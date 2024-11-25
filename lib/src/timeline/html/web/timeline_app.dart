@@ -1,6 +1,6 @@
 /// This library is compiled for both vm and web platforms.
 /// Therefore, this and all imported libraries need to be platform agnostic or stubbed.
-library app;
+library timeline_page;
 
 import 'dart:async';
 import 'dart:js_interop' if (dart.library.io) 'web_stubs.dart';
@@ -9,64 +9,27 @@ import 'package:jaspr/jaspr.dart';
 import 'package:spot/src/timeline/html/web/timeline_event.dart';
 import 'package:web/web.dart' if (dart.library.io) 'web_stubs.dart';
 
-/// The main entry point for the timeline web app.
-class App extends StatefulComponent {
-  const App({this.testName, this.testNameWithHierarchy, this.timelineEvents, super.key});
+class TimelineApp extends StatefulComponent {
+  const TimelineApp({
+    required this.testName,
+    required this.testNameWithHierarchy,
+    required this.timelineEvents,
+  });
 
   /// The name of the test.
-  final String? testName;
+  final String testName;
 
   /// The name of the test with the hierarchy.
-  final String? testNameWithHierarchy;
+  final String testNameWithHierarchy;
 
   /// The events that occurred during the test.
-  final List<TimelineEvent>? timelineEvents;
+  final List<TimelineEvent> timelineEvents;
 
   @override
-  State<App> createState() => _AppState();
+  State<TimelineApp> createState() => _TimelineAppState();
 }
 
-class _AppState extends State<App> with SyncStateMixin<App, Map<String, dynamic>> {
-  /// The name of the test.
-  late final String testName;
-
-  /// The name of the test with the hierarchy.
-  late final String testNameWithHierarchy;
-
-  /// The events that occurred during the test.
-  late final List<TimelineEvent> timelineEvents;
-
-  @override
-  void initState() {
-    super.initState();
-
-    // Initialize the state with the data we get during server side rendering.
-    // On client, the state is initialized in `updateState` instead.
-    if (!kIsWeb) {
-      testName = component.testName!;
-      testNameWithHierarchy = component.testNameWithHierarchy!;
-      timelineEvents = component.timelineEvents!;
-    }
-  }
-
-  @override
-  Map<String, dynamic> getState() {
-    // This uses Jasprs sync mechanism to embed the server state into the rendered HTML.
-    return {
-      'testName': testName,
-      'testNameWithHierarchy': testNameWithHierarchy,
-      'timelineEvents': timelineEvents.map((e) => e.toMap()).toList(),
-    };
-  }
-
-  @override
-  void updateState(Map<String, dynamic> value) {
-    // This uses Jasprs sync mechanism to retrieve the synced server state from the rendered HTML.
-    timelineEvents = (value['timelineEvents'] as List).cast<Map<String, dynamic>>().map(TimelineEvent.fromMap).toList();
-    testName = value['testName'] as String;
-    testNameWithHierarchy = value['testNameWithHierarchy'] as String;
-  }
-
+class _TimelineAppState extends State<TimelineApp> {
   // ignore: prefer_const_constructors
   final GlobalKey<_SnackBarState> _snackBar = GlobalKey();
   // ignore: prefer_const_constructors
@@ -87,10 +50,10 @@ class _AppState extends State<App> with SyncStateMixin<App, Map<String, dynamic>
       ]),
       p([
         strong([text("Test:")]),
-        text(" $testNameWithHierarchy"),
+        text(" ${component.testNameWithHierarchy}"),
       ]),
       button(classes: "button-spot", onClick: () async {
-        final command = 'flutter test --plain-name="$testName"';
+        final command = 'flutter test --plain-name="${component.testName}"';
         try {
           await window.navigator.clipboard.writeText(command).toDart;
           _snackBar.currentState!.show("Test command copied to clipboard");
@@ -101,13 +64,13 @@ class _AppState extends State<App> with SyncStateMixin<App, Map<String, dynamic>
         text("Copy test command"),
       ]),
       SnackBar(key: _snackBar),
-      if (timelineEvents.isNotEmpty) ...[
+      if (component.timelineEvents.isNotEmpty) ...[
         div(classes: "horizontal-spacer", [
           h2([text("Events")])
         ]),
         section(classes: "events", [
           Events(
-            timeLineEvents: timelineEvents,
+            timeLineEvents: component.timelineEvents,
             onClick: (event) {
               _modal.currentState!.open(event);
             },
@@ -118,7 +81,7 @@ class _AppState extends State<App> with SyncStateMixin<App, Map<String, dynamic>
         text("Tell us how to improve the timeline at "),
         a(href: "https://github.com/passsy/spot/issues", [text("github.com/passsy/spot")]),
       ]),
-      Modal(events: timelineEvents, key: _modal),
+      Modal(events: component.timelineEvents, key: _modal),
     ];
   }
 }
