@@ -2,25 +2,30 @@
 
 [![pub](https://img.shields.io/pub/v/spot?include_prereleases)](https://pub.dev/packages/spot)
 
-<img src="https://user-images.githubusercontent.com/1096485/188243198-7abfc785-8ecd-40cb-bb28-5561610432a4.png" height="100px">
+![DALL·E generated spot repo header image](https://github.com/user-attachments/assets/490103a5-4ac6-41f9-9b4f-4333e3e5ff66)
 
-Spot is a toolkit for Flutter widget tests.
-It simplifies queries and assertions against the widget tree (better finder API called `spot`). 
-And visualizes the timeline of a test as HTML report with automatic screenshots.
+Spot is a toolkit for Flutter widget tests.<br/>
+It simplifies queries and assertions against the widget tree (better finder API called `spot`) and
+visualizes the Timeline of a test as HTML report with automatic screenshots.
 
-🖼️ Automatic screenshots during widget tests (Timeline)
-⛓️ Chainable widget selectors
-💙 Useful error messages (with full tree dump)
-🌱 Works with plain `testWidgets()`
-💫 Compatible with `integration_test`
+🖼️ Automatic screenshots during widget tests (Timeline)<br/>
+⛓️ Chainable widget selectors<br/>
+💙 Useful error messages (with full tree dump)<br/>
+🌱 Opt-in, works with plain `testWidgets()`<br/>
+💫 Ful compatibility with `integration_test`<br/>
 
-## Usage
+## Get started
 
-Replace your existing finders with `spot`. 
+```bash
+flutter pub add dev:spot
+```
 
-Once you interact with `spot` (or `act`), the information can be captures by the Timeline.
+1\. Replace widget assertions (`find`) with `spot`.<br/>
+2\. Replace interactions like `tester.tap()` with `act.tap()` to interact with widgets.
 
-```diff
+With every call with `spot` or `act`, spot captures the current frame and adds it to the Timeline HTML report.
+
+```diff dart
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
@@ -32,8 +37,8 @@ void main() {
 -    await tester.tap(find.byType(ElevatedButton));
 +    await act.tap(spot<ElevatedButton>());
 
--    expect(find.text('monde'), findsOneWidget);
-+    spotText('monde').existsOnce();
+-    expect(find.text('monde'), findsOneWidget); // 🇫🇷
++    spot<Scaffold>().spotText('monde').existsOnce(); // 🇫🇷
 
      // Automatically generates a timeline report on error
   });
@@ -42,7 +47,7 @@ void main() {
 
 When your test fails, spot generates the Timeline HTML report with all assertions (`spot`) and gestures (`act`), automatic screenshots ond more information.
 
-```
+```bash
 Generating timeline report
 View time line here: file:///var/folders/0j/p0s0zrv91tgd33zrxb98c0440000gn/T/ecsTKx/existing-widget.html
 ```
@@ -51,10 +56,133 @@ You can open the local Timeline report in your browser.
 
 ![Timeline](https://github.com/user-attachments/assets/48a1a754-f56a-4c61-a4ef-b6e564ee1282)
 
+## Timeline
 
-## Manual Screenshots
+### Overview
 
-Within your existing widget tests without spot, use `await takeScreenshot()` to see what is happening on the virtual screen.
+The Timeline is a visual representation of the widget test run, rendered as an HTML report.
+It shows all interactions with the spot package, like `spot` and `act`.
+The focus on screenshots with annotations makes it easy to follow what happened during the test run.
+At any point in the timeline, it is possible to jump back into the test code.
+
+The Timeline is constructed during a widget test with the first interaction with `spot`.
+The more frames of a test are asserted with spot, the more detailed the Timeline becomes.
+
+By default, the Timeline is automatically generated when a test fails.
+The path to the HTML file is printed to the console.
+
+Successful tests skip the Timeline generation (and extra work).
+
+Widget tests without any call to `spot` do **not** generate a Timeline.
+
+### Add custom events to the Timeline
+
+You can add custom events to the Timeline to better understand what is happening in your test.
+The timeline API is completely open and allows adding any event you want.
+
+```dart
+timeline.addEvent(
+  eventType: 'Received fake server response',
+  details: 'HTTP 200\n{"message": "Hello World"}',
+  color: Colors.orange,
+  screenshot: timeline.takeScreenshotSync(),
+);
+```
+
+![Custom Timeline event](https://github.com/user-attachments/assets/fed7b032-76c0-44ab-b8b3-f33b81f420da)
+
+### Change Timeline mode
+
+Spot automatically generates a Timeline HTML report when a test fails.
+Change this behavior by adjusting the `TimelineMode`, e.g. during development, to always generate the timeline or skip it for parts of a test.
+
+`TimlineMode` defines the following values:
+
+- `off`: No events will be recorded
+- `reportOnError` _(default)_: Only generate a Timeline report when a test fails
+- `always`: Always generate the Timeline report at the end of the test
+- `live`: Print all Timeline events to console as they happen
+
+There are three ways to change the `TimlineMode`:
+
+#### Single test
+
+```dart
+
+void main() {
+  testWidgets('my widget test', (tester) async {
+    timeline.mode = TimelineMode.always;
+    /* ... */
+  });
+
+  testWidgets('complex test', (tester) async {
+    timeline.mode = TimelineMode.off;
+    /* long setup which should not be recorded */
+    timeline.mode = TimelineMode.reportOnError;
+    
+    // relevant test code
+  });
+}
+```
+
+#### Entire file
+
+Changing the `globalTimelineMode` only a default at the beginning of each test.
+It can be changed by each test individually.
+
+```dart
+void main() {
+  globalTimelineMode = TimelineMode.off;
+  
+  testWidgets('my widget test', (tester) async {/* ... */});
+
+  testWidgets('another test', (tester) async {
+    // overwrites the global mode
+    timeline.mode = TimelineMode.always;
+    // consle: View time line here: file:///var/folders/0j/p0s0zrv91t...
+  });
+}
+```
+
+#### Global
+
+```bash
+flutter test --dart-define=SPOT_TIMELINE_MODE=always
+```
+
+### Timeline in console on CI
+
+On CI servers, it might be hard to open the HTML reports.
+Unless they are explicitly archived after a run, they are usually inaccessible.
+
+Spot automatically [detects CI](https://pub.dev/packages/ci) systems and dumps the Timeline to the console when a test fails.
+That might be ugly to read, but all information is better than none.
+
+To disable this behavior, set `SPOT_TIMELINE_MODE=off` as an environment variable.
+
+```yaml
+# Github Actions
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: Run tests
+        run: flutter test --dart-define=SPOT_TIMELINE_MODE=off
+```
+
+## Screenshots
+
+### Manual Screenshots
+
+The Timeline automatically captures screenshots. But those are always for the entire screen and are not available during the test itself.
+
+Use `await takeScreenshot()` to get the current pixels on the virtual screen.
+
+`takeScreenshot` also takes a `selector` parameter to screenshot a single widget. This is useful to check the actual rasterized image (pixels) of a widget.
 
 ```dart
 import 'package:flutter/material.dart';
@@ -73,12 +201,37 @@ void main() {
     
     // Take a screenshot of a single widget
     await spot<AppBar>().takeScreenshot();
+    await takeScreenshot(selector: spot<AppBar>());
     // console:
     // Screenshot file:///var/folders/0j/p0s0zrv91tgd33zrxb88c0440000gn/T/spot/screenshot_test:16-w8UPv.png
     //   taken at main.<fn> file:///Users/pascalwelsch/Projects/passsy/spot/test/spot/screenshot_test.dart:16:24
   });
 }
 ```
+
+### Load Fonts
+
+The Timeline shows a rich report of the significant events during the test with screenshots.
+To better understand what's shown on the screenshots, it's important to load the fonts from your app, otherwise Flutter renders the text with the unreadable `Ahem` default font.
+
+Use `await loadAppFonts()` to load the fonts defined in the `pubspec.yaml`.
+
+```dart
+void main() {
+  testWidgets('my widget test', (tester) async {
+    await loadAppFonts();
+    /* ... */
+  });
+}
+```
+
+Additionally, `loadAppFonts()` loads the `Roboto` font, which is the default font in Flutter tests.
+
+| before | after |
+|--------|-------|
+| ![golden_testImage](https://github.com/user-attachments/assets/385e7760-c3ee-42d7-a3bd-6c5b906b7452) | ![golden_masterImage](https://github.com/user-attachments/assets/8261f27e-5a38-43c2-bff9-cfe01496215c) |
+
+## Widget selectors `spot`
 
 ### Chain selectors
 
@@ -130,7 +283,6 @@ final WidgetSelector<TextField> usernameTextField =
 A `WidgetSelector` may return 0, 1 or N widgets.
 Depending on how many widgets you expect to find, you should use the corresponding matchers.
 
-
 ### Better errors
 
 By chaining widget selectors, spot can provide better errors by searching the parent scope first for potential candidates.
@@ -138,7 +290,7 @@ By chaining widget selectors, spot can provide better errors by searching the pa
 Here, the settings icon couldn't not be found in the `AppBar`.
 Classic widget tests would show the following error using `findsOneWidget`.
 
-```
+```text
 expect(find.byIcon(Icons.settings), findsOneWidget);
 
 >>> Expected: exactly one matching node in the widget tree
@@ -149,7 +301,8 @@ expect(find.byIcon(Icons.settings), findsOneWidget);
 The error message above is not really helpful, because the actual error is not that there's no icon, but the `Icons.home` instead of `Icons.settings`.
 
 The spot error message is much more helpful, showing two potential candidates in the `AppBar`.
-```
+
+```text
 Could not find AppBar ᗕ Icon Widget with icon: "IconData(U+0E57F)" in widget tree, expected exactly
 1
 A less specific search (Icon with parent AppBar) discovered 2 matches!
@@ -338,7 +491,7 @@ void main() {
 - ✅️ Create interactive HTML page with all widgets and matchers when test fails
 - ✅ Automatically create report with screenshots of all user interactions
 - ✅ `loadAppFonts()`
-- ⬜️ More `act` features, feature parity with `WidgetTester` 
+- ⬜️ More `act` features, feature parity with `WidgetTester`
 - ⬜️ Combine multiple WidgetSelectors with `and`
 - ⬜️ Become the de facto Widget selector API for [patrol](https://pub.dev/packages/patrol)
 - ⬜️ Single pixel color testing
@@ -354,7 +507,7 @@ void main() {
 
 ## License
 
-```
+```text
 Copyright 2022 Pascal Welsch
 
 Licensed under the Apache License, Version 2.0 (the "License");
