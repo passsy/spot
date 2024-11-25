@@ -4,52 +4,57 @@
 
 <img src="https://user-images.githubusercontent.com/1096485/188243198-7abfc785-8ecd-40cb-bb28-5561610432a4.png" height="100px">
 
-Fluent, chainable Widget finders and better assertions for Flutter widget tests
+Spot is a toolkit for Flutter widget tests.
+It simplifies queries and assertions against the widget tree (better finder API called `spot`). 
+And visualizes the timeline of a test as HTML report with automatic screenshots.
 
+🖼️ Automatic screenshots during widget tests (Timeline)
 ⛓️ Chainable widget selectors
-💙 Prints helpful error messages
+💙 Useful error messages (with full tree dump)
+🌱 Works with plain `testWidgets()`
+💫 Compatible with `integration_test`
 
 ## Usage
 
-```dart
+Replace your existing finders with `spot`. 
+
+Once you interact with `spot` (or `act`), the information can be captures by the Timeline.
+
+```diff
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 
 void main() {
-  testWidgets('Widget test with spot', (tester) async {
-    // Create widget selectors for elements in the widget tree
-    final scaffold = spot<MaterialApp>().spot<Scaffold>();
-    final appBar = scaffold.spot<AppBar>();
+  testWidgets('existing Widget test', (tester) async {
+     await tester.pumpWidget(MyApp());
+  
+-    await tester.tap(find.byType(ElevatedButton));
++    await act.tap(spot<ElevatedButton>());
 
-    // Assert for values of widgets
-    appBar.spotText('Dash').hasFontSize(14).hasFontColor(Colors.black87);
+-    expect(find.text('monde'), findsOneWidget);
++    spotText('monde').existsOnce();
 
-    // Find widgets based on child widgets
-    appBar
-        .spot<IconButton>(children: [spotIcon(Icons.home)])
-        .existsOnce()
-        .hasTooltip('home');
-
-    // Find widgets based on multiple parent widgets
-    spot<Icon>(parents: [appBar, spot<IconButton>()])
-        .existsExactlyNTimes(2)
-        .all((icon) {
-      icon.hasColorWhere((color) => color.equals(Colors.black));
-    });
-
-    // Interact with widgets using `act`
-    final button = spot<FloatingActionButton>();
-    await act.tap(button);
-
-    final text = spot<TextField>();
-    await act.enterText(text, 'Hello World');
+     // Automatically generates a timeline report on error
   });
 }
-
 ```
 
-Take screenshots of your entire screen or single widgets to see what's going on.
+When your test fails, spot generates the Timeline HTML report with all assertions (`spot`) and gestures (`act`), automatic screenshots ond more information.
+
+```
+Generating timeline report
+View time line here: file:///var/folders/0j/p0s0zrv91tgd33zrxb98c0440000gn/T/ecsTKx/existing-widget.html
+```
+
+You can open the local Timeline report in your browser.
+
+![Timeline](https://github.com/user-attachments/assets/48a1a754-f56a-4c61-a4ef-b6e564ee1282)
+
+
+## Manual Screenshots
+
+Within your existing widget tests without spot, use `await takeScreenshot()` to see what is happening on the virtual screen.
 
 ```dart
 import 'package:flutter/material.dart';
@@ -74,7 +79,6 @@ void main() {
   });
 }
 ```
-
 
 ### Chain selectors
 
@@ -125,6 +129,79 @@ final WidgetSelector<TextField> usernameTextField =
 
 A `WidgetSelector` may return 0, 1 or N widgets.
 Depending on how many widgets you expect to find, you should use the corresponding matchers.
+
+
+### Better errors
+
+By chaining widget selectors, spot can provide better errors by searching the parent scope first for potential candidates.
+
+Here, the settings icon couldn't not be found in the `AppBar`.
+Classic widget tests would show the following error using `findsOneWidget`.
+
+```
+expect(find.byIcon(Icons.settings), findsOneWidget);
+
+>>> Expected: exactly one matching node in the widget tree
+>>>   Actual: _WidgetIconFinder:<zero widgets with icon "IconData(U+0E57F)" (ignoring offstage widgets)>
+>>>    Which: means none were found but one was expected
+```
+
+The error message above is not really helpful, because the actual error is not that there's no icon, but the `Icons.home` instead of `Icons.settings`.
+
+The spot error message is much more helpful, showing two potential candidates in the `AppBar`.
+```
+Could not find AppBar ᗕ Icon Widget with icon: "IconData(U+0E57F)" in widget tree, expected exactly
+1
+A less specific search (Icon with parent AppBar) discovered 2 matches!
+
+View time line here: file:///var/folders/0j/p0s0zrv91tgd33zrxb88c0440000gn/T/hDEgVS/timeline-narrow-down-search-down-the-tree.html
+```
+
+Spot was able to find two Icon Widgets in the AppBar (with the wrong icon). They are presented in the Timeline report, highlighted in the screenshot.
+
+![Home Icon is the error](https://github.com/user-attachments/assets/9929d827-e8d0-4d01-aeeb-68eb6912d248)
+
+#### Complex Example
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:spot/spot.dart';
+
+void main() {
+  testWidgets('Widget test with spot', (tester) async {
+    // Create widget selectors for elements in the widget tree
+    final scaffold = spot<MaterialApp>().spot<Scaffold>();
+    final appBar = scaffold.spot<AppBar>();
+
+    // Assert for values of widgets
+    appBar.spotText('Dash').hasFontSize(14).hasFontColor(Colors.black87);
+
+    // Find widgets based on child widgets
+    appBar
+        .spot<IconButton>(children: [spotIcon(Icons.home)])
+        .existsOnce()
+        .hasTooltip('home');
+
+    // Find widgets based on multiple parent widgets
+    spot<Icon>(parents: [appBar, spot<IconButton>()])
+        .existsExactlyNTimes(2)
+        .all((icon) {
+      icon.hasColorWhere((color) => color.equals(Colors.black));
+    });
+
+    // Interact with widgets using `act`
+    final button = spot<FloatingActionButton>();
+    await act.tap(button);
+
+    final text = spot<TextField>();
+    await act.enterText(text, 'Hello World');
+    
+    // at the end of a failed test, spot will generate a Timeline HTML file
+  });
+}
+
+```
 
 ### Matchers
 
@@ -242,64 +319,6 @@ void main() {
 }
 ```
 
-### Better errors
-
-In case the settings icon doesn't exist you usually would get the following error using `findsOneWidget`
-
-```
-expect(find.byIcon(Icons.settings), findsOneWidget);
-
->>> Expected: exactly one matching node in the widget tree
->>>   Actual: _WidgetIconFinder:<zero widgets with icon "IconData(U+0E57F)" (ignoring offstage widgets)>
->>>    Which: means none were found but one was expected
-```
-
-The error message above is not really helpful, because the actual error is not that there's no icon, but the `Icons.home` instead of `Icons.settings`.
-
-spot prints the entire widget tree and shows that there is an `Icon`, but the wrong one (`IconData(U+0E318)`).
-That's much more helpful!
-
-In the future, spot will only print the widget tree from the last node found node (`spot<AppBar>`).
-
-```
-spot<AppBar>().spotIcon(Icons.settings).existsOnce();
-
-Could not find 'icon "IconData(U+0E57F)"' as child of #2 type "IconButton"
-There are 1 possible parents for 'icon "IconData(U+0E57F)"' matching #2 type "IconButton". But non matched. The widget trees starting at #2 type "IconButton" are:
-Possible parent 0:
-IconButton(Icon, padding: EdgeInsets.all(8.0), dependencies: [_InheritedTheme, IconTheme, _LocalizationsScope-[GlobalKey#bdafc]])
-└Semantics(container: false, properties: SemanticsProperties, renderObject: RenderSemanticsAnnotations#9b22d relayoutBoundary=up13)
- └InkResponse
-  └_InkResponseStateWidget(gestures: [tap], mouseCursor: SystemMouseCursor(click), BoxShape.circle, dependencies: [MediaQuery], state: _InkResponseState#181bf)
-   └_ParentInkResponseProvider
-    └Actions(dispatcher: null, actions: {ActivateIntent: CallbackAction<ActivateIntent>#fded7, ButtonActivateIntent: CallbackAction<ButtonActivateIntent>#5d1ad}, state: _ActionsState#f4947)
-     └_ActionsMarker
-      └Focus(dependencies: [_FocusMarker], state: _FocusState#3db93)
-       └_FocusMarker
-        └Semantics(container: false, properties: SemanticsProperties, renderObject: RenderSemanticsAnnotations#d907f relayoutBoundary=up14)
-         └MouseRegion(listeners: [enter, exit], cursor: SystemMouseCursor(click), renderObject: RenderMouseRegion#49c96 relayoutBoundary=up15)
-          └Semantics(container: false, properties: SemanticsProperties, renderObject: RenderSemanticsAnnotations#e83d5 relayoutBoundary=up16)
-           └GestureDetector(startBehavior: start, dependencies: [MediaQuery])
-            └RawGestureDetector(state: RawGestureDetectorState#2d012(gestures: [tap], excludeFromSemantics: true, behavior: opaque))
-             └Listener(listeners: [down], behavior: opaque, renderObject: RenderPointerListener#cab1c relayoutBoundary=up17)
-              └ConstrainedBox(BoxConstraints(48.0<=w<=Infinity, 48.0<=h<=Infinity), renderObject: RenderConstrainedBox#96a26 relayoutBoundary=up18)
-               └Padding(padding: EdgeInsets.all(8.0), dependencies: [Directionality], renderObject: RenderPadding#c223d relayoutBoundary=up19)
-                └SizedBox(width: 24.0, height: 24.0, renderObject: RenderConstrainedBox#d47d4 relayoutBoundary=up20)
-                 └Align(alignment: Alignment.center, dependencies: [Directionality], renderObject: RenderPositionedBox#ac4b6)
-                  └Builder(dependencies: [IconTheme])
-                   └IconTheme(color: Color(0xffffffff), size: 24.0)
-                    └Icon(IconData(U+0E318), dependencies: [Directionality, IconTheme])
-                     └Semantics(container: false, properties: SemanticsProperties, renderObject: RenderSemanticsAnnotations#ec9ab relayoutBoundary=up1)
-                      └ExcludeSemantics(excluding: true, renderObject: RenderExcludeSemantics#5b179 relayoutBoundary=up2)
-                       └SizedBox(width: 24.0, height: 24.0, renderObject: RenderConstrainedBox#eefd6 relayoutBoundary=up3)
-                        └Center(alignment: Alignment.center, dependencies: [Directionality], renderObject: RenderPositionedBox#4c194)
-                         └RichText(textDirection: ltr, softWrap: wrapping at box width, overflow: visible, maxLines: unlimited, text: "", dependencies: [_LocalizationsScope-[GlobalKey#bdafc]], renderObject: RenderParagraph#35451 relayoutBoundary=up1)
-══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
-The following TestFailure was thrown running a test:
-Could not find 'icon "IconData(U+0E57F)"' as child of [type "MaterialApp" > 'type "Scaffold"' >
-'type "AppBar"' && type "IconButton"]
-```
-
 ## Roadmap
 
 - ✅ Make chainable `WidgetSelector`s
@@ -315,23 +334,23 @@ Could not find 'icon "IconData(U+0E57F)"' as child of [type "MaterialApp" > 'typ
 - ✅ Allow manually printing a screenshot at certain points
 - ✅ Negate child matchers
 - ✅ Simplify `WidgetSelector` API
-- ⬜️ Become the de facto Widget selector API for [patrol](https://pub.dev/packages/patrol)
+- ✅ Create screenshot when test fails
+- ✅️ Create interactive HTML page with all widgets and matchers when test fails
+- ✅ Automatically create report with screenshots of all user interactions
+- ✅ `loadAppFonts()`
+- ⬜️ More `act` features, feature parity with `WidgetTester` 
 - ⬜️ Combine multiple WidgetSelectors with `and`
-- ⬜️ More `act` features
-- ⬜️ Print only widget tree of the parent scope when test fails
-- ⬜️ Create screenshot when test fails
-- ⬜️ Automatically create report with screenshots of all user interactions
-- ⬜️ Create interactive HTML page with all widgets and matchers when test fails
+- ⬜️ Become the de facto Widget selector API for [patrol](https://pub.dev/packages/patrol)
+- ⬜️ Single pixel color testing
+- ⬜️ `pumpSmart()`
 
 ## Project state
 
-Spot is used in production by many apps already.
-The current plan is to merge spot somehow with [patrol](https://pub.dev/packages/patrol), the next big milestone.
+100% production ready.
 
-The public `spot<X>()` API just received a rework in `0.10.0` which cleans up and simplifies the API. (Awaiting feedback)
-The `act` API is still experimental and has known issues. (WIP)
-
-Even though things are still fluid, `spot` today already provides a lot of value over the traditional `finder` API.
+- The `WidgetSelector` API is stable
+- The existing `act` API is limited, but what exists is great.
+- The Timeline is in its early stages but will be improved over time.
 
 ## License
 
