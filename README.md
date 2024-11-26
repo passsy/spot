@@ -6,7 +6,7 @@
 
 Spot is a toolkit for Flutter widget tests.<br/>
 It simplifies queries and assertions against the widget tree (better finder API called `spot`) and
-visualizes the Timeline of a test as HTML report with automatic screenshots.
+visualizes the steps of a widget test as HTML report with automatic screenshots, the `Timeline`.
 
 🖼️ Automatic screenshots during widget tests (Timeline)<br/>
 ⛓️ Chainable widget selectors<br/>
@@ -45,11 +45,11 @@ void main() {
 }
 ```
 
-When your test fails, spot generates the Timeline HTML report with all assertions (`spot`) and gestures (`act`), automatic screenshots ond more information.
+When your test fails, spot generates the Timeline HTML report with all assertions (`spot`) and gestures (`act`), automatic screenshots and more information.
 
 ```bash
 Generating timeline report
-View time line here: file:///var/folders/0j/p0s0zrv91tgd33zrxb98c0440000gn/T/ecsTKx/existing-widget.html
+View timeline here: file:///var/folders/0j/p0s0zrv91tgd33zrxb98c0440000gn/T/ecsTKx/existing-widget.html
 ```
 
 You can open the local Timeline report in your browser.
@@ -96,14 +96,14 @@ timeline.addEvent(
 Spot automatically generates a Timeline HTML report when a test fails.
 Change this behavior by adjusting the `TimelineMode`, e.g. during development, to always generate the timeline or skip it for parts of a test.
 
-`TimlineMode` defines the following values:
+`TimelineMode` defines the following values:
 
 - `off`: No events will be recorded
 - `reportOnError` _(default)_: Only generate a Timeline report when a test fails
 - `always`: Always generate the Timeline report at the end of the test
 - `live`: Print all Timeline events to console as they happen
 
-There are three ways to change the `TimlineMode`:
+There are three ways to change the `TimelineMode`:
 
 #### Single test
 
@@ -117,7 +117,7 @@ void main() {
 
   testWidgets('complex test', (tester) async {
     timeline.mode = TimelineMode.off;
-    /* long setup which should not be recorded */
+    /* a long setup which should not be recorded */
     timeline.mode = TimelineMode.reportOnError;
     
     // relevant test code
@@ -139,7 +139,7 @@ void main() {
   testWidgets('another test', (tester) async {
     // overwrites the global mode
     timeline.mode = TimelineMode.always;
-    // consle: View time line here: file:///var/folders/0j/p0s0zrv91t...
+    // consle: View timeline here: file:///var/folders/0j/p0s0zrv91t...
   });
 }
 ```
@@ -152,8 +152,9 @@ flutter test --dart-define=SPOT_TIMELINE_MODE=always
 
 ### Timeline in console on CI
 
-On CI servers, it might be hard to open the HTML reports.
-Unless they are explicitly archived after a run, they are usually inaccessible.
+On CI servers, it might be hard to access the HTML reports.
+The only output is often the console output.
+Unless the reports are explicitly archived after a run, they are usually inaccessible.
 
 Spot automatically [detects CI](https://pub.dev/packages/ci) systems and dumps the Timeline to the console when a test fails.
 That might be ugly to read, but all information is better than none.
@@ -286,8 +287,9 @@ Depending on how many widgets you expect to find, you should use the correspondi
 ### Better errors
 
 By chaining widget selectors, spot can provide better errors by searching the parent scope first for potential candidates.
+This can save a lot of time when debugging failing widget tests.
 
-Here, the settings icon couldn't not be found in the `AppBar`.
+Here, the settings icon could not be found in the `AppBar`.
 Classic widget tests would show the following error using `findsOneWidget`.
 
 ```text
@@ -307,12 +309,14 @@ Could not find AppBar ᗕ Icon Widget with icon: "IconData(U+0E57F)" in widget t
 1
 A less specific search (Icon with parent AppBar) discovered 2 matches!
 
-View time line here: file:///var/folders/0j/p0s0zrv91tgd33zrxb88c0440000gn/T/hDEgVS/timeline-narrow-down-search-down-the-tree.html
+View timeline here: file:///var/folders/0j/p0s0zrv91tgd33zrxb88c0440000gn/T/hDEgVS/timeline-narrow-down-search-down-the-tree.html
 ```
 
 Spot was able to find two Icon Widgets in the AppBar (with the wrong icon). They are presented in the Timeline report, highlighted in the screenshot.
 
 ![Home Icon is the error](https://github.com/user-attachments/assets/9929d827-e8d0-4d01-aeeb-68eb6912d248)
+
+A picture is worth a thousand lines of code.
 
 #### Complex Example
 
@@ -385,7 +389,7 @@ selector.doesNotExist(); // end, nothing to match on
 #### Property matchers
 
 The property matchers allow asserting on the properties of the widgets.
-You don't have to use `execpt()`, instead you can use the `has*`/`is*` matchers directly.
+You don't have to use `expect()`, instead you can use the `has*`/`is*` matchers directly.
 
 ```dart
 spot<Tooltip>()
@@ -408,7 +412,7 @@ spot<AppBar>().spot<Tooltip>().existsAtLeastOnce()
     );
 ```
 
-### Selectors vs Matchers
+### Selectors vs. Matchers
 
 It is recommended to use matchers instead of selectors once you have narrowed down the search space to the widget you want to assert on.
 This makes the error messages much clearer.
