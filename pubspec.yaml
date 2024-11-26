@@ -1,5 +1,5 @@
 name: spot
-description: Chainable powerful widget selector API, screenshots and assertions for awesome widget tests.
+description: Flutter widget test toolkit - spot, act, validate. Better selectors, automatic screenshots, chainable.
 version: 0.16.0
 repository: https://github.com/passsy/spot
 issue_tracker: https://github.com/passsy/spot/issues
