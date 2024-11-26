@@ -12,7 +12,32 @@ visualizes the steps of a widget test as HTML report with automatic screenshots,
 ⛓️ Chainable widget selectors<br/>
 💙 Useful error messages (with full tree dump)<br/>
 🌱 Opt-in, works with plain `testWidgets()`<br/>
-💫 Ful compatibility with `integration_test`<br/>
+💫 Full compatibility with `integration_test`<br/>
+
+- [Get started](#get-started)
+- [Timeline](#timeline)
+    - [Overview](#overview)
+    - [Add custom events to the Timeline](#add-custom-events-to-the-timeline)
+    - [Change Timeline mode](#change-timeline-mode)
+    - [Timeline in console on CI](#timeline-in-console-on-ci)
+- [Screenshots](#screenshots)
+    - [Manual Screenshots](#manual-screenshots)
+    - [Load Fonts](#load-fonts)
+- [spot - Widget selectors](#widget-selectors-spot)
+    - [Chain selectors](#chain-selectors)
+    - [Selectors](#selectors)
+    - [Better errors](#better-errors)
+    - [Matchers](#matchers)
+    - [Selectors vs. Matchers](#selectors-vs-matchers)
+    - [Find offstage widgets](#find-offstage-widgets)
+- [act - tap, drag, type](#act-tap-drag-type-click)
+  - [tap](#tap)
+  - [enterText](#entertext)
+  - [dragUntilVisible](#draguntilvisible)
+  - [more act functions](#more-act-functions)
+- [Roadmap](#roadmap)
+- [Project state](#project-state)
+- [License](#license)
 
 ## Get started
 
