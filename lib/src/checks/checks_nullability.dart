@@ -42,7 +42,6 @@ CheckFailure? softCheckHideNull<T>(T value, Condition<T> condition) {
     return null;
   }
   final errorParts = describe(condition).map((it) => it.trim()).toList();
-  final errorMessage = errorParts.join(' ');
   if (errorParts.last == 'is null' &&
       failure.rejection.actual.firstOrNull == '<null>') {
     // property is null and isNull() was called
