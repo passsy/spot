@@ -50,7 +50,7 @@ flutter pub add dev:spot
 
 With every call with `spot` or `act`, spot captures the current frame and adds it to the Timeline HTML report.
 
-```diff dart
+```dart
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
@@ -59,11 +59,11 @@ void main() {
   testWidgets('existing Widget test', (tester) async {
      await tester.pumpWidget(MyApp());
   
--    await tester.tap(find.byType(ElevatedButton));
-+    await act.tap(spot<ElevatedButton>());
+     // await tester.tap(find.byType(ElevatedButton));
+     await act.tap(spot<ElevatedButton>());
 
--    expect(find.text('monde'), findsOneWidget); // 🇫🇷
-+    spot<Scaffold>().spotText('monde').existsOnce(); // 🇫🇷
+     // expect(find.text('monde'), findsOneWidget); // 🇫🇷
+     spot<Scaffold>().spotText('monde').existsOnce(); // 🇫🇷
 
      // Automatically generates a timeline report on error
   });
