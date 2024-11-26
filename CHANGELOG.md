@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.16.0
+- Add `snapshotState<S>()`
+  `final state = spot<MyContainer>().snapshotState<MyContainerState>()`
+- Add `snapshotRenderBox()`
+- Export `WidgetPresence`
+- Add `@useResult` to `.atMost(N)`, `.atLeast(N)`, `.amount(N)` and `.existsAtMostNTimes(N)` to prevent missing assertions
+- Fix `existsAtLeastNTimes` dumping the widget tree to console 
+- Fix image rendering with `TimelineMode.always`
+- Add Timeline to `/README.md`
+- Add `act` to `/README.md`
+
 ## 0.15.0
 - Add `loadAppFonts()` to display your app fonts on screenshots #66
 - Add `loadFont()` to load a fonts from a file. Useful when your app depends on preinstalled system fonts (`loadFont('Comic Sans', [r'C:\Windows\Fonts\comic.ttf'])`) #66
