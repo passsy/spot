@@ -472,6 +472,67 @@ void main() {
 }
 ```
 
+## act - tap, drag, type, click
+
+To interact with widgets, use the `act` API.
+The collection of functions mimics user interactions with the UI.
+It tries to reach feature parity with the `WidgetTester` API, while drastically improving common pitfalls and error messages.
+
+### tap
+
+Triggers a tap event (down + up) on the found widget.
+
+```dart
+// flutter_test
+// await tester.tap(find.byType(ElevatedButton));
+
+// spot
+await act.tap(spot<ElevatedButton>());
+```
+
+Tapping a widget looks almost identical to the `WidgetTester` API but with a few improvements.
+
+- Checks that the widget is within the window bounds
+- When partially visible, automatically taps the visible part (and prints a warning when <80% tappable)
+- When fully covered, shows which widgets overlay it
+- Adds screenshot with crosshair annotation to the Timeline
+- pumps automatically after the tap
+- When multiple widgets are found, it prints a useful error message
+
+### enterText
+
+```dart
+await act.enterText(spot<EmailAddress>(), 'dash@wiredash.com');
+```
+
+The `act.enterText()` automatically searches for the first `EditableText` widget within the provide selector (`spot<EmailAddress>()`).
+It then enters the text in one go (like pasting it) and pumps the widget tree.
+
+### dragUntilVisible
+
+```dart
+await act.dragUntilVisible(
+  dragStart: spot<LongListScreen>().spot<Scrollable>(),
+  dragTarget: spotText('Item 32'),
+  moveStep: const Offset(0, -100),
+);
+```
+
+The `act.dragUntilVisible()` continuously drags from the center of `dragStart` until it reaches `dragTarget`.
+
+The direction is determined by the `moveStep` parameter.
+Scrolling towards the end (bottom) of a list is archived with a negative `dy` (`Offset(0, -100)`).
+scrolling towards the beginning (top) requires a positive `dy` (`Offset(0, 100)`).
+
+Scroll faster by increasing the `moveStep` value. Make sure to keep it below the height of the viewport or the `dragTarget` might be missed.
+Check the Timeline for screenshots of the dragged area. It will help to determine good values for `moveStep`, minimizing the number of drags.
+
+Increase `maxIteration` (default `30`) for very long lists if the item is not found within that many drags.
+
+### more act functions
+
+Please [create an issues](https://github.com/passsy/spot/issues/new) when you miss a function or have a suggestion for a new one. Any contribution in this direction is welcome.
+
 ## Roadmap
 
 - ✅ Make chainable `WidgetSelector`s
