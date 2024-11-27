@@ -345,14 +345,11 @@ class Act {
     return element?.renderObject;
   }
 
-  bool _validatePositionOnViewBounds(
-    Offset position, {
-    bool throwIfInvisible = true,
-  }) {
+  bool _validatePositionOnViewBounds(Offset position) {
     final HitTestResult result = HitTestResult();
     TestWidgetsFlutterBinding.instance.hitTestInView(result, position, 0);
     final isInRenderView = result.path.isNotEmpty;
-    if (!isInRenderView && throwIfInvisible) {
+    if (!isInRenderView) {
       throw TestFailure(
         "Tried to tapAt position ($position) which is outside the viewport (${TestWidgetsFlutterBinding.instance.renderViews.first.size}).",
       );
