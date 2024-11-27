@@ -160,9 +160,14 @@ class Act {
               CrosshairAnnotator(centerPosition: position),
             ],
           );
+          final HitTestResult result = HitTestResult();
+          binding.hitTestInView(result, position, 0);
+          final hits = result.path.map((e) => e.element?.widget).toList();
+
           timeline.addEvent(
             eventType: 'TapAt Event',
-            details: 'TapAt $position',
+            details:
+                'TapAt $position. widgets at this position: ${hits.map((e) => e!.toStringShort())}',
             screenshot: screenshot,
             color: Colors.blue,
           );

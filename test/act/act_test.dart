@@ -310,6 +310,27 @@ void actTests() {
       }
       await future;
     });
+    testWidgets(
+      'tapAt ',
+      (tester) async {
+        await tester.pumpWidget(
+          const MaterialApp(
+            home: Stack(
+              children: [
+                Center(
+                  child: ColoredBox(color: Colors.blue, key: ValueKey(1)),
+                ),
+                Center(
+                  child: ColoredBox(color: Colors.red, key: ValueKey(2)),
+                ),
+              ],
+            ),
+          ),
+        );
+        act.tapAt(const Offset(100, 100));
+        print(timeline.events.last.details);
+      },
+    );
 
     testWidgets('tapAt throws if position not in view (lower bounds)',
         (tester) async {
