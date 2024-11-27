@@ -311,13 +311,26 @@ void actTests() {
       await future;
     });
 
-    testWidgets('tapAt throws if position not in view', (tester) async {
+    testWidgets('tapAt throws if position not in view (lower bounds)',
+        (tester) async {
       await tester.pumpWidget(const MaterialApp());
 
       await expectLater(
         () => act.tapAt(const Offset(-100, -100)),
         throwsSpotErrorContaining([
           "Tried to tapAt position (Offset(-100.0, -100.0)) which is outside the viewport ",
+        ]),
+      );
+    });
+    testWidgets('tapAt throws if position not in view (upper bounds)',
+        (tester) async {
+      await tester.pumpWidget(const MaterialApp());
+      final viewSize = tester.binding.renderViews.first.size;
+      final outOutside = viewSize.bottomRight(const Offset(100, 100));
+      await expectLater(
+        () => act.tapAt(outOutside),
+        throwsSpotErrorContaining([
+          "Tried to tapAt position ($outOutside) which is outside the viewport ",
         ]),
       );
     });
