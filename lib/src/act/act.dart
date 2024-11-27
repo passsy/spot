@@ -143,6 +143,37 @@ class Act {
     });
   }
 
+  /// Triggers a tap event at the given position.
+  /// If a [Timeline] is running, an annotated screenshot, indicating the tap
+  /// position, is added to the timeline.
+  ///
+  /// See also:
+  /// - [Timeline]
+  Future<void> tapAt(Offset position) async {
+    return TestAsyncUtils.guard<void>(() async {
+      final binding = TestWidgetsFlutterBinding.instance;
+      final inRenderView = _validatePositionOnViewBounds(position);
+      if (inRenderView) {
+        if (timeline.mode != TimelineMode.off) {
+          final screenshot = timeline.takeScreenshotSync(
+            annotators: [
+              CrosshairAnnotator(centerPosition: position),
+            ],
+          );
+          timeline.addEvent(
+            eventType: 'TapAt Event',
+            details: 'TapAt $position',
+            screenshot: screenshot,
+            color: Colors.blue,
+          );
+        }
+        final downEvent = PointerDownEvent(position: position);
+        binding.handlePointerEvent(downEvent);
+        await binding.pump();
+      }
+    });
+  }
+
   /// Repeatedly drags at the position of `dragStart` by `moveStep` until `dragTarget` is visible.
   ///
   /// Between each drag, advances the clock by `duration`.
@@ -310,6 +341,21 @@ class Act {
     final snapshot = selector.snapshot();
     final element = snapshot.discoveredElement;
     return element?.renderObject;
+  }
+
+  bool _validatePositionOnViewBounds(
+    Offset position, {
+    bool throwIfInvisible = true,
+  }) {
+    final view = WidgetsBinding.instance.renderView;
+    final viewport = Offset.zero & view.size;
+    final isInRenderView = viewport.contains(position);
+    if (!isInRenderView && throwIfInvisible) {
+      throw TestFailure(
+        "Tried to tapAt position ($position) which is outside the viewport ($viewport).",
+      );
+    }
+    return isInRenderView;
   }
 
   // Validates that the widget is at least partially visible in the viewport.
