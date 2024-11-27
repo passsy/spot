@@ -349,7 +349,7 @@ class Act {
     Offset position, {
     bool throwIfInvisible = true,
   }) {
-    final view = WidgetsBinding.instance.renderView;
+    final view = RendererBinding.instance.renderView;
     final viewport = Offset.zero & view.size;
     final isInRenderView = viewport.contains(position);
     if (!isInRenderView && throwIfInvisible) {
