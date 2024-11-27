@@ -152,7 +152,7 @@ class Act {
   Future<void> tapAt(Offset position) async {
     return TestAsyncUtils.guard<void>(() async {
       final binding = TestWidgetsFlutterBinding.instance;
-      final inRenderView = _validatePositionOnViewBounds(position);
+      final inRenderView = _validatePositionInViewBounds(position);
       if (inRenderView) {
         if (timeline.mode != TimelineMode.off) {
           final screenshot = timeline.takeScreenshotSync(
@@ -345,7 +345,7 @@ class Act {
     return element?.renderObject;
   }
 
-  bool _validatePositionOnViewBounds(Offset position) {
+  bool _validatePositionInViewBounds(Offset position) {
     final HitTestResult result = HitTestResult();
     TestWidgetsFlutterBinding.instance.hitTestInView(result, position, 0);
     final isInRenderView = result.path.isNotEmpty;
