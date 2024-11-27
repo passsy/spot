@@ -241,6 +241,86 @@ void actTests() {
         ]),
       );
     });
+  });
+
+  group('tapAt', () {
+    testWidgets('tapAt', (tester) async {
+      Offset? tapPosition;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: GestureDetector(
+            onTapDown: (details) => tapPosition = details.globalPosition,
+            child: const ColoredBox(color: Colors.blue),
+          ),
+        ),
+      );
+      await act.tapAt(const Offset(100, 100));
+      expect(tapPosition, const Offset(100, 100));
+    });
+
+    testWidgets('tapAt pumps a new frame', (tester) async {
+      await tester.pumpWidget(const ColorToggleApp());
+
+      final app = spot<MaterialApp>();
+      app.existsOnce().hasWidgetProp(
+            prop: widgetProp('color', (w) => w.color),
+            match: (it) => it.equals(Colors.blue),
+          );
+      final button = spot<ElevatedButton>();
+
+      // Get the RenderBox of the button
+      final renderBox = button.snapshotRenderBox();
+
+      // Calculate the center of the button
+      final center = renderBox.localToGlobal(
+        Offset(renderBox.size.width / 2, renderBox.size.height / 2),
+      );
+      await act.tapAt(center);
+      app.existsOnce().hasWidgetProp(
+            prop: widgetProp('color', (w) => w.color),
+            match: (it) => it.equals(Colors.red),
+          );
+    });
+
+    testWidgets('tapAt must be awaited', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Center(
+            child: ElevatedButton(
+              onPressed: () {},
+              child: const Text('Home'),
+            ),
+          ),
+        ),
+      );
+      final future = act.tapAt(Offset.zero);
+
+      try {
+        TestAsyncUtils.guardSync();
+        fail('Expected to throw');
+      } catch (e) {
+        check(e).isA<FlutterError>().has((it) => it.message, 'message')
+          ..contains(
+            'You must use "await" with all Future-returning test APIs.',
+          )
+          ..contains(
+            'The guarded method "tapAt" from class Act was called from',
+          )
+          ..contains('act_test.dart');
+      }
+      await future;
+    });
+
+    testWidgets('tapAt throws if position not in view', (tester) async {
+      await tester.pumpWidget(const MaterialApp());
+
+      await expectLater(
+        () => act.tapAt(const Offset(-100, -100)),
+        throwsSpotErrorContaining([
+          "Tried to tapAt position (Offset(-100.0, -100.0)) which is outside the viewport ",
+        ]),
+      );
+    });
 
     group('Visibility', () {
       testWidgets(

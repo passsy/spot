@@ -169,6 +169,8 @@ class Act {
         }
         final downEvent = PointerDownEvent(position: position);
         binding.handlePointerEvent(downEvent);
+        final upEvent = PointerUpEvent(position: position);
+        binding.handlePointerEvent(upEvent);
         await binding.pump();
       }
     });
