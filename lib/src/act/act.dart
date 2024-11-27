@@ -152,32 +152,48 @@ class Act {
   Future<void> tapAt(Offset position) async {
     return TestAsyncUtils.guard<void>(() async {
       final binding = TestWidgetsFlutterBinding.instance;
-      final inRenderView = _validatePositionInViewBounds(position);
-      if (inRenderView) {
-        if (timeline.mode != TimelineMode.off) {
-          final screenshot = timeline.takeScreenshotSync(
-            annotators: [
-              CrosshairAnnotator(centerPosition: position),
-            ],
-          );
-          final HitTestResult result = HitTestResult();
-          binding.hitTestInView(result, position, 0);
-          final hits = result.path.map((e) => e.element?.widget).toList();
+      _validatePositionInViewBounds(position);
+      if (timeline.mode != TimelineMode.off) {
+        final screenshot = timeline.takeScreenshotSync(
+          annotators: [
+            CrosshairAnnotator(centerPosition: position),
+          ],
+        );
+        final HitTestResult result = HitTestResult();
+        // ignore: deprecated_member_use
+        binding.hitTest(result, position);
+        final hits = result.path.map((e) => e.element).toList();
 
-          timeline.addEvent(
-            eventType: 'TapAt Event',
-            details:
-                'TapAt $position. widgets at this position: ${hits.map((e) => e!.toStringShort())}',
-            screenshot: screenshot,
-            color: Colors.blue,
-          );
-        }
-        final downEvent = PointerDownEvent(position: position);
-        binding.handlePointerEvent(downEvent);
-        final upEvent = PointerUpEvent(position: position);
-        binding.handlePointerEvent(upEvent);
-        await binding.pump();
+        final widgetInProject = hits.mapNotNull((e) {
+          if (e == null) return null;
+          final debugWidgetLocation = e.debugWidgetLocation;
+          if (debugWidgetLocation == null ||
+              debugWidgetLocation.isUserCode == false) {
+            return null;
+          }
+          return "${e.widget.toStringShort()} at ${debugWidgetLocation.file.path}";
+        }).joinToString(prefix: '\n- ');
+
+        final allWidgets = hits.mapNotNull((e) {
+          if (e == null) return null;
+          return "${e.widget.toStringShort()} at ${e.debugWidgetLocation?.file.path}";
+        }).joinToString(prefix: '\n- ');
+
+        timeline.addEvent(
+          eventType: 'TapAt Event',
+          details: 'TapAt $position.\n'
+              'Relevant widgets at position: $widgetInProject'
+              '\n\n'
+              'Widgets at position: $allWidgets',
+          screenshot: screenshot,
+          color: Colors.blue,
+        );
       }
+      final downEvent = PointerDownEvent(position: position);
+      binding.handlePointerEvent(downEvent);
+      final upEvent = PointerUpEvent(position: position);
+      binding.handlePointerEvent(upEvent);
+      await binding.pump();
     });
   }
 
@@ -350,16 +366,16 @@ class Act {
     return element?.renderObject;
   }
 
-  bool _validatePositionInViewBounds(Offset position) {
-    final HitTestResult result = HitTestResult();
-    TestWidgetsFlutterBinding.instance.hitTestInView(result, position, 0);
-    final isInRenderView = result.path.isNotEmpty;
-    if (!isInRenderView) {
+  void _validatePositionInViewBounds(Offset position) {
+    // ignore: deprecated_member_use
+    final view = WidgetsBinding.instance.renderView;
+    final Rect viewport = Offset.zero & view.size;
+    final isInViewport = viewport.contains(position);
+    if (!isInViewport) {
       throw TestFailure(
-        "Tried to tapAt position ($position) which is outside the viewport (${TestWidgetsFlutterBinding.instance.renderViews.first.size}).",
+        "Tried to tapAt position ($position) which is outside the viewport (${view.size}).",
       );
     }
-    return isInRenderView;
   }
 
   // Validates that the widget is at least partially visible in the viewport.

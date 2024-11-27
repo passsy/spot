@@ -241,120 +241,6 @@ void actTests() {
         ]),
       );
     });
-  });
-
-  group('tapAt', () {
-    testWidgets('tapAt', (tester) async {
-      Offset? tapPosition;
-      await tester.pumpWidget(
-        MaterialApp(
-          home: GestureDetector(
-            onTapDown: (details) => tapPosition = details.globalPosition,
-            child: const ColoredBox(color: Colors.blue),
-          ),
-        ),
-      );
-      await act.tapAt(const Offset(100, 100));
-      expect(tapPosition, const Offset(100, 100));
-    });
-
-    testWidgets('tapAt pumps a new frame', (tester) async {
-      await tester.pumpWidget(const ColorToggleApp());
-
-      final app = spot<MaterialApp>();
-      app.existsOnce().hasWidgetProp(
-            prop: widgetProp('color', (w) => w.color),
-            match: (it) => it.equals(Colors.blue),
-          );
-      final button = spot<ElevatedButton>();
-
-      // Get the RenderBox of the button
-      final renderBox = button.snapshotRenderBox();
-
-      // Calculate the center of the button
-      final center = renderBox.localToGlobal(
-        Offset(renderBox.size.width / 2, renderBox.size.height / 2),
-      );
-      await act.tapAt(center);
-      app.existsOnce().hasWidgetProp(
-            prop: widgetProp('color', (w) => w.color),
-            match: (it) => it.equals(Colors.red),
-          );
-    });
-
-    testWidgets('tapAt must be awaited', (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Center(
-            child: ElevatedButton(
-              onPressed: () {},
-              child: const Text('Home'),
-            ),
-          ),
-        ),
-      );
-      final future = act.tapAt(Offset.zero);
-
-      try {
-        TestAsyncUtils.guardSync();
-        fail('Expected to throw');
-      } catch (e) {
-        check(e).isA<FlutterError>().has((it) => it.message, 'message')
-          ..contains(
-            'You must use "await" with all Future-returning test APIs.',
-          )
-          ..contains(
-            'The guarded method "tapAt" from class Act was called from',
-          )
-          ..contains('act_test.dart');
-      }
-      await future;
-    });
-    testWidgets(
-      'tapAt ',
-      (tester) async {
-        await tester.pumpWidget(
-          const MaterialApp(
-            home: Stack(
-              children: [
-                Center(
-                  child: ColoredBox(color: Colors.blue, key: ValueKey(1)),
-                ),
-                Center(
-                  child: ColoredBox(color: Colors.red, key: ValueKey(2)),
-                ),
-              ],
-            ),
-          ),
-        );
-        act.tapAt(const Offset(100, 100));
-        print(timeline.events.last.details);
-      },
-    );
-
-    testWidgets('tapAt throws if position not in view (lower bounds)',
-        (tester) async {
-      await tester.pumpWidget(const MaterialApp());
-
-      await expectLater(
-        () => act.tapAt(const Offset(-100, -100)),
-        throwsSpotErrorContaining([
-          "Tried to tapAt position (Offset(-100.0, -100.0)) which is outside the viewport ",
-        ]),
-      );
-    });
-    testWidgets('tapAt throws if position not in view (upper bounds)',
-        (tester) async {
-      await tester.pumpWidget(const MaterialApp());
-      final viewSize = tester.binding.renderViews.first.size;
-      final outOutside = viewSize.bottomRight(const Offset(100, 100));
-      await expectLater(
-        () => act.tapAt(outOutside),
-        throwsSpotErrorContaining([
-          "Tried to tapAt position ($outOutside) which is outside the viewport ",
-        ]),
-      );
-    });
 
     group('Visibility', () {
       testWidgets(
@@ -494,52 +380,177 @@ void actTests() {
         ]),
       );
     });
+  });
 
-    group('enter text', () {
-      testWidgets('enter text in text form field', (tester) async {
-        await tester.pumpWidget(
-          MaterialApp(home: Material(child: Form(child: TextFormField()))),
-        );
-        await act.enterText(spot<TextFormField>(), 'hello');
-        spotText('hello').existsOnce();
-      });
-
-      testWidgets('enter text in text field', (tester) async {
-        await tester
-            .pumpWidget(const MaterialApp(home: Material(child: TextField())));
-        await act.enterText(spot<TextField>(), 'hello');
-        spotText('hello').existsOnce();
-      });
-
-      testWidgets('spot a non existing widget throws an error', (tester) async {
-        await tester.pumpWidget(
-          const Directionality(
-            textDirection: TextDirection.ltr,
-            child: Text("any text"),
+  group('tapAt', () {
+    testWidgets('tapAt', (tester) async {
+      Offset? tapPosition;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: GestureDetector(
+            onTapDown: (details) => tapPosition = details.globalPosition,
+            child: const ColoredBox(color: Colors.blue),
           ),
-        );
-        await expectLater(
-          () => act.enterText(spot<TextField>(), 'hello'),
-          throwsSpotErrorContaining([
-            "Could not find TextField in widget tree",
-          ]),
-        );
-      });
+        ),
+      );
+      await act.tapAt(const Offset(100, 100));
+      expect(tapPosition, const Offset(100, 100));
+    });
 
-      testWidgets('spot a non editable text throws an error', (tester) async {
-        await tester.pumpWidget(
-          const Directionality(
-            textDirection: TextDirection.ltr,
-            child: Text("any text"),
+    testWidgets('tapAt pumps a new frame', (tester) async {
+      await tester.pumpWidget(const ColorToggleApp());
+
+      final app = spot<MaterialApp>();
+      app.existsOnce().hasWidgetProp(
+            prop: widgetProp('color', (w) => w.color),
+            match: (it) => it.equals(Colors.blue),
+          );
+      final button = spot<ElevatedButton>();
+
+      // Get the RenderBox of the button
+      final renderBox = button.snapshotRenderBox();
+
+      // Calculate the center of the button
+      final center = renderBox.localToGlobal(
+        Offset(renderBox.size.width / 2, renderBox.size.height / 2),
+      );
+      await act.tapAt(center);
+      app.existsOnce().hasWidgetProp(
+            prop: widgetProp('color', (w) => w.color),
+            match: (it) => it.equals(Colors.red),
+          );
+    });
+
+    testWidgets('tapAt must be awaited', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Center(
+            child: ElevatedButton(
+              onPressed: () {},
+              child: const Text('Home'),
+            ),
           ),
-        );
-        await expectLater(
-          () => act.enterText(spot<Text>(), 'hello'),
-          throwsSpotErrorContaining([
-            "Widget 'Text' is not a descendant of EditableText.",
-          ]),
-        );
-      });
+        ),
+      );
+      final future = act.tapAt(Offset.zero);
+
+      try {
+        TestAsyncUtils.guardSync();
+        fail('Expected to throw');
+      } catch (e) {
+        check(e).isA<FlutterError>().has((it) => it.message, 'message')
+          ..contains(
+            'You must use "await" with all Future-returning test APIs.',
+          )
+          ..contains(
+            'The guarded method "tapAt" from class Act was called from',
+          )
+          ..contains('act_test.dart');
+      }
+      await future;
+    });
+    testWidgets('tapAt shows items in the timeline', (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Stack(
+            fit: StackFit.expand,
+            children: [
+              ColoredBox(color: Colors.blue, key: ValueKey(1)),
+              ColoredBox(color: Colors.red, key: ValueKey(2)),
+              ColoredBox(color: Colors.green, key: ValueKey(3)),
+            ],
+          ),
+        ),
+      );
+      // tap
+      await act.tapAt(const Offset(100, 100));
+      final event = timeline.events.last;
+      expect(event.eventType.label, 'TapAt Event');
+      expect(
+        event.details,
+        stringContainsInOrder([
+          'Relevant widgets at position: ',
+          'ColoredBox-[<3>]',
+          'Stack',
+          'Widgets at position:',
+          'ColoredBox-[<3>]',
+          'Stack',
+          '_Theater',
+        ]),
+      );
+      expect(event.details, isNot(contains('ColoredBox-[<1>]')));
+      expect(event.details, isNot(contains('ColoredBox-[<2>]')));
+    });
+
+    testWidgets('tapAt throws if position not in view (lower bounds)',
+        (tester) async {
+      await tester.pumpWidget(const MaterialApp());
+
+      await expectLater(
+        () => act.tapAt(const Offset(-100, -100)),
+        throwsSpotErrorContaining([
+          "Tried to tapAt position (Offset(-100.0, -100.0)) which is outside the viewport ",
+        ]),
+      );
+    });
+    testWidgets('tapAt throws if position not in view (upper bounds)',
+        (tester) async {
+      await tester.pumpWidget(const MaterialApp());
+      final viewSize = tester.binding.renderViews.first.size;
+      final outOutside = viewSize.bottomRight(const Offset(100, 100));
+      await expectLater(
+        () => act.tapAt(outOutside),
+        throwsSpotErrorContaining([
+          "Tried to tapAt position ($outOutside) which is outside the viewport ",
+        ]),
+      );
+    });
+  });
+
+  group('enter text', () {
+    testWidgets('enter text in text form field', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(home: Material(child: Form(child: TextFormField()))),
+      );
+      await act.enterText(spot<TextFormField>(), 'hello');
+      spotText('hello').existsOnce();
+    });
+
+    testWidgets('enter text in text field', (tester) async {
+      await tester
+          .pumpWidget(const MaterialApp(home: Material(child: TextField())));
+      await act.enterText(spot<TextField>(), 'hello');
+      spotText('hello').existsOnce();
+    });
+
+    testWidgets('spot a non existing widget throws an error', (tester) async {
+      await tester.pumpWidget(
+        const Directionality(
+          textDirection: TextDirection.ltr,
+          child: Text("any text"),
+        ),
+      );
+      await expectLater(
+        () => act.enterText(spot<TextField>(), 'hello'),
+        throwsSpotErrorContaining([
+          "Could not find TextField in widget tree",
+        ]),
+      );
+    });
+
+    testWidgets('spot a non editable text throws an error', (tester) async {
+      await tester.pumpWidget(
+        const Directionality(
+          textDirection: TextDirection.ltr,
+          child: Text("any text"),
+        ),
+      );
+      await expectLater(
+        () => act.enterText(spot<Text>(), 'hello'),
+        throwsSpotErrorContaining([
+          "Widget 'Text' is not a descendant of EditableText.",
+        ]),
+      );
     });
   });
 }
