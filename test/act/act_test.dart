@@ -496,7 +496,9 @@ void actTests() {
     testWidgets('tapAt throws if position not in view (upper bounds)',
         (tester) async {
       await tester.pumpWidget(const MaterialApp());
-      final viewSize = tester.binding.renderViews.first.size;
+
+      // ignore: deprecated_member_use
+      final viewSize = tester.binding.renderView.size;
       final outOutside = viewSize.bottomRight(const Offset(100, 100));
       await expectLater(
         () => act.tapAt(outOutside),
