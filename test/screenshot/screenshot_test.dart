@@ -264,6 +264,31 @@ void main() {
     );
   });
 
+  testWidgets('Take screenshot of dirty tree', (tester) async {
+    tester.view.physicalSize = const Size(210, 210);
+    tester.view.devicePixelRatio = 1.0;
+    const red = Color(0xffff0000);
+    await tester.pumpWidget(_RainbowColorBox());
+
+    final shot1 = await takeScreenshot(selector: spot<_RainbowColorBox>());
+    expect(shot1.file.existsSync(), isTrue);
+    final redPixelCoverage = await percentageOfPixelsWithColor(shot1.file, red);
+    expect(redPixelCoverage, greaterThan(0.9));
+
+    await tester.tap(spot<_RainbowColorBox>().finder); // tap, do not pump
+    final state =
+        spot<_RainbowColorBox>().snapshotState<_RainbowColorBoxState>();
+    expect(state.color, isNot(red)); // changed, but not yet rendered
+
+    final shot2 = await takeScreenshot(selector: spot<_RainbowColorBox>());
+    expect(shot2.file.existsSync(), isTrue);
+    final isOrangePercentage =
+        await percentageOfPixelsWithColor(shot2.file, Color(0xffff7f00));
+    expect(isOrangePercentage, 0.0); // not orange
+    final isRedPercentage = await percentageOfPixelsWithColor(shot1.file, red);
+    expect(isRedPercentage, greaterThan(0.9)); // still red
+  });
+
   group('Annotate Screenshot test', () {
     testWidgets('Take screenshot with tap marker of the entire app',
         (tester) async {
@@ -463,4 +488,46 @@ int _currentLineNumber() {
   final parts = callerLine.split(':');
   // parts[parts.length - 1] is the column number
   return parts[parts.length - 2].toInt();
+}
+
+class _RainbowColorBox extends StatefulWidget {
+  const _RainbowColorBox();
+
+  static const rainbowColors = [
+    Color(0xffff0000),
+    Color(0xffff7f00),
+    Color(0xffffff00),
+    Color(0xff00ff00),
+    Color(0xff0000ff),
+    Color(0xff4b0082),
+    Color(0xff9400d3),
+  ];
+
+  @override
+  State<_RainbowColorBox> createState() => _RainbowColorBoxState();
+}
+
+class _RainbowColorBoxState extends State<_RainbowColorBox> {
+  int _index = 0;
+
+  Color get color => _RainbowColorBox
+      .rainbowColors[_index % _RainbowColorBox.rainbowColors.length];
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            _index = _index + 1;
+          });
+        },
+        child: Container(
+          height: 200,
+          width: 200,
+          color: color,
+        ),
+      ),
+    );
+  }
 }
