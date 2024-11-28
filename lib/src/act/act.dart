@@ -151,49 +151,51 @@ class Act {
   /// - [Timeline]
   Future<void> tapAt(Offset position) async {
     return TestAsyncUtils.guard<void>(() async {
-      final binding = TestWidgetsFlutterBinding.instance;
-      _validatePositionInViewBounds(position);
-      if (timeline.mode != TimelineMode.off) {
-        final screenshot = timeline.takeScreenshotSync(
-          annotators: [
-            CrosshairAnnotator(centerPosition: position),
-          ],
-        );
-        final HitTestResult result = HitTestResult();
-        // ignore: deprecated_member_use
-        binding.hitTest(result, position);
-        final hits = result.path.map((e) => e.element).toList();
+      return _alwaysPropagateDevicePointerEvents(() async {
+        final binding = TestWidgetsFlutterBinding.instance;
+        _validatePositionInViewBounds(position);
+        if (timeline.mode != TimelineMode.off) {
+          final screenshot = timeline.takeScreenshotSync(
+            annotators: [
+              CrosshairAnnotator(centerPosition: position),
+            ],
+          );
+          final HitTestResult result = HitTestResult();
+          // ignore: deprecated_member_use
+          binding.hitTest(result, position);
+          final hits = result.path.map((e) => e.element).toList();
 
-        final widgetInProject = hits.mapNotNull((e) {
-          if (e == null) return null;
-          final debugWidgetLocation = e.debugWidgetLocation;
-          if (debugWidgetLocation == null ||
-              debugWidgetLocation.isUserCode == false) {
-            return null;
-          }
-          return "${e.widget.toStringShort()} at ${debugWidgetLocation.file.path}";
-        }).joinToString(prefix: '\n- ');
+          final widgetInProject = hits.mapNotNull((e) {
+            if (e == null) return null;
+            final debugWidgetLocation = e.debugWidgetLocation;
+            if (debugWidgetLocation == null ||
+                debugWidgetLocation.isUserCode == false) {
+              return null;
+            }
+            return "${e.widget.toStringShort()} at ${debugWidgetLocation.file.path}";
+          }).joinToString(prefix: '\n- ');
 
-        final allWidgets = hits.mapNotNull((e) {
-          if (e == null) return null;
-          return "${e.widget.toStringShort()} at ${e.debugWidgetLocation?.file.path}";
-        }).joinToString(prefix: '\n- ');
+          final allWidgets = hits.mapNotNull((e) {
+            if (e == null) return null;
+            return "${e.widget.toStringShort()} at ${e.debugWidgetLocation?.file.path}";
+          }).joinToString(prefix: '\n- ');
 
-        timeline.addEvent(
-          eventType: 'TapAt Event',
-          details: 'TapAt $position.\n'
-              'Relevant widgets at position: $widgetInProject'
-              '\n\n'
-              'Widgets at position: $allWidgets',
-          screenshot: screenshot,
-          color: Colors.blue,
-        );
-      }
-      final downEvent = PointerDownEvent(position: position);
-      binding.handlePointerEvent(downEvent);
-      final upEvent = PointerUpEvent(position: position);
-      binding.handlePointerEvent(upEvent);
-      await binding.pump();
+          timeline.addEvent(
+            eventType: 'TapAt Event',
+            details: 'TapAt $position.\n'
+                'Relevant widgets at position: $widgetInProject'
+                '\n\n'
+                'Widgets at position: $allWidgets',
+            screenshot: screenshot,
+            color: Colors.blue,
+          );
+        }
+        final downEvent = PointerDownEvent(position: position);
+        binding.handlePointerEvent(downEvent);
+        final upEvent = PointerUpEvent(position: position);
+        binding.handlePointerEvent(upEvent);
+        await binding.pump();
+      });
     });
   }
 
