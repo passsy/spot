@@ -267,42 +267,27 @@ void main() {
   testWidgets('Take screenshot of dirty tree', (tester) async {
     tester.view.physicalSize = const Size(210, 210);
     tester.view.devicePixelRatio = 1.0;
-    const red = Color(0xffff0000);
-    const orange = Color(0xffff7f00);
-    await tester.pumpWidget(_RainbowColorBox());
 
-    await loadAppFonts(); // causes system notification that a repaint is needed
-    // but pump is not called, causing all RenderParagraphs to be dirty
-    throw "TODO implement";
-
-    final shot1 = await takeScreenshot();
-    expect(shot1.file.existsSync(), isTrue);
-    final redPixelCoverage = await percentageOfPixelsWithColor(shot1.file, red);
-    expect(redPixelCoverage, greaterThan(0.9));
-
-    await tester.tap(spot<_RainbowColorBox>().finder); // tap, do not pump
-    final state =
-        spot<_RainbowColorBox>().snapshotState<_RainbowColorBoxState>();
-    expect(state.color, orange); // changed, but not yet rendered
-
-    final shot2 =
-        await takeScreenshot(selector: spot<_ColoredBoxRenderObjectWidget>());
-    expect(shot2.file.existsSync(), isTrue);
-    expect(
-      await percentageOfPixelsWithColor(shot2.file, orange),
-      0.0, // not orange
-    );
-    expect(
-      await percentageOfPixelsWithColor(shot2.file, red),
-      greaterThan(0.9), // still red
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        // Banner listens to PaintingBinding.instance.systemFonts and requests repaint (markNeedsPaint)
+        child: Banner(
+          message: 'Hello',
+          location: BannerLocation.topEnd,
+          child: Container(color: Colors.white),
+        ),
+      ),
     );
 
-    await tester.pump();
-    final shot3 = await takeScreenshot();
-    expect(
-      await percentageOfPixelsWithColor(shot3.file, orange),
-      greaterThan(0.9), // now orange
-    );
+    // FontLoader.load triggers PaintBinding.instance.systemFonts listeners
+    await loadAppFonts();
+    final renderObject =
+        spot<Banner>().spot<CustomPaint>().snapshotRenderObject();
+    expect(renderObject.debugNeedsPaint, isTrue);
+
+    // When elements are dirty, taking a screenshot should still work
+    await takeScreenshot();
   });
 
   group('Annotate Screenshot test', () {
@@ -505,101 +490,3 @@ int _currentLineNumber() {
   // parts[parts.length - 1] is the column number
   return parts[parts.length - 2].toInt();
 }
-
-class _RainbowColorBox extends StatefulWidget {
-  const _RainbowColorBox();
-
-  @override
-  State<_RainbowColorBox> createState() => _RainbowColorBoxState();
-}
-
-class _RainbowColorBoxState extends State<_RainbowColorBox> {
-  int _index = 0;
-
-  Color get color => rainbowColors[_index % rainbowColors.length];
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: GestureDetector(
-        onTap: () {
-          setState(() {
-            _index = _index + 1;
-          });
-        },
-        child: SizedBox(
-          height: 200,
-          width: 200,
-          child: _ColoredBoxRenderObjectWidget(
-            color: color,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ColoredBoxRenderObjectWidget extends LeafRenderObjectWidget {
-  const _ColoredBoxRenderObjectWidget({required this.color});
-
-  final Color color;
-
-  @override
-  RenderObject createRenderObject(BuildContext context) {
-    return _DirtyRenderObject()..color = color;
-  }
-
-  @override
-  void updateRenderObject(
-    BuildContext context,
-    _DirtyRenderObject renderObject,
-  ) {
-    renderObject.color = color;
-  }
-}
-
-class _DirtyRenderObject extends RenderBox {
-  late Color _color;
-
-  Color get color => _color;
-
-  set color(Color value) {
-    _color = value;
-    // make it dirty
-    markNeedsPaint();
-  }
-
-  @override
-  void performLayout() {
-    size = constraints.biggest;
-  }
-
-  @override
-  bool hitTestSelf(Offset position) {
-    if (position.dx < 0 || position.dx > size.width) {
-      return false;
-    }
-    if (position.dy < 0 || position.dy > size.height) {
-      return false;
-    }
-    return true;
-  }
-
-  @override
-  void paint(PaintingContext context, Offset offset) {
-    context.canvas.drawRect(
-      Rect.fromLTWH(0, 0, size.width, size.height),
-      Paint()..color = color,
-    );
-  }
-}
-
-const rainbowColors = [
-  Color(0xffff0000),
-  Color(0xffff7f00),
-  Color(0xffffff00),
-  Color(0xff00ff00),
-  Color(0xff0000ff),
-  Color(0xff4b0082),
-  Color(0xff9400d3),
-];
