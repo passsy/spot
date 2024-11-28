@@ -143,12 +143,11 @@ class Act {
     });
   }
 
-  /// Triggers a tap event at the given position.
-  /// If a [Timeline] is running, an annotated screenshot, indicating the tap
-  /// position, is added to the timeline.
+  /// Taps the screen (down + up) at [position] on the global coordinate system
+  /// and pumps a frame.
   ///
-  /// See also:
-  /// - [Timeline]
+  /// - Checks that [position] is within the viewport.
+  /// - Lists all widgets at that position in the timeline
   Future<void> tapAt(Offset position) async {
     return TestAsyncUtils.guard<void>(() async {
       return _alwaysPropagateDevicePointerEvents(() async {
