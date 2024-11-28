@@ -32,6 +32,7 @@ visualizes the steps of a widget test as HTML report with automatic screenshots,
     - [Find offstage widgets](#find-offstage-widgets)
 - [act - tap, drag, type](#act-tap-drag-type-click)
   - [tap](#tap)
+  - [tapAt](#tapAt)
   - [enterText](#entertext)
   - [dragUntilVisible](#draguntilvisible)
   - [more act functions](#more-act-functions)
@@ -527,6 +528,18 @@ Tapping a widget looks almost identical to the `WidgetTester` API but with a few
 - Adds screenshot with crosshair annotation to the Timeline
 - pumps automatically after the tap
 - When multiple widgets are found, it prints a useful error message
+
+### tapAt
+
+```dart
+await act.tapAt(const Offset(100, 100));
+```
+
+Taps the screen (down + up) at `position` on the global coordinate system and pumps a frame.
+
+- Checks that `position` is within the window viewport
+- Lists all widgets reacting to the hitTest in the timeline
+- pumps automatically after the tap
 
 ### enterText
 

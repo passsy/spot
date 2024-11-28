@@ -143,6 +143,61 @@ class Act {
     });
   }
 
+  /// Taps the screen (down + up) at [position] on the global coordinate system
+  /// and pumps a frame.
+  ///
+  /// - Checks that [position] is within the viewport.
+  /// - Lists all widgets at that position in the timeline
+  Future<void> tapAt(Offset position) async {
+    return TestAsyncUtils.guard<void>(() async {
+      return _alwaysPropagateDevicePointerEvents(() async {
+        final binding = TestWidgetsFlutterBinding.instance;
+        _validatePositionInViewBounds(position);
+        if (timeline.mode != TimelineMode.off) {
+          final screenshot = timeline.takeScreenshotSync(
+            annotators: [
+              CrosshairAnnotator(centerPosition: position),
+            ],
+          );
+          final HitTestResult result = HitTestResult();
+          // ignore: deprecated_member_use
+          binding.hitTest(result, position);
+          final hits = result.path.map((e) => e.element).toList();
+
+          final widgetInProject = hits.mapNotNull((e) {
+            if (e == null) return null;
+            final debugWidgetLocation = e.debugWidgetLocation;
+            if (debugWidgetLocation == null ||
+                debugWidgetLocation.isUserCode == false) {
+              return null;
+            }
+            return "${e.widget.toStringShort()} at ${debugWidgetLocation.file.path}";
+          }).joinToString(prefix: '\n- ');
+
+          final allWidgets = hits.mapNotNull((e) {
+            if (e == null) return null;
+            return "${e.widget.toStringShort()} at ${e.debugWidgetLocation?.file.path}";
+          }).joinToString(prefix: '\n- ');
+
+          timeline.addEvent(
+            eventType: 'TapAt Event',
+            details: 'TapAt $position.\n'
+                'Relevant widgets at position: $widgetInProject'
+                '\n\n'
+                'Widgets at position: $allWidgets',
+            screenshot: screenshot,
+            color: Colors.blue,
+          );
+        }
+        final downEvent = PointerDownEvent(position: position);
+        binding.handlePointerEvent(downEvent);
+        final upEvent = PointerUpEvent(position: position);
+        binding.handlePointerEvent(upEvent);
+        await binding.pump();
+      });
+    });
+  }
+
   /// Repeatedly drags at the position of `dragStart` by `moveStep` until `dragTarget` is visible.
   ///
   /// Between each drag, advances the clock by `duration`.
@@ -310,6 +365,18 @@ class Act {
     final snapshot = selector.snapshot();
     final element = snapshot.discoveredElement;
     return element?.renderObject;
+  }
+
+  void _validatePositionInViewBounds(Offset position) {
+    // ignore: deprecated_member_use
+    final view = WidgetsBinding.instance.renderView;
+    final Rect viewport = Offset.zero & view.size;
+    final isInViewport = viewport.contains(position);
+    if (!isInViewport) {
+      throw TestFailure(
+        "Tried to tapAt position ($position) which is outside the viewport (${view.size}).",
+      );
+    }
   }
 
   // Validates that the widget is at least partially visible in the viewport.
