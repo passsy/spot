@@ -304,7 +304,6 @@ ui.Image _captureImageSync(Element element) {
     // ignore: unnecessary_cast
     renderObject = renderObject.parent! as RenderObject;
   }
-  assert(!renderObject.debugNeedsPaint);
 
   final OffsetLayer layer = renderObject.debugLayer! as OffsetLayer;
   final ui.Image image = layer.toImageSync(renderObject.paintBounds);
@@ -338,7 +337,6 @@ Future<ui.Image> _captureImage(Element element) async {
     // ignore: unnecessary_cast
     renderObject = renderObject.parent! as RenderObject;
   }
-  assert(!renderObject.debugNeedsPaint);
 
   final OffsetLayer layer = renderObject.debugLayer! as OffsetLayer;
   final ui.Image image = await layer.toImage(renderObject.paintBounds);

@@ -264,6 +264,32 @@ void main() {
     );
   });
 
+  testWidgets('Take screenshot of dirty tree', (tester) async {
+    tester.view.physicalSize = const Size(210, 210);
+    tester.view.devicePixelRatio = 1.0;
+
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        // Banner listens to PaintingBinding.instance.systemFonts and requests repaint (markNeedsPaint)
+        child: Banner(
+          message: 'Hello',
+          location: BannerLocation.topEnd,
+          child: Container(color: Colors.white),
+        ),
+      ),
+    );
+
+    // FontLoader.load triggers PaintBinding.instance.systemFonts listeners
+    await loadAppFonts();
+    final renderObject =
+        spot<Banner>().spot<CustomPaint>().snapshotRenderObject();
+    expect(renderObject.debugNeedsPaint, isTrue);
+
+    // When elements are dirty, taking a screenshot should still work
+    await takeScreenshot();
+  });
+
   group('Annotate Screenshot test', () {
     testWidgets('Take screenshot with tap marker of the entire app',
         (tester) async {
@@ -281,9 +307,9 @@ void main() {
       );
       expect(shot.file.existsSync(), isTrue);
 
-      final cyanPixelCoverage =
-          await percentageOfPixelsWithColor(shot.file, Color(0xFF00FFFF));
-      expect(cyanPixelCoverage, greaterThan(0.0));
+      final pinkPixelCoverage =
+          await percentageOfPixelsWithColor(shot.file, Color(0xFFFF00FF));
+      expect(pinkPixelCoverage, greaterThan(0.0));
     });
 
     testWidgets('Take screenshot with tap marker from a selector',
@@ -305,9 +331,9 @@ void main() {
       );
       expect(container.file.existsSync(), isTrue);
 
-      final cyanPixelCoverage =
-          await percentageOfPixelsWithColor(container.file, Color(0xFF00FFFF));
-      expect(cyanPixelCoverage, greaterThan(0.0));
+      final pinkPixelCoverage =
+          await percentageOfPixelsWithColor(container.file, Color(0xFFFF00FF));
+      expect(pinkPixelCoverage, greaterThan(0.0));
     });
 
     testWidgets('Take screenshot with tap marker from a snapshot',
@@ -330,9 +356,9 @@ void main() {
       );
       expect(container.file.existsSync(), isTrue);
 
-      final cyanPixelCoverage =
-          await percentageOfPixelsWithColor(container.file, Color(0xFF00FFFF));
-      expect(cyanPixelCoverage, greaterThan(0.0));
+      final pinkPixelCoverage =
+          await percentageOfPixelsWithColor(container.file, Color(0xFFFF00FF));
+      expect(pinkPixelCoverage, greaterThan(0.0));
     });
 
     testWidgets(
@@ -388,9 +414,9 @@ void main() {
       );
       expect(container.file.existsSync(), isTrue);
 
-      final cyanPixelCoverage =
-          await percentageOfPixelsWithColor(container.file, Color(0xFF00FFFF));
-      expect(cyanPixelCoverage, greaterThan(0.0));
+      final pinkPixelCoverage =
+          await percentageOfPixelsWithColor(container.file, Color(0xFFFF00FF));
+      expect(pinkPixelCoverage, greaterThan(0.0));
     });
 
     testWidgets(
@@ -434,26 +460,26 @@ Future<double> percentageOfPixelsWithColor(File file, Color color) async {
       (await binding.runAsync(() => img.decodePngFile(file.absolute.path)))!;
 
   // Count the number of red pixels in the image
-  int redPixelCount = 0;
+  int matchingPixels = 0;
   final int totalPixelCount = image.width * image.height;
 
   for (int y = 0; y < image.height; y++) {
     for (int x = 0; x < image.width; x++) {
       final pixel = image.getPixel(x, y);
-      final color = Color.fromARGB(
+      final c = Color.fromARGB(
         pixel.a.toInt(),
         pixel.r.toInt(),
         pixel.g.toInt(),
         pixel.b.toInt(),
       );
-      if (color == Color(0xffff0000)) {
-        redPixelCount++;
+      if (c == color) {
+        matchingPixels++;
       }
     }
   }
   // Calculate the red pixel coverage percentage
-  final double redPixelCoverage = redPixelCount / totalPixelCount;
-  return redPixelCoverage;
+  final double coverage = matchingPixels / totalPixelCount;
+  return coverage;
 }
 
 /// The line number of this function call
