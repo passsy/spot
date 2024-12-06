@@ -4,8 +4,8 @@ import 'package:flutter/material.dart' as flt;
 import 'package:jaspr/server.dart' hide ServerApp;
 import 'package:spot/src/screenshot/screenshot.dart';
 import 'package:spot/src/timeline/html/sources/script.js.g.dart';
-import 'package:spot/src/timeline/html/sources/styles.css.dart';
 import 'package:spot/src/timeline/html/web/server_app.dart';
+import 'package:spot/src/timeline/html/web/theme.dart';
 import 'package:spot/src/timeline/html/web/timeline_event.dart' as x;
 import 'package:spot/src/timeline/timeline.dart';
 import 'package:stack_trace/stack_trace.dart';
@@ -82,8 +82,9 @@ Future<String> renderTimelineWithJaspr(List<TimelineEvent> events) async {
           rel: "stylesheet",
         ),
         DomComponent(tag: 'script', child: raw(timelineJS)),
-        DomComponent(tag: 'style', child: raw(timelineCSS)),
+        DomComponent(tag: 'style', child: raw(animationsCSS)),
       ],
+      styles: ServerAppState.styles,
       body: ServerApp(
         testName: Invoker.current!.liveTest.test.name,
         testNameWithHierarchy: nameWithHierarchy,

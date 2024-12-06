@@ -1,5 +1,8 @@
+// ignore_for_file: public_member_api_docs
+
 import 'package:jaspr/jaspr.dart';
-import 'package:spot/src/timeline/html/web/timeline_app.dart';
+import 'package:spot/src/timeline/html/components/timeline_app.dart';
+import 'package:spot/src/timeline/html/web/theme.dart';
 import 'package:spot/src/timeline/html/web/timeline_event.dart';
 
 /// The main entry point for the timeline web app.
@@ -21,10 +24,10 @@ class ServerApp extends StatefulComponent {
   final List<TimelineEvent> timelineEvents;
 
   @override
-  State<ServerApp> createState() => _ServerAppState();
+  State<ServerApp> createState() => ServerAppState();
 }
 
-class _ServerAppState extends State<ServerApp>
+class ServerAppState extends State<ServerApp>
     with SyncStateMixin<ServerApp, Map<String, dynamic>> {
   @override
   Map<String, dynamic> getState() {
@@ -47,4 +50,21 @@ class _ServerAppState extends State<ServerApp>
       timelineEvents: component.timelineEvents,
     );
   }
+
+  static List<StyleRule> get styles => [
+        css('*')
+            .text(fontFamily: fontFamily)
+            .background(color: spotBackground)
+            .raw({'-webkit-font-smoothing': 'antialiased'}),
+        css('body').box(
+          margin: EdgeInsets.all(10.px),
+          padding: EdgeInsets.only(bottom: 50.px),
+        ),
+        css('h1, h2, h3, p, pre').text(color: fontColor),
+        css('h1')
+            .text(fontWeight: FontWeight.w400, fontSize: h1FontSize)
+            .box(padding: h1Padding),
+        css('.header').flexbox(alignItems: AlignItems.center),
+        ...TimelineAppState.styles,
+      ];
 }

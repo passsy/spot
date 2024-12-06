@@ -1,8 +1,10 @@
+// ignore_for_file: public_member_api_docs
+
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html';
 
 import 'package:jaspr/jaspr.dart';
-import 'package:spot/src/timeline/html/web/timeline_app.dart';
+import 'package:spot/src/timeline/html/components/timeline_app.dart';
 import 'package:spot/src/timeline/html/web/timeline_event.dart';
 
 void main() async {
