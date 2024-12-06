@@ -9,8 +9,7 @@ void main() {
     outputJsFile.deleteSync();
   }
 
-  final stopwatch = Stopwatch()..start();
-  Process.runSync('dart', [
+  var result = Process.runSync('dart', [
     'compile',
     'js',
     'lib/src/timeline/html/web/client_app.dart',
@@ -18,8 +17,8 @@ void main() {
     '--output=${outputJsFile.path}',
     '--no-source-maps',
   ]);
-  stopwatch.stop();
-  print('Compiled timline JS in ${stopwatch.elapsedMilliseconds}ms');
+  stderr.write(result.stderr);
+  stdout.write(result.stdout);
 
   final outputJsContent = outputJsFile.readAsStringSync();
 
@@ -30,7 +29,8 @@ void main() {
       "// language=javascript\n"
       "const String timelineJS = r'''\n$outputJsContent\n''';\n";
 
-  File('lib/src/timeline/html/sources/script.js.g.dart').writeAsStringSync(scriptDartContent);
+  File('lib/src/timeline/html/sources/script.js.g.dart')
+      .writeAsStringSync(scriptDartContent);
   outputJsFile.deleteSync();
   File('${outputJsFile.path}.deps').deleteSync();
   print('Generated ${outputJsFile.path}');

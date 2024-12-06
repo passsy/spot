@@ -1,7 +1,9 @@
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html';
+
 import 'package:jaspr/jaspr.dart';
 import 'package:spot/src/timeline/html/web/timeline_app.dart';
 import 'package:spot/src/timeline/html/web/timeline_event.dart';
-import 'package:web/web.dart';
 
 void main() async {
   await window.onLoad.first;

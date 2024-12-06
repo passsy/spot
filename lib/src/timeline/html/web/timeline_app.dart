@@ -5,11 +5,11 @@
 library timeline_page;
 
 import 'dart:async';
-import 'dart:js_interop' if (dart.library.io) 'web_stubs.dart';
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html' if (dart.library.io) 'web_stubs.dart';
 
 import 'package:jaspr/jaspr.dart';
 import 'package:spot/src/timeline/html/web/timeline_event.dart';
-import 'package:web/web.dart' if (dart.library.io) 'web_stubs.dart';
 
 /// The main entry point for the timeline web app.
 class TimelineApp extends StatefulComponent {
@@ -60,7 +60,7 @@ class _TimelineAppState extends State<TimelineApp> {
       button(classes: "button-spot", onClick: () async {
         final command = 'flutter test --plain-name="${component.testName}"';
         try {
-          await window.navigator.clipboard.writeText(command).toDart;
+          await window.navigator.clipboard?.writeText(command);
           _snackBar.currentState!.show("Test command copied to clipboard");
         } catch (_) {
           _snackBar.currentState!.show("Failed to copy test command");
@@ -225,9 +225,9 @@ class _ExpandableBoxState extends State<ExpandableBox> {
             if (expandedTo != null) {
               setState(() => expandedTo = null);
             } else {
-              final contentHeight =
-                  ((e.target as HTMLElement?)?.previousSibling as HTMLElement?)
-                      ?.scrollHeight;
+              final contentHeight = (e.target as HtmlElement?)
+                  ?.previousElementSibling
+                  ?.scrollHeight;
               setState(() => expandedTo = contentHeight);
             }
           },
