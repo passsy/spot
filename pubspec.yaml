@@ -5,8 +5,8 @@ repository: https://github.com/passsy/spot
 issue_tracker: https://github.com/passsy/spot/issues
 
 environment:
-  sdk: '>=3.0.0 <3.999.0'
-  flutter: '>=3.10.0 <4.0.0'
+  sdk: ">=3.0.0 <3.999.0"
+  flutter: ">=3.10.0 <4.0.0"
 
 dependencies:
   checks: ^0.3.0
@@ -19,10 +19,11 @@ dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
+  jaspr: ^0.15.1
   meta: ^1.8.0
   nanoid2: ^2.0.0
   stack_trace: ^1.11.0
-  test_api: '>=0.5.0 <0.8.0'
+  test_api: ">=0.5.0 <0.8.0"
 
 dev_dependencies:
   image: ^4.0.0
