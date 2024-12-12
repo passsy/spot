@@ -17,4 +17,6 @@ jobs:
       with:
         channel: 'stable'
     - run: flutter analyze --fatal-infos --fatal-warnings
-    - run: dart format --set-exit-if-changed .
+    - run: |
+        dart format lib/src/timeline/html/sources/script.js.g.dart
+        dart format --set-exit-if-changed .
