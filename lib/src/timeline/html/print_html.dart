@@ -13,11 +13,19 @@ import 'package:stack_trace/stack_trace.dart';
 // ignore: implementation_imports
 import 'package:test_api/src/backend/invoker.dart';
 
+bool useFixedTimelineLocation = true;
+
 /// Writes the timeline as an HTML file
 extension HtmlTimelinePrinter on Timeline {
   /// Prints the timeline as an HTML file.
   Future<void> printHTML() async {
-    final spotTempDir = Directory.systemTemp.createTempSync();
+    final Directory spotTempDir;
+
+    if (useFixedTimelineLocation) {
+      spotTempDir = Directory('build/timeline');
+    } else {
+      spotTempDir = Directory.systemTemp.createTempSync();
+    }
 
     String name = test.test.name;
     if (name.isEmpty) {
@@ -53,7 +61,7 @@ extension HtmlTimelinePrinter on Timeline {
       return 'timeline-$name.html';
     }();
 
-    final htmlFile = File('${spotTempDir.path}/$nameForHtml');
+    final htmlFile = File('${spotTempDir.absolute.path}/$nameForHtml');
     try {
       final Stopwatch stopwatch = Stopwatch()..start();
       final content = await renderTimelineWithJaspr(this.events);

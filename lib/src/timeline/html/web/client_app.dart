@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs
 
 // ignore: avoid_web_libraries_in_flutter
+import 'dart:async';
 import 'dart:html';
 
 import 'package:jaspr/browser.dart';
@@ -10,8 +11,31 @@ import 'package:spot/src/timeline/html/web/timeline_event.dart';
 void main() async {
   await window.onLoad.first;
 
+  _registerHotRestart();
+
   // hydrate static HTML with the client side js to make it interactive
   runApp(const ClientApp());
+}
+
+void _registerHotRestart() {
+  Timer.periodic(const Duration(milliseconds: 1000), (timer) {
+    print('checking for html changes');
+    checkForHtmlChanges();
+  });
+}
+
+String? previousContent;
+
+Future<void> checkForHtmlChanges() async {
+  final response = await HttpRequest.request(
+    window.location.href,
+    requestHeaders: {'cache': 'no-cache'},
+  );
+  final currentContent = response.responseText;
+  if (previousContent != null && previousContent != currentContent) {
+    window.location.reload(); // Reload the page if the HTML changes
+  }
+  previousContent = currentContent; // Cache the current content
 }
 
 /// The main entry point for the timeline web app.
