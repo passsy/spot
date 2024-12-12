@@ -174,6 +174,7 @@ void main() {
                   child: Transform.translate(
                     offset: const Offset(100, 0),
                     child: Container(
+                      // ignore: deprecated_member_use
                       color: Colors.red.withOpacity(0.5),
                       width: 400,
                       height: 400,

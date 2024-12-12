@@ -70,8 +70,9 @@ class Events extends StatelessComponent {
             css('&') //
                 .box(margin: eventDetailsMargin, minWidth: Unit.zero)
                 .flexbox(
-                    direction: FlexDirection.column,
-                    justifyContent: JustifyContent.spaceBetween),
+                  direction: FlexDirection.column,
+                  justifyContent: JustifyContent.spaceBetween,
+                ),
             css('& p') //
                 .box(margin: EdgeInsets.zero, padding: eventDetailsPadding)
                 .flexItem(flex: const Flex(grow: 1)),
@@ -86,9 +87,10 @@ class Events extends StatelessComponent {
               .raw({'gap': '20px'}),
           css('& .thumbnail')
               .box(
-                  height: thumbnailHeight,
-                  border: thumbnailBorder,
-                  cursor: Cursor.pointer)
+            height: thumbnailHeight,
+            border: thumbnailBorder,
+            cursor: Cursor.pointer,
+          )
               .raw({'object-fit': 'contain'}),
         ]),
         css('.secondary-button', [
@@ -119,8 +121,11 @@ class Events extends StatelessComponent {
                 ),
             css('& .secondary-button__text').box(
               display: Display.inlineBlock,
-              transition: const Transition('transform',
-                  duration: 300, curve: Curve.ease),
+              transition: const Transition(
+                'transform',
+                duration: 300,
+                curve: Curve.ease,
+              ),
             ),
             css('& .secondary-button__icon').box(
               position: Position.absolute(right: (-20).px),
@@ -131,7 +136,7 @@ class Events extends StatelessComponent {
                 .box(transform: Transform.translate(x: (-10).px)),
             css('&:hover .secondary-button__icon')
                 .box(position: Position.absolute(right: 20.px)),
-          ])
+          ]),
         ]),
         ...ExpandableBoxState.styles,
       ];

@@ -3,12 +3,14 @@
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html';
 
-import 'package:jaspr/jaspr.dart';
+import 'package:jaspr/browser.dart';
 import 'package:spot/src/timeline/html/components/timeline_app.dart';
 import 'package:spot/src/timeline/html/web/timeline_event.dart';
 
 void main() async {
   await window.onLoad.first;
+
+  // hydrate static HTML with the client side js to make it interactive
   runApp(const ClientApp());
 }
 
@@ -34,6 +36,7 @@ class _ClientAppState extends State<ClientApp>
   @override
   void updateState(Map<String, dynamic> value) {
     // This uses Jasprs sync mechanism to retrieve the synced server state from the rendered HTML.
+    // See ServerApp.getState() where the server injects the data
     timelineEvents = (value['timelineEvents'] as List)
         .cast<Map<String, dynamic>>()
         .map(TimelineEvent.fromMap)

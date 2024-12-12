@@ -40,10 +40,14 @@ class ServerAppState extends State<ServerApp>
   }
 
   @override
-  void updateState(Map<String, dynamic> value) {}
+  void updateState(Map<String, dynamic> value) {
+    // See ClientApp.updateState() for the client side implementation.
+    throw UnimplementedError("Not implemented for server app");
+  }
 
   @override
   Iterable<Component> build(BuildContext context) sync* {
+    // Keep in sync with ClientApp.build(). Both should render the same components or hydration changes the DOM.
     yield TimelineApp(
       testName: component.testName,
       testNameWithHierarchy: component.testNameWithHierarchy,

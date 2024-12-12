@@ -1,3 +1,4 @@
+// ignore_for_file: avoid_print
 import 'dart:io';
 
 import 'package:flutter/material.dart' as flt;
@@ -9,7 +10,7 @@ import 'package:spot/src/timeline/html/web/theme.dart';
 import 'package:spot/src/timeline/html/web/timeline_event.dart' as x;
 import 'package:spot/src/timeline/timeline.dart';
 import 'package:stack_trace/stack_trace.dart';
-//ignore: implementation_imports
+// ignore: implementation_imports
 import 'package:test_api/src/backend/invoker.dart';
 
 /// Writes the timeline as an HTML file
@@ -54,12 +55,15 @@ extension HtmlTimelinePrinter on Timeline {
 
     final htmlFile = File('${spotTempDir.path}/$nameForHtml');
     try {
+      final Stopwatch stopwatch = Stopwatch()..start();
       final content = await renderTimelineWithJaspr(this.events);
+      stopwatch.stop();
+      if (stopwatch.elapsed > const Duration(seconds: 1)) {
+        print('Rendered HTML in ${stopwatch.elapsedMilliseconds}ms');
+      }
       htmlFile.writeAsStringSync(content);
-      //ignore: avoid_print
       print('View time line here: file://${htmlFile.path}');
     } catch (e, st) {
-      //ignore: avoid_print
       print('Error writing HTML file: $e $st');
     }
   }
@@ -69,10 +73,8 @@ extension HtmlTimelinePrinter on Timeline {
 Future<String> renderTimelineWithJaspr(List<TimelineEvent> events) async {
   // Turn off isolate rendering.
   Jaspr.initializeApp(useIsolates: false);
-
   final nameWithHierarchy = testNameWithHierarchy();
-
-  return await renderComponent(
+  final html = await renderComponent(
     Document(
       title: "Timeline Events",
       head: [
@@ -99,6 +101,7 @@ Future<String> renderTimelineWithJaspr(List<TimelineEvent> events) async {
                     : null,
                 color: e.color == flt.Colors.grey
                     ? null
+                    // ignore: deprecated_member_use
                     : e.color.value & 0xFFFFFF,
                 caller: _eventCaller(e.initiator) ?? 'N/A',
                 jetBrainsLink: _jetBrainsURL(e),
@@ -108,6 +111,8 @@ Future<String> renderTimelineWithJaspr(List<TimelineEvent> events) async {
       ),
     ),
   );
+
+  return html;
 }
 
 /// Returns the test name including the group hierarchy.

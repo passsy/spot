@@ -4,6 +4,7 @@ class DragUntilVisibleTestWidget extends StatelessWidget {
   const DragUntilVisibleTestWidget({super.key});
 
   Color getRandomColor(int index) {
+    // ignore: deprecated_member_use
     return Colors.black.withOpacity(1 / (index + 1));
   }
 
