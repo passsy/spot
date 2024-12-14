@@ -10,6 +10,7 @@ import 'dart:html' if (dart.library.io) '../web/web_stubs.dart' show window;
 import 'package:jaspr/jaspr.dart';
 import 'package:spot/src/timeline/html/components/events.dart';
 import 'package:spot/src/timeline/html/components/modal.dart';
+import 'package:spot/src/timeline/html/components/scroll_to_button.dart';
 import 'package:spot/src/timeline/html/components/snackbar.dart';
 import 'package:spot/src/timeline/html/web/theme.dart';
 import 'package:spot/src/timeline/html/web/timeline_event.dart';
@@ -93,6 +94,7 @@ class TimelineAppState extends State<TimelineApp> {
         ),
       ]),
       Modal(events: component.timelineEvents, key: _modal),
+      const ScrollToButton(),
     ];
   }
 
@@ -130,5 +132,6 @@ class TimelineAppState extends State<TimelineApp> {
         ...Events.styles,
         ...SnackBarState.styles,
         ...ModalState.styles,
+        ...ScrollToButtonState.styles,
       ];
 }
