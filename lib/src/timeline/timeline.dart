@@ -65,7 +65,7 @@ Timeline get timeline {
   }
 
   // create new timeline
-  final newTimeline = Timeline._(test);
+  final newTimeline = _Timeline._(test);
 
   Invoker.current!.addTearDown(() async {
     await newTimeline._onPostTest();
@@ -94,21 +94,74 @@ Timeline get timeline {
 /// ```
 /// See also:
 /// - [TimelineMode] for the available modes.
-class Timeline {
-  Timeline._(this.test);
+abstract interface class Timeline {
+  /// The test that the timeline is associated with.
+  LiveTest get test;
+
+  /// The events that have recording during the test.
+  List<TimelineEvent> get events;
+
+  /// The mode of the timeline. Defaults to [TimelineMode.reportOnError].
+  TimelineMode get mode;
+  set mode(TimelineMode value);
+
+  /// Adds an event to the timeline.
+  ///
+  /// Returns a unique identifier for the event which can be used to update
+  /// its details later.
+  TimelineEventId addEvent({
+    required String details,
+    required String eventType,
+    Screenshot? screenshot,
+    Frame? initiator,
+    Color? color,
+  });
+
+  /// Removes a previously added event from the timeline.
+  void removeEvent(TimelineEventId id);
+
+  /// Allows updating an event with more information after it has been added.
+  ///
+  /// With this message assertions can be added and later updated when they
+  /// failed with additional information about the error.
+  void updateEvent({
+    required TimelineEventId id,
+    String? eventType,
+    String? details,
+    Screenshot? screenshot,
+    Color? color,
+    String? description,
+  });
+
+  /// Adds a function that processes a pending [Screenshot] to be processed at a later time (or never).
+  ///
+  /// To speed up processing, the screenshots are only processed when actually needed in a report (console or html).
+  void addScreenshotProcessing(Future<void> Function() process);
+
+  /// Processes all pending screenshots
+  Future<void> processPendingScreenshots();
+}
+
+/// The actual implementation of the [Timeline].
+final class _Timeline extends Timeline {
+  _Timeline._(this.test);
 
   /// The test that the timeline is associated with.
+  @override
   final LiveTest test;
 
   /// The events that have recording during the test.
+  @override
   List<TimelineEvent> get events => List.unmodifiable(_events);
   final List<TimelineEvent> _events = [];
 
   TimelineMode _mode = _globalTimelineMode;
 
   /// The mode of the timeline. Defaults to [TimelineMode.reportOnError].
+  @override
   TimelineMode get mode => _mode;
 
+  @override
   set mode(TimelineMode value) {
     if (value == _mode) {
       return;
@@ -135,6 +188,7 @@ class Timeline {
   ///
   /// Returns a unique identifier for the event which can be used to update
   /// its details later.
+  @override
   TimelineEventId addEvent({
     required String details,
     required String eventType,
@@ -163,24 +217,13 @@ class Timeline {
   }
 
   /// Removes a previously added event from the timeline.
+  @override
   void removeEvent(TimelineEventId id) {
     _events.removeWhere((event) => event.id == id);
   }
 
-  /// Allows updating an event with more information after it has been added.
-  ///
-  /// With this message assertions can be added and later updated when they
-  /// failed with additional information about the error.
-  late void Function({
-    required TimelineEventId id,
-    String? eventType,
-    String? details,
-    Screenshot? screenshot,
-    Color? color,
-    String? description,
-  }) updateEvent = _updateEvent;
-
-  void _updateEvent({
+  @override
+  void updateEvent({
     required TimelineEventId id,
     Object? eventType = _undefined,
     Object? details = _undefined,
@@ -244,11 +287,13 @@ class Timeline {
   /// Adds a function that processes a pending [Screenshot] to be processed at a later time (or never).
   ///
   /// To speed up processing, the screenshots are only processed when actually needed in a report (console or html).
+  @override
   void addScreenshotProcessing(Future<void> Function() process) {
     _toBeProcessedScreenshots.add(process);
   }
 
   /// Processes all pending screenshots
+  @override
   Future<void> processPendingScreenshots() async {
     if (_toBeProcessedScreenshots.isEmpty) {
       return;
