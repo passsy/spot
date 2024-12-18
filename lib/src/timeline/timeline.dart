@@ -2,8 +2,10 @@
 
 import 'package:ci/ci.dart';
 import 'package:clock/clock.dart';
+import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:nanoid2/nanoid2.dart';
 import 'package:spot/src/screenshot/screenshot.dart';
 import 'package:spot/src/spot/tree_snapshot.dart';
 import 'package:spot/src/timeline/html/print_html.dart';
@@ -63,7 +65,7 @@ Timeline get timeline {
   }
 
   // create new timeline
-  final newTimeline = Timeline._(test);
+  final newTimeline = _Timeline._(test);
 
   Invoker.current!.addTearDown(() async {
     await newTimeline._onPostTest();
@@ -92,21 +94,74 @@ Timeline get timeline {
 /// ```
 /// See also:
 /// - [TimelineMode] for the available modes.
-class Timeline {
-  Timeline._(this.test);
+abstract interface class Timeline {
+  /// The test that the timeline is associated with.
+  LiveTest get test;
+
+  /// The events that have recording during the test.
+  List<TimelineEvent> get events;
+
+  /// The mode of the timeline. Defaults to [TimelineMode.reportOnError].
+  TimelineMode get mode;
+  set mode(TimelineMode value);
+
+  /// Adds an event to the timeline.
+  ///
+  /// Returns a unique identifier for the event which can be used to update
+  /// its details later.
+  TimelineEventId addEvent({
+    required String details,
+    required String eventType,
+    Screenshot? screenshot,
+    Frame? initiator,
+    Color? color,
+  });
+
+  /// Removes a previously added event from the timeline.
+  void removeEvent(TimelineEventId id);
+
+  /// Allows updating an event with more information after it has been added.
+  ///
+  /// With this message assertions can be added and later updated when they
+  /// failed with additional information about the error.
+  void updateEvent({
+    required TimelineEventId id,
+    String? eventType,
+    String? details,
+    Screenshot? screenshot,
+    Color? color,
+    String? description,
+  });
+
+  /// Adds a function that processes a pending [Screenshot] to be processed at a later time (or never).
+  ///
+  /// To speed up processing, the screenshots are only processed when actually needed in a report (console or html).
+  void addScreenshotProcessing(Future<void> Function() process);
+
+  /// Processes all pending screenshots
+  Future<void> processPendingScreenshots();
+}
+
+/// The actual implementation of the [Timeline].
+final class _Timeline extends Timeline {
+  _Timeline._(this.test);
 
   /// The test that the timeline is associated with.
+  @override
   final LiveTest test;
 
   /// The events that have recording during the test.
+  @override
   List<TimelineEvent> get events => List.unmodifiable(_events);
   final List<TimelineEvent> _events = [];
 
   TimelineMode _mode = _globalTimelineMode;
 
   /// The mode of the timeline. Defaults to [TimelineMode.reportOnError].
+  @override
   TimelineMode get mode => _mode;
 
+  @override
   set mode(TimelineMode value) {
     if (value == _mode) {
       return;
@@ -130,15 +185,20 @@ class Timeline {
   }
 
   /// Adds an event to the timeline.
-  void addEvent({
+  ///
+  /// Returns a unique identifier for the event which can be used to update
+  /// its details later.
+  @override
+  TimelineEventId addEvent({
     required String details,
     required String eventType,
     Screenshot? screenshot,
     Frame? initiator,
     Color? color,
-    String? description,
   }) {
+    final id = TimelineEventId.random();
     final event = TimelineEvent(
+      id: id,
       details: details,
       screenshot: screenshot,
       initiator: mostRelevantCaller(
@@ -153,6 +213,66 @@ class Timeline {
       ),
     );
     _addRawEvent(event);
+    return id;
+  }
+
+  /// Removes a previously added event from the timeline.
+  @override
+  void removeEvent(TimelineEventId id) {
+    final event = _events.firstOrNullWhere((event) => event.id == id);
+    if (event == null) {
+      throw StateError("Event with id '${id.value}' not found");
+    }
+    _events.remove(event);
+  }
+
+  @override
+  void updateEvent({
+    required TimelineEventId id,
+    Object? eventType = _undefined,
+    Object? details = _undefined,
+    Object? screenshot = _undefined,
+    Object? color = _undefined,
+    Object? description = _undefined,
+  }) {
+    final event = _events.firstOrNullWhere((event) => event.id == id);
+    if (event == null) {
+      throw StateError("Event with id '${id.value}' not found");
+    }
+
+    if (!event.treeSnapshot.isFromThisFrame) {
+      throw StateError(
+        'You can not update an event after a new frame has been rendered',
+      );
+    }
+
+    // ignore: cast_nullable_to_non_nullable
+    final updatedColor = color == _undefined ? event.color : color as Color;
+    final updatedDetails =
+        // ignore: cast_nullable_to_non_nullable
+        details == _undefined ? event.details : details as String;
+    final updatedEventType = eventType == _undefined
+        ? event.eventType
+        : TimelineEventType(
+            // ignore: cast_nullable_to_non_nullable
+            label: eventType as String,
+            color: updatedColor,
+          );
+    final updatedScreenshot =
+        screenshot == _undefined ? event.screenshot : screenshot as Screenshot?;
+
+    final updated = TimelineEvent(
+      id: id,
+      details: updatedDetails,
+      eventType: updatedEventType,
+      color: updatedColor,
+      screenshot: updatedScreenshot,
+      timestamp: event.timestamp,
+      treeSnapshot: event.treeSnapshot,
+      initiator: event.initiator,
+    );
+    final index = _events.indexOf(event);
+    _events[index] = updated;
   }
 
   /// Adds an event to the timeline.
@@ -171,11 +291,13 @@ class Timeline {
   /// Adds a function that processes a pending [Screenshot] to be processed at a later time (or never).
   ///
   /// To speed up processing, the screenshots are only processed when actually needed in a report (console or html).
+  @override
   void addScreenshotProcessing(Future<void> Function() process) {
     _toBeProcessedScreenshots.add(process);
   }
 
   /// Processes all pending screenshots
+  @override
   Future<void> processPendingScreenshots() async {
     if (_toBeProcessedScreenshots.isEmpty) {
       return;
@@ -255,15 +377,18 @@ class TimelineEventType {
 class TimelineEvent {
   /// Creates a new timeline event.
   const TimelineEvent({
+    required this.id,
     required this.timestamp,
     required this.treeSnapshot,
     required this.details,
     required this.eventType,
-    this.description,
     this.initiator,
     this.screenshot,
     required this.color,
   });
+
+  /// The unique identifier of the event used to update the event later.
+  final TimelineEventId id;
 
   /// The type of event that occurred.
   final TimelineEventType eventType;
@@ -283,11 +408,40 @@ class TimelineEvent {
   /// The frame that initiated the event.
   final Frame? initiator;
 
-  /// Custom plain-text information about the event.
-  final String? description;
-
   /// The color of the event.
   final Color color;
+
+  @override
+  String toString() {
+    return 'TimelineEvent{id: $id, eventType: $eventType, screenshot: $screenshot, details: $details, timestamp: $timestamp, treeSnapshot: $treeSnapshot, initiator: $initiator, color: $color}';
+  }
+}
+
+/// A unique identifier for a [TimelineEvent].
+class TimelineEventId {
+  /// Creates a fixed id for a [TimelineEvent].
+  const TimelineEventId(this.value);
+
+  /// Creates a new unique id for a [TimelineEvent].
+  TimelineEventId.random() : value = nanoid();
+
+  /// The actual value of the id.
+  final String value;
+
+  @override
+  String toString() {
+    return value;
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TimelineEventId &&
+          runtimeType == other.runtimeType &&
+          value == other.value;
+
+  @override
+  int get hashCode => value.hashCode;
 }
 
 /// The mode of the [Timeline] and how it should be generated
@@ -327,3 +481,5 @@ Frame? mostRelevantCaller({Trace? trace, Frame? fallback}) {
 
   return preferredFrame;
 }
+
+const Object _undefined = Object();

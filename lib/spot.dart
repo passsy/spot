@@ -101,6 +101,7 @@ export 'package:spot/src/timeline/timeline.dart'
     show
         Timeline,
         TimelineEvent,
+        TimelineEventId,
         TimelineEventType,
         TimelineMode,
         globalTimelineMode,
