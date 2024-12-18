@@ -31,9 +31,6 @@ extension ConsoleTimelinePrinter on Timeline {
     if (details != null) {
       buffer.writeln('Details: $details');
     }
-    if (event.description != null) {
-      buffer.writeln('Description: ${event.description}');
-    }
     buffer.writeln('Caller: $caller');
     if (event.screenshot != null) {
       buffer.writeln('Screenshot: file://${event.screenshot!.file.path}');
