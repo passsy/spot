@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
@@ -27,6 +29,19 @@ void main() {
     expect(timeline.events, isEmpty);
   });
 
+  testWidgets('Remove unknown event', (_) async {
+    expect(
+      () => timeline.removeEvent(const TimelineEventId('a')),
+      throwsA(
+        isA<StateError>().having(
+          (e) => e.message,
+          'message',
+          contains("Event with id 'a' not found"),
+        ),
+      ),
+    );
+  });
+
   testWidgets('Update event', (_) async {
     final id = timeline.addEvent(
       details: 'a',
@@ -52,5 +67,26 @@ void main() {
     expect(b.eventType.label, 'type 2');
     expect(b.eventType.color, Colors.red);
     expect(timeline.events, hasLength(1));
+  });
+
+  testWidgets('Update unknown event', (_) async {
+    expect(
+      () => timeline.updateEvent(id: const TimelineEventId('a')),
+      throwsA(
+        isA<StateError>().having(
+          (e) => e.message,
+          'message',
+          contains("Event with id 'a' not found"),
+        ),
+      ),
+    );
+  });
+
+  test('TimelineEventId.toString()', () {
+    expect(TimelineEventId('a').toString(), 'a');
+  });
+  test('TimelineEventId.equals', () {
+    expect(TimelineEventId('a'), TimelineEventId('a'));
+    expect(TimelineEventId('a'), isNot(TimelineEventId('b')));
   });
 }

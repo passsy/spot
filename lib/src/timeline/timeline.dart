@@ -219,7 +219,11 @@ final class _Timeline extends Timeline {
   /// Removes a previously added event from the timeline.
   @override
   void removeEvent(TimelineEventId id) {
-    _events.removeWhere((event) => event.id == id);
+    final event = _events.firstOrNullWhere((event) => event.id == id);
+    if (event == null) {
+      throw StateError("Event with id '${id.value}' not found");
+    }
+    _events.remove(event);
   }
 
   @override
@@ -233,7 +237,7 @@ final class _Timeline extends Timeline {
   }) {
     final event = _events.firstOrNullWhere((event) => event.id == id);
     if (event == null) {
-      throw StateError('Event with id $id not found');
+      throw StateError("Event with id '${id.value}' not found");
     }
 
     if (!event.treeSnapshot.isFromThisFrame) {
@@ -406,6 +410,11 @@ class TimelineEvent {
 
   /// The color of the event.
   final Color color;
+
+  @override
+  String toString() {
+    return 'TimelineEvent{id: $id, eventType: $eventType, screenshot: $screenshot, details: $details, timestamp: $timestamp, treeSnapshot: $treeSnapshot, initiator: $initiator, color: $color}';
+  }
 }
 
 /// A unique identifier for a [TimelineEvent].
@@ -418,6 +427,21 @@ class TimelineEventId {
 
   /// The actual value of the id.
   final String value;
+
+  @override
+  String toString() {
+    return value;
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TimelineEventId &&
+          runtimeType == other.runtimeType &&
+          value == other.value;
+
+  @override
+  int get hashCode => value.hashCode;
 }
 
 /// The mode of the [Timeline] and how it should be generated
