@@ -6,13 +6,13 @@ import 'package:spot/spot.dart';
 
 void main() {
   testWidgets('narrow down search down the tree', (tester) async {
+    await loadAppFonts();
     await tester.pumpWidget(
       MaterialApp(
         home: Container(
           child: Scaffold(
             appBar: AppBar(
-              title: DefaultTextStyle(
-                style: TextStyle(),
+              title: DefaultTextStyle.merge(
                 maxLines: 2,
                 child: Text('Pepe'),
               ),
