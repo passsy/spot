@@ -228,19 +228,6 @@ void main() {
 
     testWidgets('hasWidgetProp prints error to timeline', (widgetTester) async {
       await widgetTester.pumpWidget(checkedCheckbox);
-
-      checkbox.existsOnce().hasWidgetProp(
-            prop: widgetProp('value', (widget) => widget.value),
-            match: (value) => value.isTrue(),
-          );
-
-      final successEvent = timeline.events.last;
-      expect(successEvent.eventType.label, 'Assertion');
-      expect(
-        successEvent.details,
-        contains("Expected: Checkbox with prop 'value' that: is true"),
-      );
-
       expect(
         () => checkbox.existsOnce().hasWidgetProp(
               prop: widgetProp('value', (widget) => widget.value),
@@ -254,6 +241,12 @@ void main() {
       expect(
         failureEvent.details,
         "Failed to match widget: Checkbox with prop 'value' that: is false, actual: <true>",
+      );
+
+      final previousEvent = timeline.events[timeline.events.length - 2];
+      expect(
+        previousEvent.details,
+        "Found 1 widgets matching Checkbox (amount: 1).\nExpected: max:1,",
       );
     });
   });

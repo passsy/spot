@@ -1,8 +1,11 @@
 import 'package:dartx/dartx.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:spot/spot.dart';
+import 'package:spot/src/act/act.dart';
 import 'package:spot/src/checks/checks_nullability.dart';
+import 'package:spot/src/screenshot/screenshot_annotator.dart';
 import 'package:spot/src/spot/selectors.dart';
 import 'package:spot/src/spot/widget_matcher.dart';
 
@@ -152,9 +155,41 @@ extension DiagnosticPropWidgetMatcher<W extends Widget> on WidgetMatcher<W> {
     }
 
     final failure = softCheckHideNull(actual, condition);
-    failure.throwPropertyCheckFailure(condition, element);
+    final eventId = _addAssertionToTimeline(failure, condition, element);
+    failure.throwPropertyCheckFailure(condition, element, eventId);
     return this;
   }
+}
+
+TimelineEventId? _addAssertionToTimeline<T>(
+  CheckFailure? failure,
+  void Function(Subject<T>) condition,
+  Element element,
+) {
+  if (timeline.mode == TimelineMode.off) {
+    return null;
+  }
+  final detailsSb = StringBuffer();
+  detailsSb.writeln(
+    'Expected: ${describe(condition).map((it) => it.trim()).join(' ')}',
+  );
+  detailsSb.writeln('Widget: $element');
+  detailsSb.writeln(
+    'Widget location: at ${element.debugWidgetLocation?.file.path}',
+  );
+
+  if (failure != null) {
+    detailsSb.writeln('Actual: ${failure.rejection.which}');
+  }
+  final screenshot = timeline.takeScreenshotSync(
+    annotators: [HighlightAnnotator.element(element)],
+  );
+  return timeline.addEvent(
+    eventType: 'Assertion',
+    details: detailsSb.toString(),
+    screenshot: screenshot,
+    color: failure == null ? Colors.grey : Colors.red,
+  );
 }
 
 extension on DiagnosticsNode {

@@ -130,8 +130,8 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
         : widgetSelectorCondition;
 
     final failure = softCheckHideNull(element, condition);
-    _addAssertionToTimeline(failure, condition, element);
-    failure.throwPropertyCheckFailure(condition, element);
+    final eventId = _addAssertionToTimeline(failure, condition, element);
+    failure.throwPropertyCheckFailure(condition, element, eventId);
     return this;
   }
 
@@ -172,8 +172,8 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
     }
 
     final failure = softCheckHideNull(element, condition);
-    _addAssertionToTimeline(failure, condition, element);
-    failure.throwPropertyCheckFailure(condition, element);
+    final eventId = _addAssertionToTimeline(failure, condition, element);
+    failure.throwPropertyCheckFailure(condition, element, eventId);
 
     return this;
   }
@@ -215,8 +215,8 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
     }
 
     final failure = softCheckHideNull(element, condition);
-    _addAssertionToTimeline(failure, condition, element);
-    failure.throwPropertyCheckFailure(condition, element);
+    final eventId = _addAssertionToTimeline(failure, condition, element);
+    failure.throwPropertyCheckFailure(condition, element, eventId);
 
     return this;
   }
@@ -263,8 +263,8 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
     }
 
     final failure = softCheckHideNull(element, condition);
-    _addAssertionToTimeline(failure, condition, element);
-    failure.throwPropertyCheckFailure(condition, element);
+    final eventId = _addAssertionToTimeline(failure, condition, element);
+    failure.throwPropertyCheckFailure(condition, element, eventId);
 
     return this;
   }
@@ -312,8 +312,8 @@ extension WidgetMatcherExtensions<W extends Widget> on WidgetMatcher<W> {
     }
 
     final failure = softCheckHideNull(element, condition);
-    _addAssertionToTimeline(failure, condition, element);
-    failure.throwPropertyCheckFailure(condition, element);
+    final eventId = _addAssertionToTimeline(failure, condition, element);
+    failure.throwPropertyCheckFailure(condition, element, eventId);
 
     return this;
   }
@@ -466,13 +466,13 @@ extension MultiWidgetMatcherExtensions<W extends Widget>
   }
 }
 
-void _addAssertionToTimeline(
+TimelineEventId? _addAssertionToTimeline(
   CheckFailure? failure,
   void Function(Subject<Element>) condition,
   Element element,
 ) {
   if (timeline.mode == TimelineMode.off) {
-    return;
+    return null;
   }
   final detailsSb = StringBuffer();
   detailsSb.writeln(
@@ -489,7 +489,7 @@ void _addAssertionToTimeline(
   final screenshot = timeline.takeScreenshotSync(
     annotators: [HighlightAnnotator.element(element)],
   );
-  timeline.addEvent(
+  return timeline.addEvent(
     eventType: 'Assertion',
     details: detailsSb.toString(),
     screenshot: screenshot,
@@ -503,6 +503,7 @@ extension ThrowCheckFailure on CheckFailure? {
   void throwPropertyCheckFailure<T>(
     Condition<T> condition,
     Element element,
+    TimelineEventId? toUpdate,
   ) {
     if (this == null) {
       return;
@@ -510,16 +511,25 @@ extension ThrowCheckFailure on CheckFailure? {
     final errorParts = describe(condition).map((it) => it.trim()).toList();
     final errorMessage =
         'Failed to match widget: ${errorParts.join(' ')}, actual: ${this!.rejection.actual.joinToString()}';
-
     final screenshot = timeline.takeScreenshotSync(
       annotators: [HighlightAnnotator.element(element)],
     );
-    timeline.addEvent(
-      eventType: 'PropertyCheckFailure',
-      details: errorMessage,
-      screenshot: screenshot,
-      color: Colors.red,
-    );
+    if (toUpdate == null) {
+      timeline.addEvent(
+        eventType: 'PropertyCheckFailure',
+        details: errorMessage,
+        screenshot: screenshot,
+        color: Colors.red,
+      );
+    } else {
+      timeline.updateEvent(
+        id: toUpdate,
+        eventType: 'PropertyCheckFailure',
+        details: errorMessage,
+        screenshot: screenshot,
+        color: Colors.red,
+      );
+    }
 
     throw PropertyCheckFailure(
       errorMessage,
