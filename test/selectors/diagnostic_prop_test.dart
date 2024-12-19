@@ -95,6 +95,15 @@ void main() {
           'Text("a", maxLines: 4,',
         ]),
       );
+      final event = timeline.events.last;
+      expect(event.eventType.label, 'Assertion Failed');
+      expect(event.eventType.color, Colors.red);
+      expect(
+        event.details,
+        contains(
+          'Could not find Text with prop "maxLines" equals <2> in widget tree, expected exactly 1',
+        ),
+      );
     });
 
     testWidgets('generated withDiagnosticProp', (tester) async {

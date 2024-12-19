@@ -502,15 +502,27 @@ extension ThrowCheckFailure on CheckFailure? {
   /// Throws a [PropertyCheckFailure] if the [CheckFailure] is not `null`.
   void throwPropertyCheckFailure<T>(
     Condition<T> condition,
-    Object? actual,
+    Element element,
   ) {
     if (this == null) {
       return;
     }
     final errorParts = describe(condition).map((it) => it.trim()).toList();
-    final errorMessage = errorParts.join(' ');
+    final errorMessage =
+        'Failed to match widget: ${errorParts.join(' ')}, actual: ${this!.rejection.actual.joinToString()}';
+
+    final screenshot = timeline.takeScreenshotSync(
+      annotators: [HighlightAnnotator.element(element)],
+    );
+    timeline.addEvent(
+      eventType: 'PropertyCheckFailure',
+      details: errorMessage,
+      screenshot: screenshot,
+      color: Colors.red,
+    );
+
     throw PropertyCheckFailure(
-      'Failed to match widget: $errorMessage, actual: ${this!.rejection.actual.joinToString()}',
+      errorMessage,
       matcherDescription: errorParts.skip(1).join(' ').removePrefix('with '),
     );
   }
