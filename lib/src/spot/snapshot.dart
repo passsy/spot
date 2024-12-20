@@ -442,18 +442,16 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
         final errorBuilder = StringBuffer();
         errorBuilder.writeln('Could not find $selector in widget tree');
         _dumpWidgetTree(errorBuilder);
-        if (timeline.mode != TimelineMode.off) {
-          timeline.addEvent(
-            eventType: 'Assertion Failed',
-            details: errorBuilder.toString(),
-            color: Colors.red,
-            screenshot: timeline.takeScreenshotSync(
-              annotators: [
-                HighlightAnnotator.elements(discoveredElements),
-              ],
-            ),
-          );
-        }
+        timeline.addEvent(
+          eventType: 'Assertion Failed',
+          details: errorBuilder.toString(),
+          color: Colors.red,
+          screenshot: timeline.takeScreenshotSync(
+            annotators: [
+              HighlightAnnotator.elements(discoveredElements),
+            ],
+          ),
+        );
         fail('Could not find $selector in widget tree');
       }
     }
@@ -472,36 +470,32 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
         });
 
         final tree = findCommonAncestor(discoveredElements).toStringDeep();
-        if (timeline.mode != TimelineMode.off) {
-          timeline.addEvent(
-            eventType: 'Assertion Failed',
-            details: '$errorBuilder\n'
-                '$tree',
-            color: Colors.red,
-            screenshot: timeline.takeScreenshotSync(
-              annotators: [
-                HighlightAnnotator.elements(discoveredElements),
-              ],
-            ),
-          );
-        }
+        timeline.addEvent(
+          eventType: 'Assertion Failed',
+          details: '$errorBuilder\n'
+              '$tree',
+          color: Colors.red,
+          screenshot: timeline.takeScreenshotSync(
+            annotators: [
+              HighlightAnnotator.elements(discoveredElements),
+            ],
+          ),
+        );
         fail(errorBuilder.toString());
       }
     }
 
-    if (timeline.mode != TimelineMode.off) {
-      timeline.addEvent(
-        eventType: 'Assertion',
-        details:
-            'Found ${discovered.length} widgets matching $selector.\nExpected: ${min != null ? "min:$min," : ''}${max != null ? "max:$max," : ''}',
-        color: Colors.grey,
-        screenshot: timeline.takeScreenshotSync(
-          annotators: [
-            HighlightAnnotator.elements(discoveredElements),
-          ],
-        ),
-      );
-    }
+    timeline.addEvent(
+      eventType: 'Assertion',
+      details:
+          'Found ${discovered.length} widgets matching $selector.\nExpected: ${min != null ? "min:$min," : ''}${max != null ? "max:$max," : ''}',
+      color: Colors.grey,
+      screenshot: timeline.takeScreenshotSync(
+        annotators: [
+          HighlightAnnotator.elements(discoveredElements),
+        ],
+      ),
+    );
     return this;
   }
 }

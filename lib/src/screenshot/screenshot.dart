@@ -137,14 +137,6 @@ extension TimelineSyncScreenshot on Timeline {
     List<ScreenshotAnnotator>? annotators,
   }) {
     final Frame? frame = _caller();
-
-    if (timeline.mode == TimelineMode.off) {
-      // ignore: avoid_print
-      print(
-        'Warning: The timeline is off, do not take screenshots for the timeline\n'
-        ' at ${frame?.member} ${frame?.uri}:${frame?.line}:${frame?.column}',
-      );
-    }
     final liveElement = _findSingleElement(
       element: element,
       snapshot: snapshot,
