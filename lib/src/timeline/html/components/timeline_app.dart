@@ -69,7 +69,7 @@ class TimelineAppState extends State<TimelineApp> {
           _snackBar.currentState!.show("Failed to copy test command");
         }
       }, [
-        text("Copy test command"),
+        text("Copy asdf command"),
       ]),
       SnackBar(key: _snackBar),
       if (component.timelineEvents.isNotEmpty) ...[

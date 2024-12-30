@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs
 
-// ignore: avoid_web_libraries_in_flutter
 import 'dart:async';
+// ignore: avoid_web_libraries_in_flutter
 import 'dart:html';
 
 import 'package:jaspr/browser.dart';
@@ -11,31 +11,37 @@ import 'package:spot/src/timeline/html/web/timeline_event.dart';
 void main() async {
   await window.onLoad.first;
 
-  _registerHotRestart();
+  final selector = window.document.querySelector('meta[hot-restart="true"]');
+  if (selector != null) {
+    print('registered Hot Restart file watcher');
+    _registerHotRestart();
+  }
 
   // hydrate static HTML with the client side js to make it interactive
   runApp(const ClientApp());
 }
 
 void _registerHotRestart() {
-  Timer.periodic(const Duration(milliseconds: 1000), (timer) {
-    print('checking for html changes');
-    checkForHtmlChanges();
+  Timer.periodic(const Duration(milliseconds: 200), (timer) {
+    reloadOnChange('script.js');
+    reloadOnChange(window.location.href);
   });
 }
 
-String? previousContent;
+final Map<String, String?> previousContentMap = {};
 
-Future<void> checkForHtmlChanges() async {
+Future<void> reloadOnChange(String url) async {
   final response = await HttpRequest.request(
-    window.location.href,
+    url,
     requestHeaders: {'cache': 'no-cache'},
   );
   final currentContent = response.responseText;
+  final previousContent = previousContentMap[url];
   if (previousContent != null && previousContent != currentContent) {
-    window.location.reload(); // Reload the page if the HTML changes
+    print('Reloading because of $url');
+    window.location.reload();
   }
-  previousContent = currentContent; // Cache the current content
+  previousContentMap[url] = currentContent; // Cache the current content
 }
 
 /// The main entry point for the timeline web app.
