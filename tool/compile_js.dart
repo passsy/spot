@@ -3,16 +3,15 @@
 import 'dart:io';
 
 /// Compiles the timeline web app to JavaScript.
-void main() {
+Future<void> main() async {
+  final dartExecutable = Platform.resolvedExecutable;
   final outputJsFile = File('build/timeline/script.js');
-  if (outputJsFile.existsSync()) {
-    outputJsFile.deleteSync();
-  }
 
-  final dartVersionResult = Process.runSync('dart', ['--version']);
+  final dartVersionResult = await Process.run(dartExecutable, ['--version']);
   final dartVersion = dartVersionResult.stdout.toString();
 
-  final result = Process.runSync('dart', [
+  print('Compiling using $dartVersion');
+  final result = await Process.run(dartExecutable, [
     'compile',
     'js',
     'lib/src/timeline/html/web/client_app.dart',
@@ -35,7 +34,6 @@ void main() {
 
   File('lib/src/timeline/html/sources/script.js.g.dart')
       .writeAsStringSync(scriptDartContent);
-  outputJsFile.deleteSync();
   File('${outputJsFile.path}.deps').deleteSync();
   print('Generated ${outputJsFile.path}');
 }

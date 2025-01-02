@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs
 
+import 'dart:async';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html';
 
@@ -10,8 +11,35 @@ import 'package:spot/src/timeline/html/web/timeline_event.dart';
 void main() async {
   await window.onLoad.first;
 
+  final selector = window.document.querySelector('meta[hot-restart="true"]');
+  if (selector != null) {
+    _registerHotRestart();
+  }
+
   // hydrate static HTML with the client side js to make it interactive
   runApp(const ClientApp());
+}
+
+void _registerHotRestart() {
+  Timer.periodic(const Duration(milliseconds: 200), (timer) {
+    reloadOnChange('script.js');
+    reloadOnChange(window.location.href);
+  });
+}
+
+final Map<String, String?> previousContentMap = {};
+
+Future<void> reloadOnChange(String url) async {
+  final response = await HttpRequest.request(
+    url,
+    requestHeaders: {'cache': 'no-cache'},
+  );
+  final currentContent = response.responseText;
+  final previousContent = previousContentMap[url];
+  if (previousContent != null && previousContent != currentContent) {
+    window.location.reload();
+  }
+  previousContentMap[url] = currentContent; // Cache the current content
 }
 
 /// The main entry point for the timeline web app.

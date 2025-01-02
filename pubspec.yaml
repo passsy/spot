@@ -26,10 +26,15 @@ dependencies:
   test_api: ">=0.5.0 <0.8.0"
 
 dev_dependencies:
-  image: ">=4.0.0 <4.4.0"
+  image: ^4.0.0
   lint: ^2.1.0
   test: ^1.24.0
   test_process: ^2.1.0
+  server_nano: ^1.5.1
+
+dependency_overrides:
+  path: '>=1.8.0 <=1.9.0'
+  mime: 1.0.4
 
 flutter:
   assets:
