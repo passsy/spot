@@ -46,19 +46,17 @@ extension HtmlTimelinePrinter on Timeline {
       return name;
     }();
 
-    final timelineBuildDir = Directory('build/timeline');
+    final timelineBuildDir = Directory('build').directory('timeline');
     spotTempDir = timelineBuildDir.directory(timelineDirName);
 
     if (spotTempDir.existsSync()) {
       spotTempDir.deleteSync(recursive: true);
     }
     spotTempDir.createSync(recursive: true);
-    final screenshotsDir = Directory(
-      '${spotTempDir.absolute.path}/screenshots',
-    );
+    final screenshotsDir = spotTempDir.directory('screenshots');
     screenshotsDir.createSync(recursive: true);
 
-    final events = File('${spotTempDir.absolute.path}/events.json');
+    final events = spotTempDir.file('events.json');
     final jsonTimelineEvents = this.events.map((e) {
       // save screenshots relative to the events.json file in screenshots/
       File? screenshotFile;
@@ -85,9 +83,9 @@ extension HtmlTimelinePrinter on Timeline {
         .convert(jsonTimelineEvents.map((e) => e.toMap()).toList());
     events.writeAsStringSync(json);
 
-    final scriptFile = File('${spotTempDir.absolute.path}/script.js');
+    final scriptFile = spotTempDir.file('script.js');
     scriptFile.writeAsStringSync(timelineJS);
-    final htmlFile = File('${spotTempDir.absolute.path}/index.html');
+    final htmlFile = spotTempDir.file('index.html');
     try {
       final Stopwatch stopwatch = Stopwatch()..start();
       final content = await renderTimelineWithJaspr(
