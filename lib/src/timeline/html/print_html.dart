@@ -64,7 +64,7 @@ extension HtmlTimelinePrinter on Timeline {
       File? screenshotFile;
       if (e.screenshot != null) {
         final name = e.screenshot!.file.name;
-        screenshotFile = File('${screenshotsDir.path}/$name');
+        screenshotFile = screenshotsDir.file(name);
         e.screenshot!.file.copySync(screenshotFile.path);
       }
 
