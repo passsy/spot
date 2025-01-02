@@ -2,7 +2,7 @@
 
 /// The script used in the HTML file that is generated for the timeline.
 /// Generate it with `dart run tool/compile_js.dart`
-/// Using Dart SDK version: 3.6.0-334.4.beta (beta) (Wed Nov 13 18:24:20 2024 +0000) on "macos_arm64"
+/// Using Dart SDK version: 3.6.0 (stable) (Thu Dec 5 07:46:24 2024 -0800) on "macos_arm64"
 
 
 // language=javascript

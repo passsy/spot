@@ -4,12 +4,14 @@ import 'dart:io';
 
 /// Compiles the timeline web app to JavaScript.
 Future<void> main() async {
+  final dartExecutable = Platform.resolvedExecutable;
   final outputJsFile = File('build/timeline/script.js');
 
-  final dartVersionResult = await Process.run('dart', ['--version']);
+  final dartVersionResult = await Process.run(dartExecutable, ['--version']);
   final dartVersion = dartVersionResult.stdout.toString();
 
-  final result = await Process.run('dart', [
+  print('Compiling using $dartVersion');
+  final result = await Process.run(dartExecutable, [
     'compile',
     'js',
     'lib/src/timeline/html/web/client_app.dart',
