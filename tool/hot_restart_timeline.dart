@@ -9,6 +9,14 @@ Future<void> main() async {
     exit(0);
   });
 
+  final timelineFile = File('lib/src/timeline/html/print_html.dart');
+  final timelineContent = timelineFile.readAsStringSync();
+  if (timelineContent.contains('timelineHtmlDev = false')) {
+    print('Warning: Set `timelineHtmlDev = true;` in ${timelineFile.path} '
+        'to get the localhost path when a timeline is generated.\n');
+    await Future.delayed(const Duration(seconds: 2));
+  }
+
   // Watch for changes in lib/ and then call compile_js.dart
   final libDir = Directory('lib');
 
@@ -84,7 +92,9 @@ void rebuildHtml() async {
   _pendingRebuildHtml = false;
   print('Rendering...');
   // start a new process so that it picks up the changes in the jaspr code
+  final stopwatch = Stopwatch()..start();
   Process.run('dart', ['tool/render_html.dart']).printErrors.whenComplete(() {
+    print('Rendered in ${stopwatch.elapsedMilliseconds}ms');
     _rebuildingHtml = false;
     if (_pendingRebuildHtml) {
       _pendingRebuildHtml = false;

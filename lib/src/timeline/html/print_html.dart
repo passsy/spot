@@ -11,6 +11,11 @@ import 'package:spot/src/timeline/html/web/timeline_event.dart' as x;
 import 'package:spot/src/timeline/timeline.dart';
 import 'package:stack_trace/stack_trace.dart';
 
+/// Enable during development of the timeline
+///
+/// Set to true to print the localhost path when a timeline is generated.
+const bool timelineHtmlDev = false;
+
 /// Writes the timeline as an HTML file
 extension HtmlTimelinePrinter on Timeline {
   /// Prints the timeline as an HTML file.
@@ -94,7 +99,11 @@ extension HtmlTimelinePrinter on Timeline {
         print('Rendered HTML in ${stopwatch.elapsedMilliseconds}ms');
       }
       htmlFile.writeAsStringSync(content);
-      print('View time line here: file://${htmlFile.path}');
+      if (timelineHtmlDev) {
+        print('View timeline here: http://localhost:3000/$timelineDirName');
+      } else {
+        print('View timeline here: file://${htmlFile.path}');
+      }
     } catch (e, st) {
       print('Error writing HTML file: $e $st');
     }
