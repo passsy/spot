@@ -5714,7 +5714,7 @@ $S:0}
 A.bH.prototype={
 ah(){return new A.dW(new A.ab(t.dW),new A.ab(t.cX))}}
 A.dW.prototype={
-D(a){var s=this,r=null,q="horizontal-spacer",p=t.i,o=A.h([A.an(A.h([A.ig(r,r,r,100,"https://user-images.githubusercontent.com/1096485/188243198-7abfc785-8ecd-40cb-bb28-5561610432a4.png"),new A.G("h1",r,r,r,r,r,r,A.h([new A.D("Timeline",r)],p),r)],p),"header",r,r,r),A.an(A.h([A.jE(A.h([new A.D("Info",r)],p))],p),q,r,r,r),A.ik(A.h([A.io(A.h([new A.D("Test:",r)],p)),new A.D(" "+s.a.d,r)],p)),A.jB(A.h([new A.D("Copy asdf command",r)],p),"button-spot",new A.fC(s)),new A.bE(s.d)],p)
+D(a){var s=this,r=null,q="horizontal-spacer",p=t.i,o=A.h([A.an(A.h([A.ig(r,r,r,100,"https://user-images.githubusercontent.com/1096485/188243198-7abfc785-8ecd-40cb-bb28-5561610432a4.png"),new A.G("h1",r,r,r,r,r,r,A.h([new A.D("Timeline",r)],p),r)],p),"header",r,r,r),A.an(A.h([A.jE(A.h([new A.D("Info",r)],p))],p),q,r,r,r),A.ik(A.h([A.io(A.h([new A.D("Test:",r)],p)),new A.D(" "+s.a.d,r)],p)),A.jB(A.h([new A.D("Copy test command",r)],p),"button-spot",new A.fC(s)),new A.bE(s.d)],p)
 if(s.a.e.length!==0)B.a.T(o,A.h([A.an(A.h([A.jE(A.h([new A.D("Events",r)],p))],p),q,r,r,r),new A.G("section",r,"events",r,r,r,r,A.h([new A.du(s.a.e,new A.fD(s),r)],p),r)],p))
 o.push(A.an(A.h([new A.D("Tell us how to improve the timeline at ",r),A.hm(A.h([new A.D("github.com/passsy/spot",r)],p),r,r,"https://github.com/passsy/spot/issues")],p),r,r,r,r))
 o.push(new A.by(s.a.e,s.e))

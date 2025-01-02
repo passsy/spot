@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dartx/dartx_io.dart';
 import 'package:flutter/material.dart' as flt;
 import 'package:jaspr/server.dart' hide ServerApp;
 import 'package:spot/src/screenshot/screenshot.dart';
@@ -12,6 +13,7 @@ import 'package:spot/src/timeline/html/web/theme.dart';
 import 'package:spot/src/timeline/html/web/timeline_event.dart' as x;
 import 'package:spot/src/timeline/timeline.dart';
 import 'package:stack_trace/stack_trace.dart';
+import 'package:path/path.dart' as path;
 
 // ignore: implementation_imports
 import 'package:test_api/src/backend/invoker.dart';
@@ -24,21 +26,7 @@ extension HtmlTimelinePrinter on Timeline {
   Future<void> printHTML() async {
     final Directory spotTempDir;
 
-    if (useFixedTimelineLocation) {
-      spotTempDir = Directory('build/timeline');
-    } else {
-      spotTempDir = Directory.systemTemp.createTempSync();
-    }
-
-    String name = test.test.name;
-    if (name.isEmpty) {
-      name = 'Unnamed test';
-    }
-    if (!spotTempDir.existsSync()) {
-      spotTempDir.createSync();
-    }
-
-    final String nameForHtml = () {
+    final String timelineDirName = () {
       String name = test.test.name;
 
       if (name.isEmpty) {
@@ -59,19 +47,40 @@ extension HtmlTimelinePrinter on Timeline {
 
       // Remove leading or trailing hyphens
       name = name.replaceAll(RegExp(r'^-+|-+$'), '');
-
-      // Append .html extension
-      return 'timeline-$name.html';
+      return name;
     }();
+
+    final timelineBuildDir = Directory('build/timeline');
+    if (useFixedTimelineLocation) {
+      spotTempDir = timelineBuildDir.directory(timelineDirName);
+    } else {
+      spotTempDir = Directory.systemTemp.createTempSync();
+    }
+
+    if (spotTempDir.existsSync()) {
+      spotTempDir.deleteSync(recursive: true);
+    }
+    spotTempDir.createSync(recursive: true);
+    final screenshotsDir = Directory(
+      '${spotTempDir.absolute.path}/screenshots',
+    );
+    screenshotsDir.createSync(recursive: true);
 
     final events = File('${spotTempDir.absolute.path}/events.json');
     final jsonTimelineEvents = this.events.map((e) {
+      // save screenshots relative to the events.json file in screenshots/
+      File? screenshotFile;
+      if (e.screenshot != null) {
+        final name = e.screenshot!.file.path.split('/').last;
+        screenshotFile = File('${screenshotsDir.path}/$name');
+        e.screenshot!.file.copySync(screenshotFile.path);
+      }
+
       return x.TimelineEvent(
         eventType: e.eventType.label,
         details: e.details,
         timestamp: e.timestamp.toIso8601String(),
-        screenshotUrl:
-            e.screenshot != null ? 'file://${e.screenshot!.file.path}' : null,
+        screenshotUrl: screenshotFile?.path,
         color: e.color == flt.Colors.grey
             ? null
             // ignore: deprecated_member_use
@@ -80,18 +89,18 @@ extension HtmlTimelinePrinter on Timeline {
         jetBrainsLink: _jetBrainsURL(e),
       );
     }).toList();
-    events.writeAsStringSync(
-      jsonEncode(jsonTimelineEvents.map((e) => e.toMap()).toList()),
-    );
+    final json = const JsonEncoder.withIndent('  ')
+        .convert(jsonTimelineEvents.map((e) => e.toMap()).toList());
+    events.writeAsStringSync(json);
 
     final scriptFile = File('${spotTempDir.absolute.path}/script.js');
     scriptFile.writeAsStringSync(timelineJS);
-    final htmlFile = File('${spotTempDir.absolute.path}/$nameForHtml');
+    final htmlFile = File('${spotTempDir.absolute.path}/index.html');
     try {
       final Stopwatch stopwatch = Stopwatch()..start();
       final content = await renderTimelineWithJaspr(
         jsonTimelineEvents,
-        renderMode: RenderMode.hotRestartHtml,
+        renderMode: RenderMode.staticHtml,
       );
       stopwatch.stop();
       if (stopwatch.elapsed > const Duration(seconds: 1)) {
