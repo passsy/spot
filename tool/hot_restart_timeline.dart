@@ -1,11 +1,8 @@
-import 'dart:convert';
+// ignore_for_file: avoid_print
+
 import 'dart:io';
 
 import 'package:server_nano/server_nano.dart';
-import 'package:spot/src/timeline/html/render_timeline.dart';
-import 'package:spot/src/timeline/html/web/timeline_event.dart';
-
-import 'compile_js.dart' as compile_js;
 
 Future<void> main() async {
   ProcessSignal.sigint.watch().listen((event) {
@@ -21,6 +18,7 @@ Future<void> main() async {
       return;
     }
     rebuildJs();
+    rebuildHtml();
   });
 
   final timelineHotReloadDir = Directory('build/timeline/');
@@ -31,7 +29,7 @@ Future<void> main() async {
   final timelineWatcher = timelineHotReloadDir.watch(recursive: true);
   timelineWatcher.listen((event) {
     if (event.path.endsWith('events.json')) {
-      renderHtml();
+      rebuildHtml();
     }
   });
 
@@ -55,15 +53,16 @@ Future<void> main() async {
 bool _rebuildingJs = false;
 bool _pendingRebuildJs = false;
 
-void rebuildJs() {
+void rebuildJs() async {
   if (_rebuildingJs) {
     _pendingRebuildJs = true;
     return;
   }
   _rebuildingJs = true;
-  // ignore: avoid_print
+  await Future.delayed(const Duration(milliseconds: 100)); // debounce
+  _pendingRebuildJs = false;
   print('Recompiling...');
-  compile_js.main().printErrors.whenComplete(() {
+  Process.run('dart', ['tool/compile_js.dart']).printErrors.whenComplete(() {
     _rebuildingJs = false;
     if (_pendingRebuildJs) {
       _pendingRebuildJs = false;
@@ -75,15 +74,17 @@ void rebuildJs() {
 bool _rebuildingHtml = false;
 bool _pendingRebuildHtml = false;
 
-void rebuildHtml() {
+void rebuildHtml() async {
   if (_rebuildingHtml) {
     _pendingRebuildHtml = true;
     return;
   }
   _rebuildingHtml = true;
-  // ignore: avoid_print
+  await Future.delayed(const Duration(milliseconds: 100)); // debounce
+  _pendingRebuildHtml = false;
   print('Rendering...');
-  renderHtml().printErrors.whenComplete(() {
+  // start a new process so that it picks up the changes in the jaspr code
+  Process.run('dart', ['tool/render_html.dart']).printErrors.whenComplete(() {
     _rebuildingHtml = false;
     if (_pendingRebuildHtml) {
       _pendingRebuildHtml = false;
@@ -100,58 +101,5 @@ extension JustPrintErrors<T> on Future<T> {
       print(e);
       print(stack);
     }
-  }
-}
-
-Future<void> renderHtml() async {
-  final timelineDir = Directory('build/timeline/');
-  if (!timelineDir.existsSync()) {
-    return;
-  }
-
-  final generatedScriptFile = File('${timelineDir.path}/script.js');
-
-  final htmlFiles =
-      timelineDir.listSync(recursive: true).whereType<File>().where((file) {
-    return file.path.endsWith('.html');
-  });
-
-  for (final file in htmlFiles) {
-    final timelineDir = file.parent;
-    final eventsFile = File('${timelineDir.path}/events.json');
-    if (!eventsFile.existsSync()) {
-      continue;
-    }
-
-    final scriptLink = Link('${timelineDir.path}/script.js');
-    final scriptLinkFile = File('${timelineDir.path}/script.js');
-    if (scriptLink.existsSync()) {
-      if (scriptLink.targetSync() != generatedScriptFile.path) {
-        scriptLink.updateSync(generatedScriptFile.path);
-      }
-    } else {
-      if (scriptLinkFile.existsSync()) {
-        scriptLinkFile.deleteSync();
-      }
-      scriptLink.createSync(generatedScriptFile.path, recursive: true);
-    }
-
-    final eventsText = await eventsFile.readAsString();
-    final eventsJson = jsonDecode(eventsText) as List;
-    final events = eventsJson.map((e) {
-      final map = e as Map<String, dynamic>;
-      final screenshotPath = map['screenshotUrl'] as String?;
-      final relative = screenshotPath?.split('build/timeline/').last;
-      if (relative != null) {
-        map['screenshotUrl'] = relative;
-      }
-      return TimelineEvent.fromMap(map);
-    }).toList();
-
-    final htmlText = await renderTimelineWithJaspr(
-      events,
-      renderMode: RenderMode.hotRestartHtml,
-    );
-    file.writeAsStringSync(htmlText);
   }
 }

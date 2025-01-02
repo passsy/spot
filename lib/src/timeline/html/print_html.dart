@@ -4,21 +4,12 @@ import 'dart:io';
 
 import 'package:dartx/dartx_io.dart';
 import 'package:flutter/material.dart' as flt;
-import 'package:jaspr/server.dart' hide ServerApp;
 import 'package:spot/src/screenshot/screenshot.dart';
 import 'package:spot/src/timeline/html/render_timeline.dart';
 import 'package:spot/src/timeline/html/sources/script.js.g.dart';
-import 'package:spot/src/timeline/html/web/server_app.dart';
-import 'package:spot/src/timeline/html/web/theme.dart';
 import 'package:spot/src/timeline/html/web/timeline_event.dart' as x;
 import 'package:spot/src/timeline/timeline.dart';
 import 'package:stack_trace/stack_trace.dart';
-import 'package:path/path.dart' as path;
-
-// ignore: implementation_imports
-import 'package:test_api/src/backend/invoker.dart';
-
-bool useFixedTimelineLocation = true;
 
 /// Writes the timeline as an HTML file
 extension HtmlTimelinePrinter on Timeline {
@@ -51,11 +42,7 @@ extension HtmlTimelinePrinter on Timeline {
     }();
 
     final timelineBuildDir = Directory('build/timeline');
-    if (useFixedTimelineLocation) {
-      spotTempDir = timelineBuildDir.directory(timelineDirName);
-    } else {
-      spotTempDir = Directory.systemTemp.createTempSync();
-    }
+    spotTempDir = timelineBuildDir.directory(timelineDirName);
 
     if (spotTempDir.existsSync()) {
       spotTempDir.deleteSync(recursive: true);
@@ -100,7 +87,7 @@ extension HtmlTimelinePrinter on Timeline {
       final Stopwatch stopwatch = Stopwatch()..start();
       final content = await renderTimelineWithJaspr(
         jsonTimelineEvents,
-        renderMode: RenderMode.staticHtml,
+        renderMode: HtmlTimelineRenderMode.staticHtml,
       );
       stopwatch.stop();
       if (stopwatch.elapsed > const Duration(seconds: 1)) {

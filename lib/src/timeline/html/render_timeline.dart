@@ -8,15 +8,20 @@ import 'package:spot/src/timeline/html/web/timeline_event.dart' as x;
 // ignore: implementation_imports
 import 'package:test_api/src/backend/invoker.dart';
 
-enum RenderMode {
+/// How the HTML timeline should be rendered
+enum HtmlTimelineRenderMode {
+  /// The HTML file can be viewed without a server.
+  /// All screenshot paths are absolute on the current filesystem, scripts are inline
   staticHtml,
+
+  /// The HTML file is served by the tool/hot_restart_timeline.dart (server) script
   hotRestartHtml,
 }
 
 /// Server-side renders the HTML timeline with Jaspr
 Future<String> renderTimelineWithJaspr(
   List<x.TimelineEvent> events, {
-  required RenderMode renderMode,
+  required HtmlTimelineRenderMode renderMode,
 }) async {
   // Turn off isolate rendering.
   Jaspr.initializeApp(useIsolates: false);
@@ -30,12 +35,12 @@ Future<String> renderTimelineWithJaspr(
               "https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap",
           rel: "stylesheet",
         ),
-        if (renderMode == RenderMode.hotRestartHtml)
+        if (renderMode == HtmlTimelineRenderMode.hotRestartHtml)
           const DomComponent(tag: 'script', attributes: {'src': 'script.js'})
         else
           DomComponent(tag: 'script', child: raw(timelineJS)),
         DomComponent(tag: 'style', child: raw(animationsCSS)),
-        if (renderMode == RenderMode.hotRestartHtml)
+        if (renderMode == HtmlTimelineRenderMode.hotRestartHtml)
           const DomComponent(tag: 'meta', attributes: {'hot-restart': 'true'}),
       ],
       styles: ServerAppState.styles,
