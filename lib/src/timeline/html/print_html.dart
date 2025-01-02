@@ -63,7 +63,7 @@ extension HtmlTimelinePrinter on Timeline {
       if (e.screenshot != null) {
         final name = e.screenshot!.file.name;
         screenshotFile = screenshotsDir.file(name);
-        e.screenshot!.file.copySync(screenshotFile.path);
+        screenshotFile.writeAsBytesSync(e.screenshot!.file.readAsBytesSync());
       }
 
       return x.TimelineEvent(

@@ -122,7 +122,7 @@ class ActDragTimelineTestBodies {
     final prefix = isGlobal ? 'global' : 'local';
     expect(
       htmlLine.endsWith(
-        '$prefix-live-timeline-without-error-prints-html/index.html',
+        '$prefix-live-timeline-without-error-prints-html${Platform.pathSeparator}index.html',
       ),
       isTrue,
     );
@@ -160,7 +160,7 @@ class ActDragTimelineTestBodies {
     final prefix = isGlobal ? 'global' : 'local';
     expect(
       htmlLine.endsWith(
-        '$prefix-live-timeline-without-error-no-duplicates-prints-html/index.html',
+        '$prefix-live-timeline-without-error-no-duplicates-prints-html${Platform.pathSeparator}index.html',
       ),
       isTrue,
     );
@@ -205,7 +205,7 @@ class ActDragTimelineTestBodies {
     final prefix = isGlobal ? 'global' : 'local';
     expect(
       htmlLine.endsWith(
-        '$prefix-live-timeline-with-error-no-duplicates-prints-html/index.html',
+        '$prefix-live-timeline-with-error-no-duplicates-prints-html${Platform.pathSeparator}index.html',
       ),
       isTrue,
     );
@@ -232,9 +232,10 @@ class ActDragTimelineTestBodies {
     final prefix = isGlobal ? 'global' : 'local';
     expect(
       htmlLine.endsWith(
-        '$prefix-onerror-timeline-with-error-prints-timeline/index.html',
+        '$prefix-onerror-timeline-with-error-prints-timeline${Platform.pathSeparator}index.html',
       ),
       isTrue,
+      reason: 'Actual: $htmlLine'
     );
   }
 
