@@ -63,7 +63,7 @@ extension HtmlTimelinePrinter on Timeline {
       // save screenshots relative to the events.json file in screenshots/
       File? screenshotFile;
       if (e.screenshot != null) {
-        final name = e.screenshot!.file.path.split('/').last;
+        final name = e.screenshot!.file.name;
         screenshotFile = File('${screenshotsDir.path}/$name');
         e.screenshot!.file.copySync(screenshotFile.path);
       }
