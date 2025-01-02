@@ -34,7 +34,7 @@ dev_dependencies:
 
 dependency_overrides:
   path: '>=1.8.0 <=1.9.0'
-  mime: ^1.0.0
+  mime: 1.0.4
 
 flutter:
   assets:
