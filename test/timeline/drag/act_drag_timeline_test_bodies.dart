@@ -235,7 +235,7 @@ class ActDragTimelineTestBodies {
         '$prefix-onerror-timeline-with-error-prints-timeline${Platform.pathSeparator}index.html',
       ),
       isTrue,
-      reason: 'Actual: $htmlLine'
+      reason: 'Actual: $htmlLine',
     );
   }
 
