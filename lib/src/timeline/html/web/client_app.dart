@@ -13,7 +13,6 @@ void main() async {
 
   final selector = window.document.querySelector('meta[hot-restart="true"]');
   if (selector != null) {
-    print('registered Hot Restart file watcher');
     _registerHotRestart();
   }
 
@@ -38,7 +37,6 @@ Future<void> reloadOnChange(String url) async {
   final currentContent = response.responseText;
   final previousContent = previousContentMap[url];
   if (previousContent != null && previousContent != currentContent) {
-    print('Reloading because of $url');
     window.location.reload();
   }
   previousContentMap[url] = currentContent; // Cache the current content

@@ -117,12 +117,12 @@ class ActDragTimelineTestBodies {
 
     final htmlLine = stdout
         .split('\n')
-        .firstWhere((line) => line.startsWith('View time line here:'));
+        .firstWhere((line) => line.startsWith('View timeline here:'));
 
     final prefix = isGlobal ? 'global' : 'local';
     expect(
       htmlLine.endsWith(
-        'timeline-$prefix-live-timeline-without-error-prints-html.html',
+        '$prefix-live-timeline-without-error-prints-html/index.html',
       ),
       isTrue,
     );
@@ -155,12 +155,12 @@ class ActDragTimelineTestBodies {
 
     final htmlLine = stdout
         .split('\n')
-        .firstWhere((line) => line.startsWith('View time line here:'));
+        .firstWhere((line) => line.startsWith('View timeline here:'));
 
     final prefix = isGlobal ? 'global' : 'local';
     expect(
       htmlLine.endsWith(
-        'timeline-$prefix-live-timeline-without-error-no-duplicates-prints-html.html',
+        '$prefix-live-timeline-without-error-no-duplicates-prints-html/index.html',
       ),
       isTrue,
     );
@@ -200,12 +200,12 @@ class ActDragTimelineTestBodies {
 
     final htmlLine = stdout
         .split('\n')
-        .firstWhere((line) => line.startsWith('View time line here:'));
+        .firstWhere((line) => line.startsWith('View timeline here:'));
 
     final prefix = isGlobal ? 'global' : 'local';
     expect(
       htmlLine.endsWith(
-        'timeline-$prefix-live-timeline-with-error-no-duplicates-prints-html.html',
+        '$prefix-live-timeline-with-error-no-duplicates-prints-html/index.html',
       ),
       isTrue,
     );
@@ -228,11 +228,11 @@ class ActDragTimelineTestBodies {
 
     final htmlLine = stdout
         .split('\n')
-        .firstWhere((line) => line.startsWith('View time line here:'));
+        .firstWhere((line) => line.startsWith('View timeline here:'));
     final prefix = isGlobal ? 'global' : 'local';
     expect(
       htmlLine.endsWith(
-        'timeline-$prefix-onerror-timeline-with-error-prints-timeline.html',
+        '$prefix-onerror-timeline-with-error-prints-timeline/index.html',
       ),
       isTrue,
     );

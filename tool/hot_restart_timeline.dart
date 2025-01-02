@@ -61,7 +61,7 @@ Future<void> main() async {
 bool _rebuildingJs = false;
 bool _pendingRebuildJs = false;
 
-void rebuildJs() async {
+Future<void> rebuildJs() async {
   if (_rebuildingJs) {
     _pendingRebuildJs = true;
     return;
@@ -82,7 +82,7 @@ void rebuildJs() async {
 bool _rebuildingHtml = false;
 bool _pendingRebuildHtml = false;
 
-void rebuildHtml() async {
+Future<void> rebuildHtml() async {
   if (_rebuildingHtml) {
     _pendingRebuildHtml = true;
     return;

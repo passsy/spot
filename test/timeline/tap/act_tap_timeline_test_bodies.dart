@@ -108,10 +108,10 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
     );
     final prefix = isGlobalMode ? 'global' : 'local';
     final htmlLine =
-        timeline.firstWhere((line) => line.startsWith('View time line here:'));
+        timeline.firstWhere((line) => line.startsWith('View timeline here:'));
     expect(
       htmlLine.endsWith(
-        'timeline-$prefix-onerror-timeline-with-error-prints-timeline.html',
+        '$prefix-onerror-timeline-with-error-prints-timeline/index.html',
       ),
       isTrue,
     );
@@ -170,11 +170,11 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       shared.timelineSeparator,
     );
     final htmlLine =
-        timeline.firstWhere((line) => line.startsWith('View time line here:'));
+        timeline.firstWhere((line) => line.startsWith('View timeline here:'));
     final prefix = isGlobalMode ? 'global' : 'local';
     expect(
       htmlLine.endsWith(
-        'timeline-$prefix-live-timeline-without-error-prints-html.html',
+        '$prefix-live-timeline-without-error-prints-html/index.html',
       ),
       isTrue,
     );
@@ -222,10 +222,10 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
     );
     final prefix = isGlobalMode ? 'global' : 'local';
     final htmlLine =
-        timeline.firstWhere((line) => line.startsWith('View time line here:'));
+        timeline.firstWhere((line) => line.startsWith('View timeline here:'));
     expect(
       htmlLine.endsWith(
-        'timeline-$prefix-live-timeline-with-error-no-duplicates-prints-html.html',
+        '$prefix-live-timeline-with-error-no-duplicates-prints-html/index.html',
       ),
       isTrue,
     );
