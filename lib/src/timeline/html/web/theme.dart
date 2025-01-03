@@ -44,7 +44,7 @@ const Color navColor = Colors.white;
 const Color navBackgroundColor = Colors.transparent;
 const Unit navFontSize = Unit.pixels(30);
 const Color navHoverColor = spotOrange;
-const Color captionColor = Color.hex('#ccc');
+const Color captionColor = Color.hex('#000000a0');
 const EdgeInsets captionPadding =
     EdgeInsets.symmetric(vertical: Unit.pixels(10));
 

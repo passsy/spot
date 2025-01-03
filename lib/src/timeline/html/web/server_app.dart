@@ -58,12 +58,13 @@ class ServerAppState extends State<ServerApp>
   static List<StyleRule> get styles => [
         css('*')
             .text(fontFamily: fontFamily)
-            .background(color: spotBackground)
             .raw({'-webkit-font-smoothing': 'antialiased'}),
-        css('body').box(
-          margin: EdgeInsets.all(10.px),
-          padding: EdgeInsets.only(bottom: 50.px),
-        ),
+        css('body')
+            .box(
+              margin: EdgeInsets.all(10.px),
+              padding: EdgeInsets.only(bottom: 50.px),
+            )
+            .background(color: spotBackground),
         css('h1, h2, h3, p, pre').text(color: fontColor),
         css('h1')
             .text(fontWeight: FontWeight.w400, fontSize: h1FontSize)

@@ -38,7 +38,7 @@ class TimelineEvent {
     return TimelineEvent(
       eventType: map['eventType'] as String,
       color: map['color'] as int?,
-      screenshotUrl: map['screenshotUrl'] as String,
+      screenshotUrl: map['screenshotUrl'] as String?,
       details: map['details'] as String,
       timestamp: map['timestamp'] as String,
       caller: map['caller'] as String,
