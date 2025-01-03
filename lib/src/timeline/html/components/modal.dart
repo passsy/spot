@@ -97,7 +97,6 @@ class ModalState extends State<Modal> {
       events: events(onClick: close),
       [
         div(classes: "modal-content", [
-          div(styles: const Styles().raw({'width': '100%'}), []),
           img(
             alt: "Screenshot of the Event",
             src: event?.screenshotUrl ?? "",
@@ -174,7 +173,7 @@ class ModalState extends State<Modal> {
               .raw({'z-index': '1'}),
           css('&.show').box(display: Display.flex),
           css('img')
-              .box(width: 100.percent, height: 100.percent)
+              .box(maxWidth: 100.percent, maxHeight: 100.percent)
               .raw({'object-fit': 'contain'}) //
               .raw({'margin': 'auto'}),
           css('span').background(color: Colors.transparent),
