@@ -1,31 +1,35 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dartx/dartx_io.dart';
 import 'package:spot/src/timeline/html/render_timeline.dart';
 import 'package:spot/src/timeline/html/web/timeline_event.dart';
+import 'package:path/path.dart' as path;
 
 Future<void> main() async {
-  final timelineDir = Directory('build/timeline/');
-  if (!timelineDir.existsSync()) {
+  final globalTimelineDir = Directory('build').directory('timeline');
+  if (!globalTimelineDir.existsSync()) {
     return;
   }
 
-  final generatedScriptFile = File('${timelineDir.path}/script.js');
+  final generatedScriptFile = globalTimelineDir.file('script.js');
 
-  final htmlFiles =
-      timelineDir.listSync(recursive: true).whereType<File>().where((file) {
+  final htmlFiles = globalTimelineDir
+      .listSync(recursive: true)
+      .whereType<File>()
+      .where((file) {
     return file.path.endsWith('.html');
   });
 
   for (final file in htmlFiles) {
     final timelineDir = file.parent;
-    final eventsFile = File('${timelineDir.path}/events.json');
+    final eventsFile = timelineDir.file('events.json');
     if (!eventsFile.existsSync()) {
       continue;
     }
 
-    final scriptLink = Link('${timelineDir.path}/script.js');
-    final scriptLinkFile = File('${timelineDir.path}/script.js');
+    final scriptLinkFile = timelineDir.file('script.js');
+    final scriptLink = Link(scriptLinkFile.path);
     if (scriptLink.existsSync()) {
       if (scriptLink.targetSync() != generatedScriptFile.path) {
         scriptLink.updateSync(generatedScriptFile.path);
@@ -42,8 +46,9 @@ Future<void> main() async {
     final events = eventsJson.map((e) {
       final map = e as Map<String, dynamic>;
       final screenshotPath = map['screenshotUrl'] as String?;
-      final relative = screenshotPath?.split('build/timeline/').last;
-      if (relative != null) {
+      if (screenshotPath != null) {
+        final relative =
+            path.relative(screenshotPath, from: globalTimelineDir.path);
         map['screenshotUrl'] = relative;
       }
       return TimelineEvent.fromMap(map);
