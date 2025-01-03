@@ -6,15 +6,10 @@ import 'package:dartx/dartx_io.dart';
 import 'package:flutter/material.dart' as flt;
 import 'package:spot/src/screenshot/screenshot.dart';
 import 'package:spot/src/timeline/html/render_timeline.dart';
-import 'package:spot/src/timeline/html/sources/script.js.g.dart';
 import 'package:spot/src/timeline/html/web/timeline_event.dart' as x;
+import 'package:spot/src/timeline/invoker.dart';
 import 'package:spot/src/timeline/timeline.dart';
 import 'package:stack_trace/stack_trace.dart';
-
-/// Enable during development of the timeline
-///
-/// Set to true to print the localhost path when a timeline is generated.
-const bool timelineHtmlDev = false;
 
 /// Writes the timeline as an HTML file
 extension HtmlTimelinePrinter on Timeline {
@@ -84,25 +79,89 @@ extension HtmlTimelinePrinter on Timeline {
     events.writeAsStringSync(json);
 
     final htmlFile = spotTempDir.file('index.html');
+    final isHotReloadServerRunning = await _isTimelineHotRestartServerRunning();
     try {
       final Stopwatch stopwatch = Stopwatch()..start();
       final content = await renderTimelineWithJaspr(
         jsonTimelineEvents,
-        renderMode: HtmlTimelineRenderMode.staticHtml,
+        hotRestart: isHotReloadServerRunning,
       );
       stopwatch.stop();
       if (stopwatch.elapsed > const Duration(seconds: 1)) {
         print('Rendered HTML in ${stopwatch.elapsedMilliseconds}ms');
       }
       htmlFile.writeAsStringSync(content);
-      if (timelineHtmlDev) {
-        print('View timeline here: http://localhost:3000/$timelineDirName');
+      if (await _isTimelineHotRestartServerRunning()) {
+        print('View timeline here: http://localhost:5907/$timelineDirName');
       } else {
         print('View timeline here: file://${htmlFile.path}');
       }
     } catch (e, st) {
       print('Error writing HTML file: $e $st');
     }
+  }
+}
+
+bool? _isTimelineHotRestartServerRunningCached;
+
+/// Check if the Timeline Hot-Restart Server is running located at
+/// `tool/hot_restart_timeline.dart`
+///
+/// This method is heavily cached because it might be executed for every tests
+/// and it only is required for development.
+/// The current implementation adds `100µs` for every test
+Future<bool> _isTimelineHotRestartServerRunning() async {
+  if (_isTimelineHotRestartServerRunningCached != null) {
+    return _isTimelineHotRestartServerRunningCached!;
+  }
+  if (!_isSpotTest()) {
+    return _isTimelineHotRestartServerRunningCached = false;
+  }
+  if (!await _isHotRestartServerRunning()) {
+    return _isTimelineHotRestartServerRunningCached = false;
+  }
+  return _isTimelineHotRestartServerRunningCached = true;
+}
+
+/// Primitive check whether the current test is from the spot package.
+///
+/// Assumes the path of the spot package is called `spot`
+///
+/// This check is intended to be really fast because it is the check that is also
+/// executed on every users device for every test where the timeline need to be rendered.
+bool _isSpotTest() {
+  final liveTest = getLiveTest();
+  final suitePath = liveTest?.suite.path;
+  if (suitePath == null) {
+    return false;
+  }
+  if (Platform.isWindows) {
+    if (suitePath.contains(r'\spot\test\')) {
+      return true;
+    }
+  }
+  if (suitePath.contains('/spot/test/')) {
+    return true;
+  }
+
+  return false;
+}
+
+/// Checks if the spot hot-restart server is running on port 5907
+Future<bool> _isHotRestartServerRunning() async {
+  const host = 'localhost';
+  const port = 5907;
+  Socket? socket;
+  try {
+    socket =
+        await Socket.connect(host, port, timeout: const Duration(seconds: 1));
+    print('Server is running on $host:$port');
+    return true;
+  } on SocketException catch (_) {
+    print('No server running on $host:$port');
+    return false;
+  } finally {
+    socket?.destroy();
   }
 }
 

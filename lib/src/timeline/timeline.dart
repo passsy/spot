@@ -9,12 +9,9 @@ import 'package:nanoid2/nanoid2.dart';
 import 'package:spot/src/screenshot/screenshot.dart';
 import 'package:spot/src/spot/tree_snapshot.dart';
 import 'package:spot/src/timeline/html/print_html.dart';
+import 'package:spot/src/timeline/invoker.dart';
 import 'package:spot/src/timeline/print_console.dart';
 import 'package:stack_trace/stack_trace.dart';
-//ignore: implementation_imports
-import 'package:test_api/src/backend/invoker.dart';
-//ignore: implementation_imports
-import 'package:test_api/src/backend/live_test.dart';
 
 TimelineMode _globalTimelineMode =
     getTimelineModeFromEnv() ?? TimelineMode.reportOnError;
@@ -23,7 +20,7 @@ TimelineMode _globalTimelineMode =
 TimelineMode get globalTimelineMode => _globalTimelineMode;
 
 set globalTimelineMode(TimelineMode value) {
-  final test = Invoker.current?.liveTest;
+  final test = getLiveTest();
   if (test != null) {
     throw StateError('''
 Cannot change global timeline mode within a test.
@@ -54,7 +51,7 @@ final Map<LiveTest, Timeline> _timelines = {};
 /// Returns the current timeline for the test or creates a new one if
 /// it doesn't exist.
 Timeline get timeline {
-  final LiveTest? test = Invoker.current?.liveTest;
+  final LiveTest? test = getLiveTest();
   if (test == null) {
     throw StateError('timeline must be called within a test');
   }
@@ -67,7 +64,7 @@ Timeline get timeline {
   // create new timeline
   final newTimeline = _Timeline._(test);
 
-  Invoker.current!.addTearDown(() async {
+  addTearDown(() async {
     await newTimeline._onPostTest();
     _timelines.remove(test);
   });

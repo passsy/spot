@@ -139,5 +139,5 @@ List<StyleRule> get textStyles => [
           .raw({'word-break': 'break-word'}) //
           .raw({'white-space': 'pre-wrap'}) //
           .raw({'overflow-wrap': 'break-word'}) //
-          .raw({'text-align': 'start'}) //
+          .raw({'text-align': 'start'}), //
     ];

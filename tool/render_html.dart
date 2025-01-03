@@ -2,9 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dartx/dartx_io.dart';
+// ignore: depend_on_referenced_packages
+import 'package:path/path.dart' as path;
 import 'package:spot/src/timeline/html/render_timeline.dart';
 import 'package:spot/src/timeline/html/web/timeline_event.dart';
-import 'package:path/path.dart' as path;
 
 Future<void> main() async {
   final globalTimelineDir = Directory('build').directory('timeline');
@@ -56,7 +57,8 @@ Future<void> main() async {
 
     final htmlText = await renderTimelineWithJaspr(
       events,
-      renderMode: HtmlTimelineRenderMode.hotRestartHtml,
+      inlineScripts: false,
+      hotRestart: true,
     );
     file.writeAsStringSync(htmlText);
   }

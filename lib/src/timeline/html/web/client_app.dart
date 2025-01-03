@@ -21,6 +21,9 @@ void main() async {
 }
 
 void _registerHotRestart() {
+  if (window.location.protocol == 'file:') {
+    return;
+  }
   Timer.periodic(const Duration(milliseconds: 200), (timer) {
     reloadOnChange('script.js');
     reloadOnChange(window.location.href);
