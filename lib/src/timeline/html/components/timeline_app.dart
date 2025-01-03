@@ -137,7 +137,6 @@ class TimelineAppState extends State<TimelineApp> {
 List<StyleRule> get textStyles => [
       css('p') //
           .raw({'word-break': 'break-word'}) //
-          .raw({'white-space': 'pre-wrap'}) //
           .raw({'overflow-wrap': 'break-word'}) //
           .raw({'text-align': 'start'}), //
     ];
