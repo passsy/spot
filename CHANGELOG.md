@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.17.0
+- Timeline is now generated with [Jaspr](https://pub.dev/packages/jaspr) #76
+- New: `act.tapAt()` #80
+- New `Timeline.addEvent()` now returns the `TimelineEventId id`
+- New `Timeline.updateEvent(id)` and `Timeline.removeEvent(id)`
+- Fix: Added events to timeline while being `off` #88
+- Fix: Export `stateProp` #93
+- Improved screenshot detail page in timeline #91, #92
+
 ## 0.16.0
 - Add `snapshotState<S>()`
   `final state = spot<MyContainer>().snapshotState<MyContainerState>()`
