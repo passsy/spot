@@ -55,6 +55,7 @@ export 'package:spot/src/spot/props.dart'
         WidgetSelectorProp,
         elementProp,
         renderObjectProp,
+        stateProp,
         widgetProp;
 export 'package:spot/src/spot/selectors.dart'
     show
