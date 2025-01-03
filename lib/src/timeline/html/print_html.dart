@@ -83,8 +83,6 @@ extension HtmlTimelinePrinter on Timeline {
         .convert(jsonTimelineEvents.map((e) => e.toMap()).toList());
     events.writeAsStringSync(json);
 
-    final scriptFile = spotTempDir.file('script.js');
-    scriptFile.writeAsStringSync(timelineJS);
     final htmlFile = spotTempDir.file('index.html');
     try {
       final Stopwatch stopwatch = Stopwatch()..start();

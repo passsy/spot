@@ -12,8 +12,9 @@ Future<void> main() async {
   final timelineFile = File('lib/src/timeline/html/print_html.dart');
   final timelineContent = timelineFile.readAsStringSync();
   if (timelineContent.contains('timelineHtmlDev = false')) {
-    print('Warning: Set `timelineHtmlDev = true;` in ${timelineFile.path} '
-        'to get the localhost path when a timeline is generated.\n');
+    print(
+        'Warning: `timelineHtmlDev == false`. Set `timelineHtmlDev = true` to get the localhost path when a timeline is generated.\n'
+        'file:///${timelineFile.absolute.path}:17\n');
     await Future.delayed(const Duration(seconds: 2));
   }
 
