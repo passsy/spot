@@ -105,7 +105,7 @@ extension HtmlTimelinePrinter on Timeline {
 bool? _isTimelineHotRestartServerRunningCached;
 
 /// Check if the Timeline Hot-Restart Server is running located at
-/// `tool/hot_restart_timeline.dart`
+/// `hot_restart_timeline/bin/main.dart`
 ///
 /// This method is heavily cached because it might be executed for every tests
 /// and it only is required for development.

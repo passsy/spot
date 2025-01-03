@@ -10,5 +10,5 @@ When building the timeline, you can use the `tool/hot_restart_timeline.dart` scr
 It automatically reloads the HTML when you change any part of the Jaspr code or run the test again.
 
 ```bash
-dart run tool/hot_restart_timeline.dart
+dart run hot_restart_timeline/bin/main.dart
 ```
