@@ -8,20 +8,16 @@ import 'package:spot/src/timeline/html/web/timeline_event.dart' as x;
 // ignore: implementation_imports
 import 'package:test_api/src/backend/invoker.dart';
 
-/// How the HTML timeline should be rendered
-enum HtmlTimelineRenderMode {
-  /// The HTML file can be viewed without a server.
-  /// All screenshot paths are absolute on the current filesystem, scripts are inline
-  staticHtml,
-
-  /// The HTML file is served by the tool/hot_restart_timeline.dart (server) script
-  hotRestartHtml,
-}
-
 /// Server-side renders the HTML timeline with Jaspr
+///
+/// [inlineScripts] inlines all JS, allowing the HTML to be self-contained and
+/// executed by opening the file without any content policy violations.
+///
+/// [hotRestart] causes the site to constantly poll itself for changes, auto-reloading
 Future<String> renderTimelineWithJaspr(
   List<x.TimelineEvent> events, {
-  required HtmlTimelineRenderMode renderMode,
+  bool inlineScripts = true,
+  bool hotRestart = false,
 }) async {
   // Turn off isolate rendering.
   Jaspr.initializeApp(useIsolates: false);
@@ -35,13 +31,15 @@ Future<String> renderTimelineWithJaspr(
               "https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap",
           rel: "stylesheet",
         ),
-        if (renderMode == HtmlTimelineRenderMode.hotRestartHtml)
+        if (!inlineScripts)
           const DomComponent(tag: 'script', attributes: {'src': 'script.js'})
         else
           DomComponent(tag: 'script', child: raw(timelineJS)),
         DomComponent(tag: 'style', child: raw(animationsCSS)),
-        if (renderMode == HtmlTimelineRenderMode.hotRestartHtml)
+        if (hotRestart)
           const DomComponent(tag: 'meta', attributes: {'hot-restart': 'true'}),
+        if (hotRestart)
+          DomComponent(tag: 'script', child: raw(_upgradeToLocalhostJS)),
       ],
       styles: ServerAppState.styles,
       body: ServerApp(
@@ -111,3 +109,13 @@ String testNameWithHierarchy() {
     return test.test.name;
   }
 }
+
+/// When the HTML file itself is opened, it will automatically load the localhost:3000 version
+const String _upgradeToLocalhostJS = r'''
+if (window.location.protocol === 'file:') {
+  const path = window.location.href.replace('file://', '');
+  const parts = path.split('/').slice(-2);
+  const url = `http://localhost:5907/${parts.join('/')}`;
+  window.location.href = url;
+}
+''';
