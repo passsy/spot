@@ -2,15 +2,16 @@
 
 import 'dart:io';
 
-import 'package:server_nano/server_nano.dart';
+import 'package:dartx/dartx_io.dart';
+import 'package:hot_restart_timeline/server.dart';
+
+// Platform.script points to bin/main.dart
+final packageRoot = Directory(Platform.script.path).parent.parent;
+final spotPackageRoot = packageRoot.parent;
 
 Future<void> main() async {
-  ProcessSignal.sigint.watch().listen((event) {
-    exit(0);
-  });
-
   // Watch for changes in lib/ and then call compile_js.dart
-  final libDir = Directory('lib');
+  final libDir = spotPackageRoot.directory('lib');
 
   final spotLibWatcher = libDir.watch(recursive: true);
   spotLibWatcher.listen((event) {
@@ -21,7 +22,7 @@ Future<void> main() async {
     rebuildHtml();
   });
 
-  final timelineHotReloadDir = Directory('build/timeline/');
+  final timelineHotReloadDir = spotPackageRoot.directory('build/timeline/');
   if (!timelineHotReloadDir.existsSync()) {
     timelineHotReloadDir.createSync(recursive: true);
   }
@@ -36,31 +37,8 @@ Future<void> main() async {
   rebuildJs();
   rebuildHtml();
 
-  final server = Server();
-  server.static('build/timeline/');
-  server.get('/', (req, resp) {
-    final timelines = timelineHotReloadDir
-        .listSync(recursive: true)
-        .where((file) => file.path.endsWith('.html'))
-        .map((file) {
-      final relative = file.path.split('build/timeline/').last;
-      return '<li><a href="/$relative">$relative</a></li>\n';
-    }).join('\n');
-    resp.sendHtmlText(
-      '<h1>Spot timelines</h1>\n\n'
-      '<ul>\n$timelines</ul>',
-    );
-  });
-
-  server.listen(port: 5907);
-  final timelineFiles = timelineHotReloadDir.listSync(recursive: true);
-  for (final file in timelineFiles) {
-    if (!file.path.endsWith('.html')) {
-      continue;
-    }
-    final relative = file.path.split('build/timeline/').last;
-    print('http://localhost:5907/$relative');
-  }
+  startServer(timelineHotReloadDir);
+  print('http://localhost:5907/');
 }
 
 bool _rebuildingJs = false;
@@ -79,7 +57,11 @@ Future<void> rebuildJs() async {
   final timestamp = DateTime.now().toIso8601String().substring(11, 19);
   print('$timestamp Recompiling...');
   try {
-    final result = await Process.run(dartExecutable, ['tool/compile_js.dart']);
+    final result = await Process.run(
+      dartExecutable,
+      ['tool/compile_js.dart'],
+      workingDirectory: spotPackageRoot.path,
+    );
     if (result.exitCode != 0) {
       print('Compilation failed');
       print(result.stdout);
@@ -110,7 +92,11 @@ Future<void> rebuildHtml() async {
   // start a new process so that it picks up the changes in the jaspr code
   final stopwatch = Stopwatch()..start();
   try {
-    final result = await Process.run(dartExecutable, ['tool/render_html.dart']);
+    final result = await Process.run(
+      dartExecutable,
+      ['tool/render_html.dart'],
+      workingDirectory: packageRoot.path,
+    );
     if (result.exitCode != 0) {
       print('Render failed');
       print(result.stdout);

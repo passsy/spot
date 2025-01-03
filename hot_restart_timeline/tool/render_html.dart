@@ -7,8 +7,14 @@ import 'package:path/path.dart' as path;
 import 'package:spot/src/timeline/html/render_timeline.dart';
 import 'package:spot/src/timeline/html/web/timeline_event.dart';
 
+// Platform.script points to tool/render_html.dart
+final packageRoot = Directory(Platform.script.path).parent.parent;
+final spotPackageRoot = packageRoot.parent;
+
+/// Renders the timeline HTML files to be served by the server
 Future<void> main() async {
-  final globalTimelineDir = Directory('build').directory('timeline');
+  final globalTimelineDir =
+      spotPackageRoot.directory('build').directory('timeline');
   if (!globalTimelineDir.existsSync()) {
     return;
   }
