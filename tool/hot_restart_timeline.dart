@@ -69,14 +69,22 @@ Future<void> rebuildJs() async {
   _rebuildingJs = true;
   await Future.delayed(const Duration(milliseconds: 100)); // debounce
   _pendingRebuildJs = false;
-  print('Recompiling...');
-  Process.run('dart', ['tool/compile_js.dart']).printErrors.whenComplete(() {
+  final timestamp = DateTime.now().toIso8601String().substring(11, 19);
+  print('$timestamp Recompiling...');
+  try {
+    final result = await Process.run('dart', ['tool/compile_js.dart']);
+    if (result.exitCode != 0) {
+      print('Compilation failed');
+      print(result.stdout);
+      print(result.stderr);
+    }
+  } finally {
     _rebuildingJs = false;
     if (_pendingRebuildJs) {
       _pendingRebuildJs = false;
       rebuildJs();
     }
-  });
+  }
 }
 
 bool _rebuildingHtml = false;
@@ -90,26 +98,23 @@ Future<void> rebuildHtml() async {
   _rebuildingHtml = true;
   await Future.delayed(const Duration(milliseconds: 100)); // debounce
   _pendingRebuildHtml = false;
-  print('Rendering...');
+  final timestamp = DateTime.now().toIso8601String().substring(11, 19);
+  print('$timestamp Rendering...');
   // start a new process so that it picks up the changes in the jaspr code
   final stopwatch = Stopwatch()..start();
-  Process.run('dart', ['tool/render_html.dart']).printErrors.whenComplete(() {
+  try {
+    final result = await Process.run('dart', ['tool/render_html.dart']);
+    if (result.exitCode != 0) {
+      print('Render failed');
+      print(result.stdout);
+      print(result.stderr);
+    }
+  } finally {
     print('Rendered in ${stopwatch.elapsedMilliseconds}ms');
     _rebuildingHtml = false;
     if (_pendingRebuildHtml) {
       _pendingRebuildHtml = false;
       rebuildHtml();
-    }
-  });
-}
-
-extension JustPrintErrors<T> on Future<T> {
-  Future<void> get printErrors async {
-    try {
-      await this;
-    } catch (e, stack) {
-      print(e);
-      print(stack);
     }
   }
 }

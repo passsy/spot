@@ -58,6 +58,8 @@ void main() {
       children: [spotIcon(Icons.settings)],
     ).doesNotExist();
 
+    timeline.addEvent(details: 'myEvent', eventType: 'myEvent');
+
     appBar.spotIcon(
       Icons.settings,
       parents: [spot<IconButton>()],
