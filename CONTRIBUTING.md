@@ -12,6 +12,3 @@ It automatically reloads the HTML when you change any part of the Jaspr code or 
 ```bash
 dart run tool/hot_restart_timeline.dart
 ```
-
-Optional: Set `timelineHtmlDev = true;` and the timeline will print the correct timeline paths to the console.
-
