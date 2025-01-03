@@ -130,5 +130,14 @@ class TimelineAppState extends State<TimelineApp> {
         ...Events.styles,
         ...SnackBarState.styles,
         ...ModalState.styles,
+        ...textStyles,
       ];
 }
+
+List<StyleRule> get textStyles => [
+      css('p') //
+          .raw({'word-break': 'break-word'}) //
+          .raw({'white-space': 'pre-wrap'}) //
+          .raw({'overflow-wrap': 'break-word'}) //
+          .raw({'text-align': 'start'}) //
+    ];

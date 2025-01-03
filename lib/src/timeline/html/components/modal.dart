@@ -252,7 +252,6 @@ class ModalState extends State<Modal> {
                   ),
                 )
                 .text(color: captionColor, align: TextAlign.start)
-                .raw({'line-break': 'anywhere'}) //
                 .background(color: Colors.white),
             css('& a').text(decoration: TextDecoration.none),
             css('& div').background(color: Colors.transparent),
