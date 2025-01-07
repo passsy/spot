@@ -226,7 +226,6 @@ class Act {
     required Offset moveStep,
     int maxIteration = 50,
     Duration duration = const Duration(milliseconds: 50),
-    bool substantially = false,
   }) {
     // Check if widget is in the widget tree. Throws if not.
     final snapshot = dragStart.snapshot()..existsOnce();
@@ -269,11 +268,19 @@ class Act {
         bool isTargetVisible() {
           final renderObject = _renderObjectFromSelector(dragTarget);
           if (renderObject is RenderBox) {
-            return _validateViewBounds(
+            final isFullyOrPartiallyVisible = _validateViewBounds(
               renderObject,
               selector: dragTarget,
               throwIfInvisible: false,
             );
+            if (!isFullyOrPartiallyVisible) return false;
+            final snapshot = dragTarget.snapshot()..existsOnce();
+            final pokableTargetPositions = _findPokablePositions(
+              widgetSelector: dragTarget,
+              snapshot: snapshot,
+            );
+            final roundUp = pokableTargetPositions.percent.ceil();
+            return roundUp == 100;
           } else {
             return false;
           }
@@ -326,26 +333,11 @@ class Act {
         );
 
         int dragCount = 0;
-        bool throwOnSubstantialWarning = false;
         while (dragCount < maxIteration && !isVisible) {
-          final isLastIteration = dragCount == maxIteration - 1;
           await gestures.drag(dragPosition, moveStep);
           await binding.pump(duration);
           dragCount++;
           isVisible = isTargetVisible();
-          if (isVisible && substantially) {
-            final snapshot = dragTarget.snapshot()..existsOnce();
-            final pokableTargetPositions = _findPokablePositions(
-              widgetSelector: dragTarget,
-              snapshot: snapshot,
-            );
-            final message =
-                _createPartialCoverageMessage(pokableTargetPositions, snapshot);
-            if (isLastIteration && message != null) {
-              throwOnSubstantialWarning = true;
-            }
-            isVisible = message == null;
-          }
         }
 
         // Return as result
@@ -360,11 +352,6 @@ class Act {
         if (!isVisible) {
           throw TestFailure(
             "$targetName is not visible after dragging $dragCount times and a total dragged offset of $totalDragged.",
-          );
-        }
-        if (throwOnSubstantialWarning) {
-          throw TestFailure(
-            "$targetName is visible but not substantially after dragging $dragCount times and a total dragged offset of $totalDragged.",
           );
         }
       });
