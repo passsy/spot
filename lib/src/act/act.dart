@@ -230,6 +230,10 @@ class Act {
     // Check if widget is in the widget tree. Throws if not.
     final snapshot = dragStart.snapshot()..existsOnce();
 
+    // TODO check for the parent scrollable in order to get coordinates
+    final WidgetSelector<Scrollable> scrollable =
+        spot<Scrollable>().withChild(dragStart).last();
+
     return TestAsyncUtils.guard<void>(() async {
       return _alwaysPropagateDevicePointerEvents(() async {
         final renderBox = _getRenderBoxOrThrow(dragStart);
@@ -265,7 +269,7 @@ class Act {
         }
         final targetName = dragTarget.toStringBreadcrumb();
 
-        bool isTargetVisible() {
+        int getTargetVisibility() {
           final renderObject = _renderObjectFromSelector(dragTarget);
           if (renderObject is RenderBox) {
             final isFullyOrPartiallyVisible = _validateViewBounds(
@@ -273,20 +277,20 @@ class Act {
               selector: dragTarget,
               throwIfInvisible: false,
             );
-            if (!isFullyOrPartiallyVisible) return false;
+            if (!isFullyOrPartiallyVisible) return 0;
             final snapshot = dragTarget.snapshot()..existsOnce();
             final pokableTargetPositions = _findPokablePositions(
               widgetSelector: dragTarget,
               snapshot: snapshot,
             );
             final roundUp = pokableTargetPositions.percent.ceil();
-            return roundUp == 100;
+            return roundUp;
           } else {
-            return false;
+            return 0;
           }
         }
 
-        bool isVisible = isTargetVisible();
+        int visibility = getTargetVisibility();
 
         final dragPosition = pokablePositions.mostCenterHittablePosition!;
 
@@ -320,7 +324,7 @@ class Act {
           }
         }
 
-        if (isVisible) {
+        if (visibility == 100) {
           addDragEvent('Widget $targetName found without dragging.');
           return;
         }
@@ -333,23 +337,31 @@ class Act {
         );
 
         int dragCount = 0;
-        while (dragCount < maxIteration && !isVisible) {
+        while (dragCount < maxIteration && visibility < 100) {
           await gestures.drag(dragPosition, moveStep);
           await binding.pump(duration);
           dragCount++;
-          isVisible = isTargetVisible();
+          visibility = getTargetVisibility();
         }
 
         // Return as result
-        final totalDragged = moveStep * dragCount.toDouble();
-        final resultString = isVisible ? 'found' : 'not found';
+        Offset totalDragged = moveStep * dragCount.toDouble();
+        final resultString = visibility == 100 ? 'found' : 'not found';
+
+        // If visibility is 100, but the dragTarget is not in the center
+        // of the scrollable, we add another drag with an according moveStep
+        // TODO: implement the above
+        // determine targets position in relation to the scrollable parent
+        // drag the difference (but only if the target is smaller or equal to
+        // the scrollable's viewport)
+
         final message =
             "Target $targetName $resultString after $dragCount drags. "
             "Total dragged offset: $totalDragged";
 
         addDragEvent(message);
 
-        if (!isVisible) {
+        if (visibility < 100) {
           throw TestFailure(
             "$targetName is not visible after dragging $dragCount times and a total dragged offset of $totalDragged.",
           );
@@ -907,4 +919,21 @@ extension on String {
   String removeEmptyLines() {
     return split('\n').where((line) => line.trim().isNotEmpty).join('\n');
   }
+}
+
+/// Recursively searches for the first Element whose `renderObject` is a `RenderBox`.
+Element? _findFirstDescendantElementWithRenderBox(Element element) {
+  // If this element’s renderObject is a RenderBox, we’re done.
+  if (element.renderObject is RenderBox) {
+    return element;
+  }
+
+  // Otherwise, search each child recursively.
+  for (final Element child in element.children) {
+    final match = _findFirstDescendantElementWithRenderBox(child);
+    if (match != null) {
+      return match;
+    }
+  }
+  return null;
 }
