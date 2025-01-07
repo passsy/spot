@@ -9,6 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/act/gestures.dart';
 import 'package:spot/src/screenshot/screenshot_annotator.dart';
+import 'package:spot/src/spot/element_extensions.dart';
 import 'package:spot/src/spot/snapshot.dart';
 
 /// Top level entry point to interact with widgets on the screen.
@@ -38,7 +39,7 @@ class Act {
     // Check if widget is in the widget tree. Throws if not.
     selector.snapshot().existsOnce();
 
-    return TestAsyncUtils.guard<void>(() async {
+    return await TestAsyncUtils.guard<void>(() async {
       final binding = TestWidgetsFlutterBinding.instance;
 
       final editableText = spot<EditableText>().withParent(selector);
@@ -84,8 +85,8 @@ class Act {
     // Check if widget is in the widget tree. Throws if not.
     final snapshot = selector.snapshot()..existsOnce();
 
-    return TestAsyncUtils.guard<void>(() async {
-      return _alwaysPropagateDevicePointerEvents(() async {
+    return await TestAsyncUtils.guard<void>(() async {
+      return await _alwaysPropagateDevicePointerEvents(() async {
         final renderBox = _getRenderBoxOrThrow(selector);
 
         // Before tapping the widget, we need to make sure that the widget is
@@ -149,8 +150,8 @@ class Act {
   /// - Checks that [position] is within the viewport.
   /// - Lists all widgets at that position in the timeline
   Future<void> tapAt(Offset position) async {
-    return TestAsyncUtils.guard<void>(() async {
-      return _alwaysPropagateDevicePointerEvents(() async {
+    return await TestAsyncUtils.guard<void>(() async {
+      return await _alwaysPropagateDevicePointerEvents(() async {
         final binding = TestWidgetsFlutterBinding.instance;
         _validatePositionInViewBounds(position);
         if (timeline.mode != TimelineMode.off) {
@@ -228,7 +229,7 @@ class Act {
     final snapshot = dragStart.snapshot()..existsOnce();
 
     return TestAsyncUtils.guard<void>(() async {
-      return _alwaysPropagateDevicePointerEvents(() async {
+      return await _alwaysPropagateDevicePointerEvents(() async {
         final renderBox = _getRenderBoxOrThrow(dragStart);
 
         final binding = TestWidgetsFlutterBinding.instance;

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/screenshot/screenshot_annotator.dart';
+import 'package:spot/src/spot/element_extensions.dart';
 import 'package:spot/src/spot/filters/onstage_filter.dart';
 import 'package:spot/src/spot/widget_selector.dart';
 
@@ -88,7 +89,7 @@ extension ToWidgetMatcher<W extends Widget> on WidgetSnapshot<W> {
   }
 }
 
-/// Extension on [WidgetSnapshot]<W> providing shorthand accessors
+/// Extension on [WidgetSnapshot]`<W>` providing shorthand accessors
 /// to the discovered widgets and elements.
 ///
 /// Offers convenient methods to retrieve single widgets or elements
@@ -244,7 +245,7 @@ class _StageResult {
   }
 }
 
-/// Extension on [WidgetSnapshot]<W> providing methods to validate the quantity of discovered widgets.
+/// Extension on [WidgetSnapshot]`<W>` providing methods to validate the quantity of discovered widgets.
 extension ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
   /// Validates the quantity of [discovered] to match [WidgetSelector.quantityConstraint]
   void validateQuantity() {
@@ -387,7 +388,7 @@ class QuantityTestFailure implements TestFailure {
   }
 }
 
-/// Extension on [WidgetSnapshot]<W> providing matchers for asserting
+/// Extension on [WidgetSnapshot]`<W>` providing matchers for asserting
 /// the existence of a specific number of widgets.
 ///
 /// These matchers allow checking if a certain number of widgets of type [W]
@@ -618,35 +619,6 @@ void _dumpWidgetTree(StringBuffer buffer) {
     buffer.writeln(rootElement.toStringDeep());
   } else {
     buffer.writeln('<no tree currently mounted>');
-  }
-}
-
-/// Extension on [Element] providing access to parent and child elements.
-extension ElementParent on Element {
-  /// Gets the immediate parent of this element.
-  Element? get parent {
-    Element? parent;
-    visitAncestorElements((element) {
-      parent = element;
-      return false;
-    });
-    return parent;
-  }
-
-  /// Gets all parent elements of this element.
-  Iterable<Element> get parents sync* {
-    Element? element = this;
-    while (element != null) {
-      yield element;
-      element = element.parent;
-    }
-  }
-
-  /// Gets all immediate child elements of this element.
-  Iterable<Element> get children sync* {
-    final List<Element> found = [];
-    visitChildren(found.add);
-    yield* found;
   }
 }
 

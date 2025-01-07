@@ -478,7 +478,7 @@ void main() async {
       isGlobalMode: isGlobalMode,
       globalTimelineModeToSwitch: globalTimelineModeToSwitch,
     );
-    return process.runTestInProcessAndCaptureOutPut(
+    return await process.runTestInProcessAndCaptureOutPut(
       shouldFail: shouldFail,
       testFileText: testAsString,
       captureStart: captureStart,
