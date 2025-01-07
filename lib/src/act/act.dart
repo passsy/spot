@@ -205,6 +205,9 @@ class Act {
   /// Throws a [TestFailure] if `dragTarget` is not found after `maxIteration`
   /// drags.
   ///
+  /// If `substantially` is `true`, dragging continues until  at least 80% of
+  /// the target is visible.
+  ///
   /// usage:
   /// ```dart
   /// final firstItem = spotText('Item at index: 3', exact: true)..existsOnce();
@@ -223,6 +226,7 @@ class Act {
     required Offset moveStep,
     int maxIteration = 50,
     Duration duration = const Duration(milliseconds: 50),
+    bool substantially = false,
   }) {
     // Check if widget is in the widget tree. Throws if not.
     final snapshot = dragStart.snapshot()..existsOnce();
@@ -251,7 +255,15 @@ class Act {
           );
           return;
         }
-        _createPartialCoverageMessage(pokablePositions, snapshot);
+        final partialWarning = _createPartialCoverageMessage(
+          pokablePositions,
+          snapshot,
+          isDragStart: true,
+        );
+        if (partialWarning != null) {
+          // ignore: avoid_print
+          print(partialWarning);
+        }
         final targetName = dragTarget.toStringBreadcrumb();
 
         bool isTargetVisible() {
@@ -314,13 +326,29 @@ class Act {
         );
 
         int dragCount = 0;
+        bool throwOnSubstantialWarning = false;
         while (dragCount < maxIteration && !isVisible) {
+          final isLastIteration = dragCount == maxIteration - 1;
           await gestures.drag(dragPosition, moveStep);
           await binding.pump(duration);
           dragCount++;
           isVisible = isTargetVisible();
+          if (isVisible && substantially) {
+            final snapshot = dragTarget.snapshot()..existsOnce();
+            final pokableTargetPositions = _findPokablePositions(
+              widgetSelector: dragTarget,
+              snapshot: snapshot,
+            );
+            final message =
+                _createPartialCoverageMessage(pokableTargetPositions, snapshot);
+            if (isLastIteration && message != null) {
+              throwOnSubstantialWarning = true;
+            }
+            isVisible = message == null;
+          }
         }
 
+        // Return as result
         final totalDragged = moveStep * dragCount.toDouble();
         final resultString = isVisible ? 'found' : 'not found';
         final message =
@@ -332,6 +360,11 @@ class Act {
         if (!isVisible) {
           throw TestFailure(
             "$targetName is not visible after dragging $dragCount times and a total dragged offset of $totalDragged.",
+          );
+        }
+        if (throwOnSubstantialWarning) {
+          throw TestFailure(
+            "$targetName is visible but not substantially after dragging $dragCount times and a total dragged offset of $totalDragged.",
           );
         }
       });
@@ -405,15 +438,24 @@ class Act {
   /// Throws a warning when the widget is only partially reacting to tap events
   String? _createPartialCoverageMessage(
     _PokablePositions pokablePositions,
-    WidgetSnapshot snapshot,
-  ) {
+    WidgetSnapshot snapshot, {
+    bool isDragStart = false,
+  }) {
     final roundUp = pokablePositions.percent.ceil();
     if (roundUp > 80) {
       // Don't be pedantic when the widget is almost fully tappable
       return null;
     }
+
+    final messageHeader = () {
+      final widgetAsString = snapshot.discoveredWidget!.toStringShort();
+      if (isDragStart) {
+        return "Warning: dragStart '$widgetAsString' is only partially reacting to drag events. ";
+      }
+      return "Warning: The '$widgetAsString' is only partially reacting to tap events. ";
+    }();
     // ignore: avoid_print
-    return "Warning: The '${snapshot.discoveredWidget!.toStringShort()}' is only partially reacting to tap events. "
+    return "$messageHeader"
         "Only ~$roundUp% of the widget reacts to hitTest events.\n"
         "\n"
         "Possible causes:\n"
