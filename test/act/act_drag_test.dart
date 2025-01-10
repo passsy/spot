@@ -14,6 +14,7 @@ void main() {
 void dragTests() {
   testWidgets('Finds widget after dragging', (tester) async {
     timeline.mode = TimelineMode.live;
+    await loadAppFonts();
     await tester.pumpWidget(
       const DragUntilVisibleTestWidget(),
     );

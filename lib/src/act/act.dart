@@ -91,10 +91,7 @@ class Act {
         // Before tapping the widget, we need to make sure that the widget is
         // not outside the viewport or covered by another widget.
         _validateViewBounds(renderBox, selector: selector);
-        final pokablePositions = _findPokablePositions(
-          widgetSelector: selector,
-          snapshot: snapshot,
-        );
+        final pokablePositions = _findPokablePositions(renderBox);
 
         if (pokablePositions.hits.isEmpty) {
           final centerPosition =
@@ -202,13 +199,11 @@ class Act {
   ///
   /// Between each drag, advances the clock by `duration`.
   ///
-  /// Throws a [TestFailure] if `dragTarget` is not found after `maxIteration`
-  /// drags.
+  /// Throws a [TestFailure] if `dragTarget` is not found after [maxIteration]
+  /// drags. May drag one additional time after reaching [maxIteration] to place
+  /// the target more visible in the viewport.
   ///
-  /// If `substantially` is `true`, dragging continues until  at least 80% of
-  /// the target is visible.
-  ///
-  /// usage:
+  /// Usage:
   /// ```dart
   /// final firstItem = spotText('Item at index: 3', exact: true)..existsOnce();
   /// final secondItem = spotText('Item at index: 27', exact: true)..doesNotExist();
@@ -228,89 +223,79 @@ class Act {
     Duration duration = const Duration(milliseconds: 50),
   }) {
     // Check if widget is in the widget tree. Throws if not.
-    final snapshot = dragStart.snapshot()..existsOnce();
+    final dragStartSnapshot = dragStart.snapshot()..existsOnce();
+    _detectSizeZero(dragStartSnapshot);
 
-    // TODO check for the parent scrollable in order to get coordinates
+    // Take the closest Scrollable above the dragStart widget
     final WidgetSelector<Scrollable> scrollable =
         spot<Scrollable>().withChild(dragStart).last();
+    final WidgetSelector<Viewport> spotViewport =
+        scrollable.spot<Viewport>().first();
 
     return TestAsyncUtils.guard<void>(() async {
       return _alwaysPropagateDevicePointerEvents(() async {
-        final renderBox = _getRenderBoxOrThrow(dragStart);
+        // Before dragging, we need to make sure that `dragStart` is
+        // not outside the viewport or covered by another widget.
+        final dragStartRenderBox = _getRenderBoxOrThrow(dragStart);
+        _validateViewBounds(dragStartRenderBox, selector: dragStart);
+        final dragStartRenderBoxRect = _globalRect(dragStartRenderBox);
 
         final binding = TestWidgetsFlutterBinding.instance;
 
-        // Before dragging, we need to make sure that `dragStart` is
-        // not outside the viewport or covered by another widget.
-        _validateViewBounds(renderBox, selector: dragStart);
-        final pokablePositions = _findPokablePositions(
-          widgetSelector: dragStart,
-          snapshot: snapshot,
+        // Make sure Viewport is not covered by another widget and rects to touch (drag) events
+        final viewPortRenderBoxBeforeDrag = _getRenderBoxOrThrow(spotViewport);
+        // Check the Viewport at the relevant points (dragStart) is reacting to hit tests
+        // dragStart itself might not react to hit tests (IgnorePointer).
+        final pokablePositionsOfViewportAtDragStart = _findPokablePositions(
+          viewPortRenderBoxBeforeDrag,
+          shouldBePoked: (local, Offset global) {
+            return dragStartRenderBoxRect.contains(global);
+          },
         );
+        if (pokablePositionsOfViewportAtDragStart.hits.isEmpty) {
+          final Offset dragStartCenter = dragStartRenderBox
+              .localToGlobal(dragStartRenderBox.size.center(Offset.zero));
+          final closestToCenterFlop =
+              pokablePositionsOfViewportAtDragStart.flops.minBy((offset) {
+            return (offset - dragStartCenter).distance;
+          });
 
-        if (pokablePositions.hits.isEmpty) {
-          final centerPosition =
-              renderBox.localToGlobal(renderBox.size.center(Offset.zero));
           _throwHitTestFailureReport(
-            position: centerPosition,
-            target: renderBox,
-            snapshot: snapshot,
+            position: closestToCenterFlop ?? dragStartCenter,
+            target: viewPortRenderBoxBeforeDrag,
+            snapshot: spotViewport.snapshot(),
           );
           return;
         }
+
         final partialWarning = _createPartialCoverageMessage(
-          pokablePositions,
-          snapshot,
+          pokablePositionsOfViewportAtDragStart,
+          spotViewport.snapshot(),
           isDragStart: true,
         );
         if (partialWarning != null) {
           // ignore: avoid_print
           print(partialWarning);
         }
+
         final targetName = dragTarget.toStringBreadcrumb();
 
-        int getTargetVisibility() {
-          final renderObject = _renderObjectFromSelector(dragTarget);
-          if (renderObject is RenderBox) {
-            final isFullyOrPartiallyVisible = _validateViewBounds(
-              renderObject,
-              selector: dragTarget,
-              throwIfInvisible: false,
-            );
-            if (!isFullyOrPartiallyVisible) return 0;
-            final snapshot = dragTarget.snapshot()..existsOnce();
-            final pokableTargetPositions = _findPokablePositions(
-              widgetSelector: dragTarget,
-              snapshot: snapshot,
-            );
-            final roundUp = pokableTargetPositions.percent.ceil();
-            return roundUp;
-          } else {
-            return 0;
-          }
-        }
+        final dragBeginPosition =
+            pokablePositionsOfViewportAtDragStart.mostCenterHittablePosition!;
 
-        int visibility = getTargetVisibility();
-
-        final dragPosition = pokablePositions.mostCenterHittablePosition!;
-
-        void addDragEvent(String details, {double? direction}) {
+        void addDragEvent(String details, {Offset? direction}) {
           if (timeline.mode != TimelineMode.off) {
             final screenshot = timeline.takeScreenshotSync(
               annotators: [
-                CrosshairAnnotator(centerPosition: dragPosition),
+                CrosshairAnnotator(centerPosition: dragBeginPosition),
                 if (direction != null) ...[
                   ArrowAnnotator(
-                    start: dragPosition - const Offset(40, 0),
-                    end: dragPosition -
-                        const Offset(40, 0) +
-                        Offset(0, direction),
+                    start: dragBeginPosition - const Offset(40, 0),
+                    end: dragBeginPosition - const Offset(40, 0) + direction,
                   ),
                   ArrowAnnotator(
-                    start: dragPosition + const Offset(40, 0),
-                    end: dragPosition +
-                        const Offset(40, 0) +
-                        Offset(0, direction),
+                    start: dragBeginPosition + const Offset(40, 0),
+                    end: dragBeginPosition + const Offset(40, 0) + direction,
                   ),
                 ],
               ],
@@ -324,439 +309,410 @@ class Act {
           }
         }
 
-        if (visibility == 100) {
-          addDragEvent('Widget $targetName found without dragging.');
-          return;
+        void addDragErrorEvent(String details, {Offset? direction}) {
+          if (timeline.mode != TimelineMode.off) {
+            final screenshot = timeline.takeScreenshotSync(
+              annotators: [
+                CrosshairAnnotator(centerPosition: dragBeginPosition),
+                if (direction != null) ...[
+                  ArrowAnnotator(
+                    start: dragBeginPosition - const Offset(40, 0),
+                    end: dragBeginPosition - const Offset(40, 0) + direction,
+                  ),
+                  ArrowAnnotator(
+                    start: dragBeginPosition + const Offset(40, 0),
+                    end: dragBeginPosition + const Offset(40, 0) + direction,
+                  ),
+                ],
+              ],
+            );
+            timeline.addEvent(
+              eventType: 'Drag Error Event',
+              details: details,
+              screenshot: screenshot,
+              color: Colors.red,
+            );
+          }
         }
 
+        // TODO handle horizontal/diagonal drags
         final direction = moveStep.dy < 0 ? 'downwards' : 'upwards';
-
         addDragEvent(
-          'Scrolling $direction from $dragPosition in order to find $targetName.',
-          direction: moveStep.dy,
+          'Scrolling $direction from $dragBeginPosition in order to find $targetName.',
+          direction: moveStep,
         );
 
+        bool targetFound() {
+          final snapshot = dragTarget.snapshot();
+          if (snapshot.discoveredElements.isNotEmpty) {
+            dragTarget.existsOnce();
+            return true;
+          }
+          return false;
+        }
+
+        // Now we begin to drag the scrollable until we find the target in the widget tree
         int dragCount = 0;
-        while (dragCount < maxIteration && visibility < 100) {
-          await gestures.drag(dragPosition, moveStep);
+        while (!targetFound()) {
+          if (dragCount >= maxIteration) {
+            final totalDragged = moveStep * dragCount.toDouble();
+            final message =
+                "$targetName is not visible after dragging $dragCount times and a total dragged offset of $totalDragged.";
+            addDragErrorEvent(message);
+            throw TestFailure(message);
+          }
+          await gestures.drag(dragBeginPosition, moveStep);
           await binding.pump(duration);
           dragCount++;
-          visibility = getTargetVisibility();
         }
 
-        // Return as result
-        Offset totalDragged = moveStep * dragCount.toDouble();
-        final resultString = visibility == 100 ? 'found' : 'not found';
+        // found the widget in the tree, now do a final drag to make sure it is fully visible
+        final spotViewportAfterDrag = spot<Scrollable>()
+            .withChild(dragTarget)
+            .last()
+            .spot<Viewport>()
+            .first();
+        final viewPortRenderBoxAfterDrag =
+            _getRenderBoxOrThrow(spotViewportAfterDrag);
+        final viewportGlobalPosition =
+            viewPortRenderBoxAfterDrag.localToGlobal(Offset.zero);
+        final viewportRect = Rect.fromLTWH(
+          viewportGlobalPosition.dx,
+          viewportGlobalPosition.dy,
+          viewPortRenderBoxAfterDrag.size.width,
+          viewPortRenderBoxAfterDrag.size.height,
+        );
 
-        // If visibility is 100, but the dragTarget is not in the center
-        // of the scrollable, we add another drag with an according moveStep
-        // TODO: implement the above
-        // determine targets position in relation to the scrollable parent
-        // drag the difference (but only if the target is smaller or equal to
-        // the scrollable's viewport)
+        final targetRenderBox = dragTarget.snapshotRenderBox();
+        final Offset globalTargetPositionTopLeft =
+            targetRenderBox.localToGlobal(Offset.zero);
+        final targetRect = Rect.fromLTWH(
+          globalTargetPositionTopLeft.dx,
+          globalTargetPositionTopLeft.dy,
+          targetRenderBox.size.width,
+          targetRenderBox.size.height,
+        );
 
-        final message =
-            "Target $targetName $resultString after $dragCount drags. "
-            "Total dragged offset: $totalDragged";
+        final targetFullyVisible =
+            viewportRect.contains(globalTargetPositionTopLeft) &&
+                viewportRect.contains(targetRect.bottomRight);
 
-        addDragEvent(message);
-
-        if (visibility < 100) {
-          throw TestFailure(
-            "$targetName is not visible after dragging $dragCount times and a total dragged offset of $totalDragged.",
+        Offset finalDragOffset = Offset.zero;
+        if (!targetFullyVisible) {
+          // drag the target to the location of the dragStart widget (top right corner)
+          final endDragLocation = dragStartRenderBoxRect.topLeft;
+          final Offset distanceToEnd =
+              endDragLocation - globalTargetPositionTopLeft;
+          await gestures.drag(dragBeginPosition, distanceToEnd);
+          await binding.pump(duration);
+          finalDragOffset = distanceToEnd;
+          addDragEvent(
+            'Scrolling to fully reveal $targetName.',
+            direction: distanceToEnd,
           );
         }
+
+        final totalDragged = moveStep * dragCount.toDouble() + finalDragOffset;
+        final message = "Target $targetName found after $dragCount drags. "
+            "Total dragged offset: $totalDragged";
+        addDragEvent(message);
       });
     });
   }
+}
 
-  /// Returns the `RenderBox` of a widget based on the given selector.
-  /// Throws `TestFailure` if the widget's render object is null or not a `RenderBox`.
-  RenderBox _getRenderBoxOrThrow(WidgetSelector<Widget> selector) {
-    final renderObject = _renderObjectFromSelector(selector);
-    if (renderObject == null) {
-      throw TestFailure(
-        "Widget '${selector.toStringBreadcrumb()}' has no associated RenderObject.\n"
-        "Spot does not know where the widget is located on the screen.",
-      );
-    }
-    if (renderObject is! RenderBox) {
-      throw TestFailure(
-        "Widget '${selector.toStringBreadcrumb()}' is associated to $renderObject which "
-        "is not a RenderObject in the 2D Cartesian coordinate system "
-        "(implements RenderBox).\n"
-        "Spot does not know how to hit test such a widget.",
-      );
-    }
-    return renderObject;
+Rect _globalRect(RenderBox renderBox) {
+  final position = renderBox.localToGlobal(Offset.zero);
+  return Rect.fromLTWH(
+    position.dx,
+    position.dy,
+    renderBox.size.width,
+    renderBox.size.height,
+  );
+}
+
+/// Returns the `RenderBox` of a widget based on the given selector.
+/// Throws `TestFailure` if the widget's render object is null or not a `RenderBox`.
+RenderBox _getRenderBoxOrThrow(WidgetSelector<Widget> selector) {
+  final renderObject = _renderObjectFromSelector(selector);
+  if (renderObject == null) {
+    throw TestFailure(
+      "Widget '${selector.toStringBreadcrumb()}' has no associated RenderObject.\n"
+      "Spot does not know where the widget is located on the screen.",
+    );
+  }
+  if (renderObject is! RenderBox) {
+    throw TestFailure(
+      "Widget '${selector.toStringBreadcrumb()}' is associated to $renderObject which "
+      "is not a RenderObject in the 2D Cartesian coordinate system "
+      "(implements RenderBox).\n"
+      "Spot does not know how to hit test such a widget.",
+    );
+  }
+  return renderObject;
+}
+
+/// Returns the `RenderObject` of a widget based on the given selector.
+/// Returns `null` if the widget's render object is null.
+RenderObject? _renderObjectFromSelector(WidgetSelector<Widget> selector) {
+  final snapshot = selector.snapshot();
+  final element = snapshot.discoveredElement;
+  return element?.renderObject;
+}
+
+void _validatePositionInViewBounds(Offset position) {
+  // ignore: deprecated_member_use
+  final view = WidgetsBinding.instance.renderView;
+  final Rect viewport = Offset.zero & view.size;
+  final isInViewport = viewport.contains(position);
+  if (!isInViewport) {
+    throw TestFailure(
+      "Tried to tapAt position ($position) which is outside the viewport (${view.size}).",
+    );
+  }
+}
+
+// Validates that the widget is at least partially visible in the viewport.
+bool _validateViewBounds(
+  RenderBox renderBox, {
+  required WidgetSelector selector,
+  bool throwIfInvisible = true,
+}) {
+  // ignore: deprecated_member_use
+  final view = WidgetsBinding.instance.renderView;
+  final Rect viewport = Offset.zero & view.size;
+  final Rect location =
+      renderBox.localToGlobal(Offset.zero) & renderBox.paintBounds.size;
+
+  final intersection = viewport.intersect(location);
+  final isNotVisible = intersection.width < 0 || intersection.height < 0;
+  if (isNotVisible && throwIfInvisible) {
+    throw TestFailure(
+      "Widget '${selector.toStringBreadcrumb()}' is located outside the viewport ($location).",
+    );
+  }
+  return !isNotVisible;
+  // TODO handle case when location is partially outside viewport
+}
+
+/// Throws a warning when the widget is only partially reacting to tap events
+String? _createPartialCoverageMessage(
+  _PokablePositions pokablePositions,
+  WidgetSnapshot snapshot, {
+  bool isDragStart = false,
+}) {
+  final roundUp = pokablePositions.percent.ceil();
+  if (roundUp > 80) {
+    // Don't be pedantic when the widget is almost fully tappable
+    return null;
   }
 
-  /// Returns the `RenderObject` of a widget based on the given selector.
-  /// Returns `null` if the widget's render object is null.
-  RenderObject? _renderObjectFromSelector(WidgetSelector<Widget> selector) {
-    final snapshot = selector.snapshot();
-    final element = snapshot.discoveredElement;
-    return element?.renderObject;
-  }
-
-  void _validatePositionInViewBounds(Offset position) {
-    // ignore: deprecated_member_use
-    final view = WidgetsBinding.instance.renderView;
-    final Rect viewport = Offset.zero & view.size;
-    final isInViewport = viewport.contains(position);
-    if (!isInViewport) {
-      throw TestFailure(
-        "Tried to tapAt position ($position) which is outside the viewport (${view.size}).",
-      );
-    }
-  }
-
-  // Validates that the widget is at least partially visible in the viewport.
-  bool _validateViewBounds(
-    RenderBox renderBox, {
-    required WidgetSelector selector,
-    bool throwIfInvisible = true,
-  }) {
-    // ignore: deprecated_member_use
-    final view = WidgetsBinding.instance.renderView;
-    final Rect viewport = Offset.zero & view.size;
-    final Rect location =
-        renderBox.localToGlobal(Offset.zero) & renderBox.paintBounds.size;
-
-    final intersection = viewport.intersect(location);
-    final isNotVisible = intersection.width < 0 || intersection.height < 0;
-    if (isNotVisible && throwIfInvisible) {
-      throw TestFailure(
-        "Widget '${selector.toStringBreadcrumb()}' is located outside the viewport ($location).",
-      );
-    }
-    return !isNotVisible;
-    // TODO handle case when location is partially outside viewport
-  }
-
-  /// Throws a warning when the widget is only partially reacting to tap events
-  String? _createPartialCoverageMessage(
-    _PokablePositions pokablePositions,
-    WidgetSnapshot snapshot, {
-    bool isDragStart = false,
-  }) {
-    final roundUp = pokablePositions.percent.ceil();
-    if (roundUp > 80) {
-      // Don't be pedantic when the widget is almost fully tappable
-      return null;
-    }
-
-    final messageHeader = () {
-      final widgetAsString = snapshot.discoveredWidget!.toStringShort();
-      if (isDragStart) {
-        return "Warning: dragStart '$widgetAsString' is only partially reacting to drag events. ";
-      }
+  final messageHeader = () {
+    final widgetAsString = snapshot.discoveredWidget!.toStringShort();
+    if (isDragStart) {
+      return "Warning: dragStart '$widgetAsString' is only partially reacting to drag events. ";
+    } else {
       return "Warning: The '$widgetAsString' is only partially reacting to tap events. ";
-    }();
-    // ignore: avoid_print
-    return "$messageHeader"
-        "Only ~$roundUp% of the widget reacts to hitTest events.\n"
-        "\n"
-        "Possible causes:\n"
-        " - The widget is partially positioned out of view\n"
-        " - It is covered by another widget.\n"
-        " - It is too small (<8x8)\n"
-        "\n"
-        "Possible solutions:\n"
-        " - Scroll the widget into view using act.dragUntilVisible()\n"
-        " - Make sure no other Widget is overlapping on small screens\n"
-        " - Increase the Widget size\n";
+    }
+  }();
+  // ignore: avoid_print
+  return "$messageHeader"
+      "Only ~$roundUp% of the widget reacts to hitTest events.\n"
+      "\n"
+      "Possible causes:\n"
+      " - The widget is partially positioned out of view\n"
+      " - It is covered by another widget.\n"
+      " - It is too small (<8x8)\n"
+      "\n"
+      "Possible solutions:\n"
+      " - Scroll the widget into view using act.dragUntilVisible()\n"
+      " - Make sure no other Widget is overlapping on small screens\n"
+      " - Increase the Widget size\n";
+}
+
+/// Checks if the widget is visible and not covered by another widget
+///
+/// This test fails when the widget does not react to hit tests
+void _throwHitTestFailureReport({
+  required Offset position,
+  required RenderObject target,
+  required WidgetSnapshot snapshot,
+}) {
+  final binding = WidgetsBinding.instance;
+
+  // do the tap, hit test the position of [target]
+  final HitTestResult result = HitTestResult();
+  // ignore: deprecated_member_use
+  binding.hitTest(result, position);
+  final hitTestEntries = result.path.toList();
+
+  final List<Element> hitTargetElements =
+      hitTestEntries.mapNotNull((e) => e.element).toList();
+
+  _detectAbsorbPointer(hitTargetElements.first, snapshot);
+  _detectIgnorePointer(target, snapshot);
+  _detectSizeZero(snapshot);
+  _detectCoverWidget(target, snapshot, hitTargetElements);
+
+  throw TestFailure(
+    "Widget '${snapshot.discoveredWidget!.toStringShort()}' can not be tapped at position $position where its RenderObject $target was found.\n"
+    "The exact reason, why it doesn't receive hitTest events is unknown.\n"
+    "If you think this case needs a a better error message, create an issue https://github.com/passsy/spot for anyone else running in a similar issue.\n"
+    "A small example would be highly appreciated.",
+  );
+}
+
+/// Throws when the widget is wrapped in an AbsorbPointer that is absorbing
+/// the taps and doesn't forward them to the child
+void _detectAbsorbPointer(
+  Element hitTarget,
+  WidgetSnapshot<Widget> snapshot,
+) {
+  final childElement = hitTarget.children.firstOrNull;
+  if (childElement?.widget is AbsorbPointer) {
+    final absorbPointer = childElement!.widget as AbsorbPointer;
+    if (absorbPointer.absorbing) {
+      final location = childElement.debugWidgetLocation?.file.path ??
+          childElement.debugGetCreatorChain(100);
+      throw TestFailure(
+          "Widget '${snapshot.discoveredWidget!.toStringShort()}' is wrapped in AbsorbPointer and doesn't receive taps.\n"
+          "AbsorbPointer is created at $location\n"
+          "The closest widget reacting to the touch event is:\n"
+          "${hitTarget.toStringDeep()}");
+    }
   }
+}
 
-  /// Checks if the widget is visible and not covered by another widget
-  ///
-  /// This test fails when the widget does not react to hit tests
-  void _throwHitTestFailureReport({
-    required Offset position,
-    required RenderObject target,
-    required WidgetSnapshot snapshot,
-  }) {
-    final binding = WidgetsBinding.instance;
+/// Throws if the widget is wrapped in an IgnorePointer that is not forwarding events
+void _detectIgnorePointer(
+  RenderObject target,
+  WidgetSnapshot<Widget> snapshot,
+) {
+  final targetElement = (target.debugCreator as DebugCreator?)!.element;
+  // sorted from root to target
+  final parents = targetElement.parents.reversed.toList();
+  // the first IgnorePointer that is not forwarding events
+  final ignorePointer = parents.firstOrNullWhere(
+    (element) {
+      if (element.widget is! IgnorePointer) return false;
+      final ignorePointer = element.widget as IgnorePointer;
+      return ignorePointer.ignoring;
+    },
+  );
+  if (ignorePointer != null) {
+    final location = ignorePointer.debugWidgetLocation?.file.path ??
+        targetElement.debugGetCreatorChain(100);
+    throw TestFailure(
+      "Widget '${snapshot.discoveredWidget!.toStringShort()}' is wrapped in IgnorePointer and doesn't receive taps.\n"
+      "The IgnorePointer is located at $location",
+    );
+  }
+}
 
-    // do the tap, hit test the position of [target]
-    final HitTestResult result = HitTestResult();
-    // ignore: deprecated_member_use
-    binding.hitTest(result, position);
-    final hitTestEntries = result.path.toList();
-
-    final List<Element> hitTargetElements =
-        hitTestEntries.mapNotNull((e) => e.element).toList();
-
-    _detectAbsorbPointer(hitTargetElements.first, snapshot);
-    _detectIgnorePointer(target, snapshot);
-    _detectSizeZero(target, snapshot);
-    _detectCoverWidget(target, snapshot, hitTargetElements);
+/// Detects when the widget is 0x0 pixels in size and throws a `TestFailure`
+/// containing the widget that forces it to be 0x0 pixels.
+void _detectSizeZero(WidgetSnapshot<Widget> snapshot) {
+  final renderObject = snapshot.discoveredElement?.renderObject;
+  if (renderObject == null) {
+    return;
+  }
+  final renderBox = renderObject as RenderBox;
+  final size = renderBox.size;
+  if (size == Size.zero) {
+    final parents = snapshot.discoveredElement?.parents.toList() ?? [];
+    final parentsWithSizes = parents.map(
+      (element) {
+        final renderObject = element.renderObject;
+        if (renderObject is RenderBox?) {
+          return (renderObject?.size, element);
+        }
+        return (null, element);
+      },
+    ).toList();
+    final Element shrinker =
+        parentsWithSizes.reversed.firstWhere((it) => it.$1 == Size.zero).$2;
 
     throw TestFailure(
-      "Widget '${snapshot.discoveredWidget!.toStringShort()}' can not be tapped at position $position where its RenderObject $target was found.\n"
-      "The exact reason, why it doesn't receive hitTest events is unknown.\n"
-      "If you think this case needs a a better error message, create an issue https://github.com/passsy/spot for anyone else running in a similar issue.\n"
-      "A small example would be highly appreciated.",
+      "${snapshot.discoveredElement!.toStringShort()} can't be tapped because it has size ${Size.zero}.\n"
+      "${shrinker.toStringShort()} forces ${snapshot.discoveredElement!.toStringShort()} to have the size ${Size.zero}.\n"
+      "${shrinker.toStringShort()} ${shrinker.debugWidgetLocation?.file.path}",
     );
   }
+}
 
-  /// Attempts to find hittable position on the [snapshot] [RenderObject] using
-  /// an 8px grid.
-  ///
-  /// It returns the results of the search as [_PokablePositions], including all
-  /// failed hit tests and a good estimate of a center point which is tappable
-  /// ([_PokablePositions.mostCenterHittablePosition]).
-  _PokablePositions _findPokablePositions({
-    required WidgetSelector<Widget> widgetSelector,
-    required WidgetSnapshot snapshot,
-  }) {
-    final RenderBox renderBox = _getRenderBoxOrThrow(widgetSelector);
+void _detectCoverWidget(
+  RenderObject target,
+  WidgetSnapshot<Widget> snapshot,
+  List<Element> hitTargetElements,
+) {
+  final cover = hitTargetElements.first;
+  final Element commonAncestor = findCommonAncestor(
+    [hitTargetElements.first, snapshot.discoveredElement!],
+  );
+  final coverChain = cover
+      .debugGetDiagnosticChain()
+      .takeWhile((e) => e != commonAncestor)
+      .toList();
+  if (coverChain.isEmpty) {
+    // no widget is covering the target,
+    // target is child of the cover
+    return;
+  }
 
-    final List<Offset> hits = [];
-    final List<Offset> flops = [];
-    const gridSize = 8;
-    for (int x = 0; x < renderBox.size.width; x += gridSize) {
-      for (int y = 0; y < renderBox.size.height; y += gridSize) {
-        final Offset localPosition = Offset(x.toDouble(), y.toDouble());
-        final Offset globalPosition = renderBox.localToGlobal(localPosition);
-        final canBePoked =
-            _canBePoked(position: globalPosition, target: renderBox);
-        if (canBePoked) {
-          hits.add(globalPosition);
-        } else {
-          flops.add(globalPosition);
-        }
-      }
-    }
+  final targetChain = snapshot.discoveredElement!
+      .debugGetDiagnosticChain()
+      .takeWhile((e) => e != commonAncestor)
+      .toList();
 
-    final pos = renderBox.localToGlobal(Offset.zero);
-    final searchArea = Rect.fromLTWH(
-      pos.dx,
-      pos.dy,
-      renderBox.size.width,
-      renderBox.size.height,
-    );
+  final commonAncestorChain = commonAncestor.debugGetDiagnosticChain();
+  final usefulParents = commonAncestorChain.drop(1).where((e) {
+    return e.debugWidgetLocation?.isUserCode ?? false;
+  }).toList();
 
-    if (hits.isEmpty) {
-      return _PokablePositions(
-        searchArea: searchArea,
-        hits: hits,
-        flops: flops,
-        target: renderBox,
+  // TODO find not only the first Widget constructor call, but actually the first widget class in the user code
+  final firstUsefulParent =
+      usefulParents.firstOrNull ?? commonAncestorChain.first;
+
+  final usefulToTarget =
+      targetChain.takeWhile((e) => e != firstUsefulParent).toList();
+
+  final receiverColumn =
+      "(Cover - Received tap event)\n${coverChain.joinToString(separator: '\n', transform: (it) => it.toStringShort())}";
+  final targetColumn =
+      "(Target for tap, below Cover)\n${usefulToTarget.joinToString(separator: '\n', transform: (it) => it.toStringShort())}";
+
+  // create a string with two columns (max width 40), one for the receiver and one for the target
+  String createColumns(String receiver, String target) {
+    final receiverLines = receiver.split('\n');
+    final targetLines = target.split('\n');
+    final lines =
+        receiverLines.length > targetLines.length ? receiverLines : targetLines;
+    const columnWidth = 40;
+    const columnSeparator = ' ';
+    final buffer = StringBuffer();
+    const empty = ' │';
+    for (int i = 0; i < lines.length; i++) {
+      final receiverLine = receiverLines.length > i ? receiverLines[i] : empty;
+      final targetLine = targetLines.length > i ? targetLines[i] : empty;
+      buffer.write(
+        receiverLine.characters
+            .take(columnWidth)
+            .toString()
+            .padRight(columnWidth),
       );
-    }
-
-    // Find a good point to actually tap the widget
-    // When parts of the widget are covered (like the right side) the center is
-    // the middle of the right side.
-    // This only fails when there is a hole of tappable points in the middle (which rarely happens)
-    final Offset centerOfPokablePoints = () {
-      final maxX = hits.maxBy((e) => e.dx)!.dx;
-      final minX = hits.minBy((e) => e.dx)!.dx;
-      final maxY = hits.maxBy((e) => e.dy)!.dy;
-      final minY = hits.minBy((e) => e.dy)!.dy;
-      return Offset(
-        ((maxX + minX) ~/ 2).toDouble(),
-        ((maxY + minY) ~/ 2).toDouble(),
+      buffer.write(columnSeparator);
+      buffer.write(
+        targetLine.characters
+            .take(columnWidth)
+            .toString()
+            .padRight(columnWidth),
       );
-    }();
-    final centerCanBePoked =
-        _canBePoked(position: centerOfPokablePoints, target: renderBox);
-    final Offset? mostCenterPoint;
-    if (centerCanBePoked) {
-      mostCenterPoint = centerOfPokablePoints;
-    } else {
-      // this is point is already working, use it as fallback when the center
-      // is not tappable
-      mostCenterPoint =
-          hits.minBy((e) => (e - centerOfPokablePoints).distanceSquared);
+      buffer.writeln();
     }
-
-    return _PokablePositions(
-      searchArea: searchArea,
-      hits: hits,
-      flops: flops,
-      target: renderBox,
-      mostCenterHittablePosition: mostCenterPoint,
-    );
+    return buffer.toString().trimRight();
   }
 
-  /// Checks if the widget is visible and not covered by another widget
-  bool _canBePoked({
-    required Offset position,
-    required RenderObject target,
-  }) {
-    final binding = WidgetsBinding.instance;
-
-    // do the tap, hit test the position of [target]
-    final HitTestResult result = HitTestResult();
-    // ignore: deprecated_member_use
-    binding.hitTest(result, position);
-    final hitTestEntries = result.path.toList();
-
-    // Check if [target] received the tap event
-    for (final HitTestEntry entry in hitTestEntries) {
-      if (entry.target == target) {
-        // Success, target was hit by hitTest
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /// Throws when the widget is wrapped in an AbsorbPointer that is absorbing
-  /// the taps and doesn't forward them to the child
-  void _detectAbsorbPointer(
-    Element hitTarget,
-    WidgetSnapshot<Widget> snapshot,
-  ) {
-    final childElement = hitTarget.children.firstOrNull;
-    if (childElement?.widget is AbsorbPointer) {
-      final absorbPointer = childElement!.widget as AbsorbPointer;
-      if (absorbPointer.absorbing) {
-        final location = childElement.debugWidgetLocation?.file.path ??
-            childElement.debugGetCreatorChain(100);
-        throw TestFailure(
-            "Widget '${snapshot.discoveredWidget!.toStringShort()}' is wrapped in AbsorbPointer and doesn't receive taps.\n"
-            "AbsorbPointer is created at $location\n"
-            "The closest widget reacting to the touch event is:\n"
-            "${hitTarget.toStringDeep()}");
-      }
-    }
-  }
-
-  /// Throws if the widget is wrapped in an IgnorePointer that is not forwarding events
-  void _detectIgnorePointer(
-    RenderObject target,
-    WidgetSnapshot<Widget> snapshot,
-  ) {
-    final targetElement = (target.debugCreator as DebugCreator?)!.element;
-    // sorted from root to target
-    final parents = targetElement.parents.reversed.toList();
-    // the first IgnorePointer that is not forwarding events
-    final ignorePointer = parents.firstOrNullWhere(
-      (element) {
-        if (element.widget is! IgnorePointer) return false;
-        final ignorePointer = element.widget as IgnorePointer;
-        return ignorePointer.ignoring;
-      },
-    );
-    if (ignorePointer != null) {
-      final location = ignorePointer.debugWidgetLocation?.file.path ??
-          targetElement.debugGetCreatorChain(100);
-      throw TestFailure(
-        "Widget '${snapshot.discoveredWidget!.toStringShort()}' is wrapped in IgnorePointer and doesn't receive taps.\n"
-        "The IgnorePointer is located at $location",
-      );
-    }
-  }
-
-  /// Detects when the widget is 0x0 pixels in size and throws a `TestFailure`
-  /// containing the widget that forces it to be 0x0 pixels.
-  void _detectSizeZero(RenderObject target, WidgetSnapshot<Widget> snapshot) {
-    final renderObject = snapshot.discoveredElement?.renderObject;
-    if (renderObject == null) {
-      return;
-    }
-    final renderBox = renderObject as RenderBox;
-    final size = renderBox.size;
-    if (size == Size.zero) {
-      final parents = snapshot.discoveredElement?.parents.toList() ?? [];
-      final parentsWithSizes = parents.map(
-        (element) {
-          final renderObject = element.renderObject;
-          if (renderObject is RenderBox?) {
-            return (renderObject?.size, element);
-          }
-          return (null, element);
-        },
-      ).toList();
-      final Element shrinker =
-          parentsWithSizes.reversed.firstWhere((it) => it.$1 == Size.zero).$2;
-
-      throw TestFailure(
-        "${snapshot.discoveredElement!.toStringShort()} can't be tapped because it has size ${Size.zero}.\n"
-        "${shrinker.toStringShort()} forces ${snapshot.discoveredElement!.toStringShort()} to have the size ${Size.zero}.\n"
-        "${shrinker.toStringShort()} ${shrinker.debugWidgetLocation?.file.path}",
-      );
-    }
-  }
-
-  void _detectCoverWidget(
-    RenderObject target,
-    WidgetSnapshot<Widget> snapshot,
-    List<Element> hitTargetElements,
-  ) {
-    final cover = hitTargetElements.first;
-    final Element commonAncestor = findCommonAncestor(
-      [hitTargetElements.first, snapshot.discoveredElement!],
-    );
-    final coverChain = cover
-        .debugGetDiagnosticChain()
-        .takeWhile((e) => e != commonAncestor)
-        .toList();
-    if (coverChain.isEmpty) {
-      // no widget is covering the target,
-      // target is child of the cover
-      return;
-    }
-
-    final targetChain = snapshot.discoveredElement!
-        .debugGetDiagnosticChain()
-        .takeWhile((e) => e != commonAncestor)
-        .toList();
-
-    final commonAncestorChain = commonAncestor.debugGetDiagnosticChain();
-    final usefulParents = commonAncestorChain.drop(1).where((e) {
-      return e.debugWidgetLocation?.isUserCode ?? false;
-    }).toList();
-
-    // TODO find not only the first Widget constructor call, but actually the first widget class in the user code
-    final firstUsefulParent =
-        usefulParents.firstOrNull ?? commonAncestorChain.first;
-
-    final usefulToTarget =
-        targetChain.takeWhile((e) => e != firstUsefulParent).toList();
-
-    final receiverColumn =
-        "(Cover - Received tap event)\n${coverChain.joinToString(separator: '\n', transform: (it) => it.toStringShort())}";
-    final targetColumn =
-        "(Target for tap, below Cover)\n${usefulToTarget.joinToString(separator: '\n', transform: (it) => it.toStringShort())}";
-
-    // create a string with two columns (max width 40), one for the receiver and one for the target
-    String createColumns(String receiver, String target) {
-      final receiverLines = receiver.split('\n');
-      final targetLines = target.split('\n');
-      final lines = receiverLines.length > targetLines.length
-          ? receiverLines
-          : targetLines;
-      const columnWidth = 40;
-      const columnSeparator = ' ';
-      final buffer = StringBuffer();
-      const empty = ' │';
-      for (int i = 0; i < lines.length; i++) {
-        final receiverLine =
-            receiverLines.length > i ? receiverLines[i] : empty;
-        final targetLine = targetLines.length > i ? targetLines[i] : empty;
-        buffer.write(
-          receiverLine.characters
-              .take(columnWidth)
-              .toString()
-              .padRight(columnWidth),
-        );
-        buffer.write(columnSeparator);
-        buffer.write(
-          targetLine.characters
-              .take(columnWidth)
-              .toString()
-              .padRight(columnWidth),
-        );
-        buffer.writeln();
-      }
-      return buffer.toString().trimRight();
-    }
-
-    final diagram = """
+  final diagram = """
 ${createColumns(receiverColumn, targetColumn)}
  │ ┌──────────────────────────────────────┘
 ${commonAncestor.toStringShort().trimRight()} (${commonAncestor.debugWidgetLocation?.file.path})
@@ -764,22 +720,135 @@ ${usefulParents.takeWhile((it) => it != firstUsefulParent).joinToString(separato
 ${firstUsefulParent.toStringShort()} (${firstUsefulParent.debugWidgetLocation?.file.path})
 """;
 
-    throw TestFailure(
-      "Widget '${snapshot.discoveredWidget!.toStringShort()}' can not be tapped directly, because another widget (${cover.toStringShort()}) inside ${firstUsefulParent.toStringShort()} is completely covering it and consumes all tap events.\n"
-      "\n"
-      "Try tapping the ${firstUsefulParent.toStringShort()} which contains '${snapshot.discoveredWidget!.toStringShort()}' instead.\n\n"
-      "Example:\n"
-      "  // BAD: Taps the Text inside ElevatedButton\n"
-      "  WidgetSelector<AnyText> selector = spot<ElevatedButton>().spotText('Tap me');\n"
-      "  await act.tap(selector);\n"
-      "\n"
-      "  // GOOD: Taps the ElevatedButton which contains text 'Tap me'\n"
-      "  WidgetSelector<ElevatedButton> selector = spot<ElevatedButton>().withChild(spotText('Tap me'));\n"
-      "  await act.tap(selector);\n"
-      "\n"
-      "${diagram.removeEmptyLines()}\n",
+  throw TestFailure(
+    "Widget '${snapshot.discoveredWidget!.toStringShort()}' can not be tapped directly, because another widget (${cover.toStringShort()}) inside ${firstUsefulParent.toStringShort()} is completely covering it and consumes all tap events.\n"
+    "\n"
+    "Try tapping the ${firstUsefulParent.toStringShort()} which contains '${snapshot.discoveredWidget!.toStringShort()}' instead.\n\n"
+    "Example:\n"
+    "  // BAD: Taps the Text inside ElevatedButton\n"
+    "  WidgetSelector<AnyText> selector = spot<ElevatedButton>().spotText('Tap me');\n"
+    "  await act.tap(selector);\n"
+    "\n"
+    "  // GOOD: Taps the ElevatedButton which contains text 'Tap me'\n"
+    "  WidgetSelector<ElevatedButton> selector = spot<ElevatedButton>().withChild(spotText('Tap me'));\n"
+    "  await act.tap(selector);\n"
+    "\n"
+    "${diagram.removeEmptyLines()}\n",
+  );
+}
+
+/// Checks if the widget is visible and not covered by another widget
+bool _canBePoked({
+  required Offset position,
+  required RenderObject target,
+}) {
+  final binding = WidgetsBinding.instance;
+
+  // do the tap, hit test the position of [target]
+  final HitTestResult result = HitTestResult();
+  // ignore: deprecated_member_use
+  binding.hitTest(result, position);
+  final hitTestEntries = result.path.toList();
+
+  // Check if [target] received the tap event
+  for (final HitTestEntry entry in hitTestEntries) {
+    if (entry.target == target) {
+      // Success, target was hit by hitTest
+      return true;
+    }
+  }
+  return false;
+}
+
+/// Attempts to find hittable position on the [snapshot] [RenderObject] using
+/// an 8px grid.
+///
+/// It returns the results of the search as [_PokablePositions], including all
+/// failed hit tests and a good estimate of a center point which is tappable
+/// ([_PokablePositions.mostCenterHittablePosition]).
+_PokablePositions _findPokablePositions(
+  // WidgetSelector<Widget> widgetSelector,
+  RenderBox renderBox, {
+  bool Function(Offset local, Offset global)? shouldBePoked,
+}) {
+  // final RenderBox renderBox = _getRenderBoxOrThrow(widgetSelector);
+
+  final List<Offset> hits = [];
+  final List<Offset> flops = [];
+  final List<Offset> skipped = [];
+  const gridSize = 8;
+  for (int x = 0; x < renderBox.size.width; x += gridSize) {
+    for (int y = 0; y < renderBox.size.height; y += gridSize) {
+      final Offset localPosition = Offset(x.toDouble(), y.toDouble());
+      final Offset globalPosition = renderBox.localToGlobal(localPosition);
+      final shouldPoke =
+          shouldBePoked?.call(localPosition, globalPosition) ?? true;
+      if (!shouldPoke) {
+        skipped.add(globalPosition);
+        continue;
+      }
+      final canBePoked =
+          _canBePoked(position: globalPosition, target: renderBox);
+      if (canBePoked) {
+        hits.add(globalPosition);
+      } else {
+        flops.add(globalPosition);
+      }
+    }
+  }
+
+  final pos = renderBox.localToGlobal(Offset.zero);
+  final searchArea = Rect.fromLTWH(
+    pos.dx,
+    pos.dy,
+    renderBox.size.width,
+    renderBox.size.height,
+  );
+
+  if (hits.isEmpty) {
+    return _PokablePositions(
+      searchArea: searchArea,
+      hits: hits,
+      flops: flops,
+      skipped: skipped,
+      target: renderBox,
     );
   }
+
+  // Find a good point to actually tap the widget
+  // When parts of the widget are covered (like the right side) the center is
+  // the middle of the right side.
+  // This only fails when there is a hole of tappable points in the middle (which rarely happens)
+  final Offset centerOfPokablePoints = () {
+    final maxX = hits.maxBy((e) => e.dx)!.dx;
+    final minX = hits.minBy((e) => e.dx)!.dx;
+    final maxY = hits.maxBy((e) => e.dy)!.dy;
+    final minY = hits.minBy((e) => e.dy)!.dy;
+    return Offset(
+      ((maxX + minX) ~/ 2).toDouble(),
+      ((maxY + minY) ~/ 2).toDouble(),
+    );
+  }();
+  final centerCanBePoked =
+      _canBePoked(position: centerOfPokablePoints, target: renderBox);
+  final Offset? mostCenterPoint;
+  if (centerCanBePoked) {
+    mostCenterPoint = centerOfPokablePoints;
+  } else {
+    // this is point is already working, use it as fallback when the center
+    // is not tappable
+    mostCenterPoint =
+        hits.minBy((e) => (e - centerOfPokablePoints).distanceSquared);
+  }
+
+  return _PokablePositions(
+    searchArea: searchArea,
+    hits: hits,
+    flops: flops,
+    skipped: skipped,
+    target: renderBox,
+    mostCenterHittablePosition: mostCenterPoint,
+  );
 }
 
 /// Contains the result of hit testing an entire [RenderObject] in [_findPokablePositions]
@@ -795,6 +864,9 @@ class _PokablePositions {
   /// Those points are covered by something and the [target] did not react
   final List<Offset> flops;
 
+  /// All points that where skipped due to shouldBePoked returning false
+  final List<Offset> skipped;
+
   /// The target that was used for hit testing
   final RenderBox target;
 
@@ -807,6 +879,7 @@ class _PokablePositions {
     required this.searchArea,
     required this.hits,
     required this.flops,
+    required this.skipped,
     required this.target,
     this.mostCenterHittablePosition,
   });

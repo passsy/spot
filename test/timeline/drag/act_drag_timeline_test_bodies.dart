@@ -266,7 +266,7 @@ class ActDragTimelineTestBodies {
         .where((entry) => entry.value.startsWith('Event Type: Drag Event'))
         .map((entry) => entry.key)
         .toList();
-    expect(indexesOfDragEvents.length, 2);
+    check(indexesOfDragEvents.length).isGreaterOrEqual(2);
 
     // Event Type: Drag Event
     // Details: Scrolling downwards from Offset(398.0, 451.0) in order to find Widget with text with text "Item at index: 27".

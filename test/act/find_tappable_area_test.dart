@@ -109,43 +109,6 @@ void main() {
     );
   });
 
-  testWidgets('Warn about using and finding alternative draggable area.',
-      (tester) async {
-    final output = await captureConsoleOutput(() async {
-      await tester.pumpWidget(
-        const DragUntilVisibleTestWidget(),
-      );
-
-      final dragStart = spotText('Item at index: 4', exact: true);
-      final dragTarget = spotText('Item at index: 27', exact: true);
-      await act.dragUntilVisible(
-        dragStart: dragStart,
-        dragTarget: dragTarget,
-        maxIteration: 30,
-        moveStep: const Offset(0, -100),
-      );
-      dragTarget.existsOnce();
-      dragStart.doesNotExist();
-    });
-
-    final lines =
-        (output.split('\n')..removeWhere((line) => line.isEmpty)).join('\n');
-    expect(
-      lines,
-      startsWith(
-        "Warning: dragStart \'RichText\' is only partially reacting to drag events. Only ~67% of the widget reacts to hitTest events.\n"
-        'Possible causes:\n'
-        ' - The widget is partially positioned out of view\n'
-        ' - It is covered by another widget.\n'
-        ' - It is too small (<8x8)\n'
-        'Possible solutions:\n'
-        ' - Scroll the widget into view using act.dragUntilVisible()\n'
-        ' - Make sure no other Widget is overlapping on small screens\n'
-        ' - Increase the Widget size',
-      ),
-    );
-  });
-
   testWidgets(
       'Warn about using and finding alternative tappable area in timeline',
       (tester) async {
