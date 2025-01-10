@@ -4,7 +4,6 @@ import 'package:spot/spot.dart';
 
 import '../util/assert_error.dart';
 import '../util/capture_console_output.dart';
-import '../widgets/drag_until_visible_test_widget.dart';
 import '../widgets/poke_test_widget.dart';
 
 void main() {
