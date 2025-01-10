@@ -83,7 +83,7 @@ void dragTests() {
   );
 
   testWidgets(
-    'Finds widget in horizontal ListView after to the right back',
+    'Finds widget in horizontal ListView after dragging to the right and back',
     (tester) async {
       await tester
           .pumpWidget(const DragUntilVisibleTestWidget(axis: Axis.horizontal));
