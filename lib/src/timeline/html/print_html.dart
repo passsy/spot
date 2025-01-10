@@ -48,16 +48,17 @@ extension HtmlTimelinePrinter on Timeline {
       spotTempDir.deleteSync(recursive: true);
     }
     spotTempDir.createSync(recursive: true);
-    final screenshotsDir = spotTempDir.directory('screenshots');
+
+    const screenshotsDirName = 'screenshots';
+    final screenshotsDir = spotTempDir.directory(screenshotsDirName);
     screenshotsDir.createSync(recursive: true);
 
     final events = spotTempDir.file('events.json');
     final jsonTimelineEvents = this.events.map((e) {
       // save screenshots relative to the events.json file in screenshots/
-      File? screenshotFile;
       if (e.screenshot != null) {
         final name = e.screenshot!.file.name;
-        screenshotFile = screenshotsDir.file(name);
+        final screenshotFile = screenshotsDir.file(name);
         screenshotFile.writeAsBytesSync(e.screenshot!.file.readAsBytesSync());
       }
 
@@ -65,7 +66,9 @@ extension HtmlTimelinePrinter on Timeline {
         eventType: e.eventType.label,
         details: e.details,
         timestamp: e.timestamp.toIso8601String(),
-        screenshotUrl: screenshotFile?.path,
+        screenshotUrl: e.screenshot != null
+            ? './$screenshotsDirName/${e.screenshot!.file.name}'
+            : null,
         color: e.color == flt.Colors.grey
             ? null
             // ignore: deprecated_member_use
