@@ -55,7 +55,6 @@ extension HtmlTimelinePrinter on Timeline {
 
     final events = spotTempDir.file('events.json');
     final jsonTimelineEvents = this.events.map((e) {
-      
       // save screenshots relative to the events.json file in screenshots/
       if (e.screenshot != null) {
         final name = e.screenshot!.file.name;
@@ -67,7 +66,9 @@ extension HtmlTimelinePrinter on Timeline {
         eventType: e.eventType.label,
         details: e.details,
         timestamp: e.timestamp.toIso8601String(),
-        screenshotUrl: e.screenshot != null ? './$screenshotsDirName/${e.screenshot!.file.name}' : null,
+        screenshotUrl: e.screenshot != null
+            ? './$screenshotsDirName/${e.screenshot!.file.name}'
+            : null,
         color: e.color == flt.Colors.grey
             ? null
             // ignore: deprecated_member_use
