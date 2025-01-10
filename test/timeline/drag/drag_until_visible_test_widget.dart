@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 
 class DragUntilVisibleTestWidget extends StatelessWidget {
-  const DragUntilVisibleTestWidget({super.key});
+  const DragUntilVisibleTestWidget({
+    super.key,
+    required this.axis,
+  });
 
   Color getRandomColor(int index) {
     return index.isEven ? Colors.red : Colors.blue;
   }
+
+  final Axis axis;
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +37,7 @@ class DragUntilVisibleTestWidget extends StatelessWidget {
                   maxHeight: 450,
                 ),
                 child: ListView.builder(
+                  scrollDirection: axis,
                   itemCount: items.length,
                   itemBuilder: (context, index) {
                     return items[index];

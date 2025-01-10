@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 
@@ -241,7 +242,9 @@ class ActDragTimelineTestBodies {
   }
 
   static Future<void> _testBody(WidgetTester tester) async {
-    await tester.pumpWidget(const DragUntilVisibleTestWidget());
+    await tester.pumpWidget(
+      const DragUntilVisibleTestWidget(axis: Axis.vertical),
+    );
     _firstItemSelector.existsOnce();
     _secondItemSelector.doesNotExist();
     await act.dragUntilVisible(
@@ -380,7 +383,7 @@ void main() async {
 $globalInitiator
   testWidgets("$testTitle", (WidgetTester tester) async {
   $localInitiator
-    await tester.pumpWidget(const DragUntilVisibleTestWidget());
+    await tester.pumpWidget(const DragUntilVisibleTestWidget(axis: Axis.vertical));
       final firstItem = spotText('Item at index: 3', exact: true)..existsOnce();
       final secondItem = spotText('Item at index: 27', exact: true)
         ..doesNotExist();
