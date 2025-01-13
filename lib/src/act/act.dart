@@ -207,6 +207,10 @@ class Act {
   /// Use `moveStep: const Offset(0, -100)` to scroll to reveal 100 pixels at
   /// the bottom of the list.
   ///
+  /// If [moveStep] is not provided: The method automatically drags towards the
+  /// end of the `Scrollable` by default. If you want to drag towards the start
+  /// of the `Scrollable`, provide `toStart: true`.
+  ///
   /// Throws a [TestFailure] if `dragTarget` is not found after [maxIteration]
   /// drags. May drag one additional time after reaching [maxIteration] to place
   /// the target more visible in the viewport.
@@ -227,6 +231,7 @@ class Act {
     Offset? moveStep,
     int maxIteration = 50,
     Duration duration = const Duration(milliseconds: 50),
+    bool toStart = false,
   }) {
     // Check if widget is in the widget tree. Throws if not.
     final dragStartSnapshot = dragStart.snapshot()..existsOnce();
@@ -350,11 +355,13 @@ class Act {
 
         final moveOffset = moveStep ??= () {
           if (scrollAxis == Axis.vertical) {
-            final scrollableHeight = scrollableSizedRenderBox.size.height;
-            return Offset(0, -scrollableHeight / 2);
+            final autoScrollHeight = scrollableSizedRenderBox.size.height / 2;
+            final dy = toStart ? autoScrollHeight : -autoScrollHeight;
+            return Offset(0, dy);
           } else {
-            final scrollableWidth = scrollableSizedRenderBox.size.width;
-            return Offset(-scrollableWidth / 2, 0);
+            final autoScrollWidth = scrollableSizedRenderBox.size.width / 2;
+            final dx = toStart ? autoScrollWidth : -autoScrollWidth;
+            return Offset(dx, 0);
           }
         }();
 
