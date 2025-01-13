@@ -197,9 +197,15 @@ class Act {
     });
   }
 
-  /// Repeatedly drags at the position of `dragStart` by `moveStep` until `dragTarget` is visible.
+  /// Repeatedly drags at the position of `dragStart` towards the end of the list
+  /// until `dragTarget` is visible.
   ///
   /// Between each drag, advances the clock by `duration`.
+  ///
+  /// [moveStep] is the distance to drag in each iteration. If not provided, the
+  /// default value is half the height/width of the scrollable.
+  /// Use `moveStep: const Offset(0, -100)` to scroll to reveal 100 pixels at
+  /// the bottom of the list.
   ///
   /// Throws a [TestFailure] if `dragTarget` is not found after [maxIteration]
   /// drags. May drag one additional time after reaching [maxIteration] to place
@@ -207,20 +213,18 @@ class Act {
   ///
   /// Usage:
   /// ```dart
-  /// final firstItem = spotText('Item at index: 3', exact: true)..existsOnce();
-  /// final secondItem = spotText('Item at index: 27', exact: true)..doesNotExist();
+  /// final firstItem = spotText('Item at index: 0')..existsOnce();
+  /// final secondItem = spotText('Item at index: 27')..doesNotExist();
   /// await act.dragUntilVisible(
   ///   dragStart: firstItem,
   ///   dragTarget: secondItem,
-  ///   maxIteration: 30,
-  ///   moveStep: const Offset(0, -100),
   /// );
   /// secondItem.existsOnce();
   /// ```
   Future<void> dragUntilVisible({
     required WidgetSelector<Widget> dragStart,
     required WidgetSelector<Widget> dragTarget,
-    required Offset moveStep,
+    Offset? moveStep,
     int maxIteration = 50,
     Duration duration = const Duration(milliseconds: 50),
   }) {
@@ -342,19 +346,30 @@ class Act {
           }
         }
 
+        final scrollAxis = scrollable.snapshotWidget().axis;
+
+        final moveOffset = moveStep ??= () {
+          if (scrollAxis == Axis.vertical) {
+            final scrollableHeight = scrollableSizedRenderBox.size.height;
+            return Offset(0, -scrollableHeight / 2);
+          } else {
+            final scrollableWidth = scrollableSizedRenderBox.size.width;
+            return Offset(-scrollableWidth / 2, 0);
+          }
+        }();
+
+        // TODO add assert when both dy and dx are 0 or both >0
+
         final direction = () {
-          if (moveStep.dx != 0 && moveStep.dy != 0) return 'diagonally';
-          if (moveStep.dy < 0) return 'to the end';
-          if (moveStep.dy > 0) return 'to the start';
-          if (moveStep.dx < 0) return 'to the end';
-          if (moveStep.dx > 0) return 'to the start';
-          //TODO: Either throw or show warning
-          return 'nowhere';
+          if (moveOffset.dy < 0) return 'to the end';
+          if (moveOffset.dy > 0) return 'to the start';
+          if (moveOffset.dx < 0) return 'to the end';
+          if (moveOffset.dx > 0) return 'to the start';
         }();
 
         addDragEvent(
           'Scrolling $direction, beginning at $dragBeginPosition in order to find $targetName.',
-          direction: moveStep,
+          direction: moveOffset,
         );
 
         bool targetFound() {
@@ -370,13 +385,13 @@ class Act {
         int dragCount = 0;
         while (!targetFound()) {
           if (dragCount >= maxIteration) {
-            final totalDragged = moveStep * dragCount.toDouble();
+            final totalDragged = moveOffset * dragCount.toDouble();
             final message =
                 "$targetName is not visible after dragging $dragCount times and a total dragged offset of $totalDragged.";
             addDragErrorEvent(message);
             throw TestFailure(message);
           }
-          await gestures.drag(dragBeginPosition, moveStep);
+          await gestures.drag(dragBeginPosition, moveOffset);
           await binding.pump(duration);
           dragCount++;
         }
@@ -427,7 +442,8 @@ class Act {
           );
         }
 
-        final totalDragged = moveStep * dragCount.toDouble() + finalDragOffset;
+        final totalDragged =
+            moveOffset * dragCount.toDouble() + finalDragOffset;
         final message = "Target $targetName found after $dragCount drags. "
             "Total dragged offset: $totalDragged";
         addDragEvent(message);

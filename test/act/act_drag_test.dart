@@ -7,6 +7,7 @@ import '../timeline/drag/drag_until_visible_test_widget.dart';
 void main() {
   // Runs the tests as executed with `flutter test`
   AutomatedTestWidgetsFlutterBinding.ensureInitialized();
+  globalTimelineMode = TimelineMode.always;
   assert(WidgetsBinding.instance is! LiveTestWidgetsFlutterBinding);
   group('Drag with AutomatedTestWidgetsFlutterBinding', dragTests);
 }
@@ -29,7 +30,6 @@ void dragTests() {
         dragStart: firstItem,
         dragTarget: secondItem,
         maxIteration: 30,
-        moveStep: const Offset(0, -100),
       );
       secondItem.existsOnce();
     },
@@ -53,7 +53,6 @@ void dragTests() {
         dragStart: firstItem,
         dragTarget: secondItem,
         maxIteration: 30,
-        moveStep: const Offset(0, -100),
       );
       secondItem.existsOnce();
       final position =
@@ -76,7 +75,6 @@ void dragTests() {
         dragStart: firstItem,
         dragTarget: secondItem,
         maxIteration: 30,
-        moveStep: const Offset(-100, 0),
       );
       secondItem.existsOnce();
     },
@@ -99,7 +97,6 @@ void dragTests() {
         dragStart: firstItem,
         dragTarget: secondItem,
         maxIteration: 30,
-        moveStep: const Offset(-100, 0),
       );
       secondItem.existsOnce();
       final position =
@@ -141,8 +138,9 @@ void dragTests() {
   testWidgets(
     'Finds widget in horizontal ListView after dragging to the right and back',
     (tester) async {
-      await tester.pumpWidget(const DragUntilVisibleSingleDirectionTestWidget(
-          axis: Axis.horizontal));
+      await tester.pumpWidget(
+        const DragUntilVisibleSingleDirectionTestWidget(axis: Axis.horizontal),
+      );
 
       final firstItem = spotText('Item at index: 2', exact: true)..existsOnce();
       final secondItem = spotText('Item at index: 10', exact: true)
@@ -179,14 +177,13 @@ void dragTests() {
         ..doesNotExist();
 
       const expectedErrorMessage =
-          'Widget with text with text "Item at index: 27" is not visible after dragging 10 times and a total dragged offset of Offset(0.0, -1000.0).';
+          'Widget with text with text "Item at index: 27" is not visible after dragging 10 times and a total dragged offset of Offset(0.0, -2250.0).';
 
       await expectLater(
         () => act.dragUntilVisible(
           dragStart: firstItem,
           dragTarget: secondItem,
           maxIteration: 10,
-          moveStep: const Offset(0, -100),
         ),
         throwsA(
           isA<TestFailure>().having(
@@ -207,18 +204,17 @@ void dragTests() {
       );
 
       final firstItem = spotText('Item at index: 2', exact: true)..existsOnce();
-      final secondItem = spotText('Item at index: 10', exact: true)
+      final secondItem = spotText('Item at index: 29', exact: true)
         ..doesNotExist();
 
       const expectedErrorMessage =
-          'Widget with text with text "Item at index: 10" is not visible after dragging 10 times and a total dragged offset of Offset(-1000.0, 0.0).';
+          'Widget with text with text "Item at index: 29" is not visible after dragging 10 times and a total dragged offset of Offset(-2500.0, 0.0).';
 
       await expectLater(
         () => act.dragUntilVisible(
           dragStart: firstItem,
           dragTarget: secondItem,
           maxIteration: 10,
-          moveStep: const Offset(-100, 0),
         ),
         throwsA(
           isA<TestFailure>().having(
