@@ -307,7 +307,7 @@ class ActDragTimelineTestBodies {
     // First drag event is always the same, no matter if it's a success or a failure
     expect(
       _replaceOffsetWithDxDy(details[0]),
-      'Details: Scrolling ${isGoingDown ? 'to the end' : 'to the start'} beginning at Offset(dx,dy) in order to find ${_secondItemSelector.toStringBreadcrumb()}.',
+      'Details: Scrolling ${isGoingDown ? 'to the end,' : 'to the start,'} beginning at Offset(dx,dy) in order to find ${_secondItemSelector.toStringBreadcrumb()}.',
     );
     if (!findsWidget) {
       expect(

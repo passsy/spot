@@ -13,217 +13,347 @@ void main() {
 }
 
 void dragTests() {
-  testWidgets(
-    'Finds widget in vertical ListView after dragging',
-    (tester) async {
-      await tester.pumpWidget(
-        const DragUntilVisibleSingleDirectionTestWidget(
-          axis: Axis.vertical,
-          ignorePointerAtIndices: [0, 1, 2, 3, 4, 5, 6, 7, 8],
-        ),
-      );
+  group('Vertical Drag', () {
+    testWidgets(
+      'Finds widget in vertical ListView after dragging',
+      (tester) async {
+        await tester.pumpWidget(
+          const DragUntilVisibleSingleDirectionTestWidget(
+            axis: Axis.vertical,
+            ignorePointerAtIndices: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+          ),
+        );
 
-      final firstItem = spotText('Item at index: 3', exact: true)..existsOnce();
-      final secondItem = spotText('Item at index: 27', exact: true)
-        ..doesNotExist();
-      await act.dragUntilVisible(
-        dragStart: firstItem,
-        dragTarget: secondItem,
-        maxIteration: 30,
-      );
-      secondItem.existsOnce();
-    },
-  );
-
-  testWidgets(
-    'Finds widget in Column after dragging',
-    (tester) async {
-      await tester.pumpWidget(
-        const DragUntilVisibleSingleDirectionTestWidget(
-          useColumnOrRow: true,
-          axis: Axis.vertical,
-          ignorePointerAtIndices: [0, 1, 2, 3, 4, 5, 6, 7, 8],
-        ),
-      );
-
-      final firstItem = spotText('Item at index: 3', exact: true)..existsOnce();
-      final secondItem = spotText('Item at index: 27', exact: true)
-        ..existsOnce();
-      await act.dragUntilVisible(
-        dragStart: firstItem,
-        dragTarget: secondItem,
-        maxIteration: 30,
-      );
-      secondItem.existsOnce();
-      final position =
-          secondItem.snapshotRenderBox().localToGlobal(Offset.zero);
-      expect(position.toString(), const Offset(278.9, 443.0).toString());
-    },
-  );
-
-  testWidgets(
-    'Finds widget in horizontal ListView after dragging',
-    (tester) async {
-      await tester.pumpWidget(
-        const DragUntilVisibleSingleDirectionTestWidget(axis: Axis.horizontal),
-      );
-
-      final firstItem = spotText('Item at index: 2', exact: true)..existsOnce();
-      final secondItem = spotText('Item at index: 10', exact: true)
-        ..doesNotExist();
-      await act.dragUntilVisible(
-        dragStart: firstItem,
-        dragTarget: secondItem,
-        maxIteration: 30,
-      );
-      secondItem.existsOnce();
-    },
-  );
-
-  testWidgets(
-    'Finds widget in Row after dragging',
-    (tester) async {
-      await tester.pumpWidget(
-        const DragUntilVisibleSingleDirectionTestWidget(
-          useColumnOrRow: true,
-          axis: Axis.horizontal,
-        ),
-      );
-
-      final firstItem = spotText('Item at index: 2', exact: true)..existsOnce();
-      final secondItem = spotText('Item at index: 10', exact: true)
-        ..existsOnce();
-      await act.dragUntilVisible(
-        dragStart: firstItem,
-        dragTarget: secondItem,
-        maxIteration: 30,
-      );
-      secondItem.existsOnce();
-      final position =
-          secondItem.snapshotRenderBox().localToGlobal(Offset.zero);
-      expect(position.toString(), const Offset(606.0, 318.0).toString());
-    },
-  );
-
-  testWidgets(
-    'Finds widget in vertical ListView after dragging down and up',
-    (tester) async {
-      await tester.pumpWidget(
-        const DragUntilVisibleSingleDirectionTestWidget(axis: Axis.vertical),
-      );
-
-      final firstItem = spotText('Item at index: 3', exact: true)..existsOnce();
-      final secondItem = spotText('Item at index: 27', exact: true)
-        ..doesNotExist();
-      await act.dragUntilVisible(
-        dragStart: firstItem,
-        dragTarget: secondItem,
-        maxIteration: 30,
-        moveStep: const Offset(0, -100),
-      );
-      secondItem.existsOnce();
-      firstItem.doesNotExist();
-      await tester.pumpAndSettle();
-      await act.dragUntilVisible(
-        dragStart: secondItem,
-        dragTarget: firstItem,
-        moveStep: const Offset(0, 100),
-      );
-      await tester.pumpAndSettle();
-      firstItem.existsOnce();
-      secondItem.doesNotExist();
-    },
-  );
-
-  testWidgets(
-    'Finds widget in horizontal ListView after dragging to the right and back',
-    (tester) async {
-      await tester.pumpWidget(
-        const DragUntilVisibleSingleDirectionTestWidget(axis: Axis.horizontal),
-      );
-
-      final firstItem = spotText('Item at index: 2', exact: true)..existsOnce();
-      final secondItem = spotText('Item at index: 10', exact: true)
-        ..doesNotExist();
-      await act.dragUntilVisible(
-        dragStart: firstItem,
-        dragTarget: secondItem,
-        maxIteration: 30,
-        moveStep: const Offset(-100, 0),
-      );
-      secondItem.existsOnce();
-      firstItem.doesNotExist();
-      await tester.pumpAndSettle();
-      await act.dragUntilVisible(
-        dragStart: secondItem,
-        dragTarget: firstItem,
-        moveStep: const Offset(100, 0),
-      );
-      await tester.pumpAndSettle();
-      firstItem.existsOnce();
-      secondItem.doesNotExist();
-    },
-  );
-
-  testWidgets(
-    'Throws TestFailure if not found in vertical ListView',
-    (tester) async {
-      await tester.pumpWidget(
-        const DragUntilVisibleSingleDirectionTestWidget(axis: Axis.vertical),
-      );
-
-      final firstItem = spotText('Item at index: 3', exact: true)..existsOnce();
-      final secondItem = spotText('Item at index: 27', exact: true)
-        ..doesNotExist();
-
-      const expectedErrorMessage =
-          'Widget with text with text "Item at index: 27" is not visible after dragging 10 times and a total dragged offset of Offset(0.0, -2250.0).';
-
-      await expectLater(
-        () => act.dragUntilVisible(
+        final firstItem = spotText('Item at index: 3', exact: true)
+          ..existsOnce();
+        final secondItem = spotText('Item at index: 27', exact: true)
+          ..doesNotExist();
+        await act.dragUntilVisible(
           dragStart: firstItem,
           dragTarget: secondItem,
-          maxIteration: 10,
-        ),
-        throwsA(
-          isA<TestFailure>().having(
-            (error) => error.message,
-            'message',
-            expectedErrorMessage,
+          maxIteration: 30,
+        );
+        secondItem.existsOnce();
+      },
+    );
+
+    testWidgets(
+      'Finds widget in Column after dragging',
+      (tester) async {
+        await tester.pumpWidget(
+          const DragUntilVisibleSingleDirectionTestWidget(
+            useColumnOrRow: true,
+            axis: Axis.vertical,
+            ignorePointerAtIndices: [0, 1, 2, 3, 4, 5, 6, 7, 8],
           ),
-        ),
-      );
-    },
-  );
+        );
 
-  testWidgets(
-    'Throws TestFailure if not found in horizontal ListView',
-    (tester) async {
-      await tester.pumpWidget(
-        const DragUntilVisibleSingleDirectionTestWidget(axis: Axis.horizontal),
-      );
-
-      final firstItem = spotText('Item at index: 2', exact: true)..existsOnce();
-      final secondItem = spotText('Item at index: 29', exact: true)
-        ..doesNotExist();
-
-      const expectedErrorMessage =
-          'Widget with text with text "Item at index: 29" is not visible after dragging 10 times and a total dragged offset of Offset(-2500.0, 0.0).';
-
-      await expectLater(
-        () => act.dragUntilVisible(
+        final firstItem = spotText('Item at index: 3', exact: true)
+          ..existsOnce();
+        final secondItem = spotText('Item at index: 27', exact: true)
+          ..existsOnce();
+        await act.dragUntilVisible(
           dragStart: firstItem,
           dragTarget: secondItem,
-          maxIteration: 10,
-        ),
-        throwsA(
-          isA<TestFailure>().having(
-            (error) => error.message,
-            'message',
-            expectedErrorMessage,
+          maxIteration: 30,
+        );
+        secondItem.existsOnce();
+        final position =
+            secondItem.snapshotRenderBox().localToGlobal(Offset.zero);
+        expect(position.toString(), const Offset(278.9, 443.0).toString());
+      },
+    );
+
+    testWidgets(
+      'Finds widget in vertical ListView after dragging down and up',
+      (tester) async {
+        await tester.pumpWidget(
+          const DragUntilVisibleSingleDirectionTestWidget(axis: Axis.vertical),
+        );
+
+        final firstItem = spotText('Item at index: 3', exact: true)
+          ..existsOnce();
+        final secondItem = spotText('Item at index: 27', exact: true)
+          ..doesNotExist();
+        await act.dragUntilVisible(
+          dragStart: firstItem,
+          dragTarget: secondItem,
+          maxIteration: 30,
+        );
+        secondItem.existsOnce();
+        firstItem.doesNotExist();
+        await tester.pumpAndSettle();
+        await act.dragUntilVisible(
+          dragStart: secondItem,
+          dragTarget: firstItem,
+          toStart: true,
+        );
+        await tester.pumpAndSettle();
+        firstItem.existsOnce();
+        secondItem.doesNotExist();
+      },
+    );
+  });
+
+  group('Horizontal Drag', () {
+    testWidgets(
+      'Finds widget in horizontal ListView after dragging',
+      (tester) async {
+        await tester.pumpWidget(
+          const DragUntilVisibleSingleDirectionTestWidget(
+            axis: Axis.horizontal,
           ),
-        ),
-      );
-    },
-  );
+        );
+
+        final firstItem = spotText('Item at index: 2', exact: true)
+          ..existsOnce();
+        final secondItem = spotText('Item at index: 10', exact: true)
+          ..doesNotExist();
+        await act.dragUntilVisible(
+          dragStart: firstItem,
+          dragTarget: secondItem,
+          maxIteration: 30,
+        );
+        secondItem.existsOnce();
+      },
+    );
+
+    testWidgets(
+      'Finds widget in Row after dragging',
+      (tester) async {
+        await tester.pumpWidget(
+          const DragUntilVisibleSingleDirectionTestWidget(
+            useColumnOrRow: true,
+            axis: Axis.horizontal,
+          ),
+        );
+
+        final firstItem = spotText('Item at index: 2', exact: true)
+          ..existsOnce();
+        final secondItem = spotText('Item at index: 10', exact: true)
+          ..existsOnce();
+        await act.dragUntilVisible(
+          dragStart: firstItem,
+          dragTarget: secondItem,
+          maxIteration: 30,
+        );
+        secondItem.existsOnce();
+        final position =
+            secondItem.snapshotRenderBox().localToGlobal(Offset.zero);
+        expect(position.toString(), const Offset(606.0, 318.0).toString());
+      },
+    );
+
+    testWidgets(
+      'Finds widget in horizontal ListView after dragging to the right and back',
+      (tester) async {
+        await tester.pumpWidget(
+          const DragUntilVisibleSingleDirectionTestWidget(
+            axis: Axis.horizontal,
+          ),
+        );
+
+        final firstItem = spotText('Item at index: 2', exact: true)
+          ..existsOnce();
+        final secondItem = spotText('Item at index: 10', exact: true)
+          ..doesNotExist();
+        await act.dragUntilVisible(
+          dragStart: firstItem,
+          dragTarget: secondItem,
+          maxIteration: 30,
+        );
+        secondItem.existsOnce();
+        firstItem.doesNotExist();
+        await tester.pumpAndSettle();
+        await act.dragUntilVisible(
+          dragStart: secondItem,
+          dragTarget: firstItem,
+          toStart: true,
+        );
+        await tester.pumpAndSettle();
+        firstItem.existsOnce();
+        secondItem.doesNotExist();
+      },
+    );
+  });
+
+  group('Errors', () {
+    testWidgets(
+      'Throws TestFailure if not found in vertical ListView',
+      (tester) async {
+        await tester.pumpWidget(
+          const DragUntilVisibleSingleDirectionTestWidget(axis: Axis.vertical),
+        );
+
+        final firstItem = spotText('Item at index: 3', exact: true)
+          ..existsOnce();
+        final secondItem = spotText('Item at index: 27', exact: true)
+          ..doesNotExist();
+
+        const expectedErrorMessage =
+            'Widget with text with text "Item at index: 27" is not visible after dragging 10 times and a total dragged offset of Offset(0.0, -2250.0).';
+
+        await expectLater(
+          () => act.dragUntilVisible(
+            dragStart: firstItem,
+            dragTarget: secondItem,
+            maxIteration: 10,
+          ),
+          throwsA(
+            isA<TestFailure>().having(
+              (error) => error.message,
+              'message',
+              expectedErrorMessage,
+            ),
+          ),
+        );
+      },
+    );
+
+    testWidgets(
+      'Throws TestFailure if not found in horizontal ListView',
+      (tester) async {
+        await tester.pumpWidget(
+          const DragUntilVisibleSingleDirectionTestWidget(
+            axis: Axis.horizontal,
+          ),
+        );
+
+        final firstItem = spotText('Item at index: 2', exact: true)
+          ..existsOnce();
+        final secondItem = spotText('Item at index: 29', exact: true)
+          ..doesNotExist();
+
+        const expectedErrorMessage =
+            'Widget with text with text "Item at index: 29" is not visible after dragging 10 times and a total dragged offset of Offset(-2500.0, 0.0).';
+
+        await expectLater(
+          () => act.dragUntilVisible(
+            dragStart: firstItem,
+            dragTarget: secondItem,
+            maxIteration: 10,
+          ),
+          throwsA(
+            isA<TestFailure>().having(
+              (error) => error.message,
+              'message',
+              expectedErrorMessage,
+            ),
+          ),
+        );
+      },
+    );
+
+    testWidgets(
+      'Providing both `moveStep` and `toStart = true` should throw AssertionError',
+      (tester) async {
+        await tester.pumpWidget(
+          const DragUntilVisibleSingleDirectionTestWidget(
+            axis: Axis.horizontal,
+          ),
+        );
+
+        final firstItem = spotText('Item at index: 2', exact: true)
+          ..existsOnce();
+        final secondItem = spotText('Item at index: 29', exact: true)
+          ..doesNotExist();
+
+        await expectLater(
+          () => act.dragUntilVisible(
+            dragStart: firstItem,
+            dragTarget: secondItem,
+            moveStep: const Offset(1, 0),
+            toStart: true,
+          ),
+          throwsA(
+            isA<AssertionError>().having(
+              (error) => error.toString(),
+              'description',
+              allOf(
+                // Ensures the thrown AssertionError's message has these substrings:
+                contains(
+                  'You can either provide `moveStep`, or set `toStart` to true',
+                ),
+                contains('but not both.'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    testWidgets(
+      'Providing a zero Offset(0, 0) should throw AssertionError',
+      (tester) async {
+        await tester.pumpWidget(
+          const DragUntilVisibleSingleDirectionTestWidget(
+            axis: Axis.horizontal,
+          ),
+        );
+
+        final firstItem = spotText('Item at index: 2', exact: true)
+          ..existsOnce();
+        final secondItem = spotText('Item at index: 29', exact: true)
+          ..doesNotExist();
+
+        await expectLater(
+          () => act.dragUntilVisible(
+            dragStart: firstItem,
+            dragTarget: secondItem,
+            moveStep: Offset.zero,
+          ),
+          throwsA(
+            isA<AssertionError>().having(
+              (error) => error.toString(),
+              'description',
+              allOf(
+                contains(
+                  'If `moveStep` is provided, one of dx or dy must be non-zero.',
+                ),
+                contains('Both dx and dy being 0 results in no dragging.'),
+                contains('diagonal dragging'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    testWidgets(
+      'Providing a diagonal offset (e.g., Offset(1, 1)) should throw AssertionError',
+      (tester) async {
+        await tester.pumpWidget(
+          const DragUntilVisibleSingleDirectionTestWidget(
+            axis: Axis.horizontal,
+          ),
+        );
+
+        final firstItem = spotText('Item at index: 2', exact: true)
+          ..existsOnce();
+        final secondItem = spotText('Item at index: 29', exact: true)
+          ..doesNotExist();
+
+        await expectLater(
+          () => act.dragUntilVisible(
+            dragStart: firstItem,
+            dragTarget: secondItem,
+            moveStep: const Offset(1, 1),
+          ),
+          throwsA(
+            isA<AssertionError>().having(
+              (error) => error.toString(),
+              'description',
+              allOf(
+                contains(
+                  'If `moveStep` is provided, one of dx or dy must be non-zero.',
+                ),
+                contains('Both dx and dy being 0 results in no dragging.'),
+                contains('diagonal dragging'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  });
 }
