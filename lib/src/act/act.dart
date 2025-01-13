@@ -335,10 +335,18 @@ class Act {
           }
         }
 
-        // TODO handle horizontal/diagonal drags
-        final direction = moveStep.dy < 0 ? 'downwards' : 'upwards';
+        final direction = () {
+          if (moveStep.dx != 0 && moveStep.dy != 0) return 'diagonally';
+          if (moveStep.dy < 0) return 'upwards';
+          if (moveStep.dy > 0) return 'downwards';
+          if (moveStep.dx > 0) return 'to the left';
+          if (moveStep.dx < 0) return 'to the right';
+          //TODO: Either throw or show warning
+          return 'nowhere';
+        }();
+
         addDragEvent(
-          'Scrolling $direction from $dragBeginPosition in order to find $targetName.',
+          'Scrolling $direction beginning at $dragBeginPosition in order to find $targetName.',
           direction: moveStep,
         );
 
