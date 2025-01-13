@@ -344,16 +344,16 @@ class Act {
 
         final direction = () {
           if (moveStep.dx != 0 && moveStep.dy != 0) return 'diagonally';
-          if (moveStep.dy < 0) return 'upwards';
-          if (moveStep.dy > 0) return 'downwards';
-          if (moveStep.dx > 0) return 'to the left';
-          if (moveStep.dx < 0) return 'to the right';
+          if (moveStep.dy < 0) return 'to the end';
+          if (moveStep.dy > 0) return 'to the start';
+          if (moveStep.dx < 0) return 'to the end';
+          if (moveStep.dx > 0) return 'to the start';
           //TODO: Either throw or show warning
           return 'nowhere';
         }();
 
         addDragEvent(
-          'Scrolling $direction beginning at $dragBeginPosition in order to find $targetName.',
+          'Scrolling $direction, beginning at $dragBeginPosition in order to find $targetName.',
           direction: moveStep,
         );
 
@@ -1024,23 +1024,6 @@ extension on String {
   String removeEmptyLines() {
     return split('\n').where((line) => line.trim().isNotEmpty).join('\n');
   }
-}
-
-/// Recursively searches for the first Element whose `renderObject` is a `RenderBox`.
-Element? _findFirstDescendantElementWithRenderBox(Element element) {
-  // If this element’s renderObject is a RenderBox, we’re done.
-  if (element.renderObject is RenderBox) {
-    return element;
-  }
-
-  // Otherwise, search each child recursively.
-  for (final Element child in element.children) {
-    final match = _findFirstDescendantElementWithRenderBox(child);
-    if (match != null) {
-      return match;
-    }
-  }
-  return null;
 }
 
 enum _ActType {

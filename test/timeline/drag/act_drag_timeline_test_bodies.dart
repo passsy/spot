@@ -5,7 +5,6 @@ import 'package:spot/spot.dart';
 
 import '../../util/capture_console_output.dart';
 import '../../util/run_test_in_process.dart' as process;
-import '../../widgets/drag_until_visible_test_widget.dart';
 import '../timeline_test_shared.dart' as shared;
 import 'drag_until_visible_test_widget.dart';
 
@@ -308,7 +307,7 @@ class ActDragTimelineTestBodies {
     // First drag event is always the same, no matter if it's a success or a failure
     expect(
       _replaceOffsetWithDxDy(details[0]),
-      'Details: Scrolling ${isGoingDown ? 'downwards' : 'upwards'} beginning at Offset(dx,dy) in order to find ${_secondItemSelector.toStringBreadcrumb()}.',
+      'Details: Scrolling ${isGoingDown ? 'to the end' : 'to the start'} beginning at Offset(dx,dy) in order to find ${_secondItemSelector.toStringBreadcrumb()}.',
     );
     if (!findsWidget) {
       expect(
@@ -384,7 +383,7 @@ void main() async {
 $globalInitiator
   testWidgets("$testTitle", (WidgetTester tester) async {
   $localInitiator
-    await tester.pumpWidget(const DragUntilVisibleTestWidget(axis: Axis.vertical));
+    await tester.pumpWidget(const DragUntilVisibleSingleDirectionTestWidget(axis: Axis.vertical));
       final firstItem = spotText('Item at index: 3', exact: true)..existsOnce();
       final secondItem = spotText('Item at index: 27', exact: true)
         ..doesNotExist();

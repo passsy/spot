@@ -90,7 +90,7 @@ class DragUntilVisibleMultiDirectionTestWidget extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Grid View Drag Test'),
+          title: const Text('Grid View Drag Test'),
         ),
         body: Center(
           child: SizedBox(
