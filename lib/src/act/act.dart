@@ -233,6 +233,21 @@ class Act {
     Duration duration = const Duration(milliseconds: 50),
     bool toStart = false,
   }) {
+    assert(
+      !(moveStep != null && toStart),
+      'You can either provide `moveStep`, or set `toStart` to true, or neither, '
+      'but not both.',
+    );
+
+    if (moveStep != null) {
+      assert(
+        (moveStep.dx != 0) ^ (moveStep.dy != 0),
+        'If `moveStep` is provided, one of dx or dy must be non-zero. '
+        'Both dx and dy being 0 results in no dragging. '
+        'Both being non-zero implicates diagonal dragging, which is not supported.',
+      );
+    }
+
     // Check if widget is in the widget tree. Throws if not.
     final dragStartSnapshot = dragStart.snapshot()..existsOnce();
     _detectSizeZero(
@@ -364,8 +379,6 @@ class Act {
             return Offset(dx, 0);
           }
         }();
-
-        // TODO add assert when both dy and dx are 0 or both >0
 
         final direction = () {
           if (moveOffset.dy < 0) return 'to the end';
