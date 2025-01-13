@@ -100,6 +100,7 @@ class Act {
             position: centerPosition,
             target: renderBox,
             snapshot: snapshot,
+            actType: _ActType.tap,
           );
           return;
         }
@@ -224,7 +225,10 @@ class Act {
   }) {
     // Check if widget is in the widget tree. Throws if not.
     final dragStartSnapshot = dragStart.snapshot()..existsOnce();
-    _detectSizeZero(dragStartSnapshot);
+    _detectSizeZero(
+      snapshot: dragStartSnapshot,
+      actType: _ActType.drag,
+    );
 
     // Take the closest Scrollable above the dragStart widget
     final WidgetSelector<Scrollable> scrollable =
@@ -264,6 +268,7 @@ class Act {
             position: closestToCenterFlop ?? dragStartCenter,
             target: viewPortRenderBoxBeforeDrag,
             snapshot: spotViewport.snapshot(),
+            actType: _ActType.drag,
           );
           return;
         }
@@ -545,6 +550,7 @@ void _throwHitTestFailureReport({
   required Offset position,
   required RenderObject target,
   required WidgetSnapshot snapshot,
+  required _ActType actType,
 }) {
   final binding = WidgetsBinding.instance;
 
@@ -557,13 +563,22 @@ void _throwHitTestFailureReport({
   final List<Element> hitTargetElements =
       hitTestEntries.mapNotNull((e) => e.element).toList();
 
-  _detectAbsorbPointer(hitTargetElements.first, snapshot);
-  _detectIgnorePointer(target, snapshot);
-  _detectSizeZero(snapshot);
-  _detectCoverWidget(target, snapshot, hitTargetElements);
+  _detectAbsorbPointer(
+    hitTarget: hitTargetElements.first,
+    snapshot: snapshot,
+    actType: actType,
+  );
+  _detectIgnorePointer(target: target, snapshot: snapshot, actType: actType);
+  _detectSizeZero(snapshot: snapshot, actType: actType);
+  _detectCoverWidget(
+    target: target,
+    snapshot: snapshot,
+    hitTargetElements: hitTargetElements,
+    actType: actType,
+  );
 
   throw TestFailure(
-    "Widget '${snapshot.discoveredWidget!.toStringShort()}' can not be tapped at position $position where its RenderObject $target was found.\n"
+    "Widget '${snapshot.discoveredWidget!.toStringShort()}' can not be ${actType.pastParticiple} at position $position where its RenderObject $target was found.\n"
     "The exact reason, why it doesn't receive hitTest events is unknown.\n"
     "If you think this case needs a a better error message, create an issue https://github.com/passsy/spot for anyone else running in a similar issue.\n"
     "A small example would be highly appreciated.",
@@ -572,30 +587,34 @@ void _throwHitTestFailureReport({
 
 /// Throws when the widget is wrapped in an AbsorbPointer that is absorbing
 /// the taps and doesn't forward them to the child
-void _detectAbsorbPointer(
-  Element hitTarget,
-  WidgetSnapshot<Widget> snapshot,
-) {
+void _detectAbsorbPointer({
+  required Element hitTarget,
+  required WidgetSnapshot<Widget> snapshot,
+  required _ActType actType,
+}) {
   final childElement = hitTarget.children.firstOrNull;
   if (childElement?.widget is AbsorbPointer) {
     final absorbPointer = childElement!.widget as AbsorbPointer;
     if (absorbPointer.absorbing) {
       final location = childElement.debugWidgetLocation?.file.path ??
           childElement.debugGetCreatorChain(100);
+
       throw TestFailure(
-          "Widget '${snapshot.discoveredWidget!.toStringShort()}' is wrapped in AbsorbPointer and doesn't receive taps.\n"
-          "AbsorbPointer is created at $location\n"
-          "The closest widget reacting to the touch event is:\n"
-          "${hitTarget.toStringDeep()}");
+        "Widget '${snapshot.discoveredWidget!.toStringShort()}' is wrapped in AbsorbPointer and doesn't receive ${actType.multiples}.\n"
+        "AbsorbPointer is created at $location\n"
+        "The closest widget reacting to the touch event is:\n"
+        "${hitTarget.toStringDeep()}",
+      );
     }
   }
 }
 
 /// Throws if the widget is wrapped in an IgnorePointer that is not forwarding events
-void _detectIgnorePointer(
-  RenderObject target,
-  WidgetSnapshot<Widget> snapshot,
-) {
+void _detectIgnorePointer({
+  required RenderObject target,
+  required WidgetSnapshot<Widget> snapshot,
+  required _ActType actType,
+}) {
   final targetElement = (target.debugCreator as DebugCreator?)!.element;
   // sorted from root to target
   final parents = targetElement.parents.reversed.toList();
@@ -611,7 +630,7 @@ void _detectIgnorePointer(
     final location = ignorePointer.debugWidgetLocation?.file.path ??
         targetElement.debugGetCreatorChain(100);
     throw TestFailure(
-      "Widget '${snapshot.discoveredWidget!.toStringShort()}' is wrapped in IgnorePointer and doesn't receive taps.\n"
+      "Widget '${snapshot.discoveredWidget!.toStringShort()}' is wrapped in IgnorePointer and doesn't receive ${actType.multiples}.\n"
       "The IgnorePointer is located at $location",
     );
   }
@@ -619,7 +638,10 @@ void _detectIgnorePointer(
 
 /// Detects when the widget is 0x0 pixels in size and throws a `TestFailure`
 /// containing the widget that forces it to be 0x0 pixels.
-void _detectSizeZero(WidgetSnapshot<Widget> snapshot) {
+void _detectSizeZero({
+  required WidgetSnapshot<Widget> snapshot,
+  required _ActType actType,
+}) {
   final renderObject = snapshot.discoveredElement?.renderObject;
   if (renderObject == null) {
     return;
@@ -641,19 +663,20 @@ void _detectSizeZero(WidgetSnapshot<Widget> snapshot) {
         parentsWithSizes.reversed.firstWhere((it) => it.$1 == Size.zero).$2;
 
     throw TestFailure(
-      "${snapshot.discoveredElement!.toStringShort()} can't be tapped because it has size ${Size.zero}.\n"
+      "${snapshot.discoveredElement!.toStringShort()} can't be ${actType.pastParticiple} because it has size ${Size.zero}.\n"
       "${shrinker.toStringShort()} forces ${snapshot.discoveredElement!.toStringShort()} to have the size ${Size.zero}.\n"
       "${shrinker.toStringShort()} ${shrinker.debugWidgetLocation?.file.path}",
     );
   }
 }
 
-void _detectCoverWidget(
-  RenderObject target,
-  WidgetSnapshot<Widget> snapshot,
-  List<Element> hitTargetElements,
-) {
-  final cover = hitTargetElements.first;
+void _detectCoverWidget({
+  required RenderObject target,
+  required WidgetSnapshot<Widget> snapshot,
+  required List<Element> hitTargetElements,
+  required _ActType actType,
+}) {
+  final Element cover = hitTargetElements.first;
   final Element commonAncestor = findCommonAncestor(
     [hitTargetElements.first, snapshot.discoveredElement!],
   );
@@ -685,9 +708,9 @@ void _detectCoverWidget(
       targetChain.takeWhile((e) => e != firstUsefulParent).toList();
 
   final receiverColumn =
-      "(Cover - Received tap event)\n${coverChain.joinToString(separator: '\n', transform: (it) => it.toStringShort())}";
+      "(Cover - Received ${actType.imperative} event)\n${coverChain.joinToString(separator: '\n', transform: (it) => it.toStringShort())}";
   final targetColumn =
-      "(Target for tap, below Cover)\n${usefulToTarget.joinToString(separator: '\n', transform: (it) => it.toStringShort())}";
+      "(Target for ${actType.imperative}, below Cover)\n${usefulToTarget.joinToString(separator: '\n', transform: (it) => it.toStringShort())}";
 
   // create a string with two columns (max width 40), one for the receiver and one for the target
   String createColumns(String receiver, String target) {
@@ -727,18 +750,17 @@ ${commonAncestor.toStringShort().trimRight()} (${commonAncestor.debugWidgetLocat
 ${usefulParents.takeWhile((it) => it != firstUsefulParent).joinToString(separator: '\n', transform: (it) => it.toStringShort()).trimRight()}
 ${firstUsefulParent.toStringShort()} (${firstUsefulParent.debugWidgetLocation?.file.path})
 """;
-
   throw TestFailure(
-    "Widget '${snapshot.discoveredWidget!.toStringShort()}' can not be tapped directly, because another widget (${cover.toStringShort()}) inside ${firstUsefulParent.toStringShort()} is completely covering it and consumes all tap events.\n"
+    "Widget '${snapshot.discoveredWidget!.toStringShort()}' can not be ${actType.pastParticiple} directly, because another widget (${cover.toStringShort()}) inside ${firstUsefulParent.toStringShort()} is completely covering it and consumes all ${actType.imperative} events.\n"
     "\n"
-    "Try tapping the ${firstUsefulParent.toStringShort()} which contains '${snapshot.discoveredWidget!.toStringShort()}' instead.\n\n"
+    "Try ${actType.presentParticiple} the ${firstUsefulParent.toStringShort()} which contains '${snapshot.discoveredWidget!.toStringShort()}' instead.\n\n"
     "Example:\n"
-    "  // BAD: Taps the Text inside ElevatedButton\n"
-    "  WidgetSelector<AnyText> selector = spot<ElevatedButton>().spotText('Tap me');\n"
+    "  // BAD: ${actType.multiples.capitalized} the Text inside ElevatedButton\n"
+    "  WidgetSelector<AnyText> selector = spot<ElevatedButton>().spotText('${actType.imperative.capitalized} me');\n"
     "  await act.tap(selector);\n"
     "\n"
-    "  // GOOD: Taps the ElevatedButton which contains text 'Tap me'\n"
-    "  WidgetSelector<ElevatedButton> selector = spot<ElevatedButton>().withChild(spotText('Tap me'));\n"
+    "  // GOOD: ${actType.multiples.capitalized} the ElevatedButton which contains text '${actType.imperative.capitalized} me'\n"
+    "  WidgetSelector<ElevatedButton> selector = spot<ElevatedButton>().withChild(spotText('${actType.imperative.capitalized} me'));\n"
     "  await act.tap(selector);\n"
     "\n"
     "${diagram.removeEmptyLines()}\n",
@@ -1017,4 +1039,38 @@ Element? _findFirstDescendantElementWithRenderBox(Element element) {
     }
   }
   return null;
+}
+
+enum _ActType {
+  tap(
+    imperative: 'tap',
+    presentParticiple: 'tapping',
+    pastParticiple: 'tapped',
+    multiples: 'taps',
+  ),
+  drag(
+    imperative: 'drag',
+    presentParticiple: 'dragging',
+    pastParticiple: 'dragged',
+    multiples: 'drags',
+  );
+
+  const _ActType({
+    required this.multiples,
+    required this.imperative,
+    required this.presentParticiple,
+    required this.pastParticiple,
+  });
+
+  final String multiples;
+  final String imperative;
+  final String presentParticiple;
+  final String pastParticiple;
+}
+
+extension on String {
+  String get capitalized {
+    if (this.isEmpty || length == 1) return toUpperCase();
+    return "${this[0].toUpperCase()}${substring(1)}";
+  }
 }
