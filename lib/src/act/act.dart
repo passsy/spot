@@ -9,6 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/act/gestures.dart';
 import 'package:spot/src/screenshot/screenshot_annotator.dart';
+import 'package:spot/src/spot/element_extensions.dart';
 import 'package:spot/src/spot/snapshot.dart';
 
 /// Top level entry point to interact with widgets on the screen.
@@ -230,11 +231,15 @@ class Act {
       actType: _ActType.drag,
     );
 
-    // Take the closest Scrollable above the dragStart widget
+    // Take the closest Scrollable above the dragStart widget. This is the
+    // widget which makes a widget scrollable. It must always exist.
     final WidgetSelector<Scrollable> scrollable =
         spot<Scrollable>().withChild(dragStart).last();
-    final WidgetSelector<Viewport> spotViewport =
-        scrollable.spot<Viewport>().first();
+
+    // Every scrollable contains a Listener handling the touch events.
+    // We only care about the size and location of the RenderObject.
+    final scrollableSizedRenderBox =
+        scrollable.spot<Listener>().first().snapshotRenderBox();
 
     return TestAsyncUtils.guard<void>(() async {
       return _alwaysPropagateDevicePointerEvents(() async {
@@ -246,36 +251,34 @@ class Act {
 
         final binding = TestWidgetsFlutterBinding.instance;
 
-        // Make sure Viewport is not covered by another widget and rects to touch (drag) events
-        final viewPortRenderBoxBeforeDrag = _getRenderBoxOrThrow(spotViewport);
-        // Check the Viewport at the relevant points (dragStart) is reacting to hit tests
-        // dragStart itself might not react to hit tests (IgnorePointer).
-        final pokablePositionsOfViewportAtDragStart = _findPokablePositions(
-          viewPortRenderBoxBeforeDrag,
+        // Hit test the Scrollable at the location of dragStart. Do not check
+        // dragStart directly, because it might not be hittable (IgnorePointer).
+        final pokablePositionsAtDragStart = _findPokablePositions(
+          scrollableSizedRenderBox,
           shouldBePoked: (local, Offset global) {
             return dragStartRenderBoxRect.contains(global);
           },
         );
-        if (pokablePositionsOfViewportAtDragStart.hits.isEmpty) {
+        if (pokablePositionsAtDragStart.hits.isEmpty) {
           final Offset dragStartCenter = dragStartRenderBox
               .localToGlobal(dragStartRenderBox.size.center(Offset.zero));
           final closestToCenterFlop =
-              pokablePositionsOfViewportAtDragStart.flops.minBy((offset) {
+              pokablePositionsAtDragStart.flops.minBy((offset) {
             return (offset - dragStartCenter).distance;
           });
 
           _throwHitTestFailureReport(
             position: closestToCenterFlop ?? dragStartCenter,
-            target: viewPortRenderBoxBeforeDrag,
-            snapshot: spotViewport.snapshot(),
+            target: scrollableSizedRenderBox,
+            snapshot: scrollable.snapshot(),
             actType: _ActType.drag,
           );
           return;
         }
 
         final partialWarning = _createPartialCoverageMessage(
-          pokablePositionsOfViewportAtDragStart,
-          spotViewport.snapshot(),
+          pokablePositionsAtDragStart,
+          scrollable.snapshot(),
           isDragStart: true,
         );
         if (partialWarning != null) {
@@ -284,9 +287,8 @@ class Act {
         }
 
         final targetName = dragTarget.toStringBreadcrumb();
-
         final dragBeginPosition =
-            pokablePositionsOfViewportAtDragStart.mostCenterHittablePosition!;
+            pokablePositionsAtDragStart.mostCenterHittablePosition!;
 
         void addDragEvent(String details, {Offset? direction}) {
           if (timeline.mode != TimelineMode.off) {
@@ -380,20 +382,20 @@ class Act {
         }
 
         // found the widget in the tree, now do a final drag to make sure it is fully visible
-        final spotViewportAfterDrag = spot<Scrollable>()
+        final spotScrollableBoundsAfterDrag = spot<Scrollable>()
             .withChild(dragTarget)
             .last()
-            .spot<Viewport>()
+            .spot<Listener>()
             .first();
-        final viewPortRenderBoxAfterDrag =
-            _getRenderBoxOrThrow(spotViewportAfterDrag);
+        final scrollableSizedRenderBoxAfterDrag =
+            spotScrollableBoundsAfterDrag.snapshotRenderBox();
         final viewportGlobalPosition =
-            viewPortRenderBoxAfterDrag.localToGlobal(Offset.zero);
+            scrollableSizedRenderBoxAfterDrag.localToGlobal(Offset.zero);
         final viewportRect = Rect.fromLTWH(
           viewportGlobalPosition.dx,
           viewportGlobalPosition.dy,
-          viewPortRenderBoxAfterDrag.size.width,
-          viewPortRenderBoxAfterDrag.size.height,
+          scrollableSizedRenderBoxAfterDrag.size.width,
+          scrollableSizedRenderBoxAfterDrag.size.height,
         );
 
         final targetRenderBox = dragTarget.snapshotRenderBox();

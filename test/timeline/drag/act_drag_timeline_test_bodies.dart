@@ -5,6 +5,7 @@ import 'package:spot/spot.dart';
 
 import '../../util/capture_console_output.dart';
 import '../../util/run_test_in_process.dart' as process;
+import '../../widgets/drag_until_visible_test_widget.dart';
 import '../timeline_test_shared.dart' as shared;
 import 'drag_until_visible_test_widget.dart';
 
@@ -243,7 +244,7 @@ class ActDragTimelineTestBodies {
 
   static Future<void> _testBody(WidgetTester tester) async {
     await tester.pumpWidget(
-      const DragUntilVisibleTestWidget(axis: Axis.vertical),
+      const DragUntilVisibleSingleDirectionTestWidget(axis: Axis.vertical),
     );
     _firstItemSelector.existsOnce();
     _secondItemSelector.doesNotExist();

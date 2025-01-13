@@ -5,6 +5,7 @@ class DragUntilVisibleSingleDirectionTestWidget extends StatelessWidget {
     super.key,
     required this.axis,
     this.ignorePointerAtIndices = const [0, 0],
+    this.useColumnOrRow = false,
   });
 
   Color getRandomColor(int index) {
@@ -13,6 +14,7 @@ class DragUntilVisibleSingleDirectionTestWidget extends StatelessWidget {
 
   final Axis axis;
   final List<int> ignorePointerAtIndices;
+  final bool useColumnOrRow;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +31,33 @@ class DragUntilVisibleSingleDirectionTestWidget extends StatelessWidget {
         );
       },
     );
+
+    final list = () {
+      if (useColumnOrRow) {
+        if (axis == Axis.vertical) {
+          return SingleChildScrollView(
+            child: Column(
+              children: items,
+            ),
+          );
+        } else {
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: items,
+            ),
+          );
+        }
+      }
+      return ListView.builder(
+        scrollDirection: axis,
+        itemCount: items.length,
+        itemBuilder: (context, index) {
+          return items[index];
+        },
+      );
+    }();
+
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -43,13 +72,7 @@ class DragUntilVisibleSingleDirectionTestWidget extends StatelessWidget {
                   maxWidth: 500,
                   maxHeight: 450,
                 ),
-                child: ListView.builder(
-                  scrollDirection: axis,
-                  itemCount: items.length,
-                  itemBuilder: (context, index) {
-                    return items[index];
-                  },
-                ),
+                child: list,
               ),
             ),
           ),

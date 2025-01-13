@@ -16,7 +16,10 @@ void dragTests() {
     'Finds widget in vertical ListView after dragging',
     (tester) async {
       await tester.pumpWidget(
-        const DragUntilVisibleTestWidget(axis: Axis.vertical),
+        const DragUntilVisibleSingleDirectionTestWidget(
+          axis: Axis.vertical,
+          ignorePointerAtIndices: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+        ),
       );
 
       final firstItem = spotText('Item at index: 3', exact: true)..existsOnce();
@@ -33,10 +36,37 @@ void dragTests() {
   );
 
   testWidgets(
+    'Finds widget in Column after dragging',
+    (tester) async {
+      await tester.pumpWidget(
+        const DragUntilVisibleSingleDirectionTestWidget(
+          useColumnOrRow: true,
+          axis: Axis.vertical,
+          ignorePointerAtIndices: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+        ),
+      );
+
+      final firstItem = spotText('Item at index: 3', exact: true)..existsOnce();
+      final secondItem = spotText('Item at index: 27', exact: true)
+        ..existsOnce();
+      await act.dragUntilVisible(
+        dragStart: firstItem,
+        dragTarget: secondItem,
+        maxIteration: 30,
+        moveStep: const Offset(0, -100),
+      );
+      secondItem.existsOnce();
+      final position =
+          secondItem.snapshotRenderBox().localToGlobal(Offset.zero);
+      expect(position.toString(), const Offset(278.9, 443.0).toString());
+    },
+  );
+
+  testWidgets(
     'Finds widget in horizontal ListView after dragging',
     (tester) async {
       await tester.pumpWidget(
-        const DragUntilVisibleTestWidget(axis: Axis.horizontal),
+        const DragUntilVisibleSingleDirectionTestWidget(axis: Axis.horizontal),
       );
 
       final firstItem = spotText('Item at index: 2', exact: true)..existsOnce();
@@ -53,10 +83,36 @@ void dragTests() {
   );
 
   testWidgets(
+    'Finds widget in Row after dragging',
+    (tester) async {
+      await tester.pumpWidget(
+        const DragUntilVisibleSingleDirectionTestWidget(
+          useColumnOrRow: true,
+          axis: Axis.horizontal,
+        ),
+      );
+
+      final firstItem = spotText('Item at index: 2', exact: true)..existsOnce();
+      final secondItem = spotText('Item at index: 10', exact: true)
+        ..existsOnce();
+      await act.dragUntilVisible(
+        dragStart: firstItem,
+        dragTarget: secondItem,
+        maxIteration: 30,
+        moveStep: const Offset(-100, 0),
+      );
+      secondItem.existsOnce();
+      final position =
+          secondItem.snapshotRenderBox().localToGlobal(Offset.zero);
+      expect(position.toString(), const Offset(606.0, 318.0).toString());
+    },
+  );
+
+  testWidgets(
     'Finds widget in vertical ListView after dragging down and up',
     (tester) async {
       await tester.pumpWidget(
-        const DragUntilVisibleTestWidget(axis: Axis.vertical),
+        const DragUntilVisibleSingleDirectionTestWidget(axis: Axis.vertical),
       );
 
       final firstItem = spotText('Item at index: 3', exact: true)..existsOnce();
@@ -85,8 +141,8 @@ void dragTests() {
   testWidgets(
     'Finds widget in horizontal ListView after dragging to the right and back',
     (tester) async {
-      await tester
-          .pumpWidget(const DragUntilVisibleTestWidget(axis: Axis.horizontal));
+      await tester.pumpWidget(const DragUntilVisibleSingleDirectionTestWidget(
+          axis: Axis.horizontal));
 
       final firstItem = spotText('Item at index: 2', exact: true)..existsOnce();
       final secondItem = spotText('Item at index: 10', exact: true)
@@ -115,7 +171,7 @@ void dragTests() {
     'Throws TestFailure if not found in vertical ListView',
     (tester) async {
       await tester.pumpWidget(
-        const DragUntilVisibleTestWidget(axis: Axis.vertical),
+        const DragUntilVisibleSingleDirectionTestWidget(axis: Axis.vertical),
       );
 
       final firstItem = spotText('Item at index: 3', exact: true)..existsOnce();
@@ -147,7 +203,7 @@ void dragTests() {
     'Throws TestFailure if not found in horizontal ListView',
     (tester) async {
       await tester.pumpWidget(
-        const DragUntilVisibleTestWidget(axis: Axis.horizontal),
+        const DragUntilVisibleSingleDirectionTestWidget(axis: Axis.horizontal),
       );
 
       final firstItem = spotText('Item at index: 2', exact: true)..existsOnce();

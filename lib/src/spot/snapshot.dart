@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/screenshot/screenshot_annotator.dart';
+import 'package:spot/src/spot/element_extensions.dart';
 import 'package:spot/src/spot/filters/onstage_filter.dart';
 import 'package:spot/src/spot/widget_selector.dart';
 
@@ -618,35 +619,6 @@ void _dumpWidgetTree(StringBuffer buffer) {
     buffer.writeln(rootElement.toStringDeep());
   } else {
     buffer.writeln('<no tree currently mounted>');
-  }
-}
-
-/// Extension on [Element] providing access to parent and child elements.
-extension ElementParent on Element {
-  /// Gets the immediate parent of this element.
-  Element? get parent {
-    Element? parent;
-    visitAncestorElements((element) {
-      parent = element;
-      return false;
-    });
-    return parent;
-  }
-
-  /// Gets all parent elements of this element.
-  Iterable<Element> get parents sync* {
-    Element? element = this;
-    while (element != null) {
-      yield element;
-      element = element.parent;
-    }
-  }
-
-  /// Gets all immediate child elements of this element.
-  Iterable<Element> get children sync* {
-    final List<Element> found = [];
-    visitChildren(found.add);
-    yield* found;
   }
 }
 
