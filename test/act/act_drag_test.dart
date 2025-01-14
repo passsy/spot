@@ -7,7 +7,6 @@ import '../timeline/drag/drag_until_visible_test_widget.dart';
 void main() {
   // Runs the tests as executed with `flutter test`
   AutomatedTestWidgetsFlutterBinding.ensureInitialized();
-  globalTimelineMode = TimelineMode.always;
   assert(WidgetsBinding.instance is! LiveTestWidgetsFlutterBinding);
   group('Drag with AutomatedTestWidgetsFlutterBinding', dragTests);
 }
@@ -269,12 +268,9 @@ void dragTests() {
             isA<AssertionError>().having(
               (error) => error.toString(),
               'description',
-              allOf(
-                // Ensures the thrown AssertionError's message has these substrings:
-                contains(
-                  'You can either provide `moveStep`, or set `toStart` to true',
-                ),
-                contains('but not both.'),
+              contains(
+                'You can either provide `moveStep`, or set `toStart` to true, or neither, '
+                'but not both.',
               ),
             ),
           ),
@@ -306,12 +302,10 @@ void dragTests() {
             isA<AssertionError>().having(
               (error) => error.toString(),
               'description',
-              allOf(
-                contains(
-                  'If `moveStep` is provided, one of dx or dy must be non-zero.',
-                ),
-                contains('Both dx and dy being 0 results in no dragging.'),
-                contains('diagonal dragging'),
+              contains(
+                'If `moveStep` is provided, one of dx or dy must be non-zero. '
+                'Both dx and dy being 0 results in no dragging. '
+                'Both being non-zero implicates diagonal dragging, which is not supported.',
               ),
             ),
           ),
@@ -343,12 +337,10 @@ void dragTests() {
             isA<AssertionError>().having(
               (error) => error.toString(),
               'description',
-              allOf(
-                contains(
-                  'If `moveStep` is provided, one of dx or dy must be non-zero.',
-                ),
-                contains('Both dx and dy being 0 results in no dragging.'),
-                contains('diagonal dragging'),
+              contains(
+                'If `moveStep` is provided, one of dx or dy must be non-zero. '
+                'Both dx and dy being 0 results in no dragging. '
+                'Both being non-zero implicates diagonal dragging, which is not supported.',
               ),
             ),
           ),
