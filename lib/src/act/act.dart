@@ -368,20 +368,17 @@ class Act {
 
         final scrollAxis = scrollable.snapshotWidget().axis;
 
-        final moveOffset = moveStep ??
-            (scrollAxis == Axis.vertical
-                ? Offset(
-                    0,
-                    toStart
-                        ? scrollableSizedRenderBox.size.height / 2
-                        : -scrollableSizedRenderBox.size.height / 2,
-                  )
-                : Offset(
-                    toStart
-                        ? scrollableSizedRenderBox.size.width / 2
-                        : -scrollableSizedRenderBox.size.width / 2,
-                    0,
-                  ));
+        final moveOffset = moveStep ??= () {
+          if (scrollAxis == Axis.vertical) {
+            final autoScrollHeight = scrollableSizedRenderBox.size.height / 2;
+            final dy = toStart ? autoScrollHeight : -autoScrollHeight;
+            return Offset(0, dy);
+          } else {
+            final autoScrollWidth = scrollableSizedRenderBox.size.width / 2;
+            final dx = toStart ? autoScrollWidth : -autoScrollWidth;
+            return Offset(dx, 0);
+          }
+        }();
 
         final direction = () {
           if (moveOffset.dy < 0) return 'to the end';
@@ -404,114 +401,69 @@ class Act {
           return false;
         }
 
-        Future<Offset?> maybeDragFullyIntoViewport() async {
-          // found the widget in the tree, now do a final drag to make sure it is fully visible
-          final spotScrollableBoundsAfterDrag = spot<Scrollable>()
-              .withChild(dragTarget)
-              .last()
-              .spot<Listener>()
-              .first();
-          final scrollableSizedRenderBoxAfterDrag =
-              spotScrollableBoundsAfterDrag.snapshotRenderBox();
-          final viewportGlobalPosition =
-              scrollableSizedRenderBoxAfterDrag.localToGlobal(Offset.zero);
-          final viewportRect = Rect.fromLTWH(
-            viewportGlobalPosition.dx,
-            viewportGlobalPosition.dy,
-            scrollableSizedRenderBoxAfterDrag.size.width,
-            scrollableSizedRenderBoxAfterDrag.size.height,
-          );
+        // Now we begin to drag the scrollable until we find the target in the widget tree
+        int dragCount = 0;
+        while (!targetFound()) {
+          if (dragCount >= maxIteration) {
+            final totalDragged = moveOffset * dragCount.toDouble();
+            final message =
+                "$targetName is not visible after dragging $dragCount times and a total dragged offset of $totalDragged.";
+            addDragErrorEvent(message);
+            throw TestFailure(message);
+          }
+          await gestures.drag(dragBeginPosition, moveOffset);
+          await binding.pump(duration);
+          dragCount++;
+        }
 
-          final targetRenderBox = dragTarget.snapshotRenderBox();
-          final Offset globalTargetPositionTopLeft =
-              targetRenderBox.localToGlobal(Offset.zero);
-          final targetRect = Rect.fromLTWH(
-            globalTargetPositionTopLeft.dx,
-            globalTargetPositionTopLeft.dy,
-            targetRenderBox.size.width,
-            targetRenderBox.size.height,
-          );
+        // found the widget in the tree, now do a final drag to make sure it is fully visible
+        final spotScrollableBoundsAfterDrag = spot<Scrollable>()
+            .withChild(dragTarget)
+            .last()
+            .spot<Listener>()
+            .first();
+        final scrollableSizedRenderBoxAfterDrag =
+            spotScrollableBoundsAfterDrag.snapshotRenderBox();
+        final viewportGlobalPosition =
+            scrollableSizedRenderBoxAfterDrag.localToGlobal(Offset.zero);
+        final viewportRect = Rect.fromLTWH(
+          viewportGlobalPosition.dx,
+          viewportGlobalPosition.dy,
+          scrollableSizedRenderBoxAfterDrag.size.width,
+          scrollableSizedRenderBoxAfterDrag.size.height,
+        );
 
-          final isInViewport =
-              viewportRect.contains(globalTargetPositionTopLeft) &&
-                  viewportRect.contains(targetRect.bottomRight);
+        final targetRenderBox = dragTarget.snapshotRenderBox();
+        final Offset globalTargetPositionTopLeft =
+            targetRenderBox.localToGlobal(Offset.zero);
+        final targetRect = Rect.fromLTWH(
+          globalTargetPositionTopLeft.dx,
+          globalTargetPositionTopLeft.dy,
+          targetRenderBox.size.width,
+          targetRenderBox.size.height,
+        );
 
-          if (isInViewport) return null;
+        final targetFullyVisible =
+            viewportRect.contains(globalTargetPositionTopLeft) &&
+                viewportRect.contains(targetRect.bottomRight);
 
+        Offset finalDragOffset = Offset.zero;
+        if (!targetFullyVisible) {
           // drag the target to the location of the dragStart widget (top right corner)
           final endDragLocation = dragStartRenderBoxRect.topLeft;
           final Offset distanceToEnd =
               endDragLocation - globalTargetPositionTopLeft;
           await gestures.drag(dragBeginPosition, distanceToEnd);
           await binding.pump(duration);
+          finalDragOffset = distanceToEnd;
           addDragEvent(
             'Scrolling to fully reveal $targetName.',
             direction: distanceToEnd,
           );
-          return distanceToEnd;
         }
 
-        Offset totalDragged = Offset.zero;
-
-        // Now we begin to drag the scrollable until we find the target in the widget tree
-        int dragCount = 0;
-
-        void throwDragTestFailure({String? additional}) {
-          String message =
-              "$targetName is not visible after dragging $dragCount times and a total dragged offset of $totalDragged.";
-          if (additional != null) {
-            message = message + additional;
-          }
-          addDragErrorEvent(message);
-          throw TestFailure(message);
-        }
-
-        if (targetFound()) {
-          final dragDistance = await maybeDragFullyIntoViewport();
-          if (dragDistance != null) {
-            if (moveStep != null) {
-              final maxAllowedOffset = moveStep * maxIteration.toDouble();
-              final maxAllowedDistance = (scrollAxis == Axis.vertical
-                      ? maxAllowedOffset.dy
-                      : maxAllowedOffset.dx)
-                  .abs();
-              final draggedDistance = (scrollAxis == Axis.vertical
-                      ? dragDistance.dy
-                      : dragDistance.dx)
-                  .abs();
-              final diff = draggedDistance - maxAllowedDistance;
-              if (diff > 0) {
-                totalDragged = maxAllowedOffset;
-                final message =
-                    ' Consider increasing moveStep or maxIterations. A total Offset of $dragDistance is required to fully reveal $targetName.';
-                throwDragTestFailure(additional: message);
-              }
-              final necessaryDrags = (draggedDistance /
-                      (scrollAxis == Axis.vertical ? moveStep.dy : moveStep.dx)
-                          .abs())
-                  .ceil();
-              dragCount = necessaryDrags;
-            } else {
-              dragCount++;
-            }
-            totalDragged = dragDistance;
-          }
-          //TODO Handle case where no dragging was necessary
-        } else {
-          while (!targetFound()) {
-            if (dragCount >= maxIteration) {
-              totalDragged = moveOffset * dragCount.toDouble();
-              throwDragTestFailure();
-            }
-            await gestures.drag(dragBeginPosition, moveOffset);
-            await binding.pump(duration);
-            dragCount++;
-          }
-          final additionalOffset = await maybeDragFullyIntoViewport();
-          totalDragged = moveOffset * dragCount.toDouble() +
-              (additionalOffset ?? Offset.zero);
-        }
-
+        final totalDragged =
+            moveOffset * dragCount.toDouble() + finalDragOffset;
         final message = "Target $targetName found after $dragCount drags. "
             "Total dragged offset: $totalDragged";
         addDragEvent(message);
