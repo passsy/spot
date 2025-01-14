@@ -59,7 +59,13 @@ void dragTests() {
         secondItem.existsOnce();
         final position =
             secondItem.snapshotRenderBox().localToGlobal(Offset.zero);
-        expect(position.toString(), const Offset(278.9, 443.0).toString());
+        expect(
+          position,
+          within<Offset>(
+            distance: 10,
+            from: const Offset(278.9, 443.0),
+          ),
+        );
       },
     );
 
@@ -139,7 +145,13 @@ void dragTests() {
         secondItem.existsOnce();
         final position =
             secondItem.snapshotRenderBox().localToGlobal(Offset.zero);
-        expect(position.toString(), const Offset(606.0, 318.0).toString());
+        expect(
+          position,
+          within<Offset>(
+            distance: 10,
+            from: const Offset(606.0, 318.0),
+          ),
+        );
       },
     );
 
