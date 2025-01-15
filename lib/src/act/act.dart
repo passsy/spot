@@ -416,7 +416,8 @@ class Act {
           dragCount++;
         }
 
-        // found the widget in the tree, now do a final drag to make sure it is fully visible
+        // found the widget in the tree, now do a final drag to make sure it is
+        // within the scrollable's viewport entirely
         final spotScrollableBoundsAfterDrag = spot<Scrollable>()
             .withChild(dragTarget)
             .last()
@@ -443,13 +444,13 @@ class Act {
           targetRenderBox.size.height,
         );
 
-        final targetFullyVisible =
+        final targetFullyInViewport =
             viewportRect.contains(globalTargetPositionTopLeft) &&
                 viewportRect.contains(targetRect.bottomRight);
 
         Offset finalDragOffset = Offset.zero;
-        if (!targetFullyVisible) {
-          // drag the target to the location of the dragStart widget (top right corner)
+        if (!targetFullyInViewport) {
+          // drag the target to the location of the dragStart widget (top left corner)
           final endDragLocation = dragStartRenderBoxRect.topLeft;
           final Offset distanceToEnd =
               endDragLocation - globalTargetPositionTopLeft;
@@ -523,11 +524,11 @@ void _validatePositionInViewBounds(Offset position) {
   }
 }
 
-// Validates that the widget is at least partially visible in the viewport.
+// Validates that the widget is at least partially located in the viewport.
 bool _validateViewBounds(
   RenderBox renderBox, {
   required WidgetSelector selector,
-  bool throwIfInvisible = true,
+  bool throwWhenNotInViewport = true,
 }) {
   // ignore: deprecated_member_use
   final view = WidgetsBinding.instance.renderView;
@@ -536,13 +537,13 @@ bool _validateViewBounds(
       renderBox.localToGlobal(Offset.zero) & renderBox.paintBounds.size;
 
   final intersection = viewport.intersect(location);
-  final isNotVisible = intersection.width < 0 || intersection.height < 0;
-  if (isNotVisible && throwIfInvisible) {
+  final isNotInViewport = intersection.width < 0 || intersection.height < 0;
+  if (isNotInViewport && throwWhenNotInViewport) {
     throw TestFailure(
       "Widget '${selector.toStringBreadcrumb()}' is located outside the viewport ($location).",
     );
   }
-  return !isNotVisible;
+  return !isNotInViewport;
   // TODO handle case when location is partially outside viewport
 }
 
