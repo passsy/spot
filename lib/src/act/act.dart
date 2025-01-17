@@ -260,6 +260,8 @@ class Act {
     final WidgetSelector<Scrollable> scrollable =
         spot<Scrollable>().withChild(dragStart).last();
 
+    final scrollableElement = scrollable.snapshotElement();
+
     // Every scrollable contains a Listener handling the touch events.
     // We only care about the size and location of the RenderObject.
     final scrollableSizedRenderBox =
@@ -416,13 +418,19 @@ class Act {
           dragCount++;
         }
 
+        // Take scrollable where element is scrollable element
+        // TODO Handle case when this is null
+        final scrollableWidget = spot<Scrollable>()
+            .snapshot()
+            .discovered
+            .firstOrNullWhere((e) => e.element == scrollableElement)
+            ?.element
+            .widget;
+
         // found the widget in the tree, now do a final drag to make sure it is
         // within the scrollable's viewport entirely
-        final spotScrollableBoundsAfterDrag = spot<Scrollable>()
-            .withChild(dragTarget)
-            .last()
-            .spot<Listener>()
-            .first();
+        final spotScrollableBoundsAfterDrag = spotWidget(scrollableWidget!);
+
         final scrollableSizedRenderBoxAfterDrag =
             spotScrollableBoundsAfterDrag.snapshotRenderBox();
         final viewportGlobalPosition =
