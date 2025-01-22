@@ -32,7 +32,9 @@ class DragUntilVisibleSingleDirectionTestWidget extends StatelessWidget {
     final child = () {
       if (useColumnOrRow) {
         return SingleChildScrollView(
+          scrollDirection: axis,
           child: Flex(
+            mainAxisSize: MainAxisSize.min,
             direction: axis,
             children: items,
           ),
