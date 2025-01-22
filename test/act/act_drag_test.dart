@@ -101,27 +101,9 @@ void dragTests() {
     );
 
     testWidgets(
-      'Finds and taps widget in nested Column',
+      'Finds, drags to and taps target in nested Column',
       (tester) async {
-        timeline.mode = TimelineMode.always;
-        await tester.pumpWidget(
-          const MaterialApp(
-            localizationsDelegates: [
-              DefaultMaterialLocalizations.delegate,
-              DefaultCupertinoLocalizations.delegate,
-              DefaultWidgetsLocalizations.delegate,
-            ],
-            home: DragUntilVisibleInDialogWidget(),
-          ),
-        );
-
-        final dialogButton = spotText('Open Dialog')..existsOnce();
-        await act.tap(dialogButton);
-
-        await tester.pump(const Duration(milliseconds: 500));
-        await tester.pump(const Duration(milliseconds: 500));
-        await tester.pump(const Duration(milliseconds: 500));
-        await tester.pumpAndSettle();
+        await tester.pumpWidget(const NestedScrollDragUntilVisibleTestWidget());
 
         final firstItem =
             spotText('ParentIndex: 0, Item at index: 3', exact: true);
@@ -223,6 +205,30 @@ void dragTests() {
         await tester.pumpAndSettle();
         firstItem.existsOnce();
         secondItem.doesNotExist();
+      },
+    );
+
+    testWidgets(
+      'Finds, drags to and taps target in nested Row',
+      (tester) async {
+        await tester.pumpWidget(
+          const NestedScrollDragUntilVisibleTestWidget(
+            axis: Axis.horizontal,
+          ),
+        );
+
+        final firstItem = spot<Container>()
+            .spotText('ParentIndex: 0, Item at index: 3', exact: true);
+        final secondItem =
+            spotText('ParentIndex: 2, Item at index: 4', exact: true);
+        await act.dragUntilVisible(
+          dragStart: firstItem,
+          dragTarget: secondItem,
+        );
+        await tester.pump(const Duration(milliseconds: 500));
+        await tester.pump(const Duration(milliseconds: 500));
+        await tester.pumpAndSettle();
+        await act.tap(secondItem);
       },
     );
   });
