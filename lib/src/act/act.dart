@@ -200,20 +200,25 @@ class Act {
   /// Repeatedly drags at the position of `dragStart` towards the end of the list
   /// until `dragTarget` is visible.
   ///
-  /// Between each drag, advances the clock by `duration`.
+  /// Between each drag, advances the clock by [duration].
   ///
   /// [moveStep] is the distance to drag in each iteration. If not provided, the
-  /// default value is half the height/width of the scrollable.
-  /// Use `moveStep: const Offset(0, -100)` to scroll to reveal 100 pixels at
-  /// the bottom of the list.
+  /// default value is half the height or width of the scrollable (depending on
+  /// its axis). For example, use `moveStep: const Offset(0, -100)` to scroll
+  /// 100 pixels upward.
   ///
-  /// If [moveStep] is not provided: The method automatically drags towards the
-  /// end of the `Scrollable` by default. If you want to drag towards the start
-  /// of the `Scrollable`, provide `toStart: true`.
+  /// If [moveStep] is not provided, the method automatically drags towards the
+  /// end of the `Scrollable` by default. Provide [toStart] as `true` if you want
+  /// to drag towards the start of the `Scrollable`.
   ///
-  /// Throws a [TestFailure] if `dragTarget` is not found after [maxIteration]
+  /// Throws a [TestFailure] if [dragTarget] is not found after [maxIteration]
   /// drags. May drag one additional time after reaching [maxIteration] to place
-  /// the target more visible in the viewport.
+  /// the target more squarely in the viewport.
+  ///
+  /// [fallbackScrollableSelector] is an optional backup in case the scrollable that
+  /// originally contained [dragStart] becomes undiscoverable during the drag
+  /// (for example, if its keys get swapped). Providing this fallback can help avoid
+  /// test failures in dynamic layouts, ensuring the final checks can still succeed.
   ///
   /// Usage:
   /// ```dart
@@ -232,6 +237,7 @@ class Act {
     int maxIteration = 50,
     Duration duration = const Duration(milliseconds: 50),
     bool toStart = false,
+    WidgetSelector<Scrollable>? fallbackScrollableSelector,
   }) {
     assert(
       !(moveStep != null && toStart),
@@ -260,6 +266,10 @@ class Act {
     final WidgetSelector<Scrollable> scrollable =
         spot<Scrollable>().withChild(dragStart).last();
 
+    // Save the 'Element' of the currently targeted Scrollable.
+    // This ensures that—even if multiple scrollables exist or the
+    // widget tree changes—we’ll be able to re-spot and reliably
+    // refer back to this exact same scrollable later.
     final scrollableElement = scrollable.snapshotElement();
 
     // Every scrollable contains a Listener handling the touch events.
@@ -418,18 +428,51 @@ class Act {
           dragCount++;
         }
 
-        // Take scrollable where element is scrollable element
-        // TODO Handle case when this is null
-        final scrollableWidget = spot<Scrollable>()
+        // Use the saved 'scrollableElement' to look up the exact same
+        // Scrollable we started with, rather than picking any Scrollable in
+        // the tree. This guarantees that our final alignment calculations
+        // run against the very same Scrollable we just finished dragging.
+        Widget? scrollableWidget = spot<Scrollable>()
             .snapshot()
             .discovered
             .firstOrNullWhere((e) => e.element == scrollableElement)
             ?.element
             .widget;
 
-        // found the widget in the tree, now do a final drag to make sure it is
+        if (scrollableWidget == null) {
+          if (fallbackScrollableSelector == null) {
+            // ignore: avoid_print
+            print(
+              'Warning: Could not find the original scrollable widget anymore, and no '
+              'fallback was provided. Skipping final bounding-box check. '
+              'Possibly the widget tree changed or its keys were swapped.',
+            );
+            return;
+          } else {
+            // ignore: avoid_print
+            print(
+              'Warning: Could not find the original scrollable widget. '
+              'Possibly the widget tree changed or its keys were swapped. '
+              'Attempting to use the fallback scrollable selector...',
+            );
+            final fallbackWidget =
+                fallbackScrollableSelector.snapshot().discoveredWidget;
+            if (fallbackWidget == null) {
+              // ignore: avoid_print
+              print(
+                'Warning: Could not find the provided fallback scrollable either. '
+                'Skipping final bounding-box check. ',
+              );
+              return;
+            } else {
+              scrollableWidget = fallbackWidget;
+            }
+          }
+        }
+
+        // Found the widget in the tree, now do a final drag to make sure it is
         // within the scrollable's viewport entirely
-        final spotScrollableBoundsAfterDrag = spotWidget(scrollableWidget!);
+        final spotScrollableBoundsAfterDrag = spotWidget(scrollableWidget);
 
         final scrollableSizedRenderBoxAfterDrag =
             spotScrollableBoundsAfterDrag.snapshotRenderBox();
