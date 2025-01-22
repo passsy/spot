@@ -1,5 +1,4 @@
 import 'package:dartx/dartx.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class DragUntilVisibleSingleDirectionTestWidget extends StatelessWidget {
@@ -9,10 +8,6 @@ class DragUntilVisibleSingleDirectionTestWidget extends StatelessWidget {
     this.ignorePointerAtIndices = const [0, 0],
     this.useColumnOrRow = false,
   });
-
-  Color getRandomColor(int index) {
-    return index.isEven ? Colors.red : Colors.blue;
-  }
 
   final Axis axis;
   final List<int> ignorePointerAtIndices;
@@ -34,36 +29,32 @@ class DragUntilVisibleSingleDirectionTestWidget extends StatelessWidget {
       },
     );
 
-    final list = () {
+    final child = () {
       if (useColumnOrRow) {
-        if (axis == Axis.vertical) {
-          return SingleChildScrollView(
-            child: Column(
-              children: items,
-            ),
-          );
-        } else {
-          return SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: items,
-            ),
-          );
-        }
+        return SingleChildScrollView(
+          child: Flex(
+            direction: axis,
+            children: items,
+          ),
+        );
       }
       return ListView.builder(
         scrollDirection: axis,
         itemCount: items.length,
-        itemBuilder: (context, index) {
-          return items[index];
-        },
+        itemBuilder: (_, index) => items[index],
       );
     }();
 
+    final direction = axis == Axis.vertical ? 'Vertical' : 'Horizontal';
+    final childType = useColumnOrRow
+        ? axis == Axis.vertical
+            ? 'Column'
+            : 'Row'
+        : 'ListView';
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Scrollable Test with axis: $axis'),
+          title: Text('$direction Scrollable ($childType)'),
         ),
         body: Center(
           child: SizedBox(
@@ -74,7 +65,7 @@ class DragUntilVisibleSingleDirectionTestWidget extends StatelessWidget {
                   maxWidth: 500,
                   maxHeight: 450,
                 ),
-                child: list,
+                child: child,
               ),
             ),
           ),
@@ -143,7 +134,7 @@ class NestedScrollDragUntilVisibleTestWidget extends StatelessWidget {
       home: Scaffold(
         appBar: AppBar(
           title: Text(
-            'Nested Scroll Test in ${axis == Axis.vertical ? 'Column' : 'Row'}',
+            'Nested Scroll in ${axis == Axis.vertical ? 'Column' : 'Row'}',
           ),
         ),
         body: SizedBox(
