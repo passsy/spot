@@ -178,7 +178,7 @@ void main() {
   testWidgets('screenshot file name contains test file name', (tester) async {
     final shot = await takeScreenshot();
     final lineNumber = _currentLineNumber() - 1;
-    expect(shot.file.name, contains('screenshot_test:$lineNumber'));
+    expect(shot.file.name, contains('screenshot_test_$lineNumber'));
   });
 
   testWidgets('name gets escaped to prevent slashes', (tester) async {
