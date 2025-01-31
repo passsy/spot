@@ -81,7 +81,7 @@ Future<Screenshot> takeScreenshot({
     final file = frame?.uri.pathSegments.last.replaceFirst('.dart', '');
     final line = frame?.line;
     if (file != null && line != null) {
-      return '$file:$line';
+      return '${file}_$line';
     }
     if (file != null) {
       return file;
