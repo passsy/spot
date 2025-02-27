@@ -1,15 +1,15 @@
 // ignore_for_file: avoid_print
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:dartx/dartx_io.dart';
 import 'package:flutter/material.dart' as flt;
-import 'package:spot/src/screenshot/screenshot.dart';
+import 'package:spot/src/extensions/file_extensions.dart';
+import 'package:spot/src/screenshot/screenshot_io.dart';
 import 'package:spot/src/timeline/html/render_timeline.dart';
 import 'package:spot/src/timeline/html/web/timeline_event.dart' as x;
 import 'package:spot/src/timeline/invoker.dart';
 import 'package:spot/src/timeline/timeline.dart';
 import 'package:stack_trace/stack_trace.dart';
+import 'package:universal_io/io.dart';
 
 /// Writes the timeline as an HTML file
 extension HtmlTimelinePrinter on Timeline {
@@ -55,20 +55,21 @@ extension HtmlTimelinePrinter on Timeline {
 
     final events = spotTempDir.file('events.json');
     final jsonTimelineEvents = this.events.map((e) {
+      final file = e.screenshot?.file;
+
       // save screenshots relative to the events.json file in screenshots/
-      if (e.screenshot != null) {
-        final name = e.screenshot!.file.name;
+      if (file != null) {
+        final name = file.name;
         final screenshotFile = screenshotsDir.file(name);
-        screenshotFile.writeAsBytesSync(e.screenshot!.file.readAsBytesSync());
+        screenshotFile.writeAsBytesSync(file.readAsBytesSync());
       }
 
       return x.TimelineEvent(
         eventType: e.eventType.label,
         details: e.details,
         timestamp: e.timestamp.toIso8601String(),
-        screenshotUrl: e.screenshot != null
-            ? './$screenshotsDirName/${e.screenshot!.file.name}'
-            : null,
+        screenshotUrl:
+            file != null ? './$screenshotsDirName/${file.name}' : null,
         color: e.color == flt.Colors.grey
             ? null
             // ignore: deprecated_member_use

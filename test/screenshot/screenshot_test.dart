@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:dartx/dartx_io.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image/image.dart' as img;
@@ -23,9 +24,13 @@ void main() {
     );
 
     final shot = await takeScreenshot();
-    expect(shot.file.existsSync(), isTrue);
-
-    final redPixelCoverage = await percentageOfPixelsWithColor(shot.file, red);
+    print('kIsWeb: $kIsWeb');
+    if (kIsWeb) {
+      expect(shot.file, isNull);
+      return;
+    }
+    expect(shot.file!.existsSync(), isTrue);
+    final redPixelCoverage = await percentageOfPixelsWithColor(shot.file!, red);
     expect(redPixelCoverage, greaterThan(0.9));
   });
 
@@ -42,10 +47,14 @@ void main() {
     );
 
     final container = await takeScreenshot(selector: spot<Container>());
-    expect(container.file.existsSync(), isTrue);
+    if (kIsWeb) {
+      expect(container.file, isNull);
+      return;
+    }
+    expect(container.file!.existsSync(), isTrue);
 
     final redPixelCoverage =
-        await percentageOfPixelsWithColor(container.file, red);
+        await percentageOfPixelsWithColor(container.file!, red);
     expect(redPixelCoverage, 1.0);
   });
 
@@ -63,10 +72,15 @@ void main() {
     final containerSnapshot = spot<Container>().snapshot();
 
     final container = await takeScreenshot(snapshot: containerSnapshot);
-    expect(container.file.existsSync(), isTrue);
+
+    if (kIsWeb) {
+      expect(container.file, isNull);
+      return;
+    }
+    expect(container.file!.existsSync(), isTrue);
 
     final redPixelCoverage =
-        await percentageOfPixelsWithColor(container.file, red);
+        await percentageOfPixelsWithColor(container.file!, red);
     expect(redPixelCoverage, 1.0);
   });
 
@@ -113,10 +127,14 @@ void main() {
     final containerElement = spot<Container>().snapshot().discoveredElement;
 
     final container = await takeScreenshot(element: containerElement);
-    expect(container.file.existsSync(), isTrue);
+    if (kIsWeb) {
+      expect(container.file, isNull);
+      return;
+    }
+    expect(container.file!.existsSync(), isTrue);
 
     final redPixelCoverage =
-        await percentageOfPixelsWithColor(container.file, red);
+        await percentageOfPixelsWithColor(container.file!, red);
     expect(redPixelCoverage, 1.0);
   });
 
@@ -160,31 +178,48 @@ void main() {
       ),
     );
     final screenshot1 = await spot<Container>().takeScreenshot();
-    expect(screenshot1.file.existsSync(), isTrue);
-
     final screenshot2 = await spot<Container>().snapshot().takeScreenshot();
-    expect(screenshot2.file.existsSync(), isTrue);
-
     final screenshot3 =
         await spot<Container>().snapshot().discoveredElement!.takeScreenshot();
-    expect(screenshot3.file.existsSync(), isTrue);
+    if (kIsWeb) {
+      expect(screenshot1.file, isNull);
+      expect(screenshot2.file, isNull);
+      expect(screenshot3.file, isNull);
+      return;
+    }
+
+    expect(screenshot1.file!.existsSync(), isTrue);
+    expect(screenshot2.file!.existsSync(), isTrue);
+    expect(screenshot3.file!.existsSync(), isTrue);
   });
 
   testWidgets('Take screenshot with custom name', (tester) async {
     final shot = await takeScreenshot(name: 'custom_name');
-    expect(shot.file.name, contains('custom_name'));
+    if (kIsWeb) {
+      expect(shot.file, isNull);
+      return;
+    }
+    expect(shot.file!.name, contains('custom_name'));
   });
 
   testWidgets('screenshot file name contains test file name', (tester) async {
     final shot = await takeScreenshot();
     final lineNumber = _currentLineNumber() - 1;
-    expect(shot.file.name, contains('screenshot_test_$lineNumber'));
+    if (kIsWeb) {
+      expect(shot.file, isNull);
+      return;
+    }
+    expect(shot.file!.name, contains('screenshot_test_$lineNumber'));
   });
 
   testWidgets('name gets escaped to prevent slashes', (tester) async {
     final shot = await takeScreenshot(name: 'path/to/name');
-    expect(shot.file.name, isNot(contains('path/to/name')));
-    expect(shot.file.name, contains('path%2Fto%2Fname'));
+    if (kIsWeb) {
+      expect(shot.file, isNull);
+      return;
+    }
+    expect(shot.file!.name, isNot(contains('path/to/name')));
+    expect(shot.file!.name, contains('path%2Fto%2Fname'));
   });
 
   testWidgets('initiator frame is attached', (tester) async {
@@ -305,10 +340,14 @@ void main() {
       final shot = await takeScreenshot(
         annotators: [CrosshairAnnotator(centerPosition: Offset(105, 105))],
       );
-      expect(shot.file.existsSync(), isTrue);
+      if (kIsWeb) {
+        expect(shot.file, isNull);
+        return;
+      }
+      expect(shot.file!.existsSync(), isTrue);
 
       final pinkPixelCoverage =
-          await percentageOfPixelsWithColor(shot.file, Color(0xFFFF00FF));
+          await percentageOfPixelsWithColor(shot.file!, Color(0xFFFF00FF));
       expect(pinkPixelCoverage, greaterThan(0.0));
     });
 
@@ -329,10 +368,14 @@ void main() {
         selector: spot<Container>(),
         annotators: [CrosshairAnnotator(centerPosition: Offset(100, 100))],
       );
-      expect(container.file.existsSync(), isTrue);
+      if (kIsWeb) {
+        expect(container.file, isNull);
+        return;
+      }
+      expect(container.file!.existsSync(), isTrue);
 
       final pinkPixelCoverage =
-          await percentageOfPixelsWithColor(container.file, Color(0xFFFF00FF));
+          await percentageOfPixelsWithColor(container.file!, Color(0xFFFF00FF));
       expect(pinkPixelCoverage, greaterThan(0.0));
     });
 
@@ -354,10 +397,14 @@ void main() {
         snapshot: containerSnapshot,
         annotators: [CrosshairAnnotator(centerPosition: Offset(100, 100))],
       );
-      expect(container.file.existsSync(), isTrue);
+      if (kIsWeb) {
+        expect(container.file, isNull);
+        return;
+      }
+      expect(container.file!.existsSync(), isTrue);
 
       final pinkPixelCoverage =
-          await percentageOfPixelsWithColor(container.file, Color(0xFFFF00FF));
+          await percentageOfPixelsWithColor(container.file!, Color(0xFFFF00FF));
       expect(pinkPixelCoverage, greaterThan(0.0));
     });
 
@@ -412,10 +459,14 @@ void main() {
         element: containerElement,
         annotators: [CrosshairAnnotator(centerPosition: Offset(100, 100))],
       );
-      expect(container.file.existsSync(), isTrue);
+      if (kIsWeb) {
+        expect(container.file, isNull);
+        return;
+      }
+      expect(container.file!.existsSync(), isTrue);
 
       final pinkPixelCoverage =
-          await percentageOfPixelsWithColor(container.file, Color(0xFFFF00FF));
+          await percentageOfPixelsWithColor(container.file!, Color(0xFFFF00FF));
       expect(pinkPixelCoverage, greaterThan(0.0));
     });
 

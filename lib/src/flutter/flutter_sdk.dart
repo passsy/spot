@@ -1,5 +1,5 @@
-import 'dart:io';
-import 'package:dartx/dartx_io.dart';
+import 'package:spot/src/extensions/file_extensions.dart';
+import 'package:universal_io/io.dart';
 
 /// Returns the Flutter SDK root directory based on the current flutter
 /// executable running the tests.

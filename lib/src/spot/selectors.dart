@@ -1,4 +1,5 @@
 import 'package:dartx/dartx.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/checks/checks_nullability.dart';
@@ -772,7 +773,7 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostNTimes] asserts that at most `n` widgets of type [W] exist.
   MultiWidgetMatcher<W> existsAtLeastOnce() {
     if (timeline.mode != TimelineMode.off) {
-      final screenshot = timeline.takeScreenshotSync();
+      final screenshot = kIsWeb ? null : timeline.takeScreenshotSync();
       timeline.addEvent(
         eventType: 'Assertion',
         screenshot: screenshot,
@@ -803,7 +804,7 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostNTimes] asserts that at most `n` widgets of type [W] exist.
   WidgetMatcher<W> existsAtMostOnce() {
     if (timeline.mode != TimelineMode.off) {
-      final screenshot = timeline.takeScreenshotSync();
+      final screenshot = kIsWeb ? null : timeline.takeScreenshotSync();
       timeline.addEvent(
         eventType: 'Assertion',
         screenshot: screenshot,
@@ -833,7 +834,7 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostNTimes] asserts that at most `n` widgets of type [W] exist.
   void doesNotExist() {
     if (timeline.mode != TimelineMode.off) {
-      final screenshot = timeline.takeScreenshotSync();
+      final screenshot = kIsWeb ? null : timeline.takeScreenshotSync();
       timeline.addEvent(
         eventType: 'Assertion',
         screenshot: screenshot,
@@ -864,11 +865,14 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
     final widgetSnapshot = snapshot(one);
 
     if (timeline.mode != TimelineMode.off) {
-      final screenshot = timeline.takeScreenshotSync(
-        annotators: [
-          HighlightAnnotator.elements(widgetSnapshot.discoveredElements),
-        ],
-      );
+      print('isWeb: $kIsWeb');
+      final screenshot = kIsWeb
+          ? null
+          : timeline.takeScreenshotSync(
+              annotators: [
+                HighlightAnnotator.elements(widgetSnapshot.discoveredElements),
+              ],
+            );
       timeline.addEvent(
         eventType: 'Assertion',
         screenshot: screenshot,
@@ -914,7 +918,7 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostNTimes] asserts that at most [n] widgets of type [W] exist.
   MultiWidgetMatcher<W> existsAtLeastNTimes(int n) {
     if (timeline.mode != TimelineMode.off) {
-      final screenshot = timeline.takeScreenshotSync();
+      final screenshot = kIsWeb ? null : timeline.takeScreenshotSync();
       timeline.addEvent(
         eventType: 'Assertion',
         screenshot: screenshot,
@@ -941,7 +945,7 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostOnce] asserts that at most one widget exists.
   MultiWidgetMatcher<W> existsAtMostNTimes(int n) {
     if (timeline.mode != TimelineMode.off) {
-      final screenshot = timeline.takeScreenshotSync();
+      final screenshot = kIsWeb ? null : timeline.takeScreenshotSync();
       timeline.addEvent(
         eventType: 'Assertion',
         screenshot: screenshot,

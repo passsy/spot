@@ -21,11 +21,11 @@ export 'package:spot/src/screenshot/load_fonts.dart'
 export 'package:spot/src/screenshot/screenshot.dart'
     show
         ElementScreenshotExtension,
-        Screenshot,
         SelectorScreenshotExtension,
         SnapshotScreenshotExtension,
         TimelineSyncScreenshot,
         takeScreenshot;
+export 'package:spot/src/screenshot/screenshot_model.dart';
 export 'package:spot/src/spot/default_selectors.dart'
     show DefaultWidgetMatchers, DefaultWidgetSelectors;
 export 'package:spot/src/spot/diagnostic_props.dart'
