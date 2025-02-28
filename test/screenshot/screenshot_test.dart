@@ -206,11 +206,12 @@ void main() {
   });
 
   testWidgets('screenshot file name contains test file name', (tester) async {
-    final shot = await takeScreenshot();
     if (kIsWeb) {
+      final shot = await takeScreenshot();
       expect(shot.file, isNull);
       return;
     }
+    final shot = await takeScreenshot();
     final lineNumber = _currentLineNumber() - 1;
     expect(shot.file!.name, contains('screenshot_test_$lineNumber'));
   });
@@ -226,12 +227,13 @@ void main() {
   });
 
   testWidgets('initiator frame is attached', (tester) async {
-    final shot = await takeScreenshot();
     if (kIsWeb) {
+      final shot = await takeScreenshot();
       expect(shot.file, isNull);
       expect(shot.initiator, isNull);
       return;
     }
+    final shot = await takeScreenshot();
     final lineNumber = _currentLineNumber() - 1;
     expect(shot.initiator!.line, lineNumber);
     expect(shot.initiator!.uri.toString(), endsWith('screenshot_test.dart'));
@@ -243,9 +245,11 @@ void main() {
     int line = 0;
     await runZoned(
       () async {
-        await takeScreenshot();
         if (!kIsWeb) {
+          await takeScreenshot();
           line = _currentLineNumber() - 1;
+        } else {
+          await takeScreenshot();
         }
       },
       zoneSpecification: ZoneSpecification(

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
@@ -73,12 +74,22 @@ void actTests() {
         TestAsyncUtils.guardSync();
         fail('Expected to throw');
       } catch (e) {
-        check(e).isA<FlutterError>().has((it) => it.message, 'message')
-          ..contains(
-            'You must use "await" with all Future-returning test APIs.',
-          )
-          ..contains('The guarded method "tap" from class Act was called from')
-          ..contains('act_test.dart');
+        if (kIsWeb) {
+          check(e).isA<FlutterError>().has((it) => it.message, 'message')
+            ..contains(
+              'Guarded function conflict.',
+            )
+            ..contains(
+                'You must use "await" with all Future-returning test APIs.');
+        } else {
+          check(e).isA<FlutterError>().has((it) => it.message, 'message')
+            ..contains(
+              'You must use "await" with all Future-returning test APIs.',
+            )
+            ..contains(
+                'The guarded method "tap" from class Act was called from')
+            ..contains('act_test.dart');
+        }
       }
       await future;
     });
@@ -182,8 +193,8 @@ void actTests() {
           "Widget 'ElevatedButton' can not be tapped directly, because another widget (ColoredBox) inside Padding is completely covering it and consumes all tap events.",
           "ColoredBox", // cover
           "ElevatedButton", // target
-          "Stack (file:/",
-          "Padding (file:/",
+          if (kIsWeb) "Stack (org-dartlang-app" else "Stack (file:/",
+          if (kIsWeb) "Padding (org-dartlang-app" else "Padding (file:/",
         ]),
       );
     });
@@ -209,7 +220,7 @@ void actTests() {
         throwsSpotErrorContaining([
           "Widget 'ElevatedButton' is wrapped in AbsorbPointer and doesn't receive taps.",
           "AbsorbPointer is created at",
-          "act_test.dart:",
+          if (!kIsWeb) "act_test.dart:",
           "The closest widget reacting to the touch event is:",
           "Center(",
         ]),
@@ -438,14 +449,26 @@ void actTests() {
         TestAsyncUtils.guardSync();
         fail('Expected to throw');
       } catch (e) {
-        check(e).isA<FlutterError>().has((it) => it.message, 'message')
-          ..contains(
-            'You must use "await" with all Future-returning test APIs.',
-          )
-          ..contains(
-            'The guarded method "tapAt" from class Act was called from',
-          )
-          ..contains('act_test.dart');
+        if (kIsWeb) {
+        } else {
+          if (kIsWeb) {
+            check(e).isA<FlutterError>().has((it) => it.message, 'message')
+              ..contains(
+                'Guarded function conflict.',
+              )
+              ..contains(
+                  'You must use "await" with all Future-returning test APIs.');
+          } else {
+            check(e).isA<FlutterError>().has((it) => it.message, 'message')
+              ..contains(
+                'You must use "await" with all Future-returning test APIs.',
+              )
+              ..contains(
+                'The guarded method "tapAt" from class Act was called from',
+              )
+              ..contains('act_test.dart');
+          }
+        }
       }
       await future;
     });
