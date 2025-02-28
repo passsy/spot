@@ -81,21 +81,6 @@ extension ElementScreenshotExtension on Element {
   }
 }
 
-/// Returns the frame in the call stack that is most useful for identifying for
-/// humans
-Frame? _caller({StackTrace? stack}) {
-  final trace = stack != null ? Trace.parse(stack.toString()) : Trace.current();
-  final relevantLines = trace.frames.where((line) {
-    if (line.isCore) return false;
-    final url = line.uri.toString();
-    if (url.contains('package:spot')) return false;
-    if (url.startsWith('package:flutter_test')) return false;
-    return true;
-  }).toList();
-  final Frame? bestGuess = relevantLines.firstOrNull;
-  return bestGuess;
-}
-
 extension LiveTestExtensions on LiveTest {
   bool get isCI => false;
 }

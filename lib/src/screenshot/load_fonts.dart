@@ -116,13 +116,13 @@ Future<void> loadAppFonts() async {
 ///
 /// The [family] is optional: '' will extract the family name from the font file.
 Future<void> loadFont(String family, List<String> fontPaths) async {
-  if (fontPaths.isEmpty) {
-    return;
-  }
-
   if (kIsWeb) {
     // ignore: avoid_print
     print('⚠️ - loadFont is not supported on the web!');
+    return;
+  }
+
+  if (fontPaths.isEmpty) {
     return;
   }
 
