@@ -7,7 +7,6 @@ import 'package:spot/src/screenshot/screenshot_annotator.dart';
 import 'package:spot/src/screenshot/screenshot_web.dart' as self
     show takeScreenshot;
 import 'package:spot/src/timeline/invoker.dart';
-import 'package:stack_trace/stack_trace.dart';
 
 export 'package:stack_trace/stack_trace.dart' show Frame;
 
@@ -47,8 +46,6 @@ extension TimelineSyncScreenshot on Timeline {
     String? name,
     List<ScreenshotAnnotator>? annotators,
   }) {
-    //ignore: avoid_print
-    core.print('⚠️ - Taking screenshots is not yet supported on web');
     return Screenshot();
   }
 }
@@ -57,7 +54,10 @@ extension TimelineSyncScreenshot on Timeline {
 extension SelectorScreenshotExtension<W extends Widget> on WidgetSelector<W> {
   /// Takes as screenshot of the widget that can be found by this selector.
   Future<Screenshot> takeScreenshot({String? name}) async {
-    return self.takeScreenshot(selector: this, name: name);
+    return self.takeScreenshot(
+      selector: this,
+      name: name,
+    );
   }
 }
 
@@ -67,7 +67,10 @@ extension SnapshotScreenshotExtension<W extends Widget> on WidgetSnapshot<W> {
   ///
   /// The snapshot must have been taken at the same frame
   Future<Screenshot> takeScreenshot({String? name}) async {
-    return self.takeScreenshot(snapshot: this, name: name);
+    return self.takeScreenshot(
+      snapshot: this,
+      name: name,
+    );
   }
 }
 
