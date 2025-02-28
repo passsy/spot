@@ -865,7 +865,6 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
     final widgetSnapshot = snapshot(one);
 
     if (timeline.mode != TimelineMode.off) {
-      print('isWeb: $kIsWeb');
       final screenshot = kIsWeb
           ? null
           : timeline.takeScreenshotSync(

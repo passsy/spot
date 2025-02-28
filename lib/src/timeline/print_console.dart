@@ -29,7 +29,7 @@ extension ConsoleTimelinePrinter on Timeline {
         ? 'at ${frame.member} ${frame.uri}:${frame.line}:${frame.column}'
         : 'N/A';
     final details =
-    isCi ? event.details : event.details.split('\n').firstOrNull;
+        isCi ? event.details : event.details.split('\n').firstOrNull;
     buffer.writeln('==================== Timeline Event ====================');
     buffer.writeln('Event Type: ${event.eventType}');
     if (details != null) {

@@ -14,6 +14,9 @@ class Screenshot {
   /// The file where the screenshot was saved to
   final File? file;
 
+  // TODO replace file with bytes when thinking about enabling this for the web
+  // final Uint8List? bytes;
+
   /// Call stack of the code that initiated the screenshot
   final Frame? initiator;
 }

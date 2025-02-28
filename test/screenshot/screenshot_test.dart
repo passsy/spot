@@ -24,7 +24,6 @@ void main() {
     );
 
     final shot = await takeScreenshot();
-    print('kIsWeb: $kIsWeb');
     if (kIsWeb) {
       expect(shot.file, isNull);
       return;
@@ -105,15 +104,17 @@ void main() {
 
     await expectLater(
       takeScreenshot(snapshot: containerSnapshot),
-      throwsErrorContaining<StateError>([
-        'Cannot take a screenshot of snapshot',
-        'not mounted anymore',
-        'Only Elements that are currently mounted can be screenshotted.',
-      ]),
+      kIsWeb
+          ? completes
+          : throwsErrorContaining<StateError>([
+              'Cannot take a screenshot of snapshot',
+              'not mounted anymore',
+              'Only Elements that are currently mounted can be screenshotted.',
+            ]),
     );
   });
 
-  testWidgets('Take screenshot from a element', (tester) async {
+  testWidgets('Take screenshot from an element', (tester) async {
     tester.view.physicalSize = const Size(1000, 1000);
     tester.view.devicePixelRatio = 1.0;
     const red = Color(0xffff0000);
@@ -158,11 +159,13 @@ void main() {
 
     await expectLater(
       takeScreenshot(element: containerElement),
-      throwsErrorContaining<StateError>([
-        'Cannot take a screenshot of Element',
-        'not mounted anymore',
-        'Only Elements that are currently mounted can be screenshotted.',
-      ]),
+      kIsWeb
+          ? completes
+          : throwsErrorContaining<StateError>([
+              'Cannot take a screenshot of Element',
+              'not mounted anymore',
+              'Only Elements that are currently mounted can be screenshotted.',
+            ]),
     );
   });
 
@@ -204,11 +207,11 @@ void main() {
 
   testWidgets('screenshot file name contains test file name', (tester) async {
     final shot = await takeScreenshot();
-    final lineNumber = _currentLineNumber() - 1;
     if (kIsWeb) {
       expect(shot.file, isNull);
       return;
     }
+    final lineNumber = _currentLineNumber() - 1;
     expect(shot.file!.name, contains('screenshot_test_$lineNumber'));
   });
 
@@ -224,6 +227,11 @@ void main() {
 
   testWidgets('initiator frame is attached', (tester) async {
     final shot = await takeScreenshot();
+    if (kIsWeb) {
+      expect(shot.file, isNull);
+      expect(shot.initiator, isNull);
+      return;
+    }
     final lineNumber = _currentLineNumber() - 1;
     expect(shot.initiator!.line, lineNumber);
     expect(shot.initiator!.uri.toString(), endsWith('screenshot_test.dart'));
@@ -236,7 +244,9 @@ void main() {
     await runZoned(
       () async {
         await takeScreenshot();
-        line = _currentLineNumber() - 1;
+        if (!kIsWeb) {
+          line = _currentLineNumber() - 1;
+        }
       },
       zoneSpecification: ZoneSpecification(
         print: (self, parent, zone, message) {
@@ -245,11 +255,16 @@ void main() {
       ),
     );
     final text = log.join('\n');
-    expect(text, contains('Screenshot file://'));
-    expect(text, contains('screenshot_test'));
-    expect(text, contains('.png'));
-    expect(text, contains('taken at main'));
-    expect(text, contains('screenshot_test.dart:$line'));
+    final containsFile = text.contains('Screenshot file://');
+    final containsScreenShotTest = text.contains('screenshot_test');
+    final containsPng = text.contains('.png');
+    final containsTakenAtMain = text.contains('taken at main');
+    final containsLine = text.contains('screenshot_test.dart:$line');
+    expect(containsFile, kIsWeb ? isFalse : isTrue);
+    expect(containsScreenShotTest, kIsWeb ? isFalse : isTrue);
+    expect(containsPng, kIsWeb ? isFalse : isTrue);
+    expect(containsTakenAtMain, kIsWeb ? isFalse : isTrue);
+    expect(containsLine, kIsWeb ? isFalse : isTrue);
   });
 
   testWidgets('warning when screenshot is bigger than target', (tester) async {
@@ -282,21 +297,21 @@ void main() {
     );
 
     final text = log.join('\n');
-    expect(
-      text,
-      contains(
-        RegExp(
-          r'Warning: The screenshot captured of RichText is larger \(1000, 1000\) '
-          r'than RichText \(.*, .*\) itself.',
-        ),
+
+    final largerWarning = text.contains(
+      RegExp(
+        r'Warning: The screenshot captured of RichText is larger \(1000, 1000\) '
+        r'than RichText \(.*, .*\) itself.',
       ),
     );
-    expect(
-      text,
-      contains(
-        'Wrap the RichText in a RepaintBoundary to be able to capture only that layer.',
-      ),
+
+    expect(largerWarning, kIsWeb ? isFalse : isTrue);
+
+    final containsHint = text.contains(
+      'Wrap the RichText in a RepaintBoundary to be able to capture only that layer.',
     );
+
+    expect(containsHint, kIsWeb ? isFalse : isTrue);
   });
 
   testWidgets('Take screenshot of dirty tree', (tester) async {
@@ -319,7 +334,7 @@ void main() {
     await loadAppFonts();
     final renderObject =
         spot<Banner>().spot<CustomPaint>().snapshotRenderObject();
-    expect(renderObject.debugNeedsPaint, isTrue);
+    expect(renderObject.debugNeedsPaint, kIsWeb ? isFalse : isTrue);
 
     // When elements are dirty, taking a screenshot should still work
     await takeScreenshot();
@@ -432,11 +447,13 @@ void main() {
             snapshot: containerSnapshot,
             annotators: [CrosshairAnnotator(centerPosition: Offset(100, 100))],
           ),
-          throwsErrorContaining<StateError>([
-            'Cannot take a screenshot of snapshot',
-            'not mounted anymore',
-            'Only Elements that are currently mounted can be screenshotted.',
-          ]),
+          kIsWeb
+              ? completes
+              : throwsErrorContaining<StateError>([
+                  'Cannot take a screenshot of snapshot',
+                  'not mounted anymore',
+                  'Only Elements that are currently mounted can be screenshotted.',
+                ]),
         );
       },
     );
@@ -494,12 +511,32 @@ void main() {
           element: containerElement,
           annotators: [CrosshairAnnotator(centerPosition: Offset(100, 100))],
         ),
-        throwsErrorContaining<StateError>([
-          'Cannot take a screenshot of Element',
-          'not mounted anymore',
-          'Only Elements that are currently mounted can be screenshotted.',
-        ]),
+        kIsWeb
+            ? completes
+            : throwsErrorContaining<StateError>([
+                'Cannot take a screenshot of Element',
+                'not mounted anymore',
+                'Only Elements that are currently mounted can be screenshotted.',
+              ]),
       );
+    });
+
+    testWidgets('prints warning when on web', (tester) async {
+      final log = <String>[];
+      await runZoned(
+        () async {
+          await takeScreenshot();
+        },
+        zoneSpecification: ZoneSpecification(
+          print: (self, parent, zone, message) {
+            log.add(message);
+          },
+        ),
+      );
+      final text = log.join('\n');
+      final containsWarning =
+          text.contains('⚠️ - Taking screenshots is not yet supported on web');
+      expect(containsWarning, kIsWeb ? isTrue : isFalse);
     });
   });
 }
@@ -534,10 +571,12 @@ Future<double> percentageOfPixelsWithColor(File file, Color color) async {
 }
 
 /// The line number of this function call
+/// Does not work for web
 int _currentLineNumber() {
   final lines = StackTrace.current.toString().split('\n');
   final callerLine = lines[1];
   final parts = callerLine.split(':');
+  print('parts: $parts');
   // parts[parts.length - 1] is the column number
   return parts[parts.length - 2].toInt();
 }

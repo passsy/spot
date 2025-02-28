@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dartx/dartx.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -66,6 +67,11 @@ import 'package:universal_io/io.dart';
 /// Because showing emojis in test requires changes to you app code (set fallback)
 /// [loadAppFonts] does not automatically load system emoji fonts for you.
 Future<void> loadAppFonts() async {
+  if (kIsWeb) {
+    // ignore: avoid_print
+    print('⚠️ - loadAppFonts is not supported on the web!');
+    return;
+  }
   TestWidgetsFlutterBinding.ensureInitialized();
 
   await TestAsyncUtils.guard<void>(() async {
@@ -111,6 +117,12 @@ Future<void> loadAppFonts() async {
 /// The [family] is optional: '' will extract the family name from the font file.
 Future<void> loadFont(String family, List<String> fontPaths) async {
   if (fontPaths.isEmpty) {
+    return;
+  }
+
+  if (kIsWeb) {
+    // ignore: avoid_print
+    print('⚠️ - loadFont is not supported on the web!');
     return;
   }
 

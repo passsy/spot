@@ -1,10 +1,14 @@
-import 'dart:core';
 import 'dart:core' as core;
+import 'dart:core';
+
 import 'package:flutter/widgets.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/screenshot/screenshot_annotator.dart';
+import 'package:spot/src/screenshot/screenshot_web.dart' as self
+    show takeScreenshot;
 import 'package:spot/src/timeline/invoker.dart';
 import 'package:stack_trace/stack_trace.dart';
+
 export 'package:stack_trace/stack_trace.dart' show Frame;
 
 /// Takes a screenshot of the entire screen or a single widget.
@@ -25,15 +29,9 @@ Future<Screenshot> takeScreenshot({
   String? name,
   bool print = true,
 }) async {
-  final Frame? frame = _caller();
-
-  try {
-    return Screenshot(initiator: frame);
-  } catch (error) {
-    // ignore: avoid_print
-    core.print('Taking screenshots is not supported on web');
-  }
-  return Screenshot(initiator: frame);
+  //ignore: avoid_print
+  core.print('⚠️ - Taking screenshots is not yet supported on web');
+  return Screenshot();
 }
 
 /// Allows taking screenshot synchronously for the [timeline]
@@ -49,8 +47,9 @@ extension TimelineSyncScreenshot on Timeline {
     String? name,
     List<ScreenshotAnnotator>? annotators,
   }) {
-    final Frame? frame = _caller();
-    return Screenshot(initiator: frame);
+    //ignore: avoid_print
+    core.print('⚠️ - Taking screenshots is not yet supported on web');
+    return Screenshot();
   }
 }
 
@@ -58,7 +57,7 @@ extension TimelineSyncScreenshot on Timeline {
 extension SelectorScreenshotExtension<W extends Widget> on WidgetSelector<W> {
   /// Takes as screenshot of the widget that can be found by this selector.
   Future<Screenshot> takeScreenshot({String? name}) async {
-    return Screenshot();
+    return self.takeScreenshot(selector: this, name: name);
   }
 }
 
@@ -68,7 +67,7 @@ extension SnapshotScreenshotExtension<W extends Widget> on WidgetSnapshot<W> {
   ///
   /// The snapshot must have been taken at the same frame
   Future<Screenshot> takeScreenshot({String? name}) async {
-    return Screenshot();
+    return self.takeScreenshot(snapshot: this, name: name);
   }
 }
 
@@ -78,7 +77,7 @@ extension ElementScreenshotExtension on Element {
   ///
   /// The element must be mounted
   Future<Screenshot> takeScreenshot({String? name}) async {
-    return Screenshot();
+    return self.takeScreenshot(element: this, name: name);
   }
 }
 
@@ -98,5 +97,5 @@ Frame? _caller({StackTrace? stack}) {
 }
 
 extension LiveTestExtensions on LiveTest {
-  bool get isCI =>  false;
+  bool get isCI => false;
 }

@@ -444,14 +444,10 @@ final class _WebTimeline extends Timeline {
     Object? color = _undefined,
     Object? description = _undefined,
   }) {
-    if (screenshot != null) {
-      throw 'Taking screenshots is not supported on web';
-    }
     final event = _events.firstOrNullWhere((event) => event.id == id);
     if (event == null) {
       throw StateError("Event with id '${id.value}' not found");
     }
-
     if (!event.treeSnapshot.isFromThisFrame) {
       throw StateError(
         'You can not update an event after a new frame has been rendered',
