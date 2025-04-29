@@ -101,7 +101,6 @@ class Act {
             position: centerPosition,
             target: renderBox,
             snapshot: snapshot,
-            actType: _ActType.tap,
           );
           return;
         }
@@ -256,10 +255,7 @@ class Act {
 
     // Check if widget is in the widget tree. Throws if not.
     final dragStartSnapshot = dragStart.snapshot()..existsOnce();
-    _detectSizeZero(
-      snapshot: dragStartSnapshot,
-      actType: _ActType.drag,
-    );
+    _detectSizeZero(snapshot: dragStartSnapshot);
 
     // Take the closest Scrollable above the dragStart widget. This is the
     // widget which makes a widget scrollable. It must always exist.
@@ -307,7 +303,6 @@ class Act {
             position: closestToCenterFlop ?? dragStartCenter,
             target: scrollableSizedRenderBox,
             snapshot: scrollable.snapshot(),
-            actType: _ActType.drag,
           );
           return;
         }
@@ -640,7 +635,6 @@ void _throwHitTestFailureReport({
   required Offset position,
   required RenderObject target,
   required WidgetSnapshot snapshot,
-  required _ActType actType,
 }) {
   final binding = WidgetsBinding.instance;
 
@@ -656,19 +650,17 @@ void _throwHitTestFailureReport({
   _detectAbsorbPointer(
     hitTarget: hitTargetElements.first,
     snapshot: snapshot,
-    actType: actType,
   );
-  _detectIgnorePointer(target: target, snapshot: snapshot, actType: actType);
-  _detectSizeZero(snapshot: snapshot, actType: actType);
+  _detectIgnorePointer(target: target, snapshot: snapshot);
+  _detectSizeZero(snapshot: snapshot);
   _detectCoverWidget(
     target: target,
     snapshot: snapshot,
     hitTargetElements: hitTargetElements,
-    actType: actType,
   );
 
   throw TestFailure(
-    "Widget '${snapshot.discoveredWidget!.toStringShort()}' can not be ${actType.pastParticiple} at position $position where its RenderObject $target was found.\n"
+    "Widget '${snapshot.discoveredWidget!.toStringShort()}' can not be interacted with at position $position where its RenderObject $target was found.\n"
     "The exact reason, why it doesn't receive hitTest events is unknown.\n"
     "If you think this case needs a a better error message, create an issue https://github.com/passsy/spot for anyone else running in a similar issue.\n"
     "A small example would be highly appreciated.",
@@ -680,7 +672,6 @@ void _throwHitTestFailureReport({
 void _detectAbsorbPointer({
   required Element hitTarget,
   required WidgetSnapshot<Widget> snapshot,
-  required _ActType actType,
 }) {
   final childElement = hitTarget.children.firstOrNull;
   if (childElement?.widget is AbsorbPointer) {
@@ -690,7 +681,7 @@ void _detectAbsorbPointer({
           childElement.debugGetCreatorChain(100);
 
       throw TestFailure(
-        "Widget '${snapshot.discoveredWidget!.toStringShort()}' is wrapped in AbsorbPointer and doesn't receive ${actType.multiples}.\n"
+        "Widget '${snapshot.discoveredWidget!.toStringShort()}' is wrapped in AbsorbPointer and doesn't receive pointer events.\n"
         "AbsorbPointer is created at $location\n"
         "The closest widget reacting to the touch event is:\n"
         "${hitTarget.toStringDeep()}",
@@ -703,7 +694,6 @@ void _detectAbsorbPointer({
 void _detectIgnorePointer({
   required RenderObject target,
   required WidgetSnapshot<Widget> snapshot,
-  required _ActType actType,
 }) {
   final targetElement = (target.debugCreator as DebugCreator?)!.element;
   // sorted from root to target
@@ -720,7 +710,7 @@ void _detectIgnorePointer({
     final location = ignorePointer.debugWidgetLocation?.file.path ??
         targetElement.debugGetCreatorChain(100);
     throw TestFailure(
-      "Widget '${snapshot.discoveredWidget!.toStringShort()}' is wrapped in IgnorePointer and doesn't receive ${actType.multiples}.\n"
+      "Widget '${snapshot.discoveredWidget!.toStringShort()}' is wrapped in IgnorePointer and doesn't receive pointer events.\n"
       "The IgnorePointer is located at $location",
     );
   }
@@ -728,10 +718,7 @@ void _detectIgnorePointer({
 
 /// Detects when the widget is 0x0 pixels in size and throws a `TestFailure`
 /// containing the widget that forces it to be 0x0 pixels.
-void _detectSizeZero({
-  required WidgetSnapshot<Widget> snapshot,
-  required _ActType actType,
-}) {
+void _detectSizeZero({required WidgetSnapshot<Widget> snapshot}) {
   final renderObject = snapshot.discoveredElement?.renderObject;
   if (renderObject == null) {
     return;
@@ -753,7 +740,7 @@ void _detectSizeZero({
         parentsWithSizes.reversed.firstWhere((it) => it.$1 == Size.zero).$2;
 
     throw TestFailure(
-      "${snapshot.discoveredElement!.toStringShort()} can't be ${actType.pastParticiple} because it has size ${Size.zero}.\n"
+      "${snapshot.discoveredElement!.toStringShort()} can't be interacted with because it has size ${Size.zero}.\n"
       "${shrinker.toStringShort()} forces ${snapshot.discoveredElement!.toStringShort()} to have the size ${Size.zero}.\n"
       "${shrinker.toStringShort()} ${shrinker.debugWidgetLocation?.file.path}",
     );
@@ -764,7 +751,6 @@ void _detectCoverWidget({
   required RenderObject target,
   required WidgetSnapshot<Widget> snapshot,
   required List<Element> hitTargetElements,
-  required _ActType actType,
 }) {
   final Element cover = hitTargetElements.first;
   final Element commonAncestor = findCommonAncestor(
@@ -798,9 +784,9 @@ void _detectCoverWidget({
       targetChain.takeWhile((e) => e != firstUsefulParent).toList();
 
   final receiverColumn =
-      "(Cover - Received ${actType.imperative} event)\n${coverChain.joinToString(separator: '\n', transform: (it) => it.toStringShort())}";
+      "(Cover - Received pointer event)\n${coverChain.joinToString(separator: '\n', transform: (it) => it.toStringShort())}";
   final targetColumn =
-      "(Target for ${actType.imperative}, below Cover)\n${usefulToTarget.joinToString(separator: '\n', transform: (it) => it.toStringShort())}";
+      "(Target for pointer event, below Cover)\n${usefulToTarget.joinToString(separator: '\n', transform: (it) => it.toStringShort())}";
 
   // create a string with two columns (max width 40), one for the receiver and one for the target
   String createColumns(String receiver, String target) {
@@ -841,16 +827,16 @@ ${usefulParents.takeWhile((it) => it != firstUsefulParent).joinToString(separato
 ${firstUsefulParent.toStringShort()} (${firstUsefulParent.debugWidgetLocation?.file.path})
 """;
   throw TestFailure(
-    "Widget '${snapshot.discoveredWidget!.toStringShort()}' can not be ${actType.pastParticiple} directly, because another widget (${cover.toStringShort()}) inside ${firstUsefulParent.toStringShort()} is completely covering it and consumes all ${actType.imperative} events.\n"
+    "Widget '${snapshot.discoveredWidget!.toStringShort()}' can not be interacted with directly, because another widget (${cover.toStringShort()}) inside ${firstUsefulParent.toStringShort()} is completely covering it and consumes all pointer events.\n"
     "\n"
-    "Try ${actType.presentParticiple} the ${firstUsefulParent.toStringShort()} which contains '${snapshot.discoveredWidget!.toStringShort()}' instead.\n\n"
+    "Try interacting with the ${firstUsefulParent.toStringShort()} which contains '${snapshot.discoveredWidget!.toStringShort()}' instead.\n\n"
     "Example:\n"
-    "  // BAD: ${actType.multiples.capitalized} the Text inside ElevatedButton\n"
-    "  WidgetSelector<AnyText> selector = spot<ElevatedButton>().spotText('${actType.imperative.capitalized} me');\n"
+    "  // BAD: tap the Text inside ElevatedButton\n"
+    "  WidgetSelector<AnyText> selector = spot<ElevatedButton>().spotText('Tap me');\n"
     "  await act.tap(selector);\n"
     "\n"
-    "  // GOOD: ${actType.multiples.capitalized} the ElevatedButton which contains text '${actType.imperative.capitalized} me'\n"
-    "  WidgetSelector<ElevatedButton> selector = spot<ElevatedButton>().withChild(spotText('${actType.imperative.capitalized} me'));\n"
+    "  // GOOD: tap the ElevatedButton which contains text 'Tap me'\n"
+    "  WidgetSelector<ElevatedButton> selector = spot<ElevatedButton>().withChild(spotText('Tap me'));\n"
     "  await act.tap(selector);\n"
     "\n"
     "${diagram.removeEmptyLines()}\n",
@@ -1111,39 +1097,5 @@ class WidgetLocation {
 extension on String {
   String removeEmptyLines() {
     return split('\n').where((line) => line.trim().isNotEmpty).join('\n');
-  }
-}
-
-enum _ActType {
-  tap(
-    imperative: 'tap',
-    presentParticiple: 'tapping',
-    pastParticiple: 'tapped',
-    multiples: 'taps',
-  ),
-  drag(
-    imperative: 'drag',
-    presentParticiple: 'dragging',
-    pastParticiple: 'dragged',
-    multiples: 'drags',
-  );
-
-  const _ActType({
-    required this.multiples,
-    required this.imperative,
-    required this.presentParticiple,
-    required this.pastParticiple,
-  });
-
-  final String multiples;
-  final String imperative;
-  final String presentParticiple;
-  final String pastParticiple;
-}
-
-extension on String {
-  String get capitalized {
-    if (this.isEmpty || length == 1) return toUpperCase();
-    return "${this[0].toUpperCase()}${substring(1)}";
   }
 }
