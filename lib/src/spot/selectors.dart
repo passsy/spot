@@ -1,5 +1,6 @@
 import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/checks/checks_nullability.dart';
 import 'package:spot/src/screenshot/screenshot_annotator.dart';
@@ -677,12 +678,12 @@ extension SelectorToSnapshot<W extends Widget> on WidgetSelector<W> {
 extension ReadSingleSnapshot<W extends Widget> on WidgetSelector<W> {
   /// Convenience getter to access the [Widget] when evaluating the [WidgetSelector]
   W snapshotWidget() {
-    return snapshot_file.snapshot(this).single.widget;
+    return snapshot_file.snapshot(this).existsOnce().widget;
   }
 
   /// Convenience getter to access the [State] of a Widget found by the [WidgetSelector]
   S snapshotState<S extends State>() {
-    final matcher = snapshot_file.snapshot(this).single;
+    final matcher = snapshot_file.snapshot(this).existsOnce();
     final element = matcher.element;
     if (element is! StatefulElement) {
       throw StateError(
@@ -695,23 +696,20 @@ extension ReadSingleSnapshot<W extends Widget> on WidgetSelector<W> {
 
   /// Convenience getter to access the [Element] when evaluating the [WidgetSelector]
   Element snapshotElement() {
-    return snapshot_file.snapshot(this).single.element;
+    final snapshot = snapshot_file.snapshot(this)..existsOnce();
+    return snapshot.discoveredElement!;
   }
 
   /// Convenience getter to access the [RenderObject] when evaluating the [WidgetSelector]
   RenderObject snapshotRenderObject() {
-    // There is not a single Element in the Flutter SDK that returns null for `renderObject`.
-    // So we can safely assume that this cast never fails.
-    return snapshot_file.snapshot(this).single.element.renderObject!;
+    final WidgetSnapshot snapshot = snapshot_file.snapshot(this)..existsOnce();
+    return snapshot.discoveredRenderObject;
   }
 
   /// Convenience getter to access the [RenderBox] when evaluating the [WidgetSelector]
   RenderBox snapshotRenderBox() {
-    final renderObject = snapshotRenderObject();
-    if (renderObject is! RenderBox) {
-      throw StateError('RenderObject $renderObject is not a RenderBox');
-    }
-    return renderObject;
+    final WidgetSnapshot snapshot = snapshot_file.snapshot(this)..existsOnce();
+    return snapshot.discoveredRenderBox;
   }
 }
 
