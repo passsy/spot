@@ -28,6 +28,18 @@ extension ElementExtensions on Element {
     yield* found;
   }
 
+  /// Returns all children of [Element] of any depth
+  Iterable<Element> get allChildren sync* {
+    final List<Element> found = [];
+    void visit(Element element) {
+      found.add(element);
+      element.visitChildren(visit);
+    }
+
+    visit(this);
+    yield* found;
+  }
+
   /// Returns only onstage children of [Element], only direct children
   ///
   /// Children of [Offstage] or [Overlay] are eventually not returned,
