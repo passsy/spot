@@ -39,7 +39,7 @@ class Act {
     // Check if widget is in the widget tree. Throws if not.
     selector.snapshot().existsOnce();
 
-    return TestAsyncUtils.guard<void>(() async {
+    return await TestAsyncUtils.guard<void>(() async {
       final binding = TestWidgetsFlutterBinding.instance;
 
       final editableText = spot<EditableText>().withParent(selector);
@@ -94,8 +94,8 @@ class Act {
       rethrow;
     }
 
-    return TestAsyncUtils.guard<void>(() async {
-      return _alwaysPropagateDevicePointerEvents(() async {
+    return await TestAsyncUtils.guard<void>(() async {
+      return await _alwaysPropagateDevicePointerEvents(() async {
         // Before tapping the widget, we need to make sure that the widget is
         // not outside the viewport or covered by another widget.
         _validateViewBounds(renderBox, selector: selector);
@@ -154,8 +154,8 @@ class Act {
   /// - Checks that [position] is within the viewport.
   /// - Lists all widgets at that position in the timeline
   Future<void> tapAt(Offset position) async {
-    return TestAsyncUtils.guard<void>(() async {
-      return _alwaysPropagateDevicePointerEvents(() async {
+    return await TestAsyncUtils.guard<void>(() async {
+      return await _alwaysPropagateDevicePointerEvents(() async {
         final binding = TestWidgetsFlutterBinding.instance;
         _validatePositionInViewBounds(position);
         if (timeline.mode != TimelineMode.off) {
@@ -281,7 +281,7 @@ class Act {
         scrollable.spot<Listener>().first().snapshotRenderBox();
 
     return TestAsyncUtils.guard<void>(() async {
-      return _alwaysPropagateDevicePointerEvents(() async {
+      return await _alwaysPropagateDevicePointerEvents(() async {
         // Before dragging, we need to make sure that `dragStart` is
         // not outside the viewport or covered by another widget.
         final dragStartRenderBox = dragStart.snapshotRenderBox();

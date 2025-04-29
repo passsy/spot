@@ -99,7 +99,7 @@ class CrosshairAnnotator implements ScreenshotAnnotator {
     canvas.drawCircle(position, size / 4, circlePaint);
 
     final picture = recorder.endRecording();
-    return picture.toImage(image.width, image.height);
+    return await picture.toImage(image.width, image.height);
   }
 }
 
@@ -338,6 +338,6 @@ class ArrowAnnotator extends ScreenshotAnnotator {
     canvas.drawPath(path, paint);
 
     final picture = recorder.endRecording();
-    return picture.toImage(image.width, image.height);
+    return await picture.toImage(image.width, image.height);
   }
 }

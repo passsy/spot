@@ -350,7 +350,7 @@ class ActDragTimelineTestBodies {
       drags: drags,
     );
 
-    return process.runTestInProcessAndCaptureOutPut(
+    return await process.runTestInProcessAndCaptureOutPut(
       shouldFail:
           drags == _failingDragAmount || globalTimelineModeToSwitch != null,
       testFileText: testAsString,
