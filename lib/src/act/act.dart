@@ -84,11 +84,18 @@ class Act {
   Future<void> tap(WidgetSelector selector) async {
     // Check if widget is in the widget tree. Throws if not.
     final snapshot = selector.snapshot()..existsOnce();
+    final RenderBox renderBox;
+    try {
+      renderBox = snapshot.discoveredRenderBox;
+    } catch (_) {
+      debugPrint(
+        'Spot does not know how to hit test a non-cartesian coordinate system.',
+      );
+      rethrow;
+    }
 
     return TestAsyncUtils.guard<void>(() async {
       return _alwaysPropagateDevicePointerEvents(() async {
-        final renderBox = _getRenderBoxOrThrow(selector);
-
         // Before tapping the widget, we need to make sure that the widget is
         // not outside the viewport or covered by another widget.
         _validateViewBounds(renderBox, selector: selector);
@@ -196,8 +203,8 @@ class Act {
     });
   }
 
-  /// Repeatedly drags at the position of `dragStart` towards the end of the list
-  /// until `dragTarget` is visible.
+  /// Repeatedly drags at the position of [dragStart] towards the end of the list
+  /// until [dragTarget] is visible.
   ///
   /// Between each drag, advances the clock by [duration].
   ///
@@ -277,7 +284,7 @@ class Act {
       return _alwaysPropagateDevicePointerEvents(() async {
         // Before dragging, we need to make sure that `dragStart` is
         // not outside the viewport or covered by another widget.
-        final dragStartRenderBox = _getRenderBoxOrThrow(dragStart);
+        final dragStartRenderBox = dragStart.snapshotRenderBox();
         _validateViewBounds(dragStartRenderBox, selector: dragStart);
         final dragStartRenderBoxRect = _globalRect(dragStartRenderBox);
 
@@ -444,19 +451,13 @@ class Act {
             );
             return;
           } else {
-            // ignore: avoid_print
-            print(
-              'Warning: Could not find the original scrollable widget. '
-              'Possibly the widget tree changed or its keys were swapped. '
-              'Attempting to use the fallback scrollable selector...',
-            );
             final fallbackWidget =
                 fallbackScrollableSelector.snapshot().discoveredWidget;
             if (fallbackWidget == null) {
               // ignore: avoid_print
               print(
                 'Warning: Could not find the provided fallback scrollable either. '
-                'Skipping final bounding-box check. ',
+                'Skipping final bounding-box check.',
               );
               return;
             } else {
@@ -529,35 +530,6 @@ Rect _globalRect(RenderBox renderBox) {
   );
 }
 
-/// Returns the `RenderBox` of a widget based on the given selector.
-/// Throws `TestFailure` if the widget's render object is null or not a `RenderBox`.
-RenderBox _getRenderBoxOrThrow(WidgetSelector<Widget> selector) {
-  final renderObject = _renderObjectFromSelector(selector);
-  if (renderObject == null) {
-    throw TestFailure(
-      "Widget '${selector.toStringBreadcrumb()}' has no associated RenderObject.\n"
-      "Spot does not know where the widget is located on the screen.",
-    );
-  }
-  if (renderObject is! RenderBox) {
-    throw TestFailure(
-      "Widget '${selector.toStringBreadcrumb()}' is associated to $renderObject which "
-      "is not a RenderObject in the 2D Cartesian coordinate system "
-      "(implements RenderBox).\n"
-      "Spot does not know how to hit test such a widget.",
-    );
-  }
-  return renderObject;
-}
-
-/// Returns the `RenderObject` of a widget based on the given selector.
-/// Returns `null` if the widget's render object is null.
-RenderObject? _renderObjectFromSelector(WidgetSelector<Widget> selector) {
-  final snapshot = selector.snapshot();
-  final element = snapshot.discoveredElement;
-  return element?.renderObject;
-}
-
 void _validatePositionInViewBounds(Offset position) {
   // ignore: deprecated_member_use
   final view = WidgetsBinding.instance.renderView;
@@ -565,7 +537,8 @@ void _validatePositionInViewBounds(Offset position) {
   final isInViewport = viewport.contains(position);
   if (!isInViewport) {
     throw TestFailure(
-      "Tried to tapAt position ($position) which is outside the viewport (${view.size}).",
+      "Point of interaction (${position.dx}, ${position.dy}) is outside the viewport (${view.size.width}, ${view.size.height}). "
+      "Humans can not interact with this point.",
     );
   }
 }

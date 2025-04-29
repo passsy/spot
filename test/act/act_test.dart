@@ -489,7 +489,8 @@ void actTests() {
       await expectLater(
         () => act.tapAt(const Offset(-100, -100)),
         throwsSpotErrorContaining([
-          "Tried to tapAt position (Offset(-100.0, -100.0)) which is outside the viewport ",
+          "Point of interaction (-100.0, -100.0) is outside the viewport (800.0, 600.0).",
+          "Humans can not interact with this point.",
         ]),
       );
     });
@@ -503,7 +504,8 @@ void actTests() {
       await expectLater(
         () => act.tapAt(outOutside),
         throwsSpotErrorContaining([
-          "Tried to tapAt position ($outOutside) which is outside the viewport ",
+          "Point of interaction (${outOutside.dx}, ${outOutside.dy}) is outside the viewport (800.0, 600.0).",
+          "Humans can not interact with this point.",
         ]),
       );
     });

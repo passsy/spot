@@ -126,6 +126,42 @@ extension WidgetSnapshotShorthands<W extends Widget> on WidgetSnapshot<W> {
   /// Use this list to access elements corresponding to the discovered widgets.
   List<Element> get discoveredElements =>
       discovered.map((e) => e.element).toList();
+
+  /// Shorthand to get the [RenderObject] of the first discovered widget.
+  RenderObject get discoveredRenderObject {
+    final renderObject = discoveredElement!.renderObject;
+    if (renderObject == null) {
+      // There is not a single Element in the Flutter SDK that returns null for `renderObject`.
+      // Please file a bug if you ever encounter this.
+      throw TestFailure(
+        "Widget '${selector.toStringBreadcrumb()}' has no associated RenderObject.\n",
+      );
+    }
+    return renderObject;
+  }
+
+  /// Shorthand to get all RenderObjects of the discovered widgets.
+  List<RenderObject> get discoveredRenderObjects {
+    return discoveredElements.mapNotNull((e) => e.renderObject).toList();
+  }
+
+  /// Shorthand to get the [RenderBox] of the first discovered widget.
+  RenderBox get discoveredRenderBox {
+    final renderObject = discoveredRenderObject;
+    if (renderObject is! RenderBox) {
+      throw TestFailure(
+        "Widget '${selector.toStringBreadcrumb()}' is associated to $renderObject which "
+        "is not a RenderObject in the 2D Cartesian coordinate system "
+        "(implements RenderBox).",
+      );
+    }
+    return renderObject;
+  }
+
+  /// Shorthand to get all RenderBoxes of the discovered widgets.
+  List<RenderBox> get discoveredRenderBoxes {
+    return discoveredRenderObjects.whereType<RenderBox>().toList();
+  }
 }
 
 /// prints debug information during [snapshot] that can be enabled in the
