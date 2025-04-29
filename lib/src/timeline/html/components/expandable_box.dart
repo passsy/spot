@@ -1,6 +1,6 @@
 // ignore_for_file: public_member_api_docs
 
-// ignore: avoid_web_libraries_in_flutter
+// ignore: avoid_web_libraries_in_flutter, deprecated_member_use
 import 'dart:html' if (dart.library.io) '../web/web_stubs.dart';
 
 import 'package:jaspr/jaspr.dart';

@@ -89,7 +89,7 @@ extension ToWidgetMatcher<W extends Widget> on WidgetSnapshot<W> {
   }
 }
 
-/// Extension on [WidgetSnapshot]<W> providing shorthand accessors
+/// Extension on [WidgetSnapshot]`<W>` providing shorthand accessors
 /// to the discovered widgets and elements.
 ///
 /// Offers convenient methods to retrieve single widgets or elements
@@ -281,7 +281,7 @@ class _StageResult {
   }
 }
 
-/// Extension on [WidgetSnapshot]<W> providing methods to validate the quantity of discovered widgets.
+/// Extension on [WidgetSnapshot]`<W>` providing methods to validate the quantity of discovered widgets.
 extension ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
   /// Validates the quantity of [discovered] to match [WidgetSelector.quantityConstraint]
   void validateQuantity() {
@@ -424,7 +424,7 @@ class QuantityTestFailure implements TestFailure {
   }
 }
 
-/// Extension on [WidgetSnapshot]<W> providing matchers for asserting
+/// Extension on [WidgetSnapshot]`<W>` providing matchers for asserting
 /// the existence of a specific number of widgets.
 ///
 /// These matchers allow checking if a certain number of widgets of type [W]
