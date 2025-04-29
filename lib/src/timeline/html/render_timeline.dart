@@ -48,9 +48,10 @@ Future<String> renderTimelineWithJaspr(
         timelineEvents: events,
       ),
     ),
+    standalone: true,
   );
 
-  return html;
+  return '<!DOCTYPE html>\n$html';
 }
 
 /// Returns the test name including the group hierarchy.

@@ -4,7 +4,6 @@
 /// Generate it with `dart run tool/compile_js.dart`
 /// Using Dart SDK version: 3.6.0 (stable) (Thu Dec 5 07:46:24 2024 -0800) on "macos_arm64"
 
-
 // language=javascript
 const String timelineJS = r'''
 (function dartProgram(){function copyProperties(a,b){var s=Object.keys(a)
