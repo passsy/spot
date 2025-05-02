@@ -695,7 +695,8 @@ extension ReadSingleSnapshot<W extends Widget> on WidgetSelector<W> {
 
   /// Convenience getter to access the [Element] when evaluating the [WidgetSelector]
   Element snapshotElement() {
-    return snapshot_file.snapshot(this).single.element;
+    final snapshot = snapshot_file.snapshot(this)..existsOnce();
+    return snapshot.discoveredElement!;
   }
 
   /// Convenience getter to access the [RenderObject] when evaluating the [WidgetSelector]

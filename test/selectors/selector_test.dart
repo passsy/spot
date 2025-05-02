@@ -180,10 +180,39 @@ void main() {
       ),
     );
     final element = spotText('home').snapshotElement();
+    expect(element.widget, isA<RichText>());
     expect(element.size?.height, 14);
   });
 
-  testWidgets('snapshotRenderObject()', (tester) async {
+  testWidgets('snapshotElement() multiple widgets', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Row(
+          children: [
+            Text('home'),
+            Text('home'),
+          ],
+        ),
+      ),
+    );
+    expect(
+      () => spotText('home').snapshotElement(),
+      throwsSpotErrorContaining([
+        'Found 2 elements matching Widget with text contains text "home" in widget tree, expected at most 1'
+      ]),
+    );
+  });
+
+  testWidgets('snapshotRenderObject() zero widgets', (tester) async {
+    expect(
+      () => spotText('unknown').snapshotRenderObject(),
+      throwsSpotErrorContaining([
+        'Could not find Widget with text contains text "unknown" in widget tree'
+      ]),
+    );
+  });
+
+  testWidgets('snapshotRenderObject() one widget', (tester) async {
     await tester.pumpWidget(
       WidgetsApp(
         builder: (_, __) => const Center(child: Text('home')),
@@ -191,10 +220,39 @@ void main() {
       ),
     );
     final renderObject = spotText('home').snapshotRenderObject();
+    expect(renderObject, isNotNull);
     expect(renderObject.isRepaintBoundary, isFalse);
   });
 
-  testWidgets('snapshotRenderBox()', (tester) async {
+  testWidgets('snapshotRenderObject() multiple widgets', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Row(
+          children: [
+            Text('home'),
+            Text('home'),
+          ],
+        ),
+      ),
+    );
+    expect(
+      () => spotText('home').snapshotRenderObject(),
+      throwsSpotErrorContaining([
+        'Found 2 elements matching Widget with text contains text "home" in widget tree, expected at most 1'
+      ]),
+    );
+  });
+
+  testWidgets('snapshotRenderBox() zero widgets', (tester) async {
+    expect(
+      () => spotText('unknown').snapshotRenderBox(),
+      throwsSpotErrorContaining([
+        'Could not find Widget with text contains text "unknown" in widget tree'
+      ]),
+    );
+  });
+
+  testWidgets('snapshotRenderBox() one widget', (tester) async {
     await tester.pumpWidget(
       WidgetsApp(
         builder: (_, __) => const Center(child: Text('home')),
