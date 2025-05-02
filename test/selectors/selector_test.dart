@@ -260,7 +260,27 @@ void main() {
       ),
     );
     final renderBox = spotText('home').snapshotRenderBox();
+    expect(renderBox, isA<RenderBox>());
     expect(renderBox.localToGlobal(Offset.zero), const Offset(372.0, 293.0));
+  });
+
+  testWidgets('snapshotRenderBox() multiple widgets', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Row(
+          children: [
+            Text('home'),
+            Text('home'),
+          ],
+        ),
+      ),
+    );
+    expect(
+      () => spotText('home').snapshotRenderBox(),
+      throwsSpotErrorContaining([
+        'Found 2 elements matching Widget with text contains text "home" in widget tree, expected at most 1'
+      ]),
+    );
   });
 }
 
