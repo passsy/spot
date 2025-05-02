@@ -535,7 +535,7 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
   /// the constraints.
   WidgetSnapshot<W> _exists({int? min, int? max}) {
     assert(min != null || max != null);
-    assert(min == null || min > 0);
+    assert(min == null || min >= 0);
     assert(max == null || max >= 0);
     assert(min == null || max == null || min <= max);
 

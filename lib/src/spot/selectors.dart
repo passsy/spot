@@ -770,7 +770,7 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   MultiWidgetMatcher<W> existsAtLeastOnce() {
     final atLeastOne =
         copyWith(quantityConstraint: const QuantityConstraint.atLeast(1));
-    return snapshot(this).existsAtLeastOnce();
+    return snapshot(atLeastOne).existsAtLeastOnce();
   }
 
   /// Asserts that at most one widget of type [W] exists.
@@ -790,8 +790,8 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtLeastNTimes] asserts that at least `n` widgets of type [W] exist.
   /// - [existsAtMostNTimes] asserts that at most `n` widgets of type [W] exist.
   WidgetMatcher<W> existsAtMostOnce() {
-    // final atMostOne = copyWith(quantityConstraint: QuantityConstraint.single);
-    return snapshot(this).existsAtMostOnce();
+    final atMostOne = copyWith(quantityConstraint: QuantityConstraint.single);
+    return snapshot(atMostOne).existsAtMostOnce();
   }
 
   /// Asserts that no widgets of type [W] exist.
@@ -812,7 +812,7 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostNTimes] asserts that at most `n` widgets of type [W] exist.
   void doesNotExist() {
     final none = copyWith(quantityConstraint: QuantityConstraint.zero);
-    snapshot(this).doesNotExist();
+    snapshot(none).doesNotExist();
   }
 
   /// Asserts that exactly one widget of type [W] exists.
@@ -831,7 +831,7 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   WidgetMatcher<W> existsOnce() {
     final one =
         copyWith(quantityConstraint: const QuantityConstraint.exactly(1));
-    return snapshot(this).existsOnce();
+    return snapshot(one).existsOnce();
   }
 
   /// Asserts that exactly [n] widgets of type [W] exist.
@@ -850,7 +850,7 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   MultiWidgetMatcher<W> existsExactlyNTimes(int n) {
     final exactlyNTimes =
         copyWith(quantityConstraint: QuantityConstraint.exactly(n));
-    return snapshot(this).existsExactlyNTimes(n);
+    return snapshot(exactlyNTimes).existsExactlyNTimes(n);
   }
 
   /// Asserts that at least [n] widgets of type [W] exist.
@@ -868,7 +868,7 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostNTimes] asserts that at most [n] widgets of type [W] exist.
   MultiWidgetMatcher<W> existsAtLeastNTimes(int n) {
     final atLeast = copyWith(quantityConstraint: QuantityConstraint.atLeast(n));
-    return snapshot(this).existsAtLeastNTimes(n);
+    return snapshot(atLeast).existsAtLeastNTimes(n);
   }
 
   /// Asserts that at most [n] widgets of type [W] exist.
@@ -886,7 +886,7 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostOnce] asserts that at most one widget exists.
   MultiWidgetMatcher<W> existsAtMostNTimes(int n) {
     final atMostN = copyWith(quantityConstraint: QuantityConstraint.atMost(n));
-    return snapshot(this).existsAtMostNTimes(n);
+    return snapshot(atMostN).existsAtMostNTimes(n);
   }
 }
 
