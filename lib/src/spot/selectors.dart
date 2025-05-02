@@ -768,18 +768,9 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostOnce] asserts that at most one widget exists.
   /// - [existsAtMostNTimes] asserts that at most `n` widgets of type [W] exist.
   MultiWidgetMatcher<W> existsAtLeastOnce() {
-    if (timeline.mode != TimelineMode.off) {
-      final screenshot = timeline.takeScreenshotSync();
-      timeline.addEvent(
-        eventType: 'Assertion',
-        screenshot: screenshot,
-        details: '${toStringBreadcrumb()} exists at least once.',
-        color: Colors.grey,
-      );
-    }
     final atLeastOne =
         copyWith(quantityConstraint: const QuantityConstraint.atLeast(1));
-    return snapshot(atLeastOne).multi;
+    return snapshot(this).existsAtLeastOnce();
   }
 
   /// Asserts that at most one widget of type [W] exists.
@@ -799,17 +790,8 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtLeastNTimes] asserts that at least `n` widgets of type [W] exist.
   /// - [existsAtMostNTimes] asserts that at most `n` widgets of type [W] exist.
   WidgetMatcher<W> existsAtMostOnce() {
-    if (timeline.mode != TimelineMode.off) {
-      final screenshot = timeline.takeScreenshotSync();
-      timeline.addEvent(
-        eventType: 'Assertion',
-        screenshot: screenshot,
-        details: '${toStringBreadcrumb()} exists at most once.',
-        color: Colors.grey,
-      );
-    }
-    final atMostOne = copyWith(quantityConstraint: QuantityConstraint.single);
-    return snapshot(atMostOne).single;
+    // final atMostOne = copyWith(quantityConstraint: QuantityConstraint.single);
+    return snapshot(this).existsAtMostOnce();
   }
 
   /// Asserts that no widgets of type [W] exist.
@@ -829,17 +811,8 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostOnce] asserts that at most one widget exists.
   /// - [existsAtMostNTimes] asserts that at most `n` widgets of type [W] exist.
   void doesNotExist() {
-    if (timeline.mode != TimelineMode.off) {
-      final screenshot = timeline.takeScreenshotSync();
-      timeline.addEvent(
-        eventType: 'Assertion',
-        screenshot: screenshot,
-        details: '${toStringBreadcrumb()} does not exist.',
-        color: Colors.grey,
-      );
-    }
     final none = copyWith(quantityConstraint: QuantityConstraint.zero);
-    snapshot(none);
+    snapshot(this).doesNotExist();
   }
 
   /// Asserts that exactly one widget of type [W] exists.
@@ -858,23 +831,7 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   WidgetMatcher<W> existsOnce() {
     final one =
         copyWith(quantityConstraint: const QuantityConstraint.exactly(1));
-    final widgetSnapshot = snapshot(one);
-
-    if (timeline.mode != TimelineMode.off) {
-      final screenshot = timeline.takeScreenshotSync(
-        annotators: [
-          HighlightAnnotator.elements(widgetSnapshot.discoveredElements),
-        ],
-      );
-      timeline.addEvent(
-        eventType: 'Assertion',
-        screenshot: screenshot,
-        details: '${toStringBreadcrumb()} exists once.',
-        color: Colors.grey,
-      );
-    }
-
-    return widgetSnapshot.single;
+    return snapshot(this).existsOnce();
   }
 
   /// Asserts that exactly [n] widgets of type [W] exist.
@@ -893,7 +850,7 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   MultiWidgetMatcher<W> existsExactlyNTimes(int n) {
     final exactlyNTimes =
         copyWith(quantityConstraint: QuantityConstraint.exactly(n));
-    return snapshot(exactlyNTimes).multi;
+    return snapshot(this).existsExactlyNTimes(n);
   }
 
   /// Asserts that at least [n] widgets of type [W] exist.
@@ -910,17 +867,8 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostOnce] asserts that at most one widget exists.
   /// - [existsAtMostNTimes] asserts that at most [n] widgets of type [W] exist.
   MultiWidgetMatcher<W> existsAtLeastNTimes(int n) {
-    if (timeline.mode != TimelineMode.off) {
-      final screenshot = timeline.takeScreenshotSync();
-      timeline.addEvent(
-        eventType: 'Assertion',
-        screenshot: screenshot,
-        details: '${toStringBreadcrumb()} exists at least $n times.',
-        color: Colors.grey,
-      );
-    }
     final atLeast = copyWith(quantityConstraint: QuantityConstraint.atLeast(n));
-    return snapshot(atLeast).multi;
+    return snapshot(this).existsAtLeastNTimes(n);
   }
 
   /// Asserts that at most [n] widgets of type [W] exist.
@@ -937,17 +885,8 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtLeastNTimes] asserts that at least [n] widgets of type [W] exist.
   /// - [existsAtMostOnce] asserts that at most one widget exists.
   MultiWidgetMatcher<W> existsAtMostNTimes(int n) {
-    if (timeline.mode != TimelineMode.off) {
-      final screenshot = timeline.takeScreenshotSync();
-      timeline.addEvent(
-        eventType: 'Assertion',
-        screenshot: screenshot,
-        details: '${toStringBreadcrumb()} exists at most $n times.',
-        color: Colors.grey,
-      );
-    }
     final atMostN = copyWith(quantityConstraint: QuantityConstraint.atMost(n));
-    return snapshot(atMostN).multi;
+    return snapshot(this).existsAtMostNTimes(n);
   }
 }
 
