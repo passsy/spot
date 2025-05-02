@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 
+import '../util/assert_error.dart';
+
 void main() {
   testWidgets('.single keeps all information', (tester) async {
     final multiSelector = spot<Center>(
@@ -80,10 +82,38 @@ void main() {
     expect(multiMap.runtimeType, singleMap.runtimeType);
   });
 
-  testWidgets('snapshotWidget()', (tester) async {
+  testWidgets('snapshotWidget() zero widgets', (tester) async {
+    expect(
+      () => spotText('unknown').snapshotWidget(),
+      throwsSpotErrorContaining([
+        'Could not find Widget with text contains text "unknown" in widget tree'
+      ]),
+    );
+  });
+
+  testWidgets('snapshotWidget() one widget', (tester) async {
     await tester.pumpWidget(const MaterialApp(home: Text('home')));
     final widget = spotText('home').snapshotWidget();
     expect(widget.text, 'home');
+  });
+
+  testWidgets('snapshotWidget() multiple widgets', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Column(
+          children: [
+            Text('home'),
+            Text('home'),
+          ],
+        ),
+      ),
+    );
+    expect(
+      () => spotText('home').snapshotWidget(),
+      throwsSpotErrorContaining([
+        'Found 2 elements matching Widget with text contains text "home" in widget tree, expected at most 1'
+      ]),
+    );
   });
 
   testWidgets('snapshotState()', (tester) async {

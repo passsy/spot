@@ -677,7 +677,7 @@ extension SelectorToSnapshot<W extends Widget> on WidgetSelector<W> {
 extension ReadSingleSnapshot<W extends Widget> on WidgetSelector<W> {
   /// Convenience getter to access the [Widget] when evaluating the [WidgetSelector]
   W snapshotWidget() {
-    return snapshot_file.snapshot(this).single.widget;
+    return snapshot_file.snapshot(this).existsOnce().widget;
   }
 
   /// Convenience getter to access the [State] of a Widget found by the [WidgetSelector]
