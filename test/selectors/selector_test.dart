@@ -116,14 +116,22 @@ void main() {
     );
   });
 
-  testWidgets('snapshotState()', (tester) async {
+  testWidgets('snapshotState() zero widgets', (tester) async {
+    expect(
+      () => spot<_MyContainer>().snapshotState(),
+      throwsSpotErrorContaining(['Could not find _MyContainer in widget tree']),
+    );
+  });
+
+  testWidgets('snapshotState() one widget', (tester) async {
     await tester.pumpWidget(
       const MaterialApp(home: _MyContainer(color: Colors.red)),
     );
     final state = spot<_MyContainer>().snapshotState<_MyContainerState>();
     expect(state.innerValue, 'stateValue');
-    final plainState = spot<_MyContainer>().snapshotState();
-    expect(plainState.mounted, isTrue);
+
+    // Test for non-stateful widget
+    await tester.pumpWidget(const MaterialApp(home: Text('test')));
     expect(
       () => spot<DefaultTextStyle>().snapshotState(),
       throwsA(
@@ -136,7 +144,35 @@ void main() {
     );
   });
 
-  testWidgets('snapshotElement()', (tester) async {
+  testWidgets('snapshotState() multiple widgets', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Row(
+          children: [
+            _MyContainer(color: Colors.red),
+            _MyContainer(color: Colors.blue),
+          ],
+        ),
+      ),
+    );
+    expect(
+      () => spot<_MyContainer>().snapshotState(),
+      throwsSpotErrorContaining([
+        'Found 2 elements matching _MyContainer in widget tree, expected at most 1'
+      ]),
+    );
+  });
+
+  testWidgets('snapshotElement() zero widgets', (tester) async {
+    expect(
+      () => spotText('unknown').snapshotElement(),
+      throwsSpotErrorContaining([
+        'Could not find Widget with text contains text "unknown" in widget tree'
+      ]),
+    );
+  });
+
+  testWidgets('snapshotElement() one widget', (tester) async {
     await tester.pumpWidget(
       WidgetsApp(
         builder: (_, __) => const Center(child: Text('home')),
