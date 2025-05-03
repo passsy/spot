@@ -735,6 +735,12 @@ extension QuantitySelectors<W extends Widget> on WidgetSelector<W> {
     return self.overrideQuantityConstraint(QuantityConstraint.atMost(n));
   }
 
+  /// Sets the selector to match at most one widget.
+  @useResult
+  WidgetSelector<W> removeQuantityConstraints() {
+    return self.overrideQuantityConstraint(QuantityConstraint.unconstrained);
+  }
+
   /// Overrides the current quantity constraint with a new [constraint].
   ///
   /// This method allows for more flexible control over the number of widgets

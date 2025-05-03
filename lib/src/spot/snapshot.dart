@@ -254,8 +254,7 @@ extension ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
       final minimumConstraint = selector.quantityConstraint.min;
       final maximumConstraint = selector.quantityConstraint.max;
 
-      final unconstrainedSelector =
-          selector.overrideQuantityConstraint(QuantityConstraint.unconstrained);
+      final unconstrainedSelector = selector.removeQuantityConstraints();
 
       String significantWidgetTree() {
         final set = discoveredElements.toSet();
@@ -632,8 +631,7 @@ void _tryMatchingLessSpecificCriteria(WidgetSnapshot snapshot) {
   final selector = snapshot.selector;
   final count = snapshot.discovered.length;
   final errorBuilder = StringBuffer();
-  final unconstrainedSelector =
-      selector.overrideQuantityConstraint(QuantityConstraint.unconstrained);
+  final unconstrainedSelector = selector.removeQuantityConstraints();
   for (final lessSpecificSelector
       in unconstrainedSelector.lessSpecificSelectors()) {
     late final WidgetSnapshot lessSpecificSnapshot;
@@ -645,8 +643,7 @@ void _tryMatchingLessSpecificCriteria(WidgetSnapshot snapshot) {
     final lessSpecificCount = lessSpecificSnapshot.discovered.length;
     final minimumConstraint = selector.quantityConstraint.min;
     final maximumConstraint = selector.quantityConstraint.max;
-    final unconstrainedSelector =
-        selector.overrideQuantityConstraint(QuantityConstraint.unconstrained);
+    final unconstrainedSelector = selector.removeQuantityConstraints();
 
     // error that selector could not be found, but instead spot detected lessSpecificSnapshot, which might be useful
     if (lessSpecificCount > count) {
