@@ -301,7 +301,7 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       output,
       isNot(contains('Tap ${_clearButtonSelector.toStringBreadcrumb()}')),
     );
-    _testTimeLineContent(output: output, tapCount: 2, assertionCount: 10);
+    _testTimeLineContent(output: output, tapCount: 2, assertionCount: 6);
     expect(output, contains('⏸︎ - Timeline recording is off'));
   }
 
@@ -369,7 +369,7 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
         'Details: ${spotText('Counter: 3')} exists once',
       ),
     );
-    _testTimeLineContent(output: output, tapCount: 2, assertionCount: 10);
+    _testTimeLineContent(output: output, tapCount: 2, assertionCount: 6);
   }
 
   static void _testTimeLineContent({

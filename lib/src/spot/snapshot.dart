@@ -399,8 +399,7 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
     if (timeline.mode != TimelineMode.off) {
       timeline.addEvent(
         eventType: 'Assertion',
-        details:
-            'Found ${discovered.length} widgets matching $selector expected none.',
+        details: '${selector.removeQuantityConstraints()} does not exist.',
         color: Colors.grey,
         screenshot: timeline.takeScreenshotSync(
           annotators: [
@@ -417,8 +416,7 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
     if (timeline.mode != TimelineMode.off) {
       timeline.addEvent(
         eventType: 'Assertion',
-        details:
-            'Found ${discovered.length} widgets matching $selector expected only one.',
+        details: '${selector.removeQuantityConstraints()} exists once.',
         color: Colors.grey,
         screenshot: timeline.takeScreenshotSync(
           annotators: [
@@ -437,7 +435,7 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
       timeline.addEvent(
         eventType: 'Assertion',
         details:
-            'Found ${discovered.length} widgets matching $selector expected at least one.',
+            '${selector.removeQuantityConstraints()} exists at least once, found ${discovered.length}.',
         color: Colors.grey,
         screenshot: timeline.takeScreenshotSync(
           annotators: [
@@ -456,7 +454,7 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
       timeline.addEvent(
         eventType: 'Assertion',
         details:
-            'Found ${discovered.length} widgets matching $selector expected at most one.',
+            '${selector.removeQuantityConstraints()} exists at most once, found ${discovered.length}.',
         color: Colors.grey,
         screenshot: timeline.takeScreenshotSync(
           annotators: [
@@ -475,7 +473,7 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
       timeline.addEvent(
         eventType: 'Assertion',
         details:
-            'Found ${discovered.length} widgets matching $selector expected exactly $n.',
+            '${selector.removeQuantityConstraints()} exists exactly $n times, found ${discovered.length}.',
         color: Colors.grey,
         screenshot: timeline.takeScreenshotSync(
           annotators: [
@@ -494,7 +492,7 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
       timeline.addEvent(
         eventType: 'Assertion',
         details:
-            'Found ${discovered.length} widgets matching $selector expected at least $n.',
+            '${selector.removeQuantityConstraints()} exists at least $n times, found ${discovered.length}.',
         color: Colors.grey,
         screenshot: timeline.takeScreenshotSync(
           annotators: [
@@ -513,7 +511,7 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
       timeline.addEvent(
         eventType: 'Assertion',
         details:
-            'Found ${discovered.length} widgets matching $selector expected at most $n.',
+            '${selector.removeQuantityConstraints()} exists at most $n times, found ${discovered.length}.',
         color: Colors.grey,
         screenshot: timeline.takeScreenshotSync(
           annotators: [
