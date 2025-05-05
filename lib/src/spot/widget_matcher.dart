@@ -62,7 +62,7 @@ class _WidgetMatcherFromSnapshot<W extends Widget> implements WidgetMatcher<W> {
   W get widget => snapshot.discoveredWidgets.first;
 
   @override
-  Element get element => snapshot.discovered.single.element;
+  Element get element => snapshot.discovered.first.element;
 
   @override
   WidgetSelector<W> get selector => snapshot.selector;
