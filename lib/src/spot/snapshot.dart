@@ -129,6 +129,7 @@ extension WidgetSnapshotShorthands<W extends Widget> on WidgetSnapshot<W> {
 
   /// Shorthand to get the [RenderObject] of the first discovered widget.
   RenderObject get discoveredRenderObject {
+    _exists(min: 1, max: 1);
     final renderObject = discoveredElement!.renderObject;
     if (renderObject == null) {
       // There is not a single Element in the Flutter SDK that returns null for `renderObject`.
@@ -147,6 +148,7 @@ extension WidgetSnapshotShorthands<W extends Widget> on WidgetSnapshot<W> {
 
   /// Shorthand to get the [RenderBox] of the first discovered widget.
   RenderBox get discoveredRenderBox {
+    _exists(min: 1, max: 1);
     final renderObject = discoveredRenderObject;
     if (renderObject is! RenderBox) {
       throw TestFailure(

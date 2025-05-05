@@ -282,6 +282,247 @@ void main() {
       ]),
     );
   });
+
+  group('WidgetSnapshot render object methods', () {
+    testWidgets('discoveredRenderObject with one widget', (tester) async {
+      await tester.pumpWidget(
+        WidgetsApp(
+          builder: (_, __) => const Center(child: Text('home')),
+          color: Colors.red,
+        ),
+      );
+
+      final snapshot = spotText('home').snapshot();
+      final renderObject = snapshot.discoveredRenderObject;
+
+      expect(renderObject, isNotNull);
+      expect(renderObject.isRepaintBoundary, isFalse);
+    });
+
+    testWidgets('discoveredRenderObject with zero widgets throws',
+        (tester) async {
+      expect(
+        () => spotText('unknown').snapshot().discoveredRenderObject,
+        throwsSpotErrorContaining([
+          'Could not find Widget with text contains text "unknown" in widget tree'
+        ]),
+      );
+    });
+
+    testWidgets('discoveredRenderObject with multiple widgets throws',
+        (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Row(
+            children: [
+              Text('home'),
+              Text('home'),
+            ],
+          ),
+        ),
+      );
+
+      final snapshot = spotText('home').snapshot();
+
+      expect(
+        () => snapshot.discoveredRenderObject,
+        throwsSpotErrorContaining([
+          'Found 2 elements matching Widget with text contains text "home" in widget tree, expected at most 1'
+        ]),
+      );
+    });
+
+    testWidgets('discoveredRenderObjects with multiple widgets',
+        (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Row(
+            children: [
+              Text('home'),
+              Text('home'),
+            ],
+          ),
+        ),
+      );
+
+      final snapshot = spotText('home').snapshot();
+      final renderObjects = snapshot.discoveredRenderObjects;
+
+      expect(renderObjects, hasLength(2));
+      expect(renderObjects.first, isA<RenderObject>());
+      expect(renderObjects.last, isA<RenderObject>());
+    });
+
+    testWidgets('discoveredRenderObjects with zero widgets returns empty list',
+        (tester) async {
+      final snapshot = spotText('unknown').snapshot();
+      final renderObjects = snapshot.discoveredRenderObjects;
+
+      expect(renderObjects, isEmpty);
+    });
+
+    testWidgets('discoveredRenderBox with one widget', (tester) async {
+      await tester.pumpWidget(
+        WidgetsApp(
+          builder: (_, __) => const Center(child: Text('home')),
+          color: Colors.red,
+        ),
+      );
+
+      final snapshot = spotText('home').snapshot();
+      final renderBox = snapshot.discoveredRenderBox;
+
+      expect(renderBox, isA<RenderBox>());
+      expect(renderBox.localToGlobal(Offset.zero), const Offset(372.0, 293.0));
+    });
+
+    testWidgets('discoveredRenderBox with zero widgets throws', (tester) async {
+      expect(
+        () => spotText('unknown').snapshot().discoveredRenderBox,
+        throwsSpotErrorContaining([
+          'Could not find Widget with text contains text "unknown" in widget tree'
+        ]),
+      );
+    });
+
+    testWidgets('discoveredRenderBox with multiple widgets throws',
+        (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Row(
+            children: [
+              Text('home'),
+              Text('home'),
+            ],
+          ),
+        ),
+      );
+
+      final snapshot = spotText('home').snapshot();
+
+      expect(
+        () => snapshot.discoveredRenderBox,
+        throwsSpotErrorContaining([
+          'Found 2 elements matching Widget with text contains text "home" in widget tree, expected at most 1'
+        ]),
+      );
+    });
+
+    testWidgets('discoveredRenderBoxes with multiple widgets', (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Row(
+            children: [
+              Text('home'),
+              Text('home'),
+            ],
+          ),
+        ),
+      );
+
+      final snapshot = spotText('home').snapshot();
+      final renderBoxes = snapshot.discoveredRenderBoxes;
+
+      expect(renderBoxes, hasLength(2));
+      expect(renderBoxes.first, isA<RenderBox>());
+      expect(renderBoxes.last, isA<RenderBox>());
+    });
+
+    testWidgets('discoveredRenderBoxes with zero widgets returns empty list',
+        (tester) async {
+      final snapshot = spotText('unknown').snapshot();
+      final renderBoxes = snapshot.discoveredRenderBoxes;
+
+      expect(renderBoxes, isEmpty);
+    });
+
+    testWidgets(
+        'discoveredRenderBox throws when render object is not a RenderBox',
+        (tester) async {
+      await tester.pumpWidget(_NonCartesianWidget());
+      final snapshot = spot<_NonCartesianWidget>().snapshot();
+      expect(
+        () => snapshot.discoveredRenderBox,
+        throwsSpotErrorContaining(
+          [
+            "Widget '_NonCartesianWidget' is associated to _CustomRenderObject",
+            "is not a RenderObject in the 2D Cartesian coordinate system (implements RenderBox)."
+          ],
+        ),
+      );
+    });
+
+    testWidgets('discoveredRenderObject throws when render object is null',
+        (tester) async {
+      await tester.pumpWidget(_NoRenderObjectWidget());
+      final snapshot = spot<_NoRenderObjectWidget>().snapshot();
+      expect(
+        () => snapshot.discoveredRenderObject,
+        throwsSpotErrorContaining(
+          [
+            "Widget '_NoRenderObjectWidget' has no associated RenderObject",
+          ],
+        ),
+      );
+    });
+  });
+}
+
+/// A widget that uses a custom render object that isn't a RenderBox
+class _NonCartesianWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => const SizedBox();
+
+  @override
+  StatelessElement createElement() {
+    return _StatelessElementWithCustomRenderObject(this);
+  }
+}
+
+class _StatelessElementWithCustomRenderObject extends StatelessElement {
+  _StatelessElementWithCustomRenderObject(super.widget);
+
+  @override
+  RenderObject get renderObject => _CustomRenderObject();
+}
+
+/// A render object that's not a RenderBox
+class _CustomRenderObject extends RenderObject {
+  @override
+  void performLayout() {}
+
+  @override
+  void debugAssertDoesMeetConstraints() {}
+
+  @override
+  Rect get paintBounds => Rect.zero;
+
+  @override
+  void performResize() {}
+
+  @override
+  Rect get semanticBounds => Rect.zero;
+
+  @override
+  void setupParentData(RenderObject child) {}
+}
+
+/// A widget that has no associated render object
+class _NoRenderObjectWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => const SizedBox();
+
+  @override
+  StatelessElement createElement() {
+    return _NoRenderObjectElement(this);
+  }
+}
+
+class _NoRenderObjectElement extends StatelessElement {
+  _NoRenderObjectElement(super.widget);
+
+  @override
+  RenderObject? get renderObject => null;
 }
 
 class _MyContainer extends StatefulWidget {
