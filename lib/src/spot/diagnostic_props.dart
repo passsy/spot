@@ -54,14 +54,12 @@ extension DiagnosticPropWidgetSelector<W extends Widget> on WidgetSelector<W> {
             .getProperties()
             .firstOrNullWhere((e) => e.name == propName);
 
-        final unconstrainedSelector =
-            overrideQuantityConstraint(QuantityConstraint.unconstrained);
         final actual = prop?.value as T? ?? prop?.getDefaultValue<T>();
 
         void condition(Subject<T?> subject) {
           subject.context.nest<T>(
             () => [
-              unconstrainedSelector.toStringBreadcrumb(),
+              removeQuantityConstraints().toStringBreadcrumb(),
               'with prop "$propName"',
             ],
             (value) {
@@ -124,14 +122,11 @@ extension DiagnosticPropWidgetMatcher<W extends Widget> on WidgetMatcher<W> {
         .getProperties()
         .firstOrNullWhere((e) => e.name == propName);
 
-    final unconstrainedSelector =
-        selector.overrideQuantityConstraint(QuantityConstraint.unconstrained);
     final actual = prop?.value as T? ?? prop?.getDefaultValue<T>();
-
     void condition(Subject<T?> subject) {
       subject.context.nest<T>(
         () => [
-          unconstrainedSelector.toStringBreadcrumb(),
+          selector.removeQuantityConstraints().toStringBreadcrumb(),
           'with property $propName',
         ],
         (value) {
