@@ -129,6 +129,7 @@ extension WidgetSnapshotShorthands<W extends Widget> on WidgetSnapshot<W> {
 
   /// Shorthand to get the [RenderObject] of the first discovered widget.
   RenderObject get discoveredRenderObject {
+    _exists(min: 1, max: 1);
     final renderObject = discoveredElement!.renderObject;
     if (renderObject == null) {
       // There is not a single Element in the Flutter SDK that returns null for `renderObject`.
@@ -147,6 +148,7 @@ extension WidgetSnapshotShorthands<W extends Widget> on WidgetSnapshot<W> {
 
   /// Shorthand to get the [RenderBox] of the first discovered widget.
   RenderBox get discoveredRenderBox {
+    _exists(min: 1, max: 1);
     final renderObject = discoveredRenderObject;
     if (renderObject is! RenderBox) {
       throw TestFailure(
@@ -290,8 +292,7 @@ extension ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
       final minimumConstraint = selector.quantityConstraint.min;
       final maximumConstraint = selector.quantityConstraint.max;
 
-      final unconstrainedSelector =
-          selector.overrideQuantityConstraint(QuantityConstraint.unconstrained);
+      final unconstrainedSelector = selector.removeQuantityConstraints();
 
       String significantWidgetTree() {
         final set = discoveredElements.toSet();
@@ -431,28 +432,134 @@ class QuantityTestFailure implements TestFailure {
 /// exist in the widget tree based on the snapshot's selector.
 extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
   /// Asserts that no widgets of type [W] exist.
-  void doesNotExist() => _exists(max: 0);
+  void doesNotExist() {
+    _exists(max: 0);
+    if (timeline.mode != TimelineMode.off) {
+      timeline.addEvent(
+        eventType: 'Assertion',
+        details: '${selector.removeQuantityConstraints()} does not exist.',
+        color: Colors.grey,
+        screenshot: timeline.takeScreenshotSync(
+          annotators: [
+            HighlightAnnotator.elements(discoveredElements),
+          ],
+        ),
+      );
+    }
+  }
 
   /// Asserts that exactly one widget of type [W] exists.
-  WidgetMatcher<W> existsOnce() =>
-      WidgetMatcher.fromSnapshot(_exists(min: 1, max: 1));
+  WidgetMatcher<W> existsOnce() {
+    final snapshot = _exists(min: 1, max: 1);
+    if (timeline.mode != TimelineMode.off) {
+      timeline.addEvent(
+        eventType: 'Assertion',
+        details: '${selector.removeQuantityConstraints()} exists once.',
+        color: Colors.grey,
+        screenshot: timeline.takeScreenshotSync(
+          annotators: [
+            HighlightAnnotator.elements(discoveredElements),
+          ],
+        ),
+      );
+    }
+    return WidgetMatcher.fromSnapshot(snapshot);
+  }
 
   /// Asserts that at least one widget of type [W] exists.
-  MultiWidgetMatcher<W> existsAtLeastOnce() => _exists(min: 1).multi;
+  MultiWidgetMatcher<W> existsAtLeastOnce() {
+    final snapshot = _exists(min: 1);
+    if (timeline.mode != TimelineMode.off) {
+      timeline.addEvent(
+        eventType: 'Assertion',
+        details:
+            '${selector.removeQuantityConstraints()} exists at least once, found ${discovered.length}.',
+        color: Colors.grey,
+        screenshot: timeline.takeScreenshotSync(
+          annotators: [
+            HighlightAnnotator.elements(discoveredElements),
+          ],
+        ),
+      );
+    }
+    return snapshot.multi;
+  }
 
   /// Asserts that at most one widget of type [W] exists.
-  WidgetMatcher<W> existsAtMostOnce() =>
-      WidgetMatcher.fromSnapshot(_exists(max: 1));
+  WidgetMatcher<W> existsAtMostOnce() {
+    final snapshot = _exists(max: 1);
+    if (timeline.mode != TimelineMode.off) {
+      timeline.addEvent(
+        eventType: 'Assertion',
+        details:
+            '${selector.removeQuantityConstraints()} exists at most once, found ${discovered.length}.',
+        color: Colors.grey,
+        screenshot: timeline.takeScreenshotSync(
+          annotators: [
+            HighlightAnnotator.elements(discoveredElements),
+          ],
+        ),
+      );
+    }
+    return WidgetMatcher.fromSnapshot(snapshot);
+  }
 
   /// Asserts that exactly [n] widgets of type [W] exist.
-  MultiWidgetMatcher<W> existsExactlyNTimes(int n) =>
-      _exists(min: n, max: n).multi;
+  MultiWidgetMatcher<W> existsExactlyNTimes(int n) {
+    final snapshot = _exists(min: n, max: n);
+    if (timeline.mode != TimelineMode.off) {
+      timeline.addEvent(
+        eventType: 'Assertion',
+        details:
+            '${selector.removeQuantityConstraints()} exists exactly $n times, found ${discovered.length}.',
+        color: Colors.grey,
+        screenshot: timeline.takeScreenshotSync(
+          annotators: [
+            HighlightAnnotator.elements(discoveredElements),
+          ],
+        ),
+      );
+    }
+    return snapshot.multi;
+  }
 
   /// Asserts that at least [n] widgets of type [W] exist.
-  MultiWidgetMatcher<W> existsAtLeastNTimes(int n) => _exists(min: n).multi;
+  MultiWidgetMatcher<W> existsAtLeastNTimes(int n) {
+    final snapshot = _exists(min: n);
+    if (timeline.mode != TimelineMode.off) {
+      timeline.addEvent(
+        eventType: 'Assertion',
+        details:
+            '${selector.removeQuantityConstraints()} exists at least $n times, found ${discovered.length}.',
+        color: Colors.grey,
+        screenshot: timeline.takeScreenshotSync(
+          annotators: [
+            HighlightAnnotator.elements(discoveredElements),
+          ],
+        ),
+      );
+    }
+    return snapshot.multi;
+  }
 
   /// Asserts that at most [n] widgets of type [W] exist.
-  MultiWidgetMatcher<W> existsAtMostNTimes(int n) => _exists(max: n).multi;
+  MultiWidgetMatcher<W> existsAtMostNTimes(int n) {
+    final snapshot = _exists(max: n);
+    if (timeline.mode != TimelineMode.off) {
+      timeline.addEvent(
+        eventType: 'Assertion',
+        details:
+            '${selector.removeQuantityConstraints()} exists at most $n times, found ${discovered.length}.',
+        color: Colors.grey,
+        screenshot: timeline.takeScreenshotSync(
+          annotators: [
+            HighlightAnnotator.elements(discoveredElements),
+          ],
+        ),
+      );
+    }
+    return snapshot.multi;
+  }
 
   /// Internal method to check the existence of widgets with optional
   /// minimum and maximum limits.
@@ -463,7 +570,7 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
   /// the constraints.
   WidgetSnapshot<W> _exists({int? min, int? max}) {
     assert(min != null || max != null);
-    assert(min == null || min > 0);
+    assert(min == null || min >= 0);
     assert(max == null || max >= 0);
     assert(min == null || max == null || min <= max);
 
@@ -477,7 +584,31 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
 
         // else fail with default message
         final errorBuilder = StringBuffer();
-        errorBuilder.writeln('Could not find $selector in widget tree');
+        if (count == 0) {
+          if (min == max) {
+            errorBuilder.writeln(
+              'Could not find $selector in widget tree, '
+              'expected exactly $min.',
+            );
+          } else {
+            errorBuilder.writeln(
+              'Could not find $selector in widget tree, '
+              'expected at least $min',
+            );
+          }
+        } else {
+          if (min == max) {
+            errorBuilder.writeln(
+              'Found $count elements matching $selector in widget tree, '
+              'expected exactly $min.',
+            );
+          } else {
+            errorBuilder.writeln(
+              'Found $count elements matching $selector in widget tree, '
+              'expected at least $min.',
+            );
+          }
+        }
         _dumpWidgetTree(errorBuilder);
         if (timeline.mode != TimelineMode.off) {
           timeline.addEvent(
@@ -500,7 +631,7 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
         final errorBuilder = StringBuffer();
         errorBuilder.writeln(
           'Found ${discovered.length} elements matching $selector in widget tree, '
-          'expected at most $max',
+          'expected at most $max.',
         );
 
         discovered.forEachIndexed((candidate, index) {
@@ -525,20 +656,6 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
         fail(errorBuilder.toString());
       }
     }
-
-    if (timeline.mode != TimelineMode.off) {
-      timeline.addEvent(
-        eventType: 'Assertion',
-        details:
-            'Found ${discovered.length} widgets matching $selector.\nExpected: ${min != null ? "min:$min," : ''}${max != null ? "max:$max," : ''}',
-        color: Colors.grey,
-        screenshot: timeline.takeScreenshotSync(
-          annotators: [
-            HighlightAnnotator.elements(discoveredElements),
-          ],
-        ),
-      );
-    }
     return this;
   }
 }
@@ -550,8 +667,7 @@ void _tryMatchingLessSpecificCriteria(WidgetSnapshot snapshot) {
   final selector = snapshot.selector;
   final count = snapshot.discovered.length;
   final errorBuilder = StringBuffer();
-  final unconstrainedSelector =
-      selector.overrideQuantityConstraint(QuantityConstraint.unconstrained);
+  final unconstrainedSelector = selector.removeQuantityConstraints();
   for (final lessSpecificSelector
       in unconstrainedSelector.lessSpecificSelectors()) {
     late final WidgetSnapshot lessSpecificSnapshot;
@@ -563,8 +679,7 @@ void _tryMatchingLessSpecificCriteria(WidgetSnapshot snapshot) {
     final lessSpecificCount = lessSpecificSnapshot.discovered.length;
     final minimumConstraint = selector.quantityConstraint.min;
     final maximumConstraint = selector.quantityConstraint.max;
-    final unconstrainedSelector =
-        selector.overrideQuantityConstraint(QuantityConstraint.unconstrained);
+    final unconstrainedSelector = selector.removeQuantityConstraints();
 
     // error that selector could not be found, but instead spot detected lessSpecificSnapshot, which might be useful
     if (lessSpecificCount > count) {
