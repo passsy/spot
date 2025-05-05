@@ -28,11 +28,11 @@ void main() {
     await expectLater(
       () => act.tap(button),
       throwsSpotErrorContaining([
-        "Widget '_TestButton' can not be tapped directly, because another widget (ColoredBox) inside Center is completely covering it and consumes all tap events.",
-        "Try tapping the Center which contains '_TestButton' instead.",
+        "Widget '_TestButton' can not be interacted with directly, because another widget (ColoredBox) inside Center is completely covering it and consumes all pointer events.",
+        "Try interacting with the Center which contains '_TestButton' instead.",
         "Example:",
-        "(Cover - Received tap event)",
-        "(Target for tap, below Cover)",
+        "(Cover - Received pointer event)",
+        "(Target for pointer event, below Cover)",
         "Stack (file:/",
         "Center (file:/",
       ]),
@@ -241,7 +241,7 @@ void main() {
     await expectLater(
       () => act.tap(text),
       throwsSpotErrorContaining([
-        "Widget 'RichText' can not be tapped directly, because another widget (Listener) inside Padding is completely covering it and consumes all tap events.",
+        "Widget 'RichText' can not be interacted with directly, because another widget (Listener) inside Padding is completely covering it and consumes all pointer events.",
         "spot<ElevatedButton>().spotText('Tap me');",
         "spot<ElevatedButton>().withChild(spotText('Tap me'));",
         " │ ┌──", // diagram
@@ -279,7 +279,7 @@ void main() {
     await expectLater(
       () => act.tap(spotText('Search')),
       throwsSpotErrorContaining([
-        "RichText can't be tapped because it has size Size(0.0, 0.0)",
+        "RichText can't be interacted with because it has size Size(0.0, 0.0)",
         "SizedBox.shrink forces RichText to have the size Size(0.0, 0.0)",
         "material/navigation_rail.dart:",
       ]),

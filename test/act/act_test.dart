@@ -179,7 +179,7 @@ void actTests() {
       await expectLater(
         () => act.tap(button),
         throwsSpotErrorContaining([
-          "Widget 'ElevatedButton' can not be tapped directly, because another widget (ColoredBox) inside Padding is completely covering it and consumes all tap events.",
+          "Widget 'ElevatedButton' can not be interacted with directly, because another widget (ColoredBox) inside Padding is completely covering it and consumes all pointer events.",
           "ColoredBox", // cover
           "ElevatedButton", // target
           "Stack (file:/",
@@ -207,7 +207,7 @@ void actTests() {
       await expectLater(
         () => act.tap(button),
         throwsSpotErrorContaining([
-          "Widget 'ElevatedButton' is wrapped in AbsorbPointer and doesn't receive taps.",
+          "Widget 'ElevatedButton' is wrapped in AbsorbPointer and doesn't receive pointer events.",
           "AbsorbPointer is created at",
           "act_test.dart:",
           "The closest widget reacting to the touch event is:",
@@ -235,7 +235,7 @@ void actTests() {
       await expectLater(
         () => act.tap(button),
         throwsSpotErrorContaining([
-          "Widget 'ElevatedButton' is wrapped in IgnorePointer and doesn't receive taps",
+          "Widget 'ElevatedButton' is wrapped in IgnorePointer and doesn't receive pointer events",
           "The IgnorePointer is located at",
           "act_test.dart:",
         ]),
@@ -295,7 +295,7 @@ void actTests() {
         await expectLater(
           () => act.tap(button),
           throwsSpotErrorContaining([
-            "Widget 'ElevatedButton' is wrapped in IgnorePointer and doesn't receive taps",
+            "Widget 'ElevatedButton' is wrapped in IgnorePointer and doesn't receive pointer events",
             "The IgnorePointer is located at",
             "widgets/visibility.dart:",
           ]),
@@ -349,7 +349,7 @@ void actTests() {
       await expectLater(
         () => act.tap(button),
         throwsSpotErrorContaining([
-          "ElevatedButton can't be tapped because it has size Size(0.0, 0.0).",
+          "ElevatedButton can't be interacted with because it has size Size(0.0, 0.0).",
           "SizedBox.shrink forces ElevatedButton to have the size Size(0.0, 0.0)",
           "act_test.dart:",
         ]),
@@ -489,7 +489,8 @@ void actTests() {
       await expectLater(
         () => act.tapAt(const Offset(-100, -100)),
         throwsSpotErrorContaining([
-          "Tried to tapAt position (Offset(-100.0, -100.0)) which is outside the viewport ",
+          "Point of interaction (-100.0, -100.0) is outside the viewport (800.0, 600.0).",
+          "Humans can not interact with this point.",
         ]),
       );
     });
@@ -503,7 +504,8 @@ void actTests() {
       await expectLater(
         () => act.tapAt(outOutside),
         throwsSpotErrorContaining([
-          "Tried to tapAt position ($outOutside) which is outside the viewport ",
+          "Point of interaction (${outOutside.dx}, ${outOutside.dy}) is outside the viewport (800.0, 600.0).",
+          "Humans can not interact with this point.",
         ]),
       );
     });
