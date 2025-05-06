@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
@@ -145,13 +146,17 @@ void main() {
           ),
         ),
       );
-
+      const webError =
+          'has "textStyle" that: has fontSize that: equals <20>, actual: <14>';
       expect(
         () => spot<Text>()
             .existsOnce()
             .hasEffectiveTextStyleWhere((style) => style..fontSize.equals(20)),
         throwsSpotErrorContaining([
-          'has "textStyle" that: has fontSize that: equals <20.0>, actual: <14.0>',
+          if (kIsWeb)
+            webError
+          else
+            'has "textStyle" that: has fontSize that: equals <20.0>, actual: <14.0>',
         ]),
       );
 
@@ -298,7 +303,10 @@ void main() {
           },
         ).existsOnce(),
         throwsSpotErrorContaining([
-          'with "textStyle" that: has fontSize that: equals <20.0> has fontStyle that: equals <FontStyle.normal> has fontWeight that: equals <FontWeight.w700> has letterSpacing that: equals <2.0>',
+          RegExp(r'has fontSize that: equals <20(\.0)?>'),
+          'has fontStyle that: equals <FontStyle.normal>',
+          'has fontWeight that: equals <FontWeight.w700>',
+          RegExp(r'has letterSpacing that: equals <2(\.0)?>'),
         ]),
       );
 

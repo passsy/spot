@@ -21,7 +21,6 @@ export 'package:spot/src/screenshot/load_fonts.dart'
 export 'package:spot/src/screenshot/screenshot.dart'
     show
         ElementScreenshotExtension,
-        Screenshot,
         SelectorScreenshotExtension,
         SnapshotScreenshotExtension,
         TimelineSyncScreenshot,
