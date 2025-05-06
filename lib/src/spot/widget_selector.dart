@@ -27,7 +27,7 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
 
   /// Separator indicating a parent-child relationship between selectors
   ///
-  /// ```
+  /// ```txt
   /// MaterialApp ᗕ Scaffold
   /// ```
   ///
@@ -36,7 +36,7 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
 
   /// Separator splitting stages of a selector
   ///
-  /// ```
+  /// ```txt
   /// IconButton ❯ (at index 1) ❯ with prop "color" equals <MaterialColor(primary value: Color(0xff4caf50))>
   /// ```
   ///

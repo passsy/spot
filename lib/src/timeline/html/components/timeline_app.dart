@@ -2,9 +2,9 @@
 
 /// This library is compiled for both vm and web platforms.
 /// Therefore, this and all imported libraries need to be platform agnostic or stubbed.
-library timeline_page;
+library;
 
-// ignore: avoid_web_libraries_in_flutter
+// ignore: avoid_web_libraries_in_flutter, deprecated_member_use
 import 'dart:html' if (dart.library.io) '../web/web_stubs.dart' show window;
 
 import 'package:jaspr/jaspr.dart';

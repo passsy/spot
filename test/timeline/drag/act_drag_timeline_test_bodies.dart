@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 
@@ -28,6 +29,7 @@ class ActDragTimelineTestBodies {
         output.contains('🔴 - Live! Shows all timeline events as they happen');
 
     expect(hasMessage, isGlobal ? isFalse : isTrue);
+
     _testTimeLineContent(
       output: output,
       totalExpectedOffset: _passingOffset,
@@ -240,7 +242,9 @@ class ActDragTimelineTestBodies {
   }
 
   static Future<void> _testBody(WidgetTester tester) async {
-    await tester.pumpWidget(const DragUntilVisibleTestWidget());
+    await tester.pumpWidget(
+      const DragUntilVisibleSingleDirectionTestWidget(axis: Axis.vertical),
+    );
     _firstItemSelector.existsOnce();
     _secondItemSelector.doesNotExist();
     await act.dragUntilVisible(
@@ -263,53 +267,64 @@ class ActDragTimelineTestBodies {
     final indexesOfDragEvents = lines
         .asMap()
         .entries
-        .where((entry) => entry.value.startsWith('Event Type: Drag Event'))
+        .where(
+          (entry) =>
+              entry.value.startsWith('Event Type: Drag Event') ||
+              entry.value.startsWith('Event Type: Drag Error Event'),
+        )
         .map((entry) => entry.key)
         .toList();
-    expect(indexesOfDragEvents.length, 2);
+    final totalDragEvents = indexesOfDragEvents.length;
 
-    // Event Type: Drag Event
-    // Details: Scrolling downwards from Offset(398.0, 451.0) in order to find Widget with text with text "Item at index: 27".
-    // Caller: at main file:///Users/pascalwelsch/Projects/passsy/spot/test/timeline/drag/local/local_timeline_drag_test.dart:8:9
-    // Screenshot: file:///var/folders/0j/p0s0zrv91tgd33zrxb88c0440000gn/T/spot/act_drag_timeline_test_bodies:230-LSyb7.png
-    // Timestamp: 2024-11-03T02:53:05.111569
-    final indexOfStart = indexesOfDragEvents[0];
-    assert(indexOfStart != -1);
-    expect(
-      _replaceOffsetWithDxDy(lines[indexOfStart + 1]),
-      'Details: Scrolling ${isGoingDown ? 'downwards' : 'upwards'} from Offset(dx,dy) in order to find ${_secondItemSelector.toStringBreadcrumb()}.',
-    );
-    expect(
-      lines[indexOfStart + 2],
-      startsWith('Caller: at'),
-    );
-    expect(
-      lines[indexOfStart + 3],
-      startsWith('Screenshot: file://'),
-    );
-    expect(
-      lines[indexOfStart + 4],
-      startsWith('Timestamp: 20'),
-    );
+    expect(totalDragEvents, findsWidget ? 3 : 2);
 
-    final indexOfEnd = indexesOfDragEvents[1];
-    assert(indexOfEnd != -1);
+    final List<List<String>> dragEvents = [];
+
+    for (final index in indexesOfDragEvents) {
+      final List<String> event = [];
+      for (var i = index; i < index + 5; i++) {
+        event.add(lines[i]);
+      }
+      dragEvents.add(event);
+    }
+
+    // Basics, shared by all Drag Events
+    for (final event in dragEvents) {
+      expect(
+        event[2],
+        startsWith('Caller: at'),
+      );
+      expect(
+        event[3],
+        startsWith('Screenshot: file://'),
+      );
+      expect(
+        event[4],
+        startsWith('Timestamp: 20'),
+      );
+    }
+    final details = dragEvents.map((e) => e[1]).toList();
+    // First drag event is always the same, no matter if it's a success or a failure
     expect(
-      lines[indexOfEnd + 1],
-      'Details: Target ${_secondItemSelector.toStringBreadcrumb()} ${findsWidget ? 'found' : 'not found'} after $drags drags. Total dragged offset: $totalExpectedOffset',
+      _replaceOffsetWithDxDy(details[0]),
+      'Details: Scrolling ${isGoingDown ? 'to the end,' : 'to the start,'} beginning at Offset(dx,dy) in order to find ${_secondItemSelector.toStringBreadcrumb()}.',
     );
-    expect(
-      lines[indexOfEnd + 2],
-      startsWith('Caller: at'),
-    );
-    expect(
-      lines[indexOfEnd + 3],
-      startsWith('Screenshot: file://'),
-    );
-    expect(
-      lines[indexOfEnd + 4],
-      startsWith('Timestamp: 20'),
-    );
+    if (!findsWidget) {
+      expect(
+        details[1],
+        'Details: ${_secondItemSelector.toStringBreadcrumb()} is not visible after dragging $drags times and a total dragged offset of $totalExpectedOffset.',
+      );
+    } else {
+      expect(
+        details[1],
+        'Details: Scrolling to fully reveal ${_secondItemSelector.toStringBreadcrumb()}.',
+      );
+      expect(
+        _replaceOffsetWithDxDy(details[2]),
+        "Details: Target ${_secondItemSelector.toStringBreadcrumb()} found after $drags drags. "
+        "Total dragged offset: Offset(dx,dy)",
+      );
+    }
   }
 
   static String _replaceOffsetWithDxDy(String originalString) {
@@ -335,7 +350,7 @@ class ActDragTimelineTestBodies {
       drags: drags,
     );
 
-    return process.runTestInProcessAndCaptureOutPut(
+    return await process.runTestInProcessAndCaptureOutPut(
       shouldFail:
           drags == _failingDragAmount || globalTimelineModeToSwitch != null,
       testFileText: testAsString,
@@ -368,7 +383,7 @@ void main() async {
 $globalInitiator
   testWidgets("$testTitle", (WidgetTester tester) async {
   $localInitiator
-    await tester.pumpWidget(const DragUntilVisibleTestWidget());
+    await tester.pumpWidget(const DragUntilVisibleSingleDirectionTestWidget(axis: Axis.vertical));
       final firstItem = spotText('Item at index: 3', exact: true)..existsOnce();
       final secondItem = spotText('Item at index: 27', exact: true)
         ..doesNotExist();

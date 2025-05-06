@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs
 
 import 'dart:async';
-// ignore: avoid_web_libraries_in_flutter
+// ignore: avoid_web_libraries_in_flutter, deprecated_member_use
 import 'dart:html';
 
 import 'package:jaspr/browser.dart';

@@ -1,5 +1,5 @@
 /// Spot is a library for testing the Widget tree of Flutter apps.
-library spot;
+library;
 
 import 'package:flutter/material.dart';
 import 'package:spot/spot.dart';
@@ -141,7 +141,7 @@ const Spot _global = Spot();
 
 /// A WidgetSelector that matches all widgets in the widget tree.
 ///
-/// ```
+/// ```dart
 /// final globalKeyWidgets = allWidgets
 ///     .whereWidget(
 ///       (widget) => widget.key is GlobalKey,
@@ -158,7 +158,7 @@ WidgetSelector<Widget> get allWidgets => WidgetSelector.all;
 
 /// A WidgetSelector that matches all widgets in the widget tree.
 ///
-/// ```
+/// ```dart
 /// final globalKeyWidgets = spotAllWidgets()
 ///     .whereWidget(
 ///       (widget) => widget.key is GlobalKey,

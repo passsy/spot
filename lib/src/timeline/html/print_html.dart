@@ -15,7 +15,14 @@ import 'package:universal_io/io.dart';
 extension HtmlTimelinePrinter on Timeline {
   /// Prints the timeline as an HTML file.
   Future<void> printHTML() async {
-    final Directory spotTempDir;
+    final pubspecYaml = File('pubspec.yaml');
+    if (!pubspecYaml.existsSync()) {
+      // test is executed on a device (or simulator), we can't store the file to be accessible from the host system
+      print(
+        'Warning: The timeline is only available for widget tests on the host system, not on a device',
+      );
+      return;
+    }
 
     final String timelineDirName = () {
       String name = test.test.name;
@@ -42,8 +49,7 @@ extension HtmlTimelinePrinter on Timeline {
     }();
 
     final timelineBuildDir = Directory('build').directory('timeline');
-    spotTempDir = timelineBuildDir.directory(timelineDirName);
-
+    final spotTempDir = timelineBuildDir.directory(timelineDirName);
     if (spotTempDir.existsSync()) {
       spotTempDir.deleteSync(recursive: true);
     }

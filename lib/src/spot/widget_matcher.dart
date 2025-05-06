@@ -62,13 +62,13 @@ class _WidgetMatcherFromSnapshot<W extends Widget> implements WidgetMatcher<W> {
   W get widget => snapshot.discoveredWidgets.first;
 
   @override
-  Element get element => snapshot.discovered.single.element;
+  Element get element => snapshot.discovered.first.element;
 
   @override
   WidgetSelector<W> get selector => snapshot.selector;
 }
 
-/// Extension on [WidgetMatcher]<W> providing additional matchers for
+/// Extension on [WidgetMatcher]`<W>` providing additional matchers for
 /// widgets of type [W].
 ///
 /// These matchers facilitate more specific assertions on widget properties,
@@ -366,7 +366,7 @@ class MultiWidgetMatcher<W extends Widget> {
   }
 }
 
-/// Extension on [MultiWidgetMatcher]<W> providing matchers for assertions
+/// Extension on [MultiWidgetMatcher]`<W>` providing matchers for assertions
 /// on multiple widgets.
 ///
 /// These matchers allow performing assertions on each widget in the set of

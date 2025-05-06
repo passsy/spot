@@ -12,7 +12,7 @@ visualizes the steps of a widget test as HTML report with automatic screenshots,
 ⛓️ Chainable widget selectors<br/>
 💙 Useful error messages (with full tree dump)<br/>
 🌱 Opt-in, works with plain `testWidgets()`<br/>
-💫 Full compatibility with `integration_test`<br/>
+💫 Compatibility with `integration_test` (except for the Timeline)<br/>
 
 - [Get started](#get-started)
 - [Timeline](#timeline)
