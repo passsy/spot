@@ -17,8 +17,6 @@ dependencies:
     sdk: flutter
   flutter_test:
     sdk: flutter
-  integration_test:
-    sdk: flutter
   jaspr: ^0.15.2
   meta: ^1.8.0
   nanoid2: ^2.0.0
