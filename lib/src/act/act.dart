@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:dartx/dartx.dart';
 
 import 'package:flutter/foundation.dart';
@@ -11,7 +12,6 @@ import 'package:spot/src/extensions/file_extensions.dart';
 import 'package:spot/src/screenshot/screenshot_annotator.dart';
 import 'package:spot/src/spot/element_extensions.dart';
 import 'package:spot/src/spot/snapshot.dart';
-import 'package:universal_io/io.dart';
 
 /// Top level entry point to interact with widgets on the screen.
 ///

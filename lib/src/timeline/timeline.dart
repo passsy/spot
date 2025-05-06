@@ -1,5 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages
 
+import 'package:ci/ci.dart' as ci;
 import 'package:clock/clock.dart';
 import 'package:dartx/dartx.dart';
 import 'package:flutter/foundation.dart';
@@ -7,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nanoid2/nanoid2.dart';
 import 'package:spot/src/screenshot/screenshot.dart';
-import 'package:spot/src/screenshot/screenshot_model.dart';
 import 'package:spot/src/spot/tree_snapshot.dart';
 import 'package:spot/src/timeline/html/print_html.dart';
 import 'package:spot/src/timeline/invoker.dart';
@@ -665,3 +665,7 @@ Frame? mostRelevantCaller({Trace? trace, Frame? fallback}) {
 }
 
 const Object _undefined = Object();
+
+extension LiveTestExtensions on LiveTest {
+  bool get isCI => ci.isCI;
+}

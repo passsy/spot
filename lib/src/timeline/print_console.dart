@@ -1,5 +1,4 @@
 import 'package:spot/src/screenshot/screenshot.dart';
-import 'package:spot/src/timeline/invoker.dart';
 import 'package:spot/src/timeline/timeline.dart';
 // ignore: implementation_imports
 import 'package:test_api/src/backend/invoker.dart';
@@ -21,7 +20,7 @@ extension ConsoleTimelinePrinter on Timeline {
   }
 
   /// Prints a single event to the console.
-  void printEventToConsole(TimelineEvent event) {
+  Future<void> printEventToConsole(TimelineEvent event) async {
     final isCi = Invoker.current?.liveTest.isCI == true;
     final StringBuffer buffer = StringBuffer();
     final frame = event.initiator;
@@ -36,8 +35,9 @@ extension ConsoleTimelinePrinter on Timeline {
       buffer.writeln('Details: $details');
     }
     buffer.writeln('Caller: $caller');
-    if (event.screenshot?.file != null) {
-      buffer.writeln('Screenshot: file://${event.screenshot!.file!.path}');
+    final pngPath = await event.screenshot?.materializePng();
+    if (pngPath != null) {
+      buffer.writeln('Screenshot: file://$pngPath');
     }
     buffer.writeln('Timestamp: ${event.timestamp.toIso8601String()}');
     buffer.writeln('========================================================');

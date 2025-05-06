@@ -1,6 +1,6 @@
 import 'package:dartx/dartx.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show SelectableText;
+import 'package:flutter/widgets.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/checks/checks_nullability.dart';
 import 'package:spot/src/spot/snapshot.dart' as snapshot_file show snapshot;

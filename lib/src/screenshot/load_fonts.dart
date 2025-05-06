@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dartx/dartx.dart';
 import 'package:flutter/foundation.dart';
@@ -7,7 +8,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/src/extensions/file_extensions.dart';
 import 'package:spot/src/flutter/flutter_sdk.dart';
-import 'package:universal_io/io.dart';
 
 /// Loads all font from the apps FontManifest and embedded in the Flutter SDK
 ///
