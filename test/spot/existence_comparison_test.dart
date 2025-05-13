@@ -185,6 +185,38 @@ void main() {
     });
   });
 
+  testWidgets('error shows alternative widgets when found less',
+      (tester) async {
+    await tester.pumpWidget(
+      Column(
+        children: [
+          Center(child: SizedBox()),
+          SizedBox(),
+        ],
+      ),
+    );
+
+    final selector = spot<SizedBox>()
+        // does not exist
+        .withParent(spot<Scaffold>());
+    final snapshot = selector.snapshot();
+    expect(snapshot.discovered, isEmpty);
+
+    expect(
+      () => snapshot.existsOnce(),
+      throwsSpotErrorContaining([
+        "Could not find Scaffold ᗕ SizedBox in widget tree, expected exactly 1",
+        "A less specific search (SizedBox) discovered 2 matches!",
+        "Maybe you have to adjust your WidgetSelector (SizedBox with parent Scaffold) to cover those missing elements.",
+        "Possible match #1:",
+        "SizedBox(renderObject:",
+        "Possible match #2:",
+        "SizedBox(renderObject:",
+        "See the timeline at the very bottom for the full widget tree",
+      ]),
+    );
+  });
+
   group('match child', () {
     testWidgets('item and child exist', (tester) async {
       await tester.pumpWidget(
