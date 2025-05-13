@@ -22,7 +22,7 @@ dependencies:
   meta: ^1.8.0
   nanoid2: ^2.0.0
   stack_trace: ^1.11.0
-  synchronized: ^3.3.1
+  synchronized: ^3.0.1
   test_api: ">=0.5.0 <0.8.0"
 
 dev_dependencies:
