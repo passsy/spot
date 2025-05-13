@@ -1,4 +1,9 @@
+import 'dart:async';
+import 'dart:typed_data';
+
+import 'package:flutter_test/flutter_test.dart' show addTearDown;
 import 'package:spot/src/screenshot/screenshot.dart';
+import 'package:spot/src/screenshot/screenshot_io.dart';
 import 'package:spot/src/timeline/timeline.dart';
 // ignore: implementation_imports
 import 'package:test_api/src/backend/invoker.dart';
@@ -6,7 +11,7 @@ import 'package:test_api/src/backend/invoker.dart';
 /// Extension that adds a method to print the timeline to the console.
 extension ConsoleTimelinePrinter on Timeline {
   /// Prints the complete timeline to the console.
-  void printToConsole() {
+  Future<void> printToConsole() async {
     // ignore: avoid_print
     final frame = mostRelevantCaller(trace: test.test.trace);
     final location = frame != null
@@ -15,7 +20,7 @@ extension ConsoleTimelinePrinter on Timeline {
     // ignore: avoid_print
     print('Timeline of test: ${test.test.name}$location');
     for (final event in events) {
-      printEventToConsole(event);
+      await printEventToConsole(event);
     }
   }
 
@@ -35,10 +40,16 @@ extension ConsoleTimelinePrinter on Timeline {
       buffer.writeln('Details: $details');
     }
     buffer.writeln('Caller: $caller');
-    final pngPath = await event.screenshot?.materializePng();
-    if (pngPath != null) {
+    final screenshot = event.screenshot;
+    if (screenshot != null) {
+      // create sync dummy file
+      final pngPath = writePngToDisk(screenshot.name, Uint8List(0));
+      // fill it with data async
+      // make sure it is written at the end of the test (never after)
+      addTearDown(() async => await screenshot.materializePng());
       buffer.writeln('Screenshot: file://$pngPath');
     }
+
     buffer.writeln('Timestamp: ${event.timestamp.toIso8601String()}');
     buffer.writeln('========================================================');
 

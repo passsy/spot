@@ -1,5 +1,6 @@
 import 'dart:core' as core;
 import 'dart:core';
+import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:dartx/dartx_io.dart';
@@ -8,6 +9,8 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nanoid2/nanoid2.dart';
+import 'package:image/image.dart' as img;
+
 import 'package:spot/spot.dart';
 import 'package:spot/src/screenshot/screenshot.dart' as self
     show takeScreenshot;
@@ -15,6 +18,7 @@ import 'package:spot/src/screenshot/screenshot_annotator.dart';
 import 'package:spot/src/screenshot/screenshot_io.dart'
     if (dart.library.html) 'package:spot/src/screenshot/screenshot_web.dart';
 import 'package:stack_trace/stack_trace.dart';
+import 'package:synchronized/synchronized.dart';
 
 export 'package:stack_trace/stack_trace.dart' show Frame;
 
@@ -222,11 +226,14 @@ class Screenshot {
         width = image.width,
         height = image.height {
     addTearDown(() {
-      _image?.dispose();
-      _image = null;
+      _materializeLock.synchronized(() {
+        _image?.dispose();
+        _image = null;
+      });
     });
   }
 
+  /// The name of the file, without file extension
   final String name;
 
   /// The raw image before it is converted to bytes
@@ -235,47 +242,57 @@ class Screenshot {
   /// The raw bytes in raw RGBA format, 8bits per channel
   Uint8List? _bytes;
 
-  /// The pixel data in raw RGBA format, 8bits per channel
-  Future<Uint8List> readBytes() async {
-    if (_bytes != null) {
-      return _bytes!;
-    } else {
+  final Lock _materializeLock = Lock();
+
+  /// Reads the raw bytes from [_image].
+  ///
+  /// Noop when the default Screenshot constructor was used
+  Future<void> materialize() {
+    return _materializeLock.synchronized(() async {
+      if (_bytes != null) {
+        // already materialized
+        return Future.value();
+      }
       final ByteData? byteData =
           // ignore: avoid_redundant_argument_values
           await _image!.toByteData(format: ui.ImageByteFormat.rawRgba);
-      _image!.dispose();
-      _image = null;
       if (byteData == null) {
-        throw 'Could not take screenshot';
+        throw 'Could not read raw bytes from ui.Image';
       }
+      _image!.dispose();
       _bytes = byteData.buffer.asUint8List();
-      return _bytes!;
-    }
+      _image = null;
+    });
+  }
+
+  /// The pixel data in raw RGBA format, 8bits per channel
+  Future<Uint8List> readBytes() async {
+    await materialize();
+    return _bytes!;
   }
 
   /// The pixel data in PNG format
   Future<Uint8List> readPngBytes() async {
-    final bytes = await readBytes();
+    await materialize();
+    return readPngBytesSync();
+  }
 
-    final ui.ImmutableBuffer buffer =
-        await ui.ImmutableBuffer.fromUint8List(bytes);
-
-    final ui.ImageDescriptor descriptor = ui.ImageDescriptor.raw(
-      buffer,
+  /// The pixel data in PNG format
+  Uint8List readPngBytesSync() {
+    final b = _bytes;
+    if (b == null) {
+      throw 'Cannot read PNG bytes, because the screenshot was not materialized yet, call materialize() first';
+    }
+    final image = img.Image.fromBytes(
       width: width,
       height: height,
-      pixelFormat: ui.PixelFormat.rgba8888,
+      bytes: _bytes!.buffer,
+      format: img.Format.uint8,
+      order: img.ChannelOrder.rgba,
+      numChannels: 4,
     );
-
-    final ui.Codec codec = await descriptor.instantiateCodec();
-
-    final frame = await codec.getNextFrame();
-    final pngByteData =
-        await frame.image.toByteData(format: ui.ImageByteFormat.png);
-    if (pngByteData == null) {
-      throw 'Could not convert screenshot to PNG';
-    }
-    return pngByteData.buffer.asUint8List();
+    final Uint8List pngBytes = img.encodePng(image);
+    return pngBytes;
   }
 
   /// The file on disk that contains the screenshot
@@ -348,10 +365,14 @@ extension WriteScreenshotToDisk on Screenshot {
   // TODO find better name and export
   Future<String> materializePng() async {
     final binding = TestWidgetsFlutterBinding.instance;
+    final fileName = '$name.png';
+    print('before readPngBytes');
+    final bytes = await readPngBytes();
+    print('before runAsync');
     final path = await binding.runAsync(() async {
-      final fileName = '$name.png';
-      final bytes = await readPngBytes();
+      print('inside runAsync');
       return writePngToDisk(fileName, bytes);
+      print('after writePngToDisk');
     });
     return path!;
   }
