@@ -508,11 +508,10 @@ void actTests() {
     testWidgets('tapAt throws if position not in view (lower bounds)',
         (tester) async {
       await tester.pumpWidget(const MaterialApp());
-
       await expectLater(
         () => act.tapAt(const Offset(-100, -100)),
         throwsSpotErrorContaining([
-          "Point of interaction (-100.0, -100.0) is outside the viewport (800.0, 600.0).",
+          "Point of interaction (${-100.0}, ${-100.0}) is outside the viewport (${800.0}, ${600.0}).",
           "Humans can not interact with this point.",
         ]),
       );
@@ -527,7 +526,7 @@ void actTests() {
       await expectLater(
         () => act.tapAt(outOutside),
         throwsSpotErrorContaining([
-          "Point of interaction (${outOutside.dx}, ${outOutside.dy}) is outside the viewport (800.0, 600.0).",
+          "Point of interaction (${outOutside.dx}, ${outOutside.dy}) is outside the viewport (${800.0}, ${600.0}).",
           "Humans can not interact with this point.",
         ]),
       );

@@ -337,7 +337,7 @@ final class _IoTimeline extends Timeline {
         // ignore: avoid_print
         print('Test failed, generating timeline report');
         await processPendingScreenshots();
-        if (test.isCI) {
+        if (ci.isCI) {
           // best for CI, prints the full timeline and doesn't require archiving the html timeline file
           printToConsole();
         }
@@ -356,7 +356,7 @@ final class _IoTimeline extends Timeline {
         // ignore: avoid_print
         print('Generating timeline report');
         await processPendingScreenshots();
-        if (test.isCI) {
+        if (ci.isCI) {
           // best for CI, prints the full timeline and doesn't require archiving the html timeline file
           printToConsole();
         }
@@ -516,17 +516,17 @@ final class _WebTimeline extends Timeline {
   /// This is not supported on web.
   @override
   void addScreenshotProcessing(Future<void> Function() process) {
-    throw UnimplementedError(
-      'addScreenshotProcessing is not supported on web',
-    );
+    // throw UnimplementedError(
+    //   'addScreenshotProcessing is not supported on web',
+    // );
   }
 
   /// Processes all pending screenshots
   /// This is not supported on web.
   Future<void> processPendingScreenshots() async {
-    throw UnimplementedError(
-      'processPendingScreenshots is not supported on web',
-    );
+    // throw UnimplementedError(
+    //   'processPendingScreenshots is not supported on web',
+    // );
   }
 
   // ignore: avoid_futureor_void
@@ -699,7 +699,3 @@ Frame? mostRelevantCaller({Trace? trace, Frame? fallback}) {
 }
 
 const Object _undefined = Object();
-
-extension LiveTestExtensions on LiveTest {
-  bool get isCI => ci.isCI;
-}

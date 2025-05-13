@@ -1,6 +1,5 @@
 import 'dart:core' as core;
 import 'dart:core';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:dartx/dartx_io.dart';
@@ -8,9 +7,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nanoid2/nanoid2.dart';
 import 'package:image/image.dart' as img;
-
+import 'package:nanoid2/nanoid2.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/screenshot/screenshot.dart' as self
     show takeScreenshot;
@@ -216,6 +214,7 @@ class Screenshot {
   })  : _bytes = bytes,
         _image = null;
 
+  /// Creates a [Screenshot] that holds a reference to a [ui.Image] and later loads the actual bytes
   Screenshot.fromImage({
     required ui.Image image,
     required this.pixelRatio,
@@ -230,7 +229,6 @@ class Screenshot {
       _materializeLock.synchronized(() {
         _image?.dispose();
         _image = null;
-        print('Setting _image to null due to dispose $name');
       });
     });
   }
@@ -250,12 +248,11 @@ class Screenshot {
   ///
   /// Noop when the default Screenshot constructor was used
   Future<void> materialize() {
-    assert(_image != null || _bytes != null);
+    if (_bytes != null) {
+      // already materialized
+      return Future.value();
+    }
     return _materializeLock.synchronized(() async {
-      if (_bytes != null) {
-        // already materialized
-        return Future.value();
-      }
       final ByteData? byteData =
           // ignore: avoid_redundant_argument_values
           await _image!.toByteData(format: ui.ImageByteFormat.rawRgba);
@@ -264,21 +261,29 @@ class Screenshot {
       }
       _image!.dispose();
       _bytes = byteData.buffer.asUint8List();
-      print('Setting _image to null after setting _bytes $name');
       _image = null;
     });
   }
 
+  /// Returns true when the image data is already available as raw bytes
+  ///
+  /// Returns false when the data has to be extracted async from the [ui.Image] first
+  bool get isMaterialized => _bytes != null;
+
   /// The pixel data in raw RGBA format, 8bits per channel
-  Future<Uint8List> readBytes() async {
-    await materialize();
-    return _bytes!;
+  Future<Uint8List> readBytes() {
+    if (isMaterialized) {
+      return Future.value(_bytes!);
+    }
+    return materialize().then((_) => _bytes!);
   }
 
   /// The pixel data in PNG format
-  Future<Uint8List> readPngBytes() async {
-    await materialize();
-    return readPngBytesSync();
+  Future<Uint8List> readPngBytes() {
+    if (isMaterialized) {
+      return Future.value(readPngBytesSync());
+    }
+    return materialize().then((_) => readPngBytesSync());
   }
 
   /// The pixel data in PNG format
@@ -290,7 +295,8 @@ class Screenshot {
     final image = img.Image.fromBytes(
       width: width,
       height: height,
-      bytes: _bytes!.buffer,
+      bytes: b.buffer,
+      // ignore: avoid_redundant_argument_values
       format: img.Format.uint8,
       order: img.ChannelOrder.rgba,
       numChannels: 4,
@@ -364,19 +370,16 @@ class ScreenshotAnnotation {
   ScreenshotAnnotation({required this.image, required this.name});
 }
 
+///
 extension WriteScreenshotToDisk on Screenshot {
   /// Writes the screenshot to disk, returns the absolute path to the file
   // TODO find better name and export
   Future<String> materializePng() async {
     final binding = TestWidgetsFlutterBinding.instance;
     final fileName = name;
-    print('before readPngBytes $fileName');
     final bytes = await readPngBytes();
-    print('before runAsync $fileName');
-    final path = await binding.runAsync(() async {
-      print('inside runAsync $fileName');
-      return writePngToDisk(fileName, bytes);
-    });
+    final path =
+        await binding.runAsync(() async => writePngToDisk(fileName, bytes));
     return path!;
   }
 }

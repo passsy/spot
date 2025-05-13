@@ -1,17 +1,12 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
-import 'dart:async';
 import 'dart:io';
 
-import 'package:dartx/dartx_io.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image/image.dart' as img;
-import 'package:spot/spot.dart';
 import 'package:spot/src/screenshot/screenshot.dart';
-import 'package:spot/src/screenshot/screenshot_annotator.dart';
-import '../util/assert_error.dart';
 
 void main() {
   testWidgets('Take screenshot of the entire app', (tester) async {
@@ -580,15 +575,4 @@ Future<double> percentageOfPixelsWithColor(File file, Color color) async {
   // Calculate the red pixel coverage percentage
   final double coverage = matchingPixels / totalPixelCount;
   return coverage;
-}
-
-/// The line number of this function call
-/// Does not work for web
-int _currentLineNumber() {
-  final lines = StackTrace.current.toString().split('\n');
-  final callerLine = lines[1];
-  final parts = callerLine.split(':');
-  print('parts: $parts');
-  // parts[parts.length - 1] is the column number
-  return parts[parts.length - 2].toInt();
 }
