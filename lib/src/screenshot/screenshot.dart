@@ -225,10 +225,12 @@ class Screenshot {
         _bytes = null,
         width = image.width,
         height = image.height {
-    addTearDown(() {
+    assert(_image != null || _bytes != null);
+    timeline.addTearDown(() {
       _materializeLock.synchronized(() {
         _image?.dispose();
         _image = null;
+        print('Setting _image to null due to dispose $name');
       });
     });
   }
@@ -248,6 +250,7 @@ class Screenshot {
   ///
   /// Noop when the default Screenshot constructor was used
   Future<void> materialize() {
+    assert(_image != null || _bytes != null);
     return _materializeLock.synchronized(() async {
       if (_bytes != null) {
         // already materialized
@@ -261,6 +264,7 @@ class Screenshot {
       }
       _image!.dispose();
       _bytes = byteData.buffer.asUint8List();
+      print('Setting _image to null after setting _bytes $name');
       _image = null;
     });
   }
@@ -365,14 +369,13 @@ extension WriteScreenshotToDisk on Screenshot {
   // TODO find better name and export
   Future<String> materializePng() async {
     final binding = TestWidgetsFlutterBinding.instance;
-    final fileName = '$name.png';
-    print('before readPngBytes');
+    final fileName = name;
+    print('before readPngBytes $fileName');
     final bytes = await readPngBytes();
-    print('before runAsync');
+    print('before runAsync $fileName');
     final path = await binding.runAsync(() async {
-      print('inside runAsync');
+      print('inside runAsync $fileName');
       return writePngToDisk(fileName, bytes);
-      print('after writePngToDisk');
     });
     return path!;
   }

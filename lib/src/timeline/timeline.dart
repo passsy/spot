@@ -1,5 +1,7 @@
 // ignore_for_file: depend_on_referenced_packages
 
+import 'dart:async';
+
 import 'package:ci/ci.dart' as ci;
 import 'package:clock/clock.dart';
 import 'package:dartx/dartx.dart';
@@ -140,8 +142,10 @@ abstract interface class Timeline {
   /// To speed up processing, the screenshots are only processed when actually needed in a report (console or html).
   void addScreenshotProcessing(Future<void> Function() process);
 
-  /// Processes all pending screenshots
-  Future<void> processPendingScreenshots();
+  /// Adds a function that will be called after the test completed and the timeline has been rendered.
+  ///
+  /// Use it instead of `addTearDown` from `flutter_test` to ensure that the timeline is rendered before
+  void addTearDown(FutureOr<void> Function() tearDown);
 }
 
 /// The actual implementation of the [Timeline].
@@ -298,8 +302,15 @@ final class _IoTimeline extends Timeline {
     _toBeProcessedScreenshots.add(process);
   }
 
-  /// Processes all pending screenshots
+  // ignore: avoid_futureor_void
+  final List<FutureOr<void> Function()> _tearDowns = [];
+
   @override
+  void addTearDown(FutureOr<void> Function() tearDown) {
+    _tearDowns.add(tearDown);
+  }
+
+  /// Processes all pending screenshots
   Future<void> processPendingScreenshots() async {
     if (_toBeProcessedScreenshots.isEmpty) {
       return;
@@ -313,6 +324,14 @@ final class _IoTimeline extends Timeline {
   ///
   /// Prints the timeline to console, as link to a html file or plain text
   Future<void> _onPostTest() async {
+    await _renderTimeline();
+    for (final tearDown in _tearDowns.toList()) {
+      await tearDown();
+      _tearDowns.remove(tearDown);
+    }
+  }
+
+  Future<void> _renderTimeline() async {
     Future<void> reportOnError() async {
       if (!test.state.result.isPassing) {
         // ignore: avoid_print
@@ -496,12 +515,27 @@ final class _WebTimeline extends Timeline {
   /// To speed up processing, the screenshots are only processed when actually needed in a report (console or html).
   /// This is not supported on web.
   @override
-  void addScreenshotProcessing(Future<void> Function() process) {}
+  void addScreenshotProcessing(Future<void> Function() process) {
+    throw UnimplementedError(
+      'addScreenshotProcessing is not supported on web',
+    );
+  }
 
   /// Processes all pending screenshots
   /// This is not supported on web.
+  Future<void> processPendingScreenshots() async {
+    throw UnimplementedError(
+      'processPendingScreenshots is not supported on web',
+    );
+  }
+
+  // ignore: avoid_futureor_void
+  final List<FutureOr<void> Function()> _tearDowns = [];
+
   @override
-  Future<void> processPendingScreenshots() async {}
+  void addTearDown(FutureOr<void> Function() tearDown) {
+    _tearDowns.add(tearDown);
+  }
 
   /// Event handler after the [test] has completed.
   ///

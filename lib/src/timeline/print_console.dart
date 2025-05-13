@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:flutter_test/flutter_test.dart' show addTearDown;
+import 'package:flutter_test/flutter_test.dart' show addTearDown, expect;
 import 'package:spot/src/screenshot/screenshot.dart';
 import 'package:spot/src/screenshot/screenshot_io.dart';
 import 'package:spot/src/timeline/timeline.dart';
@@ -46,7 +46,10 @@ extension ConsoleTimelinePrinter on Timeline {
       final pngPath = writePngToDisk(screenshot.name, Uint8List(0));
       // fill it with data async
       // make sure it is written at the end of the test (never after)
-      addTearDown(() async => await screenshot.materializePng());
+      addTearDown(() async {
+        final path = await screenshot.materializePng();
+        expect(path, pngPath);
+      });
       buffer.writeln('Screenshot: file://$pngPath');
     }
 
