@@ -580,31 +580,36 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
       if (count < min) {
         // try finding similar selectors (less specific)
         // if one is found, fail with a more specific error message
-        _tryMatchingLessSpecificCriteria(this);
+        _tryMatchingLessSpecificCriteria(
+          this,
+          quantityConstraint: QuantityConstraint(min: min, max: max),
+        );
+
+        final unconstrainedSelector = selector.removeQuantityConstraints();
 
         // else fail with default message
         final errorBuilder = StringBuffer();
         if (count == 0) {
           if (min == max) {
             errorBuilder.writeln(
-              'Could not find $selector in widget tree, '
+              'Could not find ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
               'expected exactly $min.',
             );
           } else {
             errorBuilder.writeln(
-              'Could not find $selector in widget tree, '
+              'Could not find ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
               'expected at least $min',
             );
           }
         } else {
           if (min == max) {
             errorBuilder.writeln(
-              'Found $count elements matching $selector in widget tree, '
+              'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
               'expected exactly $min.',
             );
           } else {
             errorBuilder.writeln(
-              'Found $count elements matching $selector in widget tree, '
+              'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
               'expected at least $min.',
             );
           }
@@ -622,7 +627,8 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
             ),
           );
         }
-        fail('Could not find $selector in widget tree');
+        fail(
+            'Could not find ${unconstrainedSelector.toStringBreadcrumb()} in widget tree');
       }
     }
 
@@ -663,11 +669,25 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
 /// Throws when elements are found which match less specific criteria
 ///
 /// Uses all permutations of the criteria (props/parents/children)
-void _tryMatchingLessSpecificCriteria(WidgetSnapshot snapshot) {
+void _tryMatchingLessSpecificCriteria(
+  WidgetSnapshot snapshot, {
+  QuantityConstraint? quantityConstraint,
+}) {
   final selector = snapshot.selector;
   final count = snapshot.discovered.length;
   final errorBuilder = StringBuffer();
   final unconstrainedSelector = selector.removeQuantityConstraints();
+  final minimumConstraint = quantityConstraint != null
+      ? quantityConstraint.min
+      : selector.quantityConstraint.min;
+  final maximumConstraint = quantityConstraint != null
+      ? quantityConstraint.max
+      : selector.quantityConstraint.max;
+
+  if (minimumConstraint == null && maximumConstraint == null) {
+    // no constraints, so no need to check
+    return;
+  }
   for (final lessSpecificSelector
       in unconstrainedSelector.lessSpecificSelectors()) {
     late final WidgetSnapshot lessSpecificSnapshot;
@@ -677,9 +697,6 @@ void _tryMatchingLessSpecificCriteria(WidgetSnapshot snapshot) {
       continue;
     }
     final lessSpecificCount = lessSpecificSnapshot.discovered.length;
-    final minimumConstraint = selector.quantityConstraint.min;
-    final maximumConstraint = selector.quantityConstraint.max;
-    final unconstrainedSelector = selector.removeQuantityConstraints();
 
     // error that selector could not be found, but instead spot detected lessSpecificSnapshot, which might be useful
     if (lessSpecificCount > count) {
@@ -741,6 +758,8 @@ void _tryMatchingLessSpecificCriteria(WidgetSnapshot snapshot) {
       final significantTree =
           findCommonAncestor(lessSpecificSnapshot.discoveredElements.toSet())
               .toStringDeep();
+      final timelineErrorText =
+          '$errorBuilder\nFound in widget Tree:\n$significantTree';
 
       if (timeline.mode != TimelineMode.off) {
         final screenshot = timeline.takeScreenshotSync(
@@ -755,9 +774,20 @@ void _tryMatchingLessSpecificCriteria(WidgetSnapshot snapshot) {
           eventType: 'Assertion Failed',
           color: Colors.red,
           screenshot: screenshot,
-          details: '$errorBuilder\nFound in widget Tree:\n$significantTree',
+          details: timelineErrorText,
         );
       }
+
+      if (timeline.mode == TimelineMode.off) {
+        errorBuilder.writeln(
+          'Enable the timeline to see the relevant widget tree at this point https://github.com/passsy/spot#change-timeline-mode',
+        );
+      } else {
+        errorBuilder.writeln(
+          '⬇️⬇️⬇️ See the timeline at the very bottom for the full widget tree ⬇️⬇️⬇️',
+        );
+      }
+
       fail(errorBuilder.toString());
     }
   }
