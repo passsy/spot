@@ -332,6 +332,7 @@ void main() {
       tester.view.physicalSize = const Size(210, 210);
       tester.view.devicePixelRatio = 1.0;
       const red = Color(0xffff0000);
+      const pink = Color(0xFFFF00FF);
       await tester.pumpWidget(
         Center(
           child: Container(height: 200, width: 200, color: red),
@@ -347,22 +348,25 @@ void main() {
         expect(shot.file!.existsSync(), isTrue);
       }
 
-      final shotPinkPixels = await percentageOfPixelsWithColor(shot, Color(0xFFFF00FF));
-      expect(shotPinkPixels, 0.0);
-      final annotationPinkPixels = await percentageOfPixelsWithColor(shot.annotations.first.image, Color(0xFFFF00FF));
-      expect(annotationPinkPixels, greaterThan(0.0));
+      final shotCoverage = await analyzeImageCoverage(shot);
+      expect(shotCoverage.coverage(pink), 0.0);
+      expect(shotCoverage.coverage(red), greaterThan(0.5));
+      final annotationCoverage = await analyzeImageCoverage(shot.annotations.first.image);
+      expect(annotationCoverage.coverage(pink), greaterThan(0.0));
+      expect(annotationCoverage.coverage(red), lessThan(0.1));
 
       final flattened = await shot.flattenedImage();
-      final pinkPixels = await percentageOfPixelsWithColor(flattened, Color(0xFFFF00FF));
-      final redPixels = await percentageOfPixelsWithColor(flattened, Color(0xFFFF0000));
-      expect(pinkPixels, greaterThan(0.001));
-      expect(redPixels, greaterThan(0.5));
+      final flattenedCoverage = await analyzeImageCoverage(flattened);
+      expect(flattenedCoverage.coverage(pink), greaterThan(0.001));
+      expect(flattenedCoverage.coverage(red), greaterThan(0.5));
+      expect(flattenedCoverage.coverage(Colors.white), lessThan(0.01));
     });
 
     testWidgets('Take screenshot with tap marker from a selector', (tester) async {
       tester.view.physicalSize = const Size(1000, 1000);
       tester.view.devicePixelRatio = 1.0;
       const red = Color(0xffff0000);
+      const pink = Color(0xFFFF00FF);
       await tester.pumpWidget(
         Center(
           child: RepaintBoundary(
@@ -382,14 +386,17 @@ void main() {
       }
 
       final flattened = await container.flattenedImage();
-      final pinkPixelCoverage = await percentageOfPixelsWithColor(flattened, Color(0xFFFF00FF));
-      expect(pinkPixelCoverage, greaterThan(0.0));
+      final coverage = await analyzeImageCoverage(flattened);
+      expect(coverage.coverage(pink), greaterThan(0.0));
+      expect(coverage.coverage(red), greaterThan(0.5));
+      expect(coverage.coverage(Colors.white), lessThan(0.01));
     });
 
     testWidgets('Take screenshot with tap marker from a snapshot', (tester) async {
       tester.view.physicalSize = const Size(1000, 1000);
       tester.view.devicePixelRatio = 1.0;
       const red = Color(0xffff0000);
+      const pink = Color(0xFFFF00FF);
       await tester.pumpWidget(
         Center(
           child: RepaintBoundary(
@@ -410,8 +417,10 @@ void main() {
       }
 
       final flattened = await container.flattenedImage();
-      final pinkPixelCoverage = await percentageOfPixelsWithColor(flattened, Color(0xFFFF00FF));
-      expect(pinkPixelCoverage, greaterThan(0.0));
+      final coverage = await analyzeImageCoverage(flattened);
+      expect(coverage.coverage(pink), greaterThan(0.0));
+      expect(coverage.coverage(red), greaterThan(0.5));
+      expect(coverage.coverage(Colors.white), lessThan(0.01));
     });
 
     testWidgets(
@@ -453,6 +462,7 @@ void main() {
       tester.view.physicalSize = const Size(1000, 1000);
       tester.view.devicePixelRatio = 1.0;
       const red = Color(0xffff0000);
+      const pink = Color(0xFFFF00FF);
       await tester.pumpWidget(
         Center(
           child: RepaintBoundary(
@@ -473,8 +483,10 @@ void main() {
       }
 
       final flattened = await container.flattenedImage();
-      final pinkPixelCoverage = await percentageOfPixelsWithColor(flattened, Color(0xFFFF00FF));
-      expect(pinkPixelCoverage, greaterThan(0.0));
+      final coverage = await analyzeImageCoverage(flattened);
+      expect(coverage.coverage(pink), greaterThan(0.0));
+      expect(coverage.coverage(red), greaterThan(0.5));
+      expect(coverage.coverage(Colors.white), lessThan(0.01));
     });
 
     testWidgets('takeScreenshotWithCrosshair throws when element does not exist anymore', (tester) async {
@@ -563,4 +575,39 @@ int _currentLineNumber() {
   final parts = callerLine.split(':');
   // parts[parts.length - 1] is the column number
   return parts[parts.length - 2].toInt();
+}
+
+/// Parses a png image file and allows pixel coverage assertions for multiple colors.
+class ImageCoverageResult {
+  final img.Image image;
+  final Map<Color, double> _cache = {};
+
+  ImageCoverageResult(this.image);
+
+  /// Returns the percentage of pixels matching [color].
+  double coverage(Color color) {
+    return _cache.putIfAbsent(color, () {
+      int matching = 0;
+      final total = image.width * image.height;
+      for (int y = 0; y < image.height; y++) {
+        for (int x = 0; x < image.width; x++) {
+          final pixel = image.getPixel(x, y);
+          final c = Color.fromARGB(
+            pixel.a.toInt(),
+            pixel.r.toInt(),
+            pixel.g.toInt(),
+            pixel.b.toInt(),
+          );
+          if (c == color) matching++;
+        }
+      }
+      return matching / total;
+    });
+  }
+}
+
+Future<ImageCoverageResult> analyzeImageCoverage(ImageDataRef screenshot) async {
+  final binding = TestWidgetsFlutterBinding.instance;
+  final image = (await binding.runAsync(() async => img.decodePng(await screenshot.readPngBytes())))!;
+  return ImageCoverageResult(image);
 }
