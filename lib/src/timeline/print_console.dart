@@ -2,7 +2,8 @@ import 'dart:async';
 
 import 'package:ci/ci.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_test/flutter_test.dart' show addTearDown, expect;
+import 'package:flutter_test/flutter_test.dart'
+    show TestWidgetsFlutterBinding, addTearDown, expect;
 import 'package:spot/src/screenshot/screenshot.dart';
 import 'package:spot/src/screenshot/screenshot_io.dart';
 import 'package:spot/src/timeline/timeline.dart';
@@ -40,13 +41,17 @@ extension ConsoleTimelinePrinter on Timeline {
     buffer.writeln('Caller: $caller');
     final screenshot = event.screenshot;
     if (screenshot != null) {
-      // create sync dummy file
-      final pngPath = writePngToDisk(screenshot.name, Uint8List(0));
-      // fill it with data async
-      // make sure it is written at the end of the test (never after)
-      addTearDown(() async {
-        final path = await screenshot.materializePng();
-        expect(path, pngPath);
+      // create dummy file to be printed into the console (sync)
+      final fileName = screenshot.name;
+      final pngPath = createSpotTempFile(fileName, Uint8List(0));
+      // fill it with data (async)
+      timeline.addScreenshotProcessing(() async {
+        final bytes = await screenshot.readPngBytes();
+        final binding = TestWidgetsFlutterBinding.instance;
+        final path = await binding.runAsync(() async {
+          return createSpotTempFile(fileName, bytes);
+        });
+        assert(path == pngPath);
       });
       buffer.writeln('Screenshot: file://$pngPath');
     }
