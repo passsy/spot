@@ -46,10 +46,11 @@ extension ConsoleTimelinePrinter on Timeline {
       final pngPath = createSpotTempFile(fileName, Uint8List(0));
       // fill it with data (async)
       timeline.addScreenshotProcessing(() async {
-        final bytes = await screenshot.readPngBytes();
+        final flattened = await screenshot.flattenedImage();
+        final pngBytes = await flattened.readPngBytes();
         final binding = TestWidgetsFlutterBinding.instance;
         final path = await binding.runAsync(() async {
-          return createSpotTempFile(fileName, bytes);
+          return createSpotTempFile(fileName, pngBytes);
         });
         assert(path == pngPath);
       });

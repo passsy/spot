@@ -66,7 +66,9 @@ extension HtmlTimelinePrinter on Timeline {
       if (screenshot != null) {
         // save screenshots relative to the events.json file in screenshots/
         screenshotFile = screenshotsDir.file('${screenshot.name}.png');
-        screenshotFile.writeAsBytesSync(await screenshot.readPngBytes());
+        final flattened = await screenshot.flattenedImage();
+        final pngBytes = await flattened.readPngBytes();
+        screenshotFile.writeAsBytesSync(pngBytes);
       }
 
       final timelineEvent = x.TimelineEvent(
