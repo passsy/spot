@@ -742,6 +742,30 @@ void _tryMatchingLessSpecificCriteria(
         }
       }
 
+      if (count == 0) {
+        final dynamicRegexp = RegExp(r'\bdynamic\b');
+
+        final allUsedSelectors = [
+          selector,
+          ...selector.parents,
+          ...selector.children,
+        ];
+        final allUsedTypes = allUsedSelectors.map((e) => e.type).distinct();
+
+        for (final type in allUsedTypes) {
+          final typeName = "$type";
+          final RegExpMatch? match = dynamicRegexp.firstMatch(typeName);
+          if (match != null) {
+            errorBuilder.writeln(
+                '\nWARNING: You are using a "dynamic" in your selector (ex: spot<$typeName>), this may be why you got no results:');
+            errorBuilder.writeln(
+                "-> a spot<$typeName>() doesn't match a ${typeName.replaceAll("dynamic", "String")}.");
+            errorBuilder.writeln(
+                "-> \"dynamic\" is used when you don't specify a generic type.\n");
+          }
+        }
+      }
+
       errorBuilder.writeln(
         "A less specific search ($lessSpecificSelector) discovered $lessSpecificCount matches!",
       );
