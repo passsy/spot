@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
@@ -107,13 +108,14 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       shared.timelineSeparator,
     );
     final prefix = isGlobalMode ? 'global' : 'local';
-    final htmlLine =
-        timeline.firstWhere((line) => line.startsWith('View timeline here:'));
+    final htmlLine = timeline
+        .firstOrNullWhere((line) => line.startsWith('View timeline here:'));
     expect(
-      htmlLine.endsWith(
+      htmlLine,
+      endsWith(
         '$prefix-onerror-timeline-with-error-prints-timeline${Platform.pathSeparator}index.html',
       ),
-      isTrue,
+      reason: "Full output $stdout",
     );
   }
 
@@ -158,7 +160,7 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
     expect(
       screenshotFile.readAsBytesSync(),
       isNotEmpty,
-      reason: 'file is empty, no data written',
+      reason: 'file is empty, no data written at $screenshotPath',
     );
 
     expect(

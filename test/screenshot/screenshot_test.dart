@@ -4,11 +4,13 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:dartx/dartx_io.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image/image.dart' as img;
 import 'package:spot/spot.dart';
 import 'package:spot/src/screenshot/screenshot_annotator.dart';
+
 import '../util/assert_error.dart';
 
 void main() {
@@ -23,9 +25,14 @@ void main() {
     );
 
     final shot = await takeScreenshot();
-    expect(shot.file.existsSync(), isTrue);
+    expect(shot.width, 210);
+    expect(shot.height, 210);
+    expect(shot.name, isNot(endsWith('.png')));
 
-    final redPixelCoverage = await percentageOfPixelsWithColor(shot.file, red);
+    final filePath = await shot.createTempPngFile();
+    expect(filePath, endsWith('.png'));
+    expect(File(filePath).existsSync(), isTrue);
+    final redPixelCoverage = await percentageOfPixelsWithColor(shot, red);
     expect(redPixelCoverage, greaterThan(0.9));
   });
 
@@ -42,11 +49,14 @@ void main() {
     );
 
     final container = await takeScreenshot(selector: spot<Container>());
-    expect(container.file.existsSync(), isTrue);
-
-    final redPixelCoverage =
-        await percentageOfPixelsWithColor(container.file, red);
+    final redPixelCoverage = await percentageOfPixelsWithColor(container, red);
     expect(redPixelCoverage, 1.0);
+
+    if (kIsWeb) {
+      expect(container.file, isNull);
+    } else {
+      expect(container.file.existsSync(), isTrue);
+    }
   });
 
   testWidgets('Take screenshot from a snapshot', (tester) async {
@@ -63,16 +73,18 @@ void main() {
     final containerSnapshot = spot<Container>().snapshot();
 
     final container = await takeScreenshot(snapshot: containerSnapshot);
-    expect(container.file.existsSync(), isTrue);
 
-    final redPixelCoverage =
-        await percentageOfPixelsWithColor(container.file, red);
+    if (kIsWeb) {
+      expect(container.file, isNull);
+    } else {
+      expect(container.file!.existsSync(), isTrue);
+    }
+
+    final redPixelCoverage = await percentageOfPixelsWithColor(container, red);
     expect(redPixelCoverage, 1.0);
   });
 
-  testWidgets(
-      'Take screenshot from a snapshot throws when snapshot is outdated',
-      (tester) async {
+  testWidgets('Take screenshot from a snapshot throws when snapshot is outdated', (tester) async {
     tester.view.physicalSize = const Size(1000, 1000);
     tester.view.devicePixelRatio = 1.0;
     const red = Color(0xffff0000);
@@ -99,7 +111,7 @@ void main() {
     );
   });
 
-  testWidgets('Take screenshot from a element', (tester) async {
+  testWidgets('Take screenshot from an element', (tester) async {
     tester.view.physicalSize = const Size(1000, 1000);
     tester.view.devicePixelRatio = 1.0;
     const red = Color(0xffff0000);
@@ -113,15 +125,16 @@ void main() {
     final containerElement = spot<Container>().snapshot().discoveredElement;
 
     final container = await takeScreenshot(element: containerElement);
-    expect(container.file.existsSync(), isTrue);
-
-    final redPixelCoverage =
-        await percentageOfPixelsWithColor(container.file, red);
+    if (kIsWeb) {
+      expect(container.file, isNull);
+    } else {
+      expect(container.file!.existsSync(), isTrue);
+    }
+    final redPixelCoverage = await percentageOfPixelsWithColor(container, red);
     expect(redPixelCoverage, 1.0);
   });
 
-  testWidgets('takeScreenshot throws when element does not exist anymore',
-      (tester) async {
+  testWidgets('takeScreenshot throws when element does not exist anymore', (tester) async {
     tester.view.physicalSize = const Size(1000, 1000);
     tester.view.devicePixelRatio = 1.0;
     const red = Color(0xffff0000);
@@ -160,31 +173,47 @@ void main() {
       ),
     );
     final screenshot1 = await spot<Container>().takeScreenshot();
-    expect(screenshot1.file.existsSync(), isTrue);
-
     final screenshot2 = await spot<Container>().snapshot().takeScreenshot();
-    expect(screenshot2.file.existsSync(), isTrue);
-
-    final screenshot3 =
-        await spot<Container>().snapshot().discoveredElement!.takeScreenshot();
-    expect(screenshot3.file.existsSync(), isTrue);
+    final screenshot3 = await spot<Container>().snapshot().discoveredElement!.takeScreenshot();
+    if (kIsWeb) {
+      expect(screenshot1.file, isNull);
+      expect(screenshot2.file, isNull);
+      expect(screenshot3.file, isNull);
+    } else {
+      expect(screenshot1.file!.existsSync(), isTrue);
+      expect(screenshot2.file!.existsSync(), isTrue);
+      expect(screenshot3.file!.existsSync(), isTrue);
+    }
   });
 
   testWidgets('Take screenshot with custom name', (tester) async {
     final shot = await takeScreenshot(name: 'custom_name');
-    expect(shot.file.name, contains('custom_name'));
+    if (kIsWeb) {
+      expect(shot.file, isNull);
+    } else {
+      expect((shot.file as File).name, contains('custom_name'));
+    }
   });
 
   testWidgets('screenshot file name contains test file name', (tester) async {
-    final shot = await takeScreenshot();
-    final lineNumber = _currentLineNumber() - 1;
-    expect(shot.file.name, contains('screenshot_test_$lineNumber'));
+    if (kIsWeb) {
+      final shot = await takeScreenshot();
+      expect(shot.file, isNull);
+    } else {
+      final shot = await takeScreenshot();
+      final lineNumber = _currentLineNumber() - 1;
+      expect((shot.file as File).name, contains('screenshot_test_$lineNumber'));
+    }
   });
 
   testWidgets('name gets escaped to prevent slashes', (tester) async {
     final shot = await takeScreenshot(name: 'path/to/name');
-    expect(shot.file.name, isNot(contains('path/to/name')));
-    expect(shot.file.name, contains('path%2Fto%2Fname'));
+    if (kIsWeb) {
+      expect(shot.file, isNull);
+    } else {
+      expect((shot.file as File).name, isNot(contains('path/to/name')));
+      expect((shot.file as File).name, contains('path%2Fto%2Fname'));
+    }
   });
 
   testWidgets('initiator frame is attached', (tester) async {
@@ -200,8 +229,12 @@ void main() {
     int line = 0;
     await runZoned(
       () async {
-        await takeScreenshot();
-        line = _currentLineNumber() - 1;
+        if (!kIsWeb) {
+          await takeScreenshot();
+          line = _currentLineNumber() - 1;
+        } else {
+          await takeScreenshot();
+        }
       },
       zoneSpecification: ZoneSpecification(
         print: (self, parent, zone, message) {
@@ -210,11 +243,16 @@ void main() {
       ),
     );
     final text = log.join('\n');
-    expect(text, contains('Screenshot file://'));
-    expect(text, contains('screenshot_test'));
-    expect(text, contains('.png'));
-    expect(text, contains('taken at main'));
-    expect(text, contains('screenshot_test.dart:$line'));
+    final containsFile = text.contains('Screenshot file://');
+    final containsScreenShotTest = text.contains('screenshot_test');
+    final containsPng = text.contains('.png');
+    final containsTakenAtMain = text.contains('taken at main');
+    final containsLine = text.contains('screenshot_test.dart:$line');
+    expect(containsFile, kIsWeb ? isFalse : isTrue);
+    expect(containsScreenShotTest, kIsWeb ? isFalse : isTrue);
+    expect(containsPng, kIsWeb ? isFalse : isTrue);
+    expect(containsTakenAtMain, kIsWeb ? isFalse : isTrue);
+    expect(containsLine, kIsWeb ? isFalse : isTrue);
   });
 
   testWidgets('warning when screenshot is bigger than target', (tester) async {
@@ -247,21 +285,21 @@ void main() {
     );
 
     final text = log.join('\n');
-    expect(
-      text,
-      contains(
-        RegExp(
-          r'Warning: The screenshot captured of RichText is larger \(1000, 1000\) '
-          r'than RichText \(.*, .*\) itself.',
-        ),
+
+    final largerWarning = text.contains(
+      RegExp(
+        r'Warning: The screenshot captured of RichText is larger \(1000, 1000\) '
+        r'than RichText \(.*, .*\) itself.',
       ),
     );
-    expect(
-      text,
-      contains(
-        'Wrap the RichText in a RepaintBoundary to be able to capture only that layer.',
-      ),
+
+    expect(largerWarning, kIsWeb ? isFalse : isTrue);
+
+    final containsHint = text.contains(
+      'Wrap the RichText in a RepaintBoundary to be able to capture only that layer.',
     );
+
+    expect(containsHint, kIsWeb ? isFalse : isTrue);
   });
 
   testWidgets('Take screenshot of dirty tree', (tester) async {
@@ -282,20 +320,19 @@ void main() {
 
     // FontLoader.load triggers PaintBinding.instance.systemFonts listeners
     await loadAppFonts();
-    final renderObject =
-        spot<Banner>().spot<CustomPaint>().snapshotRenderObject();
-    expect(renderObject.debugNeedsPaint, isTrue);
+    final renderObject = spot<Banner>().spot<CustomPaint>().snapshotRenderObject();
+    expect(renderObject.debugNeedsPaint, kIsWeb ? isFalse : isTrue);
 
     // When elements are dirty, taking a screenshot should still work
     await takeScreenshot();
   });
 
   group('Annotate Screenshot test', () {
-    testWidgets('Take screenshot with tap marker of the entire app',
-        (tester) async {
+    testWidgets('Take screenshot with tap marker of the entire app', (tester) async {
       tester.view.physicalSize = const Size(210, 210);
       tester.view.devicePixelRatio = 1.0;
       const red = Color(0xffff0000);
+      const pink = Color(0xFFFF00FF);
       await tester.pumpWidget(
         Center(
           child: Container(height: 200, width: 200, color: red),
@@ -305,18 +342,31 @@ void main() {
       final shot = await takeScreenshot(
         annotators: [CrosshairAnnotator(centerPosition: Offset(105, 105))],
       );
-      expect(shot.file.existsSync(), isTrue);
+      if (kIsWeb) {
+        expect(shot.file, isNull);
+      } else {
+        expect(shot.file!.existsSync(), isTrue);
+      }
 
-      final pinkPixelCoverage =
-          await percentageOfPixelsWithColor(shot.file, Color(0xFFFF00FF));
-      expect(pinkPixelCoverage, greaterThan(0.0));
+      final shotCoverage = await analyzeImageCoverage(shot);
+      expect(shotCoverage.coverage(pink), 0.0);
+      expect(shotCoverage.coverage(red), greaterThan(0.5));
+      final annotationCoverage = await analyzeImageCoverage(shot.annotations.first.image);
+      expect(annotationCoverage.coverage(pink), greaterThan(0.0));
+      expect(annotationCoverage.coverage(red), lessThan(0.1));
+
+      final flattened = await shot.flattenedImage();
+      final flattenedCoverage = await analyzeImageCoverage(flattened);
+      expect(flattenedCoverage.coverage(pink), greaterThan(0.001));
+      expect(flattenedCoverage.coverage(red), greaterThan(0.5));
+      expect(flattenedCoverage.coverage(Colors.white), lessThan(0.01));
     });
 
-    testWidgets('Take screenshot with tap marker from a selector',
-        (tester) async {
+    testWidgets('Take screenshot with tap marker from a selector', (tester) async {
       tester.view.physicalSize = const Size(1000, 1000);
       tester.view.devicePixelRatio = 1.0;
       const red = Color(0xffff0000);
+      const pink = Color(0xFFFF00FF);
       await tester.pumpWidget(
         Center(
           child: RepaintBoundary(
@@ -329,18 +379,24 @@ void main() {
         selector: spot<Container>(),
         annotators: [CrosshairAnnotator(centerPosition: Offset(100, 100))],
       );
-      expect(container.file.existsSync(), isTrue);
+      if (kIsWeb) {
+        expect(container.file, isNull);
+      } else {
+        expect(container.file!.existsSync(), isTrue);
+      }
 
-      final pinkPixelCoverage =
-          await percentageOfPixelsWithColor(container.file, Color(0xFFFF00FF));
-      expect(pinkPixelCoverage, greaterThan(0.0));
+      final flattened = await container.flattenedImage();
+      final coverage = await analyzeImageCoverage(flattened);
+      expect(coverage.coverage(pink), greaterThan(0.0));
+      expect(coverage.coverage(red), greaterThan(0.5));
+      expect(coverage.coverage(Colors.white), lessThan(0.01));
     });
 
-    testWidgets('Take screenshot with tap marker from a snapshot',
-        (tester) async {
+    testWidgets('Take screenshot with tap marker from a snapshot', (tester) async {
       tester.view.physicalSize = const Size(1000, 1000);
       tester.view.devicePixelRatio = 1.0;
       const red = Color(0xffff0000);
+      const pink = Color(0xFFFF00FF);
       await tester.pumpWidget(
         Center(
           child: RepaintBoundary(
@@ -354,11 +410,17 @@ void main() {
         snapshot: containerSnapshot,
         annotators: [CrosshairAnnotator(centerPosition: Offset(100, 100))],
       );
-      expect(container.file.existsSync(), isTrue);
+      if (kIsWeb) {
+        expect(container.file, isNull);
+      } else {
+        expect(container.file!.existsSync(), isTrue);
+      }
 
-      final pinkPixelCoverage =
-          await percentageOfPixelsWithColor(container.file, Color(0xFFFF00FF));
-      expect(pinkPixelCoverage, greaterThan(0.0));
+      final flattened = await container.flattenedImage();
+      final coverage = await analyzeImageCoverage(flattened);
+      expect(coverage.coverage(pink), greaterThan(0.0));
+      expect(coverage.coverage(red), greaterThan(0.5));
+      expect(coverage.coverage(Colors.white), lessThan(0.01));
     });
 
     testWidgets(
@@ -385,20 +447,22 @@ void main() {
             snapshot: containerSnapshot,
             annotators: [CrosshairAnnotator(centerPosition: Offset(100, 100))],
           ),
-          throwsErrorContaining<StateError>([
-            'Cannot take a screenshot of snapshot',
-            'not mounted anymore',
-            'Only Elements that are currently mounted can be screenshotted.',
-          ]),
+          kIsWeb
+              ? completes
+              : throwsErrorContaining<StateError>([
+                  'Cannot take a screenshot of snapshot',
+                  'not mounted anymore',
+                  'Only Elements that are currently mounted can be screenshotted.',
+                ]),
         );
       },
     );
 
-    testWidgets('Take screenshot with tap marker from an element',
-        (tester) async {
+    testWidgets('Take screenshot with tap marker from an element', (tester) async {
       tester.view.physicalSize = const Size(1000, 1000);
       tester.view.devicePixelRatio = 1.0;
       const red = Color(0xffff0000);
+      const pink = Color(0xFFFF00FF);
       await tester.pumpWidget(
         Center(
           child: RepaintBoundary(
@@ -412,16 +476,20 @@ void main() {
         element: containerElement,
         annotators: [CrosshairAnnotator(centerPosition: Offset(100, 100))],
       );
-      expect(container.file.existsSync(), isTrue);
+      if (kIsWeb) {
+        expect(container.file, isNull);
+      } else {
+        expect(container.file.existsSync(), isTrue);
+      }
 
-      final pinkPixelCoverage =
-          await percentageOfPixelsWithColor(container.file, Color(0xFFFF00FF));
-      expect(pinkPixelCoverage, greaterThan(0.0));
+      final flattened = await container.flattenedImage();
+      final coverage = await analyzeImageCoverage(flattened);
+      expect(coverage.coverage(pink), greaterThan(0.0));
+      expect(coverage.coverage(red), greaterThan(0.5));
+      expect(coverage.coverage(Colors.white), lessThan(0.01));
     });
 
-    testWidgets(
-        'takeScreenshotWithCrosshair throws when element does not exist anymore',
-        (tester) async {
+    testWidgets('takeScreenshotWithCrosshair throws when element does not exist anymore', (tester) async {
       tester.view.physicalSize = const Size(1000, 1000);
       tester.view.devicePixelRatio = 1.0;
       const red = Color(0xffff0000);
@@ -450,14 +518,31 @@ void main() {
         ]),
       );
     });
+
+    testWidgets('prints warning when on web', (tester) async {
+      final log = <String>[];
+      await runZoned(
+        () async {
+          await takeScreenshot();
+        },
+        zoneSpecification: ZoneSpecification(
+          print: (self, parent, zone, message) {
+            log.add(message);
+          },
+        ),
+      );
+      final text = log.join('\n');
+      final containsWarning = text.contains('⚠️ - Taking screenshots is not yet supported on web');
+      expect(containsWarning, kIsWeb ? isTrue : isFalse);
+    });
   });
 }
 
 /// Parses an png image file and reads the percentage of pixels of a given [color].
-Future<double> percentageOfPixelsWithColor(File file, Color color) async {
+Future<double> percentageOfPixelsWithColor(ImageDataRef screenshot, Color color) async {
   final binding = TestWidgetsFlutterBinding.instance;
-  final image =
-      (await binding.runAsync(() => img.decodePngFile(file.absolute.path)))!;
+
+  final image = (await binding.runAsync(() async => img.decodePng(await screenshot.readPngBytes())))!;
 
   // Count the number of red pixels in the image
   int matchingPixels = 0;
@@ -483,10 +568,46 @@ Future<double> percentageOfPixelsWithColor(File file, Color color) async {
 }
 
 /// The line number of this function call
+/// Does not work for web
 int _currentLineNumber() {
   final lines = StackTrace.current.toString().split('\n');
   final callerLine = lines[1];
   final parts = callerLine.split(':');
   // parts[parts.length - 1] is the column number
   return parts[parts.length - 2].toInt();
+}
+
+/// Parses a png image file and allows pixel coverage assertions for multiple colors.
+class ImageCoverageResult {
+  final img.Image image;
+  final Map<Color, double> _cache = {};
+
+  ImageCoverageResult(this.image);
+
+  /// Returns the percentage of pixels matching [color].
+  double coverage(Color color) {
+    return _cache.putIfAbsent(color, () {
+      int matching = 0;
+      final total = image.width * image.height;
+      for (int y = 0; y < image.height; y++) {
+        for (int x = 0; x < image.width; x++) {
+          final pixel = image.getPixel(x, y);
+          final c = Color.fromARGB(
+            pixel.a.toInt(),
+            pixel.r.toInt(),
+            pixel.g.toInt(),
+            pixel.b.toInt(),
+          );
+          if (c == color) matching++;
+        }
+      }
+      return matching / total;
+    });
+  }
+}
+
+Future<ImageCoverageResult> analyzeImageCoverage(ImageDataRef screenshot) async {
+  final binding = TestWidgetsFlutterBinding.instance;
+  final image = (await binding.runAsync(() async => img.decodePng(await screenshot.readPngBytes())))!;
+  return ImageCoverageResult(image);
 }

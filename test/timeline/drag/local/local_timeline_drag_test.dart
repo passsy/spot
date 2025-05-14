@@ -1,8 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import '../act_drag_timeline_test_bodies.dart';
 
 void main() {
-  group('Drag Timeline Test', () {
+  group('Drag Timeline Test', skip: kIsWeb, () {
     group('Without error', () {
       testWidgets('Local: record, without error', (tester) async {
         await ActDragTimelineTestBodies.liveWithoutError(tester);

@@ -2,14 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dartx/dartx_io.dart';
-import 'package:flutter/rendering.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/src/flutter/flutter_sdk.dart';
 
 import 'font_test_project.dart';
 
 void main() {
-  test('roboto is loaded per default', () async {
+  test('roboto is loaded per default', skip: kIsWeb, () async {
     final testProject = FontTestProject('test/fonts/templates/default_font');
     await testProject.create();
     debugPrint('Run pub get');
