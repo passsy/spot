@@ -300,28 +300,28 @@ extension ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
       }
 
       if (minimumConstraint != null && maximumConstraint == null) {
-        if (count == 0) {
-          _tryMatchingLessSpecificCriteria(this);
-          throw QuantityTestFailure(
-            message:
-                'Could not find ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
-                'expected at least $minimumConstraint.\n'
-                'Check the timeline at the very bottom for more information.',
-            significantWidgetTree: significantWidgetTree(),
-            snapshot: this,
-          );
-        }
-
         if (minimumConstraint > count) {
           _tryMatchingLessSpecificCriteria(this);
-          throw QuantityTestFailure(
-            message:
-                'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
-                'expected at least $minimumConstraint.\n'
-                'Check the timeline at the very bottom for more information.',
-            significantWidgetTree: significantWidgetTree(),
-            snapshot: this,
-          );
+
+          if (count == 0) {
+            throw QuantityTestFailure(
+              message:
+                  'Could not find ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
+                  'expected at least $minimumConstraint.\n'
+                  'Check the timeline at the very bottom for more information.',
+              significantWidgetTree: significantWidgetTree(),
+              snapshot: this,
+            );
+          } else {
+            throw QuantityTestFailure(
+              message:
+                  'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
+                  'expected at least $minimumConstraint.\n'
+                  'Check the timeline at the very bottom for more information.',
+              significantWidgetTree: significantWidgetTree(),
+              snapshot: this,
+            );
+          }
         }
       }
 
