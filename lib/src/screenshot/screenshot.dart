@@ -623,6 +623,14 @@ Frame? _caller({StackTrace? stack}) {
   final trace = stack != null ? Trace.parse(stack.toString()) : Trace.current();
   final relevantLines = trace.frames.where((line) {
     if (line.isCore) return false;
+    if (kIsWeb) {
+      if (line.toString().startsWith('../')) {
+        // usually from external packages, or from the dart sdk
+        // ../packages/spot/src/widgets/wrap.g.dart.js 14322:88 in _caller
+        // ../dart-sdk/lib/_internal/js_dev_runtime/patch/async_patch.dart 647:23 in <fn>
+        return false;
+      }
+    }
     final url = line.uri.toString();
     if (url.contains('package:spot')) return false;
     if (url.startsWith('package:flutter_test')) return false;
