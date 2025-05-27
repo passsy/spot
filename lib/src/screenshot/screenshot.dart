@@ -92,7 +92,7 @@ Future<Screenshot> takeScreenshot({
   );
 
   if (annotators.isNotEmpty) {
-    await screenshot.annotateScreenshot(annotators);
+    await renderAnnotationLayers(screenshot, annotators);
   }
 
   if (kIsWeb) {
@@ -185,12 +185,61 @@ extension TimelineSyncScreenshot on Timeline {
     // At the end of the test, do the actual screenshot processing, because runAsync must be awaited or it crashes
     if (annotators.isNotEmpty) {
       timeline.addScreenshotProcessing(() async {
-        await screenshot.annotateScreenshot(annotators);
+        await renderAnnotationLayers(screenshot, annotators);
       });
     }
 
     return screenshot;
   }
+}
+
+/// Renders all [annotators] as separate layers into the [screenshot].
+Future<void> renderAnnotationLayers(
+  Screenshot screenshot,
+  List<ScreenshotAnnotator> annotators,
+) async {
+  for (final annotator in annotators) {
+    final annotation = await renderAnnotation(screenshot, annotator);
+    screenshot.addAnnotation(annotation);
+  }
+}
+
+/// Renders a single annotator to a single layer [ScreenshotAnnotation]
+Future<ScreenshotAnnotation> renderAnnotation(
+  Screenshot screenshot,
+  ScreenshotAnnotator annotator,
+) async {
+  final binding = TestWidgetsFlutterBinding.instance;
+  final annotation = await binding.runAsync(() async {
+    // Create transparent image the same size as plainImage to start with
+    final ui.Image transparentBackground =
+        _transparentImage(screenshot.width, screenshot.height);
+
+    final image = await annotator.annotate(transparentBackground);
+
+    final String screenshotName = () {
+      // escape /
+      final String n = Uri.encodeQueryComponent(annotator.name);
+      // always append a unique id to avoid name collisions
+      final uniqueId = nanoid(length: 5);
+      return '$n-$uniqueId';
+    }();
+
+    final annotationScreenshot = Screenshot.fromImage(
+      image: image,
+      pixelRatio: screenshot.pixelRatio,
+      name: screenshotName,
+    );
+
+    transparentBackground.dispose();
+
+    return ScreenshotAnnotation(
+      image: annotationScreenshot,
+      name: annotator.name,
+    );
+  });
+
+  return annotation!;
 }
 
 /// A screenshot taken in a widget test of a single widget or the entire screen.
@@ -262,43 +311,16 @@ class Screenshot extends ImageDataRef {
   List<ScreenshotAnnotation> get annotations =>
       _annotations.toList(growable: false);
 
-  /// Renders the annotations as separate images
-  Future<void> annotateScreenshot(List<ScreenshotAnnotator> annotators) async {
-    final binding = TestWidgetsFlutterBinding.instance;
-    await binding.runAsync(() async {
-      // Create transparent image the same size as plainImage to start with
-      final ui.Image transparentBackground = _transparentImage(width, height);
-      for (final annotator in annotators) {
-        final image = await annotator.annotate(transparentBackground);
-
-        final String screenshotName = () {
-          // escape /
-          final String n = Uri.encodeQueryComponent(annotator.name);
-          // always append a unique id to avoid name collisions
-          final uniqueId = nanoid(length: 5);
-          return '$n-$uniqueId';
-        }();
-
-        final annotationScreenshot = Screenshot.fromImage(
-          image: image,
-          pixelRatio: pixelRatio,
-          name: screenshotName,
-        );
-        final annotation = ScreenshotAnnotation(
-          image: annotationScreenshot,
-          name: annotator.name,
-        );
-        addAnnotation(annotation);
-      }
-      transparentBackground.dispose();
-    });
-  }
-
   /// Adds an annotation to the screenshot
   void addAnnotation(ScreenshotAnnotation annotation) {
     assert(annotation.image.width == width);
     assert(annotation.image.height == height);
     _annotations.add(annotation);
+  }
+
+  /// Removes an annotation from the screenshot
+  void removeAnnotation(ScreenshotAnnotation annotation) {
+    _annotations.remove(annotation);
   }
 }
 
