@@ -1,6 +1,6 @@
 // ignore_for_file: avoid_print
 import 'dart:convert';
-import 'dart:io' as io;
+import 'dart:io';
 
 import 'package:dartx/dartx_io.dart';
 import 'package:flutter/material.dart' as flt;
@@ -14,7 +14,7 @@ import 'package:stack_trace/stack_trace.dart';
 extension HtmlTimelinePrinter on Timeline {
   /// Prints the timeline as an HTML file.
   Future<void> printHTML() async {
-    final pubspecYaml = io.File('pubspec.yaml');
+    final pubspecYaml = File('pubspec.yaml');
     if (!pubspecYaml.existsSync()) {
       // test is executed on a device (or simulator), we can't store the file to be accessible from the host system
       print(
@@ -47,7 +47,7 @@ extension HtmlTimelinePrinter on Timeline {
       return name;
     }();
 
-    final timelineBuildDir = io.Directory('build').directory('timeline');
+    final timelineBuildDir = Directory('build').directory('timeline');
     final spotTempDir = timelineBuildDir.directory(timelineDirName);
     if (spotTempDir.existsSync()) {
       spotTempDir.deleteSync(recursive: true);
@@ -62,7 +62,7 @@ extension HtmlTimelinePrinter on Timeline {
     final List<x.TimelineEvent> jsonTimelineEvents = [];
     for (final e in this.events) {
       final screenshot = e.screenshot;
-      io.File? screenshotFile;
+      File? screenshotFile;
       if (screenshot != null) {
         // save screenshots relative to the events.json file in screenshots/
         screenshotFile = screenshotsDir.file('${screenshot.name}.png');
@@ -148,7 +148,7 @@ bool _isSpotTest() {
   if (suitePath == null) {
     return false;
   }
-  if (io.Platform.isWindows) {
+  if (Platform.isWindows) {
     if (suitePath.contains(r'\spot\test\')) {
       return true;
     }
@@ -164,16 +164,16 @@ bool _isSpotTest() {
 Future<bool> _isHotRestartServerRunning() async {
   const host = 'localhost';
   const port = 5907;
-  io.Socket? socket;
+  Socket? socket;
   try {
-    socket = await io.Socket.connect(
+    socket = await Socket.connect(
       host,
       port,
       timeout: const Duration(seconds: 1),
     );
     print('Server is running on $host:$port');
     return true;
-  } on io.SocketException catch (_) {
+  } on SocketException catch (_) {
     print('No server running on $host:$port');
     return false;
   } finally {
@@ -182,11 +182,11 @@ Future<bool> _isHotRestartServerRunning() async {
 }
 
 String? _projectName() {
-  io.Directory? dir = io.Directory.current;
+  Directory? dir = Directory.current;
   String? projectDir;
 
   while (dir != null) {
-    final ideaDir = io.Directory('${dir.path}/.idea');
+    final ideaDir = Directory('${dir.path}/.idea');
     if (ideaDir.existsSync()) {
       // Update to the current directory path
       projectDir = dir.path;
@@ -222,7 +222,7 @@ String? _jetBrainsURL(TimelineEvent event) {
   final initiator = event.initiator;
   if (initiator == null) return null;
 
-  final isIntelliJ = io.Platform.environment.values.any(
+  final isIntelliJ = Platform.environment.values.any(
     (value) => value.toLowerCase().contains('intellij'),
   );
   if (!isIntelliJ) return null;
