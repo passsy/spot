@@ -290,6 +290,7 @@ class Screenshot extends ImageDataRef {
         );
         addAnnotation(annotation);
       }
+      transparentBackground.dispose();
     });
   }
 
@@ -413,7 +414,7 @@ class ImageDataRef {
     return pngBytes;
   }
 
-  /// Creates a temporary file on disk with the screenshot as png
+  /// Creates a temporary file on disk with the screenshot as png, returns the absolute path to the file as String
   Future<String> createTempPngFile() async {
     final binding = TestWidgetsFlutterBinding.instance;
     final path = await binding.runAsync(() async {
