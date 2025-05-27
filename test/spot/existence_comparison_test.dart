@@ -356,5 +356,61 @@ void main() {
         ]),
       );
     });
+
+    testWidgets('warns when no match and <dynamic> generic used',
+        (tester) async {
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: SegmentedButton<String>(
+            segments: [
+              ButtonSegment(value: "ttt1", label: Text("zzz1")),
+              ButtonSegment(value: "ttt2", label: Text("zzz2")),
+            ],
+            selected: {"ttt2"},
+          ),
+        ),
+      );
+
+      expect(
+        () => spot<SegmentedButton<dynamic>>().spotText("zzz1").existsOnce(),
+        throwsSpotErrorContaining(
+          [
+            'WARNING: You are using a "dynamic" in your selector',
+            "spot<SegmentedButton<dynamic>>() doesn't match a SegmentedButton<String>",
+          ],
+        ),
+      );
+    });
+
+    testWidgets(
+        "doesn't warn about dynamic generic when no match and a spotText contains 'dynamic'",
+        (tester) async {
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: SegmentedButton<String>(
+            segments: [
+              ButtonSegment(value: "ttt1", label: Text("zzz1")),
+              ButtonSegment(value: "ttt2", label: Text("zzz2")),
+            ],
+            selected: {"ttt2"},
+          ),
+        ),
+      );
+
+      expect(
+        () => spot<SegmentedButton<String>>()
+            .spotText("i am a dynamic person")
+            .existsOnce(),
+        throwsSpotErrorContaining([
+          // The warning would appear in between those two lines
+          // Negative tests are annoying... to make in a non-brittle way
+          "expected exactly 1.\nCheck the timeline",
+        ], not: [
+          "WARNING:"
+        ]),
+      );
+    });
   });
 }
