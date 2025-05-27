@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
@@ -107,6 +108,9 @@ class ActDragTimelineTestBodies {
       drags: _passingDragAmount,
       captureStart: ['Timeline', shared.timelineHeader],
     );
+    if (stdout == null) {
+      return;
+    }
 
     // Does not start with 'Timeline', this only happens on error
     expect(stdout.startsWith('Timeline'), isFalse);
@@ -139,7 +143,9 @@ class ActDragTimelineTestBodies {
       drags: _passingDragAmount,
       captureStart: [shared.timelineHeader, '🔴 - Recording live timeline'],
     );
-
+    if (stdout == null) {
+      return;
+    }
     final lines = stdout.split('\n');
     // In the local test, the default timeline mode is 'record'.
     // Switching to live within the test results in a change to the mode,
@@ -182,6 +188,9 @@ class ActDragTimelineTestBodies {
           '🔴 - Live! Shows all timeline events as they happen',
       ],
     );
+    if (stdout == null) {
+      return;
+    }
 
     final lines = stdout.split('\n');
     // In the local test, the default timeline mode is 'record'.
@@ -221,6 +230,9 @@ class ActDragTimelineTestBodies {
       drags: _failingDragAmount,
       isGlobalMode: isGlobal,
     );
+    if (stdout == null) {
+      return;
+    }
 
     _testTimeLineContent(
       output: stdout,
@@ -294,10 +306,18 @@ class ActDragTimelineTestBodies {
         event[2],
         startsWith('Caller: at'),
       );
-      expect(
-        event[3],
-        startsWith('Screenshot: file://'),
-      );
+      if (kIsWeb) {
+        expect(
+          event[3],
+          startsWith(
+              'Screenshot links are not supported in the timeline on platform web'),
+        );
+      } else {
+        expect(
+          event[3],
+          startsWith('Screenshot: file://'),
+        );
+      }
       expect(
         event[4],
         startsWith('Timestamp: 20'),
@@ -335,7 +355,7 @@ class ActDragTimelineTestBodies {
     return originalString.replaceAll(offsetPattern, 'Offset(dx,dy)');
   }
 
-  static Future<String> _outputFromDragTestProcess({
+  static Future<String?> _outputFromDragTestProcess({
     required String title,
     required TimelineMode timelineMode,
     List<String> captureStart = const [shared.timelineHeader],
@@ -343,17 +363,20 @@ class ActDragTimelineTestBodies {
     TimelineMode? globalTimelineModeToSwitch,
     required int drags,
   }) async {
-    final testAsString = _testAsString(
-      title: title,
-      timelineMode: timelineMode,
-      isGlobalMode: isGlobalMode,
-      drags: drags,
-    );
+    if (kIsWeb) {
+      markTestSkipped('Running a Test process is unsupported on platform web');
+      return null;
+    }
 
     return await process.runTestInProcessAndCaptureOutPut(
       shouldFail:
           drags == _failingDragAmount || globalTimelineModeToSwitch != null,
-      testFileText: testAsString,
+      testFileText: () => _testAsString(
+        title: title,
+        timelineMode: timelineMode,
+        isGlobalMode: isGlobalMode,
+        drags: drags,
+      ),
       captureStart: captureStart,
     );
   }

@@ -42,18 +42,23 @@ extension ConsoleTimelinePrinter on Timeline {
     if (screenshot != null) {
       // create dummy file to be printed into the console (sync)
       final fileName = screenshot.name;
-      final pngPath = createSpotTempFile(fileName, Uint8List(0));
-      // fill it with data (async)
-      timeline.addScreenshotProcessing(() async {
-        final flattened = await screenshot.flattenedImage();
-        final pngBytes = await flattened.readPngBytes();
-        final binding = TestWidgetsFlutterBinding.instance;
-        final path = await binding.runAsync(() async {
-          return createSpotTempFile(fileName, pngBytes);
+      if (kIsWeb) {
+        buffer.writeln(
+            'Screenshot links are not supported in the timeline on platform web.');
+      } else {
+        final pngPath = createSpotTempFile(fileName, Uint8List(0));
+        // fill it with data (async)
+        timeline.addScreenshotProcessing(() async {
+          final flattened = await screenshot.flattenedImage();
+          final pngBytes = await flattened.readPngBytes();
+          final binding = TestWidgetsFlutterBinding.instance;
+          final path = await binding.runAsync(() async {
+            return createSpotTempFile(fileName, pngBytes);
+          });
+          assert(path == pngPath);
         });
-        assert(path == pngPath);
-      });
-      buffer.writeln('Screenshot: file://$pngPath');
+        buffer.writeln('Screenshot: file://$pngPath');
+      }
     }
 
     buffer.writeln('Timestamp: ${event.timestamp.toIso8601String()}');

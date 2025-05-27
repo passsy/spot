@@ -1,11 +1,10 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/src/timeline/timeline.dart';
 import '../act_tap_timeline_test_bodies.dart';
 
 void main() {
   globalTimelineMode = TimelineMode.reportOnError;
-  group("Global: reportOnError - ", skip: kIsWeb, () {
+  group("Global: reportOnError - ", () {
     testWidgets('without error', (tester) async {
       await ActTapTimelineTestBodies.recordWithoutError(
         tester: tester,

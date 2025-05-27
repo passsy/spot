@@ -1,10 +1,9 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/src/timeline/timeline.dart';
 import '../act_tap_timeline_test_bodies.dart';
 
 void main() {
-  group('Override global timeline', skip: kIsWeb, () {
+  group('Override global timeline', () {
     testWidgets('Local: live, without error', (tester) async {
       await ActTapTimelineTestBodies.liveWithoutError(tester: tester);
     });
@@ -16,7 +15,7 @@ void main() {
     });
   });
 
-  group('Print on teardown', skip: kIsWeb, () {
+  group('Print on teardown', () {
     testWidgets('Local: record, without error', (tester) async {
       await ActTapTimelineTestBodies.recordWithoutError(tester: tester);
     });
@@ -32,8 +31,7 @@ void main() {
     });
   });
 
-  test('Throws when global mode is changed during test', skip: kIsWeb,
-      () async {
+  test('Throws when global mode is changed during test', () async {
     await ActTapTimelineTestBodies.throwOnGlobalTimelineChange(
       initialGlobalMode: TimelineMode.live,
       globalTimelineModeToSwitch: TimelineMode.reportOnError,
