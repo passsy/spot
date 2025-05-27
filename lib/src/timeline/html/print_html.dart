@@ -2,12 +2,12 @@
 import 'dart:convert';
 import 'dart:io' as io;
 
+import 'package:dartx/dartx_io.dart';
 import 'package:flutter/material.dart' as flt;
 import 'package:spot/src/timeline/html/render_timeline.dart';
 import 'package:spot/src/timeline/html/web/timeline_event.dart' as x;
 import 'package:spot/src/timeline/invoker.dart';
 import 'package:spot/src/timeline/timeline.dart';
-import 'package:spot/src/utils/file_extensions.dart';
 import 'package:stack_trace/stack_trace.dart';
 
 /// Writes the timeline as an HTML file
