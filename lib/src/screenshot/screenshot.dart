@@ -17,7 +17,6 @@ import 'package:spot/src/screenshot/screenshot_annotator.dart';
 import 'package:spot/src/screenshot/screenshot_io.dart'
     if (dart.library.html) 'package:spot/src/screenshot/screenshot_web.dart';
 import 'package:stack_trace/stack_trace.dart';
-import 'package:synchronized/synchronized.dart';
 
 export 'package:stack_trace/stack_trace.dart' show Frame;
 
@@ -323,10 +322,8 @@ class ImageDataRef {
         height = image.height {
     assert(_image != null || _bytes != null);
     timeline.addTearDown(() {
-      _materializeLock.synchronized(() {
-        _image?.dispose();
-        _image = null;
-      });
+      _image?.dispose();
+      _image = null;
     });
   }
 
@@ -339,27 +336,23 @@ class ImageDataRef {
   /// The raw bytes in raw RGBA format, 8bits per channel
   Uint8List? _bytes;
 
-  final Lock _materializeLock = Lock();
-
   /// Reads the raw bytes from [_image].
   ///
   /// Noop when the default Screenshot constructor was used
-  Future<void> materialize() {
+  Future<void> materialize() async {
     if (_bytes != null) {
       // already materialized
       return Future.value();
     }
-    return _materializeLock.synchronized(() async {
-      final ByteData? byteData =
-          // ignore: avoid_redundant_argument_values
-          await _image!.toByteData(format: ui.ImageByteFormat.rawRgba);
-      if (byteData == null) {
-        throw 'Could not read raw bytes from ui.Image';
-      }
-      _image!.dispose();
-      _bytes = byteData.buffer.asUint8List();
-      _image = null;
-    });
+    final ByteData? byteData =
+        // ignore: avoid_redundant_argument_values
+        await _image!.toByteData(format: ui.ImageByteFormat.rawRgba);
+    if (byteData == null) {
+      throw 'Could not read raw bytes from ui.Image';
+    }
+    _image!.dispose();
+    _bytes = byteData.buffer.asUint8List();
+    _image = null;
   }
 
   /// Returns true when the image data is already available as raw bytes
