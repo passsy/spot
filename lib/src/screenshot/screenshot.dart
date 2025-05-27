@@ -193,9 +193,11 @@ extension TimelineSyncScreenshot on Timeline {
   }
 }
 
-/// A screenshot taken from a widget test.
+/// A screenshot taken in a widget test of a single widget or the entire screen.
 ///
-/// Can also be just a pixels of a single widget, not the entire screen
+/// It holds a reference to the plain pixels or [ui.Image] and contains
+/// additional layers (annotations) that draw on top of the screenshot to
+/// highlight certain areas.
 class Screenshot extends ImageDataRef {
   /// Creates a [Screenshot] that holds the bytes of the image
   Screenshot({
@@ -542,6 +544,7 @@ Element _findSingleElement({
 /// See also:
 ///
 ///  * [OffsetLayer.toImage] which is the actual method being called.
+///  * [_captureImageSync] sync version with known memory leak issue
 Future<ui.Image> _captureImage(Element element) async {
   assert(element.renderObject != null);
   RenderObject renderObject = element.renderObject!;
@@ -578,6 +581,7 @@ Future<ui.Image> _captureImage(Element element) async {
 /// See also:
 ///
 ///  * [OffsetLayer.toImage] which is the actual method being called.
+///  * [_captureImage] async version without memory leak
 ui.Image _captureImageSync(Element element) {
   assert(element.renderObject != null);
   RenderObject renderObject = element.renderObject!;
