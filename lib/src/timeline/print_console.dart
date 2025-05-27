@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:ci/ci.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart' show TestWidgetsFlutterBinding;
 import 'package:spot/src/screenshot/screenshot_io.dart';
 import 'package:spot/src/timeline/timeline.dart';
+import 'package:spot/src/utils/ci.dart';
 
 /// Extension that adds a method to print the timeline to the console.
 extension ConsoleTimelinePrinter on Timeline {

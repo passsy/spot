@@ -2,7 +2,6 @@
 
 import 'dart:async';
 
-import 'package:ci/ci.dart' as ci;
 import 'package:clock/clock.dart';
 import 'package:dartx/dartx.dart';
 import 'package:flutter/foundation.dart';
@@ -14,6 +13,7 @@ import 'package:spot/src/spot/tree_snapshot.dart';
 import 'package:spot/src/timeline/html/print_html.dart';
 import 'package:spot/src/timeline/invoker.dart';
 import 'package:spot/src/timeline/print_console.dart';
+import 'package:spot/src/utils/ci.dart';
 import 'package:stack_trace/stack_trace.dart';
 
 TimelineMode _globalTimelineMode =
@@ -65,14 +65,10 @@ Timeline get timeline {
   }
 
   // create new timeline
-  final newTimeline = kIsWeb ? _WebTimeline._(test) : _IoTimeline._(test);
+  final newTimeline = _Timeline._(test);
 
   addTearDown(() async {
-    if (newTimeline is _IoTimeline) {
-      await newTimeline._onPostTest();
-    } else if (newTimeline is _WebTimeline) {
-      await newTimeline._onPostTest();
-    }
+    await newTimeline._onPostTest();
     _timelines.remove(test);
   });
 
@@ -107,6 +103,7 @@ abstract interface class Timeline {
 
   /// The mode of the timeline. Defaults to [TimelineMode.reportOnError].
   TimelineMode get mode;
+
   set mode(TimelineMode value);
 
   /// Adds an event to the timeline.
@@ -149,8 +146,8 @@ abstract interface class Timeline {
 }
 
 /// The actual implementation of the [Timeline].
-final class _IoTimeline extends Timeline {
-  _IoTimeline._(this.test);
+final class _Timeline extends Timeline {
+  _Timeline._(this.test);
 
   /// The test that the timeline is associated with.
   @override
@@ -336,13 +333,17 @@ final class _IoTimeline extends Timeline {
       if (!test.state.result.isPassing) {
         // ignore: avoid_print
         print('Test failed, generating timeline report');
-        await processPendingScreenshots();
-        if (ci.isCI) {
+        if (!kIsWeb) {
+          await processPendingScreenshots();
+        }
+        if (isCI) {
           // best for CI, prints the full timeline and doesn't require archiving the html timeline file
           printToConsole();
         }
         // best for humans
-        await printHTML();
+        if (!kIsWeb) {
+          await printHTML();
+        }
       }
     }
 
@@ -350,213 +351,24 @@ final class _IoTimeline extends Timeline {
       case TimelineMode.live:
         // during live mode the events are written directly to the console.
         // Finalize with html report
-        await processPendingScreenshots();
-        await printHTML();
+        if (!kIsWeb) {
+          await processPendingScreenshots();
+          await printHTML();
+        }
       case TimelineMode.always:
         // ignore: avoid_print
         print('Generating timeline report');
-        await processPendingScreenshots();
-        if (ci.isCI) {
+        if (!kIsWeb) {
+          await processPendingScreenshots();
+        }
+        if (isCI) {
           // best for CI, prints the full timeline and doesn't require archiving the html timeline file
           printToConsole();
         }
         // best for humans
-        await printHTML();
-      // ignore: deprecated_member_use_from_same_package
-      case TimelineMode.record:
-        await reportOnError();
-      case TimelineMode.reportOnError:
-        await reportOnError();
-      case TimelineMode.off:
-        // do nothing
-        break;
-    }
-  }
-}
-
-final class _WebTimeline extends Timeline {
-  _WebTimeline._(this.test);
-
-  /// The test that the timeline is associated with.
-  @override
-  final LiveTest test;
-
-  /// The events that have recording during the test.
-  @override
-  List<TimelineEvent> get events => List.unmodifiable(_events);
-  final List<TimelineEvent> _events = [];
-
-  TimelineMode _mode = _globalTimelineMode;
-
-  /// The mode of the timeline. Defaults to [TimelineMode.reportOnError].
-  @override
-  TimelineMode get mode => _mode;
-
-  @override
-  set mode(TimelineMode value) {
-    if (value == _mode) {
-      return;
-    }
-    // ignore: avoid_print
-    print(
-      switch (value) {
-        TimelineMode.live =>
-          '🔴 - Live! Shows all timeline events as they happen',
-        TimelineMode.always => '🔴 - Always shows the timeline',
-        TimelineMode.reportOnError =>
-          '🔴 - Shows the timeline when the test fails',
-        // ignore: deprecated_member_use_from_same_package
-        TimelineMode.record =>
-          '🔴 - Recording, but only showing on test failure',
-        TimelineMode.off => '⏸︎ - Timeline recording is off',
-      },
-    );
-
-    _mode = value;
-  }
-
-  /// Adds an event to the timeline.
-  ///
-  /// Returns a unique identifier for the event which can be used to update
-  /// its details later.
-  @override
-  TimelineEventId addEvent({
-    required String details,
-    required String eventType,
-    Screenshot? screenshot,
-    Frame? initiator,
-    Color? color,
-  }) {
-    final id = TimelineEventId.random();
-    final event = TimelineEvent(
-      id: id,
-      details: details,
-      initiator: mostRelevantCaller(fallback: initiator),
-      timestamp: clock.now(),
-      color: color ?? Colors.white,
-      treeSnapshot: currentWidgetTreeSnapshot(),
-      eventType: TimelineEventType(
-        label: eventType,
-        color: color,
-      ),
-    );
-    _addRawEvent(event);
-    return id;
-  }
-
-  /// Removes a previously added event from the timeline.
-  @override
-  void removeEvent(TimelineEventId id) {
-    final event = _events.firstOrNullWhere((event) => event.id == id);
-    if (event == null) {
-      throw StateError("Event with id '${id.value}' not found");
-    }
-    _events.remove(event);
-  }
-
-  @override
-  void updateEvent({
-    required TimelineEventId id,
-    Object? eventType = _undefined,
-    Object? details = _undefined,
-    Object? screenshot = _undefined,
-    Object? color = _undefined,
-    Object? description = _undefined,
-  }) {
-    final event = _events.firstOrNullWhere((event) => event.id == id);
-    if (event == null) {
-      throw StateError("Event with id '${id.value}' not found");
-    }
-    if (!event.treeSnapshot.isFromThisFrame) {
-      throw StateError(
-        'You can not update an event after a new frame has been rendered',
-      );
-    }
-
-    // ignore: cast_nullable_to_non_nullable
-    final updatedColor = color == _undefined ? event.color : color as Color;
-    final updatedDetails =
-        // ignore: cast_nullable_to_non_nullable
-        details == _undefined ? event.details : details as String;
-    final updatedEventType = eventType == _undefined
-        ? event.eventType
-        : TimelineEventType(
-            // ignore: cast_nullable_to_non_nullable
-            label: eventType as String,
-            color: updatedColor,
-          );
-
-    final updated = TimelineEvent(
-      id: id,
-      details: updatedDetails,
-      eventType: updatedEventType,
-      color: updatedColor,
-      timestamp: event.timestamp,
-      treeSnapshot: event.treeSnapshot,
-      initiator: event.initiator,
-    );
-    final index = _events.indexOf(event);
-    _events[index] = updated;
-  }
-
-  /// Adds an event to the timeline.
-  void _addRawEvent(TimelineEvent event) {
-    if (mode == TimelineMode.off) {
-      return;
-    }
-    _events.add(event);
-    if (mode == TimelineMode.live) {
-      printEventToConsole(event);
-    }
-  }
-
-  /// Adds a function that processes a pending [Screenshot] to be processed at a later time (or never).
-  ///
-  /// To speed up processing, the screenshots are only processed when actually needed in a report (console or html).
-  /// This is not supported on web.
-  @override
-  void addScreenshotProcessing(Future<void> Function() process) {
-    // throw UnimplementedError(
-    //   'addScreenshotProcessing is not supported on web',
-    // );
-  }
-
-  /// Processes all pending screenshots
-  /// This is not supported on web.
-  Future<void> processPendingScreenshots() async {
-    // throw UnimplementedError(
-    //   'processPendingScreenshots is not supported on web',
-    // );
-  }
-
-  // ignore: avoid_futureor_void
-  final List<FutureOr<void> Function()> _tearDowns = [];
-
-  @override
-  void addTearDown(FutureOr<void> Function() tearDown) {
-    _tearDowns.add(tearDown);
-  }
-
-  /// Event handler after the [test] has completed.
-  ///
-  /// Prints the timeline to console, as link to a html file or plain text
-  Future<void> _onPostTest() async {
-    Future<void> reportOnError() async {
-      if (!test.state.result.isPassing) {
-        // ignore: avoid_print
-        print('Test failed, generating timeline report');
-        printToConsole();
-      }
-    }
-
-    switch (mode) {
-      case TimelineMode.live:
-        // during live mode the events are written directly to the console.
-        // Finalize with html report
-        printToConsole();
-      case TimelineMode.always:
-        // ignore: avoid_print
-        printToConsole();
+        if (!kIsWeb) {
+          await printHTML();
+        }
       // ignore: deprecated_member_use_from_same_package
       case TimelineMode.record:
         await reportOnError();

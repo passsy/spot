@@ -86,7 +86,7 @@ void main() {
     expect(
       () => spotText('unknown').snapshotWidget(),
       throwsSpotErrorContaining([
-        'Could not find Widget with text contains text "unknown" in widget tree'
+        'Could not find Widget with text contains text "unknown" in widget tree',
       ]),
     );
   });
@@ -111,7 +111,7 @@ void main() {
     expect(
       () => spotText('home').snapshotWidget(),
       throwsSpotErrorContaining([
-        'Found 2 elements matching Widget with text contains text "home" in widget tree, expected at most 1'
+        'Found 2 elements matching Widget with text contains text "home" in widget tree, expected at most 1',
       ]),
     );
   });
@@ -158,7 +158,7 @@ void main() {
     expect(
       () => spot<_MyContainer>().snapshotState(),
       throwsSpotErrorContaining([
-        'Found 2 elements matching _MyContainer in widget tree, expected at most 1'
+        'Found 2 elements matching _MyContainer in widget tree, expected at most 1',
       ]),
     );
   });
@@ -167,7 +167,7 @@ void main() {
     expect(
       () => spotText('unknown').snapshotElement(),
       throwsSpotErrorContaining([
-        'Could not find Widget with text contains text "unknown" in widget tree'
+        'Could not find Widget with text contains text "unknown" in widget tree',
       ]),
     );
   });
@@ -198,7 +198,7 @@ void main() {
     expect(
       () => spotText('home').snapshotElement(),
       throwsSpotErrorContaining([
-        'Found 2 elements matching Widget with text contains text "home" in widget tree, expected at most 1'
+        'Found 2 elements matching Widget with text contains text "home" in widget tree, expected at most 1',
       ]),
     );
   });
@@ -207,7 +207,7 @@ void main() {
     expect(
       () => spotText('unknown').snapshotRenderObject(),
       throwsSpotErrorContaining([
-        'Could not find Widget with text contains text "unknown" in widget tree'
+        'Could not find Widget with text contains text "unknown" in widget tree',
       ]),
     );
   });
@@ -238,7 +238,7 @@ void main() {
     expect(
       () => spotText('home').snapshotRenderObject(),
       throwsSpotErrorContaining([
-        'Found 2 elements matching Widget with text contains text "home" in widget tree, expected at most 1'
+        'Found 2 elements matching Widget with text contains text "home" in widget tree, expected at most 1',
       ]),
     );
   });
@@ -247,7 +247,7 @@ void main() {
     expect(
       () => spotText('unknown').snapshotRenderBox(),
       throwsSpotErrorContaining([
-        'Could not find Widget with text contains text "unknown" in widget tree'
+        'Could not find Widget with text contains text "unknown" in widget tree',
       ]),
     );
   });
@@ -278,7 +278,7 @@ void main() {
     expect(
       () => spotText('home').snapshotRenderBox(),
       throwsSpotErrorContaining([
-        'Found 2 elements matching Widget with text contains text "home" in widget tree, expected at most 1'
+        'Found 2 elements matching Widget with text contains text "home" in widget tree, expected at most 1',
       ]),
     );
   });
@@ -304,7 +304,7 @@ void main() {
       expect(
         () => spotText('unknown').snapshot().discoveredRenderObject,
         throwsSpotErrorContaining([
-          'Could not find Widget with text contains text "unknown" in widget tree'
+          'Could not find Widget with text contains text "unknown" in widget tree',
         ]),
       );
     });
@@ -327,7 +327,7 @@ void main() {
       expect(
         () => snapshot.discoveredRenderObject,
         throwsSpotErrorContaining([
-          'Found 2 elements matching Widget with text contains text "home" in widget tree, expected at most 1'
+          'Found 2 elements matching Widget with text contains text "home" in widget tree, expected at most 1',
         ]),
       );
     });
@@ -380,7 +380,7 @@ void main() {
       expect(
         () => spotText('unknown').snapshot().discoveredRenderBox,
         throwsSpotErrorContaining([
-          'Could not find Widget with text contains text "unknown" in widget tree'
+          'Could not find Widget with text contains text "unknown" in widget tree',
         ]),
       );
     });
@@ -403,7 +403,7 @@ void main() {
       expect(
         () => snapshot.discoveredRenderBox,
         throwsSpotErrorContaining([
-          'Found 2 elements matching Widget with text contains text "home" in widget tree, expected at most 1'
+          'Found 2 elements matching Widget with text contains text "home" in widget tree, expected at most 1',
         ]),
       );
     });
@@ -446,7 +446,7 @@ void main() {
         throwsSpotErrorContaining(
           [
             "Widget '_NonCartesianWidget' is associated to _CustomRenderObject",
-            "is not a RenderObject in the 2D Cartesian coordinate system (implements RenderBox)."
+            "is not a RenderObject in the 2D Cartesian coordinate system (implements RenderBox).",
           ],
         ),
       );

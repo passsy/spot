@@ -120,9 +120,11 @@ void main() {
       final timelineEvent = timeline.events.single;
       expect(timelineEvent.eventType.label, 'Assertion Failed');
       expect(
-          timelineEvent.details,
-          contains(
-              'Found 2 elements matching Text in widget tree, expected at most 1'));
+        timelineEvent.details,
+        contains(
+          'Found 2 elements matching Text in widget tree, expected at most 1',
+        ),
+      );
     });
 
     testWidgets('doesNotExist adds to timeline', (tester) async {

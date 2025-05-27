@@ -21,6 +21,3 @@ linter:
 
     # Documentation is key
     public_member_api_docs: true
-
-formatter:
-  line-length: 80

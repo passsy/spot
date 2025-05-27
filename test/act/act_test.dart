@@ -80,14 +80,16 @@ void actTests() {
               'Guarded function conflict.',
             )
             ..contains(
-                'You must use "await" with all Future-returning test APIs.');
+              'You must use "await" with all Future-returning test APIs.',
+            );
         } else {
           check(e).isA<FlutterError>().has((it) => it.message, 'message')
             ..contains(
               'You must use "await" with all Future-returning test APIs.',
             )
             ..contains(
-                'The guarded method "tap" from class Act was called from')
+              'The guarded method "tap" from class Act was called from',
+            )
             ..contains('act_test.dart');
         }
       }
@@ -457,7 +459,8 @@ void actTests() {
                 'Guarded function conflict.',
               )
               ..contains(
-                  'You must use "await" with all Future-returning test APIs.');
+                'You must use "await" with all Future-returning test APIs.',
+              );
           } else {
             check(e).isA<FlutterError>().has((it) => it.message, 'message')
               ..contains(

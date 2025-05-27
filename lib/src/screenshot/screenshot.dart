@@ -374,7 +374,12 @@ class ImageDataRef {
     }
     final completer = Completer<ui.Image>();
     ui.decodeImageFromPixels(
-        _bytes!, width, height, ui.PixelFormat.rgba8888, completer.complete);
+      _bytes!,
+      width,
+      height,
+      ui.PixelFormat.rgba8888,
+      completer.complete,
+    );
     return completer.future;
   }
 

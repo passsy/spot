@@ -1,6 +1,6 @@
 import 'dart:io';
 
-///
+/// Extension for [FileSystemEntity] to provide a universal way to get the name
 extension UniversalFileSystemEntityExtensions on FileSystemEntity {
   /// Gets the part of [path] after the last separator.
   /// dart
@@ -31,7 +31,7 @@ extension UniversalFileSystemEntityExtensions on FileSystemEntity {
   }
 }
 
-///
+/// Extension for [Directory] to provide methods for creating subdirectories
 extension DirectoryDirectoryExtension on Directory {
   /// Returns a directory within the [Directory]
   ///
