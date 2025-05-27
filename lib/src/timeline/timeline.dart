@@ -1,8 +1,10 @@
 // ignore_for_file: depend_on_referenced_packages
 
-import 'package:ci/ci.dart';
+import 'dart:async';
+
 import 'package:clock/clock.dart';
 import 'package:dartx/dartx.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nanoid2/nanoid2.dart';
@@ -11,6 +13,7 @@ import 'package:spot/src/spot/tree_snapshot.dart';
 import 'package:spot/src/timeline/html/print_html.dart';
 import 'package:spot/src/timeline/invoker.dart';
 import 'package:spot/src/timeline/print_console.dart';
+import 'package:spot/src/utils/ci.dart';
 import 'package:stack_trace/stack_trace.dart';
 
 TimelineMode _globalTimelineMode =
@@ -100,6 +103,7 @@ abstract interface class Timeline {
 
   /// The mode of the timeline. Defaults to [TimelineMode.reportOnError].
   TimelineMode get mode;
+
   set mode(TimelineMode value);
 
   /// Adds an event to the timeline.
@@ -135,8 +139,10 @@ abstract interface class Timeline {
   /// To speed up processing, the screenshots are only processed when actually needed in a report (console or html).
   void addScreenshotProcessing(Future<void> Function() process);
 
-  /// Processes all pending screenshots
-  Future<void> processPendingScreenshots();
+  /// Adds a function that will be called after the test completed and the timeline has been rendered.
+  ///
+  /// Use it instead of `addTearDown` from `flutter_test` to ensure that the timeline is rendered before
+  void addTearDown(FutureOr<void> Function() tearDown);
 }
 
 /// The actual implementation of the [Timeline].
@@ -293,8 +299,15 @@ final class _Timeline extends Timeline {
     _toBeProcessedScreenshots.add(process);
   }
 
-  /// Processes all pending screenshots
+  // ignore: avoid_futureor_void
+  final List<FutureOr<void> Function()> _tearDowns = [];
+
   @override
+  void addTearDown(FutureOr<void> Function() tearDown) {
+    _tearDowns.add(tearDown);
+  }
+
+  /// Processes all pending screenshots
   Future<void> processPendingScreenshots() async {
     if (_toBeProcessedScreenshots.isEmpty) {
       return;
@@ -308,17 +321,29 @@ final class _Timeline extends Timeline {
   ///
   /// Prints the timeline to console, as link to a html file or plain text
   Future<void> _onPostTest() async {
+    await _renderTimeline();
+    for (final tearDown in _tearDowns.toList()) {
+      await tearDown();
+      _tearDowns.remove(tearDown);
+    }
+  }
+
+  Future<void> _renderTimeline() async {
     Future<void> reportOnError() async {
       if (!test.state.result.isPassing) {
         // ignore: avoid_print
         print('Test failed, generating timeline report');
-        await processPendingScreenshots();
+        if (!kIsWeb) {
+          await processPendingScreenshots();
+        }
         if (isCI) {
           // best for CI, prints the full timeline and doesn't require archiving the html timeline file
           printToConsole();
         }
         // best for humans
-        await printHTML();
+        if (!kIsWeb) {
+          await printHTML();
+        }
       }
     }
 
@@ -326,18 +351,24 @@ final class _Timeline extends Timeline {
       case TimelineMode.live:
         // during live mode the events are written directly to the console.
         // Finalize with html report
-        await processPendingScreenshots();
-        await printHTML();
+        if (!kIsWeb) {
+          await processPendingScreenshots();
+          await printHTML();
+        }
       case TimelineMode.always:
         // ignore: avoid_print
         print('Generating timeline report');
-        await processPendingScreenshots();
+        if (!kIsWeb) {
+          await processPendingScreenshots();
+        }
         if (isCI) {
           // best for CI, prints the full timeline and doesn't require archiving the html timeline file
           printToConsole();
         }
         // best for humans
-        await printHTML();
+        if (!kIsWeb) {
+          await printHTML();
+        }
       // ignore: deprecated_member_use_from_same_package
       case TimelineMode.record:
         await reportOnError();

@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:dartx/dartx_io.dart';
 import 'package:flutter/material.dart' as flt;
-import 'package:spot/src/screenshot/screenshot.dart';
 import 'package:spot/src/timeline/html/render_timeline.dart';
 import 'package:spot/src/timeline/html/web/timeline_event.dart' as x;
 import 'package:spot/src/timeline/invoker.dart';
@@ -60,20 +59,24 @@ extension HtmlTimelinePrinter on Timeline {
     screenshotsDir.createSync(recursive: true);
 
     final events = spotTempDir.file('events.json');
-    final jsonTimelineEvents = this.events.map((e) {
-      // save screenshots relative to the events.json file in screenshots/
-      if (e.screenshot != null) {
-        final name = e.screenshot!.file.name;
-        final screenshotFile = screenshotsDir.file(name);
-        screenshotFile.writeAsBytesSync(e.screenshot!.file.readAsBytesSync());
+    final List<x.TimelineEvent> jsonTimelineEvents = [];
+    for (final e in this.events) {
+      final screenshot = e.screenshot;
+      File? screenshotFile;
+      if (screenshot != null) {
+        // save screenshots relative to the events.json file in screenshots/
+        screenshotFile = screenshotsDir.file('${screenshot.name}.png');
+        final flattened = await screenshot.flattenedImage();
+        final pngBytes = await flattened.readPngBytes();
+        screenshotFile.writeAsBytesSync(pngBytes);
       }
 
-      return x.TimelineEvent(
+      final timelineEvent = x.TimelineEvent(
         eventType: e.eventType.label,
         details: e.details,
         timestamp: e.timestamp.toIso8601String(),
-        screenshotUrl: e.screenshot != null
-            ? './$screenshotsDirName/${e.screenshot!.file.name}'
+        screenshotUrl: screenshotFile != null
+            ? './$screenshotsDirName/${screenshotFile.name}'
             : null,
         color: e.color == flt.Colors.grey
             ? null
@@ -82,7 +85,8 @@ extension HtmlTimelinePrinter on Timeline {
         caller: _eventCaller(e.initiator) ?? 'N/A',
         jetBrainsLink: _jetBrainsURL(e),
       );
-    }).toList();
+      jsonTimelineEvents.add(timelineEvent);
+    }
     final json = const JsonEncoder.withIndent('  ')
         .convert(jsonTimelineEvents.map((e) => e.toMap()).toList());
     events.writeAsStringSync(json);
@@ -162,8 +166,11 @@ Future<bool> _isHotRestartServerRunning() async {
   const port = 5907;
   Socket? socket;
   try {
-    socket =
-        await Socket.connect(host, port, timeout: const Duration(seconds: 1));
+    socket = await Socket.connect(
+      host,
+      port,
+      timeout: const Duration(seconds: 1),
+    );
     print('Server is running on $host:$port');
     return true;
   } on SocketException catch (_) {

@@ -1,0 +1,30 @@
+name: Web Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  web-tests:
+    name: Chrome Widget Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run widget tests on Chrome
+        run: flutter test --platform chrome

@@ -14,8 +14,6 @@ import 'package:spot/spot.dart';
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     timeline.mode = TimelineMode.always;
-    print(TestWidgetsFlutterBinding.instance);
-    print(WidgetsBinding.instance);
     await tester.pumpWidget(const CounterApp());
     spotText('0').existsOnce();
     await act.tap(spotIcon(Icons.add));

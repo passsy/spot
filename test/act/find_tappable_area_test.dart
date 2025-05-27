@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
@@ -33,8 +34,8 @@ void main() {
         "Example:",
         "(Cover - Received pointer event)",
         "(Target for pointer event, below Cover)",
-        "Stack (file:/",
-        "Center (file:/",
+        "Stack (${kIsWeb ? 'org-dartlang-app://' : 'file:/'}",
+        "Center (${kIsWeb ? 'org-dartlang-app://' : 'file:/'}",
       ]),
     );
 
@@ -245,8 +246,8 @@ void main() {
         "spot<ElevatedButton>().spotText('Tap me');",
         "spot<ElevatedButton>().withChild(spotText('Tap me'));",
         " │ ┌──", // diagram
-        "Stack (file:/", // Link to common ancestor
-        "Padding (file:/", // first useful parent in user code
+        "Stack (${kIsWeb ? 'org-dartlang-app://' : 'file:/'}", // Link to common ancestor
+        "Padding (${kIsWeb ? 'org-dartlang-app://' : 'file:/'}", // first useful parent in user code
       ]),
     );
   });

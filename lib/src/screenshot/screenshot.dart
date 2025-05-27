@@ -1,38 +1,24 @@
-import 'dart:core';
+import 'dart:async';
 import 'dart:core' as core;
-import 'dart:io';
-import 'dart:typed_data';
+import 'dart:core';
 import 'dart:ui' as ui;
 
 import 'package:dartx/dartx_io.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:image/image.dart' as img;
 import 'package:nanoid2/nanoid2.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/screenshot/screenshot.dart' as self
     show takeScreenshot;
 import 'package:spot/src/screenshot/screenshot_annotator.dart';
+import 'package:spot/src/screenshot/screenshot_io.dart'
+    if (dart.library.html) 'package:spot/src/screenshot/screenshot_web.dart';
 import 'package:stack_trace/stack_trace.dart';
 
 export 'package:stack_trace/stack_trace.dart' show Frame;
-
-/// A screenshot taken from a widget test.
-///
-/// May also be just a single widget, not the entire screen
-class Screenshot {
-  /// Creates a [Screenshot] that points to a file on disk.
-  Screenshot({
-    required this.file,
-    this.initiator,
-  });
-
-  /// The file where the screenshot was saved to
-  final File file;
-
-  /// Call stack of the code that initiated the screenshot
-  final Frame? initiator;
-}
 
 /// Takes a screenshot of the entire screen or a single widget.
 ///
@@ -51,7 +37,14 @@ Future<Screenshot> takeScreenshot({
   List<ScreenshotAnnotator> annotators = const [],
   String? name,
   bool print = true,
+  double? devicePixelRatio,
 }) async {
+  assert(devicePixelRatio == null || devicePixelRatio > 0.0);
+  final binding = TestWidgetsFlutterBinding.instance;
+  final pixelRatio = devicePixelRatio ??
+      binding.platformDispatcher.implicitView?.devicePixelRatio ??
+      1.0;
+
   final Frame? frame = _caller();
   final liveElement = _findSingleElement(
     element: element,
@@ -59,23 +52,12 @@ Future<Screenshot> takeScreenshot({
     selector: selector,
   );
 
-  late final Uint8List image;
-
-  final binding = TestWidgetsFlutterBinding.instance;
-  await binding.runAsync(() async {
-    final ui.Image plainImage = await _captureImage(liveElement);
-    ui.Image imageToCapture = plainImage;
-    for (final annotator in annotators) {
-      imageToCapture = await annotator.annotate(imageToCapture);
-    }
-    final byteData =
-        await imageToCapture.toByteData(format: ui.ImageByteFormat.png);
-    if (byteData == null) {
-      throw 'Could not take screenshot';
-    }
-    image = byteData.buffer.asUint8List();
-    plainImage.dispose();
+  final ui.Image? plainImage = await binding.runAsync(() async {
+    return await _captureImage(liveElement);
   });
+  if (plainImage == null) {
+    throw 'Could not take screenshot, see the logs for more details';
+  }
 
   String callerFileName() {
     final file = frame?.uri.pathSegments.last.replaceFirst('.dart', '');
@@ -89,7 +71,7 @@ Future<Screenshot> takeScreenshot({
     return 'unknown';
   }
 
-  final String screenshotFileName = () {
+  final String screenshotName = () {
     final String n;
     if (name != null) {
       // escape /
@@ -99,23 +81,31 @@ Future<Screenshot> takeScreenshot({
     }
     // always append a unique id to avoid name collisions
     final uniqueId = nanoid(length: 5);
-    return '$n-$uniqueId.png';
+    return '$n-$uniqueId';
   }();
 
-  final spotTempDir = Directory.systemTemp.directory('spot');
-  if (!spotTempDir.existsSync()) {
-    spotTempDir.createSync();
-  }
-  final file = spotTempDir.file(screenshotFileName);
-  file.writeAsBytesSync(image);
+  final screenshot = Screenshot.fromImage(
+    image: plainImage,
+    pixelRatio: pixelRatio,
+    name: screenshotName,
+    initiator: frame,
+  );
 
-  final screenshot = Screenshot(file: file, initiator: frame);
+  if (annotators.isNotEmpty) {
+    await renderAnnotationLayers(screenshot, annotators);
+  }
+
+  if (kIsWeb) {
+    return screenshot;
+  }
+
+  final String filePath = await screenshot.createTempPngFile();
 
   if (print) {
     final frame = screenshot.initiator;
     // ignore: avoid_print
     core.print(
-      'Screenshot file://${screenshot.file.path}\n'
+      'Screenshot file://$filePath\n'
       '  taken at ${frame?.member} ${frame?.uri}:${frame?.line}:${frame?.column}',
     );
   }
@@ -134,8 +124,15 @@ extension TimelineSyncScreenshot on Timeline {
     WidgetSnapshot? snapshot,
     WidgetSelector? selector,
     String? name,
-    List<ScreenshotAnnotator>? annotators,
+    List<ScreenshotAnnotator> annotators = const [],
+    double? devicePixelRatio,
   }) {
+    assert(devicePixelRatio == null || devicePixelRatio > 0.0);
+    final binding = TestWidgetsFlutterBinding.instance;
+    final pixelRatio = devicePixelRatio ??
+        binding.platformDispatcher.implicitView?.devicePixelRatio ??
+        1.0;
+
     final Frame? frame = _caller();
 
     if (timeline.mode == TimelineMode.off) {
@@ -150,7 +147,6 @@ extension TimelineSyncScreenshot on Timeline {
       snapshot: snapshot,
       selector: selector,
     );
-    final ui.Image plainImage = _captureImageSync(liveElement);
 
     String callerFileName() {
       final file = frame?.uri.pathSegments.last.replaceFirst('.dart', '');
@@ -174,42 +170,311 @@ extension TimelineSyncScreenshot on Timeline {
       }
       // always append a unique id to avoid name collisions
       final uniqueId = nanoid(length: 5);
-      return '$n-$uniqueId.png';
+      return '$n-$uniqueId';
     }();
 
-    final spotTempDir = Directory.systemTemp.directory('spot');
-    if (!spotTempDir.existsSync()) {
-      spotTempDir.createSync();
-    }
-    final file = spotTempDir.file(screenshotFileName);
-
-    final screenshot = Screenshot(
-      file: file,
+    final ui.Image plainImage = _captureImageSync(liveElement);
+    final screenshot = Screenshot.fromImage(
+      name: screenshotFileName,
+      image: plainImage,
+      pixelRatio: pixelRatio,
       initiator: frame,
     );
+    plainImage.dispose();
 
     // At the end of the test, do the actual screenshot processing, because runAsync must be awaited or it crashes
-    timeline.addScreenshotProcessing(() async {
-      final binding = TestWidgetsFlutterBinding.instance;
-      await binding.runAsync(() async {
-        ui.Image imageToCapture = plainImage;
-        for (final annotator in annotators ?? <ScreenshotAnnotator>[]) {
-          imageToCapture = await annotator.annotate(imageToCapture);
-        }
-        final byteData =
-            await imageToCapture.toByteData(format: ui.ImageByteFormat.png);
-        if (byteData == null) {
-          throw 'Could not take screenshot';
-        }
-        final image = byteData.buffer.asUint8List();
-        file.writeAsBytesSync(image);
+    if (annotators.isNotEmpty) {
+      timeline.addScreenshotProcessing(() async {
+        await renderAnnotationLayers(screenshot, annotators);
       });
-
-      plainImage.dispose();
-    });
+    }
 
     return screenshot;
   }
+}
+
+/// Renders all [annotators] as separate layers into the [screenshot].
+Future<void> renderAnnotationLayers(
+  Screenshot screenshot,
+  List<ScreenshotAnnotator> annotators,
+) async {
+  for (final annotator in annotators) {
+    final annotation = await renderAnnotation(screenshot, annotator);
+    screenshot.addAnnotation(annotation);
+  }
+}
+
+/// Renders a single annotator to a single layer [ScreenshotAnnotation]
+Future<ScreenshotAnnotation> renderAnnotation(
+  Screenshot screenshot,
+  ScreenshotAnnotator annotator,
+) async {
+  final binding = TestWidgetsFlutterBinding.instance;
+  final annotation = await binding.runAsync(() async {
+    // Create transparent image the same size as plainImage to start with
+    final ui.Image transparentBackground =
+        _transparentImage(screenshot.width, screenshot.height);
+
+    final image = await annotator.annotate(transparentBackground);
+
+    final String screenshotName = () {
+      // escape /
+      final String n = Uri.encodeQueryComponent(annotator.name);
+      // always append a unique id to avoid name collisions
+      final uniqueId = nanoid(length: 5);
+      return '$n-$uniqueId';
+    }();
+
+    final annotationScreenshot = Screenshot.fromImage(
+      image: image,
+      pixelRatio: screenshot.pixelRatio,
+      name: screenshotName,
+    );
+
+    transparentBackground.dispose();
+
+    return ScreenshotAnnotation(
+      image: annotationScreenshot,
+      name: annotator.name,
+    );
+  });
+
+  return annotation!;
+}
+
+/// A screenshot taken in a widget test of a single widget or the entire screen.
+///
+/// It holds a reference to the plain pixels or [ui.Image] and contains
+/// additional layers (annotations) that draw on top of the screenshot to
+/// highlight certain areas.
+class Screenshot extends ImageDataRef {
+  /// Creates a [Screenshot] that holds the bytes of the image
+  Screenshot({
+    required super.bytes,
+    required super.width,
+    required super.height,
+    required super.pixelRatio,
+    required super.name,
+    this.initiator,
+  });
+
+  /// Creates a [Screenshot] that holds a reference to a [ui.Image] and later loads the actual bytes
+  Screenshot.fromImage({
+    required super.image,
+    required super.pixelRatio,
+    required super.name,
+    this.initiator,
+  }) : super.fromImage();
+
+  /// Returns the screenshot as File
+  ///
+  /// This method is deprecated and will be removed in the future.
+  ///
+  /// Use the async [createTempPngFile()] instead, which also works on web
+  @Deprecated('Use createTempPngFile() instead')
+  dynamic /*File?*/ get file {
+    if (kIsWeb) {
+      return null;
+    }
+    final bytes = readPngBytesSync();
+    final path = createSpotTempFile('$name.png', bytes);
+    return fileFromPath(path);
+  }
+
+  /// Merges the image itself and all annotations into a single image
+  Future<ImageDataRef> flattenedImage() async {
+    final recorder = ui.PictureRecorder();
+    final canvas = Canvas(recorder);
+    final binding = TestWidgetsFlutterBinding.instance;
+    await binding.runAsync(() async {
+      final base = await readImage();
+      canvas.drawImage(base, Offset.zero, Paint());
+      for (final annotation in annotations) {
+        final image = await annotation.image.readImage();
+        canvas.drawImage(image, Offset.zero, Paint());
+      }
+    });
+    final merged = recorder.endRecording().toImageSync(width, height);
+    return ImageDataRef.fromImage(
+      image: merged,
+      pixelRatio: pixelRatio,
+      name: '$name-flattened',
+    );
+  }
+
+  /// Call stack of the code that initiated the screenshot
+  final Frame? initiator;
+
+  final List<ScreenshotAnnotation> _annotations = [];
+
+  /// The annotations which have been added to the raw screenshot
+  List<ScreenshotAnnotation> get annotations =>
+      _annotations.toList(growable: false);
+
+  /// Adds an annotation to the screenshot
+  void addAnnotation(ScreenshotAnnotation annotation) {
+    assert(annotation.image.width == width);
+    assert(annotation.image.height == height);
+    _annotations.add(annotation);
+  }
+
+  /// Removes an annotation from the screenshot
+  void removeAnnotation(ScreenshotAnnotation annotation) {
+    _annotations.remove(annotation);
+  }
+}
+
+/// A reference to image data (raw pixels or a [ui.Image])
+class ImageDataRef {
+  /// Creates a [ImageDataRef] that holds the bytes of the image
+  ImageDataRef({
+    required Uint8List bytes,
+    required this.width,
+    required this.height,
+    required this.pixelRatio,
+    required this.name,
+  })  : _bytes = bytes,
+        _image = null;
+
+  /// Creates a [ImageDataRef] that holds a reference to a [ui.Image] and later loads the actual bytes
+  ImageDataRef.fromImage({
+    required ui.Image image,
+    required this.pixelRatio,
+    required this.name,
+  })  : _image = image.clone(),
+        _bytes = null,
+        width = image.width,
+        height = image.height {
+    assert(_image != null || _bytes != null);
+    timeline.addTearDown(() {
+      _image?.dispose();
+      _image = null;
+    });
+  }
+
+  /// The name of the file, without file extension
+  final String name;
+
+  /// The raw image before it is converted to bytes
+  ui.Image? _image;
+
+  /// The raw bytes in raw RGBA format, 8bits per channel
+  Uint8List? _bytes;
+
+  /// Reads the raw bytes from [_image].
+  ///
+  /// Noop when the default Screenshot constructor was used
+  Future<void> materialize() async {
+    if (_bytes != null) {
+      // already materialized
+      return Future.value();
+    }
+    final ByteData? byteData =
+        // ignore: avoid_redundant_argument_values
+        await _image!.toByteData(format: ui.ImageByteFormat.rawRgba);
+    if (byteData == null) {
+      throw 'Could not read raw bytes from ui.Image';
+    }
+    _image!.dispose();
+    _bytes = byteData.buffer.asUint8List();
+    _image = null;
+  }
+
+  /// Returns true when the image data is already available as raw bytes
+  ///
+  /// Returns false when the data has to be extracted async from the [ui.Image] first
+  bool get isMaterialized => _bytes != null;
+
+  /// Returns the image as a [ui.Image]
+  Future<ui.Image> readImage() async {
+    if (_image != null) {
+      return _image!;
+    }
+    final completer = Completer<ui.Image>();
+    ui.decodeImageFromPixels(
+      _bytes!,
+      width,
+      height,
+      ui.PixelFormat.rgba8888,
+      completer.complete,
+    );
+    return completer.future;
+  }
+
+  /// The pixel data in raw RGBA format, 8bits per channel
+  Future<Uint8List> readBytes() {
+    if (isMaterialized) {
+      return Future.value(_bytes!);
+    }
+    return materialize().then((_) => _bytes!);
+  }
+
+  /// The pixel data in PNG format
+  Future<Uint8List> readPngBytes() {
+    if (isMaterialized) {
+      return Future.value(readPngBytesSync());
+    }
+    return materialize().then((_) => readPngBytesSync());
+  }
+
+  /// The pixel data in PNG format
+  Uint8List readPngBytesSync() {
+    final b = _bytes;
+    if (b == null) {
+      throw 'Cannot read PNG bytes, because the screenshot was not materialized yet, call materialize() first';
+    }
+    final image = img.Image.fromBytes(
+      width: width,
+      height: height,
+      bytes: b.buffer,
+      // ignore: avoid_redundant_argument_values
+      format: img.Format.uint8,
+      order: img.ChannelOrder.rgba,
+      numChannels: 4,
+    );
+    final Uint8List pngBytes = img.encodePng(image);
+    return pngBytes;
+  }
+
+  /// Creates a temporary file on disk with the screenshot as png, returns the absolute path to the file as String
+  Future<String> createTempPngFile() async {
+    final binding = TestWidgetsFlutterBinding.instance;
+    final path = await binding.runAsync(() async {
+      final pngBytes = await readPngBytes();
+      return createSpotTempFile('$name.png', pngBytes);
+    });
+    return path!;
+  }
+
+  /// The file on disk that contains the screenshot
+  final int width;
+
+  /// The width of the screenshot in pixels are represented in [bytes]
+  int get logicalWidth => width ~/ pixelRatio;
+
+  /// The height of the screenshot in pixels are represented in [bytes]
+  final int height;
+
+  /// The height of the screenshot in logical pixels
+  int get logicalHeight => height ~/ pixelRatio;
+
+  /// The pixel ratio of the device that took the screenshot
+  ///
+  /// A pixel ratio of 2.0 means that the image has 800 pixels where the
+  /// device has 400 logical pixels
+  final double pixelRatio;
+}
+
+/// Additional information about elements on the screenshot like a crosshair or a rect
+class ScreenshotAnnotation {
+  /// The pixels annotating the screenshot
+  final ImageDataRef image;
+
+  /// The name of the annotation
+  final String name;
+
+  /// Creates a screenshot annotation
+  ScreenshotAnnotation({required this.image, required this.name});
 }
 
 /// Provides the ability to create screenshots of a [WidgetSelector]
@@ -299,45 +564,10 @@ Element _findSingleElement({
 
 /// Render the closest [RepaintBoundary] of the [element] into an image.
 ///
-/// This sync variant of [_captureImage] is known to cause memory leak issues. Prefer using the async variant.
-/// https://github.com/flutter/flutter/issues/138627
-///
 /// See also:
 ///
 ///  * [OffsetLayer.toImage] which is the actual method being called.
-ui.Image _captureImageSync(Element element) {
-  assert(element.renderObject != null);
-  RenderObject renderObject = element.renderObject!;
-  while (!renderObject.isRepaintBoundary) {
-    // ignore: unnecessary_cast
-    renderObject = renderObject.parent! as RenderObject;
-  }
-
-  final OffsetLayer layer = renderObject.debugLayer! as OffsetLayer;
-  final ui.Image image = layer.toImageSync(renderObject.paintBounds);
-
-  if (element.renderObject is RenderBox) {
-    final expectedSize = (element.renderObject as RenderBox?)!.size;
-    if (expectedSize.width != image.width ||
-        expectedSize.height != image.height) {
-      // ignore: avoid_print
-      print(
-        'Warning: The screenshot captured of ${element.toStringShort()} is '
-        'larger (${image.width}, ${image.height}) than '
-        '${element.toStringShort()} (${expectedSize.width}, ${expectedSize.height}) itself.\n'
-        'Wrap the ${element.toStringShort()} in a RepaintBoundary to be able to capture only that layer. ',
-      );
-    }
-  }
-
-  return image;
-}
-
-/// Render the closest [RepaintBoundary] of the [element] into an image.
-///
-/// See also:
-///
-///  * [OffsetLayer.toImage] which is the actual method being called.
+///  * [_captureImageSync] sync version with known memory leak issue
 Future<ui.Image> _captureImage(Element element) async {
   assert(element.renderObject != null);
   RenderObject renderObject = element.renderObject!;
@@ -366,12 +596,66 @@ Future<ui.Image> _captureImage(Element element) async {
   return image;
 }
 
+/// Render the closest [RepaintBoundary] of the [element] into an image.
+///
+/// This sync variant of [_captureImage] is known to cause memory leak issues. Prefer using the async variant.
+/// https://github.com/flutter/flutter/issues/138627
+///
+/// See also:
+///
+///  * [OffsetLayer.toImage] which is the actual method being called.
+///  * [_captureImage] async version without memory leak
+ui.Image _captureImageSync(Element element) {
+  assert(element.renderObject != null);
+  RenderObject renderObject = element.renderObject!;
+  while (!renderObject.isRepaintBoundary) {
+    // ignore: unnecessary_cast
+    renderObject = renderObject.parent! as RenderObject;
+  }
+
+  final OffsetLayer layer = renderObject.debugLayer! as OffsetLayer;
+  final ui.Image image = layer.toImageSync(renderObject.paintBounds);
+
+  if (element.renderObject is RenderBox) {
+    final expectedSize = (element.renderObject as RenderBox?)!.size;
+    if (expectedSize.width != image.width ||
+        expectedSize.height != image.height) {
+      // ignore: avoid_print
+      print(
+        'Warning: The screenshot captured of ${element.toStringShort()} is '
+        'larger (${image.width}, ${image.height}) than '
+        '${element.toStringShort()} (${expectedSize.width}, ${expectedSize.height}) itself.\n'
+        'Wrap the ${element.toStringShort()} in a RepaintBoundary to be able to capture only that layer. ',
+      );
+    }
+  }
+
+  return image;
+}
+
+/// Renders a transparent image of the given size
+ui.Image _transparentImage(int width, int height) {
+  final recorder = ui.PictureRecorder();
+  Canvas(recorder, Rect.fromLTWH(0, 0, width.toDouble(), height.toDouble()));
+  final picture = recorder.endRecording();
+  final ui.Image transparentImage = picture.toImageSync(width, height);
+  return transparentImage;
+}
+
 /// Returns the frame in the call stack that is most useful for identifying for
 /// humans
 Frame? _caller({StackTrace? stack}) {
   final trace = stack != null ? Trace.parse(stack.toString()) : Trace.current();
   final relevantLines = trace.frames.where((line) {
     if (line.isCore) return false;
+    if (kIsWeb) {
+      if (line.toString().startsWith('../')) {
+        // usually from external packages, or from the dart sdk
+        // ../packages/spot/src/widgets/wrap.g.dart.js 14322:88 in _caller
+        // ../dart-sdk/lib/_internal/js_dev_runtime/patch/async_patch.dart 647:23 in <fn>
+        return false;
+      }
+    }
     final url = line.uri.toString();
     if (url.contains('package:spot')) return false;
     if (url.startsWith('package:flutter_test')) return false;

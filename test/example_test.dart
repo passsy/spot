@@ -6,6 +6,7 @@ import 'package:spot/spot.dart';
 
 void main() {
   testWidgets('narrow down search down the tree', (tester) async {
+    timeline.mode = TimelineMode.always;
     await loadAppFonts();
     await tester.pumpWidget(
       MaterialApp(

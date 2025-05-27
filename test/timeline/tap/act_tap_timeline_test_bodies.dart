@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:dartx/dartx.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
@@ -55,6 +57,9 @@ class ActTapTimelineTestBodies {
       captureStart: ['The following StateError was thrown running a test:'],
       globalTimelineModeToSwitch: globalTimelineModeToSwitch,
     );
+    if (stdout == null) {
+      return;
+    }
     final expectedErrorMessage = '''
 Cannot change global timeline mode within a test.
 Use "timeline.mode" instead.
@@ -73,6 +78,9 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       isGlobalMode: isGlobalMode,
       captureStart: ['Timeline of test'],
     );
+    if (stdout == null) {
+      return;
+    }
 
     final timeline = stdout.split('\n');
 
@@ -94,10 +102,17 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       timeline[start + 2],
       startsWith('Caller: at'),
     );
-    expect(
-      timeline[start + 3],
-      startsWith('Screenshot: file://'),
-    );
+    if (kIsWeb) {
+      expect(
+        timeline[start + 3],
+        'Screenshot links are not supported in the timeline on platform web',
+      );
+    } else {
+      expect(
+        timeline[start + 3],
+        startsWith('Screenshot: file://'),
+      );
+    }
     expect(
       timeline[start + 4],
       startsWith('Timestamp:'),
@@ -107,13 +122,14 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       shared.timelineSeparator,
     );
     final prefix = isGlobalMode ? 'global' : 'local';
-    final htmlLine =
-        timeline.firstWhere((line) => line.startsWith('View timeline here:'));
+    final htmlLine = timeline
+        .firstOrNullWhere((line) => line.startsWith('View timeline here:'));
     expect(
-      htmlLine.endsWith(
+      htmlLine,
+      endsWith(
         '$prefix-onerror-timeline-with-error-prints-timeline${Platform.pathSeparator}index.html',
       ),
-      isTrue,
+      reason: "Full output $stdout",
     );
   }
 
@@ -126,6 +142,9 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       isGlobalMode: isGlobalMode,
       captureStart: ['Timeline', shared.timelineHeader],
     );
+    if (stdout == null) {
+      return;
+    }
 
     final timeline = stdout.split('\n');
     // Does not start with 'Timeline', this only happens on error
@@ -158,7 +177,7 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
     expect(
       screenshotFile.readAsBytesSync(),
       isNotEmpty,
-      reason: 'file is empty, no data written',
+      reason: 'file is empty, no data written at $screenshotPath',
     );
 
     expect(
@@ -189,6 +208,9 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       shouldFail: true,
       isGlobalMode: isGlobalMode,
     );
+    if (stdout == null) {
+      return;
+    }
 
     final timeline = stdout.split('\n');
     // Does not start with 'Timeline', this only happens on error
@@ -377,42 +399,78 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
     required int tapCount,
     required int assertionCount,
   }) {
+    printOnFailure('Timeline output:\n$output');
+    final actualTapCount =
+        RegExp('Event Type: Tap Event').allMatches(output).length;
     expect(
-      RegExp('Event Type: Tap Event').allMatches(output).length,
+      actualTapCount,
       tapCount,
+      reason: 'Expected $tapCount taps but found only $actualTapCount.',
     );
+    final actualAssertCount =
+        RegExp('Event Type: Assertion').allMatches(output).length;
     expect(
-      RegExp('Event Type: Assertion').allMatches(output).length,
+      actualAssertCount,
       assertionCount,
+      reason:
+          'Expected $assertionCount assertions but found only $actualAssertCount.',
     );
+    final headerCount = RegExp(shared.timelineHeader).allMatches(output).length;
     expect(
-      RegExp(shared.timelineHeader).allMatches(output).length,
+      headerCount,
       tapCount + assertionCount,
+      reason:
+          'Expected $tapCount taps + $assertionCount assertions but found only $headerCount headers.',
     );
     final callerParts = output.split('\n').where((line) {
-      return line.startsWith('Caller: at') && line.contains('file://');
+      return line.startsWith('Caller: at') &&
+          ((!kIsWeb && line.contains('file://')) ||
+              (kIsWeb && line.contains('http://')));
     }).toList();
     expect(
       callerParts.length,
       tapCount + assertionCount,
+      reason:
+          'Expected $tapCount taps + $assertionCount assertions but found ${callerParts.length} caller parts.',
     );
     final screenshots = output.split('\n').where((line) {
       return line.startsWith('Screenshot: file:');
     }).toList();
-    if (WidgetsBinding.instance is! LiveTestWidgetsFlutterBinding) {
-      expect(
-        screenshots.length,
-        tapCount + assertionCount,
+    final screenshotsUnsupported = output.split('\n').where((line) {
+      return line.startsWith(
+        'Screenshot links are not supported in the timeline on platform web',
       );
+    }).toList();
+    if (WidgetsBinding.instance is! LiveTestWidgetsFlutterBinding) {
+      if (kIsWeb) {
+        // no screenshots in web mode
+        expect(
+          screenshotsUnsupported.length,
+          tapCount + assertionCount,
+          reason:
+              'Expected $tapCount taps + $assertionCount assertions but found ${screenshotsUnsupported.length} unsupported screenshots.',
+        );
+      } else {
+        expect(
+          screenshots.length,
+          tapCount + assertionCount,
+          reason:
+              'Expected $tapCount taps + $assertionCount assertions but found ${screenshots.length} screenshots.',
+        );
+      }
     } else {
       expect(
         screenshots.length,
         0,
+        reason:
+            'Expected no screenshots in live mode, but found ${screenshots.length}.',
       );
     }
     expect(
       RegExp('Timestamp: ').allMatches(output).length,
       tapCount + assertionCount,
+      reason:
+          'Expected $tapCount taps and $assertionCount assertions but found only ${RegExp('Timestamp: ').allMatches(output).length} timestamps.',
     );
   }
 
@@ -463,7 +521,7 @@ void main() async {
 ''';
   }
 
-  static Future<String> _outputFromTapTestProcess({
+  static Future<String?> _outputFromTapTestProcess({
     required String title,
     required TimelineMode timelineMode,
     List<String> captureStart = const [shared.timelineHeader],
@@ -471,16 +529,19 @@ void main() async {
     bool isGlobalMode = false,
     TimelineMode? globalTimelineModeToSwitch,
   }) async {
-    final testAsString = _tapTestAsString(
-      title: title,
-      timelineMode: timelineMode,
-      shouldFail: shouldFail,
-      isGlobalMode: isGlobalMode,
-      globalTimelineModeToSwitch: globalTimelineModeToSwitch,
-    );
+    if (kIsWeb) {
+      markTestSkipped('Running a Test process is unsupported on platform web');
+      return null;
+    }
     return await process.runTestInProcessAndCaptureOutPut(
       shouldFail: shouldFail,
-      testFileText: testAsString,
+      testFileText: () => _tapTestAsString(
+        title: title,
+        timelineMode: timelineMode,
+        shouldFail: shouldFail,
+        isGlobalMode: isGlobalMode,
+        globalTimelineModeToSwitch: globalTimelineModeToSwitch,
+      ),
       captureStart: captureStart,
     );
   }

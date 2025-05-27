@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:dartx/dartx_io.dart';
 
 /// Returns the Flutter SDK root directory based on the current flutter

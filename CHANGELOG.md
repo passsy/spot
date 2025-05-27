@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.18.0
+
+Changes for class `Screenshot`
+- New: `width`, `height`, `pixelRatio`, `name`
+- New: `readBytes()`, `readPngBytes()`, `readPngBytesSync()` gives access to raw bytes
+- Deprecated: `file` property. Still returns `File` but signature now returns `dynamic` for web support. Use `createTempPngFile()` or raw byte APIs instead
+- New: `createTempPngFile()` writes the screenshot to a temporary file and returns the absolute file path 
+- New: `List<ScreenshotAnnotation> annotations`, `addAnnotation()`, `removeAnnotation()` each layer is now separately available
+- New: `flattenedImage()` merges all layers into a single image
+
 ## 0.17.0
 - Timeline is now generated with [Jaspr](https://pub.dev/packages/jaspr) #76
 - New: `act.tapAt()` #80

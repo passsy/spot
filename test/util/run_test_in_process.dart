@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:spot/src/flutter/flutter_sdk.dart';
 import 'package:test/test.dart';
 import 'package:test_process/test_process.dart';
@@ -12,13 +13,17 @@ import 'package:test_process/test_process.dart';
 /// the output of the process, and returns the captured output as a string.
 /// The temporary test file is deleted after the test process completes.
 /// If `captureStart` is provided, the output will be captured starting from the line that matches `captureStart`.
-Future<String> runTestInProcessAndCaptureOutPut({
-  required String testFileText,
+Future<String?> runTestInProcessAndCaptureOutPut({
+  required String Function() testFileText,
   List<String> captureStart = const [],
   bool shouldFail = false,
   Iterable<String>? args,
 }) async {
-  final tempTestFile = await _createTempTestFile(testFileText);
+  if (kIsWeb) {
+    markTestSkipped('Running a Test process is unsupported on platform web');
+    return null;
+  }
+  final tempTestFile = await _createTempTestFile(testFileText());
 
   final arguments = [
     'test',

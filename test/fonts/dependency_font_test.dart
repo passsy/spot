@@ -2,14 +2,15 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dartx/dartx_io.dart';
-import 'package:flutter/rendering.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/src/flutter/flutter_sdk.dart';
 
 import 'font_test_project.dart';
 
 void main() {
-  test('When defined in pubspec a third-party font is loaded', () async {
+  test('When defined in pubspec a third-party font is loaded', skip: kIsWeb,
+      () async {
     final dependencyFontProject =
         FontTestProject('test/fonts/templates/dependency_font');
     await dependencyFontProject.create();
