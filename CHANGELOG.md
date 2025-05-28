@@ -2,7 +2,26 @@
 
 ## 0.18.0
 
-Changes for class `Screenshot`
+- Breaking: Add `act.dragUntilVisible()` now moves the target in the center of the viewport (one additional drag). parameter `moveStep` is now optional, default to half the scrollable size. The direction can be controlled with `bool toStart`.
+- Fix: Restore support for **integration_tests** - don't generate the timeline HTML
+- New: Add support for `flutter test --platform chrome` - don't generate the timeline HTML and screenshot paths
+- New: Added warning when `spot<GenericWidget>()` can't find a widget because it is actually looking for `GenericWidget<dynamic>`
+- Improvement: Moved timeline screenshots into `build/timeline/<test_name>/screenshots/` for easier browser image resolution. Fixes issues with Firefox.
+- Improvement: Improve error message of `act.tap` when multiple or no widgets are found
+- Fix: `existsAtLeastNTimes(0)` now reports a correct error message
+
+Changes for `WidgetSelector`
+- Improved: `.snapshotWidget()`, `.snapshotState()`, `.snapshotElement()`, `.snapshotRenderBox()` and `.snapshotRenderObject()` now add a single consistent entry each to the timeline with consistent messages.
+
+Changes for `WidgetSnapshot`
+- New: `discoveredRenderObject`
+- New: `discoveredRenderObjects`
+- New: `discoveredRenderBox`
+- New: `discoveredRenderBoxes`
+- New: `removeQuantityConstraints()`
+
+Changes for class `Screenshot` (big breaking update!)
+- Fix screenshot filenames on windows (remove colons)
 - New: `width`, `height`, `pixelRatio`, `name`
 - New: `readBytes()`, `readPngBytes()`, `readPngBytesSync()` gives access to raw bytes
 - Deprecated: `file` property. Still returns `File` but signature now returns `dynamic` for web support. Use `createTempPngFile()` or raw byte APIs instead
