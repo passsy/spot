@@ -226,6 +226,11 @@ class Act {
   /// (for example, if its keys get swapped). Providing this fallback can help avoid
   /// test failures in dynamic layouts, ensuring the final checks can still succeed.
   ///
+  /// [padding] defines areas within the scrollable that should be avoided during
+  /// dragging. The target will not be positioned within the padding when scrolling is complete.
+  /// This is useful for avoiding fixed headers, footers, or other UI elements that
+  /// overlap the scrollable content.
+  ///
   /// Usage:
   /// ```dart
   /// final firstItem = spotText('Item at index: 0')..existsOnce();
@@ -244,6 +249,7 @@ class Act {
     Duration duration = const Duration(milliseconds: 50),
     bool toStart = false,
     WidgetSelector<Scrollable>? fallbackScrollableSelector,
+    EdgeInsets padding = EdgeInsets.zero,
   }) {
     assert(
       !(moveStep != null && toStart),
@@ -474,11 +480,19 @@ class Act {
             spotScrollableBoundsAfterDrag.snapshotRenderBox();
         final viewportGlobalPosition =
             scrollableSizedRenderBoxAfterDrag.localToGlobal(Offset.zero);
-        final viewportRect = Rect.fromLTWH(
+        final fullViewportRect = Rect.fromLTWH(
           viewportGlobalPosition.dx,
           viewportGlobalPosition.dy,
           scrollableSizedRenderBoxAfterDrag.size.width,
           scrollableSizedRenderBoxAfterDrag.size.height,
+        );
+
+        // Account for padding when determining the usable viewport area
+        final viewportRect = Rect.fromLTRB(
+          fullViewportRect.left + padding.left,
+          fullViewportRect.top + padding.top,
+          fullViewportRect.right - padding.right,
+          fullViewportRect.bottom - padding.bottom,
         );
 
         final targetRenderBox = dragTarget.snapshotRenderBox();
@@ -497,8 +511,22 @@ class Act {
 
         Offset finalDragOffset = Offset.zero;
         if (!targetFullyInViewport) {
-          // drag the target to the location of the dragStart widget (top left corner)
-          final endDragLocation = dragStartRenderBoxRect.topLeft;
+          // Calculate the desired end location, respecting padding
+          final Offset endDragLocation;
+          if (scrollAxis == Axis.vertical) {
+            // Position target at top of usable viewport (excluding padding)
+            endDragLocation = Offset(
+              globalTargetPositionTopLeft.dx,
+              viewportRect.top,
+            );
+          } else {
+            // Position target at left of usable viewport (excluding padding)
+            endDragLocation = Offset(
+              viewportRect.left,
+              globalTargetPositionTopLeft.dy,
+            );
+          }
+
           final Offset fullDistanceToEnd =
               endDragLocation - globalTargetPositionTopLeft;
 
