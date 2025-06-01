@@ -499,15 +499,49 @@ class Act {
         if (!targetFullyInViewport) {
           // drag the target to the location of the dragStart widget (top left corner)
           final endDragLocation = dragStartRenderBoxRect.topLeft;
-          final Offset distanceToEnd =
+          final Offset fullDistanceToEnd =
               endDragLocation - globalTargetPositionTopLeft;
-          await gestures.drag(dragBeginPosition, distanceToEnd);
-          await binding.pump(duration);
-          finalDragOffset = distanceToEnd;
-          addDragEvent(
-            'Scrolling to fully reveal $targetName.',
-            direction: distanceToEnd,
-          );
+
+          // Only drag in the direction of the scroll axis, never diagonal
+          final Offset distanceToEnd;
+          if (scrollAxis == Axis.vertical) {
+            distanceToEnd = Offset(0, fullDistanceToEnd.dy);
+          } else {
+            distanceToEnd = Offset(fullDistanceToEnd.dx, 0);
+          }
+
+          // Ensure the drag is always recognized as a drag gesture, not a tap
+          if (distanceToEnd.distance >= kDragSlopDefault) {
+            // Distance is large enough, drag directly
+            await gestures.drag(dragBeginPosition, distanceToEnd);
+            await binding.pump(duration);
+            finalDragOffset = distanceToEnd;
+            addDragEvent(
+              'Scrolling to fully reveal $targetName.',
+              direction: distanceToEnd,
+            );
+          } else if (distanceToEnd.distance > 0) {
+            // Distance is too small, overshoot then return to ensure drag recognition, not a tap.
+            const overshootDistance = kDragSlopDefault + 1;
+            final direction = distanceToEnd / distanceToEnd.distance;
+            final overshootOffset = direction * overshootDistance;
+            final returnOffset = overshootOffset - distanceToEnd;
+
+            // First drag: overshoot the target
+            await gestures.drag(dragBeginPosition, overshootOffset);
+            await binding.pump(duration);
+
+            // Second drag: return to the correct position
+            await gestures.drag(
+                dragBeginPosition + overshootOffset, -returnOffset);
+            await binding.pump(duration);
+
+            finalDragOffset = distanceToEnd;
+            addDragEvent(
+              'Scrolling to fully reveal $targetName.',
+              direction: distanceToEnd,
+            );
+          }
         }
 
         final totalDragged =
