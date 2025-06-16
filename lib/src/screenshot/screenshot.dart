@@ -152,7 +152,10 @@ extension TimelineSyncScreenshot on Timeline {
       final file = frame?.uri.pathSegments.last.replaceFirst('.dart', '');
       final line = frame?.line;
       if (file != null && line != null) {
-        return '$file:$line';
+        // Using ':' in a file name is not portable across all platforms
+        // (Windows does not allow it). Keep the async variant's behaviour
+        // which separates file and line with an underscore.
+        return '${file}_$line';
       }
       if (file != null) {
         return file;
