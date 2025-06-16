@@ -152,7 +152,10 @@ extension TimelineSyncScreenshot on Timeline {
       final file = frame?.uri.pathSegments.last.replaceFirst('.dart', '');
       final line = frame?.line;
       if (file != null && line != null) {
-        return '$file:$line';
+        // Using ':' in a file name is not portable across all platforms
+        // (Windows rejects it). The async screenshot path already replaces
+        // ':' with '_' to avoid this issue.
+        return '${file}_$line';
       }
       if (file != null) {
         return file;
