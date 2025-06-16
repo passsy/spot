@@ -36,6 +36,7 @@ export 'package:spot/src/spot/effective/effective_text.dart'
     show EffectiveTextMatcher, EffectiveTextSelector, TextStyleSubject;
 export 'package:spot/src/spot/filters/child_filter.dart' show ChildFilter;
 export 'package:spot/src/spot/filters/parent_filter.dart' show ParentFilter;
+export 'package:spot/src/spot/filters/position_filter.dart' show PositionFilter;
 export 'package:spot/src/spot/filters/predicate_filter.dart'
     show PredicateFilter;
 export 'package:spot/src/spot/filters/widget_type_filter.dart'
@@ -61,6 +62,7 @@ export 'package:spot/src/spot/props.dart'
         widgetProp;
 export 'package:spot/src/spot/selectors.dart'
     show
+        PositionFilterSelector,
         QuantityMatchers,
         QuantitySelectors,
         ReadSingleSnapshot,

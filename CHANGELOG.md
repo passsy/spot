@@ -4,6 +4,7 @@
 
 - Fix: Assertions like `spotKey(key).existsOnce()` were extremely slow (tens of seconds) when no match was found in a large widget tree. The error output is now limited and match-all selectors are no longer suggested as "less specific" matches. #119
 - Improvement: Untyped selectors (`spot`, `spotKey`, `spotWidget`, `spotElement`, `spotTexts`) no longer add a no-op `WidgetTypeFilter<Widget>` at the root.
+- New: `WidgetSelector.spotAtPosition` to query widgets on the hit-test path for a global screen position. #28
 
 ## 0.19.0
 
@@ -37,7 +38,7 @@ Changes for class `Screenshot` (big breaking update!)
 - New: `width`, `height`, `pixelRatio`, `name`
 - New: `readBytes()`, `readPngBytes()`, `readPngBytesSync()` gives access to raw bytes
 - Deprecated: `file` property. Still returns `File` but signature now returns `dynamic` for web support. Use `createTempPngFile()` or raw byte APIs instead
-- New: `createTempPngFile()` writes the screenshot to a temporary file and returns the absolute file path 
+- New: `createTempPngFile()` writes the screenshot to a temporary file and returns the absolute file path
 - New: `List<ScreenshotAnnotation> annotations`, `addAnnotation()`, `removeAnnotation()` each layer is now separately available
 - New: `flattenedImage()` merges all layers into a single image
 
@@ -56,7 +57,7 @@ Changes for class `Screenshot` (big breaking update!)
 - Add `snapshotRenderBox()`
 - Export `WidgetPresence`
 - Add `@useResult` to `.atMost(N)`, `.atLeast(N)`, `.amount(N)` and `.existsAtMostNTimes(N)` to prevent missing assertions
-- Fix `existsAtLeastNTimes` dumping the widget tree to console 
+- Fix `existsAtLeastNTimes` dumping the widget tree to console
 - Fix image rendering with `TimelineMode.always`
 - Add Timeline to `/README.md`
 - Add `act` to `/README.md`
@@ -69,7 +70,7 @@ Changes for class `Screenshot` (big breaking update!)
   - `spot<_MyContainer>().getStateProp(stateProp<String, _MyContainerState>('innerValue', (s) => s.innerValue));`
   - `spot<_MyContainer>().getRenderObjectProp(renderObjectProp<Size, RenderBox>('size', (r) => r.size));`
 - New `getStateProp` and `stateProp` to access state properties #71
-  `spot<_MyContainer>().existsOnce().getStateProp(stateProp('innerValue', (_MyContainerState s) => s.innerValue));` 
+  `spot<_MyContainer>().existsOnce().getStateProp(stateProp('innerValue', (_MyContainerState s) => s.innerValue));`
 - New `timeline` mode `TimelineMode.always` to always print a timeline after each test #68
 - Deprecate `TimelineMode.record` in favor of `TimelineMode.reportOnError` (which is the default) #68
 - Timeline now shows partial tap warnings #69
@@ -100,7 +101,7 @@ Changes for class `Screenshot` (big breaking update!)
 
 - Add support for Flutter 3.20
 - Update `checks` to 0.3.0 #48
-- Remove deprecated property `selector` from `withProp()` and `hasProp()`. Use `elementSelector` instead 
+- Remove deprecated property `selector` from `withProp()` and `hasProp()`. Use `elementSelector` instead
 - Widen `test_api` version range to include `0.7.X`
 
 ## 0.10.0
@@ -108,7 +109,7 @@ Changes for class `Screenshot` (big breaking update!)
 ### High-level API changes
 
 - **Breaking** `spotText('dash')` can now return multiple widgets
-- New: `.atLeast(n)` and `.atMost(n)` and `.amount(n)` to force the number of expected widgets. 
+- New: `.atLeast(n)` and `.atMost(n)` and `.amount(n)` to force the number of expected widgets.
   `.atMost(0)` can be used to test that a widget does not exist!
 - Deprecated: `spotSingle<W>()` is now deprecated. Use `spot<W>()` instead, or `spot<W>().atMost(1)` to indicate that only a single widget is expected.
 - Fix: `.first()` and `.last()`
@@ -125,18 +126,17 @@ Changes for class `Screenshot` (big breaking update!)
 Those changes can be breaking for packages that depend on `spot` or advanced usages, but should not affect most users.
 
 - **Breaking** `WidgetSelector` now has `List<ElementFilter> stages`, replacing the previous `props`, `parents`, `children` and `elementFilters`.
-- **Breaking** `WidgetSelector` constructor and `copyWith` signature changed, reflecting the new properties. 
+- **Breaking** `WidgetSelector` constructor and `copyWith` signature changed, reflecting the new properties.
   `createElementFilters()`, `createCandidateGenerator()` and `toStringWithoutParents()` have been removed.
 - `WidgetSelector` now has a `quantityConstraint` property (deprecates `expectedQuantity`) that allows setting the `min` and `max` number of expected widgets.
 - `WidgetSelector` replaces `SingleWidgetSelector` and `MultiWidgetSelector`
-- **Breaking** Quantity assertions like `.doesNotExist()` or `.existsOnce()` now return `WidgetMatcher`/`MultiWidgetMatcher` instead of `WidgetSnapshot`. 
+- **Breaking** Quantity assertions like `.doesNotExist()` or `.existsOnce()` now return `WidgetMatcher`/`MultiWidgetMatcher` instead of `WidgetSnapshot`.
   To get the `WidgetSnapshot` use `snapshot()` instead.
 - **Breaking** Remove `WidgetSelector.cast` because it lost information and was untested
 - **Breaking** `PropFilter` has been renamed to `PredicateFilter`
 - **Breaking** `PredicateWithDescription` has been removed
 - **Breaking** `CandidateGenerator` has been removed
 - Explicitly export all classes/extensions/functions to prevent accidental leaks of internal APIs
-
 
 ## 0.10.0-beta.3
 
@@ -153,14 +153,12 @@ The end-user `spot` API is not affected.
 - `WidgetSelector.toString()` has been improved, has now separators for stages and adds braces. Example: `Center with child SizedBox ❯ with parent (Scaffold ᗕ Row)`
 - Fix `.atIndex(n)` to be executed at the right time, not after all other filters.
 
-
 ## 0.10.0-beta.2
 
 - New `getDiagnosticProp<T>('name')` for easy access to the values of a diagnostic property #40
 - New `hasEffectiveTextStyle`, `withEffectiveTextStyleMatching()`, `withEffectiveTextStyle()` #36, #38
 - Tons of documentation and examples #37, #39
 - Restructure of internal files
-
 
 ## 0.10.0-beta.1
 
@@ -175,11 +173,10 @@ Eventually **Breaking**, but only the class names. The end user API stays the sa
 - `spotText('a')` can now return multiple widgets
 - **Breaking** remove `WidgetSelector.cast` because it lost information and was untested
 
-
 ## 0.7.0
 
 - New prop API with `hasWidgetProp()` makes it easy to filter and assert properties of Widgets.
-  This replaces the old `hasProp()` method which was based on way to complicated package:checks context. 
+  This replaces the old `hasProp()` method which was based on way to complicated package:checks context.
   ```dart
   // Old ⛈️
   spotSingle<Checkbox>().existsOnce().hasProp(
@@ -198,43 +195,43 @@ Eventually **Breaking**, but only the class names. The end user API stays the sa
     );
   ```
 
-  The prop API is also available for `Element` and `RenderObject`. 
+  The prop API is also available for `Element` and `RenderObject`.
   <summary>
     <details>
-  
-  ```
-  ├── Interface "NamedWidgetProp" added 
-  ├── Interface "NamedElementProp" added 
-  ├── Interface "NamedRenderObjectProp" added 
-  ├── Function "widgetProp" added 
-  ├── Function "elementProp" added 
-  ├── Function "renderObjectProp" added 
+
+  ```text
+  ├── Interface "NamedWidgetProp" added
+  ├── Interface "NamedElementProp" added
+  ├── Interface "NamedRenderObjectProp" added
+  ├── Function "widgetProp" added
+  ├── Function "elementProp" added
+  ├── Function "renderObjectProp" added
   ├─┬ Class SelectorQueries
-  │ ├── Method "whereWidgetProp" added 
-  │ ├── Method "whereElementProp" added 
-  │ └── Method "whereRenderObjectProp" added 
+  │ ├── Method "whereWidgetProp" added
+  │ ├── Method "whereElementProp" added
+  │ └── Method "whereRenderObjectProp" added
   └─┬ Class WidgetMatcherExtensions
-  ├── Method "getWidgetProp" added 
-  ├── Method "hasWidgetProp" added 
-  ├── Method "getElementProp" added 
-  ├── Method "hasElementProp" added 
-  ├── Method "getRenderObjectProp" added 
-  └── Method "hasRenderObjectProp" added 
+  ├── Method "getWidgetProp" added
+  ├── Method "hasWidgetProp" added
+  ├── Method "getElementProp" added
+  ├── Method "hasElementProp" added
+  ├── Method "getRenderObjectProp" added
+  └── Method "hasRenderObjectProp" added
   ```
     </details>
   </summary>
-  
+
 - Never miss asserting your `WidgetSelector`.
   All methods returning a `WidgetSelector` are now annotated with `@useResult`.
   This will cause a lint warning when you only define a `WidgetSelector` without asserting it.
   ```dart
   spot<FloatingActionButton>().withChild(spotIcon(Icons.add)); // warning, no assertion
-  
+
   final plusFab = spot<FloatingActionButton>().withChild(spotIcon(Icons.add)); // ok, assigned
   spot<FloatingActionButton>().withChild(spotIcon(Icons.add)).existsOnce(); // ok, asserted
   ```
-  
-- It is now easy to directly access the Widget of a `SingleWidgetSelector` with `snapshotWidget()`. 
+
+- It is now easy to directly access the Widget of a `SingleWidgetSelector` with `snapshotWidget()`.
   It also works for the associated `Element` and `RenderObject`. Use `snapshotElement()` and `snapshotRenderObject()`.
 
   ```diff
@@ -269,11 +266,11 @@ Eventually **Breaking**, but only the class names. The end user API stays the sa
   ```dart
   /// Takes a screenshot of the entire window
   await takeScreenshot();
-  
+
   /// Takes a screenshot of a single Screen/Widget
   final homePage = spotSingle<HomePage>();
   await takeScreenshot(selector: homePage);
-  
+
   /// Use it as extension
   await spotSingle<HomePage>().takeScreenshot();
   ```
@@ -290,7 +287,7 @@ Eventually **Breaking**, but only the class names. The end user API stays the sa
 - Widen test_api range to support Flutter 3.22
 
 ## 0.3.2
-- Export all types from `checks.dart` which are required to use `hasProp` 
+- Export all types from `checks.dart` which are required to use `hasProp`
 
 ## 0.3.1
 - Fix compilation error with Flutter 3.0.0
@@ -299,7 +296,7 @@ Eventually **Breaking**, but only the class names. The end user API stays the sa
 - `spotTexts` now matches `EditableText` and `SelectableText` #5
 - `spotTexts` now has generic type `<W>` instead of static `Text`. This changes the return type from  `MultiWidgetSelector<Text>` -> `MultiWidgetSelector<W>` #5
 - Changed signature of `SingleWidgetSelector.withProp` and `MultiWidgetSelector.withProp`.
-- New matchers for `EditableText`, `ListTile`, `SelectableText` 
+- New matchers for `EditableText`, `ListTile`, `SelectableText`
 
 ## 0.2.2
 - Support for Flutter 3.0.0 / Dart 2.17

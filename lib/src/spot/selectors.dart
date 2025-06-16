@@ -962,3 +962,13 @@ extension RelativeSelectors<W extends Widget> on WidgetSelector<W> {
     return addStage(ChildFilter(children));
   }
 }
+
+/// Filters an existing selector by a global screen coordinate.
+extension PositionFilterSelector<W extends Widget> on WidgetSelector<W> {
+  /// Keeps widgets from this selector that are on the hit-test path at
+  /// [position].
+  @useResult
+  WidgetSelector<W> spotAtPosition(Offset position) {
+    return addStage(PositionFilter(position));
+  }
+}
