@@ -153,8 +153,8 @@ extension TimelineSyncScreenshot on Timeline {
       final line = frame?.line;
       if (file != null && line != null) {
         // Using ':' in a file name is not portable across all platforms
-        // (Windows rejects it). Asynchronously captured screenshots already
-        // replaced ':' with '_' in #100. Keep the behaviour consistent here.
+        // (Windows rejects it). The async screenshot path already replaces
+        // ':' with '_' to avoid this issue.
         return '${file}_$line';
       }
       if (file != null) {
