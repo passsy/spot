@@ -165,7 +165,7 @@ void main() {
   testWidgets('another test', (tester) async {
     // overwrites the global mode
     timeline.mode = TimelineMode.always;
-    // consle: View timeline here: file:///var/folders/0j/p0s0zrv91t...
+    // console: View timeline here: file:///var/folders/0j/p0s0zrv91t...
   });
 }
 ```
