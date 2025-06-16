@@ -635,7 +635,7 @@ void _throwHitTestFailureReport({
   throw TestFailure(
     "Widget '${snapshot.discoveredWidget!.toStringShort()}' can not be interacted with at position $position where its RenderObject $target was found.\n"
     "The exact reason, why it doesn't receive hitTest events is unknown.\n"
-    "If you think this case needs a a better error message, create an issue https://github.com/passsy/spot for anyone else running in a similar issue.\n"
+    "If you think this case needs a better error message, create an issue https://github.com/passsy/spot for anyone else running in a similar issue.\n"
     "A small example would be highly appreciated.",
   );
 }
