@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.18.1
+
+- New: `spotWidgetsAtPosition` to query widgets by screen position. Hit testing
+  happens when the selector is evaluated. #28
+
 ## 0.18.0
 
 - Breaking: Add `act.dragUntilVisible()` now moves the target in the center of the viewport (one additional drag). parameter `moveStep` is now optional, default to half the scrollable size. The direction can be controlled with `bool toStart`.
