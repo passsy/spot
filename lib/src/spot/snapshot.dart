@@ -58,7 +58,7 @@ class WidgetSnapshot<W extends Widget> {
 
   @override
   String toString() {
-    return 'SpotSnapshot of $selector (${discoveredElements.length} matches)}';
+    return 'SpotSnapshot of $selector (${discoveredElements.length} matches)';
   }
 }
 
