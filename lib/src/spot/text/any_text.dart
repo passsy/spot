@@ -306,13 +306,14 @@ class MatchTextFilter implements ElementFilter {
   }
 
   String? _extractTextData(Element e) {
-    if (e.widget is EditableText) {
-      return (e.widget as EditableText).controller.text;
+    final widget = e.widget;
+    if (widget is EditableText) {
+      return widget.controller.text;
     }
-    if (e.widget is RichText) {
-      return (e.widget as RichText).text.toPlainText();
+    if (widget is RichText) {
+      return widget.text.toPlainText();
     }
-    throw _UnsupportedWidgetTypeException(e.widget);
+    throw _UnsupportedWidgetTypeException(widget);
   }
 
   @override
