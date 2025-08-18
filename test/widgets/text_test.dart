@@ -196,8 +196,6 @@ void main() {
         ),
       );
 
-      debugDumpApp();
-
       spot<_MyWidget>().spotText('a').existsOnce();
       spot<RotatedBox>().spotText('b').existsOnce();
 
