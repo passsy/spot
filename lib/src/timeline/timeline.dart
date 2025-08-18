@@ -321,6 +321,15 @@ final class _Timeline extends Timeline {
   ///
   /// Prints the timeline to console, as link to a html file or plain text
   Future<void> _onPostTest() async {
+    if (test.errors.isNotEmpty) {
+      final screenshot = takeScreenshotSync();
+      timeline.addEvent(
+        details: 'Test failed with ${test.errors.length} errors',
+        eventType: 'Test Failed',
+        screenshot: screenshot,
+        color: Colors.red,
+      );
+    }
     await _renderTimeline();
     for (final tearDown in _tearDowns.toList()) {
       await tearDown();
