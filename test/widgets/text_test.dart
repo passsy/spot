@@ -183,8 +183,7 @@ void main() {
       await tester.pumpWidget(
         _stage(
           children: [
-            ColoredBox(
-              color: Colors.red,
+            _MyWidget(
               child: Text('a'),
             ),
             RotatedBox(
@@ -199,10 +198,10 @@ void main() {
 
       debugDumpApp();
 
-      spot<ColoredBox>().spotText('a').existsOnce();
+      spot<_MyWidget>().spotText('a').existsOnce();
       spot<RotatedBox>().spotText('b').existsOnce();
 
-      spot<ColoredBox>().spotText('b').doesNotExist();
+      spot<_MyWidget>().spotText('b').doesNotExist();
       spot<RotatedBox>().spotText('a').doesNotExist();
     });
   });
@@ -407,4 +406,14 @@ Widget _stage({required List<Widget> children}) {
       ),
     ),
   );
+}
+
+class _MyWidget extends StatelessWidget {
+  const _MyWidget({required this.child});
+
+  final Widget child;
+  @override
+  Widget build(BuildContext context) {
+    return child;
+  }
 }
