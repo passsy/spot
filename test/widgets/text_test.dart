@@ -197,6 +197,8 @@ void main() {
         ),
       );
 
+      debugDumpApp();
+
       spot<ColoredBox>().spotText('a').existsOnce();
       spot<RotatedBox>().spotText('b').existsOnce();
 
