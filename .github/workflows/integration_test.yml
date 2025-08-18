@@ -33,4 +33,4 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-metrics
           disable-animations: true
           working-directory: counter_app
-          script: flutter test integration_test
+          script: flutter test integration_test -d emulator-5554
