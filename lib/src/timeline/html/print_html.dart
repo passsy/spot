@@ -23,7 +23,7 @@ extension HtmlTimelinePrinter on Timeline {
       return;
     }
 
-    final String timelineDirName = () {
+    String timelineDirName({int maxLength = 50}) {
       String name = test.test.name;
 
       if (name.isEmpty) {
@@ -44,11 +44,46 @@ extension HtmlTimelinePrinter on Timeline {
 
       // Remove leading or trailing hyphens
       name = name.replaceAll(RegExp(r'^-+|-+$'), '');
-      return name;
-    }();
 
+      if (name.length > maxLength) {
+        // Shorten name by using a hash
+        final fullName = name;
+        final hash = fullName.md5.takeFirst(8);
+
+        // taking the end of the name for variation, because the start usually is a common group name
+        String testNameEnd = fullName.takeLast(maxLength - 9);
+        if (testNameEnd.startsWith('-')) {
+          testNameEnd = testNameEnd.dropFirst(1);
+        }
+        if (testNameEnd.endsWith('-')) {
+          testNameEnd = testNameEnd.dropLast(1);
+        }
+        return '$testNameEnd-$hash';
+      }
+
+      return name;
+    }
+
+    // Limit the number of characters in the file paths of the timeline to 256 characters (for windows)
+    const maxScreenshotFilenameLength = 40;
+    const maxTimelineDirNameLength = 60;
     final timelineBuildDir = Directory('build').directory('timeline');
-    final spotTempDir = timelineBuildDir.directory(timelineDirName);
+    final reserved = [
+      // C:\Users\<YourUsername>\AppData\Local\Temp
+      timelineBuildDir.absolute.path.length,
+      'screenshots'.length,
+      maxScreenshotFilenameLength,
+      10 // padding for slashes, file extensions and other miscalculations
+    ];
+    final remainingSpace = 256 - reserved.reduce((a, b) => a + b);
+    assert(
+        remainingSpace > 0,
+        'The remaining space for the timeline directory name is too small: $remainingSpace/256 left. '
+        'The plan was to place the timeline in ${timelineDirName(maxLength: 1000)}');
+    final timelineDirNameTrimmed = timelineDirName(
+        maxLength: remainingSpace.clamp(0, maxTimelineDirNameLength));
+
+    final spotTempDir = timelineBuildDir.directory(timelineDirNameTrimmed);
     if (spotTempDir.existsSync()) {
       spotTempDir.deleteSync(recursive: true);
     }
@@ -63,9 +98,10 @@ extension HtmlTimelinePrinter on Timeline {
     for (final e in this.events) {
       final screenshot = e.screenshot;
       File? screenshotFile;
+      final pngName = screenshot?.name.takeLast(maxScreenshotFilenameLength);
       if (screenshot != null) {
         // save screenshots relative to the events.json file in screenshots/
-        screenshotFile = screenshotsDir.file('${screenshot.name}.png');
+        screenshotFile = screenshotsDir.file('$pngName.png');
         final flattened = await screenshot.flattenedImage();
         final pngBytes = await flattened.readPngBytes();
         screenshotFile.writeAsBytesSync(pngBytes);
@@ -76,7 +112,7 @@ extension HtmlTimelinePrinter on Timeline {
         details: e.details,
         timestamp: e.timestamp.toIso8601String(),
         screenshotUrl: screenshotFile != null
-            ? './$screenshotsDirName/${screenshotFile.name}'
+            ? './$screenshotsDirName/$pngName.png'
             : null,
         color: e.color == flt.Colors.grey
             ? null
@@ -240,4 +276,34 @@ String? _jetBrainsURL(TimelineEvent event) {
   final normalizedPath = path.startsWith('/') ? path.substring(1) : path;
 
   return 'jetbrains://idea/navigate/reference?project=$name&path=$normalizedPath';
+}
+
+extension on String {
+  String takeFirst(int count) {
+    if (count < 0) {
+      throw ArgumentError('Count must be non-negative');
+    }
+    return substring(0, count.clamp(0, length));
+  }
+
+  String takeLast(int count) {
+    if (count < 0) {
+      throw ArgumentError('Count must be non-negative');
+    }
+    return substring(length - count.clamp(0, length));
+  }
+
+  String dropFirst(int count) {
+    if (count < 0) {
+      throw ArgumentError('Count must be non-negative');
+    }
+    return substring(count.clamp(0, length));
+  }
+
+  String dropLast(int count) {
+    if (count < 0) {
+      throw ArgumentError('Count must be non-negative');
+    }
+    return substring(0, length - count.clamp(0, length));
+  }
 }
