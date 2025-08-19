@@ -29,8 +29,9 @@ jobs:
       - name: Run integration tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 29
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-metrics
+          api-level: 34
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-metrics -no-snapshot -no-snapshot-load -no-snapshot-save
+          arch: x86_64
           disable-animations: true
           working-directory: counter_app
           script: flutter test integration_test -d emulator-5554
