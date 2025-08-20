@@ -3,7 +3,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:spot/spot.dart';
-import 'package:spot/src/spot/selectors.dart' show Spot;
+import 'package:spot/src/spot/selectors.dart' show Spot, PositionSelectors;
 
 export 'package:checks/checks.dart'
     hide
@@ -38,6 +38,7 @@ export 'package:spot/src/spot/filters/child_filter.dart' show ChildFilter;
 export 'package:spot/src/spot/filters/parent_filter.dart' show ParentFilter;
 export 'package:spot/src/spot/filters/predicate_filter.dart'
     show PredicateFilter;
+export 'package:spot/src/spot/filters/position_filter.dart' show PositionFilter;
 export 'package:spot/src/spot/filters/widget_type_filter.dart'
     show WidgetTypeFilter;
 export 'package:spot/src/spot/finder_interop.dart'
@@ -503,6 +504,21 @@ WidgetSelector<W> spotKeys<W extends Widget>(
 }) {
   return _global.spotKeys<W>(
     key,
+    parents: parents,
+    children: children,
+  );
+}
+
+/// Creates a [WidgetSelector] that matches all widgets at the given global
+/// [position].
+@useResult
+WidgetSelector<Widget> spotWidgetsAtPosition(
+  Offset position, {
+  List<WidgetSelector> parents = const [],
+  List<WidgetSelector> children = const [],
+}) {
+  return spot().spotWidgetsAtPosition(
+    position,
     parents: parents,
     children: children,
   );

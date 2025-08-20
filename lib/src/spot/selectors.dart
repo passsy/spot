@@ -6,6 +6,7 @@ import 'package:spot/src/checks/checks_nullability.dart';
 import 'package:spot/src/spot/snapshot.dart' as snapshot_file show snapshot;
 import 'package:spot/src/spot/snapshot.dart';
 import 'package:spot/src/spot/text/any_text.dart';
+import 'package:spot/src/spot/filters/position_filter.dart';
 
 export 'package:checks/context.dart';
 
@@ -964,5 +965,24 @@ extension RelativeSelectors<W extends Widget> on WidgetSelector<W> {
   @useResult
   WidgetSelector<W> withChildren(List<WidgetSelector> children) {
     return addStage(ChildFilter(children));
+  }
+}
+
+/// Extensions to locate widgets based on global screen coordinates.
+extension PositionSelectors<W extends Widget> on WidgetSelector<W> {
+  /// Creates a [WidgetSelector] that matches all widgets at the given global
+  /// [position].
+  @useResult
+  WidgetSelector<Widget> spotWidgetsAtPosition(
+    Offset position, {
+    List<WidgetSelector> parents = const [],
+    List<WidgetSelector> children = const [],
+  }) {
+    return WidgetSelector(
+      stages: [
+        PositionFilter(position),
+        ..._childAndParentFilters(children, parents),
+      ],
+    );
   }
 }
