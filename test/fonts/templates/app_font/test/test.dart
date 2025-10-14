@@ -64,7 +64,7 @@ void main() {
       (tester) async {
     await loadFont(
       'Montserrat',
-      ['packages/app_font/fonts/Montserrat-Regular.ttf'],
+      ['packages/app_font/fonts/Montserrat Regular.ttf'],
     );
 
     await tester.pumpWidget(
@@ -84,7 +84,7 @@ void main() {
 
   testWidgets('Montserrat can be loaded with via file reference',
       (tester) async {
-    final fontPath = File('lib/fonts/Montserrat-Regular.ttf').absolute.path;
+    final fontPath = File('lib/fonts/Montserrat Regular.ttf').absolute.path;
     await loadFont('Montserrat', [fontPath]);
 
     await tester.pumpWidget(
@@ -104,7 +104,7 @@ void main() {
 
   testWidgets('Montserrat can be loaded with blank family name',
       (tester) async {
-    final fontPath = File('lib/fonts/Montserrat-Regular.ttf').absolute.path;
+    final fontPath = File('lib/fonts/Montserrat Regular.ttf').absolute.path;
     await loadFont('', [fontPath]);
 
     await tester.pumpWidget(

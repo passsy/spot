@@ -128,17 +128,18 @@ Future<void> loadFont(String family, List<String> fontPaths) async {
   await TestAsyncUtils.guard<void>(() async {
     final fontLoader = FontLoader(family);
     for (final path in fontPaths) {
+      final decodedPath = Uri.decodeComponent(path);
       try {
-        final file = File(path);
+        final file = File(decodedPath);
         if (file.existsSync()) {
           final Uint8List bytes = file.readAsBytesSync();
           fontLoader.addFont(Future.value(bytes.buffer.asByteData()));
         } else {
-          final data = rootBundle.load(path);
+          final data = rootBundle.load(decodedPath);
           fontLoader.addFont(Future.value(data));
         }
       } catch (e, stack) {
-        debugPrint("Could not load font $path\n$e\n$stack");
+        debugPrint("Could not load font $decodedPath\n$e\n$stack");
       }
     }
     // the fontLoader is unusable after calling load().
