@@ -71,7 +71,6 @@ Future<void> loadAppFonts() async {
     print('⚠️ - loadAppFonts is not supported on the web!');
     return;
   }
-  TestWidgetsFlutterBinding.ensureInitialized();
 
   await TestAsyncUtils.guard<void>(() async {
     // First we load the Roboto font from the Flutter SDK, which most Android apps use.
