@@ -102,6 +102,12 @@ void main() {
             .toStringBreadcrumb(),
       );
     });
+
+    test('spotKey has no less specific selectors', () {
+      final selector = spotKey(const ValueKey('a'));
+      final lessSpecificSelectors = selector.lessSpecificSelectors().toList();
+      expect(lessSpecificSelectors.length, 1);
+    });
   });
 }
 
