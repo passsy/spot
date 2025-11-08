@@ -11,6 +11,7 @@ import 'package:spot/src/act/gestures.dart';
 import 'package:spot/src/screenshot/screenshot_annotator.dart';
 import 'package:spot/src/spot/element_extensions.dart';
 import 'package:spot/src/spot/snapshot.dart';
+import 'package:spot/src/utils/binding.dart';
 
 /// Top level entry point to interact with widgets on the screen.
 ///
@@ -40,8 +41,6 @@ class Act {
     selector.snapshot().existsOnce();
 
     return await TestAsyncUtils.guard<void>(() async {
-      final binding = TestWidgetsFlutterBinding.instance;
-
       final editableText = spot<EditableText>().withParent(selector);
       final element = editableText.snapshot().discoveredElement;
       final EditableTextState editableTextState;
@@ -57,8 +56,8 @@ class Act {
       // Setting focusedEditable causes the binding to call requestKeyboard()
       // on the EditableTextState, which itself eventually calls TextInput.attach
       // to establish the connection.
-      binding.focusedEditable = editableTextState;
-      await binding.pump();
+      testBinding.focusedEditable = editableTextState;
+      await testBinding.pump();
 
       if (!kIsWeb) {
         // Fix for enterText() not working in release mode on real iOS devices.
@@ -66,12 +65,12 @@ class Act {
         // Also a fix for enterText() not being able to interact with the same
         // textfield 2 times in the same test.
         // See https://github.com/flutter/flutter/issues/134604
-        binding.testTextInput.register();
+        testBinding.testTextInput.register();
       }
 
-      final testTextInput = binding.testTextInput;
+      final testTextInput = testBinding.testTextInput;
       testTextInput.enterText(text);
-      await binding.pump();
+      await testBinding.pump();
     });
   }
 
@@ -119,8 +118,6 @@ class Act {
         }
 
         final positionToTap = pokablePositions.mostCenterHittablePosition!;
-        final binding = TestWidgetsFlutterBinding.instance;
-
         if (timeline.mode != TimelineMode.off) {
           final screenshot = timeline.takeScreenshotSync(
             annotators: [
@@ -138,12 +135,12 @@ class Act {
 
         // Finally, tap the widget by sending a down and up event.
         final downEvent = PointerDownEvent(position: positionToTap);
-        binding.handlePointerEvent(downEvent);
+        testBinding.handlePointerEvent(downEvent);
 
         final upEvent = PointerUpEvent(position: positionToTap);
-        binding.handlePointerEvent(upEvent);
+        testBinding.handlePointerEvent(upEvent);
 
-        await binding.pump();
+        await testBinding.pump();
       });
     });
   }
@@ -156,7 +153,6 @@ class Act {
   Future<void> tapAt(Offset position) async {
     return await TestAsyncUtils.guard<void>(() async {
       return await _alwaysPropagateDevicePointerEvents(() async {
-        final binding = TestWidgetsFlutterBinding.instance;
         _validatePositionInViewBounds(position);
         if (timeline.mode != TimelineMode.off) {
           final screenshot = timeline.takeScreenshotSync(
@@ -166,7 +162,7 @@ class Act {
           );
           final HitTestResult result = HitTestResult();
           // ignore: deprecated_member_use
-          binding.hitTest(result, position);
+          testBinding.hitTest(result, position);
           final hits = result.path.map((e) => e.element).toList();
 
           final widgetInProject = hits.mapNotNull((e) {
@@ -195,10 +191,10 @@ class Act {
           );
         }
         final downEvent = PointerDownEvent(position: position);
-        binding.handlePointerEvent(downEvent);
+        testBinding.handlePointerEvent(downEvent);
         final upEvent = PointerUpEvent(position: position);
-        binding.handlePointerEvent(upEvent);
-        await binding.pump();
+        testBinding.handlePointerEvent(upEvent);
+        await testBinding.pump();
       });
     });
   }
@@ -287,8 +283,6 @@ class Act {
         final dragStartRenderBox = dragStart.snapshotRenderBox();
         _validateViewBounds(dragStartRenderBox, selector: dragStart);
         final dragStartRenderBoxRect = _globalRect(dragStartRenderBox);
-
-        final binding = TestWidgetsFlutterBinding.instance;
 
         // Hit test the Scrollable at the location of dragStart. Do not check
         // dragStart directly, because it might not be hittable (IgnorePointer).
@@ -426,7 +420,7 @@ class Act {
             throw TestFailure(message);
           }
           await gestures.drag(dragBeginPosition, moveOffset);
-          await binding.pump(duration);
+          await testBinding.pump(duration);
           dragCount++;
         }
 
@@ -502,7 +496,7 @@ class Act {
           final Offset distanceToEnd =
               endDragLocation - globalTargetPositionTopLeft;
           await gestures.drag(dragBeginPosition, distanceToEnd);
-          await binding.pump(duration);
+          await testBinding.pump(duration);
           finalDragOffset = distanceToEnd;
           addDragEvent(
             'Scrolling to fully reveal $targetName.',

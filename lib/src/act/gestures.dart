@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:spot/src/utils/binding.dart';
 
 /// Top level entry point for gestures on the screen.
 const gestures = Gestures._();
@@ -211,8 +212,7 @@ class Gestures {
   /// Forwards the given pointer event to the binding.
   Future<void> sendEventToBinding(PointerEvent event) {
     return TestAsyncUtils.guard<void>(() async {
-      final binding = TestWidgetsFlutterBinding.instance;
-      binding.handlePointerEvent(event);
+      testBinding.handlePointerEvent(event);
     });
   }
 }

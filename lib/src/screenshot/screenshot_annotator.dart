@@ -5,6 +5,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:spot/src/utils/binding.dart';
 
 /// An annotator that can draw on a screenshot image.
 abstract class ScreenshotAnnotator {
@@ -114,8 +115,7 @@ class HighlightAnnotator implements ScreenshotAnnotator {
 
   /// Highlight elements on the screenshot
   factory HighlightAnnotator.elements(List<Element> elements, {Color? color}) {
-    final binding = TestWidgetsFlutterBinding.instance;
-    final view = binding.platformDispatcher.implicitView;
+    final view = testBinding.platformDispatcher.implicitView;
     final devicePixelRatio = view?.devicePixelRatio ?? 1.0;
 
     final List<Rect> rects = [];
@@ -160,8 +160,7 @@ class HighlightAnnotator implements ScreenshotAnnotator {
 
   @override
   Future<ui.Image> annotate(ui.Image image) async {
-    final binding = TestWidgetsFlutterBinding.instance;
-    if (binding is! LiveTestWidgetsFlutterBinding) {
+    if (testBinding is! LiveTestWidgetsFlutterBinding) {
       final fontLoader = FontLoader('Test-Roboto');
       final fontBytes =
           await rootBundle.load('packages/spot/lib/assets/Roboto-Regular.ttf');
@@ -241,8 +240,7 @@ class ArrowAnnotator extends ScreenshotAnnotator {
     final canvas = Canvas(recorder);
 
     canvas.drawImage(image, Offset.zero, Paint());
-    final binding = TestWidgetsFlutterBinding.instance;
-    final view = binding.platformDispatcher.implicitView;
+    final view = testBinding.platformDispatcher.implicitView;
     final devicePixelRatio = view?.devicePixelRatio ?? 1.0;
 
     // Shadow Paint

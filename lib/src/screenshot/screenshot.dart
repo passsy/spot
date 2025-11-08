@@ -16,6 +16,7 @@ import 'package:spot/src/screenshot/screenshot.dart' as self
 import 'package:spot/src/screenshot/screenshot_annotator.dart';
 import 'package:spot/src/screenshot/screenshot_io.dart'
     if (dart.library.html) 'package:spot/src/screenshot/screenshot_web.dart';
+import 'package:spot/src/utils/binding.dart';
 import 'package:stack_trace/stack_trace.dart';
 
 export 'package:stack_trace/stack_trace.dart' show Frame;
@@ -40,9 +41,8 @@ Future<Screenshot> takeScreenshot({
   double? devicePixelRatio,
 }) async {
   assert(devicePixelRatio == null || devicePixelRatio > 0.0);
-  final binding = TestWidgetsFlutterBinding.instance;
   final pixelRatio = devicePixelRatio ??
-      binding.platformDispatcher.implicitView?.devicePixelRatio ??
+      testBinding.platformDispatcher.implicitView?.devicePixelRatio ??
       1.0;
 
   final Frame? frame = _caller();
@@ -52,7 +52,7 @@ Future<Screenshot> takeScreenshot({
     selector: selector,
   );
 
-  final ui.Image? plainImage = await binding.runAsync(() async {
+  final ui.Image? plainImage = await testBinding.runAsync(() async {
     return await _captureImage(liveElement);
   });
   if (plainImage == null) {
@@ -128,9 +128,8 @@ extension TimelineSyncScreenshot on Timeline {
     double? devicePixelRatio,
   }) {
     assert(devicePixelRatio == null || devicePixelRatio > 0.0);
-    final binding = TestWidgetsFlutterBinding.instance;
     final pixelRatio = devicePixelRatio ??
-        binding.platformDispatcher.implicitView?.devicePixelRatio ??
+        testBinding.platformDispatcher.implicitView?.devicePixelRatio ??
         1.0;
 
     final Frame? frame = _caller();
@@ -212,8 +211,7 @@ Future<ScreenshotAnnotation> renderAnnotation(
   Screenshot screenshot,
   ScreenshotAnnotator annotator,
 ) async {
-  final binding = TestWidgetsFlutterBinding.instance;
-  final annotation = await binding.runAsync(() async {
+  final annotation = await testBinding.runAsync(() async {
     // Create transparent image the same size as plainImage to start with
     final ui.Image transparentBackground =
         _transparentImage(screenshot.width, screenshot.height);
@@ -288,8 +286,7 @@ class Screenshot extends ImageDataRef {
   Future<ImageDataRef> flattenedImage() async {
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder);
-    final binding = TestWidgetsFlutterBinding.instance;
-    await binding.runAsync(() async {
+    await testBinding.runAsync(() async {
       final base = await readImage();
       canvas.drawImage(base, Offset.zero, Paint());
       for (final annotation in annotations) {
@@ -441,8 +438,7 @@ class ImageDataRef {
 
   /// Creates a temporary file on disk with the screenshot as png, returns the absolute path to the file as String
   Future<String> createTempPngFile() async {
-    final binding = TestWidgetsFlutterBinding.instance;
-    final path = await binding.runAsync(() async {
+    final path = await testBinding.runAsync(() async {
       final pngBytes = await readPngBytes();
       return createSpotTempFile('$name.png', pngBytes);
     });
@@ -516,7 +512,6 @@ Element _findSingleElement({
   WidgetSnapshot? snapshot,
   WidgetSelector? selector,
 }) {
-  final binding = TestWidgetsFlutterBinding.instance;
   if (selector != null) {
     // taking a fresh snapshot guarantees an element that is currently in the
     // tree and can be screenshotted
@@ -562,7 +557,7 @@ Element _findSingleElement({
   // fallback to screenshotting the entire app
   // Deprecated, but as of today there is no multi-window support for widget tests
   // ignore: deprecated_member_use
-  return binding.renderViewElement!;
+  return testBinding.renderViewElement!;
 }
 
 /// Render the closest [RepaintBoundary] of the [element] into an image.

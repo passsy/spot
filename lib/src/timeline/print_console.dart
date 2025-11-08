@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart' show TestWidgetsFlutterBinding;
 import 'package:spot/src/screenshot/screenshot_io.dart'
     if (dart.library.html) 'package:spot/src/screenshot/screenshot_web.dart';
 import 'package:spot/src/timeline/timeline.dart';
+import 'package:spot/src/utils/binding.dart';
 import 'package:spot/src/utils/ci.dart';
 
 /// Extension that adds a method to print the timeline to the console.
@@ -51,8 +52,7 @@ extension ConsoleTimelinePrinter on Timeline {
         timeline.addScreenshotProcessing(() async {
           final flattened = await screenshot.flattenedImage();
           final pngBytes = await flattened.readPngBytes();
-          final binding = TestWidgetsFlutterBinding.instance;
-          final path = await binding.runAsync(() async {
+          final path = await testBinding.runAsync(() async {
             return createSpotTempFile(fileName, pngBytes);
           });
           assert(path == pngPath);
