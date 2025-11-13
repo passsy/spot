@@ -270,10 +270,13 @@ class Act {
     final dragStartSnapshot = dragStart.snapshot()..existsOnce();
     _detectSizeZero(snapshot: dragStartSnapshot);
 
-    // Take the closest Scrollable above the dragStart widget. This is the
-    // widget which makes a widget scrollable. It must always exist.
-    final WidgetSelector<Scrollable> scrollable =
-        spot<Scrollable>().withChild(dragStart).last();
+    final WidgetSelector<Scrollable> scrollable = () {
+      final element = dragStartSnapshot.discoveredElement!;
+      if (element.widget is Scrollable) {
+        return spotElement<Scrollable>(element);
+      }
+      return spot<Scrollable>().withChild(dragStart).last();
+    }();
 
     // Save the 'Element' of the currently targeted Scrollable.
     // This ensures that—even if multiple scrollables exist or the

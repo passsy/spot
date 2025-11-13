@@ -7,11 +7,13 @@ class DragUntilVisibleSingleDirectionTestWidget extends StatelessWidget {
     required this.axis,
     this.ignorePointerAtIndices = const [0, 0],
     this.useColumnOrRow = false,
+    this.scrollableKey,
   });
 
   final Axis axis;
   final List<int> ignorePointerAtIndices;
   final bool useColumnOrRow;
+  final Key? scrollableKey;
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +33,23 @@ class DragUntilVisibleSingleDirectionTestWidget extends StatelessWidget {
     );
 
     final child = () {
+      if (scrollableKey != null) {
+        return Scrollable(
+          key: scrollableKey,
+          viewportBuilder: (context, position) {
+            return Viewport(
+              axisDirection: _axisDirection(axis),
+              offset: position,
+              slivers: [
+                SliverFixedExtentList(
+                  itemExtent: 100,
+                  delegate: SliverChildListDelegate(items),
+                ),
+              ],
+            );
+          },
+        );
+      }
       if (useColumnOrRow) {
         return SingleChildScrollView(
           scrollDirection: axis,
@@ -76,6 +95,13 @@ class DragUntilVisibleSingleDirectionTestWidget extends StatelessWidget {
       ),
     );
   }
+}
+
+AxisDirection _axisDirection(Axis axis) {
+  if (axis == Axis.vertical) {
+    return AxisDirection.down;
+  }
+  return AxisDirection.right;
 }
 
 class NestedScrollDragUntilVisibleTestWidget extends StatelessWidget {

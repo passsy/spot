@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
@@ -118,6 +117,56 @@ void dragTests() {
         await tester.pump(const Duration(milliseconds: 500));
         await tester.pumpAndSettle();
         await act.tap(secondItem);
+      },
+    );
+
+    testWidgets(
+      'Finds widget in vertical ListView after dragging when dragStart is a Scrollable',
+      (tester) async {
+        await tester.pumpWidget(
+          const DragUntilVisibleSingleDirectionTestWidget(
+            axis: Axis.vertical,
+            ignorePointerAtIndices: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+          ),
+        );
+
+        final firstItem = spot<DragUntilVisibleSingleDirectionTestWidget>()
+            .spot<Scrollable>()
+            .last()
+          ..existsOnce();
+        final secondItem = spotText('Item at index: 27', exact: true)
+          ..doesNotExist();
+        await act.dragUntilVisible(
+          dragStart: firstItem,
+          dragTarget: secondItem,
+          maxIteration: 30,
+        );
+        secondItem.existsOnce();
+      },
+    );
+
+    testWidgets(
+      'Finds widget after dragging when a keyed dragStart resolves to a Scrollable',
+      (tester) async {
+        const scrollableKey = ValueKey('direct-scrollable');
+        await tester.pumpWidget(
+          const DragUntilVisibleSingleDirectionTestWidget(
+            axis: Axis.vertical,
+            ignorePointerAtIndices: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+            scrollableKey: scrollableKey,
+          ),
+        );
+
+        final firstItem = spotKey(scrollableKey)..existsOnce();
+        expect(firstItem.snapshotWidget(), isA<Scrollable>());
+        final secondItem = spotText('Item at index: 27', exact: true)
+          ..doesNotExist();
+        await act.dragUntilVisible(
+          dragStart: firstItem,
+          dragTarget: secondItem,
+          maxIteration: 30,
+        );
+        secondItem.existsOnce();
       },
     );
   });
