@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.19.0
+
+- Fix: Shorten screenshot filenames to avoid issues on some filesystems #124
+- Fix: Replace colons in screenshot filenames for Windows portability #114
+- Fix: `WidgetSnapshot.toString()` formatting #116
+- Fix: Handle whitespaces in dependency font family names #130
+
 ## 0.18.0
 
 - Breaking: Add `act.dragUntilVisible()` now moves the target in the center of the viewport (one additional drag). parameter `moveStep` is now optional, default to half the scrollable size. The direction can be controlled with `bool toStart`.

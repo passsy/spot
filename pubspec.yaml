@@ -1,6 +1,6 @@
 name: spot
 description: Flutter widget test toolkit - spot, act, validate. Better selectors, automatic screenshots, chainable.
-version: 0.18.0
+version: 0.19.0
 repository: https://github.com/passsy/spot
 issue_tracker: https://github.com/passsy/spot/issues
 
