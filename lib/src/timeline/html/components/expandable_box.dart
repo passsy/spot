@@ -69,6 +69,11 @@ class ExpandableBoxState extends State<ExpandableBox> {
           transition:
               const Transition('max-height', duration: 300, curve: Curve.ease),
         ),
+        css('.content pre').box(
+          overflow: const Overflow.only(x: Overflow.auto),
+          padding: EdgeInsets.only(bottom: 20.px),
+          border: Border.all(BorderSide(width: 1.px, color: spotGrey)),
+        ),
         css('.show-more') //
             .box(cursor: Cursor.pointer, display: Display.block)
             .text(color: spotOrange)
