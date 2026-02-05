@@ -76,8 +76,9 @@ Future<void> loadAppFonts() async {
   if (kIsWeb) {
     // ignore: avoid_print
     print('⚠️ - loadAppFonts is not supported on the web!');
-    _loadAppFontsFuture = Future.value();
-    return _loadAppFontsFuture!;
+    final future = Future<void>.value();
+    _loadAppFontsFuture = future;
+    return future;
   }
 
   final future = _loadAppFontsOnce();
