@@ -8,6 +8,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/src/flutter/flutter_sdk.dart';
 
+Future<void>? _loadAppFontsFuture;
+
 /// Loads all font from the apps FontManifest and embedded in the Flutter SDK
 ///
 /// ## What is loaded?
@@ -66,11 +68,30 @@ import 'package:spot/src/flutter/flutter_sdk.dart';
 /// Because showing emojis in test requires changes to you app code (set fallback)
 /// [loadAppFonts] does not automatically load system emoji fonts for you.
 Future<void> loadAppFonts() async {
+  final existingFuture = _loadAppFontsFuture;
+  if (existingFuture != null) {
+    return existingFuture;
+  }
+
   if (kIsWeb) {
     // ignore: avoid_print
     print('⚠️ - loadAppFonts is not supported on the web!');
-    return;
+    _loadAppFontsFuture = Future.value();
+    return _loadAppFontsFuture!;
   }
+
+  final future = _loadAppFontsOnce();
+  _loadAppFontsFuture = future;
+
+  try {
+    await future;
+  } catch (e, stackTrace) {
+    _loadAppFontsFuture = null;
+    Error.throwWithStackTrace(e, stackTrace);
+  }
+}
+
+Future<void> _loadAppFontsOnce() async {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   await TestAsyncUtils.guard<void>(() async {
