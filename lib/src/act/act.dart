@@ -266,8 +266,11 @@ class Act {
 
     // Take the closest Scrollable above the dragStart widget. This is the
     // widget which makes a widget scrollable. It must always exist.
-    final WidgetSelector<Scrollable> scrollable =
-        spot<Scrollable>().withChild(dragStart).last();
+    // If dragStart is already a Scrollable, use it directly instead of searching for a parent.
+    final WidgetSelector<Scrollable> scrollable = switch (dragStart) {
+      final WidgetSelector<Scrollable> s => s,
+      _ => spot<Scrollable>().withChild(dragStart).last(),
+    };
 
     // Save the 'Element' of the currently targeted Scrollable.
     // This ensures that—even if multiple scrollables exist or the
