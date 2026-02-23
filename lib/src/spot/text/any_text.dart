@@ -272,6 +272,14 @@ class AnyTextWidgetSelector extends WidgetSelector<AnyText> {
 /// widgets. It extracts text data from the relevant widget and uses the
 /// provided [match] function to assert the text content.
 class MatchTextFilter implements ElementFilter {
+  /// Prepares a text for string matching.
+  static String normalizeText(String text) {
+    // Remove all occurrences of ZWSP (Zero Width Space) characters ...
+    final text_ = text.replaceAll('\u{200B}', '');
+    // Replace all occurrences of NBSP (Non-Breaking Space) characters with a space ...
+    return text_.replaceAll('\u{00A0}', ' ');
+  }
+
   /// Constructs a [MatchTextFilter].
   ///
   /// The [match] function is used to assert the text content found in the
@@ -307,13 +315,15 @@ class MatchTextFilter implements ElementFilter {
 
   String? _extractTextData(Element e) {
     final widget = e.widget;
+    String widgetText;
     if (widget is EditableText) {
-      return widget.controller.text;
+      widgetText = widget.controller.text;
+    } else if (widget is RichText) {
+      widgetText = widget.text.toPlainText();
+    } else {
+      throw _UnsupportedWidgetTypeException(widget);
     }
-    if (widget is RichText) {
-      return widget.text.toPlainText();
-    }
-    throw _UnsupportedWidgetTypeException(widget);
+    return normalizeText(widgetText);
   }
 
   @override

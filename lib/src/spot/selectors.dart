@@ -243,15 +243,16 @@ mixin ChainableSelectors<T extends Widget> {
     List<WidgetSelector> children = const [],
     bool exact = false,
   }) {
+    final text_ = text is String ? MatchTextFilter.normalizeText(text) : text;
     if (exact) {
-      if (text is! String) {
+      if (text_ is! String) {
         throw ArgumentError(
           'Patterns are not supported for exact matching',
         );
       }
       return spotTextWhere(
-        (it) => it.equals(text),
-        description: 'with text "$text"',
+        (it) => it.equals(text_),
+        description: 'with text "$text_"',
         parents: parents,
         children: children,
       );
@@ -259,8 +260,8 @@ mixin ChainableSelectors<T extends Widget> {
 
     // default with contains
     return spotTextWhere(
-      (it) => it.contains(text),
-      description: 'contains text "$text"',
+      (it) => it.contains(text_),
+      description: 'contains text "$text_"',
       parents: parents,
       children: children,
     );

@@ -202,6 +202,36 @@ void main() {
       spot<_MyWidget>().spotText('b').doesNotExist();
       spot<RotatedBox>().spotText('a').doesNotExist();
     });
+
+    testWidgets('spotText ignores ZWSP characters', (tester) async {
+      await tester.pumpWidget(
+        _stage(
+          children: [
+            Text('f\u{200B}o\u{200B}o'),
+            Text('bar'),
+          ],
+        ),
+      );
+      spotText('foo').existsOnce();
+      spot<Column>().spotText('foo').existsOnce();
+      spotText('b\u{200B}a\u{200B}r').existsOnce();
+      spot<Column>().spotText('b\u{200B}a\u{200B}r').existsOnce();
+    });
+
+    testWidgets('spotText treats NBSP as space', (tester) async {
+      await tester.pumpWidget(
+        _stage(
+          children: [
+            Text('foo\u{00A0}bar baz'),
+          ],
+        ),
+      );
+      spotText('foo bar baz').existsOnce();
+      spot<Column>().spotText('foo bar baz').existsOnce();
+      spotText('foo bar\u{00A0}baz').existsOnce();
+      spotText('foo\u{00A0}bar baz').existsOnce();
+      spotText('foo\u{00A0}bar\u{00A0}baz').existsOnce();
+    });
   });
 
   testWidgets('spotText finds multiple text', (tester) async {
