@@ -341,8 +341,18 @@ class CrossAxisNestedScrollableTestWidget extends StatefulWidget {
 class CrossAxisNestedScrollableTestWidgetState
     extends State<CrossAxisNestedScrollableTestWidget> {
   /// Controller for the OUTER scrollable; used by tests to assert it didn't
-  /// scroll on the cross axis.
-  final ScrollController outerController = ScrollController();
+  /// scroll on the cross axis. Started at a non-zero offset so the outer can
+  /// scroll in either cross-axis direction — without that, a diagonal drag
+  /// going against the available scroll direction would never move the
+  /// outer and the test would silently miss the bug.
+  static const double _outerInitialOffset = 400;
+  final ScrollController outerController =
+      ScrollController(initialScrollOffset: _outerInitialOffset);
+
+  /// Whether the outer scrollable's offset has changed from its initial
+  /// position. Tests assert this stays false.
+  bool get outerHasMoved =>
+      (outerController.offset - _outerInitialOffset).abs() > 0.5;
 
   @override
   void dispose() {
@@ -355,19 +365,50 @@ class CrossAxisNestedScrollableTestWidgetState
     final outerAxis =
         widget.innerAxis == Axis.vertical ? Axis.horizontal : Axis.vertical;
 
-    final innerItems = List.generate(
-      30,
-      (index) => Container(
-        width: widget.innerAxis == Axis.horizontal ? 100 : 200,
-        height: widget.innerAxis == Axis.vertical ? 100 : 200,
+    // Each item is a "list tile" with an avatar at one end. dragStart
+    // typically points at the avatar (small, off-center), target points at
+    // the tile (full width/height). They sit at different cross-axis
+    // positions, which is the original case the cross-axis fix was about:
+    // without locking the drag to the scroll axis the final adjustment
+    // became diagonal and scrolled an outer scrollable.
+    final innerItems = List.generate(30, (index) {
+      final tile = Container(
+        key: ValueKey('tile-$index'),
+        width: widget.innerAxis == Axis.horizontal ? 100 : 400,
+        height: widget.innerAxis == Axis.vertical ? 100 : 400,
         color: index.isEven ? Colors.red : Colors.blue,
-        child: Center(child: Text('Item at index: $index')),
-      ),
-    );
+      );
+      final avatar = Container(
+        key: ValueKey('avatar-$index'),
+        width: 40,
+        height: 40,
+        color: Colors.amber,
+        child: Center(child: Text('$index')),
+      );
+      return SizedBox(
+        width: widget.innerAxis == Axis.horizontal ? 100 : 400,
+        height: widget.innerAxis == Axis.vertical ? 100 : 400,
+        child: Stack(
+          children: [
+            tile,
+            // Avatar sits at the OPPOSITE end of the cross axis from the
+            // tile's origin so dragStart (the avatar) and target (the tile)
+            // have a substantial cross-axis offset. Without locking the
+            // final drag to the scroll axis, the outer cross-axis scrollable
+            // would scroll by roughly that offset.
+            Positioned(
+              right: widget.innerAxis == Axis.vertical ? 8 : null,
+              bottom: widget.innerAxis == Axis.horizontal ? 8 : null,
+              child: avatar,
+            ),
+          ],
+        ),
+      );
+    });
 
     final innerScrollable = SizedBox(
-      width: widget.innerAxis == Axis.horizontal ? 400 : 200,
-      height: widget.innerAxis == Axis.vertical ? 400 : 200,
+      width: 400,
+      height: 400,
       child: ListView.builder(
         scrollDirection: widget.innerAxis,
         itemCount: innerItems.length,
@@ -375,26 +416,35 @@ class CrossAxisNestedScrollableTestWidgetState
       ),
     );
 
-    // Outer is overflowed on its scroll axis (via a spacer after the inner
-    // scrollable) to give it room to scroll, while keeping the inner
-    // scrollable at offset 0 so its first items are fully on-screen at
-    // startup. We use Row/Column so the inner SizedBox isn't forced to stretch
-    // by tight parent constraints.
+    // Outer has spacers on BOTH sides of the inner scrollable so it can scroll
+    // in either direction from the initial offset. With an initial offset
+    // matching the leading spacer, the inner scrollable appears at the start
+    // of the visible area at startup AND the outer can scroll either way —
+    // this is what lets the test detect a diagonal drag regardless of its
+    // sign. We use Row/Column so the inner SizedBox isn't forced to stretch.
     final Widget outerChild = outerAxis == Axis.horizontal
         ? Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
+              const SizedBox(
+                width: CrossAxisNestedScrollableTestWidgetState
+                    ._outerInitialOffset,
+              ),
               innerScrollable,
-              const SizedBox(width: 1300),
+              const SizedBox(width: 1000),
             ],
           )
         : Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
+              const SizedBox(
+                height: CrossAxisNestedScrollableTestWidgetState
+                    ._outerInitialOffset,
+              ),
               innerScrollable,
-              const SizedBox(height: 1100),
+              const SizedBox(height: 800),
             ],
           );
 

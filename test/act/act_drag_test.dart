@@ -508,39 +508,41 @@ void dragTests() {
 
   group('Cross-axis fix', () {
     testWidgets(
-      'final adjustment never scrolls the outer cross-axis scrollable '
-      '(vertical inner)',
+      'avatar dragStart + tile target: outer cross-axis scrollable does not '
+      'move (vertical inner)',
       (tester) async {
+        // Reproduces the original use case for the cross-axis fix: the user
+        // drags from a small AVATAR inside a list item and wants the whole
+        // TILE visible. Avatar and tile sit at different cross-axis
+        // positions; without locking the final drag to the scroll axis the
+        // diagonal would scroll the outer (horizontal) scrollable.
         await tester.pumpWidget(
           const CrossAxisNestedScrollableTestWidget(innerAxis: Axis.vertical),
         );
 
-        final outerStateFinder =
-            find.byType(CrossAxisNestedScrollableTestWidget);
         final outerState =
             tester.state<CrossAxisNestedScrollableTestWidgetState>(
-          outerStateFinder,
+          find.byType(CrossAxisNestedScrollableTestWidget),
         );
 
-        final firstItem = spotText('Item at index: 3', exact: true)
+        final dragStart = spotKey<Container>(const ValueKey('avatar-3'))
           ..existsOnce();
-        final secondItem = spotText('Item at index: 25', exact: true)
+        final target = spotKey<Container>(const ValueKey('tile-24'))
           ..doesNotExist();
 
         await act.dragUntilVisible(
-          dragStart: firstItem,
-          dragTarget: secondItem,
+          dragStart: dragStart,
+          dragTarget: target,
         );
-        secondItem.existsOnce();
+        target.existsOnce();
 
-        // Outer (horizontal) scrollable must not have moved.
-        expect(outerState.outerController.offset, 0.0);
+        expect(outerState.outerHasMoved, isFalse);
       },
     );
 
     testWidgets(
-      'final adjustment never scrolls the outer cross-axis scrollable '
-      '(horizontal inner)',
+      'avatar dragStart + tile target: outer cross-axis scrollable does not '
+      'move (horizontal inner)',
       (tester) async {
         await tester.pumpWidget(
           const CrossAxisNestedScrollableTestWidget(
@@ -548,26 +550,24 @@ void dragTests() {
           ),
         );
 
-        final outerStateFinder =
-            find.byType(CrossAxisNestedScrollableTestWidget);
         final outerState =
             tester.state<CrossAxisNestedScrollableTestWidgetState>(
-          outerStateFinder,
+          find.byType(CrossAxisNestedScrollableTestWidget),
         );
 
-        final firstItem = spotText('Item at index: 2', exact: true)
+        final dragStart = spotKey<Container>(const ValueKey('avatar-2'))
           ..existsOnce();
-        final secondItem = spotText('Item at index: 20', exact: true)
+        final target = spotKey<Container>(const ValueKey('tile-21'))
           ..doesNotExist();
 
         await act.dragUntilVisible(
-          dragStart: firstItem,
-          dragTarget: secondItem,
+          dragStart: dragStart,
+          dragTarget: target,
         );
-        secondItem.existsOnce();
+        target.existsOnce();
 
         // Outer (vertical) scrollable must not have moved.
-        expect(outerState.outerController.offset, 0.0);
+        expect(outerState.outerHasMoved, isFalse);
       },
     );
   });
