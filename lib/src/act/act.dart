@@ -334,19 +334,24 @@ class Act {
         final dragBeginPosition =
             pokablePositionsAtDragStart.mostCenterHittablePosition!;
 
-        void addDragEvent(String details, {Offset? direction}) {
+        void addDragEvent(
+          String details, {
+          Offset? direction,
+          Offset? origin,
+        }) {
           if (timeline.mode != TimelineMode.off) {
+            final crosshair = origin ?? dragBeginPosition;
             final screenshot = timeline.takeScreenshotSync(
               annotators: [
-                CrosshairAnnotator(centerPosition: dragBeginPosition),
+                CrosshairAnnotator(centerPosition: crosshair),
                 if (direction != null) ...[
                   ArrowAnnotator(
-                    start: dragBeginPosition - const Offset(40, 0),
-                    end: dragBeginPosition - const Offset(40, 0) + direction,
+                    start: crosshair - const Offset(40, 0),
+                    end: crosshair - const Offset(40, 0) + direction,
                   ),
                   ArrowAnnotator(
-                    start: dragBeginPosition + const Offset(40, 0),
-                    end: dragBeginPosition + const Offset(40, 0) + direction,
+                    start: crosshair + const Offset(40, 0),
+                    end: crosshair + const Offset(40, 0) + direction,
                   ),
                 ],
               ],
@@ -552,23 +557,70 @@ class Act {
             // Distance is too small, overshoot then return to ensure drag recognition, not a tap.
             const overshootDistance = kDragSlopDefault + 1;
             final direction = distanceToEnd / distanceToEnd.distance;
-            final overshootOffset = direction * overshootDistance;
+
+            // The second gesture starts at dragBeginPosition + overshootOffset.
+            // It must be hittable on the scrollable AND outside the padded
+            // strip, so it never lands in an obscured area like a fixed
+            // header/footer. Try the natural overshoot direction; if its
+            // origin lies in the padded strip, flip the direction; if even
+            // the flipped origin is unsafe (very thin visible band), search
+            // along the dragBegin → preferred-end line, then fall back to a
+            // full 8 px grid scan of the scrollable.
+            Offset overshootOffset = direction * overshootDistance;
+            Offset secondGestureOrigin =
+                dragBeginPosition + overshootOffset;
+            if (!_canBePoked(
+              position: secondGestureOrigin,
+              target: scrollableSizedRenderBoxAfterDrag,
+              insideArea: viewportRect,
+            )) {
+              overshootOffset = -overshootOffset;
+              secondGestureOrigin = dragBeginPosition + overshootOffset;
+            }
+            if (!_canBePoked(
+              position: secondGestureOrigin,
+              target: scrollableSizedRenderBoxAfterDrag,
+              insideArea: viewportRect,
+            )) {
+              // Search line points first (closest-to-preferred-end first),
+              // then fall back to a full 8 px grid scan of the scrollable.
+              secondGestureOrigin = _findPokablePosition(
+                    scrollable: scrollableSizedRenderBoxAfterDrag,
+                    paddedViewport: viewportRect,
+                    preferredPosition: secondGestureOrigin,
+                    priorityPoints: _lineSamples(
+                      dragBeginPosition,
+                      secondGestureOrigin,
+                    ),
+                  ) ??
+                  // No hittable point of the scrollable is outside the
+                  // padded strip at all — keep the unsafe origin as a best
+                  // effort. (In practice this only happens when the
+                  // scrollable is fully obscured, in which case
+                  // _findPokablePositions would have already failed when
+                  // picking dragBeginPosition.)
+                  secondGestureOrigin;
+            }
             final returnOffset = overshootOffset - distanceToEnd;
 
             // First drag: overshoot the target
             await gestures.drag(dragBeginPosition, overshootOffset);
             await binding.pump(duration);
+            addDragEvent(
+              'Overshoot drag (1/2) to fully reveal $targetName.',
+              direction: overshootOffset,
+            );
 
             // Second drag: return to the correct position
-            await gestures.drag(
-                dragBeginPosition + overshootOffset, -returnOffset);
+            await gestures.drag(secondGestureOrigin, -returnOffset);
             await binding.pump(duration);
+            addDragEvent(
+              'Return drag (2/2) to fully reveal $targetName.',
+              direction: -returnOffset,
+              origin: secondGestureOrigin,
+            );
 
             finalDragOffset = distanceToEnd;
-            addDragEvent(
-              'Scrolling to fully reveal $targetName.',
-              direction: distanceToEnd,
-            );
           }
         }
 
@@ -878,11 +930,79 @@ ${firstUsefulParent.toStringShort()} (${firstUsefulParent.debugWidgetLocation?.f
   );
 }
 
-/// Checks if the widget is visible and not covered by another widget
+/// Finds a hittable position on [scrollable] that is outside the padded
+/// strip (i.e. inside [paddedViewport]).
+///
+/// First tries [priorityPoints] in order — the first one that is hittable on
+/// [scrollable] AND inside [paddedViewport] is returned. If none qualify,
+/// scans every point of [scrollable] on a [gridSize] grid and returns the
+/// hit closest to [preferredPosition]. Returns null if no point of
+/// [scrollable] is both hittable and outside the padded strip.
+Offset? _findPokablePosition({
+  required RenderBox scrollable,
+  required Rect paddedViewport,
+  required Offset preferredPosition,
+  List<Offset> priorityPoints = const [],
+  int gridSize = 8,
+}) {
+  for (final candidate in priorityPoints) {
+    if (_canBePoked(
+      position: candidate,
+      target: scrollable,
+      insideArea: paddedViewport,
+    )) {
+      return candidate;
+    }
+  }
+
+  final scrollableTopLeft = scrollable.localToGlobal(Offset.zero);
+  Offset? best;
+  double bestDist = double.infinity;
+  for (int x = 0; x < scrollable.size.width; x += gridSize) {
+    for (int y = 0; y < scrollable.size.height; y += gridSize) {
+      final candidate =
+          scrollableTopLeft + Offset(x.toDouble(), y.toDouble());
+      if (!_canBePoked(
+        position: candidate,
+        target: scrollable,
+        insideArea: paddedViewport,
+      )) {
+        continue;
+      }
+      final d = (candidate - preferredPosition).distance;
+      if (d < bestDist) {
+        bestDist = d;
+        best = candidate;
+      }
+    }
+  }
+  return best;
+}
+
+/// Returns the points of the line from [from] to [to] in [gridSize] steps,
+/// ordered from [to] back to [from] (closest-to-[to] first).
+List<Offset> _lineSamples(Offset from, Offset to, {int gridSize = 8}) {
+  final delta = to - from;
+  final steps = (delta.distance / gridSize).ceil();
+  if (steps == 0) return [from];
+  return [
+    for (int i = steps; i >= 0; i--) from + delta * (i / steps),
+  ];
+}
+
+/// True iff a hit-test at [position] reaches [target] (the target is the
+/// topmost hit, not covered by any overlay). When [insideArea] is given,
+/// also requires [position] to lie inside that rect — useful for ignoring
+/// points that fall in a padded/obscured strip even if they happen to hit
+/// [target].
 bool _canBePoked({
   required Offset position,
   required RenderObject target,
+  Rect? insideArea,
 }) {
+  if (insideArea != null && !insideArea.contains(position)) {
+    return false;
+  }
   final binding = WidgetsBinding.instance;
 
   // do the tap, hit test the position of [target]
