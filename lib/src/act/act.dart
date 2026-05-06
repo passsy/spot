@@ -567,8 +567,7 @@ class Act {
             // along the dragBegin → preferred-end line, then fall back to a
             // full 8 px grid scan of the scrollable.
             Offset overshootOffset = direction * overshootDistance;
-            Offset secondGestureOrigin =
-                dragBeginPosition + overshootOffset;
+            Offset secondGestureOrigin = dragBeginPosition + overshootOffset;
             if (!_canBePoked(
               position: secondGestureOrigin,
               target: scrollableSizedRenderBoxAfterDrag,
@@ -960,8 +959,7 @@ Offset? _findPokablePosition({
   double bestDist = double.infinity;
   for (int x = 0; x < scrollable.size.width; x += gridSize) {
     for (int y = 0; y < scrollable.size.height; y += gridSize) {
-      final candidate =
-          scrollableTopLeft + Offset(x.toDouble(), y.toDouble());
+      final candidate = scrollableTopLeft + Offset(x.toDouble(), y.toDouble());
       if (!_canBePoked(
         position: candidate,
         target: scrollable,

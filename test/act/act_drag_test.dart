@@ -470,7 +470,8 @@ void dragTests() {
         final viewportLeft = scrollable.localToGlobal(Offset.zero).dx;
         final targetLeft =
             secondItem.snapshotRenderBox().localToGlobal(Offset.zero).dx;
-        expect(targetLeft, greaterThanOrEqualTo(viewportLeft + paddingLeft - 1));
+        expect(
+            targetLeft, greaterThanOrEqualTo(viewportLeft + paddingLeft - 1));
         expect(targetLeft, lessThan(viewportLeft + paddingLeft + 5));
       },
     );
@@ -781,7 +782,9 @@ void dragTests() {
           DragInObscuredAreaTestWidget(
             onPointerDown: (event) {
               pointerDowns.add(event.position);
-              timeline.addEvent(details: 'Tap at ${event.position.dy}', eventType: 'tap down');
+              timeline.addEvent(
+                  details: 'Tap at ${event.position.dy}',
+                  eventType: 'tap down');
             },
             onTopBannerTap: () => bannerTaps++,
             topBannerHeight: topBannerHeight,
@@ -907,10 +910,8 @@ void dragTests() {
           padding: const EdgeInsets.only(bottom: bottomBannerHeight),
         );
 
-        final scrollableBox = spot<Scrollable>()
-            .withChild(firstItem)
-            .last()
-            .snapshotRenderBox();
+        final scrollableBox =
+            spot<Scrollable>().withChild(firstItem).last().snapshotRenderBox();
         final topLeft = scrollableBox.localToGlobal(Offset.zero);
         final obscuredRect = Rect.fromLTWH(
           topLeft.dx,
