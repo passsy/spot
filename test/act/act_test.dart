@@ -310,7 +310,10 @@ void actTests() {
           throwsSpotErrorContaining([
             "Widget 'ElevatedButton' is wrapped in IgnorePointer and doesn't receive pointer events",
             "The IgnorePointer is located at",
-            "widgets/visibility.dart:",
+            // On Flutter master, Visibility is implemented via IndexedStack,
+            // so the IgnorePointer's debugWidgetLocation points to
+            // indexed_stack.dart instead of visibility.dart.
+            RegExp(r'widgets/(visibility|indexed_stack)\.dart:'),
           ]),
         );
       });
