@@ -581,24 +581,19 @@ class Act {
               target: scrollableSizedRenderBoxAfterDrag,
               insideArea: viewportRect,
             )) {
-              // Search line points first (closest-to-preferred-end first),
-              // then fall back to a full 8 px grid scan of the scrollable.
+              // Walk the line from dragBeginPosition toward the preferred
+              // origin, closest-to-preferred first, and pick the first safe
+              // point. dragBeginPosition itself is always safe (the earlier
+              // _findPokablePositions ensured that), so the search always
+              // finds at least that as a fallback.
               secondGestureOrigin = _findPokablePosition(
-                    scrollable: scrollableSizedRenderBoxAfterDrag,
-                    paddedViewport: viewportRect,
-                    preferredPosition: secondGestureOrigin,
-                    priorityPoints: _lineSamples(
-                      dragBeginPosition,
-                      secondGestureOrigin,
-                    ),
-                  ) ??
-                  // No hittable point of the scrollable is outside the
-                  // padded strip at all — keep the unsafe origin as a best
-                  // effort. (In practice this only happens when the
-                  // scrollable is fully obscured, in which case
-                  // _findPokablePositions would have already failed when
-                  // picking dragBeginPosition.)
-                  secondGestureOrigin;
+                scrollable: scrollableSizedRenderBoxAfterDrag,
+                paddedViewport: viewportRect,
+                priorityPoints: _lineSamples(
+                  dragBeginPosition,
+                  secondGestureOrigin,
+                ),
+              )!;
             }
             final returnOffset = overshootOffset - distanceToEnd;
 
@@ -929,20 +924,14 @@ ${firstUsefulParent.toStringShort()} (${firstUsefulParent.debugWidgetLocation?.f
   );
 }
 
-/// Finds a hittable position on [scrollable] that is outside the padded
-/// strip (i.e. inside [paddedViewport]).
-///
-/// First tries [priorityPoints] in order — the first one that is hittable on
-/// [scrollable] AND inside [paddedViewport] is returned. If none qualify,
-/// scans every point of [scrollable] on a [gridSize] grid and returns the
-/// hit closest to [preferredPosition]. Returns null if no point of
-/// [scrollable] is both hittable and outside the padded strip.
+/// Returns the first point in [priorityPoints] that is hittable on
+/// [scrollable] AND inside [paddedViewport]. Returns null if no candidate
+/// qualifies. Callers should include a known-safe fallback (e.g. the
+/// original [dragBeginPosition]) at the end of [priorityPoints].
 Offset? _findPokablePosition({
   required RenderBox scrollable,
   required Rect paddedViewport,
-  required Offset preferredPosition,
-  List<Offset> priorityPoints = const [],
-  int gridSize = 8,
+  required List<Offset> priorityPoints,
 }) {
   for (final candidate in priorityPoints) {
     if (_canBePoked(
@@ -953,28 +942,7 @@ Offset? _findPokablePosition({
       return candidate;
     }
   }
-
-  final scrollableTopLeft = scrollable.localToGlobal(Offset.zero);
-  Offset? best;
-  double bestDist = double.infinity;
-  for (int x = 0; x < scrollable.size.width; x += gridSize) {
-    for (int y = 0; y < scrollable.size.height; y += gridSize) {
-      final candidate = scrollableTopLeft + Offset(x.toDouble(), y.toDouble());
-      if (!_canBePoked(
-        position: candidate,
-        target: scrollable,
-        insideArea: paddedViewport,
-      )) {
-        continue;
-      }
-      final d = (candidate - preferredPosition).distance;
-      if (d < bestDist) {
-        bestDist = d;
-        best = candidate;
-      }
-    }
-  }
-  return best;
+  return null;
 }
 
 /// Returns the points of the line from [from] to [to] in [gridSize] steps,

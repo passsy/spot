@@ -930,6 +930,85 @@ void dragTests() {
         expect(bannerTaps, 0);
       },
     );
+
+    testWidgets(
+      'thin visible band between two banners triggers second-origin search',
+      (tester) async {
+        // Visible band of 30 px is narrower than 2 * overshoot (= 42 px), so
+        // BOTH the natural and reversed second-gesture origins land inside a
+        // banner. This is the case the line + grid search in
+        // _findPokablePosition handles. Verify no banner registers a tap and
+        // no pointer down lands inside either banner.
+        final pointerDowns = <Offset>[];
+        var topTaps = 0;
+        var bottomTaps = 0;
+
+        const scrollableHeight = 500.0;
+        const topBannerHeight = 235.0;
+        const bottomBannerHeight = 235.0;
+
+        await tester.pumpWidget(
+          DragInObscuredAreaTestWidget(
+            onPointerDown: (event) => pointerDowns.add(event.position),
+            onTopBannerTap: () => topTaps++,
+            onBottomBannerTap: () => bottomTaps++,
+            topBannerHeight: topBannerHeight,
+            bottomBannerHeight: bottomBannerHeight,
+            itemHeight: 24,
+            itemCount: 60,
+          ),
+        );
+
+        // Item 10 at content y=240 sits inside the 30 px visible band
+        // [235, 265] at scroll=0. dragBeginPosition picks (centerX, +248)
+        // (closest grid point to dragStart's center). Target item 35 at
+        // content y=840 leaves the target 10 px below the desired alignment
+        // after a -595 step, so the overshoot path runs upward. Both
+        // natural origin (+227) and reversed origin (+269) fall outside the
+        // visible band [235, 265) — line + grid search must pick a safe
+        // position.
+        final firstItem = spotKey<Container>(const ValueKey('item-10'));
+        final secondItem = spotKey<Container>(const ValueKey('item-35'));
+
+        await act.dragUntilVisible(
+          dragStart: firstItem,
+          dragTarget: secondItem,
+          moveStep: const Offset(0, -595),
+          padding: const EdgeInsets.symmetric(vertical: topBannerHeight),
+        );
+
+        final scrollableBox =
+            spot<Scrollable>().withChild(secondItem).last().snapshotRenderBox();
+        final topLeft = scrollableBox.localToGlobal(Offset.zero);
+        final topBanner = Rect.fromLTWH(
+          topLeft.dx,
+          topLeft.dy,
+          scrollableBox.size.width,
+          topBannerHeight,
+        );
+        final bottomBanner = Rect.fromLTWH(
+          topLeft.dx,
+          topLeft.dy + scrollableHeight - bottomBannerHeight,
+          scrollableBox.size.width,
+          bottomBannerHeight,
+        );
+
+        for (final pos in pointerDowns) {
+          expect(
+            topBanner.contains(pos),
+            isFalse,
+            reason: 'Pointer down at $pos lands inside top banner.',
+          );
+          expect(
+            bottomBanner.contains(pos),
+            isFalse,
+            reason: 'Pointer down at $pos lands inside bottom banner.',
+          );
+        }
+        expect(topTaps, 0);
+        expect(bottomTaps, 0);
+      },
+    );
   });
 }
 
