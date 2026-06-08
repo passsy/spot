@@ -775,9 +775,14 @@ void _tryMatchingLessSpecificCriteria(
       int index = 0;
       for (final Element match in lessSpecificSnapshot.discoveredElements) {
         index++;
-        errorBuilder.writeln(
-          'Possible match #$index:\n${match.toStringDeep(minLevel: DiagnosticLevel.info)}',
-        );
+        errorBuilder.writeln('Possible match #$index:\n$match');
+        const maxLength = 10000;
+        if (index > 10 && errorBuilder.length > maxLength) {
+          errorBuilder.writeln(
+            '... (truncated after $maxLength chars, too many matches found)',
+          );
+          break;
+        }
       }
       final significantTree =
           findCommonAncestor(lessSpecificSnapshot.discoveredElements.toSet())
