@@ -226,6 +226,11 @@ class Act {
   /// (for example, if its keys get swapped). Providing this fallback can help avoid
   /// test failures in dynamic layouts, ensuring the final checks can still succeed.
   ///
+  /// [padding] defines areas within the scrollable that should be avoided during
+  /// dragging. The target will not be positioned within the padding when scrolling is complete.
+  /// This is useful for avoiding fixed headers, footers, or other UI elements that
+  /// overlap the scrollable content.
+  ///
   /// Usage:
   /// ```dart
   /// final firstItem = spotText('Item at index: 0')..existsOnce();
@@ -244,6 +249,7 @@ class Act {
     Duration duration = const Duration(milliseconds: 50),
     bool toStart = false,
     WidgetSelector<Scrollable>? fallbackScrollableSelector,
+    EdgeInsets padding = EdgeInsets.zero,
   }) {
     assert(
       !(moveStep != null && toStart),
@@ -328,19 +334,24 @@ class Act {
         final dragBeginPosition =
             pokablePositionsAtDragStart.mostCenterHittablePosition!;
 
-        void addDragEvent(String details, {Offset? direction}) {
+        void addDragEvent(
+          String details, {
+          Offset? direction,
+          Offset? origin,
+        }) {
           if (timeline.mode != TimelineMode.off) {
+            final crosshair = origin ?? dragBeginPosition;
             final screenshot = timeline.takeScreenshotSync(
               annotators: [
-                CrosshairAnnotator(centerPosition: dragBeginPosition),
+                CrosshairAnnotator(centerPosition: crosshair),
                 if (direction != null) ...[
                   ArrowAnnotator(
-                    start: dragBeginPosition - const Offset(40, 0),
-                    end: dragBeginPosition - const Offset(40, 0) + direction,
+                    start: crosshair - const Offset(40, 0),
+                    end: crosshair - const Offset(40, 0) + direction,
                   ),
                   ArrowAnnotator(
-                    start: dragBeginPosition + const Offset(40, 0),
-                    end: dragBeginPosition + const Offset(40, 0) + direction,
+                    start: crosshair + const Offset(40, 0),
+                    end: crosshair + const Offset(40, 0) + direction,
                   ),
                 ],
               ],
@@ -474,11 +485,19 @@ class Act {
             spotScrollableBoundsAfterDrag.snapshotRenderBox();
         final viewportGlobalPosition =
             scrollableSizedRenderBoxAfterDrag.localToGlobal(Offset.zero);
-        final viewportRect = Rect.fromLTWH(
+        final fullViewportRect = Rect.fromLTWH(
           viewportGlobalPosition.dx,
           viewportGlobalPosition.dy,
           scrollableSizedRenderBoxAfterDrag.size.width,
           scrollableSizedRenderBoxAfterDrag.size.height,
+        );
+
+        // Account for padding when determining the usable viewport area
+        final viewportRect = Rect.fromLTRB(
+          fullViewportRect.left + padding.left,
+          fullViewportRect.top + padding.top,
+          fullViewportRect.right - padding.right,
+          fullViewportRect.bottom - padding.bottom,
         );
 
         final targetRenderBox = dragTarget.snapshotRenderBox();
@@ -497,17 +516,106 @@ class Act {
 
         Offset finalDragOffset = Offset.zero;
         if (!targetFullyInViewport) {
-          // drag the target to the location of the dragStart widget (top left corner)
-          final endDragLocation = dragStartRenderBoxRect.topLeft;
-          final Offset distanceToEnd =
+          // Calculate the desired end location, respecting padding
+          final Offset endDragLocation;
+          if (scrollAxis == Axis.vertical) {
+            // Position target at top of usable viewport (excluding padding)
+            endDragLocation = Offset(
+              globalTargetPositionTopLeft.dx,
+              viewportRect.top,
+            );
+          } else {
+            // Position target at left of usable viewport (excluding padding)
+            endDragLocation = Offset(
+              viewportRect.left,
+              globalTargetPositionTopLeft.dy,
+            );
+          }
+
+          final Offset fullDistanceToEnd =
               endDragLocation - globalTargetPositionTopLeft;
-          await gestures.drag(dragBeginPosition, distanceToEnd);
-          await binding.pump(duration);
-          finalDragOffset = distanceToEnd;
-          addDragEvent(
-            'Scrolling to fully reveal $targetName.',
-            direction: distanceToEnd,
-          );
+
+          // Only drag in the direction of the scroll axis, never diagonal
+          final Offset distanceToEnd;
+          if (scrollAxis == Axis.vertical) {
+            distanceToEnd = Offset(0, fullDistanceToEnd.dy);
+          } else {
+            distanceToEnd = Offset(fullDistanceToEnd.dx, 0);
+          }
+
+          // Ensure the drag is always recognized as a drag gesture, not a tap
+          if (distanceToEnd.distance >= kDragSlopDefault) {
+            // Distance is large enough, drag directly
+            await gestures.drag(dragBeginPosition, distanceToEnd);
+            await binding.pump(duration);
+            finalDragOffset = distanceToEnd;
+            addDragEvent(
+              'Scrolling to fully reveal $targetName.',
+              direction: distanceToEnd,
+            );
+          } else if (distanceToEnd.distance > 0) {
+            // Distance is too small, overshoot then return to ensure drag recognition, not a tap.
+            const overshootDistance = kDragSlopDefault + 1;
+            final direction = distanceToEnd / distanceToEnd.distance;
+
+            // The second gesture starts at dragBeginPosition + overshootOffset.
+            // It must be hittable on the scrollable AND outside the padded
+            // strip, so it never lands in an obscured area like a fixed
+            // header/footer. Try the natural overshoot direction; if its
+            // origin lies in the padded strip, flip the direction; if even
+            // the flipped origin is unsafe (very thin visible band), search
+            // along the dragBegin → preferred-end line, then fall back to a
+            // full 8 px grid scan of the scrollable.
+            Offset overshootOffset = direction * overshootDistance;
+            Offset secondGestureOrigin = dragBeginPosition + overshootOffset;
+            if (!_canBePoked(
+              position: secondGestureOrigin,
+              target: scrollableSizedRenderBoxAfterDrag,
+              insideArea: viewportRect,
+            )) {
+              overshootOffset = -overshootOffset;
+              secondGestureOrigin = dragBeginPosition + overshootOffset;
+            }
+            if (!_canBePoked(
+              position: secondGestureOrigin,
+              target: scrollableSizedRenderBoxAfterDrag,
+              insideArea: viewportRect,
+            )) {
+              // Walk the line from dragBeginPosition toward the preferred
+              // origin, closest-to-preferred first, and pick the first safe
+              // point. dragBeginPosition itself is always safe (the earlier
+              // _findPokablePositions ensured that), so the search always
+              // finds at least that as a fallback.
+              secondGestureOrigin = _findPokablePosition(
+                scrollable: scrollableSizedRenderBoxAfterDrag,
+                paddedViewport: viewportRect,
+                priorityPoints: _lineSamples(
+                  dragBeginPosition,
+                  secondGestureOrigin,
+                ),
+              )!;
+            }
+            final returnOffset = overshootOffset - distanceToEnd;
+
+            // First drag: overshoot the target
+            await gestures.drag(dragBeginPosition, overshootOffset);
+            await binding.pump(duration);
+            addDragEvent(
+              'Overshoot drag (1/2) to fully reveal $targetName.',
+              direction: overshootOffset,
+            );
+
+            // Second drag: return to the correct position
+            await gestures.drag(secondGestureOrigin, -returnOffset);
+            await binding.pump(duration);
+            addDragEvent(
+              'Return drag (2/2) to fully reveal $targetName.',
+              direction: -returnOffset,
+              origin: secondGestureOrigin,
+            );
+
+            finalDragOffset = distanceToEnd;
+          }
         }
 
         final totalDragged =
@@ -816,11 +924,51 @@ ${firstUsefulParent.toStringShort()} (${firstUsefulParent.debugWidgetLocation?.f
   );
 }
 
-/// Checks if the widget is visible and not covered by another widget
+/// Returns the first point in [priorityPoints] that is hittable on
+/// [scrollable] AND inside [paddedViewport]. Returns null if no candidate
+/// qualifies. Callers should include a known-safe fallback (e.g. the
+/// original [dragBeginPosition]) at the end of [priorityPoints].
+Offset? _findPokablePosition({
+  required RenderBox scrollable,
+  required Rect paddedViewport,
+  required List<Offset> priorityPoints,
+}) {
+  for (final candidate in priorityPoints) {
+    if (_canBePoked(
+      position: candidate,
+      target: scrollable,
+      insideArea: paddedViewport,
+    )) {
+      return candidate;
+    }
+  }
+  return null;
+}
+
+/// Returns the points of the line from [from] to [to] in [gridSize] steps,
+/// ordered from [to] back to [from] (closest-to-[to] first).
+List<Offset> _lineSamples(Offset from, Offset to, {int gridSize = 8}) {
+  final delta = to - from;
+  final steps = (delta.distance / gridSize).ceil();
+  if (steps == 0) return [from];
+  return [
+    for (int i = steps; i >= 0; i--) from + delta * (i / steps),
+  ];
+}
+
+/// True iff a hit-test at [position] reaches [target] (the target is the
+/// topmost hit, not covered by any overlay). When [insideArea] is given,
+/// also requires [position] to lie inside that rect — useful for ignoring
+/// points that fall in a padded/obscured strip even if they happen to hit
+/// [target].
 bool _canBePoked({
   required Offset position,
   required RenderObject target,
+  Rect? insideArea,
 }) {
+  if (insideArea != null && !insideArea.contains(position)) {
+    return false;
+  }
   final binding = WidgetsBinding.instance;
 
   // do the tap, hit test the position of [target]

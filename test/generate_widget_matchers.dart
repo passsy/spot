@@ -131,6 +131,7 @@ void main() {
     imports: "import 'package:flutter/material.dart';",
   );
   _generateWidget<Radio<String>>(
+    // ignore: deprecated_member_use
     builder: () =>
         // ignore: deprecated_member_use
         Radio<String>(value: 'a', groupValue: 'a', onChanged: (_) {}),
