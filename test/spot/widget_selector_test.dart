@@ -102,6 +102,15 @@ void main() {
             .toStringBreadcrumb(),
       );
     });
+
+    test('spotKey has no less specific selectors', () {
+      // spotKey only adds a key filter on top of the match-all type filter.
+      // Dropping either leaves a match-all selector or the original, so there
+      // are no useful less specific selectors.
+      final selector = spotKey(const ValueKey('a'));
+      final lessSpecificSelectors = selector.lessSpecificSelectors().toList();
+      expect(lessSpecificSelectors, isEmpty);
+    });
   });
 }
 
