@@ -9,6 +9,8 @@ class WidgetTypeFilter<W extends Widget> implements ElementFilter {
   @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
     if (W == Widget) {
+      // [W] is the broadest possible type, this filter is a no-op that keeps
+      // all candidates.
       return candidates;
     }
     final type = _typeOf<W>();

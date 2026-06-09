@@ -299,6 +299,21 @@ extension ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
         return findCommonAncestor(set).toStringDeep();
       }
 
+      String discoveredElementsList() {
+        final buffer = StringBuffer();
+        int index = 0;
+        for (final element in discoveredElements) {
+          index++;
+          buffer.writeln('Match #$index: $element');
+          const maxLength = 10000;
+          if (index > 10 && buffer.length > maxLength) {
+            buffer.writeln('... (truncated, too many matches found)');
+            break;
+          }
+        }
+        return buffer.toString();
+      }
+
       if (minimumConstraint != null && maximumConstraint == null) {
         if (minimumConstraint > count) {
           _tryMatchingLessSpecificCriteria(this);
@@ -317,6 +332,7 @@ extension ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
               message:
                   'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
                   'expected at least $minimumConstraint.\n'
+                  '${discoveredElementsList()}'
                   'Check the timeline at the very bottom for more information.',
               significantWidgetTree: significantWidgetTree(),
               snapshot: this,
@@ -361,6 +377,7 @@ extension ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
                 message:
                     'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
                     'expected exactly $exactCount.\n'
+                    '${discoveredElementsList()}'
                     'Check the timeline at the very bottom for more information.',
                 significantWidgetTree: significantWidgetTree(),
                 snapshot: this,
@@ -775,9 +792,14 @@ void _tryMatchingLessSpecificCriteria(
       int index = 0;
       for (final Element match in lessSpecificSnapshot.discoveredElements) {
         index++;
-        errorBuilder.writeln(
-          'Possible match #$index:\n${match.toStringDeep(minLevel: DiagnosticLevel.info)}',
-        );
+        errorBuilder.writeln('Possible match #$index:\n$match');
+        const maxLength = 10000;
+        if (index > 10 && errorBuilder.length > maxLength) {
+          errorBuilder.writeln(
+            '... (truncated after $maxLength chars, too many matches found)',
+          );
+          break;
+        }
       }
       final significantTree =
           findCommonAncestor(lessSpecificSnapshot.discoveredElements.toSet())
@@ -840,10 +862,22 @@ extension LessSpecificSelectors<W extends Widget> on WidgetSelector<W> {
   /// - selector which only matches for parent SizedBox
   @visibleForTesting
   Iterable<WidgetSelector<W>> lessSpecificSelectors() sync* {
-    final List<WidgetSelector<W> Function(WidgetSelector<W>)> criteria = [
-      for (final stage in stages)
-        (s) => s.copyWith(stages: [...s.stages, stage]),
-    ];
+    final criteria = <WidgetSelector<W> Function(WidgetSelector<W>)>[];
+    for (final stage in stages) {
+      // A WidgetTypeFilter<Widget> matches any widget, it is not a real
+      // constraint. Permuting it only yields a selector matching the whole
+      // tree or one equal to the original, neither of which is a useful
+      // "less specific" suggestion.
+      //
+      // Compares runtimeType instead of `is WidgetTypeFilter<Widget>` because
+      // the latter would also match a WidgetTypeFilter<Center> (Center extends
+      // Widget). Only the exact match-all filter should be skipped.
+      final isMatchAllType = stage.runtimeType == WidgetTypeFilter<Widget>;
+      if (isMatchAllType) {
+        continue;
+      }
+      criteria.add((s) => s.copyWith(stages: [...s.stages, stage]));
+    }
     if (criteria.length <= 1) {
       return;
     }

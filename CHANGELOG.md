@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Fix: Assertions like `spotKey(key).existsOnce()` were extremely slow (tens of seconds) when no match was found in a large widget tree. The error output is now limited and match-all selectors are no longer suggested as "less specific" matches. #119
+
 ## 0.19.0
 
 - Fix: Shorten screenshot filenames to avoid issues on some filesystems #124
