@@ -67,13 +67,9 @@ mixin ChainableSelectors<T extends Widget> {
   }) {
     final selector = WidgetSelector<W>(
       stages: [
-        if (W == Widget)
-          PredicateFilter(
-            predicate: (e) => true,
-            description: 'any Widget',
-          )
-        else
-          WidgetTypeFilter<W>(),
+        // A WidgetTypeFilter<Widget> would match every widget and constrain
+        // nothing, so it is only added for a concrete type.
+        if (W != Widget) WidgetTypeFilter<W>(),
         ..._childAndParentFilters(children, parents),
       ],
     );
@@ -158,7 +154,7 @@ mixin ChainableSelectors<T extends Widget> {
   }) {
     final selector = WidgetSelector<W>(
       stages: [
-        WidgetTypeFilter<W>(),
+        if (W != Widget) WidgetTypeFilter<W>(),
         PredicateFilter(
           predicate: (Element e) => identical(e.widget, widget),
           description: 'Widget === $widget',
@@ -209,7 +205,7 @@ mixin ChainableSelectors<T extends Widget> {
   }) {
     final selector = WidgetSelector<W>(
       stages: [
-        WidgetTypeFilter<W>(),
+        if (W != Widget) WidgetTypeFilter<W>(),
         PredicateFilter(
           predicate: (Element e) => identical(e, element),
           description: 'Element === $element',
@@ -337,7 +333,7 @@ mixin ChainableSelectors<T extends Widget> {
   }) {
     final selector = WidgetSelector<W>(
       stages: [
-        WidgetTypeFilter<W>(),
+        if (W != Widget) WidgetTypeFilter<W>(),
         PredicateFilter(
           predicate: (Element e) {
             if (e.widget is Text) {
@@ -435,7 +431,7 @@ mixin ChainableSelectors<T extends Widget> {
   }) {
     final selector = WidgetSelector<W>(
       stages: [
-        WidgetTypeFilter<W>(),
+        if (W != Widget) WidgetTypeFilter<W>(),
         PredicateFilter(
           predicate: (Element e) => e.widget.key == key,
           description: 'with key: "$key"',
