@@ -139,6 +139,30 @@ void main() {
       matchesGoldenFile('golden.png'),
     );
   });
+
+  testWidgets(
+      'Own bare-path font is also available via packages/<self>/ prefix',
+      (tester) async {
+    // PrivateFont is declared with a bare `lib/...` asset path. A package that
+    // references its own font with `package: 'app_font'` makes Flutter resolve
+    // the family to "packages/app_font/PrivateFont", which loadAppFonts() must
+    // also register (see https://github.com/passsy/spot/issues/141).
+    await loadAppFonts();
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: FontTestWidget(
+          fontFamily: 'packages/app_font/PrivateFont',
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await expectLater(
+      find.byType(MaterialApp),
+      matchesGoldenFile('golden.png'),
+    );
+  });
 }
 
 class FontTestWidget extends StatelessWidget {

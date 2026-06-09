@@ -236,6 +236,11 @@ Future<void> _loadFontsFromFontManifest() async {
   final json = jsonDecode(fontManifestContent!);
   final fontManifest = _FontManifest.fromJson(json);
 
+  // The name of the package running the tests. Used to also expose the test
+  // target's own fonts under "packages/<self>/MyFont", matching how Flutter
+  // resolves a `package:` set on a TextStyle/IconData.
+  final thisPackageName = _readPackageNameFromPubspec();
+
   for (final item in fontManifest.fontFamilies) {
     final packageAsset =
         item.assets.firstOrNullWhere((it) => it.startsWith('packages/'));
@@ -243,8 +248,21 @@ Future<void> _loadFontsFromFontManifest() async {
 
     if (packageName == null) {
       // font asset in pubspec.yaml references a file relative to the pubspec.yaml
-      // The font can not be used by other packages
+      // e.g. asset: lib/fonts/MyFont.ttf
+
+      // Make it accessible as "MyFont" for the app/package itself
       await loadFont(item.family, item.assets);
+
+      // A package may reference its own fonts with `package: '<self>'`, which
+      // Flutter resolves to "packages/<self>/MyFont" at lookup time. Register
+      // that name too so the font is reachable both ways, mirroring the
+      // packages/ asset case below.
+      if (thisPackageName != null) {
+        await loadFont(
+          'packages/$thisPackageName/${item.family}',
+          item.assets,
+        );
+      }
     } else {
       // font uses the package notation, which resolves relative to the packages lib/* directory
       // asset: packages/<packageName>/<somewhereInsideLib>/MyFont.ttf
@@ -256,6 +274,26 @@ Future<void> _loadFontsFromFontManifest() async {
       await loadFont('packages/$packageName/$fontFamilyName', item.assets);
     }
   }
+}
+
+/// Reads the `name:` field from the test target's pubspec.yaml.
+///
+/// `flutter test` runs with the package root as working directory, so the
+/// pubspec.yaml is expected next to it. Returns null when no pubspec.yaml is
+/// found or it does not declare a name.
+String? _readPackageNameFromPubspec() {
+  final pubspec = File('pubspec.yaml');
+  if (!pubspec.existsSync()) {
+    return null;
+  }
+  for (final line in pubspec.readAsLinesSync()) {
+    final match =
+        RegExp('''^name:\\s*['"]?([a-zA-Z0-9_]+)['"]?''').firstMatch(line);
+    if (match != null) {
+      return match.group(1);
+    }
+  }
+  return null;
 }
 
 /// Parsed representation of the FontManifest.json file
