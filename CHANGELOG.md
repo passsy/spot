@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Fix: Assertions like `spotKey(key).existsOnce()` were extremely slow (tens of seconds) when no match was found in a large widget tree. The error output is now limited and match-all selectors are no longer suggested as "less specific" matches. #119
+- Improvement: Untyped selectors (`spot`, `spotKey`, `spotWidget`, `spotElement`, `spotTexts`) no longer add a no-op `WidgetTypeFilter<Widget>` at the root.
 
 ## 0.19.0
 

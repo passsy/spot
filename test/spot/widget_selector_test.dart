@@ -61,7 +61,7 @@ void main() {
       );
       expect(
         lessSpecificSelectors[1].toStringBreadcrumb(),
-        spot().withParent(spot<Center>()).toStringBreadcrumb(),
+        allCasted().withParent(spot<Center>()).toStringBreadcrumb(),
       );
     });
 
@@ -104,13 +104,25 @@ void main() {
     });
 
     test('spotKey has no less specific selectors', () {
-      // spotKey only adds a key filter on top of the match-all type filter.
-      // Dropping either leaves a match-all selector or the original, so there
-      // are no useful less specific selectors.
+      // spotKey only adds a key filter, no match-all type filter on top.
+      // Dropping it leaves the original, so there are no useful less specific
+      // selectors.
       final selector = spotKey(const ValueKey('a'));
       final lessSpecificSelectors = selector.lessSpecificSelectors().toList();
       expect(lessSpecificSelectors, isEmpty);
     });
+  });
+
+  test('untyped selectors do not add a match-all type filter', () {
+    // A WidgetTypeFilter<Widget> would match everything and constrain nothing,
+    // so untyped selectors (W == Widget) add no type filter at all.
+    expect(spot().stages.whereType<WidgetTypeFilter>(), isEmpty);
+    expect(
+      spotKey(const ValueKey('a')).stages.whereType<WidgetTypeFilter>(),
+      isEmpty,
+    );
+    // A typed selector keeps its type filter.
+    expect(spot<Center>().stages.whereType<WidgetTypeFilter>(), isNotEmpty);
   });
 }
 

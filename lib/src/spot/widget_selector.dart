@@ -138,9 +138,34 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
     return false;
   }
 
+  /// An implicit `Widget ` subject for untyped selectors that dropped their
+  /// `WidgetTypeFilter`.
+  ///
+  /// Without it the description would dangle, e.g. `spotKey` would read
+  /// `with key: …` instead of `Widget with key: …`. Only added when no stage
+  /// already names a subject (a type filter, or a description like
+  /// `any Widget` / `Widget === …`).
+  String get _implicitWidgetSubject {
+    if (W != Widget) {
+      return '';
+    }
+    if (stages.any((stage) => stage is WidgetTypeFilter)) {
+      return '';
+    }
+    final constraints = stages
+        .where((stage) => stage is! ParentFilter && stage is! ChildFilter)
+        .toList();
+    if (constraints.isEmpty ||
+        constraints.first.description.startsWith('with ')) {
+      return 'Widget ';
+    }
+    return '';
+  }
+
   @override
   String toString() {
     final sb = StringBuffer();
+    sb.write(_implicitWidgetSubject);
 
     for (int i = 0; i < stages.length; i++) {
       final stage = stages[i];
@@ -204,6 +229,7 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
   /// hierarchy of the selection.
   String toStringBreadcrumb() {
     var sb = StringBuffer();
+    sb.write(_implicitWidgetSubject);
 
     for (int i = 0; i < stages.length; i++) {
       final stage = stages[i];
