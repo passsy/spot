@@ -36,6 +36,7 @@ export 'package:spot/src/spot/effective/effective_text.dart'
     show EffectiveTextMatcher, EffectiveTextSelector, TextStyleSubject;
 export 'package:spot/src/spot/filters/child_filter.dart' show ChildFilter;
 export 'package:spot/src/spot/filters/parent_filter.dart' show ParentFilter;
+export 'package:spot/src/spot/filters/position_filter.dart' show PositionFilter;
 export 'package:spot/src/spot/filters/predicate_filter.dart'
     show PredicateFilter;
 export 'package:spot/src/spot/filters/widget_type_filter.dart'
@@ -61,6 +62,7 @@ export 'package:spot/src/spot/props.dart'
         widgetProp;
 export 'package:spot/src/spot/selectors.dart'
     show
+        PositionFilterSelector,
         QuantityMatchers,
         QuantitySelectors,
         ReadSingleSnapshot,
@@ -173,6 +175,16 @@ WidgetSelector<Widget> get allWidgets => WidgetSelector.all;
 /// // ...
 /// ```
 WidgetSelector<Widget> spotAllWidgets() => WidgetSelector.all;
+
+/// Creates a [WidgetSelector] for widgets on the hit-test path at [position].
+///
+/// [position] is a global screen coordinate.
+/// Flutter hit testing decides which widgets match, so widgets that overlap the
+/// coordinate but do not receive hit-test events are not included.
+@useResult
+WidgetSelector<Widget> spotAtPosition(Offset position) {
+  return spot().atPosition(position);
+}
 
 /// Creates a chainable [WidgetSelector] that matches a single [Widget] of
 /// type [W].
