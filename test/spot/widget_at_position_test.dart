@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 
 void main() {
-  testWidgets('spotAtPosition finds widgets on hit-test path', (tester) async {
+  testWidgets('atPosition finds widgets on hit-test path', (tester) async {
     await tester.pumpWidget(
       const MaterialApp(
         home: Center(
@@ -20,10 +20,10 @@ void main() {
     );
 
     spot<ColoredBox>()
-        .spotAtPosition(const Offset(400, 300))
+        .atPosition(const Offset(400, 300))
         .withKey(const ValueKey('target'))
         .existsOnce();
-    spot<SizedBox>().spotAtPosition(const Offset(400, 300)).existsOnce();
+    spot<SizedBox>().atPosition(const Offset(400, 300)).existsOnce();
   });
 
   testWidgets('spotAtPosition finds all widgets on hit-test path',
@@ -43,7 +43,7 @@ void main() {
       ),
     );
 
-    final widgetsAtPosition = spot().spotAtPosition(const Offset(400, 300));
+    final widgetsAtPosition = spotAtPosition(const Offset(400, 300));
     widgetsAtPosition.existsAtLeastNTimes(2);
     widgetsAtPosition
         .whereWidget(
@@ -53,7 +53,7 @@ void main() {
         .existsOnce();
   });
 
-  testWidgets('spotAtPosition filters typed selectors', (tester) async {
+  testWidgets('atPosition filters typed selectors', (tester) async {
     await tester.pumpWidget(
       const MaterialApp(
         home: Row(
@@ -81,20 +81,19 @@ void main() {
 
     final selector = spot<ColoredBox>()
         .withKey(const ValueKey('green'))
-        .spotAtPosition(const Offset(150, 300));
+        .atPosition(const Offset(150, 300));
     selector.existsOnce();
     final box = selector.snapshotWidget();
     expect(box.color, Colors.green);
   });
 
-  testWidgets('spotAtPosition returns no widgets outside the view',
-      (tester) async {
+  testWidgets('atPosition returns no widgets outside the view', (tester) async {
     await tester.pumpWidget(
       const MaterialApp(
         home: ColoredBox(color: Colors.green),
       ),
     );
 
-    spot<ColoredBox>().spotAtPosition(const Offset(-1, -1)).doesNotExist();
+    spot<ColoredBox>().atPosition(const Offset(-1, -1)).doesNotExist();
   });
 }

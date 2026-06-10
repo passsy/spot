@@ -176,6 +176,16 @@ WidgetSelector<Widget> get allWidgets => WidgetSelector.all;
 /// ```
 WidgetSelector<Widget> spotAllWidgets() => WidgetSelector.all;
 
+/// Creates a [WidgetSelector] for widgets on the hit-test path at [position].
+///
+/// [position] is a global screen coordinate.
+/// Flutter hit testing decides which widgets match, so widgets that overlap the
+/// coordinate but do not receive hit-test events are not included.
+@useResult
+WidgetSelector<Widget> spotAtPosition(Offset position) {
+  return spot().atPosition(position);
+}
+
 /// Creates a chainable [WidgetSelector] that matches a single [Widget] of
 /// type [W].
 ///

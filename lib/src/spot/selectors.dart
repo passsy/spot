@@ -967,8 +967,12 @@ extension RelativeSelectors<W extends Widget> on WidgetSelector<W> {
 extension PositionFilterSelector<W extends Widget> on WidgetSelector<W> {
   /// Keeps widgets from this selector that are on the hit-test path at
   /// [position].
+  ///
+  /// [position] is a global screen coordinate.
+  /// Flutter hit testing decides which widgets match, so widgets that overlap
+  /// the coordinate but do not receive hit-test events are not included.
   @useResult
-  WidgetSelector<W> spotAtPosition(Offset position) {
+  WidgetSelector<W> atPosition(Offset position) {
     return addStage(PositionFilter(position));
   }
 }

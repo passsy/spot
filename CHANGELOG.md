@@ -4,7 +4,7 @@
 
 - Fix: Assertions like `spotKey(key).existsOnce()` were extremely slow (tens of seconds) when no match was found in a large widget tree. The error output is now limited and match-all selectors are no longer suggested as "less specific" matches. #119
 - Improvement: Untyped selectors (`spot`, `spotKey`, `spotWidget`, `spotElement`, `spotTexts`) no longer add a no-op `WidgetTypeFilter<Widget>` at the root.
-- New: `WidgetSelector.spotAtPosition` to query widgets on the hit-test path for a global screen position. #28
+- New: `spotAtPosition` and `WidgetSelector.atPosition` to query widgets on the hit-test path for a global screen position. #28
 
 ## 0.19.0
 
