@@ -278,22 +278,20 @@ Future<void> _loadFontsFromFontManifest() async {
 
 /// Reads the `name:` field from the test target's pubspec.yaml.
 ///
-/// `flutter test` runs with the package root as working directory, so the
-/// pubspec.yaml is expected next to it. Returns null when no pubspec.yaml is
-/// found or it does not declare a name.
+/// `flutter test` creates a generated main.dart next to the package root, so
+/// pubspec.yaml is expected next to [Platform.script]. Returns null when no
+/// pubspec.yaml is found or it does not declare a name.
 String? _readPackageNameFromPubspec() {
-  final pubspec = File('pubspec.yaml');
+  final pubspec = File.fromUri(Platform.script.resolve('pubspec.yaml'));
   if (!pubspec.existsSync()) {
     return null;
   }
-  for (final line in pubspec.readAsLinesSync()) {
-    final match =
-        RegExp('''^name:\\s*['"]?([a-zA-Z0-9_]+)['"]?''').firstMatch(line);
-    if (match != null) {
-      return match.group(1);
-    }
-  }
-  return null;
+  final content = pubspec.readAsStringSync();
+  final match = RegExp(
+    '''^\\s*name\\s*:\\s*['"]?([a-zA-Z0-9_]+)['"]?''',
+    multiLine: true,
+  ).firstMatch(content);
+  return match?.group(1);
 }
 
 /// Parsed representation of the FontManifest.json file
