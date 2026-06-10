@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- New: Text matching ignores invisible and special whitespace, so tests can use regular characters. `spotText`, `spotTextWhere`, `whereText`, `withText` and `hasText` strip invisible characters (zero width space, soft hyphen, word joiner, BOM) and fold every Unicode space separator (`Zs`, e.g. non-breaking space) to a regular space. Meaningful characters (zero width joiner, bidi controls, the `U+FFFC` WidgetSpan placeholder) and line breaks are kept. #138 (thx @MichaelTamm)
+  ```dart
+  spotText('foobar').existsOnce();  // matches Text('foo\u{200B}bar')
+  spotText('foo bar').existsOnce(); // matches Text('foo\u{00A0}bar')
+  ```
+  To match exact characters, pass `raw: true` to `spotText`/`spotTextWhere`, or use `whereRawText`/`withRawText`/`hasRawText` on `WidgetSelector<AnyText>`. Also exposes `AnyText.normalizeVisibleText`, `AnyText.extractText`, and `AnyTextContent` (`raw`/`normalized`).
+- Deprecated: `spotText(text, exact: true)` is now `spotText(text, whole: true)` — the flag controls whole-string vs. substring matching, not character handling. `exact` still works. #138
 - Fix: `loadAppFonts()` now also registers a package's own fonts under `packages/<self>/MyFont`, so fonts referenced via `package: '<self>'` render instead of falling back to Ahem. #141
 - Fix: Assertions like `spotKey(key).existsOnce()` were extremely slow (tens of seconds) when no match was found in a large widget tree. The error output is now limited and match-all selectors are no longer suggested as "less specific" matches. #119
 - Improvement: Untyped selectors (`spot`, `spotKey`, `spotWidget`, `spotElement`, `spotTexts`) no longer add a no-op `WidgetTypeFilter<Widget>` at the root.

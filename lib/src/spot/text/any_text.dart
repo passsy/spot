@@ -82,6 +82,56 @@ class AnyText extends LeafRenderObjectWidget {
     );
   }
 
+  /// Normalizes [text] to what a user visually perceives, so tests can match
+  /// text without worrying about invisible or special whitespace characters.
+  ///
+  /// Invisible characters with no visible glyph (zero width space, soft
+  /// hyphen, word joiner, BOM) are removed, and every Unicode space separator
+  /// (such as the non-breaking space) is folded to a regular space. Characters
+  /// that carry meaning (zero width joiner, bidi controls, the [WidgetSpan]
+  /// placeholder) and line structure (tabs, line breaks) are left untouched.
+  ///
+  /// This powers the forgiving matching of [spotText] and the `whereText` /
+  /// `withText` / `hasText` selectors. To match the exact characters of a
+  /// widget, use the raw variants (`whereRawText` / `withRawText` /
+  /// `hasRawText`).
+  static String normalizeVisibleText(String text) {
+    StringBuffer? result;
+    for (var i = 0; i < text.length; i++) {
+      final codeUnit = text.codeUnitAt(i);
+      final removed = _invisibleCodeUnits.contains(codeUnit);
+      final foldedToSpace =
+          !removed && _spaceSeparatorCodeUnits.contains(codeUnit);
+      if (!removed && !foldedToSpace) {
+        result?.writeCharCode(codeUnit);
+        continue;
+      }
+      // First special character: copy the untouched prefix into the buffer.
+      result ??= StringBuffer(text.substring(0, i));
+      if (foldedToSpace) {
+        result.write(' ');
+      }
+      // Removed characters are simply not written.
+    }
+    return result?.toString() ?? text;
+  }
+
+  /// Extracts the text from a text widget [element].
+  ///
+  /// Supports the text widgets spot recognizes: [EditableText] and [RichText],
+  /// which backs [Text] and [SelectableText]. Returns `null` for any other
+  /// widget.
+  static AnyTextContent? extractText(Element element) {
+    final widget = element.widget;
+    if (widget is EditableText) {
+      return AnyTextContent(widget.controller.text);
+    }
+    if (widget is RichText) {
+      return AnyTextContent(widget.text.toPlainText());
+    }
+    return null;
+  }
+
   /// The exact widget where the text was found
   final Widget widget;
 
@@ -164,7 +214,15 @@ class AnyText extends LeafRenderObjectWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(StringProperty('text', text));
+    final rawText = text;
+    final normalizedText =
+        rawText == null ? null : normalizeVisibleText(rawText);
+    // 'text' is normalized so matching ignores invisible/special whitespace
+    // (see [normalizeVisibleText]), while 'rawText' keeps the exact characters.
+    // Both are always added so the generator emits the `text` and `rawText`
+    // selector families.
+    properties.add(StringProperty('text', normalizedText));
+    properties.add(StringProperty('rawText', rawText));
     properties.add(
       EnumProperty<TextDirection>(
         'textDirection',
@@ -230,6 +288,71 @@ class AnyText extends LeafRenderObjectWidget {
   }
 }
 
+/// The text content of a text widget, available both as written ([raw]) and
+/// in a [normalized] form (see [AnyText.normalizeVisibleText]) suitable for
+/// matching. Returned by [AnyText.extractText].
+class AnyTextContent {
+  /// Creates an [AnyTextContent] from the [raw] text of a widget.
+  AnyTextContent(this.raw);
+
+  /// The text exactly as found in the widget, including invisible and special
+  /// whitespace characters.
+  final String raw;
+
+  /// The [raw] text run through [AnyText.normalizeVisibleText], matching what
+  /// a user visually perceives. Computed lazily and cached.
+  late final String normalized = AnyText.normalizeVisibleText(raw);
+
+  @override
+  String toString() => 'AnyTextContent(raw: "$raw", normalized: "$normalized")';
+}
+
+/// Code units that have no visible glyph and no semantic effect on plain
+/// text. [AnyText.normalizeVisibleText] removes them entirely.
+///
+/// Other invisible characters are deliberately **not** included because they
+/// carry meaning and removing them would change how the text renders:
+/// - `U+200C`/`U+200D` Zero Width Non-Joiner / Joiner drive emoji sequences
+///   (e.g. family emojis) and Indic/Arabic shaping.
+/// - `U+200E`/`U+200F` and other bidirectional controls change the visual
+///   order of mixed left-to-right and right-to-left text.
+/// - `U+FFFC` Object Replacement Character represents an embedded [WidgetSpan]
+///   and is meaningful content, not whitespace.
+const _invisibleCodeUnits = {
+  0x200B, // ZERO WIDTH SPACE: inserted to allow line breaks (flutter#18761)
+  0x00AD, // SOFT HYPHEN: invisible break hint, only renders when broken
+  0x2060, // WORD JOINER: invisible no-break glue
+  0xFEFF, // ZERO WIDTH NO-BREAK SPACE / BOM: invisible, often a stray prefix
+};
+
+/// Code units of Unicode Space_Separator (`Zs`) characters other than the
+/// regular space. [AnyText.normalizeVisibleText] folds them to a regular space
+/// because they all render as a blank of some width.
+///
+/// Each code point is listed explicitly (instead of a range) so a reader
+/// wondering what happens to e.g. `U+2004` can find it by searching the repo.
+///
+/// Tabs and line breaks (`U+0009`, `U+000A`, `U+000D`, ...) are intentionally
+/// left untouched: they are visually distinct structure, not spaces.
+const _spaceSeparatorCodeUnits = {
+  0x00A0, // NO-BREAK SPACE: glues words/units onto the same line
+  0x1680, // OGHAM SPACE MARK
+  0x2000, // EN QUAD
+  0x2001, // EM QUAD
+  0x2002, // EN SPACE
+  0x2003, // EM SPACE
+  0x2004, // THREE-PER-EM SPACE
+  0x2005, // FOUR-PER-EM SPACE
+  0x2006, // SIX-PER-EM SPACE
+  0x2007, // FIGURE SPACE
+  0x2008, // PUNCTUATION SPACE
+  0x2009, // THIN SPACE
+  0x200A, // HAIR SPACE
+  0x202F, // NARROW NO-BREAK SPACE: common in number/currency/locale formats
+  0x205F, // MEDIUM MATHEMATICAL SPACE
+  0x3000, // IDEOGRAPHIC SPACE: full-width CJK space
+};
+
 /// A [WidgetSelector] that matches any text on the screen, including:
 /// - [Text]
 /// - [SelectableText]
@@ -280,6 +403,7 @@ class MatchTextFilter implements ElementFilter {
   MatchTextFilter({
     required this.match,
     required this.description,
+    this.normalizeText = true,
   });
 
   /// The function that asserts the text content.
@@ -290,45 +414,29 @@ class MatchTextFilter implements ElementFilter {
   @override
   final String description;
 
+  /// When `true` (the default) [match] receives the [AnyTextContent.normalized]
+  /// text, ignoring invisible and special whitespace. When `false` it receives
+  /// the [AnyTextContent.raw] text, matching the exact characters.
+  final bool normalizeText;
+
   @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
     return candidates.where((it) => _match(it.element));
   }
 
   bool _match(Element element) {
-    try {
-      final actual = _extractTextData(element);
-      final failure = softCheck(actual, match.hideNullability());
-      return failure == null;
-    } on _UnsupportedWidgetTypeException {
+    final content = AnyText.extractText(element);
+    if (content == null) {
+      // Not a text widget this filter understands.
       return false;
     }
-  }
-
-  String? _extractTextData(Element e) {
-    final widget = e.widget;
-    if (widget is EditableText) {
-      return widget.controller.text;
-    }
-    if (widget is RichText) {
-      return widget.text.toPlainText();
-    }
-    throw _UnsupportedWidgetTypeException(widget);
+    final actual = normalizeText ? content.normalized : content.raw;
+    final failure = softCheck(actual, match.hideNullability());
+    return failure == null;
   }
 
   @override
   String toString() {
     return 'MatchTextFilter which keeps $description';
-  }
-}
-
-class _UnsupportedWidgetTypeException implements Exception {
-  _UnsupportedWidgetTypeException(this.widget);
-
-  final Widget widget;
-
-  @override
-  String toString() {
-    return 'UnsupportedWidgetTypeException: ${widget.toStringShort()}';
   }
 }

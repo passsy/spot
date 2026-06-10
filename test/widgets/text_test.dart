@@ -7,6 +7,8 @@ import 'package:spot/spot.dart';
 import '../spot/existence_comparison_test.dart';
 
 const testTextStyle = TextStyle(color: Colors.red);
+const zeroWidthSpace = '\u200B';
+const nonBreakingSpace = '\u00A0';
 
 void main() {
   // does inherit TextStyle
@@ -100,8 +102,8 @@ void main() {
 
         testWidgets('$widgetType exact', (tester) async {
           await tester.pumpWidget(tree.value);
-          spotText('foo', exact: true).existsOnce();
-          spotText('oo', exact: true).doesNotExist();
+          spotText('foo', whole: true).existsOnce();
+          spotText('oo', whole: true).doesNotExist();
         });
 
         testWidgets('$widgetType RegEx', (tester) async {
@@ -389,6 +391,180 @@ void main() {
           'font_size: null',
         ]),
       );
+    });
+  });
+
+  group('visible text normalization', () {
+    test('normalizeVisibleText removes invisible characters', () {
+      expect(AnyText.normalizeVisibleText('f\u200Bo\u200Bo'), 'foo'); // ZWSP
+      expect(AnyText.normalizeVisibleText('soft\u00ADhyphen'),
+          'softhyphen'); // SHY
+      expect(
+          AnyText.normalizeVisibleText('word\u2060joiner'), 'wordjoiner'); // WJ
+      expect(AnyText.normalizeVisibleText('\uFEFFbom'), 'bom'); // ZWNBSP / BOM
+    });
+
+    test('normalizeVisibleText folds space separators to a regular space', () {
+      expect(AnyText.normalizeVisibleText('foo\u00A0bar'), 'foo bar'); // NBSP
+      expect(
+          AnyText.normalizeVisibleText('1\u202F234'), '1 234'); // NARROW NBSP
+      expect(AnyText.normalizeVisibleText('thin\u2009space'), 'thin space');
+      expect(AnyText.normalizeVisibleText('em\u2003space'), 'em space');
+      expect(AnyText.normalizeVisibleText('ogham\u1680mark'), 'ogham mark');
+      expect(AnyText.normalizeVisibleText('math\u205Fspace'), 'math space');
+      expect(AnyText.normalizeVisibleText('full\u3000width'), 'full width');
+    });
+
+    test('normalizeVisibleText keeps meaningful and structural characters', () {
+      // Zero Width Joiner builds emoji sequences and must be preserved.
+      expect(AnyText.normalizeVisibleText('a\u200Db'), 'a\u200Db');
+      // Object Replacement Character represents an embedded WidgetSpan.
+      expect(AnyText.normalizeVisibleText('a\uFFFCb'), 'a\uFFFCb');
+      // Tabs and line breaks are structure, not spaces.
+      expect(AnyText.normalizeVisibleText('a\tb\nc'), 'a\tb\nc');
+      expect(AnyText.normalizeVisibleText('unchanged'), 'unchanged');
+    });
+
+    test('TextContent exposes both raw and normalized text', () {
+      final content = AnyTextContent('foo${nonBreakingSpace}bar');
+      expect(content.raw, 'foo${nonBreakingSpace}bar');
+      expect(content.normalized, 'foo bar');
+    });
+
+    testWidgets('extractTextContent reads raw and normalized from a widget',
+        (tester) async {
+      await tester.pumpWidget(
+        _stage(children: [Text('foo${nonBreakingSpace}bar')]),
+      );
+      final content =
+          AnyText.extractText(tester.element(find.byType(RichText).first));
+      expect(content, isNotNull);
+      expect(content!.raw, 'foo${nonBreakingSpace}bar');
+      expect(content.normalized, 'foo bar');
+    });
+
+    testWidgets('extractTextContent returns null for non-text widgets',
+        (tester) async {
+      await tester.pumpWidget(_stage(children: [Icon(Icons.add)]));
+      expect(
+        AnyText.extractText(tester.element(find.byIcon(Icons.add))),
+        isNull,
+      );
+    });
+
+    testWidgets('spotText ignores ZWSP', (tester) async {
+      await tester.pumpWidget(
+        _stage(children: [Text('f${zeroWidthSpace}o${zeroWidthSpace}o')]),
+      );
+      spotText('foo').existsOnce();
+      spot<Column>().spotText('foo').existsOnce();
+      // The needle is normalized too, so the raw spelling matches as well.
+      spotText('f${zeroWidthSpace}o${zeroWidthSpace}o').existsOnce();
+    });
+
+    testWidgets('spotText treats NBSP as a regular space', (tester) async {
+      await tester.pumpWidget(
+        _stage(children: [Text('foo${nonBreakingSpace}bar baz')]),
+      );
+      spotText('foo bar baz').existsOnce();
+      spotText('foo${nonBreakingSpace}bar baz').existsOnce();
+      spotText('foo bar${nonBreakingSpace}baz').existsOnce();
+    });
+
+    testWidgets('spotText with whole matches the entire text', (tester) async {
+      await tester.pumpWidget(
+        _stage(children: [Text('a${nonBreakingSpace}b')]),
+      );
+      spotText('a b', whole: true).existsOnce();
+      spotText('a${nonBreakingSpace}b', whole: true).existsOnce();
+      // whole requires the entire text, so a substring does not match.
+      spotText('a', whole: true).doesNotExist();
+      spotText('a').existsOnce();
+    });
+
+    testWidgets('deprecated exact still behaves like whole', (tester) async {
+      await tester.pumpWidget(
+        _stage(children: [Text('a${nonBreakingSpace}b')]),
+      );
+      spotText('a b', exact: true).existsOnce();
+      spotText('a', exact: true).doesNotExist();
+    });
+
+    testWidgets('spotText handles narrow NBSP and soft hyphen', (tester) async {
+      // '12<NNBSP>345' price formatting and a soft hyphen inside 'invisible'.
+      await tester.pumpWidget(
+        _stage(children: [Text('12\u202F345 \u20AC in\u00ADvisible')]),
+      );
+      spotText('12 345 \u20AC invisible').existsOnce();
+    });
+
+    testWidgets('spotText normalizes ZWSP inside Text.rich', (tester) async {
+      await tester.pumpWidget(
+        _stage(
+          children: [Text.rich(TextSpan(text: 'He${zeroWidthSpace}llo'))],
+        ),
+      );
+      spotText('Hello').existsOnce();
+    });
+
+    testWidgets('whereText/withText/hasText match the normalized text',
+        (tester) async {
+      await tester.pumpWidget(
+        _stage(children: [Text('foo${nonBreakingSpace}bar')]),
+      );
+      spotText('foo').whereText((it) => it.equals('foo bar')).existsOnce();
+      spotText('foo').withText('foo bar').existsOnce();
+      spotText('foo').existsOnce().hasText('foo bar');
+    });
+
+    testWidgets('whereRawText/withRawText/hasRawText match exact characters',
+        (tester) async {
+      await tester.pumpWidget(
+        _stage(children: [Text('foo${nonBreakingSpace}bar')]),
+      );
+      // The raw text keeps the NBSP, so a regular space does not match.
+      spotText('foo').withRawText('foo bar').doesNotExist();
+      spotText('foo').withRawText('foo${nonBreakingSpace}bar').existsOnce();
+      spotText('foo')
+          .whereRawText((it) => it.equals('foo${nonBreakingSpace}bar'))
+          .existsOnce();
+      spotText('foo').existsOnce().hasRawText('foo${nonBreakingSpace}bar');
+    });
+
+    testWidgets('spotTextWhere operates on the normalized text',
+        (tester) async {
+      await tester.pumpWidget(
+        _stage(children: [Text('foo${nonBreakingSpace}bar')]),
+      );
+      spotTextWhere((it) => it.contains('foo bar')).existsOnce();
+      spotTextWhere((it) => it.startsWith('foo b')).existsOnce();
+    });
+
+    testWidgets('spotText with raw matches the exact characters',
+        (tester) async {
+      await tester.pumpWidget(
+        _stage(children: [Text('foo${nonBreakingSpace}bar')]),
+      );
+      // The NBSP is matched literally; a regular space does not match.
+      spotText('foo${nonBreakingSpace}bar', raw: true).existsOnce();
+      spotText('foo bar', raw: true).doesNotExist();
+      // contains by default, whole requires the entire text
+      spotText('foo$nonBreakingSpace', raw: true).existsOnce();
+      spotText('foo$nonBreakingSpace', raw: true, whole: true).doesNotExist();
+      spotText('foo${nonBreakingSpace}bar', raw: true, whole: true)
+          .existsOnce();
+    });
+
+    testWidgets('spotTextWhere with raw operates on the raw text',
+        (tester) async {
+      await tester.pumpWidget(
+        _stage(children: [Text('foo${nonBreakingSpace}bar')]),
+      );
+      spotTextWhere((it) => it.equals('foo${nonBreakingSpace}bar'), raw: true)
+          .existsOnce();
+      spotTextWhere((it) => it.equals('foo bar'), raw: true).doesNotExist();
+      spotTextWhere((it) => it.startsWith('foo$nonBreakingSpace'), raw: true)
+          .existsOnce();
     });
   });
 }

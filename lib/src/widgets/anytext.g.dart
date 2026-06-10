@@ -38,6 +38,29 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
         'text', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Creates a [WidgetSelector] that finds all [AnyText] where rawText matches the condition.
+  ///
+  /// #### Example usage:
+  /// ```dart
+  /// spot<AnyText>().whereRawText((it) => it.equals('foo')).existsOnce();
+  /// ```
+  @useResult
+  WidgetSelector<AnyText> whereRawText(MatchProp<String> match) {
+    return withDiagnosticProp<String>('rawText', match);
+  }
+
+  /// Creates a [WidgetSelector] that finds all [AnyText] where rawText equals (==) [value].
+  ///
+  /// #### Example usage:
+  /// ```dart
+  /// spot<AnyText>().withRawText('foo').existsOnce();
+  /// ```
+  @useResult
+  WidgetSelector<AnyText> withRawText(String? value) {
+    return withDiagnosticProp<String>(
+        'rawText', (it) => value == null ? it.isNull() : it.equals(value));
+  }
+
   /// Creates a [WidgetSelector] that finds all [AnyText] where textDirection matches the condition.
   ///
   /// #### Example usage:
@@ -641,6 +664,27 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
         'text', (it) => value == null ? it.isNull() : it.equals(value));
   }
 
+  /// Expects that rawText of [AnyText] matches the condition in [match].
+  ///
+  /// #### Example usage:
+  /// ```dart
+  /// spot<AnyText>().existsOnce().hasRawTextWhere((it) => it.equals('foo'));
+  /// ```
+  WidgetMatcher<AnyText> hasRawTextWhere(MatchProp<String> match) {
+    return hasDiagnosticProp<String>('rawText', match);
+  }
+
+  /// Expects that rawText of [AnyText] equals (==) [value].
+  ///
+  /// #### Example usage:
+  /// ```dart
+  /// spot<AnyText>().existsOnce().hasRawText('foo');
+  /// ```
+  WidgetMatcher<AnyText> hasRawText(String? value) {
+    return hasDiagnosticProp<String>(
+        'rawText', (it) => value == null ? it.isNull() : it.equals(value));
+  }
+
   /// Expects that textDirection of [AnyText] matches the condition in [match].
   ///
   /// #### Example usage:
@@ -1176,6 +1220,11 @@ extension AnyTextGetter on WidgetMatcher<AnyText> {
   /// Returns the text of the matched [AnyText] via [Widget.toDiagnosticsNode]
   String getText() {
     return getDiagnosticProp<String>('text');
+  }
+
+  /// Returns the rawText of the matched [AnyText] via [Widget.toDiagnosticsNode]
+  String getRawText() {
+    return getDiagnosticProp<String>('rawText');
   }
 
   /// Returns the textDirection of the matched [AnyText] via [Widget.toDiagnosticsNode]

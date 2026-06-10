@@ -79,7 +79,7 @@ export 'package:spot/src/spot/snapshot.dart'
         ToWidgetMatcher,
         WidgetSnapshot,
         WidgetSnapshotShorthands;
-export 'package:spot/src/spot/text/any_text.dart' show AnyText;
+export 'package:spot/src/spot/text/any_text.dart' show AnyText, AnyTextContent;
 export 'package:spot/src/spot/tree_snapshot.dart'
     show ScopedWidgetTreeSnapshot, WidgetTreeNode;
 export 'package:spot/src/spot/widget_matcher.dart'
@@ -321,8 +321,14 @@ WidgetSelector<W> spotElement<W extends Widget>(
 
 /// Finds text on the screen
 ///
-/// [spotText] compares text using 'contains'. For more control over the
-/// comparison, use [spotTextWhere] or set [exact] to `true`.
+/// By default [spotText] matches widgets whose text *contains* [text]. Set
+/// [whole] to `true` to require [text] to match the *entire* widget text
+/// instead. For full control over the comparison, use [spotTextWhere].
+///
+/// Matching ignores invisible and special whitespace characters (see
+/// [AnyText.normalizeVisibleText]); [whole] does not change that. To match the
+/// exact characters of a widget, use the raw selectors (`whereRawText` /
+/// `withRawText` / `hasRawText`).
 ///
 /// This method combines finding of [Text], [EditableText] and [SelectableText]
 /// widgets. Ultimately, all widgets show text as [RichText] widget.
@@ -339,12 +345,18 @@ WidgetSelector<AnyText> spotText(
   Pattern text, {
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
-  bool exact = false,
+  bool whole = false,
+  bool raw = false,
+  @Deprecated('Use whole instead. For exact-character matching, set raw: true.')
+  bool? exact,
 }) {
   return _global.spotText(
     text,
     parents: parents,
     children: children,
+    whole: whole,
+    raw: raw,
+    // ignore: deprecated_member_use_from_same_package
     exact: exact,
   );
 }
@@ -363,16 +375,22 @@ WidgetSelector<AnyText> spotText(
 /// spotTextWhere((it) => it.contains('Wo'));
 /// spotText('Wo');
 /// ```
+///
+/// By default [match] receives the text with invisible and special whitespace
+/// normalized (see [AnyText.normalizeVisibleText]). Set [raw] to `true` to
+/// match against the exact characters of the widget instead.
 @useResult
 WidgetSelector<AnyText> spotTextWhere(
   void Function(Subject<String>) match, {
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
+  bool raw = false,
 }) {
   return _global.spotTextWhere(
     match,
     parents: parents,
     children: children,
+    raw: raw,
   );
 }
 
