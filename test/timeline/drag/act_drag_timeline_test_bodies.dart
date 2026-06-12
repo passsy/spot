@@ -10,8 +10,8 @@ import '../timeline_test_shared.dart' as shared;
 import 'drag_until_visible_test_widget.dart';
 
 class ActDragTimelineTestBodies {
-  static final _firstItemSelector = spotText('Item at index: 3', exact: true);
-  static final _secondItemSelector = spotText('Item at index: 27', exact: true);
+  static final _firstItemSelector = spotText('Item at index: 3', whole: true);
+  static final _secondItemSelector = spotText('Item at index: 27', whole: true);
 
   static const _failingDragAmount = 10;
   static const _failingOffset = Offset(0, -1000);
@@ -407,8 +407,8 @@ $globalInitiator
   testWidgets("$testTitle", (WidgetTester tester) async {
   $localInitiator
     await tester.pumpWidget(const DragUntilVisibleSingleDirectionTestWidget(axis: Axis.vertical));
-      final firstItem = spotText('Item at index: 3', exact: true)..existsOnce();
-      final secondItem = spotText('Item at index: 27', exact: true)
+      final firstItem = spotText('Item at index: 3', whole: true)..existsOnce();
+      final secondItem = spotText('Item at index: 27', whole: true)
         ..doesNotExist();
       await act.dragUntilVisible(
         dragStart: firstItem,

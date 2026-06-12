@@ -218,8 +218,14 @@ mixin ChainableSelectors<T extends Widget> {
 
   /// Creates a [WidgetSelector] that finds text within the parent
   ///
-  /// [spotText] compares text using 'contains'. For more control over the
-  /// comparison, use [spotTextWhere] or set [exact] to `true`.
+  /// By default [spotText] matches widgets whose text *contains* [text]. Set
+  /// [whole] to `true` to require [text] to match the *entire* widget text
+  /// instead. For full control over the comparison, use [spotTextWhere].
+  ///
+  /// By default matching ignores invisible and special whitespace characters
+  /// (see [AnyText.normalizeVisibleText]); [whole] does not change that. Set
+  /// [raw] to `true` to match the exact characters of the widget instead, e.g.
+  /// to assert that a non-breaking space is really present.
   ///
   /// This method combines finding of [Text], [EditableText] and [SelectableText]
   /// widgets. Ultimately, all widgets show text as [RichText] widget.
@@ -237,17 +243,33 @@ mixin ChainableSelectors<T extends Widget> {
     Pattern text, {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
-    bool exact = false,
+    bool whole = false,
+    bool raw = false,
+    @Deprecated(
+      'Use whole instead. For exact-character matching, set raw: true.',
+    )
+    bool? exact,
   }) {
-    if (exact) {
-      if (text is! String) {
+    if (exact != null && whole) {
+      throw ArgumentError('Pass either `whole` or the deprecated `exact`.');
+    }
+    final matchWholeText = exact ?? whole;
+    // By default normalize string needles so 'foo bar' matches a widget that
+    // renders the same text using a non-breaking or zero width space. With
+    // raw: true the exact characters are matched. RegExp patterns are matched
+    // as-is against the (normalized or raw) widget text.
+    final needle =
+        (raw || text is! String) ? text : AnyText.normalizeVisibleText(text);
+    if (matchWholeText) {
+      if (needle is! String) {
         throw ArgumentError(
-          'Patterns are not supported for exact matching',
+          'Patterns are not supported when matching the whole text',
         );
       }
       return spotTextWhere(
-        (it) => it.equals(text),
-        description: 'with text "$text"',
+        (it) => it.equals(needle),
+        raw: raw,
+        description: 'with text "$needle"',
         parents: parents,
         children: children,
       );
@@ -255,8 +277,9 @@ mixin ChainableSelectors<T extends Widget> {
 
     // default with contains
     return spotTextWhere(
-      (it) => it.contains(text),
-      description: 'contains text "$text"',
+      (it) => it.contains(needle),
+      raw: raw,
+      description: 'contains text "$needle"',
       parents: parents,
       children: children,
     );
@@ -274,11 +297,16 @@ mixin ChainableSelectors<T extends Widget> {
   /// spotTextWhere((it) => it.contains('Wo'));
   /// spotText('Wo');
   /// ```
+  ///
+  /// By default [match] receives the text with invisible and special
+  /// whitespace normalized (see [AnyText.normalizeVisibleText]). Set [raw] to
+  /// `true` to match against the exact characters of the widget instead.
   @useResult
   WidgetSelector<AnyText> spotTextWhere(
     void Function(Subject<String>) match, {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
+    bool raw = false,
     String? description,
   }) {
     final String name = description ??
@@ -290,6 +318,7 @@ mixin ChainableSelectors<T extends Widget> {
         MatchTextFilter(
           match: (it) => match(it),
           description: 'Widget with text $name',
+          normalizeText: !raw,
         ),
         ..._childAndParentFilters(children, parents),
       ],

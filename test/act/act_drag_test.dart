@@ -24,9 +24,9 @@ void dragTests() {
           ),
         );
 
-        final firstItem = spotText('Item at index: 3', exact: true)
+        final firstItem = spotText('Item at index: 3', whole: true)
           ..existsOnce();
-        final secondItem = spotText('Item at index: 27', exact: true)
+        final secondItem = spotText('Item at index: 27', whole: true)
           ..doesNotExist();
         await act.dragUntilVisible(
           dragStart: firstItem,
@@ -48,9 +48,9 @@ void dragTests() {
           ),
         );
 
-        final firstItem = spotText('Item at index: 3', exact: true)
+        final firstItem = spotText('Item at index: 3', whole: true)
           ..existsOnce();
-        final secondItem = spotText('Item at index: 27', exact: true)
+        final secondItem = spotText('Item at index: 27', whole: true)
           ..existsOnce();
         await act.dragUntilVisible(
           dragStart: firstItem,
@@ -78,9 +78,9 @@ void dragTests() {
           const DragUntilVisibleSingleDirectionTestWidget(axis: Axis.vertical),
         );
 
-        final firstItem = spotText('Item at index: 3', exact: true)
+        final firstItem = spotText('Item at index: 3', whole: true)
           ..existsOnce();
-        final secondItem = spotText('Item at index: 27', exact: true)
+        final secondItem = spotText('Item at index: 27', whole: true)
           ..doesNotExist();
         await act.dragUntilVisible(
           dragStart: firstItem,
@@ -107,9 +107,9 @@ void dragTests() {
         await tester.pumpWidget(const NestedScrollDragUntilVisibleTestWidget());
 
         final firstItem =
-            spotText('ParentIndex: 0, Item at index: 3', exact: true);
+            spotText('ParentIndex: 0, Item at index: 3', whole: true);
         final secondItem =
-            spotText('ParentIndex: 2, Item at index: 4', exact: true);
+            spotText('ParentIndex: 2, Item at index: 4', whole: true);
         await act.dragUntilVisible(
           dragStart: firstItem,
           dragTarget: secondItem,
@@ -132,9 +132,9 @@ void dragTests() {
           ),
         );
 
-        final firstItem = spotText('Item at index: 2', exact: true)
+        final firstItem = spotText('Item at index: 2', whole: true)
           ..existsOnce();
-        final secondItem = spotText('Item at index: 10', exact: true)
+        final secondItem = spotText('Item at index: 10', whole: true)
           ..doesNotExist();
         await act.dragUntilVisible(
           dragStart: firstItem,
@@ -155,9 +155,9 @@ void dragTests() {
           ),
         );
 
-        final firstItem = spotText('Item at index: 2', exact: true)
+        final firstItem = spotText('Item at index: 2', whole: true)
           ..existsOnce();
-        final secondItem = spotText('Item at index: 10', exact: true)
+        final secondItem = spotText('Item at index: 10', whole: true)
           ..existsOnce();
         await act.dragUntilVisible(
           dragStart: firstItem,
@@ -187,9 +187,9 @@ void dragTests() {
           ),
         );
 
-        final firstItem = spotText('Item at index: 2', exact: true)
+        final firstItem = spotText('Item at index: 2', whole: true)
           ..existsOnce();
-        final secondItem = spotText('Item at index: 10', exact: true)
+        final secondItem = spotText('Item at index: 10', whole: true)
           ..doesNotExist();
         await act.dragUntilVisible(
           dragStart: firstItem,
@@ -220,9 +220,9 @@ void dragTests() {
         );
 
         final firstItem = spot<Container>()
-            .spotText('ParentIndex: 0, Item at index: 3', exact: true);
+            .spotText('ParentIndex: 0, Item at index: 3', whole: true);
         final secondItem =
-            spotText('ParentIndex: 2, Item at index: 4', exact: true);
+            spotText('ParentIndex: 2, Item at index: 4', whole: true);
         await act.dragUntilVisible(
           dragStart: firstItem,
           dragTarget: secondItem,
@@ -243,9 +243,9 @@ void dragTests() {
           const DragUntilVisibleSingleDirectionTestWidget(axis: Axis.vertical),
         );
 
-        final firstItem = spotText('Item at index: 3', exact: true)
+        final firstItem = spotText('Item at index: 3', whole: true)
           ..existsOnce();
-        final secondItem = spotText('Item at index: 27', exact: true)
+        final secondItem = spotText('Item at index: 27', whole: true)
           ..doesNotExist();
 
         const expectedErrorMessage =
@@ -277,9 +277,9 @@ void dragTests() {
           ),
         );
 
-        final firstItem = spotText('Item at index: 2', exact: true)
+        final firstItem = spotText('Item at index: 2', whole: true)
           ..existsOnce();
-        final secondItem = spotText('Item at index: 29', exact: true)
+        final secondItem = spotText('Item at index: 29', whole: true)
           ..doesNotExist();
 
         const expectedErrorMessage =
@@ -311,9 +311,9 @@ void dragTests() {
           ),
         );
 
-        final firstItem = spotText('Item at index: 2', exact: true)
+        final firstItem = spotText('Item at index: 2', whole: true)
           ..existsOnce();
-        final secondItem = spotText('Item at index: 29', exact: true)
+        final secondItem = spotText('Item at index: 29', whole: true)
           ..doesNotExist();
 
         await expectLater(
@@ -346,9 +346,9 @@ void dragTests() {
           ),
         );
 
-        final firstItem = spotText('Item at index: 2', exact: true)
+        final firstItem = spotText('Item at index: 2', whole: true)
           ..existsOnce();
-        final secondItem = spotText('Item at index: 29', exact: true)
+        final secondItem = spotText('Item at index: 29', whole: true)
           ..doesNotExist();
 
         await expectLater(
@@ -381,9 +381,9 @@ void dragTests() {
           ),
         );
 
-        final firstItem = spotText('Item at index: 2', exact: true)
+        final firstItem = spotText('Item at index: 2', whole: true)
           ..existsOnce();
-        final secondItem = spotText('Item at index: 29', exact: true)
+        final secondItem = spotText('Item at index: 29', whole: true)
           ..doesNotExist();
 
         await expectLater(
@@ -587,9 +587,9 @@ void dragTests() {
           ),
         );
 
-        final firstItem = spotText('Item at index: 3', exact: true)
+        final firstItem = spotText('Item at index: 3', whole: true)
           ..existsOnce();
-        final secondItem = spotText('Item at index: 27', exact: true)
+        final secondItem = spotText('Item at index: 27', whole: true)
           ..doesNotExist();
 
         await act.dragUntilVisible(
@@ -615,9 +615,9 @@ void dragTests() {
           ),
         );
 
-        final firstItem = spotText('Item at index: 2', exact: true)
+        final firstItem = spotText('Item at index: 2', whole: true)
           ..existsOnce();
-        final secondItem = spotText('Item at index: 20', exact: true)
+        final secondItem = spotText('Item at index: 20', whole: true)
           ..doesNotExist();
 
         await act.dragUntilVisible(
@@ -651,9 +651,9 @@ void dragTests() {
         // Items are 100 tall. Default cacheExtent is 250. Target item 8 sits
         // at content y=800 (outside initial cache [-250, 700]). A single drag
         // of -810 puts scroll past the target by 10 px — small final drag.
-        final firstItem = spotText('Item at index: 3', exact: true)
+        final firstItem = spotText('Item at index: 3', whole: true)
           ..existsOnce();
-        final secondItem = spotText('Item at index: 8', exact: true);
+        final secondItem = spotText('Item at index: 8', whole: true);
 
         await act.dragUntilVisible(
           dragStart: firstItem,
