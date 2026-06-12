@@ -44,7 +44,7 @@ class QueryStats {
   /// parent and child selectors.
   final int snapshotCalls;
 
-  /// Sum of all checks, the total work done by the query engine.
+  /// Sum of [nodesTraversed], [candidateChecks] and [relationChecks].
   int get totalChecks {
     return nodesTraversed + candidateChecks + relationChecks;
   }
