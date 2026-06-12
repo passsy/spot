@@ -1,6 +1,5 @@
-import 'package:dartx/dartx.dart';
 import 'package:flutter/widgets.dart';
-import 'package:spot/spot.dart';
+import 'package:spot/src/spot/query_stats.dart';
 import 'package:spot/src/spot/snapshot.dart';
 import 'package:spot/src/spot/widget_selector.dart';
 
@@ -22,9 +21,10 @@ class ParentFilter implements ElementFilter {
 
   @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
-    final tree = currentWidgetTreeSnapshot();
-
-    final List<WidgetSnapshot<Widget>> parentSnapshots = [];
+    // The elements each parent selector discovered. A candidate matches a
+    // parent selector when the candidate itself, or one of its ancestors,
+    // was discovered by that selector.
+    final List<Set<Element>> parentSets = [];
     for (final selector in parents) {
       final WidgetSnapshot<Widget> widgetSnapshot =
           snapshot(selector, validateQuantity: false);
@@ -34,84 +34,23 @@ class ParentFilter implements ElementFilter {
         throw UnimplementedError(
           'Parents can not be negated, yet. Please upvote https://github.com/passsy/spot/issues/49',
         );
-      } else {
-        widgetSnapshot.validateQuantity();
-        parentSnapshots.add(widgetSnapshot);
       }
+      widgetSnapshot.validateQuantity();
+      parentSets.add(
+        widgetSnapshot.discovered.map((node) => node.element).toSet(),
+      );
     }
 
-    final List<Map<WidgetTreeNode, List<WidgetSnapshot>>> discoveryByParent =
-        [];
-
-    for (final parentSnapshot in parentSnapshots) {
-      final Map<WidgetTreeNode, List<WidgetSnapshot>> groups = {};
-      if (parentSnapshot.discovered.isEmpty) {
-        discoveryByParent.add(groups);
-        continue;
+    // Instead of searching downwards from every discovered parent (which
+    // visits whole subtrees), walk from each candidate up to the root. The
+    // path to the root is short (the tree depth), and each step is a single
+    // hash lookup per parent selector.
+    final List<WidgetTreeNode> remaining = [];
+    for (final candidate in candidates) {
+      if (_isWithinAllParents(candidate, parentSets)) {
+        remaining.add(candidate);
       }
-
-      // remove elements when the parent is already in the list. This prevents searching all element of a subtree, resulting in always the same items
-      final rootNodes = parentSnapshot.discovered
-          .whereNot(
-            (element) => parentSnapshot.discovered.contains(element.parent),
-          )
-          .toList();
-
-      final visibilityMode = parentSnapshot.selector.widgetPresence;
-
-      for (final WidgetTreeNode node in rootNodes) {
-        groups[node] ??= [];
-
-        final WidgetSelector root = switch (visibilityMode) {
-          WidgetPresence.onstage => spot(),
-          WidgetPresence.offstage => spotOffstage(),
-          WidgetPresence.combined => spotAllWidgets(),
-        };
-        final subtree = tree.scope(node);
-        final snapshot = WidgetSnapshot(
-          selector: root.withParent(spotElement(node.element)),
-          discovered: [
-            node,
-            ...subtree.allNodes,
-          ],
-          scope: subtree,
-          debugCandidates: candidates.map((it) => it.element).toList(),
-        );
-        groups[node]!.add(snapshot);
-      }
-
-      discoveryByParent.add(groups);
     }
-
-    final List<WidgetSnapshot> discoveredSnapshots =
-        discoveryByParent.map((it) => it.values).flatten().flatten().toList();
-
-    final List<WidgetTreeNode> allDiscoveredNodes =
-        discoveredSnapshots.map((it) => it.discovered).flatten().toList();
-
-    final List<Element> distinctElements =
-        allDiscoveredNodes.map((e) => e.element).toSet().toList();
-
-    // find nodes that exist in all parents
-    final List<Element> elementsInAllParents =
-        distinctElements.where((element) {
-      return discoveryByParent.all((
-        Map<WidgetTreeNode, List<WidgetSnapshot>> discovered,
-      ) {
-        return discovered.values.any((List<WidgetSnapshot> list) {
-          return list.any((node) {
-            return node.discovered.map((e) => e.element).contains(element);
-          });
-        });
-      });
-    }).toList();
-
-    final remaining = elementsInAllParents.mapNotNull((e) {
-      return candidates.firstOrNullWhere((node) {
-        return node.element == e;
-      });
-    }).toList();
-
     return remaining;
   }
 
@@ -119,4 +58,23 @@ class ParentFilter implements ElementFilter {
   String toString() {
     return 'ParentFilter which keeps $description Widget';
   }
+}
+
+/// Returns true when, for every parent selector, [candidate] or one of its
+/// ancestors was discovered by that selector ([parentSets]).
+///
+/// Different parent selectors may be satisfied by different ancestors.
+bool _isWithinAllParents(
+  WidgetTreeNode candidate,
+  List<Set<Element>> parentSets,
+) {
+  final List<Set<Element>> unsatisfied = parentSets.toList();
+  WidgetTreeNode? node = candidate;
+  while (node != null && unsatisfied.isNotEmpty) {
+    final element = node.element;
+    QueryStats.relationChecks += unsatisfied.length;
+    unsatisfied.removeWhere((parentSet) => parentSet.contains(element));
+    node = node.parent;
+  }
+  return unsatisfied.isEmpty;
 }

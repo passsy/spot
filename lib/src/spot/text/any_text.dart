@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/checks/checks_nullability.dart';
+import 'package:spot/src/spot/query_stats.dart';
 
 /// A union type for any text widget that can be found in the widget tree.
 /// Specifically this includes:
@@ -421,7 +422,10 @@ class MatchTextFilter implements ElementFilter {
 
   @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
-    return candidates.where((it) => _match(it.element));
+    return candidates.where((it) {
+      QueryStats.candidateChecks++;
+      return _match(it.element);
+    });
   }
 
   bool _match(Element element) {

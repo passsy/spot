@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:spot/src/spot/query_stats.dart';
 import 'package:spot/src/spot/widget_selector.dart';
 
 /// Filters widget tree nodes based on a predicate
@@ -14,6 +15,7 @@ class PredicateFilter implements ElementFilter {
   @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
     return candidates.where((node) {
+      QueryStats.candidateChecks++;
       return predicate(node.element);
     });
   }

@@ -6,6 +6,7 @@ import 'package:spot/spot.dart';
 import 'package:spot/src/screenshot/screenshot_annotator.dart';
 import 'package:spot/src/spot/element_extensions.dart';
 import 'package:spot/src/spot/filters/onstage_filter.dart';
+import 'package:spot/src/spot/query_stats.dart';
 import 'package:spot/src/spot/widget_selector.dart';
 
 /// A type alias for a snapshot that can contain multiple widgets.
@@ -185,6 +186,15 @@ void _snapshotDebugPrint(String text) {
 
 int _depth = -1;
 
+/// Memoized snapshot results per [WidgetTreeSnapshot].
+///
+/// A [WidgetSelector] always discovers the same widgets within one frame.
+/// Results are cached per selector instance, so that selectors which are
+/// reused in multiple chains (or as parent of multiple selectors) are only
+/// evaluated once per frame. The cache dies together with the
+/// [WidgetTreeSnapshot] when the next frame is pumped.
+final Expando<Map<WidgetSelector, WidgetSnapshot>> _snapshotCache = Expando();
+
 /// Creates a snapshot of widgets that match the specified [selector].
 ///
 /// This function captures the current state of widgets that match the criteria
@@ -199,8 +209,18 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
   // Make sure that any previous asynchronous operations are completed.
   // This check makes sure that a missing `await` in the line before throws here
   TestAsyncUtils.guardSync();
+  QueryStats.snapshotCalls++;
 
   final treeSnapshot = currentWidgetTreeSnapshot();
+  final cache = _snapshotCache[treeSnapshot] ??= Map.identity();
+  final WidgetSnapshot? cachedSnapshot = cache[selector];
+  if (cachedSnapshot != null) {
+    if (validateQuantity) {
+      cachedSnapshot.validateQuantity();
+    }
+    return cachedSnapshot as WidgetSnapshot<W>;
+  }
+
   final List<WidgetTreeNode> candidates = treeSnapshot.allNodes;
 
   final isAnyOffstage = selector.isAnyOffstage();
@@ -257,6 +277,7 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
     scope: treeSnapshot,
     debugCandidates: candidates.map((element) => element.element).toList(),
   );
+  cache[selector] = snapshot;
   _depth--;
 
   if (validateQuantity) {

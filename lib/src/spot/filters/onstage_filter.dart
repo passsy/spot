@@ -1,3 +1,4 @@
+import 'package:spot/src/spot/query_stats.dart';
 import 'package:spot/src/spot/widget_selector.dart';
 
 /// Removes all [WidgetTreeNode] that are offstage
@@ -7,6 +8,7 @@ class OnstageFilter implements ElementFilter {
     final List<WidgetTreeNode> onstage = [];
 
     for (final WidgetTreeNode candidate in candidates) {
+      QueryStats.candidateChecks++;
       if (!candidate.isOffstage) {
         onstage.add(candidate);
       }
@@ -32,6 +34,7 @@ class OffstageFilter implements ElementFilter {
     final List<WidgetTreeNode> offstage = [];
 
     for (final WidgetTreeNode candidate in candidates) {
+      QueryStats.candidateChecks++;
       if (candidate.isOffstage) {
         offstage.add(candidate);
       }

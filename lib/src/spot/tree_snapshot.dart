@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/src/spot/element_extensions.dart';
+import 'package:spot/src/spot/query_stats.dart';
 
 /// caching the tree for the current frame
 WidgetTreeSnapshot? _cachedTree;
@@ -201,9 +202,18 @@ class ScopedWidgetTreeSnapshot {
         'It is only valid until the next frame is pumped.');
   }
 
+  List<WidgetTreeNode>? _allNodesCache;
+
   /// Returns all [WidgetTreeNode] in tree in depth-first order
+  ///
+  /// The tree is immutable for the lifetime of this snapshot (one frame),
+  /// the traversal happens only once and is cached afterwards.
   List<WidgetTreeNode> get allNodes {
     _ensureSnapshotIsFromThisFrame();
+    final cached = _allNodesCache;
+    if (cached != null) {
+      return cached;
+    }
     final List<WidgetTreeNode> depthFirstElements = [];
     final List<WidgetTreeNode> stack = [];
 
@@ -223,7 +233,10 @@ class ScopedWidgetTreeSnapshot {
       depthFirstElements.add(next);
       fill(next);
     }
-    return depthFirstElements.toList();
+    QueryStats.nodesTraversed += depthFirstElements.length;
+    final nodes = List<WidgetTreeNode>.unmodifiable(depthFirstElements);
+    _allNodesCache = nodes;
+    return nodes;
   }
 
   /// Returns the Elements in depth-first order
