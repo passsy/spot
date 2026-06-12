@@ -16,23 +16,23 @@ visualizes the steps of a widget test as HTML report with automatic screenshots,
 
 - [Get started](#get-started)
 - [Timeline](#timeline)
-    - [Overview](#overview)
-    - [Add custom events to the Timeline](#add-custom-events-to-the-timeline)
-    - [Change Timeline mode](#change-timeline-mode)
-    - [Timeline in console on CI](#timeline-in-console-on-ci)
+  - [Overview](#overview)
+  - [Add custom events to the Timeline](#add-custom-events-to-the-timeline)
+  - [Change Timeline mode](#change-timeline-mode)
+  - [Timeline in console on CI](#timeline-in-console-on-ci)
 - [Screenshots](#screenshots)
-    - [Manual Screenshots](#manual-screenshots)
-    - [Load Fonts](#load-fonts)
+  - [Manual Screenshots](#manual-screenshots)
+  - [Load Fonts](#load-fonts)
 - [spot - Widget selectors](#widget-selectors-spot)
-    - [Chain selectors](#chain-selectors)
-    - [Selectors](#selectors)
-    - [Better errors](#better-errors)
-    - [Matchers](#matchers)
-    - [Selectors vs. Matchers](#selectors-vs-matchers)
-    - [Find offstage widgets](#find-offstage-widgets)
-- [act - tap, drag, type](#act-tap-drag-type-click)
+  - [Chain selectors](#chain-selectors)
+  - [Selectors](#selectors)
+  - [Better errors](#better-errors)
+  - [Matchers](#matchers)
+  - [Selectors vs. Matchers](#selectors-vs-matchers)
+  - [Find offstage widgets](#find-offstage-widgets)
+- [act - tap, drag, type](#act---tap-drag-type-click)
   - [tap](#tap)
-  - [tapAt](#tapAt)
+  - [tapAt](#tapat)
   - [enterText](#entertext)
   - [dragUntilVisible](#draguntilvisible)
   - [more act functions](#more-act-functions)
@@ -254,9 +254,13 @@ void main() {
 
 Additionally, `loadAppFonts()` loads the `Roboto` font, which is the default font in Flutter tests.
 
-| before | after |
-|--------|-------|
-| ![golden_testImage](https://github.com/user-attachments/assets/385e7760-c3ee-42d7-a3bd-6c5b906b7452) | ![golden_masterImage](https://github.com/user-attachments/assets/8261f27e-5a38-43c2-bff9-cfe01496215c) |
+Before:
+
+![golden_testImage](https://github.com/user-attachments/assets/385e7760-c3ee-42d7-a3bd-6c5b906b7452)
+
+After:
+
+![golden_masterImage](https://github.com/user-attachments/assets/8261f27e-5a38-43c2-bff9-cfe01496215c)
 
 ## Widget selectors `spot`
 
@@ -406,10 +410,29 @@ The easiest matchers are the quantity matchers. They allow checking how many wid
 final selector = spot<ElevatedButton>();
 
 // calls snapshot() internally
-final matchOne = selector.existsOnce(); 
+final matchOne = selector.existsOnce();
 final matchMultiple = selector.existsExactlyNTimes(5);
 
-selector.doesNotExist(); // end, nothing to match on 
+selector.doesNotExist(); // end, nothing to match on
+```
+
+To check the presence or absence of a widget without failing the test, use `isPresent()` or `isAbsent()`.
+They return a `bool` instead of throwing, allowing test logic to branch on the presence or absence of a widget.
+Quantity constraints are ignored because these methods only check whether at least one widget matches the selector.
+Use `countWidgets()` to read the exact number of matching widgets.
+
+```dart
+if (spot<Tooltip>().withMessage('Open navigation menu').isPresent()) {
+  // ...
+}
+
+if (spot<Tooltip>().withMessage('Close menu').isAbsent()) {
+  // ...
+}
+
+final buttonCount = spot<ElevatedButton>().countWidgets();
+final hasTwoButtons = spot<ElevatedButton>().countWidgets() == 2;
+final hasAtLeastTwoButtons = spot<ElevatedButton>().countWidgets() >= 2;
 ```
 
 #### Property matchers
@@ -436,6 +459,24 @@ spot<AppBar>().spot<Tooltip>().existsAtLeastOnce()
       .hasShowDurationWhere((it) => it.isGreaterOrEqual(Duration(seconds: 1000)))
       .hasTriggerMode(TooltipTriggerMode.longPress)
     );
+```
+
+#### Property readers
+
+Instead of asserting, read the raw property values to pass them into other functions.
+Each `has*` matcher has a `get*` counterpart on `WidgetMatcher`.
+
+```dart
+final message = spot<Tooltip>().existsOnce().getMessage();
+```
+
+Read any property with `getWidgetProp`, `getElementProp`, `getStateProp`, `getRenderObjectProp` or `getDiagnosticProp`, directly on the `WidgetSelector` or on a `WidgetMatcher`.
+
+```dart
+final size = spot<Tooltip>().getRenderObjectProp(
+  renderObjectProp<Size, RenderBox>('size', (r) => r.size),
+);
+final message = spot<Tooltip>().getDiagnosticProp<String>('message');
 ```
 
 ### Selectors vs. Matchers

@@ -846,6 +846,72 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
     snapshot(none).doesNotExist();
   }
 
+  /// Returns whether at least one widget of type [W] matches this selector,
+  /// without failing the test when none is found.
+  ///
+  /// Use it to branch test logic based on the presence of a widget, where
+  /// the asserting matchers like [existsOnce] or [doesNotExist] would throw.
+  ///
+  /// Quantity constraints like [QuantitySelectors.atLeast] are ignored.
+  /// Use [countWidgets] to read the exact number of matching widgets.
+  ///
+  /// #### Example usage:
+  /// ```dart
+  /// if (spot<Tooltip>().withMessage('Open navigation menu').isPresent()) {
+  ///   // ...
+  /// }
+  /// ```
+  /// #### See also:
+  /// - [doesNotExist] asserts that no widgets of type [W] exist.
+  /// - [existsOnce] asserts that exactly one widget of type [W] exists.
+  /// - [existsAtLeastOnce] asserts that at least one widget of type [W] exists.
+  @useResult
+  bool isPresent() {
+    return countWidgets() > 0;
+  }
+
+  /// Returns whether no widget of type [W] matches this selector,
+  /// without failing the test when one is found.
+  ///
+  /// Use it to branch test logic based on the absence of a widget, where
+  /// the asserting matchers like [doesNotExist] or [existsOnce] would throw.
+  ///
+  /// Quantity constraints like [QuantitySelectors.atLeast] are ignored.
+  /// Use [countWidgets] to read the exact number of matching widgets.
+  ///
+  /// #### Example usage:
+  /// ```dart
+  /// if (spot<Tooltip>().withMessage('Close menu').isAbsent()) {
+  ///   // ...
+  /// }
+  /// ```
+  /// #### See also:
+  /// - [isPresent] returns whether at least one widget of type [W] exists.
+  /// - [doesNotExist] asserts that no widgets of type [W] exist.
+  /// - [existsOnce] asserts that exactly one widget of type [W] exists.
+  @useResult
+  bool isAbsent() {
+    return countWidgets() == 0;
+  }
+
+  /// Returns how many widgets of type [W] match this selector,
+  /// without failing the test when the quantity does not match.
+  ///
+  /// Quantity constraints like [QuantitySelectors.atLeast] are ignored.
+  /// Compare the returned number for boolean quantity checks.
+  ///
+  /// #### Example usage:
+  /// ```dart
+  /// final buttonCount = spot<ElevatedButton>().countWidgets();
+  /// final hasAtLeastTwoButtons = spot<ElevatedButton>().countWidgets() >= 2;
+  /// ```
+  @useResult
+  int countWidgets() {
+    final found =
+        snapshot(removeQuantityConstraints(), validateQuantity: false);
+    return found.discovered.length;
+  }
+
   /// Asserts that exactly one widget of type [W] exists.
   ///
   /// #### Example usage:
