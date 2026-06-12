@@ -29,7 +29,9 @@ class WidgetSnapshot<W extends Widget> {
     required this.discovered,
     required this.debugCandidates,
     required this.scope,
-  }) : _widgets = Map.fromEntries(
+    QueryStats? queryStats,
+  })  : queryStats = queryStats ?? QueryStats.zero,
+        _widgets = Map.fromEntries(
           discovered
               .map((e) => MapEntry(e, selector.mapElementToWidget(e.element))),
         );
@@ -56,6 +58,15 @@ class WidgetSnapshot<W extends Widget> {
 
   /// All elements in [scope] that match [selector]
   final List<WidgetTreeNode> discovered;
+
+  /// The amount of work the query engine performed to discover [discovered],
+  /// including the evaluation of all parent and child selectors.
+  ///
+  /// Snapshot results are memoized per frame. When a selector instance was
+  /// already evaluated in the current frame, the memoized snapshot is
+  /// returned and [queryStats] reports the work of the original evaluation,
+  /// while the reuse itself costs almost nothing.
+  final QueryStats queryStats;
 
   @override
   String toString() {
@@ -209,7 +220,8 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
   // Make sure that any previous asynchronous operations are completed.
   // This check makes sure that a missing `await` in the line before throws here
   TestAsyncUtils.guardSync();
-  QueryStats.snapshotCalls++;
+  final QueryStats statsBefore = QueryStatsCounter.total;
+  QueryStatsCounter.snapshotCalls++;
 
   final treeSnapshot = currentWidgetTreeSnapshot();
   final cache = _snapshotCache[treeSnapshot] ??= Map.identity();
@@ -276,6 +288,7 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
     discovered: stageResults.last.candidates,
     scope: treeSnapshot,
     debugCandidates: candidates.map((element) => element.element).toList(),
+    queryStats: QueryStatsCounter.total - statsBefore,
   );
   cache[selector] = snapshot;
   _depth--;

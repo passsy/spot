@@ -16,7 +16,7 @@ class WidgetTypeFilter<W extends Widget> implements ElementFilter {
     }
     final type = _typeOf<W>();
     return candidates.where((WidgetTreeNode node) {
-      QueryStats.candidateChecks++;
+      QueryStatsCounter.candidateChecks++;
       return node.element.widget.runtimeType == type;
     }).toList();
   }

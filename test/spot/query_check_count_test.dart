@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
-import 'package:spot/src/spot/query_stats.dart';
 import 'package:spot/src/spot/tree_snapshot.dart';
 
 /// Measures the number of checks the spot query engine performs for typical
@@ -19,14 +18,17 @@ import 'package:spot/src/spot/tree_snapshot.dart';
 /// comparisons of the linear `Iterable.contains` calls. Each simulation
 /// asserts that it discovers exactly the same elements as the real finder.
 void main() {
-  void measureSpot(String label, int maxChecks, void Function() query) {
-    QueryStats.reset();
-    query();
-    print('$label\n  ${QueryStats.summary()}');
+  void measureSpot(
+    String label,
+    int maxChecks,
+    WidgetSnapshot<Widget> Function() query,
+  ) {
+    final snapshot = query();
+    print('$label\n  ${snapshot.queryStats}');
     // Guards against performance regressions of the query engine. The
     // bounds have ~3x headroom over the currently measured numbers.
     expect(
-      QueryStats.totalChecks,
+      snapshot.queryStats.totalChecks,
       lessThan(maxChecks),
       reason: 'Query engine did more checks than expected for: $label',
     );
@@ -88,7 +90,7 @@ void main() {
     print('tree size: $treeSize nodes');
 
     measureSpot('Q1 spot: spotText("Item 99") [no relationship]', 12000, () {
-      spotText('Item 99').existsOnce();
+      return spotText('Item 99').snapshot()..existsOnce();
     });
     measureFinder(
       'Q1 finder: find.text("Item 99")',
@@ -99,11 +101,12 @@ void main() {
     measureSpot(
         'Q2 spot: spot<MaterialApp>().spot<Scaffold>().spot<AppBar>().spotText("Home")',
         50000, () {
-      spot<MaterialApp>()
+      return spot<MaterialApp>()
           .spot<Scaffold>()
           .spot<AppBar>()
           .spotText('Home')
-          .existsOnce();
+          .snapshot()
+        ..existsOnce();
     });
     measureFinder(
       'Q2 finder: find.descendant(MaterialApp > Scaffold > AppBar > "Home")',
@@ -134,9 +137,10 @@ void main() {
     measureSpot(
         'Q3 spot: spotText("Item 99").withParent(spot<Row>().withParent(spot<Container>()))',
         40000, () {
-      spotText('Item 99')
+      return spotText('Item 99')
           .withParent(spot<Row>().withParent(spot<Container>()))
-          .existsOnce();
+          .snapshot()
+        ..existsOnce();
     });
     measureFinder(
       'Q3a finder: find.descendant(of: find.descendant(of: Container, matching: Row), matching: "Item 99")',
@@ -180,9 +184,8 @@ void main() {
     measureSpot(
         'Q4 spot: spot<Container>().withChild(spotIcon(Icons.star))', 80000,
         () {
-      spot<Container>()
-          .withChild(spotIcon(Icons.star))
-          .existsExactlyNTimes(100);
+      return spot<Container>().withChild(spotIcon(Icons.star)).snapshot()
+        ..existsExactlyNTimes(100);
     });
     measureFinder(
       'Q4 finder: find.ancestor(of: icon, matching: Container)',
@@ -201,7 +204,8 @@ void main() {
     measureSpot(
         'Q5 spot: spot<Row>().withParent(spot<MaterialApp>()) [wide parent]',
         75000, () {
-      spot<Row>().withParent(spot<MaterialApp>()).existsAtLeastNTimes(100);
+      return spot<Row>().withParent(spot<MaterialApp>()).snapshot()
+        ..existsAtLeastNTimes(100);
     });
     measureFinder(
       'Q5 finder: find.descendant(of: MaterialApp, matching: Row)',
@@ -251,7 +255,8 @@ void main() {
     measureSpot(
         'M1 spot: spot<_GridTile>().withChild(spotIcon(Icons.star)) -> 4 of 100',
         60000, () {
-      spot<_GridTile>().withChild(spotIcon(Icons.star)).existsExactlyNTimes(4);
+      return spot<_GridTile>().withChild(spotIcon(Icons.star)).snapshot()
+        ..existsExactlyNTimes(4);
     });
     measureFinder(
       'M1 finder: find.ancestor(of: star icon, matching: _GridTile)',
@@ -270,7 +275,8 @@ void main() {
     measureSpot(
         'M2 spot: spotIcon(Icons.star).withParent(spot<_GridTile>()) -> 4 of 100',
         60000, () {
-      spotIcon(Icons.star).withParent(spot<_GridTile>()).existsExactlyNTimes(4);
+      return spotIcon(Icons.star).withParent(spot<_GridTile>()).snapshot()
+        ..existsExactlyNTimes(4);
     });
     measureFinder(
       'M2 finder: find.descendant(of: _GridTile, matching: star icon)',
@@ -303,7 +309,8 @@ void main() {
 
     measureSpot('N1 spot: spotText("leaf").withParent(spot<SizedBox>())', 10000,
         () {
-      spotText('leaf').withParent(spot<SizedBox>()).existsOnce();
+      return spotText('leaf').withParent(spot<SizedBox>()).snapshot()
+        ..existsOnce();
     });
     measureFinder(
       'N1 finder: find.descendant(of: SizedBox, matching: "leaf")',
@@ -322,9 +329,10 @@ void main() {
     measureSpot(
         'N2 spot: spotText("leaf").withParent(spot<SizedBox>().withParent(spot<SizedBox>()))',
         10000, () {
-      spotText('leaf')
+      return spotText('leaf')
           .withParent(spot<SizedBox>().withParent(spot<SizedBox>()))
-          .existsOnce();
+          .snapshot()
+        ..existsOnce();
     });
     measureFinder(
       'N2a finder: find.descendant(of: find.descendant(of: SizedBox, matching: SizedBox), matching: "leaf")',

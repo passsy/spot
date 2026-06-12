@@ -8,7 +8,7 @@ class OnstageFilter implements ElementFilter {
     final List<WidgetTreeNode> onstage = [];
 
     for (final WidgetTreeNode candidate in candidates) {
-      QueryStats.candidateChecks++;
+      QueryStatsCounter.candidateChecks++;
       if (!candidate.isOffstage) {
         onstage.add(candidate);
       }
@@ -34,7 +34,7 @@ class OffstageFilter implements ElementFilter {
     final List<WidgetTreeNode> offstage = [];
 
     for (final WidgetTreeNode candidate in candidates) {
-      QueryStats.candidateChecks++;
+      QueryStatsCounter.candidateChecks++;
       if (candidate.isOffstage) {
         offstage.add(candidate);
       }

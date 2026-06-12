@@ -50,7 +50,7 @@ class ChildFilter implements ElementFilter {
         // Start above the match, a widget is not its own child
         WidgetTreeNode? ancestor = match.parent;
         while (ancestor != null) {
-          QueryStats.relationChecks++;
+          QueryStatsCounter.relationChecks++;
           matchesBelowNode[ancestor] = (matchesBelowNode[ancestor] ?? 0) + 1;
           ancestor = ancestor.parent;
         }
@@ -62,7 +62,7 @@ class ChildFilter implements ElementFilter {
     for (final WidgetTreeNode candidate in candidates) {
       bool allChildrenMatch = true;
       for (int i = 0; i < matchSelectors.length; i++) {
-        QueryStats.relationChecks++;
+        QueryStatsCounter.relationChecks++;
         final int matchCount = matchCountsPerSelector[i][candidate] ?? 0;
         if (!_matchesQuantityConstraint(matchSelectors[i], matchCount)) {
           allChildrenMatch = false;

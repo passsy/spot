@@ -10,6 +10,7 @@
   To match exact characters, pass `raw: true` to `spotText`/`spotTextWhere`, or use `whereRawText`/`withRawText`/`hasRawText` on `WidgetSelector<AnyText>`. Also exposes `AnyText.normalizeVisibleText`, `AnyText.extractText`, and `AnyTextContent` (`raw`/`normalized`).
 - Deprecated: `spotText(text, exact: true)` is now `spotText(text, whole: true)` — the flag controls whole-string vs. substring matching, not character handling. `exact` still works. #138
 - Improvement: Queries with `withParent`/`withChild` and chained selectors are drastically faster (up to 200x on big widget trees). Relationships are now resolved by walking up the tree instead of searching the subtree of every parent. #148
+- New: `WidgetSnapshot.queryStats` reports how much work the query engine performed to evaluate a selector, useful to debug slow queries. #148
 - Fix: `loadAppFonts()` now also registers a package's own fonts under `packages/<self>/MyFont`, so fonts referenced via `package: '<self>'` render instead of falling back to Ahem. #141
 - Fix: Assertions like `spotKey(key).existsOnce()` were extremely slow (tens of seconds) when no match was found in a large widget tree. The error output is now limited and match-all selectors are no longer suggested as "less specific" matches. #119
 - Improvement: Untyped selectors (`spot`, `spotKey`, `spotWidget`, `spotElement`, `spotTexts`) no longer add a no-op `WidgetTypeFilter<Widget>` at the root.

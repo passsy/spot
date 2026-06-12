@@ -233,7 +233,7 @@ class ScopedWidgetTreeSnapshot {
       depthFirstElements.add(next);
       fill(next);
     }
-    QueryStats.nodesTraversed += depthFirstElements.length;
+    QueryStatsCounter.nodesTraversed += depthFirstElements.length;
     final nodes = List<WidgetTreeNode>.unmodifiable(depthFirstElements);
     _allNodesCache = nodes;
     return nodes;

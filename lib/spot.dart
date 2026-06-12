@@ -60,6 +60,7 @@ export 'package:spot/src/spot/props.dart'
         renderObjectProp,
         stateProp,
         widgetProp;
+export 'package:spot/src/spot/query_stats.dart' show QueryStats;
 export 'package:spot/src/spot/selectors.dart'
     show
         PositionFilterSelector,

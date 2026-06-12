@@ -423,7 +423,7 @@ class MatchTextFilter implements ElementFilter {
   @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
     return candidates.where((it) {
-      QueryStats.candidateChecks++;
+      QueryStatsCounter.candidateChecks++;
       return _match(it.element);
     });
   }

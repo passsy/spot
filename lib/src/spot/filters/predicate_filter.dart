@@ -15,7 +15,7 @@ class PredicateFilter implements ElementFilter {
   @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
     return candidates.where((node) {
-      QueryStats.candidateChecks++;
+      QueryStatsCounter.candidateChecks++;
       return predicate(node.element);
     });
   }

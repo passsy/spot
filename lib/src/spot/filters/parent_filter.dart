@@ -72,7 +72,7 @@ bool _isWithinAllParents(
   WidgetTreeNode? node = candidate;
   while (node != null && unsatisfied.isNotEmpty) {
     final element = node.element;
-    QueryStats.relationChecks += unsatisfied.length;
+    QueryStatsCounter.relationChecks += unsatisfied.length;
     unsatisfied.removeWhere((parentSet) => parentSet.contains(element));
     node = node.parent;
   }
