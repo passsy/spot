@@ -62,10 +62,9 @@ class WidgetSnapshot<W extends Widget> {
   /// The amount of work the query engine performed to discover [discovered],
   /// including the evaluation of all parent and child selectors.
   ///
-  /// Snapshot results are memoized per frame. When a selector instance was
-  /// already evaluated in the current frame, the memoized snapshot is
-  /// returned and [queryStats] reports the work of the original evaluation,
-  /// while the reuse itself costs almost nothing.
+  /// Stage-prefix results are memoized per frame. When cached stage results
+  /// are reused, [queryStats] reports the cheap lookup work and cache hit count
+  /// for the current call.
   final QueryStats queryStats;
 
   @override
@@ -197,15 +196,6 @@ void _snapshotDebugPrint(String text) {
 
 int _depth = -1;
 
-/// Memoized snapshot results per [WidgetTreeSnapshot].
-///
-/// A [WidgetSelector] always discovers the same widgets within one frame.
-/// Results are cached per selector instance, so that selectors which are
-/// reused in multiple chains (or as parent of multiple selectors) are only
-/// evaluated once per frame. The cache dies together with the
-/// [WidgetTreeSnapshot] when the next frame is pumped.
-final Expando<Map<WidgetSelector, WidgetSnapshot>> _snapshotCache = Expando();
-
 /// Creates a snapshot of widgets that match the specified [selector].
 ///
 /// This function captures the current state of widgets that match the criteria
@@ -224,15 +214,7 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
   QueryStatsCounter.snapshotCalls++;
 
   final treeSnapshot = currentWidgetTreeSnapshot();
-  final cache = _snapshotCache[treeSnapshot] ??= Map.identity();
-  final WidgetSnapshot? cachedSnapshot = cache[selector];
-  if (cachedSnapshot != null) {
-    if (validateQuantity) {
-      cachedSnapshot.validateQuantity();
-    }
-    return cachedSnapshot as WidgetSnapshot<W>;
-  }
-
+  final cache = treeSnapshot.queryCache;
   final List<WidgetTreeNode> candidates = treeSnapshot.allNodes;
 
   final isAnyOffstage = selector.isAnyOffstage();
@@ -260,21 +242,42 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
     ...selector.stages,
   ];
 
+  Object? prefixCacheKey = _initialStageCacheKey;
   for (int i = 0; i < stages.length; i++) {
     final stage = stages[i];
     // using unmodifiable copies to prevent accidental modification during filtering
     final remainingCandidatesFromPreviousStage =
         stageResults.last.candidates.toUnmodifiable();
+    final stageCacheKey = _stageCacheKey(prefixCacheKey, stage.cacheKey);
+    final cachedStageResult = stageCacheKey == null
+        ? null
+        : cache.stageResultsByPrefix[stageCacheKey];
 
     _snapshotDebugPrint(
       "+ Stage $i: $stage, "
       "input-candidates: ${remainingCandidatesFromPreviousStage.length}",
     );
 
-    final after = stage
-        .filter(remainingCandidatesFromPreviousStage)
-        .toList()
-        .toUnmodifiable();
+    final List<WidgetTreeNode> after;
+    if (cachedStageResult != null) {
+      QueryStatsCounter.cacheHits++;
+      QueryStatsCounter.cacheHitChecks += cachedStageResult.savedChecks;
+      after = cachedStageResult.candidates;
+    } else {
+      final statsBeforeStage = QueryStatsCounter.total;
+      after = stage
+          .filter(remainingCandidatesFromPreviousStage)
+          .toList()
+          .toUnmodifiable();
+      if (stageCacheKey != null) {
+        final stageStats = QueryStatsCounter.total - statsBeforeStage;
+        cache.stageResultsByPrefix[stageCacheKey] = CachedQueryStageResult(
+          candidates: after,
+          savedChecks: _savedChecks(stageStats),
+        );
+      }
+    }
+    prefixCacheKey = stageCacheKey;
     _snapshotDebugPrint("- Stage $i: $stage, "
         "output-candidates: ${after.length}");
     stageResults.add(_StageResult(index: i, filter: stage, candidates: after));
@@ -290,7 +293,6 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
     debugCandidates: candidates.map((element) => element.element).toList(),
     queryStats: QueryStatsCounter.total - statsBefore,
   );
-  cache[selector] = snapshot;
   _depth--;
 
   if (validateQuantity) {
@@ -298,6 +300,24 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
   }
 
   return snapshot;
+}
+
+final Object _initialStageCacheKey = Object();
+
+Object? _stageCacheKey(Object? prefixCacheKey, Object? filterCacheKey) {
+  if (prefixCacheKey == null || filterCacheKey == null) {
+    return null;
+  }
+  return SpotCacheKey(
+    _StageCacheKey,
+    [prefixCacheKey, filterCacheKey],
+  );
+}
+
+class _StageCacheKey {}
+
+int _savedChecks(QueryStats stats) {
+  return stats.totalChecks + stats.cacheHitChecks;
 }
 
 class _StageResult {

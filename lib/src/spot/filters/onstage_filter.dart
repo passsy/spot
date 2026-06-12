@@ -4,6 +4,9 @@ import 'package:spot/src/spot/widget_selector.dart';
 /// Removes all [WidgetTreeNode] that are offstage
 class OnstageFilter implements ElementFilter {
   @override
+  Object get cacheKey => OnstageFilter;
+
+  @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
     final List<WidgetTreeNode> onstage = [];
 
@@ -29,6 +32,9 @@ class OnstageFilter implements ElementFilter {
 
 /// Removes all [WidgetTreeNode] that are onstage
 class OffstageFilter implements ElementFilter {
+  @override
+  Object get cacheKey => OffstageFilter;
+
   @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
     final List<WidgetTreeNode> offstage = [];

@@ -12,6 +12,19 @@ class ParentFilter implements ElementFilter {
   final List<WidgetSelector> parents;
 
   @override
+  Object? get cacheKey {
+    final parentKeys = <Object>[];
+    for (final parent in parents) {
+      final key = parent.cacheKey;
+      if (key == null) {
+        return null;
+      }
+      parentKeys.add(key);
+    }
+    return SpotCacheKey(ParentFilter, parentKeys);
+  }
+
+  @override
   String get description {
     if (parents.length == 1) {
       return parents.first.toStringBreadcrumb();

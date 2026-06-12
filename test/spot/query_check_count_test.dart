@@ -105,6 +105,9 @@ void main() {
       filters: snapshot.queryStats.candidateChecks,
       relations: snapshot.queryStats.relationChecks,
       snapshots: snapshot.queryStats.snapshotCalls.toString(),
+      cacheHits: snapshot.queryStats.cacheHits.toString(),
+      cacheHitChecks: snapshot.queryStats.cacheHitChecks.toString(),
+      cacheRatio: _formatPercent(snapshot.queryStats.cacheRatio),
       matched: snapshot.discovered.length,
     );
     _printMeasurement(label, measurement);
@@ -140,6 +143,9 @@ void main() {
       filters: _simPredicateChecks,
       relations: _simComparisons,
       snapshots: '-',
+      cacheHits: '-',
+      cacheHitChecks: '-',
+      cacheRatio: '-',
       matched: matches.length,
     );
     _printMeasurement(label, measurement);
@@ -539,6 +545,9 @@ class _Measurement {
     required this.filters,
     required this.relations,
     required this.snapshots,
+    required this.cacheHits,
+    required this.cacheHitChecks,
+    required this.cacheRatio,
     required this.matched,
   });
 
@@ -548,6 +557,9 @@ class _Measurement {
   final int filters;
   final int relations;
   final String snapshots;
+  final String cacheHits;
+  final String cacheHitChecks;
+  final String cacheRatio;
   final int matched;
 }
 
@@ -571,6 +583,9 @@ void _printMeasurement(String label, _Measurement measurement) {
     filters: 'filter',
     relations: 'relation',
     snapshots: 'snapshots',
+    cacheHits: 'cache',
+    cacheHitChecks: 'saved',
+    cacheRatio: 'cached',
     matched: 'matched',
   );
   final values = _formatMeasurementRow(
@@ -580,6 +595,9 @@ void _printMeasurement(String label, _Measurement measurement) {
     filters: measurement.filters.toString(),
     relations: measurement.relations.toString(),
     snapshots: measurement.snapshots,
+    cacheHits: measurement.cacheHits,
+    cacheHitChecks: measurement.cacheHitChecks,
+    cacheRatio: measurement.cacheRatio,
     matched: measurement.matched.toString(),
   );
   print('$label\n  $header\n  $values');
@@ -593,6 +611,8 @@ void _printSummary(String label, List<_Comparison> comparisons) {
     fewer: 'fewer checks',
     spot: 'spot',
     finder: 'finder',
+    cacheHitChecks: 'saved',
+    cacheRatio: 'cached',
   );
   final rows = comparisons.map(_formatSummaryComparison).join('\n  ');
   print('Summary: $label\n  $header\n  $rows');
@@ -609,6 +629,8 @@ String _formatSummaryComparison(_Comparison comparison) {
     fewer: _formatInt(fewerChecks),
     spot: _formatInt(comparison.spot.total),
     finder: _formatInt(comparison.finder.total),
+    cacheHitChecks: comparison.spot.cacheHitChecks,
+    cacheRatio: comparison.spot.cacheRatio,
   );
 }
 
@@ -656,6 +678,8 @@ String _formatSummaryRow({
   required String fewer,
   required String spot,
   required String finder,
+  required String cacheHitChecks,
+  required String cacheRatio,
 }) {
   return [
     query.padRight(5),
@@ -664,6 +688,8 @@ String _formatSummaryRow({
     fewer.padLeft(13),
     spot.padLeft(10),
     finder.padLeft(10),
+    cacheHitChecks.padLeft(8),
+    cacheRatio.padLeft(6),
   ].join('  ');
 }
 
@@ -751,6 +777,9 @@ String _formatMeasurementRow({
   required String filters,
   required String relations,
   required String snapshots,
+  required String cacheHits,
+  required String cacheHitChecks,
+  required String cacheRatio,
   required String matched,
 }) {
   return [
@@ -760,8 +789,15 @@ String _formatMeasurementRow({
     filters.padLeft(8),
     relations.padLeft(9),
     snapshots.padLeft(9),
+    cacheHits.padLeft(5),
+    cacheHitChecks.padLeft(8),
+    cacheRatio.padLeft(6),
     matched.padLeft(7),
   ].join('  ');
+}
+
+String _formatPercent(double value) {
+  return '${(value * 100).toStringAsFixed(0)}%';
 }
 
 /// A grid tile of the multi-result query test

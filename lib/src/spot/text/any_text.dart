@@ -405,6 +405,7 @@ class MatchTextFilter implements ElementFilter {
     required this.match,
     required this.description,
     this.normalizeText = true,
+    this.cacheKey,
   });
 
   /// The function that asserts the text content.
@@ -419,6 +420,9 @@ class MatchTextFilter implements ElementFilter {
   /// text, ignoring invisible and special whitespace. When `false` it receives
   /// the [AnyTextContent.raw] text, matching the exact characters.
   final bool normalizeText;
+
+  @override
+  final Object? cacheKey;
 
   @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {

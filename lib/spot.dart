@@ -101,6 +101,7 @@ export 'package:spot/src/spot/widget_selector.dart'
         QuantityConstraint,
         // ignore: deprecated_member_use_from_same_package
         SingleWidgetSelector,
+        SpotCacheKey,
         WidgetPresence,
         WidgetSelector;
 export 'package:spot/src/timeline/timeline.dart'

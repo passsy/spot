@@ -266,22 +266,32 @@ mixin ChainableSelectors<T extends Widget> {
           'Patterns are not supported when matching the whole text',
         );
       }
-      return spotTextWhere(
+      return _spotTextWhere(
         (it) => it.equals(needle),
         raw: raw,
         description: 'with text "$needle"',
         parents: parents,
         children: children,
+        cacheKey: _spotTextCacheKey(
+          matchType: _SpotTextMatchType.whole,
+          needle: needle,
+          raw: raw,
+        ),
       );
     }
 
     // default with contains
-    return spotTextWhere(
+    return _spotTextWhere(
       (it) => it.contains(needle),
       raw: raw,
       description: 'contains text "$needle"',
       parents: parents,
       children: children,
+      cacheKey: _spotTextCacheKey(
+        matchType: _SpotTextMatchType.contains,
+        needle: needle,
+        raw: raw,
+      ),
     );
   }
 
@@ -309,6 +319,23 @@ mixin ChainableSelectors<T extends Widget> {
     bool raw = false,
     String? description,
   }) {
+    return _spotTextWhere(
+      match,
+      parents: parents,
+      children: children,
+      raw: raw,
+      description: description,
+    );
+  }
+
+  WidgetSelector<AnyText> _spotTextWhere(
+    void Function(Subject<String>) match, {
+    required List<WidgetSelector> parents,
+    required List<WidgetSelector> children,
+    required bool raw,
+    required String? description,
+    Object? cacheKey,
+  }) {
     final String name = description ??
         () {
           return describe(match).map((it) => it.trim()).toList().join(' ');
@@ -319,6 +346,7 @@ mixin ChainableSelectors<T extends Widget> {
           match: (it) => match(it),
           description: 'Widget with text $name',
           normalizeText: !raw,
+          cacheKey: cacheKey,
         ),
         ..._childAndParentFilters(children, parents),
       ],
@@ -547,6 +575,9 @@ class _FirstElement extends ElementFilter {
   _FirstElement();
 
   @override
+  Object get cacheKey => _FirstElement;
+
+  @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
     final first = candidates.firstOrNull;
     if (first == null) {
@@ -561,6 +592,9 @@ class _FirstElement extends ElementFilter {
 
 class _LastElement extends ElementFilter {
   _LastElement();
+
+  @override
+  Object get cacheKey => _LastElement;
 
   @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
@@ -579,6 +613,9 @@ class _ElementAtIndex extends ElementFilter {
   _ElementAtIndex(this.index);
 
   final int index;
+
+  @override
+  Object get cacheKey => SpotCacheKey(_ElementAtIndex, [index]);
 
   @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
@@ -693,6 +730,47 @@ extension SelectorToSnapshot<W extends Widget> on WidgetSelector<W> {
     return atMost(1);
   }
 }
+
+enum _SpotTextMatchType {
+  contains,
+  whole,
+}
+
+Object _spotTextCacheKey({
+  required _SpotTextMatchType matchType,
+  required Pattern needle,
+  required bool raw,
+}) {
+  return SpotCacheKey(
+    _SpotTextCacheKey,
+    [
+      matchType,
+      _patternCacheKey(needle),
+      raw,
+    ],
+  );
+}
+
+Object _patternCacheKey(Pattern pattern) {
+  if (pattern is String) {
+    return SpotCacheKey(String, [pattern]);
+  }
+  if (pattern is RegExp) {
+    return SpotCacheKey(
+      RegExp,
+      [
+        pattern.pattern,
+        pattern.isCaseSensitive,
+        pattern.isDotAll,
+        pattern.isMultiLine,
+        pattern.isUnicode,
+      ],
+    );
+  }
+  return SpotCacheKey(Pattern, [pattern]);
+}
+
+class _SpotTextCacheKey {}
 
 /// Extension on [WidgetSelector<W>] to provide easy access to the single
 /// widget, element, or render object in the current selection.

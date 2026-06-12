@@ -8,6 +8,9 @@ import 'package:spot/src/spot/widget_selector.dart';
 /// does not accidentally match a [Center] Widget, that extends [Align].
 class WidgetTypeFilter<W extends Widget> implements ElementFilter {
   @override
+  Object get cacheKey => SpotCacheKey(WidgetTypeFilter, [W]);
+
+  @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
     if (W == Widget) {
       // [W] is the broadest possible type, this filter is a no-op that keeps

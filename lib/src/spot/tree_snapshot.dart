@@ -125,6 +125,9 @@ class WidgetTreeSnapshot extends ScopedWidgetTreeSnapshot {
   /// the widget tree was recorded.
   final DateTime timestamp;
 
+  /// Query results cached for the lifetime of this tree snapshot.
+  final WidgetTreeQueryCache queryCache = WidgetTreeQueryCache();
+
   bool _isNextFrame = false;
 
   /// Creates a snapshot of the widget tree at the given [timestamp].
@@ -162,6 +165,27 @@ class WidgetTreeSnapshot extends ScopedWidgetTreeSnapshot {
   String toString() {
     return 'WidgetTreeSnapshot{timestamp: $timestamp, origin: $origin}';
   }
+}
+
+/// Selector query results cached for one [WidgetTreeSnapshot].
+class WidgetTreeQueryCache {
+  /// Intermediate stage-prefix results by structural stage-prefix cache key.
+  final Map<Object, CachedQueryStageResult> stageResultsByPrefix = {};
+}
+
+/// Cached result of applying one selector stage.
+class CachedQueryStageResult {
+  /// Creates a cached stage result.
+  const CachedQueryStageResult({
+    required this.candidates,
+    required this.savedChecks,
+  });
+
+  /// Candidates after this stage was applied.
+  final List<WidgetTreeNode> candidates;
+
+  /// [QueryStats.totalChecks] avoided when this result is reused.
+  final int savedChecks;
 }
 
 /// A snapshot representing a specific subtree within a [WidgetTreeSnapshot].

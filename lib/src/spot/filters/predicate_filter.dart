@@ -10,7 +10,14 @@ class PredicateFilter implements ElementFilter {
   /// Creates a super generic filter that filters based on a predicate.
   ///
   /// The [description] is used to describe the filter in error messages.
-  PredicateFilter({required this.predicate, required this.description});
+  PredicateFilter({
+    required this.predicate,
+    required this.description,
+    this.cacheKey,
+  });
+
+  @override
+  final Object? cacheKey;
 
   @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {

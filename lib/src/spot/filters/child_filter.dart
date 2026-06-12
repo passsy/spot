@@ -18,6 +18,19 @@ class ChildFilter implements ElementFilter {
   final List<WidgetSelector> childSelectors;
 
   @override
+  Object? get cacheKey {
+    final childKeys = <Object>[];
+    for (final childSelector in childSelectors) {
+      final key = childSelector.cacheKey;
+      if (key == null) {
+        return null;
+      }
+      childKeys.add(key);
+    }
+    return SpotCacheKey(ChildFilter, childKeys);
+  }
+
+  @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
     if (childSelectors.isEmpty) {
       return candidates;

@@ -99,6 +99,32 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
   /// Whether to include offstage widgets in the selection
   final WidgetPresence widgetPresence;
 
+  /// A structural cache key used when this selector is nested in relation filters.
+  ///
+  /// [ParentFilter] and [ChildFilter] include this key in their own cache key so
+  /// equivalent nested selectors can reuse stage results.
+  ///
+  /// Returns `null` when any stage depends on data that must be read live.
+  Object? get cacheKey {
+    final stageKeys = <Object>[];
+    for (final stage in stages) {
+      final key = stage.cacheKey;
+      if (key == null) {
+        return null;
+      }
+      stageKeys.add(key);
+    }
+    return SpotCacheKey(
+      WidgetSelector,
+      [
+        type,
+        quantityConstraint,
+        widgetPresence,
+        SpotCacheKey(_SelectorStagesCacheKey, stageKeys),
+      ],
+    );
+  }
+
   /// All parent selectors of all stages this widget selector depends on
   List<WidgetSelector> get parents {
     return stages.whereType<ParentFilter>().flatMap((e) => e.parents).toList();
@@ -397,7 +423,66 @@ abstract class ElementFilter {
 
   /// A description to describe the filter
   String get description;
+
+  /// A structural key used to cache this filter's result within one frame.
+  ///
+  /// Return `null` when the filter reads mutable state that may change before
+  /// the next frame.
+  Object? get cacheKey => null;
 }
+
+/// Immutable structural cache key for cacheable selector/filter stages.
+class SpotCacheKey {
+  /// Creates a structural cache key.
+  SpotCacheKey(this.type, List<Object> values)
+      : values = List.unmodifiable(values) {
+    _throwIfCacheKeyPartIsCollection(type);
+    for (final value in values) {
+      _throwIfCacheKeyPartIsCollection(value);
+    }
+  }
+
+  /// The type of selector/filter represented by this key.
+  final Object type;
+
+  /// Immutable value parts that define the selector/filter semantics.
+  final List<Object> values;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    if (other is! SpotCacheKey) {
+      return false;
+    }
+    if (type != other.type || values.length != other.values.length) {
+      return false;
+    }
+    for (int i = 0; i < values.length; i++) {
+      if (values[i] != other.values[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(type, Object.hashAll(values));
+  }
+}
+
+void _throwIfCacheKeyPartIsCollection(Object key) {
+  if (key is List || key is Set || key is Map) {
+    throw StateError(
+      'ElementFilter.cacheKey must not return List, Set or Map. '
+      'Use SpotCacheKey or records with value-equality fields.',
+    );
+  }
+}
+
+class _SelectorStagesCacheKey {}
 
 /// Defines the quantity constraints for the number of widgets
 /// expected to be found.

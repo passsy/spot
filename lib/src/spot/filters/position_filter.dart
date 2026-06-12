@@ -12,6 +12,9 @@ class PositionFilter implements ElementFilter {
   final Offset position;
 
   @override
+  Object? get cacheKey => null;
+
+  @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
     final HitTestResult result = HitTestResult();
     // Flutter 3.10 does not expose the view-aware hitTestInView API yet.

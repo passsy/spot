@@ -18,6 +18,8 @@ class QueryStats {
     required this.candidateChecks,
     required this.relationChecks,
     required this.snapshotCalls,
+    required this.cacheHits,
+    required this.cacheHitChecks,
   });
 
   /// Stats of a query that did no work at all.
@@ -26,6 +28,8 @@ class QueryStats {
     candidateChecks: 0,
     relationChecks: 0,
     snapshotCalls: 0,
+    cacheHits: 0,
+    cacheHitChecks: 0,
   );
 
   /// Number of `WidgetTreeNode`s materialized while traversing the widget
@@ -44,9 +48,24 @@ class QueryStats {
   /// parent and child selectors.
   final int snapshotCalls;
 
+  /// Number of stage-prefix results reused from cache.
+  final int cacheHits;
+
+  /// [totalChecks] avoided by cache hits.
+  final int cacheHitChecks;
+
   /// Sum of [nodesTraversed], [candidateChecks] and [relationChecks].
   int get totalChecks {
     return nodesTraversed + candidateChecks + relationChecks;
+  }
+
+  /// Ratio of avoided checks to the uncached checks.
+  double get cacheRatio {
+    final uncachedChecks = totalChecks + cacheHitChecks;
+    if (uncachedChecks == 0) {
+      return 0;
+    }
+    return cacheHitChecks / uncachedChecks;
   }
 
   /// Returns the difference between two measurements.
@@ -56,6 +75,8 @@ class QueryStats {
       candidateChecks: candidateChecks - other.candidateChecks,
       relationChecks: relationChecks - other.relationChecks,
       snapshotCalls: snapshotCalls - other.snapshotCalls,
+      cacheHits: cacheHits - other.cacheHits,
+      cacheHitChecks: cacheHitChecks - other.cacheHitChecks,
     );
   }
 
@@ -67,7 +88,9 @@ class QueryStats {
             nodesTraversed == other.nodesTraversed &&
             candidateChecks == other.candidateChecks &&
             relationChecks == other.relationChecks &&
-            snapshotCalls == other.snapshotCalls;
+            snapshotCalls == other.snapshotCalls &&
+            cacheHits == other.cacheHits &&
+            cacheHitChecks == other.cacheHitChecks;
   }
 
   @override
@@ -77,6 +100,8 @@ class QueryStats {
       candidateChecks,
       relationChecks,
       snapshotCalls,
+      cacheHits,
+      cacheHitChecks,
     );
   }
 
@@ -87,6 +112,9 @@ class QueryStats {
         'candidateChecks: $candidateChecks, '
         'relationChecks: $relationChecks, '
         'snapshotCalls: $snapshotCalls, '
+        'cacheHits: $cacheHits, '
+        'cacheHitChecks: $cacheHitChecks, '
+        'cacheRatio: ${(cacheRatio * 100).toStringAsFixed(0)}%, '
         'total: $totalChecks)';
   }
 }
@@ -111,6 +139,12 @@ class QueryStatsCounter {
   /// See [QueryStats.snapshotCalls]
   static int snapshotCalls = 0;
 
+  /// See [QueryStats.cacheHits]
+  static int cacheHits = 0;
+
+  /// See [QueryStats.cacheHitChecks]
+  static int cacheHitChecks = 0;
+
   /// The current totals since process start.
   static QueryStats get total {
     return QueryStats(
@@ -118,6 +152,8 @@ class QueryStatsCounter {
       candidateChecks: candidateChecks,
       relationChecks: relationChecks,
       snapshotCalls: snapshotCalls,
+      cacheHits: cacheHits,
+      cacheHitChecks: cacheHitChecks,
     );
   }
 }
