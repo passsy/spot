@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:spot/src/spot/query_stats.dart';
 import 'package:spot/src/spot/widget_selector.dart';
 
 /// Filters widget tree nodes based on a predicate
@@ -9,11 +10,19 @@ class PredicateFilter implements ElementFilter {
   /// Creates a super generic filter that filters based on a predicate.
   ///
   /// The [description] is used to describe the filter in error messages.
-  PredicateFilter({required this.predicate, required this.description});
+  PredicateFilter({
+    required this.predicate,
+    required this.description,
+    this.cacheKey,
+  });
+
+  @override
+  final Object? cacheKey;
 
   @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
     return candidates.where((node) {
+      QueryStatsCounter.candidateChecks++;
       return predicate(node.element);
     });
   }

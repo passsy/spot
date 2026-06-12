@@ -6,6 +6,7 @@ import 'package:spot/spot.dart';
 import 'package:spot/src/screenshot/screenshot_annotator.dart';
 import 'package:spot/src/spot/element_extensions.dart';
 import 'package:spot/src/spot/filters/onstage_filter.dart';
+import 'package:spot/src/spot/query_stats.dart';
 import 'package:spot/src/spot/widget_selector.dart';
 
 /// A type alias for a snapshot that can contain multiple widgets.
@@ -28,7 +29,9 @@ class WidgetSnapshot<W extends Widget> {
     required this.discovered,
     required this.debugCandidates,
     required this.scope,
-  }) : _widgets = Map.fromEntries(
+    QueryStats? queryStats,
+  })  : queryStats = queryStats ?? QueryStats.zero,
+        _widgets = Map.fromEntries(
           discovered
               .map((e) => MapEntry(e, selector.mapElementToWidget(e.element))),
         );
@@ -55,6 +58,14 @@ class WidgetSnapshot<W extends Widget> {
 
   /// All elements in [scope] that match [selector]
   final List<WidgetTreeNode> discovered;
+
+  /// The amount of work the query engine performed to discover [discovered],
+  /// including the evaluation of all parent and child selectors.
+  ///
+  /// Stage-prefix results are memoized per frame. When cached stage results
+  /// are reused, [queryStats] reports the cheap lookup work and cache hit count
+  /// for the current call.
+  final QueryStats queryStats;
 
   @override
   String toString() {
@@ -199,8 +210,11 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
   // Make sure that any previous asynchronous operations are completed.
   // This check makes sure that a missing `await` in the line before throws here
   TestAsyncUtils.guardSync();
+  final QueryStats statsBefore = QueryStatsCounter.total;
+  QueryStatsCounter.snapshotCalls++;
 
   final treeSnapshot = currentWidgetTreeSnapshot();
+  final cache = treeSnapshot.queryCache;
   final List<WidgetTreeNode> candidates = treeSnapshot.allNodes;
 
   final isAnyOffstage = selector.isAnyOffstage();
@@ -228,21 +242,42 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
     ...selector.stages,
   ];
 
+  Object? prefixCacheKey = _initialStageCacheKey;
   for (int i = 0; i < stages.length; i++) {
     final stage = stages[i];
     // using unmodifiable copies to prevent accidental modification during filtering
     final remainingCandidatesFromPreviousStage =
         stageResults.last.candidates.toUnmodifiable();
+    final stageCacheKey = _stageCacheKey(prefixCacheKey, stage.cacheKey);
+    final cachedStageResult = stageCacheKey == null
+        ? null
+        : cache.stageResultsByPrefix[stageCacheKey];
 
     _snapshotDebugPrint(
       "+ Stage $i: $stage, "
       "input-candidates: ${remainingCandidatesFromPreviousStage.length}",
     );
 
-    final after = stage
-        .filter(remainingCandidatesFromPreviousStage)
-        .toList()
-        .toUnmodifiable();
+    final List<WidgetTreeNode> after;
+    if (cachedStageResult != null) {
+      QueryStatsCounter.cacheHits++;
+      QueryStatsCounter.cacheHitChecks += cachedStageResult.savedChecks;
+      after = cachedStageResult.candidates;
+    } else {
+      final statsBeforeStage = QueryStatsCounter.total;
+      after = stage
+          .filter(remainingCandidatesFromPreviousStage)
+          .toList()
+          .toUnmodifiable();
+      if (stageCacheKey != null) {
+        final stageStats = QueryStatsCounter.total - statsBeforeStage;
+        cache.stageResultsByPrefix[stageCacheKey] = CachedQueryStageResult(
+          candidates: after,
+          savedChecks: _savedChecks(stageStats),
+        );
+      }
+    }
+    prefixCacheKey = stageCacheKey;
     _snapshotDebugPrint("- Stage $i: $stage, "
         "output-candidates: ${after.length}");
     stageResults.add(_StageResult(index: i, filter: stage, candidates: after));
@@ -256,6 +291,7 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
     discovered: stageResults.last.candidates,
     scope: treeSnapshot,
     debugCandidates: candidates.map((element) => element.element).toList(),
+    queryStats: QueryStatsCounter.total - statsBefore,
   );
   _depth--;
 
@@ -264,6 +300,24 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
   }
 
   return snapshot;
+}
+
+final Object _initialStageCacheKey = Object();
+
+Object? _stageCacheKey(Object? prefixCacheKey, Object? filterCacheKey) {
+  if (prefixCacheKey == null || filterCacheKey == null) {
+    return null;
+  }
+  return SpotCacheKey(
+    _StageCacheKey,
+    [prefixCacheKey, filterCacheKey],
+  );
+}
+
+class _StageCacheKey {}
+
+int _savedChecks(QueryStats stats) {
+  return stats.totalChecks + stats.cacheHitChecks;
 }
 
 class _StageResult {

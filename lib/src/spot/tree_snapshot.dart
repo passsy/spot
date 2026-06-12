@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/src/spot/element_extensions.dart';
+import 'package:spot/src/spot/query_stats.dart';
 
 /// caching the tree for the current frame
 WidgetTreeSnapshot? _cachedTree;
@@ -124,6 +125,9 @@ class WidgetTreeSnapshot extends ScopedWidgetTreeSnapshot {
   /// the widget tree was recorded.
   final DateTime timestamp;
 
+  /// Query results cached for the lifetime of this tree snapshot.
+  final WidgetTreeQueryCache queryCache = WidgetTreeQueryCache();
+
   bool _isNextFrame = false;
 
   /// Creates a snapshot of the widget tree at the given [timestamp].
@@ -161,6 +165,27 @@ class WidgetTreeSnapshot extends ScopedWidgetTreeSnapshot {
   String toString() {
     return 'WidgetTreeSnapshot{timestamp: $timestamp, origin: $origin}';
   }
+}
+
+/// Selector query results cached for one [WidgetTreeSnapshot].
+class WidgetTreeQueryCache {
+  /// Intermediate stage-prefix results by structural stage-prefix cache key.
+  final Map<Object, CachedQueryStageResult> stageResultsByPrefix = {};
+}
+
+/// Cached result of applying one selector stage.
+class CachedQueryStageResult {
+  /// Creates a cached stage result.
+  const CachedQueryStageResult({
+    required this.candidates,
+    required this.savedChecks,
+  });
+
+  /// Candidates after this stage was applied.
+  final List<WidgetTreeNode> candidates;
+
+  /// [QueryStats.totalChecks] avoided when this result is reused.
+  final int savedChecks;
 }
 
 /// A snapshot representing a specific subtree within a [WidgetTreeSnapshot].
@@ -201,9 +226,18 @@ class ScopedWidgetTreeSnapshot {
         'It is only valid until the next frame is pumped.');
   }
 
+  List<WidgetTreeNode>? _allNodesCache;
+
   /// Returns all [WidgetTreeNode] in tree in depth-first order
+  ///
+  /// The tree is immutable for the lifetime of this snapshot (one frame),
+  /// the traversal happens only once and is cached afterwards.
   List<WidgetTreeNode> get allNodes {
     _ensureSnapshotIsFromThisFrame();
+    final cached = _allNodesCache;
+    if (cached != null) {
+      return cached;
+    }
     final List<WidgetTreeNode> depthFirstElements = [];
     final List<WidgetTreeNode> stack = [];
 
@@ -223,7 +257,10 @@ class ScopedWidgetTreeSnapshot {
       depthFirstElements.add(next);
       fill(next);
     }
-    return depthFirstElements.toList();
+    QueryStatsCounter.nodesTraversed += depthFirstElements.length;
+    final nodes = List<WidgetTreeNode>.unmodifiable(depthFirstElements);
+    _allNodesCache = nodes;
+    return nodes;
   }
 
   /// Returns the Elements in depth-first order

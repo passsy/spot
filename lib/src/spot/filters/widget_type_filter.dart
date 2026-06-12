@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:spot/src/spot/query_stats.dart';
 import 'package:spot/src/spot/widget_selector.dart';
 
 /// Filters candidates by widget type [W] comparing the runtime type.
@@ -7,6 +8,9 @@ import 'package:spot/src/spot/widget_selector.dart';
 /// does not accidentally match a [Center] Widget, that extends [Align].
 class WidgetTypeFilter<W extends Widget> implements ElementFilter {
   @override
+  Object get cacheKey => SpotCacheKey(WidgetTypeFilter, [W]);
+
+  @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
     if (W == Widget) {
       // [W] is the broadest possible type, this filter is a no-op that keeps
@@ -14,9 +18,10 @@ class WidgetTypeFilter<W extends Widget> implements ElementFilter {
       return candidates;
     }
     final type = _typeOf<W>();
-    return candidates
-        .where((WidgetTreeNode node) => node.element.widget.runtimeType == type)
-        .toList();
+    return candidates.where((WidgetTreeNode node) {
+      QueryStatsCounter.candidateChecks++;
+      return node.element.widget.runtimeType == type;
+    }).toList();
   }
 
   @override

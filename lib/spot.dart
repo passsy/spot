@@ -60,6 +60,7 @@ export 'package:spot/src/spot/props.dart'
         renderObjectProp,
         stateProp,
         widgetProp;
+export 'package:spot/src/spot/query_stats.dart' show QueryStats;
 export 'package:spot/src/spot/selectors.dart'
     show
         PositionFilterSelector,
@@ -100,6 +101,7 @@ export 'package:spot/src/spot/widget_selector.dart'
         QuantityConstraint,
         // ignore: deprecated_member_use_from_same_package
         SingleWidgetSelector,
+        SpotCacheKey,
         WidgetPresence,
         WidgetSelector;
 export 'package:spot/src/timeline/timeline.dart'

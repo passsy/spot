@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/checks/checks_nullability.dart';
+import 'package:spot/src/spot/query_stats.dart';
 
 /// A union type for any text widget that can be found in the widget tree.
 /// Specifically this includes:
@@ -404,6 +405,7 @@ class MatchTextFilter implements ElementFilter {
     required this.match,
     required this.description,
     this.normalizeText = true,
+    this.cacheKey,
   });
 
   /// The function that asserts the text content.
@@ -420,8 +422,14 @@ class MatchTextFilter implements ElementFilter {
   final bool normalizeText;
 
   @override
+  final Object? cacheKey;
+
+  @override
   Iterable<WidgetTreeNode> filter(Iterable<WidgetTreeNode> candidates) {
-    return candidates.where((it) => _match(it.element));
+    return candidates.where((it) {
+      QueryStatsCounter.candidateChecks++;
+      return _match(it.element);
+    });
   }
 
   bool _match(Element element) {
