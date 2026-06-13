@@ -87,6 +87,64 @@ void main() {
     expect(box.color, Colors.green);
   });
 
+  testWidgets('atPosition preserves tree order', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Center(
+          child: SizedBox(
+            key: ValueKey('outer'),
+            width: 100,
+            height: 100,
+            child: SizedBox(
+              key: ValueKey('inner'),
+              width: 100,
+              height: 100,
+              child: ColoredBox(color: Colors.green),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final boxes = spot<SizedBox>()
+        .atPosition(const Offset(400, 300))
+        .snapshot()
+        .discoveredWidgets;
+
+    expect(boxes.map((it) => it.key), [
+      const ValueKey('outer'),
+      const ValueKey('inner'),
+    ]);
+  });
+
+  testWidgets('withParent keeps the order from atPosition', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Center(
+          child: SizedBox(
+            key: ValueKey('outer'),
+            width: 100,
+            height: 100,
+            child: SizedBox(
+              key: ValueKey('inner'),
+              width: 100,
+              height: 100,
+              child: ColoredBox(color: Colors.green),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final firstBox = spot<SizedBox>()
+        .atPosition(const Offset(400, 300))
+        .withParent(spot<Center>())
+        .first()
+        .snapshotWidget();
+
+    expect(firstBox.key, const ValueKey('outer'));
+  });
+
   testWidgets('atPosition returns no widgets outside the view', (tester) async {
     await tester.pumpWidget(
       const MaterialApp(

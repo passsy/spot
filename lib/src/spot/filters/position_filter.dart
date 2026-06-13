@@ -27,26 +27,12 @@ class PositionFilter implements ElementFilter {
         .map((entry) => _elementFromHitTarget(entry.target))
         .whereType<Element>()
         .toList();
-    final hitElements = <Element>[];
     final hitElementSet = <Element>{};
     for (final element in hits) {
-      if (!hitElementSet.add(element)) {
-        continue;
-      }
-      hitElements.add(element);
+      hitElementSet.add(element);
     }
 
-    final matchedByElement = <Element, WidgetTreeNode>{};
-    for (final node in candidates) {
-      if (!hitElementSet.contains(node.element)) {
-        continue;
-      }
-      matchedByElement[node.element] = node;
-    }
-
-    return hitElements
-        .map((element) => matchedByElement[element])
-        .whereType<WidgetTreeNode>();
+    return candidates.where((node) => hitElementSet.contains(node.element));
   }
 
   @override
