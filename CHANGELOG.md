@@ -2,6 +2,23 @@
 
 ## Unreleased
 
+- New: `WidgetSelector.isPresent()` and `isAbsent()` return `bool` without failing the test, and `countWidgets()` returns the number of matching widgets. Use them to branch test logic on the presence, absence or quantity of a widget. #30
+  ```dart
+  if (spot<Tooltip>().withMessage('Open navigation menu').isPresent()) {
+    // ...
+  }
+  if (spot<Tooltip>().withMessage('Close menu').isAbsent()) {
+    // ...
+  }
+  final buttonCount = spot<ElevatedButton>().countWidgets();
+  final hasTwoButtons = spot<ElevatedButton>().countWidgets() == 2;
+  final hasAtLeastTwoButtons = spot<ElevatedButton>().countWidgets() >= 2;
+  ```
+- New: `getDiagnosticProp<T>('name')` is now also available on `WidgetSelector`, alongside the existing `getWidgetProp`, `getElementProp`, `getStateProp` and `getRenderObjectProp` readers. #30
+  ```dart
+  final message = spot<Tooltip>().getDiagnosticProp<String>('message');
+  ```
+
 - New: Text matching ignores invisible and special whitespace, so tests can use regular characters. `spotText`, `spotTextWhere`, `whereText`, `withText` and `hasText` strip invisible characters (zero width space, soft hyphen, word joiner, BOM) and fold every Unicode space separator (`Zs`, e.g. non-breaking space) to a regular space. Meaningful characters (zero width joiner, bidi controls, the `U+FFFC` WidgetSpan placeholder) and line breaks are kept. #138 (thx @MichaelTamm)
   ```dart
   spotText('foobar').existsOnce();  // matches Text('foo\u{200B}bar')

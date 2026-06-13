@@ -15,6 +15,8 @@ void main() {
 
       final sizedBox = spot<SizedBox>();
 
+      expect(sizedBox.isPresent(), isFalse);
+      expect(sizedBox.isAbsent(), isTrue);
       expect(() => sizedBox.doesNotExist(), returnsNormally);
       expect(() => sizedBox.existsOnce(), throwsTestFailure);
       expect(() => sizedBox.existsAtLeastOnce(), throwsTestFailure);
@@ -36,6 +38,8 @@ void main() {
 
       final sizedBox = spot<SizedBox>();
 
+      expect(sizedBox.isPresent(), isTrue);
+      expect(sizedBox.isAbsent(), isFalse);
       expect(() => sizedBox.doesNotExist(), throwsTestFailure);
       expect(() => sizedBox.existsOnce(), returnsNormally);
       expect(() => sizedBox.existsAtLeastOnce(), returnsNormally);
@@ -56,6 +60,8 @@ void main() {
 
       final sizedBox = spot<SizedBox>();
 
+      expect(sizedBox.isPresent(), isTrue);
+      expect(sizedBox.isAbsent(), isFalse);
       expect(() => sizedBox.doesNotExist(), throwsTestFailure);
       expect(() => sizedBox.existsOnce(), throwsTestFailure);
       expect(() => sizedBox.existsAtLeastOnce(), returnsNormally);
@@ -66,6 +72,77 @@ void main() {
       expect(() => sizedBox.existsAtLeastNTimes(2), returnsNormally);
       expect(() => sizedBox.existsAtMostNTimes(1), throwsTestFailure);
       expect(() => sizedBox.existsAtMostNTimes(2), returnsNormally);
+    });
+  });
+
+  group('isPresent and isAbsent', () {
+    testWidgets('checks presence of widgets filtered by props', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Tooltip(
+            message: 'Open navigation menu',
+            child: SizedBox(),
+          ),
+        ),
+      );
+
+      bool isBurgerMenuPresent() {
+        return spot<Tooltip>().withMessage('Open navigation menu').isPresent();
+      }
+
+      expect(isBurgerMenuPresent(), isTrue);
+      expect(spot<Tooltip>().withMessage('Close menu').isPresent(), isFalse);
+      expect(spot<Tooltip>().withMessage('Close menu').isAbsent(), isTrue);
+    });
+
+    testWidgets('ignores quantity constraints', (tester) async {
+      await tester.pumpWidget(SizedBox());
+
+      expect(spot<SizedBox>().atLeast(5).countWidgets(), 1);
+      expect(spot<SizedBox>().amount(2).countWidgets(), 1);
+      expect(spot<SizedBox>().atMost(0).countWidgets(), 1);
+      expect(spot<SizedBox>().atLeast(1).isPresent(), isTrue);
+      expect(spot<SizedBox>().atLeast(5).isPresent(), isTrue);
+      expect(spot<SizedBox>().amount(1).isPresent(), isTrue);
+      expect(spot<SizedBox>().amount(2).isPresent(), isTrue);
+      expect(spot<SizedBox>().atMost(1).isPresent(), isTrue);
+      expect(spot<SizedBox>().atMost(0).isPresent(), isTrue);
+      expect(spot<SizedBox>().atMost(0).isAbsent(), isFalse);
+      expect(spot<Placeholder>().atLeast(0).isAbsent(), isTrue);
+    });
+
+    testWidgets('counts widgets without throwing', (tester) async {
+      await tester.pumpWidget(Column(children: [SizedBox(), SizedBox()]));
+
+      final sizedBox = spot<SizedBox>();
+
+      expect(sizedBox.countWidgets(), 2);
+      expect(sizedBox.countWidgets() == 1, isFalse);
+      expect(sizedBox.countWidgets() == 2, isTrue);
+      expect(sizedBox.countWidgets() >= 3, isFalse);
+      expect(sizedBox.countWidgets() >= 2, isTrue);
+      expect(sizedBox.countWidgets() <= 1, isFalse);
+      expect(sizedBox.countWidgets() <= 2, isTrue);
+    });
+
+    testWidgets('uses at least one match without quantity constraints',
+        (tester) async {
+      await tester.pumpWidget(Placeholder());
+
+      expect(spot<SizedBox>().countWidgets(), 0);
+      expect(spot<SizedBox>().isPresent(), isFalse);
+      expect(spot<SizedBox>().isAbsent(), isTrue);
+      expect(spot<SizedBox>().countWidgets() >= 0, isTrue);
+      expect(spot<SizedBox>().countWidgets() <= 0, isTrue);
+    });
+
+    testWidgets('does not add an event to the timeline', (tester) async {
+      await tester.pumpWidget(SizedBox());
+
+      final eventCount = timeline.events.length;
+      final isSizedBoxPresent = spot<SizedBox>().isPresent();
+      expect(timeline.events.length, eventCount);
+      expect(isSizedBoxPresent, isTrue);
     });
   });
 
@@ -84,6 +161,8 @@ void main() {
 
       expect(sizedBox.snapshot().discovered, isNotNull);
 
+      expect(sizedBox.isPresent(), isTrue);
+      expect(sizedBox.isAbsent(), isFalse);
       expect(() => sizedBox.doesNotExist(), throwsTestFailure);
       expect(() => sizedBox.existsOnce(), returnsNormally);
       expect(() => sizedBox.existsAtLeastOnce(), returnsNormally);
@@ -113,6 +192,8 @@ void main() {
 
       expect(sizedBox.snapshot().discovered, isEmpty);
 
+      expect(sizedBox.isPresent(), isFalse);
+      expect(sizedBox.isAbsent(), isTrue);
       expect(() => sizedBox.doesNotExist(), returnsNormally);
       expect(() => sizedBox.existsOnce(), throwsTestFailure);
       expect(() => sizedBox.existsAtLeastOnce(), throwsTestFailure);

@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 import 'package:spot/src/checks/checks_nullability.dart';
+import 'package:spot/src/spot/diagnostic_props.dart';
 import 'package:spot/src/spot/filters/predicate_filter.dart';
 import 'package:spot/src/spot/selectors.dart';
 import 'package:spot/src/spot/widget_selector.dart';
@@ -117,6 +118,18 @@ extension PropGetter<W extends Widget> on WidgetSelector<W> {
     final matcher = existsOnce();
     final renderObject = matcher.element.renderObject! as R;
     return prop.get(renderObject);
+  }
+
+  /// Retrieves the diagnostic property with [propName] of type [T] from
+  /// the matched widget (via `Widget.toDiagnosticsNode()`).
+  ///
+  /// #### Example usage:
+  /// ```dart
+  /// final message = spot<Tooltip>().getDiagnosticProp<String>('message');
+  /// ```
+  T getDiagnosticProp<T>(String propName) {
+    final matcher = existsOnce();
+    return matcher.getDiagnosticProp<T>(propName);
   }
 }
 

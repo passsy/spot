@@ -50,6 +50,19 @@ void main() {
       );
       expect(size, const Size(800.0, 600.0));
     });
+
+    testWidgets('getDiagnosticProp', (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Tooltip(
+            message: 'Open navigation menu',
+            child: SizedBox(),
+          ),
+        ),
+      );
+      final message = spot<Tooltip>().getDiagnosticProp<String>('message');
+      expect(message, 'Open navigation menu');
+    });
   });
 
   group('WidgetMatcher', () {
