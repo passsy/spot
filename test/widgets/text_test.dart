@@ -220,6 +220,91 @@ void main() {
     spotText('a').existsExactlyNTimes(2);
   });
 
+  group('text editability', () {
+    testWidgets('whereIsEditable keeps editable text inputs', (tester) async {
+      await tester.pumpWidget(
+        _stage(
+          children: [
+            TextFormField(initialValue: 'username'),
+            Text('username'),
+          ],
+        ),
+      );
+
+      spotText('username').existsExactlyNTimes(2);
+      spotText('username').whereIsEditable().existsOnce();
+      spotText('username').whereIsNotEditable().existsOnce();
+    });
+
+    testWidgets('whereIsEditable rejects read-only text inputs', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _stage(
+          children: [TextFormField(initialValue: 'username', readOnly: true)],
+        ),
+      );
+
+      spotText('username').whereIsEditable().doesNotExist();
+      spotText('username').whereIsNotEditable().existsOnce();
+    });
+
+    testWidgets('whereIsEditable rejects disabled text inputs', (tester) async {
+      await tester.pumpWidget(
+        _stage(
+          children: [TextFormField(initialValue: 'username', enabled: false)],
+        ),
+      );
+
+      spotText('username').whereIsEditable().doesNotExist();
+      spotText('username').whereIsNotEditable().existsOnce();
+    });
+
+    testWidgets('whereIsEditable rejects focus-blocked EditableText', (
+      tester,
+    ) async {
+      final focusNode = FocusNode(canRequestFocus: false);
+      addTearDown(focusNode.dispose);
+
+      final controller = TextEditingController(text: 'username');
+      addTearDown(controller.dispose);
+
+      await tester.pumpWidget(
+        _stage(
+          children: [
+            EditableText(
+              controller: controller,
+              focusNode: focusNode,
+              style: testTextStyle,
+              cursorColor: Colors.black,
+              backgroundCursorColor: Colors.black,
+            ),
+          ],
+        ),
+      );
+
+      spotText('username').whereIsEditable().doesNotExist();
+      spotText('username').whereIsNotEditable().existsOnce();
+    });
+
+    testWidgets('whereIsNotEditable keeps non-input text', (tester) async {
+      await tester.pumpWidget(
+        _stage(
+          children: [
+            Text('username'),
+            SelectableText('username'),
+            RichText(
+              text: TextSpan(text: 'username', style: testTextStyle),
+            ),
+          ],
+        ),
+      );
+
+      spotText('username').whereIsEditable().doesNotExist();
+      spotText('username').whereIsNotEditable().existsExactlyNTimes(3);
+    });
+  });
+
   group('spotTextWhere', () {
     for (final tree in trees.entries) {
       final widgetType = tree.key;

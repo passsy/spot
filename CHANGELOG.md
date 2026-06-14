@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- New: `WidgetSelector<AnyText>.whereIsEditable()` and `whereIsNotEditable()` filter text matches by whether they come from an editable text input.
+  ```dart
+  spotText('username').whereIsEditable().existsOnce();
+  spotText('Username').whereIsNotEditable().existsOnce();
+  ```
 - New: `WidgetSelector.isPresent()` and `isAbsent()` return `bool` without failing the test, and `countWidgets()` returns the number of matching widgets. Use them to branch test logic on the presence, absence or quantity of a widget. #30
   ```dart
   if (spot<Tooltip>().withMessage('Open navigation menu').isPresent()) {

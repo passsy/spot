@@ -308,6 +308,44 @@ class AnyTextContent {
   String toString() => 'AnyTextContent(raw: "$raw", normalized: "$normalized")';
 }
 
+/// Filters text selectors by whether the text can be edited by the user.
+extension AnyTextEditabilitySelector on WidgetSelector<AnyText> {
+  /// Keeps text backed by an [EditableText] that accepts user edits.
+  ///
+  /// Disabled and read-only text inputs are not editable.
+  @useResult
+  WidgetSelector<AnyText> whereIsEditable() {
+    return whereElement(
+      _isEditableTextElement,
+      description: 'is editable text',
+    );
+  }
+
+  /// Keeps text that is not editable by the user.
+  ///
+  /// This includes regular text widgets and disabled or read-only text inputs.
+  @useResult
+  WidgetSelector<AnyText> whereIsNotEditable() {
+    return whereElement(
+      (element) {
+        return !_isEditableTextElement(element);
+      },
+      description: 'is not editable text',
+    );
+  }
+}
+
+bool _isEditableTextElement(Element element) {
+  final widget = element.widget;
+  if (widget is! EditableText) {
+    return false;
+  }
+  if (widget.readOnly) {
+    return false;
+  }
+  return widget.focusNode.canRequestFocus;
+}
+
 /// Code units that have no visible glyph and no semantic effect on plain
 /// text. [AnyText.normalizeVisibleText] removes them entirely.
 ///

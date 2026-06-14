@@ -368,6 +368,16 @@ spot<Text>().withText('Save').existsOnce();
 spotText('Save').existsOnce();
 ```
 
+Use `whereIsEditable()` and `whereIsNotEditable()` when the same text can appear as a label and as input content.
+
+```dart
+spotText('username').whereIsEditable().existsOnce();
+spotText('Username').whereIsNotEditable().existsOnce();
+```
+
+`whereIsEditable()` keeps text from enabled inputs that accept user edits.
+`whereIsNotEditable()` keeps regular display text and disabled or read-only inputs.
+
 Use `raw: true` when exact characters matter.
 Use `whereRawText`, `withRawText` and `hasRawText` for exact-character selector and matcher chains.
 

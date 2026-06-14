@@ -80,7 +80,8 @@ export 'package:spot/src/spot/snapshot.dart'
         ToWidgetMatcher,
         WidgetSnapshot,
         WidgetSnapshotShorthands;
-export 'package:spot/src/spot/text/any_text.dart' show AnyText, AnyTextContent;
+export 'package:spot/src/spot/text/any_text.dart'
+    show AnyText, AnyTextContent, AnyTextEditabilitySelector;
 export 'package:spot/src/spot/tree_snapshot.dart'
     show ScopedWidgetTreeSnapshot, WidgetTreeNode;
 export 'package:spot/src/spot/widget_matcher.dart'
