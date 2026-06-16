@@ -585,6 +585,38 @@ void actTests() {
       );
     });
   });
+
+  group('enter text into an unreachable field', () {
+    // By default enterText taps the field first, which goes through hit testing
+    // and fails because the field is completely covered by the (fake) on-screen
+    // keyboard - exactly as it should in a real app.
+    testWidgets('enterText throws when the field is covered', (tester) async {
+      await tester.pumpWidget(const _KeyboardCoveredTextFieldApp());
+
+      await expectLater(
+        () => act.enterText(spot<TextField>(), 'hello'),
+        throwsSpotErrorContaining([
+          'can not be interacted with directly',
+          'ColoredBox', // the fake keyboard covering the field
+          'completely covering it',
+        ]),
+      );
+
+      // Nothing was entered because the tap never reached the field.
+      spotText('hello').doesNotExist();
+    });
+
+    // bypassHitTest: true reaches into the widget tree and force-focuses the
+    // field, filling it even though a real user could never reach it. This is
+    // the explicit escape hatch for seeding state.
+    testWidgets('enterText with bypassHitTest fills a covered field',
+        (tester) async {
+      await tester.pumpWidget(const _KeyboardCoveredTextFieldApp());
+
+      await act.enterText(spot<TextField>(), 'hello', bypassHitTest: true);
+      spotText('hello').existsOnce();
+    });
+  });
 }
 
 class ColorToggleApp extends StatefulWidget {
@@ -609,6 +641,39 @@ class _ColorToggleAppState extends State<ColorToggleApp> {
             });
           },
           child: null,
+        ),
+      ),
+    );
+  }
+}
+
+/// A text field that is completely hidden behind a fake on-screen keyboard.
+///
+/// The [ColoredBox] fills the whole screen and consumes all pointer events, so
+/// the [TextField] underneath can never be tapped by a real user - but its
+/// controller can still be filled directly via [Act.enterText].
+class _KeyboardCoveredTextFieldApp extends StatelessWidget {
+  const _KeyboardCoveredTextFieldApp();
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      home: Material(
+        child: Stack(
+          children: [
+            Align(
+              alignment: Alignment.topCenter,
+              child: Padding(
+                padding: EdgeInsets.all(20),
+                child: SizedBox(width: 200, child: TextField()),
+              ),
+            ),
+            // Fake on-screen keyboard covering the entire screen, including the
+            // text field above.
+            Positioned.fill(
+              child: ColoredBox(color: Color(0xFF00FF00)),
+            ),
+          ],
         ),
       ),
     );
