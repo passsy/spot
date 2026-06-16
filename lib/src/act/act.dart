@@ -66,6 +66,19 @@ class Act {
       editableTextState = element.state as EditableTextState;
     }
 
+    // A read-only field (e.g. a disabled or readOnly TextField) can not receive
+    // input on any path: tapping it produces a generic hit-test failure, and
+    // bypassing the hit test only results in a silent no-op. Surface a clear
+    // reason instead.
+    if (editableTextState.widget.readOnly) {
+      throw TestFailure(
+        "Widget '${selector.toStringBreadcrumb()}' is read-only and can not "
+        'receive text input. This is usually caused by a disabled or '
+        'read-only TextField. To set its content, assign it through the '
+        "field's TextEditingController instead.",
+      );
+    }
+
     if (!bypassHitTest) {
       // Tap the field for real. This validates that the field is actually
       // hittable (not off-screen or covered) and focuses it, which in turn

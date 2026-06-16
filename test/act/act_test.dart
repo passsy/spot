@@ -617,6 +617,42 @@ void actTests() {
       spotText('hello').existsOnce();
     });
   });
+
+  group('enter text into a disabled field', () {
+    // A disabled TextField builds a read-only EditableText, which can never
+    // receive input. Both paths throw a dedicated error rather than silently
+    // doing nothing.
+    for (final bypassHitTest in [false, true]) {
+      testWidgets(
+        'throws a dedicated error on a disabled field '
+        '(bypassHitTest: $bypassHitTest)',
+        (tester) async {
+          final controller = TextEditingController(text: 'original');
+          addTearDown(controller.dispose);
+          await tester.pumpWidget(
+            MaterialApp(
+              home: Material(
+                child: TextField(controller: controller, enabled: false),
+              ),
+            ),
+          );
+
+          await expectLater(
+            () => act.enterText(
+              spot<TextField>(),
+              'new',
+              bypassHitTest: bypassHitTest,
+            ),
+            throwsSpotErrorContaining([
+              'is read-only and can not receive text input',
+              'TextEditingController',
+            ]),
+          );
+          expect(controller.text, 'original');
+        },
+      );
+    }
+  });
 }
 
 class ColorToggleApp extends StatefulWidget {
