@@ -616,6 +616,22 @@ void actTests() {
       await act.enterText(spot<TextField>(), 'hello', bypassHitTest: true);
       spotText('hello').existsOnce();
     });
+
+    // A real user does not always tap to focus a field - it can be focused via
+    // the keyboard or autofocus. When the field is already focused, enterText
+    // types into it without tapping, so it succeeds even though the field is
+    // covered and could not be tapped.
+    testWidgets('enters text into an already-focused field without tapping',
+        (tester) async {
+      await tester.pumpWidget(
+        const _KeyboardCoveredTextFieldApp(autofocus: true),
+      );
+      // Let autofocus take effect.
+      await tester.pump();
+
+      await act.enterText(spot<TextField>(), 'hello');
+      spotText('hello').existsOnce();
+    });
   });
 
   group('enter text into a disabled field', () {
@@ -689,24 +705,29 @@ class _ColorToggleAppState extends State<ColorToggleApp> {
 /// the [TextField] underneath can never be tapped by a real user - but its
 /// controller can still be filled directly via [Act.enterText].
 class _KeyboardCoveredTextFieldApp extends StatelessWidget {
-  const _KeyboardCoveredTextFieldApp();
+  const _KeyboardCoveredTextFieldApp({this.autofocus = false});
+
+  final bool autofocus;
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       home: Material(
         child: Stack(
           children: [
             Align(
               alignment: Alignment.topCenter,
               child: Padding(
-                padding: EdgeInsets.all(20),
-                child: SizedBox(width: 200, child: TextField()),
+                padding: const EdgeInsets.all(20),
+                child: SizedBox(
+                  width: 200,
+                  child: TextField(autofocus: autofocus),
+                ),
               ),
             ),
             // Fake on-screen keyboard covering the entire screen, including the
             // text field above.
-            Positioned.fill(
+            const Positioned.fill(
               child: ColoredBox(color: Color(0xFF00FF00)),
             ),
           ],

@@ -79,11 +79,12 @@ class Act {
       );
     }
 
-    if (!bypassHitTest) {
-      // Tap the field for real. This validates that the field is actually
-      // hittable (not off-screen or covered) and focuses it, which in turn
-      // requests the keyboard and attaches the text input connection - exactly
-      // what happens when a user taps the field.
+    if (!bypassHitTest && !editableTextState.widget.focusNode.hasFocus) {
+      // A real user does not always tap a field to focus it - it may already be
+      // focused via the keyboard or autofocus. Only when it isn't focused yet do
+      // we tap it the way a user would. The tap also validates that the field is
+      // actually hittable (not off-screen or covered) and focuses it, which in
+      // turn requests the keyboard and attaches the text input connection.
       await tap(editableText);
     }
 
