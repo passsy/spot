@@ -549,10 +549,20 @@ void actTests() {
     });
 
     testWidgets('enter text in text field', (tester) async {
+      // Record events so we can assert the unfocused field is tapped. This also
+      // acts as the control for the "already-focused field is not tapped" test:
+      // it proves the timeline captures taps, so the absence of the event there
+      // is meaningful.
+      timeline.mode = TimelineMode.reportOnError;
       await tester
           .pumpWidget(const MaterialApp(home: Material(child: TextField())));
       await act.enterText(spot<TextField>(), 'hello');
       spotText('hello').existsOnce();
+
+      expect(
+        timeline.events.where((e) => e.eventType.label == 'Tap Event'),
+        isNotEmpty,
+      );
     });
 
     testWidgets('spot a non existing widget throws an error', (tester) async {
@@ -623,6 +633,9 @@ void actTests() {
     // covered and could not be tapped.
     testWidgets('enters text into an already-focused field without tapping',
         (tester) async {
+      // Record events so we can assert that no tap happened.
+      timeline.mode = TimelineMode.reportOnError;
+
       await tester.pumpWidget(
         const _KeyboardCoveredTextFieldApp(autofocus: true),
       );
@@ -631,6 +644,13 @@ void actTests() {
 
       await act.enterText(spot<TextField>(), 'hello');
       spotText('hello').existsOnce();
+
+      // The field was already focused, so enterText skipped the tap entirely -
+      // no 'Tap Event' was added to the timeline.
+      expect(
+        timeline.events.where((e) => e.eventType.label == 'Tap Event'),
+        isEmpty,
+      );
     });
   });
 
