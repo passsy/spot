@@ -26,6 +26,18 @@ class Act {
 
   /// Enters a text into the first [EditableText] child of [selector].
   ///
+  /// By default the field is tapped the way a real user would tap it before the
+  /// text is entered. The tap goes through the same hit-test validation as
+  /// [tap], so this throws if the field is outside the viewport or covered by
+  /// another widget (e.g. an overlay or an on-screen keyboard). This makes the
+  /// test fail when the field could not actually be reached by a user.
+  ///
+  /// Set [bypassHitTest] to `true` to skip the tap and force-focus the field by
+  /// reaching directly into the widget tree. This fills the field even when it
+  /// is not reachable, which is occasionally useful to seed state for a field
+  /// that is not the subject of the test. Prefer the default whenever the
+  /// field's reachability is part of what you are testing.
+  ///
   /// ```dart
   /// final emailTextField = spot<Form>()
   ///     .spot<TextField>()
@@ -35,30 +47,43 @@ class Act {
   ///     )..existsOnce();
   /// await act.enterText(emailTextField, 'alfred@phntm.xyz');
   /// ```
-  Future<void> enterText(WidgetSelector selector, String text) async {
+  Future<void> enterText(
+    WidgetSelector selector,
+    String text, {
+    bool bypassHitTest = false,
+  }) async {
     // Check if widget is in the widget tree. Throws if not.
     selector.snapshot().existsOnce();
+
+    final editableText = spot<EditableText>().withParent(selector);
+    final element = editableText.snapshot().discoveredElement;
+    final EditableTextState editableTextState;
+    if (element is! StatefulElement || element.state is! EditableTextState) {
+      throw TestFailure(
+        "Widget '${selector.toStringBreadcrumb()}' is not a descendant of EditableText.",
+      );
+    } else {
+      editableTextState = element.state as EditableTextState;
+    }
+
+    if (!bypassHitTest) {
+      // Tap the field for real. This validates that the field is actually
+      // hittable (not off-screen or covered) and focuses it, which in turn
+      // requests the keyboard and attaches the text input connection - exactly
+      // what happens when a user taps the field.
+      await tap(editableText);
+    }
 
     return await TestAsyncUtils.guard<void>(() async {
       final binding = TestWidgetsFlutterBinding.instance;
 
-      final editableText = spot<EditableText>().withParent(selector);
-      final element = editableText.snapshot().discoveredElement;
-      final EditableTextState editableTextState;
-
-      if (element is! StatefulElement || element.state is! EditableTextState) {
-        throw TestFailure(
-          "Widget '${selector.toStringBreadcrumb()}' is not a descendant of EditableText.",
-        );
-      } else {
-        editableTextState = element.state as EditableTextState;
+      if (bypassHitTest) {
+        // Setting focusedEditable causes the binding to call requestKeyboard()
+        // on the EditableTextState, which itself eventually calls
+        // TextInput.attach to establish the connection.
+        binding.focusedEditable = editableTextState;
+        await binding.pump();
       }
-
-      // Setting focusedEditable causes the binding to call requestKeyboard()
-      // on the EditableTextState, which itself eventually calls TextInput.attach
-      // to establish the connection.
-      binding.focusedEditable = editableTextState;
-      await binding.pump();
 
       if (!kIsWeb) {
         // Fix for enterText() not working in release mode on real iOS devices.
@@ -69,8 +94,7 @@ class Act {
         binding.testTextInput.register();
       }
 
-      final testTextInput = binding.testTextInput;
-      testTextInput.enterText(text);
+      binding.testTextInput.enterText(text);
       await binding.pump();
     });
   }
