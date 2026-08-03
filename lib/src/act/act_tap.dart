@@ -2,6 +2,9 @@ import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
+// Imported so the [Act.tap] and [Act.inspectTap] doc references below resolve.
+// act.dart imports this file for the implementation, never the other way round.
+import 'package:spot/src/act/act.dart';
 import 'package:spot/src/spot/element_extensions.dart';
 import 'package:spot/src/spot/selectors.dart';
 import 'package:spot/src/spot/snapshot.dart';
@@ -77,9 +80,13 @@ TapInspection inspectTapSelector(WidgetSelector selector) {
     return outsideViewportFailure;
   }
 
-  final probe = _inspectTapTarget(renderObject);
-  final samples = probe.samples;
-  if (samples.hittable.isEmpty) {
+  // The cheap search decides whether the widget can be tapped. Collecting the
+  // per-sample hit-test paths costs an order of magnitude more and is only
+  // paid for when someone reads TapInspection.samples.
+  final pokablePositions = findPokablePositions(renderObject);
+  TapSamples collectSamples() => _collectSamples(renderObject);
+
+  if (pokablePositions.hits.isEmpty) {
     final centerPosition =
         renderObject.localToGlobal(renderObject.size.center(Offset.zero));
     return _inspectUntappableTarget(
@@ -88,15 +95,15 @@ TapInspection inspectTapSelector(WidgetSelector selector) {
       targetElement: targetElement,
       renderBox: renderObject,
       position: centerPosition,
-      samples: samples,
+      samples: collectSamples,
     );
   }
 
-  return TapInspection(
+  return TapInspection._(
     selectorDescription: selectorDescription,
     target: target,
-    samples: samples,
-    tapPosition: probe.bestTapPosition,
+    samples: collectSamples,
+    tapPosition: pokablePositions.mostCenterHittablePosition,
     message: null,
     tapFailure: null,
   );
@@ -145,7 +152,10 @@ void validateViewBounds(
 class _ViewBounds {
   _ViewBounds({required this.viewport, required this.targetRect});
 
+  /// The visible area of the view, in global coordinates.
   final Rect viewport;
+
+  /// Where the target is, in the same coordinates as [viewport].
   final Rect targetRect;
 
   /// Whether the target does not overlap the viewport at all.
@@ -170,12 +180,14 @@ class _ViewBounds {
     return visible.width * visible.height / targetArea;
   }
 
+  /// The failure text, identical whether it is thrown or reported.
   String messageFor(String selectorDescription) {
     return "Widget '$selectorDescription' is located outside the viewport "
         '($targetRect).';
   }
 }
 
+/// Where [renderBox] sits relative to the view it is rendered into.
 _ViewBounds _viewBoundsOf(RenderBox renderBox) {
   // ignore: deprecated_member_use
   final view = WidgetsBinding.instance.renderView;
@@ -220,33 +232,87 @@ String? createPartialCoverageMessage(
       " - Increase the Widget size\n";
 }
 
+/// Throws a [TapFailure] with the analysis [inspectTapSelector] would produce.
+///
+/// Only for [Act.tap]. Gestures that are not a tap throw through
+/// [throwHitTestFailureReport], which reports the same message without claiming
+/// a tap was attempted.
+void throwTapFailureReport({
+  required Offset position,
+  required RenderObject target,
+  required WidgetSnapshot snapshot,
+}) {
+  final failure = _inspectHitTestFailure(
+    position: position,
+    target: target,
+    snapshot: snapshot,
+  );
+  if (failure != null) {
+    throw TapFailure(failure);
+  }
+  throw TestFailure(_unknownHitTestMessage(position, target, snapshot));
+}
+
 /// Throws the same tap failure message produced by [inspectTapSelector].
+///
+/// Throws a plain [TestFailure]. [Act.dragUntilVisible] hit tests the widget it
+/// wants to start the drag on, which is not a tap, so a [TapFailure] carrying a
+/// [TapInspection] of a different widget would be a lie.
 void throwHitTestFailureReport({
   required Offset position,
   required RenderObject target,
   required WidgetSnapshot snapshot,
 }) {
-  final targetElement = snapshot.discoveredElement;
-  if (target is RenderBox && targetElement != null) {
-    final failure = _inspectUntappableTarget(
-      selectorDescription: snapshot.selector.toStringBreadcrumb(),
-      target: _tapWidgetInfo(targetElement),
-      targetElement: targetElement,
-      renderBox: target,
-      position: position,
-      samples: _inspectTapTarget(target).samples,
-    );
-    throw TapFailure(failure);
-  }
-
-  final probe = probeHitTest(position, target);
-  throw TestFailure(
-    "Widget '${snapshot.discoveredWidget!.toStringShort()}' can not be interacted with at position $position where its RenderObject $target was found.\n"
-    "The exact reason, why it doesn't receive hitTest events is unknown.\n"
-    "Hit-test path: ${probe.hitTest.path.joinToString(separator: ', ')}\n"
-    "If you think this case needs a better error message, create an issue https://github.com/passsy/spot for anyone else running in a similar issue.\n"
-    "A small example would be highly appreciated.",
+  final failure = _inspectHitTestFailure(
+    position: position,
+    target: target,
+    snapshot: snapshot,
   );
+  if (failure != null) {
+    throw TestFailure(failure.message);
+  }
+  throw TestFailure(_unknownHitTestMessage(position, target, snapshot));
+}
+
+/// The analysis behind [throwTapFailureReport] and [throwHitTestFailureReport].
+///
+/// Returns `null` when the target is not a [RenderBox], or when [snapshot]
+/// matched no single element. Nothing here can explain a widget it cannot
+/// measure, so the callers fall back to [_unknownHitTestMessage].
+TapInspection? _inspectHitTestFailure({
+  required Offset position,
+  required RenderObject target,
+  required WidgetSnapshot snapshot,
+}) {
+  final targetElement = snapshot.discoveredElement;
+  if (target is! RenderBox || targetElement == null) {
+    return null;
+  }
+  return _inspectUntappableTarget(
+    selectorDescription: snapshot.selector.toStringBreadcrumb(),
+    target: _tapWidgetInfo(targetElement),
+    targetElement: targetElement,
+    renderBox: target,
+    position: position,
+    samples: () => _collectSamples(target),
+  );
+}
+
+/// The message for a target the diagnostics could not reason about at all.
+///
+/// Unlike [TapUnknownReason] this is not backed by a [TapInspection]: it is what
+/// is left when even building one was not possible.
+String _unknownHitTestMessage(
+  Offset position,
+  RenderObject target,
+  WidgetSnapshot snapshot,
+) {
+  final probe = probeHitTest(position, target);
+  return "Widget '${snapshot.discoveredWidget!.toStringShort()}' can not be interacted with at position $position where its RenderObject $target was found.\n"
+      "The exact reason, why it doesn't receive hitTest events is unknown.\n"
+      "Hit-test path: ${probe.hitTest.path.joinToString(separator: ', ')}\n"
+      "If you think this case needs a better error message, create an issue https://github.com/passsy/spot for anyone else running in a similar issue.\n"
+      "A small example would be highly appreciated.";
 }
 
 /// Throws when [snapshot] points at a zero-size render box.
@@ -257,10 +323,6 @@ void throwIfZeroSize({required WidgetSnapshot snapshot}) {
     return;
   }
   if (renderObject.size != Size.zero) {
-    // Bail out before collecting diagnostics. _inspectTapTarget hit-tests the
-    // whole widget on an 8px grid and resolves the source location of every
-    // widget it finds, which is only worth paying for once the size check
-    // below is known to fail.
     return;
   }
 
@@ -269,7 +331,7 @@ void throwIfZeroSize({required WidgetSnapshot snapshot}) {
     target: _tapWidgetInfo(targetElement),
     targetElement: targetElement,
     renderBox: renderObject,
-    samples: _inspectTapTarget(renderObject).samples,
+    samples: () => _collectSamples(renderObject),
   );
   if (failure == null) {
     return;
@@ -278,14 +340,18 @@ void throwIfZeroSize({required WidgetSnapshot snapshot}) {
   throw TestFailure(failure.message);
 }
 
+/// Builds a [TapInspection] that reports [reason].
+///
+/// The single place where a failure is assembled, so [TapInspection.message]
+/// and [TapInspection.tapFailure] can never disagree about which failure it is.
 TapInspection _tapInspectionFailure({
   required String selectorDescription,
   required TapWidgetInfo? target,
   required Object reason,
   required String message,
-  TapSamples? samples,
+  TapSamples Function()? samples,
 }) {
-  return TapInspection(
+  return TapInspection._(
     selectorDescription: selectorDescription,
     target: target,
     samples: samples,
@@ -295,6 +361,10 @@ TapInspection _tapInspectionFailure({
   );
 }
 
+/// Reports a target that does not overlap the viewport at all.
+///
+/// Returns `null` while any part of it is inside, even a single pixel. Hit
+/// testing decides the rest, a partially visible widget may still be tappable.
 TapInspection? _inspectViewBounds({
   required String selectorDescription,
   required TapWidgetInfo target,
@@ -322,36 +392,30 @@ TapInspection? _inspectViewBounds({
   );
 }
 
+/// Works out why a target that was hit tested everywhere received nothing.
+///
+/// The order is the order the causes take effect in: a widget above the target
+/// swallowing the event beats the target having no size, which beats a sibling
+/// painted on top of it. Whatever is left gets [TapUnknownReason].
 TapInspection _inspectUntappableTarget({
   required String selectorDescription,
   required TapWidgetInfo target,
   required Element targetElement,
   required RenderBox renderBox,
   required Offset position,
-  required TapSamples samples,
+  required TapSamples Function() samples,
 }) {
   final probe = probeHitTest(position, renderBox);
   final renderElement = _elementForRenderBox(renderBox) ?? targetElement;
-  final absorbedFailure = _inspectAbsorbPointer(
+  final blockedFailure = _inspectPointerBlocker(
     selectorDescription: selectorDescription,
     target: target,
     targetElement: renderElement,
     hitTest: probe.hitTest,
     samples: samples,
   );
-  if (absorbedFailure != null) {
-    return absorbedFailure;
-  }
-
-  final ignoredFailure = _inspectIgnorePointer(
-    selectorDescription: selectorDescription,
-    target: target,
-    targetElement: renderElement,
-    hitTest: probe.hitTest,
-    samples: samples,
-  );
-  if (ignoredFailure != null) {
-    return ignoredFailure;
+  if (blockedFailure != null) {
+    return blockedFailure;
   }
 
   final zeroSizeFailure = _inspectZeroSize(
@@ -379,7 +443,6 @@ TapInspection _inspectUntappableTarget({
   final reason = TapUnknownReason(
     position: position,
     hitTest: probe.hitTest,
-    samples: samples,
   );
   return _tapInspectionFailure(
     selectorDescription: selectorDescription,
@@ -394,6 +457,9 @@ TapInspection _inspectUntappableTarget({
   );
 }
 
+/// The [Element] that created [renderBox], `null` outside debug builds.
+///
+/// Flutter only records the creator in debug mode, which is where tests run.
 Element? _elementForRenderBox(RenderBox renderBox) {
   final debugCreator = renderBox.debugCreator;
   if (debugCreator is! DebugCreator) {
@@ -402,105 +468,131 @@ Element? _elementForRenderBox(RenderBox renderBox) {
   return debugCreator.element;
 }
 
-TapInspection? _inspectAbsorbPointer({
+/// Whether [element] stops a hit test from reaching anything below it.
+bool _blocksPointerEvents(Element element) {
+  final widget = element.widget;
+  if (widget is AbsorbPointer) {
+    return widget.absorbing;
+  }
+  if (widget is IgnorePointer) {
+    return widget.ignoring;
+  }
+  if (widget is Offstage) {
+    return widget.offstage;
+  }
+  return false;
+}
+
+/// Reports the widget above [targetElement] that swallows the pointer event.
+///
+/// Flutter hit tests from the root down, and [RenderAbsorbPointer],
+/// [RenderIgnorePointer] and [RenderOffstage] all answer without visiting their
+/// child. The outermost blocker is therefore the one that stops the hit test;
+/// anything below it is never asked and removing it would not help. That is why
+/// this walks root to target and takes the first match, not the closest one.
+///
+/// [Element.parents] starts at [targetElement], so a blocker on the target
+/// itself is found here too.
+TapInspection? _inspectPointerBlocker({
   required String selectorDescription,
   required TapWidgetInfo target,
   required Element targetElement,
   required TapHitTestInfo hitTest,
-  required TapSamples samples,
+  required TapSamples Function() samples,
 }) {
-  // parents starts at targetElement, an AbsorbPointer on the target itself
-  // absorbs its own pointer events and has to be found here, too.
-  final absorbElement = targetElement.parents.firstOrNullWhere((it) {
-    if (it.widget is! AbsorbPointer) {
-      return false;
-    }
-    final absorbPointer = it.widget as AbsorbPointer;
-    return absorbPointer.absorbing;
-  });
-  if (absorbElement == null) {
+  final rootToTarget = targetElement.parents.toList().reversed;
+  final blockerElement = rootToTarget.firstOrNullWhere(_blocksPointerEvents);
+  if (blockerElement == null) {
     return null;
   }
 
-  final absorbPointer = _tapWidgetInfo(absorbElement);
-  final reason = TapAbsorbedReason(
-    absorbPointer: absorbPointer,
-    hitReceiver: hitTest.receiver,
-    hitTest: hitTest,
-  );
-  final location = absorbElement.debugWidgetLocation?.file.path ??
-      absorbElement.debugGetCreatorChain(100);
-  final closestReceiver = hitTest.receiver?.element.toStringDeep() ?? '';
-  return _tapInspectionFailure(
-    selectorDescription: selectorDescription,
-    target: target,
-    reason: reason,
-    samples: samples,
-    message:
-        "Widget '${target.widgetName}' is wrapped in AbsorbPointer and doesn't receive pointer events.\n"
-        "AbsorbPointer is created at $location\n"
-        "The closest widget reacting to the touch event is:\n"
-        "$closestReceiver",
-  );
-}
+  final blocker = _tapWidgetInfo(blockerElement);
+  final location = blockerElement.debugWidgetLocation?.file.path ??
+      blockerElement.debugGetCreatorChain(100);
+  final introducer = _findIntroducer(blockerElement);
+  final introducedBy = introducer == null ? null : _tapWidgetInfo(introducer);
 
-TapInspection? _inspectIgnorePointer({
-  required String selectorDescription,
-  required TapWidgetInfo target,
-  required Element targetElement,
-  required TapHitTestInfo hitTest,
-  required TapSamples samples,
-}) {
-  // parents starts at targetElement, see _inspectAbsorbPointer.
-  final ignoreElement = targetElement.parents.firstOrNullWhere((it) {
-    if (it.widget is! IgnorePointer) {
-      return false;
-    }
-    final ignorePointer = it.widget as IgnorePointer;
-    return ignorePointer.ignoring;
-  });
-  if (ignoreElement == null) {
-    return null;
+  final widget = blockerElement.widget;
+  if (widget is AbsorbPointer) {
+    final closestReceiver = hitTest.receiver?.element.toStringDeep() ?? '';
+    return _tapInspectionFailure(
+      selectorDescription: selectorDescription,
+      target: target,
+      samples: samples,
+      reason: TapAbsorbedReason(
+        absorbPointer: blocker,
+        hitReceiver: hitTest.receiver,
+        hitTest: hitTest,
+      ),
+      message:
+          "Widget '${target.widgetName}' is wrapped in AbsorbPointer and doesn't receive pointer events.\n"
+          "AbsorbPointer is created at $location\n"
+          "The closest widget reacting to the touch event is:\n"
+          "$closestReceiver",
+    );
   }
 
-  final introducedBy = _findIgnorePointerIntroducer(ignoreElement);
-  final reason = TapIgnoredReason(
-    ignorePointer: _tapWidgetInfo(ignoreElement),
-    introducedBy: introducedBy == null ? null : _tapWidgetInfo(introducedBy),
-    hitReceiver: hitTest.receiver,
-    hitTest: hitTest,
-  );
-  final location = ignoreElement.debugWidgetLocation?.file.path ??
-      targetElement.debugGetCreatorChain(100);
+  if (widget is IgnorePointer) {
+    return _tapInspectionFailure(
+      selectorDescription: selectorDescription,
+      target: target,
+      samples: samples,
+      reason: TapIgnoredReason(
+        ignorePointer: blocker,
+        introducedBy: introducedBy,
+        hitReceiver: hitTest.receiver,
+        hitTest: hitTest,
+      ),
+      message:
+          "Widget '${target.widgetName}' is wrapped in IgnorePointer and doesn't receive pointer events.\n"
+          "The IgnorePointer is located at $location",
+    );
+  }
+
   return _tapInspectionFailure(
     selectorDescription: selectorDescription,
     target: target,
-    reason: reason,
     samples: samples,
+    reason: TapOffstageReason(
+      offstage: blocker,
+      introducedBy: introducedBy,
+      hitReceiver: hitTest.receiver,
+      hitTest: hitTest,
+    ),
     message:
-        "Widget '${target.widgetName}' is wrapped in IgnorePointer and doesn't receive pointer events.\n"
-        "The IgnorePointer is located at $location",
+        "Widget '${target.widgetName}' is wrapped in Offstage, which takes it out of the layout and out of hit testing.\n"
+        "The Offstage is located at $location\n"
+        "Offstage widgets are not on screen. spotOffstage() finds them, nothing can tap them.",
   );
 }
 
-Element? _findIgnorePointerIntroducer(Element ignoreElement) {
-  final visibility = ignoreElement.parents.skip(1).firstOrNullWhere((it) {
+/// The widget a test author would have to change to remove [blockerElement].
+///
+/// [Visibility] builds an [IgnorePointer] or an [Offstage] depending on its
+/// flags, so it is named directly. Otherwise the closest user-code ancestor is
+/// the best guess.
+Element? _findIntroducer(Element blockerElement) {
+  final visibility = blockerElement.parents.skip(1).firstOrNullWhere((it) {
     return it.widget is Visibility;
   });
   if (visibility != null) {
     return visibility;
   }
-  return ignoreElement.parents.skip(1).firstOrNullWhere((it) {
+  return blockerElement.parents.skip(1).firstOrNullWhere((it) {
     return it.debugWidgetLocation?.isUserCode ?? false;
   });
 }
 
+/// Reports a target of zero size and the ancestor that shrank it.
+///
+/// Names the outermost zero-sized ancestor, because giving any widget below it
+/// a size changes nothing. Returns `null` when [renderBox] has a size.
 TapInspection? _inspectZeroSize({
   required String selectorDescription,
   required TapWidgetInfo target,
   required Element targetElement,
   required RenderBox renderBox,
-  required TapSamples samples,
+  required TapSamples Function() samples,
 }) {
   if (renderBox.size != Size.zero) {
     return null;
@@ -535,12 +627,17 @@ TapInspection? _inspectZeroSize({
   );
 }
 
+/// Reports the widget that received the pointer event instead of the target.
+///
+/// Returns `null` when nothing was hit, or when the receiver turns out to be an
+/// ancestor of the target rather than a sibling painted over it, see
+/// [analyzeCoverWidget].
 TapInspection? _inspectCoveredWidget({
   required String selectorDescription,
   required TapWidgetInfo target,
   required Element targetElement,
   required TapHitTestInfo hitTest,
-  required TapSamples samples,
+  required TapSamples Function() samples,
 }) {
   final cover = hitTest.receiver;
   if (cover == null) {
@@ -580,15 +677,13 @@ TapInspection? _inspectCoveredWidget({
   );
 }
 
-/// The sampled points of a target plus the position [Act.tap] would use.
-class _TapTargetProbe {
-  _TapTargetProbe({required this.samples, required this.bestTapPosition});
-
-  final TapSamples samples;
-  final Offset? bestTapPosition;
-}
-
-_TapTargetProbe _inspectTapTarget(RenderBox renderBox) {
+/// Hit tests all of [renderBox] and records what each point reached.
+///
+/// An order of magnitude more expensive than [findPokablePositions] without
+/// `collectHitTests`, because it builds a [TapWidgetInfo] for every widget on
+/// every sample's hit-test path. Only called when [TapInspection.samples] is
+/// actually read.
+TapSamples _collectSamples(RenderBox renderBox) {
   final pokablePositions = findPokablePositions(
     renderBox,
     collectHitTests: true,
@@ -605,13 +700,10 @@ _TapTargetProbe _inspectTapTarget(RenderBox renderBox) {
       hitTest: hitTest,
     );
   }).toList();
-  return _TapTargetProbe(
-    samples: TapSamples(
-      searchArea: pokablePositions.searchArea,
-      spacing: pokablePositions.spacing,
-      all: all,
-    ),
-    bestTapPosition: pokablePositions.mostCenterHittablePosition,
+  return TapSamples(
+    searchArea: pokablePositions.searchArea,
+    spacing: pokablePositions.spacing,
+    all: all,
   );
 }
 
@@ -827,6 +919,9 @@ TapHitTestProbe probeHitTest(Offset position, RenderObject target) {
   );
 }
 
+/// Describes one hit test, dropping entries that belong to no [Element].
+///
+/// The path keeps Flutter's order, innermost receiver first.
 TapHitTestInfo _tapHitTestInfo(
   Offset position,
   List<HitTestEntry> entries,
@@ -839,6 +934,10 @@ TapHitTestInfo _tapHitTestInfo(
   );
 }
 
+/// Hit tests [position] and returns everything the event would travel through.
+///
+/// The one place that asks the binding, called once per sampled grid point, so
+/// it stays free of anything the caller does not need.
 List<HitTestEntry> _hitTestEntriesAt(Offset position) {
   final result = HitTestResult();
   // ignore: deprecated_member_use
@@ -846,6 +945,12 @@ List<HitTestEntry> _hitTestEntriesAt(Offset position) {
   return result.path.toList();
 }
 
+/// Captures what [element] looks like right now.
+///
+/// Geometry is read eagerly because it changes with the next layout. The source
+/// location is not, see [TapWidgetInfo.sourceLocation] — resolving it serializes
+/// a diagnostics node, and this runs for every widget on every sampled
+/// hit-test path.
 TapWidgetInfo _tapWidgetInfo(Element element) {
   final renderObject = element.renderObject;
   final renderBox = renderObject is RenderBox ? renderObject : null;
@@ -859,6 +964,10 @@ TapWidgetInfo _tapWidgetInfo(Element element) {
   );
 }
 
+/// Lays out [receiver] and [target] side by side for the cover diagram.
+///
+/// Both are multi-line widget chains. Lines longer than the column are cut
+/// rather than wrapped, so the two columns stay aligned.
 String _createColumns(String receiver, String target) {
   final receiverLines = receiver.split('\n');
   final targetLines = target.split('\n');
@@ -894,15 +1003,16 @@ String _createColumns(String receiver, String target) {
 /// unmounted by the next build. Read it before continuing the test, do not
 /// keep it around.
 class TapInspection {
-  /// Creates a tap inspection result.
-  TapInspection({
+  TapInspection._({
     required this.selectorDescription,
     required this.target,
-    required this.samples,
+    required TapSamples Function()? samples,
     required this.tapPosition,
     required this.message,
     required Object? tapFailure,
-  }) : _tapFailure = tapFailure;
+  })  : _samples = samples,
+        _tapFailure = tapFailure,
+        _tree = currentWidgetTreeSnapshot();
 
   /// Human-readable selector description used in diagnostics.
   final String selectorDescription;
@@ -910,8 +1020,44 @@ class TapInspection {
   /// The single widget selected as tap target, if one was found.
   final TapWidgetInfo? target;
 
+  final TapSamples Function()? _samples;
+
+  /// The tree this inspection describes, to notice when it is outdated.
+  final WidgetTreeSnapshot _tree;
+
+  TapSamples? _resolvedSamples;
+
   /// The points that were poked to find out whether the target can be tapped.
-  final TapSamples? samples;
+  ///
+  /// `null` when nothing was sampled, because the target was never found or was
+  /// ruled out before the search, see [tapFailure].
+  ///
+  /// Sampling hit tests the whole target on a grid, which costs far more than
+  /// the rest of the inspection, so it happens on first read rather than up
+  /// front. That only works while the tree still looks the way it did when
+  /// [Act.inspectTap] ran — reading this after a pump throws a [TestFailure]
+  /// rather than reporting what a different tree does.
+  TapSamples? get samples {
+    final resolved = _resolvedSamples;
+    if (resolved != null) {
+      return resolved;
+    }
+    final collect = _samples;
+    if (collect == null) {
+      return null;
+    }
+    if (!_tree.isFromThisFrame) {
+      throw TestFailure(
+        'TapInspection.samples was read after a new frame was pumped.\n'
+        'The samples are collected on first read by hit testing the target, so '
+        'they would describe the tree as it is now, not the one the inspection '
+        'reports on.\n'
+        'Read inspection.samples before pumping, or inspect again if it is the '
+        'current tree you want to know about.',
+      );
+    }
+    return _resolvedSamples = collect();
+  }
 
   /// The position [Act.tap] would use.
   final Offset? tapPosition;
@@ -931,11 +1077,14 @@ class TapInspection {
     return TapFailureReason._(this, tapFailure);
   }
 
+  /// The raw failure, `null` when the widget can be tapped.
+  ///
+  /// Kept untyped and private so a new reason type cannot break callers, see
+  /// [TapFailureReason.reason].
   final Object? _tapFailure;
 
   /// Whether [Act.tap] can tap the selector.
   bool get canTap => _tapFailure == null && tapPosition != null;
-
 }
 
 /// Why [Act.tap] can not tap the widget of a [TapInspection].
@@ -955,6 +1104,8 @@ class TapInspection {
 class TapFailureReason {
   TapFailureReason._(this._inspection, this.reason);
 
+  /// The inspection [reason] came from, to attach its full diagnostics when a
+  /// typed getter is asked for the wrong reason.
   final TapInspection _inspection;
 
   /// The failure object.
@@ -986,6 +1137,11 @@ class TapFailureReason {
   /// Returns the outside-viewport reason or throws a [TestFailure].
   TapOutsideViewportReason get tapOutsideViewportReason {
     return _as<TapOutsideViewportReason>();
+  }
+
+  /// Returns the offstage reason or throws a [TestFailure].
+  TapOffstageReason get tapOffstageReason {
+    return _as<TapOffstageReason>();
   }
 
   /// Returns the zero-size reason or throws a [TestFailure].
@@ -1032,6 +1188,10 @@ class TapFailureReason {
     return '${reason.runtimeType}: $summary';
   }
 
+  /// Casts [reason] to [R], or fails the test with the real diagnostics.
+  ///
+  /// A wrong assumption about why a tap failed reads as a normal test failure
+  /// naming the actual reason, not as a cast error.
   R _as<R extends Object>() {
     final reason = this.reason;
     if (reason is R) {
@@ -1055,7 +1215,7 @@ class TapFailureReason {
 ///   () => act.tap(spot<SubmitButton>()),
 ///   throwsA(
 ///     isA<TapFailure>().having(
-///       (it) => it.inspection.tapFailure.reason,
+///       (it) => it.inspection.tapFailure?.reason,
 ///       'reason',
 ///       isA<TapCoveredReason>(),
 ///     ),
@@ -1196,7 +1356,7 @@ class TapSamples {
 
   /// Pixel distance between sampled points.
   ///
-  /// Describes the search that produced this result: [samples] holds one entry
+  /// Describes the search that produced this result: [all] holds one entry
   /// per point of a uniform grid with this step size, covering [searchArea].
   /// A future spot version may search differently.
   final int spacing;
@@ -1229,7 +1389,7 @@ class TapSamples {
   /// The widgets that received pointer events instead of the target, the one
   /// covering the most of it first.
   ///
-  /// Answers what is in the way without walking [samples]:
+  /// Answers what is in the way without walking [all]:
   ///
   /// ```dart
   /// final blocker = act.inspectTap(spot<MyButton>()).samples!.blockers.first;
@@ -1382,6 +1542,36 @@ class TapAbsorbedReason {
   final TapHitTestInfo hitTest;
 }
 
+/// An [Offstage] takes the target out of the layout and out of hit testing.
+///
+/// Reported for widgets reached with `spotOffstage()`. The default [spot]
+/// selectors skip offstage widgets, so an offstage target usually surfaces as
+/// [TapNotFoundReason] instead.
+class TapOffstageReason {
+  /// Creates an offstage tap failure reason.
+  TapOffstageReason({
+    required this.offstage,
+    required this.introducedBy,
+    required this.hitReceiver,
+    required this.hitTest,
+  });
+
+  /// The [Offstage] that hides the target.
+  final TapWidgetInfo offstage;
+
+  /// The user-relevant widget that introduced [offstage], if known.
+  ///
+  /// A [Visibility] when one built the [Offstage], otherwise the closest
+  /// ancestor from user code.
+  final TapWidgetInfo? introducedBy;
+
+  /// The widget that received the inspected hit-test first.
+  final TapWidgetInfo? hitReceiver;
+
+  /// Hit-test path at the inspected position.
+  final TapHitTestInfo hitTest;
+}
+
 /// An [IgnorePointer] prevents the target from receiving pointer events.
 class TapIgnoredReason {
   /// Creates an ignored tap failure reason.
@@ -1396,6 +1586,9 @@ class TapIgnoredReason {
   final TapWidgetInfo ignorePointer;
 
   /// The user-relevant widget that introduced [ignorePointer], if known.
+  ///
+  /// A [Visibility] when one built the [IgnorePointer], otherwise the closest
+  /// ancestor from user code.
   final TapWidgetInfo? introducedBy;
 
   /// The widget that received the inspected hit-test first.
@@ -1455,12 +1648,14 @@ class TapCoveredReason {
 }
 
 /// No known reason explains why the target cannot be tapped.
+///
+/// Read [TapInspection.samples] for what the hit tests found, and please report
+/// the case at https://github.com/passsy/spot so it can get a real reason.
 class TapUnknownReason {
   /// Creates an unknown tap failure reason.
   TapUnknownReason({
     required this.position,
     required this.hitTest,
-    required this.samples,
   });
 
   /// Inspected global position.
@@ -1468,9 +1663,6 @@ class TapUnknownReason {
 
   /// Hit-test path at [position].
   final TapHitTestInfo hitTest;
-
-  /// Sampled tap search data.
-  final TapSamples samples;
 }
 
 /// The outcome of a single hit test, see [probeHitTest].

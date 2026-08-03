@@ -1090,14 +1090,194 @@ void actTests() {
       expect(reason.hitTest.position, reason.position);
       expect(reason.hitTest.path, isNotEmpty);
       expect(reason.hitTest.receiver?.widget, isNot(isA<SizedBox>()));
-      expect(reason.samples, same(inspection.samples));
-      expect(reason.samples.searchArea, inspection.target?.globalRect);
-      expect(reason.samples.spacing, 8);
-      expect(reason.samples.all, isNotEmpty);
-      expect(reason.samples.hittable, isEmpty);
-      expect(reason.samples.blocked, hasLength(reason.samples.all.length));
-      expect(reason.samples.hittable.map((it) => it.globalPosition), isEmpty);
-      expect(reason.samples.hittablePercent, 0);
+
+      final samples = inspection.samples!;
+      expect(samples.searchArea, inspection.target?.globalRect);
+      expect(samples.spacing, 8);
+      expect(samples.all, isNotEmpty);
+      expect(samples.hittable, isEmpty);
+      expect(samples.blocked, hasLength(samples.all.length));
+      expect(samples.hittable.map((it) => it.globalPosition), isEmpty);
+      expect(samples.hittablePercent, 0);
+      // Collected once and kept, so reading twice does not hit test twice.
+      expect(inspection.samples, same(samples));
+    });
+
+    testWidgets('reports the outermost IgnorePointer, not the closest one',
+        (tester) async {
+      // Hit testing walks root to target and RenderIgnorePointer answers
+      // without visiting its child, so the outer one is what stops the event.
+      // Removing the inner one changes nothing, pointing a test author at it
+      // would send them to the wrong line.
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Center(
+            child: IgnorePointer(
+              key: ValueKey('outer'),
+              child: Padding(
+                padding: EdgeInsets.all(4),
+                child: _IgnoredButtonWrapper(),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final outer = find.byKey(const ValueKey('outer')).evaluate().single;
+      final inner = find
+          .descendant(
+            of: find.byType(_IgnoredButtonWrapper),
+            matching: find.byType(IgnorePointer),
+          )
+          .evaluate()
+          .single;
+      expect(outer, isNot(same(inner)));
+
+      final inspection = act.inspectTap(spot<ElevatedButton>());
+      final reason = inspection.tapFailure!.tapIgnoredReason;
+
+      expect(reason.ignorePointer.element, same(outer));
+    });
+
+    testWidgets('reports the outermost AbsorbPointer, not the closest one',
+        (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Center(
+            child: AbsorbPointer(
+              key: ValueKey('outer'),
+              child: Padding(
+                padding: EdgeInsets.all(4),
+                child: _AbsorbingButtonWrapper(),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final outer = find.byKey(const ValueKey('outer')).evaluate().single;
+
+      final inspection = act.inspectTap(spot<ElevatedButton>());
+      final reason = inspection.tapFailure!.tapAbsorbedReason;
+
+      expect(reason.absorbPointer.element, same(outer));
+    });
+
+    testWidgets('reports an offstage reason', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Center(
+            child: Offstage(
+              child: ElevatedButton(
+                onPressed: () {},
+                child: const Text('Save'),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      // spot() skips offstage widgets, so the default selector cannot even see
+      // it. spotOffstage() is what the docs point at, and it used to land in
+      // TapUnknownReason.
+      expect(act.inspectTap(spot<ElevatedButton>()).tapFailure!.reason,
+          isA<TapNotFoundReason>());
+
+      final inspection = act.inspectTap(
+        spotOffstage().spot<ElevatedButton>().atMost(1),
+      );
+      final reason = inspection.tapFailure!.tapOffstageReason;
+
+      expect(inspection.canTap, isFalse);
+      expect(
+        inspection.message,
+        contains(
+          "is wrapped in Offstage, which takes it out of the layout and out of "
+          'hit testing.',
+        ),
+      );
+      expect(inspection.tapPosition, isNull);
+
+      expect(reason.offstage.widget, isA<Offstage>());
+      if (!kIsWeb) {
+        expect(reason.offstage.sourceLocation, contains('act_test.dart:'));
+      }
+      // The Offstage is written inline here, so the closest user-code ancestor
+      // is the widget that wraps it.
+      expect(reason.introducedBy?.widget, isA<Center>());
+      expect(reason.hitTest.path, isNotEmpty);
+    });
+
+    testWidgets('reports the Visibility that introduced the Offstage',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Center(
+            child: Visibility(
+              visible: false,
+              // Keeps the child in the tree, which is the branch where
+              // Visibility builds an Offstage.
+              maintainState: true,
+              child: ElevatedButton(
+                onPressed: () {},
+                child: const Text('Save'),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final inspection = act.inspectTap(
+        spotOffstage().spot<ElevatedButton>().atMost(1),
+      );
+      final reason = inspection.tapFailure!.tapOffstageReason;
+
+      expect(reason.introducedBy?.widget, isA<Visibility>());
+    });
+
+    testWidgets('samples are collected on read, not up front', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Center(
+            child: ElevatedButton(onPressed: () {}, child: const Text('Save')),
+          ),
+        ),
+      );
+
+      final inspection = act.inspectTap(spot<ElevatedButton>());
+      expect(inspection.canTap, isTrue);
+
+      // The inspection describes the tree of the frame it was created in.
+      // Sampling now would hit test a tree it never saw, so it refuses instead
+      // of reporting something that did not happen.
+      await tester.pump();
+
+      expect(
+        () => inspection.samples,
+        throwsSpotErrorContaining([
+          'TapInspection.samples was read after a new frame was pumped.',
+          'Read inspection.samples before pumping',
+        ]),
+      );
+    });
+
+    testWidgets('samples read before a pump stay readable afterwards',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Center(
+            child: ElevatedButton(onPressed: () {}, child: const Text('Save')),
+          ),
+        ),
+      );
+
+      final inspection = act.inspectTap(spot<ElevatedButton>());
+      final samples = inspection.samples!;
+      await tester.pump();
+
+      // Already collected, so it is a value like every other field, not a new
+      // hit test against the current tree.
+      expect(inspection.samples, same(samples));
     });
 
     testWidgets('typed reason getters fail when the reason changes',
@@ -1243,6 +1423,46 @@ void actTests() {
         selector: () => spot<ElevatedButton>(),
       ),
       _TapParityCase(
+        name: 'offstage',
+        canTap: false,
+        build: () {
+          return MaterialApp(
+            home: Center(
+              child: Offstage(
+                child: ElevatedButton(onPressed: () {}, child: null),
+              ),
+            ),
+          );
+        },
+        selector: () => spotOffstage().spot<ElevatedButton>().atMost(1),
+      ),
+      _TapParityCase(
+        name: 'no render object',
+        canTap: false,
+        build: _NoRenderObjectWidget.new,
+        selector: () => spot<_NoRenderObjectWidget>(),
+      ),
+      _TapParityCase(
+        name: 'not a RenderBox',
+        canTap: false,
+        // The fixture hands out a fresh _CustomRenderObject on every access and
+        // the message names it, so the two calls can never print the same text.
+        sameMessage: false,
+        build: _NonCartesianWidget.new,
+        selector: () => spot<_NonCartesianWidget>(),
+      ),
+      _TapParityCase(
+        name: 'no known reason',
+        canTap: false,
+        build: () {
+          return const Directionality(
+            textDirection: TextDirection.ltr,
+            child: Center(child: SizedBox(width: 100, height: 100)),
+          );
+        },
+        selector: () => spot<SizedBox>(),
+      ),
+      _TapParityCase(
         name: 'no match',
         canTap: false,
         build: () => const MaterialApp(home: Text('Save')),
@@ -1283,11 +1503,13 @@ void actTests() {
         await expectLater(
           () => act.tap(selector),
           throwsA(
-            isA<Object>().having(
-              (it) => it.toString(),
-              'message',
-              contains(inspection.message),
-            ),
+            parityCase.sameMessage
+                ? isA<Object>().having(
+                    (it) => it.toString(),
+                    'message',
+                    contains(inspection.message),
+                  )
+                : isA<TestFailure>(),
           ),
         );
       });
@@ -1599,12 +1821,20 @@ class _TapParityCase {
     required this.canTap,
     required this.build,
     required this.selector,
+    this.sameMessage = true,
   });
 
   final String name;
 
   /// What [TapInspection.canTap] must report, and whether [act.tap] must work.
   final bool canTap;
+
+  /// Whether the message [act.tap] throws must repeat the inspection's.
+  ///
+  /// Only `false` where the message embeds something that differs between two
+  /// calls, such as a `RenderObject` that is rebuilt on every access. The
+  /// decision is still compared, which is the part that can drift.
+  final bool sameMessage;
 
   final Widget Function() build;
 

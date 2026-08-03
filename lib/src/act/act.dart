@@ -102,18 +102,15 @@ class Act {
         if (pokablePositions.hits.isEmpty) {
           final centerPosition =
               renderBox.localToGlobal(renderBox.size.center(Offset.zero));
-          throwHitTestFailureReport(
+          throwTapFailureReport(
             position: centerPosition,
             target: renderBox,
             snapshot: snapshot,
           );
           return;
         }
-
-        final partialWarning = createPartialCoverageMessage(
-          pokablePositions,
-          snapshot,
-        );
+        final partialWarning =
+            createPartialCoverageMessage(pokablePositions, snapshot);
         if (partialWarning != null) {
           // ignore: avoid_print
           print(partialWarning);
@@ -137,6 +134,7 @@ class Act {
           );
         }
 
+        // Finally, tap the widget by sending a down and up event.
         final downEvent = PointerDownEvent(position: positionToTap);
         binding.handlePointerEvent(downEvent);
 
@@ -199,10 +197,8 @@ class Act {
         }
         final downEvent = PointerDownEvent(position: position);
         binding.handlePointerEvent(downEvent);
-
         final upEvent = PointerUpEvent(position: position);
         binding.handlePointerEvent(upEvent);
-
         await binding.pump();
       });
     });

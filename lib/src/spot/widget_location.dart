@@ -38,9 +38,14 @@ class WidgetLocationFile {
   WidgetLocationFile(this.path);
 
   /// The source path, including line and column when Flutter reports them.
+  ///
+  /// For example `file:///src/my_widget.dart:42:7`, not a path a file API can
+  /// open.
   final String path;
 
-  /// The final path segment.
+  /// The last segment of [path], including line and column.
+  ///
+  /// For example `my_widget.dart:42:7`.
   String get name {
     return path.split('/').last;
   }

@@ -31,6 +31,7 @@ export 'package:spot/src/act/act_tap.dart'
         TapNoRenderObjectReason,
         TapNonRenderBoxReason,
         TapNotFoundReason,
+        TapOffstageReason,
         TapOutsideViewportReason,
         TapSamples,
         TapUnknownReason,
