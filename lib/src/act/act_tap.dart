@@ -115,7 +115,7 @@ TapInspection inspectTapSelector(WidgetSelector selector) {
     samples: samples,
     tapPosition: probe.bestTapPosition,
     message: null,
-    reason: null,
+    tapFailure: null,
     warning: warning,
   );
 }
@@ -309,7 +309,7 @@ TapInspection _tapInspectionFailure({
     samples: samples,
     tapPosition: null,
     message: message,
-    reason: reason,
+    tapFailure: reason,
     warning: null,
   );
 }
@@ -943,9 +943,9 @@ class TapInspection {
     required this.samples,
     required this.tapPosition,
     required this.message,
-    required this.reason,
+    required Object? tapFailure,
     required this.warning,
-  });
+  }) : _tapFailure = tapFailure;
 
   /// Human-readable selector description used in diagnostics.
   final String selectorDescription;
@@ -962,86 +962,23 @@ class TapInspection {
   /// A plain-text message describing why [Act.tap] cannot tap the selector.
   final String? message;
 
-  /// The reason why [Act.tap] cannot tap the selector, if any.
-  final Object? reason;
+  /// Why [Act.tap] can not tap the selector.
+  ///
+  /// A view on this inspection that casts the failure to one of the
+  /// `Tap*Reason` types, see [TapFailureReason].
+  TapFailureReason get tapFailure => TapFailureReason._(this);
+
+  final Object? _tapFailure;
 
   /// Non-fatal diagnostic information about a tappable target.
   final TapInspectionWarning? warning;
 
   /// Whether [Act.tap] can tap the selector.
-  bool get canTap => reason == null && tapPosition != null;
-
-  /// Returns the not-found reason or throws a [TestFailure].
-  TapNotFoundReason get tapNotFoundReason {
-    return _failureReason<TapNotFoundReason>();
-  }
-
-  /// Returns the multiple-widgets reason or throws a [TestFailure].
-  TapMultipleWidgetsFoundReason get tapMultipleWidgetsFoundReason {
-    return _failureReason<TapMultipleWidgetsFoundReason>();
-  }
-
-  /// Returns the no-render-object reason or throws a [TestFailure].
-  TapNoRenderObjectReason get tapNoRenderObjectReason {
-    return _failureReason<TapNoRenderObjectReason>();
-  }
-
-  /// Returns the non-render-box reason or throws a [TestFailure].
-  TapNonRenderBoxReason get tapNonRenderBoxReason {
-    return _failureReason<TapNonRenderBoxReason>();
-  }
-
-  /// Returns the outside-viewport reason or throws a [TestFailure].
-  TapOutsideViewportReason get tapOutsideViewportReason {
-    return _failureReason<TapOutsideViewportReason>();
-  }
-
-  /// Returns the zero-size reason or throws a [TestFailure].
-  TapZeroSizeReason get tapZeroSizeReason {
-    return _failureReason<TapZeroSizeReason>();
-  }
-
-  /// Returns the absorbed reason or throws a [TestFailure].
-  TapAbsorbedReason get tapAbsorbedReason {
-    return _failureReason<TapAbsorbedReason>();
-  }
-
-  /// Returns the ignored reason or throws a [TestFailure].
-  TapIgnoredReason get tapIgnoredReason {
-    return _failureReason<TapIgnoredReason>();
-  }
-
-  /// Returns the covered reason or throws a [TestFailure].
-  TapCoveredReason get tapCoveredReason {
-    return _failureReason<TapCoveredReason>();
-  }
-
-  /// Returns the unknown reason or throws a [TestFailure].
-  TapUnknownReason get tapUnknownReason {
-    return _failureReason<TapUnknownReason>();
-  }
+  bool get canTap => _tapFailure == null && tapPosition != null;
 
   /// Returns the partial-coverage warning reason or throws a [TestFailure].
   TapPartialCoverageReason get tapPartialCoverageReason {
     return _warningReason<TapPartialCoverageReason>();
-  }
-
-  R _failureReason<R extends Object>() {
-    final reason = this.reason;
-    if (reason == null) {
-      throw TestFailure(
-        'Expected $R but $selectorDescription can be tapped.',
-      );
-    }
-
-    if (reason is R) {
-      return reason;
-    }
-
-    throw TestFailure(
-      'Expected $R but tap failed with ${reason.runtimeType}.\n'
-      '$message',
-    );
   }
 
   R _warningReason<R extends Object>() {
@@ -1064,6 +1001,101 @@ class TapInspection {
   }
 }
 
+/// Why [Act.tap] can not tap the widget of a [TapInspection].
+///
+/// Every getter casts the failure to one concrete reason. When the tap failed
+/// for a different reason, or did not fail at all, it throws a [TestFailure]
+/// with the full tap diagnostics attached, which makes it safe to read a
+/// property right away:
+///
+/// ```dart
+/// final inspection = act.inspectTap(spot<ElevatedButton>());
+/// expect(inspection.tapFailure.tapCoveredReason.primaryCover?.widget,
+///     isA<ColoredBox>());
+/// ```
+///
+/// Read [reason] to branch on the failure instead of asserting one, for
+/// example with `isA<TapCoveredReason>()`.
+class TapFailureReason {
+  TapFailureReason._(this._inspection);
+
+  final TapInspection _inspection;
+
+  /// The failure object, `null` when the widget can be tapped.
+  ///
+  /// One of the `Tap*Reason` types. It is intentionally untyped: adding a new
+  /// reason must not break callers that switch over the known ones.
+  Object? get reason => _inspection._tapFailure;
+
+  /// Returns the not-found reason or throws a [TestFailure].
+  TapNotFoundReason get tapNotFoundReason {
+    return _as<TapNotFoundReason>();
+  }
+
+  /// Returns the multiple-widgets reason or throws a [TestFailure].
+  TapMultipleWidgetsFoundReason get tapMultipleWidgetsFoundReason {
+    return _as<TapMultipleWidgetsFoundReason>();
+  }
+
+  /// Returns the no-render-object reason or throws a [TestFailure].
+  TapNoRenderObjectReason get tapNoRenderObjectReason {
+    return _as<TapNoRenderObjectReason>();
+  }
+
+  /// Returns the non-render-box reason or throws a [TestFailure].
+  TapNonRenderBoxReason get tapNonRenderBoxReason {
+    return _as<TapNonRenderBoxReason>();
+  }
+
+  /// Returns the outside-viewport reason or throws a [TestFailure].
+  TapOutsideViewportReason get tapOutsideViewportReason {
+    return _as<TapOutsideViewportReason>();
+  }
+
+  /// Returns the zero-size reason or throws a [TestFailure].
+  TapZeroSizeReason get tapZeroSizeReason {
+    return _as<TapZeroSizeReason>();
+  }
+
+  /// Returns the absorbed reason or throws a [TestFailure].
+  TapAbsorbedReason get tapAbsorbedReason {
+    return _as<TapAbsorbedReason>();
+  }
+
+  /// Returns the ignored reason or throws a [TestFailure].
+  TapIgnoredReason get tapIgnoredReason {
+    return _as<TapIgnoredReason>();
+  }
+
+  /// Returns the covered reason or throws a [TestFailure].
+  TapCoveredReason get tapCoveredReason {
+    return _as<TapCoveredReason>();
+  }
+
+  /// Returns the unknown reason or throws a [TestFailure].
+  TapUnknownReason get tapUnknownReason {
+    return _as<TapUnknownReason>();
+  }
+
+  R _as<R extends Object>() {
+    final reason = this.reason;
+    if (reason == null) {
+      throw TestFailure(
+        'Expected $R but ${_inspection.selectorDescription} can be tapped.',
+      );
+    }
+
+    if (reason is R) {
+      return reason;
+    }
+
+    throw TestFailure(
+      'Expected $R but tap failed with ${reason.runtimeType}.\n'
+      '${_inspection.message}',
+    );
+  }
+}
+
 /// Thrown by [Act.tap] when the widget can not be tapped.
 ///
 /// Carries the [inspection] that explains why, so a test can assert the reason
@@ -1074,7 +1106,7 @@ class TapInspection {
 ///   () => act.tap(spot<SubmitButton>()),
 ///   throwsA(
 ///     isA<TapFailure>().having(
-///       (it) => it.inspection.reason,
+///       (it) => it.inspection.tapFailure.reason,
 ///       'reason',
 ///       isA<TapCoveredReason>(),
 ///     ),
