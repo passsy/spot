@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -1212,33 +1210,6 @@ class TapTargetSearch {
       return 0;
     }
     return hittableSamples.length / samples.length * 100;
-  }
-
-  /// Whether every sampled point reached the target.
-  bool get isFullyHittable {
-    return samples.isNotEmpty && blockedSamples.isEmpty;
-  }
-
-  /// Whether no sampled point reached the target.
-  bool get isUnreachable {
-    return hittableSamples.isEmpty;
-  }
-
-  /// The area of [searchArea] that actually reacts to pointer events.
-  ///
-  /// `null` when nothing was reachable. Derived from sampled points, so it is
-  /// accurate to [spacing] rather than to the pixel.
-  Rect? get hittableBounds {
-    final positions = hittablePositions;
-    if (positions.isEmpty) {
-      return null;
-    }
-    return Rect.fromLTRB(
-      positions.map((it) => it.dx).reduce(min),
-      positions.map((it) => it.dy).reduce(min),
-      positions.map((it) => it.dx).reduce(max),
-      positions.map((it) => it.dy).reduce(max),
-    );
   }
 
   /// The widgets that received pointer events instead of the target, the one

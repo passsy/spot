@@ -474,10 +474,7 @@ void actTests() {
       );
       expect(search.blockedSamples, isEmpty);
       expect(search.hittablePercent, 100);
-      expect(search.isFullyHittable, isTrue);
-      expect(search.isUnreachable, isFalse);
       expect(search.blockers, isEmpty);
-      expect(search.hittableBounds, isNotNull);
       expect(search.hittablePositions, hasLength(search.samples.length));
       expect(search.blockedPositions, isEmpty);
       expect(search.bestTapPosition, result.tapPosition);
@@ -549,8 +546,6 @@ void actTests() {
       expect(search.blockedPositions, isNotEmpty);
       expect(search.hittablePercent, greaterThan(0));
       expect(search.hittablePercent, lessThan(100));
-      expect(search.isFullyHittable, isFalse);
-      expect(search.isUnreachable, isFalse);
 
       // Names what is in the way and how much of the target it takes, without
       // the caller having to group 169 samples by hit-test receiver.
@@ -563,11 +558,12 @@ void actTests() {
       expect(search.blockedSamples.first.blockedBy, isNotNull);
       expect(search.hittableSamples.first.blockedBy, isNull);
 
-      // The right half is covered, so only the left half reacts.
-      final bounds = search.hittableBounds!;
-      expect(bounds.left, search.searchArea.left);
-      expect(bounds.top, search.searchArea.top);
-      expect(bounds.right, lessThan(search.searchArea.center.dx));
+      // The right half is covered, so every reachable point is on the left.
+      expect(
+        search.hittablePositions
+            .every((it) => it.dx < search.searchArea.center.dx),
+        isTrue,
+      );
       expect(result.tapPosition!.dx, lessThan(search.searchArea.center.dx));
     });
 
@@ -977,8 +973,7 @@ void actTests() {
 
       // The whole surface is blocked by the same widget.
       final search = result.search!;
-      expect(search.isUnreachable, isTrue);
-      expect(search.hittableBounds, isNull);
+      expect(search.hittablePositions, isEmpty);
       expect(search.blockers, hasLength(1));
       expect(search.blockers.single.widget.widget, isA<ColoredBox>());
       expect(search.blockers.single.percent, 100);

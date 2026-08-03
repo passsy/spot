@@ -14,7 +14,7 @@
   `TapInspection.search` reports how much of the widget reacts to pointer events and what is in the way, for tappable widgets too.
   ```dart
   final search = act.inspectTap(spot<ElevatedButton>()).search!;
-  print('${search.hittablePercent}% reachable, area ${search.hittableBounds}');
+  print('${search.hittablePercent}% reachable');
   for (final blocker in search.blockers) {
     print('${blocker.widget.widgetName} covers ${blocker.percent}%');
   }
