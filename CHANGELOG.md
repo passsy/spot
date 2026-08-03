@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- New: `act.inspectTap()` reports whether a widget can be tapped and why not, as a value instead of a thrown error. It sends no pointer events and pumps no frame, so a test can assert that something is untappable *for a specific reason* rather than matching on message strings. #150
+  ```dart
+  final inspection = act.inspectTap(spot<ElevatedButton>());
+  expect(inspection.canTap, isFalse);
+  // the button is behind a full-screen overlay
+  expect(inspection.tapCoveredReason.primaryCover?.widget, isA<ColoredBox>());
+  ```
+  Every failure branch of `act.tap()` has a reason: `TapNotFoundReason`, `TapMultipleWidgetsFoundReason`, `TapNoRenderObjectReason`, `TapNonRenderBoxReason`, `TapOutsideViewportReason`, `TapAbsorbedReason`, `TapIgnoredReason`, `TapZeroSizeReason`, `TapCoveredReason` and `TapUnknownReason`. A tappable widget that is only partially reachable reports `TapPartialCoverageReason` as a warning. Read them via `inspection.reason`, or via a typed getter such as `tapCoveredReason` that fails the test when the widget turned out to be untappable for a different reason. Also adds `TapInspection`, `TapInspectionWarning`, `TapWidgetInfo`, `TapHitTestInfo`, `TapHitSample` and `TapTargetSearch`.
+- Fix: `act.tap()` now finds an `AbsorbPointer` anywhere above the target. It previously only looked directly below the widget that received the hit test, so an `AbsorbPointer` created inside another widget's `build()` was missed and the failure reported an unknown reason. #150
 - Improvement: The source location of a widget is resolved once per widget instead of on every lookup, which speeds up `act.tapAt()` timeline events and the diagnostics behind failing `act.tap()` calls. #154
 - New: `WidgetSelector<AnyText>.whereIsEditable()` and `whereIsNotEditable()` filter text matches by whether they come from an editable text input.
   ```dart
