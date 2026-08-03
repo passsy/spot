@@ -1127,6 +1127,173 @@ void actTests() {
     });
   });
 
+  // [TapInspection.canTap] is documented as "whether act.tap can tap the
+  // selector", but act.tap computes that itself and never asks. Two code paths
+  // answering the same question, so assert they agree on every tree the tests
+  // above set up. Without this both suites can stay green while they disagree.
+  group('inspectTap agrees with tap', () {
+    final cases = <_TapParityCase>[
+      _TapParityCase(
+        name: 'tappable button',
+        canTap: true,
+        build: () => MaterialApp(
+          home: Center(child: ElevatedButton(onPressed: () {}, child: null)),
+        ),
+        selector: () => spot<ElevatedButton>(),
+      ),
+      _TapParityCase(
+        name: 'tappable despite partial coverage',
+        canTap: true,
+        build: () => MaterialApp(
+          home: Center(
+            child: SizedBox(
+              width: 100,
+              height: 100,
+              child: Stack(
+                children: [
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {},
+                    child: const SizedBox.expand(),
+                  ),
+                  const Positioned(
+                    left: 50,
+                    top: 0,
+                    bottom: 0,
+                    width: 50,
+                    child: ColoredBox(color: Colors.green),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        selector: () => spot<GestureDetector>(),
+      ),
+      _TapParityCase(
+        name: 'covered by another widget',
+        canTap: false,
+        build: () => MaterialApp(
+          home: Stack(
+            children: [
+              Center(child: ElevatedButton(onPressed: () {}, child: null)),
+              const Positioned.fill(child: ColoredBox(color: Colors.green)),
+            ],
+          ),
+        ),
+        selector: () => spot<ElevatedButton>(),
+      ),
+      _TapParityCase(
+        name: 'wrapped in AbsorbPointer',
+        canTap: false,
+        build: () => MaterialApp(
+          home: Center(
+            child: AbsorbPointer(
+              child: ElevatedButton(onPressed: () {}, child: null),
+            ),
+          ),
+        ),
+        selector: () => spot<ElevatedButton>(),
+      ),
+      _TapParityCase(
+        name: 'AbsorbPointer created in another widget',
+        canTap: false,
+        build: () => const MaterialApp(
+          home: Center(child: _AbsorbingButtonWrapper()),
+        ),
+        selector: () => spot<ElevatedButton>(),
+      ),
+      _TapParityCase(
+        name: 'wrapped in IgnorePointer',
+        canTap: false,
+        build: () => MaterialApp(
+          home: Center(
+            child: IgnorePointer(
+              child: ElevatedButton(onPressed: () {}, child: null),
+            ),
+          ),
+        ),
+        selector: () => spot<ElevatedButton>(),
+      ),
+      _TapParityCase(
+        name: 'forced to zero size',
+        canTap: false,
+        build: () => MaterialApp(
+          home: Center(
+            child: SizedBox.shrink(
+              child: ElevatedButton(onPressed: () {}, child: null),
+            ),
+          ),
+        ),
+        selector: () => spot<ElevatedButton>(),
+      ),
+      _TapParityCase(
+        name: 'outside the viewport',
+        canTap: false,
+        build: () => MaterialApp(
+          home: Stack(
+            children: [
+              Positioned(
+                top: -1000,
+                child: ElevatedButton(onPressed: () {}, child: null),
+              ),
+            ],
+          ),
+        ),
+        selector: () => spot<ElevatedButton>(),
+      ),
+      _TapParityCase(
+        name: 'no match',
+        canTap: false,
+        build: () => const MaterialApp(home: Text('Save')),
+        selector: () => spot<ElevatedButton>(),
+      ),
+      _TapParityCase(
+        name: 'multiple matches',
+        canTap: false,
+        build: () => MaterialApp(
+          home: Row(
+            children: [
+              ElevatedButton(onPressed: () {}, child: null),
+              ElevatedButton(onPressed: () {}, child: null),
+            ],
+          ),
+        ),
+        selector: () => spot<ElevatedButton>(),
+      ),
+    ];
+
+    for (final parityCase in cases) {
+      testWidgets(parityCase.name, (tester) async {
+        await tester.pumpWidget(parityCase.build());
+        final selector = parityCase.selector();
+        final inspection = act.inspectTap(selector);
+
+        expect(inspection.canTap, parityCase.canTap);
+
+        if (parityCase.canTap) {
+          expect(inspection.message, isNull);
+          expect(inspection.tapFailure, isNull);
+          await act.tap(selector);
+          return;
+        }
+
+        // act.tap fails, and says the same thing the inspection did.
+        expect(inspection.message, isNotNull);
+        await expectLater(
+          () => act.tap(selector),
+          throwsA(
+            isA<Object>().having(
+              (it) => it.toString(),
+              'message',
+              contains(inspection.message),
+            ),
+          ),
+        );
+      });
+    }
+  });
+
   group('tapAt', () {
     testWidgets('tapAt', (tester) async {
       Offset? tapPosition;
@@ -1423,4 +1590,24 @@ class _IgnoredButtonWrapper extends StatelessWidget {
       ),
     );
   }
+}
+
+/// One widget tree that [act.tap] and [act.inspectTap] must agree on.
+class _TapParityCase {
+  _TapParityCase({
+    required this.name,
+    required this.canTap,
+    required this.build,
+    required this.selector,
+  });
+
+  final String name;
+
+  /// What [TapInspection.canTap] must report, and whether [act.tap] must work.
+  final bool canTap;
+
+  final Widget Function() build;
+
+  /// Created after pumping, selectors resolve against the current tree.
+  final WidgetSelector<Widget> Function() selector;
 }
