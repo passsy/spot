@@ -422,6 +422,86 @@ void actTests() {
         ]),
       );
     });
+
+    testWidgets('tap throws a TapFailure that carries the inspection',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Stack(
+            children: [
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {},
+                  child: const Text('Save'),
+                ),
+              ),
+              const Positioned.fill(
+                child: ColoredBox(color: Colors.green),
+              ),
+            ],
+          ),
+        ),
+      );
+
+      final button = spot<ElevatedButton>()..existsOnce();
+
+      await expectLater(
+        () => act.tap(button),
+        throwsA(
+          isA<TapFailure>()
+              .having((it) => it.inspection.canTap, 'canTap', isFalse)
+              .having(
+                (it) => it.inspection.reason,
+                'reason',
+                isA<TapCoveredReason>().having(
+                  (it) => it.primaryCover?.widget,
+                  'primaryCover',
+                  isA<ColoredBox>(),
+                ),
+              )
+              .having(
+                (it) => it.message,
+                'message',
+                contains('can not be interacted with directly'),
+              ),
+        ),
+      );
+
+      // Still a TestFailure, so the test runner reports a failed assertion
+      // instead of a crashed test, and existing expectations keep matching.
+      await expectLater(() => act.tap(button), throwsA(isA<TestFailure>()));
+    });
+
+    testWidgets('tap throws a TapFailure for a widget outside the viewport',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Stack(
+            children: [
+              Positioned(
+                top: -1000,
+                child: ElevatedButton(
+                  onPressed: () {},
+                  child: null,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+
+      final button = spot<ElevatedButton>()..existsOnce();
+      await expectLater(
+        () => act.tap(button),
+        throwsA(
+          isA<TapFailure>().having(
+            (it) => it.inspection.reason,
+            'reason',
+            isA<TapOutsideViewportReason>(),
+          ),
+        ),
+      );
+    });
   });
 
   // Every reason [act.inspectTap] can report gets one test here, written the

@@ -19,6 +19,19 @@
     print('${blocker.widget.widgetName} covers ${blocker.percent}%');
   }
   ```
+- New: `act.tap()` throws a `TapFailure` that carries the `TapInspection` explaining the failure, so the reason can be asserted without matching on the message. `TapFailure` extends `TestFailure`, existing expectations keep working. #150
+  ```dart
+  await expectLater(
+    () => act.tap(spot<ElevatedButton>()),
+    throwsA(
+      isA<TapFailure>().having(
+        (it) => it.inspection.reason,
+        'reason',
+        isA<TapCoveredReason>(),
+      ),
+    ),
+  );
+  ```
 - Fix: `act.tap()` now finds an `AbsorbPointer` anywhere above the target. It previously only looked directly below the widget that received the hit test, so an `AbsorbPointer` created inside another widget's `build()` was missed and the failure reported an unknown reason. #150
 - Improvement: The source location of a widget is resolved once per widget instead of on every lookup, which speeds up `act.tapAt()` timeline events and the diagnostics behind failing `act.tap()` calls. #154
 - New: `WidgetSelector<AnyText>.whereIsEditable()` and `whereIsNotEditable()` filter text matches by whether they come from an editable text input.

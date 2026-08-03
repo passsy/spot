@@ -96,7 +96,7 @@ class Act {
       return await alwaysPropagateDevicePointerEvents(() async {
         // Before tapping the widget, we need to make sure that the widget is
         // not outside the viewport or covered by another widget.
-        validateViewBounds(renderBox, selector: selector);
+        throwIfOutsideViewport(snapshot: snapshot, renderBox: renderBox);
         final pokablePositions = findPokablePositions(renderBox);
 
         if (pokablePositions.hits.isEmpty) {

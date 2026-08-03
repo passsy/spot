@@ -119,6 +119,29 @@ TapInspection inspectTapSelector(WidgetSelector selector) {
   );
 }
 
+/// Throws a [TapFailure] when the target of [snapshot] is outside the viewport.
+///
+/// Unlike [validateViewBounds] this reports the failure as a [TapInspection],
+/// so a caller of [Act.tap] can read the reason instead of the message.
+void throwIfOutsideViewport({
+  required WidgetSnapshot snapshot,
+  required RenderBox renderBox,
+}) {
+  final targetElement = snapshot.discoveredElement;
+  if (targetElement == null) {
+    validateViewBounds(renderBox, selector: snapshot.selector);
+    return;
+  }
+  final failure = _inspectViewBounds(
+    selectorDescription: snapshot.selector.toStringBreadcrumb(),
+    target: _tapWidgetInfo(targetElement),
+    renderBox: renderBox,
+  );
+  if (failure != null) {
+    throw TapFailure(failure);
+  }
+}
+
 /// Throws when the widget is not at least partially located in the viewport.
 void validateViewBounds(
   RenderBox renderBox, {
@@ -230,7 +253,7 @@ void throwHitTestFailureReport({
       position: position,
       search: _inspectTapTarget(target),
     );
-    throw TestFailure(failure.message);
+    throw TapFailure(failure);
   }
 
   final probe = probeHitTest(position, target);
@@ -1028,6 +1051,34 @@ class TapInspection {
       '${warning.message}',
     );
   }
+}
+
+/// Thrown by [Act.tap] when the widget can not be tapped.
+///
+/// Carries the [inspection] that explains why, so a test can assert the reason
+/// instead of matching on the message:
+///
+/// ```dart
+/// await expectLater(
+///   () => act.tap(spot<SubmitButton>()),
+///   throwsA(
+///     isA<TapFailure>().having(
+///       (it) => it.inspection.reason,
+///       'reason',
+///       isA<TapCoveredReason>(),
+///     ),
+///   ),
+/// );
+/// ```
+///
+/// Extends [TestFailure], so it is still reported as a failed assertion rather
+/// than a crashed test.
+class TapFailure extends TestFailure {
+  /// Creates a tap failure for [inspection].
+  TapFailure(this.inspection) : super(inspection.message);
+
+  /// Describes the widget and why [Act.tap] could not tap it.
+  final TapInspection inspection;
 }
 
 /// Non-fatal warning produced by [Act.inspectTap].

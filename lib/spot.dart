@@ -21,6 +21,7 @@ export 'package:spot/src/act/act_tap.dart'
         TapAbsorbedReason,
         TapBlocker,
         TapCoveredReason,
+        TapFailure,
         TapHitSample,
         TapHitTestInfo,
         TapIgnoredReason,
