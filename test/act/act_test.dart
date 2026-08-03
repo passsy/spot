@@ -229,6 +229,32 @@ void actTests() {
       );
     });
 
+    testWidgets('tap throws when the AbsorbPointer is not below the hit target',
+        (tester) async {
+      // The widget below the hit target is _AbsorbingButtonWrapper, the
+      // AbsorbPointer sits one level further down. Detection has to walk up
+      // from the target, walking down from the hit target finds nothing.
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Center(
+            child: _AbsorbingButtonWrapper(),
+          ),
+        ),
+      );
+
+      final button = spot<ElevatedButton>()..existsOnce();
+      await expectLater(
+        () => act.tap(button),
+        throwsSpotErrorContaining([
+          "Widget 'ElevatedButton' is wrapped in AbsorbPointer and doesn't receive pointer events.",
+          "AbsorbPointer is created at",
+          if (!kIsWeb) "act_test.dart:",
+          "The closest widget reacting to the touch event is:",
+          "Center(",
+        ]),
+      );
+    });
+
     testWidgets('tap throws when widget is wrapped in IgnorePointer',
         (tester) async {
       await tester.pumpWidget(
@@ -506,6 +532,39 @@ void actTests() {
       expect(() => result.tapUnknownReason, throwsA(isA<TestFailure>()));
       expect(reason.ignorePointer.widget, isA<IgnorePointer>());
       expect(reason.ignorePointer.globalRect, isNotNull);
+    });
+
+    testWidgets('reports the AbsorbPointer above the target, not below the hit',
+        (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Center(
+            child: _AbsorbingButtonWrapper(),
+          ),
+        ),
+      );
+
+      final absorbElement = find
+          .descendant(
+            of: find.byType(_AbsorbingButtonWrapper),
+            matching: find.byType(AbsorbPointer),
+          )
+          .evaluate()
+          .single;
+      final result = act.inspectTap(spot<ElevatedButton>());
+      final reason = result.tapAbsorbedReason;
+
+      expect(result.canTap, isFalse);
+      expect(result.target?.widget, isA<ElevatedButton>());
+      // Pins the reported widget to the AbsorbPointer itself. The message
+      // renders the source location of this element, so reporting the
+      // _AbsorbingButtonWrapper that created it would point at the wrong line.
+      expect(reason.absorbPointer.element, same(absorbElement));
+      expect(reason.absorbPointer.widget, isA<AbsorbPointer>());
+      // The hit stops above the wrapper, which is why walking down from the
+      // receiver cannot find the AbsorbPointer.
+      expect(reason.hitReceiver?.widget, isNot(isA<AbsorbPointer>()));
+      expect(reason.hitTest.path, isNotEmpty);
     });
 
     testWidgets('typed reason getters fail when the reason changes',
@@ -843,6 +902,22 @@ class _NoRenderObjectElement extends StatelessElement {
 
   @override
   RenderObject? get renderObject => null;
+}
+
+/// Creates the [AbsorbPointer] inside [build], so the widget below the hit
+/// target is this wrapper instead of the [AbsorbPointer].
+class _AbsorbingButtonWrapper extends StatelessWidget {
+  const _AbsorbingButtonWrapper();
+
+  @override
+  Widget build(BuildContext context) {
+    return AbsorbPointer(
+      child: ElevatedButton(
+        onPressed: () {},
+        child: const Text('Save'),
+      ),
+    );
+  }
 }
 
 class _IgnoredButtonWrapper extends StatelessWidget {
