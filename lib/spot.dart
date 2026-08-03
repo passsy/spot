@@ -33,7 +33,7 @@ export 'package:spot/src/act/act_tap.dart'
         TapNotFoundReason,
         TapOutsideViewportReason,
         TapPartialCoverageReason,
-        TapTargetSearch,
+        TapSamples,
         TapUnknownReason,
         TapWidgetInfo,
         TapZeroSizeReason;

@@ -544,23 +544,24 @@ void actTests() {
         expect(target.isUserCode, isTrue);
       }
 
-      final search = result.search!;
-      expect(search.searchArea, target.globalRect);
-      expect(search.spacing, 8);
-      expect(search.samples, isNotEmpty);
+      final samples = result.samples!;
+      expect(samples.searchArea, target.globalRect);
+      expect(samples.spacing, 8);
+      expect(samples.all, isNotEmpty);
       expect(
-        search.samples.length,
-        search.hittableSamples.length + search.blockedSamples.length,
+        samples.all.length,
+        samples.hittable.length + samples.blocked.length,
       );
-      expect(search.blockedSamples, isEmpty);
-      expect(search.hittablePercent, 100);
-      expect(search.blockers, isEmpty);
-      expect(search.hittablePositions, hasLength(search.samples.length));
-      expect(search.blockedPositions, isEmpty);
-      expect(search.bestTapPosition, result.tapPosition);
+      expect(samples.blocked, isEmpty);
+      expect(samples.hittablePercent, 100);
+      expect(samples.blockers, isEmpty);
+      expect(samples.hittable.map((it) => it.globalPosition),
+          hasLength(samples.all.length));
+      expect(samples.blocked.map((it) => it.globalPosition), isEmpty);
+      expect(result.tapPosition, isNotNull);
       expect(target.globalRect!.contains(result.tapPosition!), isTrue);
 
-      final sample = search.samples.first;
+      final sample = samples.all.first;
       expect(sample.hitsTarget, isTrue);
       expect(
         sample.globalPosition,
@@ -617,34 +618,35 @@ void actTests() {
       // The warning reason carries the same search data as the inspection.
       final reason = result.tapPartialCoverageReason;
       expect(reason, same(warning.reason));
-      expect(reason.search, same(result.search));
+      expect(reason.samples, same(result.samples));
 
-      final search = result.search!;
-      expect(search.hittableSamples, isNotEmpty);
-      expect(search.blockedSamples, isNotEmpty);
-      expect(search.hittablePositions, isNotEmpty);
-      expect(search.blockedPositions, isNotEmpty);
-      expect(search.hittablePercent, greaterThan(0));
-      expect(search.hittablePercent, lessThan(100));
+      final samples = result.samples!;
+      expect(samples.hittable, isNotEmpty);
+      expect(samples.blocked, isNotEmpty);
+      expect(samples.hittable.map((it) => it.globalPosition), isNotEmpty);
+      expect(samples.blocked.map((it) => it.globalPosition), isNotEmpty);
+      expect(samples.hittablePercent, greaterThan(0));
+      expect(samples.hittablePercent, lessThan(100));
 
       // Names what is in the way and how much of the target it takes, without
       // the caller having to group 169 samples by hit-test receiver.
-      expect(search.blockers, hasLength(1));
-      final blocker = search.blockers.single;
+      expect(samples.blockers, hasLength(1));
+      final blocker = samples.blockers.single;
       expect(blocker.widget.widget, isA<ColoredBox>());
-      expect(blocker.sampleCount, search.blockedSamples.length);
+      expect(blocker.sampleCount, samples.blocked.length);
       expect(blocker.percent, closeTo(46, 1));
       expect(blocker.toString(), 'ColoredBox (46%)');
-      expect(search.blockedSamples.first.blockedBy, isNotNull);
-      expect(search.hittableSamples.first.blockedBy, isNull);
+      expect(samples.blocked.first.blockedBy, isNotNull);
+      expect(samples.hittable.first.blockedBy, isNull);
 
       // The right half is covered, so every reachable point is on the left.
       expect(
-        search.hittablePositions
-            .every((it) => it.dx < search.searchArea.center.dx),
+        samples.hittable
+            .map((it) => it.globalPosition)
+            .every((it) => it.dx < samples.searchArea.center.dx),
         isTrue,
       );
-      expect(result.tapPosition!.dx, lessThan(search.searchArea.center.dx));
+      expect(result.tapPosition!.dx, lessThan(samples.searchArea.center.dx));
     });
 
     testWidgets('reports a not-found reason when nothing matches',
@@ -660,7 +662,7 @@ void actTests() {
       expect(result.warning, isNull);
       // Nothing was found, so there is nothing to describe or search.
       expect(result.target, isNull);
-      expect(result.search, isNull);
+      expect(result.samples, isNull);
       expect(result.tapPosition, isNull);
 
       expect(reason.selectorDescription, result.selectorDescription);
@@ -687,7 +689,7 @@ void actTests() {
       expect(result.message, 'Found 2 elements matching Text in widget tree');
       expect(result.warning, isNull);
       expect(result.target, isNull);
-      expect(result.search, isNull);
+      expect(result.samples, isNull);
       expect(result.tapPosition, isNull);
 
       expect(reason.selectorDescription, 'Text');
@@ -713,7 +715,7 @@ void actTests() {
             "Widget '_NoRenderObjectWidget' has no associated RenderObject"),
       );
       expect(result.warning, isNull);
-      expect(result.search, isNull);
+      expect(result.samples, isNull);
       expect(result.tapPosition, isNull);
 
       // The widget itself is known, only its render object is missing.
@@ -738,7 +740,7 @@ void actTests() {
         contains('is not a RenderObject in the 2D Cartesian coordinate system'),
       );
       expect(result.warning, isNull);
-      expect(result.search, isNull);
+      expect(result.samples, isNull);
       expect(result.tapPosition, isNull);
 
       final target = result.target!;
@@ -786,7 +788,7 @@ void actTests() {
       );
       expect(result.warning, isNull);
       // Sampling is skipped, nothing inside the viewport could be hit.
-      expect(result.search, isNull);
+      expect(result.samples, isNull);
       expect(result.tapPosition, isNull);
       expect(result.target?.widget, isA<GestureDetector>());
 
@@ -829,7 +831,7 @@ void actTests() {
       expect(result.target?.widget, isA<ElevatedButton>());
       // Sampling ran and found no hittable point, that is why the inspection
       // looked for a cause in the first place.
-      expect(result.search?.hittableSamples, isEmpty);
+      expect(result.samples?.hittable, isEmpty);
 
       expect(reason.absorbPointer.widget, isA<AbsorbPointer>());
       expect(reason.absorbPointer.globalRect, result.target?.globalRect);
@@ -905,7 +907,7 @@ void actTests() {
       expect(result.warning, isNull);
       expect(result.tapPosition, isNull);
       expect(result.target?.widget, isA<ElevatedButton>());
-      expect(result.search?.hittableSamples, isEmpty);
+      expect(result.samples?.hittable, isEmpty);
 
       expect(reason.ignorePointer.widget, isA<IgnorePointer>());
       expect(reason.ignorePointer.globalRect, result.target?.globalRect);
@@ -1023,7 +1025,7 @@ void actTests() {
       expect(result.warning, isNull);
       expect(result.tapPosition, isNull);
       expect(result.target?.widget, isA<ElevatedButton>());
-      expect(result.search?.hittableSamples, isEmpty);
+      expect(result.samples?.hittable, isEmpty);
 
       // Everything from the covering widget up to the common ancestor.
       expect(
@@ -1052,11 +1054,11 @@ void actTests() {
       expect(reason.hitTest.position, result.target?.globalCenter);
 
       // The whole surface is blocked by the same widget.
-      final search = result.search!;
-      expect(search.hittablePositions, isEmpty);
-      expect(search.blockers, hasLength(1));
-      expect(search.blockers.single.widget.widget, isA<ColoredBox>());
-      expect(search.blockers.single.percent, 100);
+      final samples = result.samples!;
+      expect(samples.hittable.map((it) => it.globalPosition), isEmpty);
+      expect(samples.blockers, hasLength(1));
+      expect(samples.blockers.single.widget.widget, isA<ColoredBox>());
+      expect(samples.blockers.single.percent, 100);
     });
 
     testWidgets('reports an unknown reason when nothing else explains it',
@@ -1091,16 +1093,14 @@ void actTests() {
       expect(reason.hitTest.position, reason.position);
       expect(reason.hitTest.path, isNotEmpty);
       expect(reason.hitTest.receiver?.widget, isNot(isA<SizedBox>()));
-      expect(reason.search, same(result.search));
-      expect(reason.search.searchArea, result.target?.globalRect);
-      expect(reason.search.spacing, 8);
-      expect(reason.search.samples, isNotEmpty);
-      expect(reason.search.hittableSamples, isEmpty);
-      expect(reason.search.blockedSamples,
-          hasLength(reason.search.samples.length));
-      expect(reason.search.hittablePositions, isEmpty);
-      expect(reason.search.hittablePercent, 0);
-      expect(reason.search.bestTapPosition, isNull);
+      expect(reason.samples, same(result.samples));
+      expect(reason.samples.searchArea, result.target?.globalRect);
+      expect(reason.samples.spacing, 8);
+      expect(reason.samples.all, isNotEmpty);
+      expect(reason.samples.hittable, isEmpty);
+      expect(reason.samples.blocked, hasLength(reason.samples.all.length));
+      expect(reason.samples.hittable.map((it) => it.globalPosition), isEmpty);
+      expect(reason.samples.hittablePercent, 0);
     });
 
     testWidgets('typed reason getters fail when the reason changes',

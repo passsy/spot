@@ -77,8 +77,9 @@ TapInspection inspectTapSelector(WidgetSelector selector) {
     return outsideViewportFailure;
   }
 
-  final search = _inspectTapTarget(renderObject);
-  if (search.hittableSamples.isEmpty) {
+  final probe = _inspectTapTarget(renderObject);
+  final samples = probe.samples;
+  if (samples.hittable.isEmpty) {
     final centerPosition =
         renderObject.localToGlobal(renderObject.size.center(Offset.zero));
     return _inspectUntappableTarget(
@@ -87,16 +88,16 @@ TapInspection inspectTapSelector(WidgetSelector selector) {
       targetElement: targetElement,
       renderBox: renderObject,
       position: centerPosition,
-      search: search,
+      samples: samples,
     );
   }
 
   final reason = TapPartialCoverageReason(
-    search: search,
+    samples: samples,
   );
   final warningMessage = _createPartialCoverageWarningMessage(
     target: target,
-    search: search,
+    samples: samples,
   );
   final warning = () {
     if (warningMessage == null) {
@@ -111,8 +112,8 @@ TapInspection inspectTapSelector(WidgetSelector selector) {
   return TapInspection(
     selectorDescription: selectorDescription,
     target: target,
-    search: search,
-    tapPosition: search.bestTapPosition,
+    samples: samples,
+    tapPosition: probe.bestTapPosition,
     message: null,
     reason: null,
     warning: warning,
@@ -251,7 +252,7 @@ void throwHitTestFailureReport({
       targetElement: targetElement,
       renderBox: target,
       position: position,
-      search: _inspectTapTarget(target),
+      samples: _inspectTapTarget(target).samples,
     );
     throw TapFailure(failure);
   }
@@ -286,7 +287,7 @@ void throwIfZeroSize({required WidgetSnapshot snapshot}) {
     target: _tapWidgetInfo(targetElement),
     targetElement: targetElement,
     renderBox: renderObject,
-    search: _inspectTapTarget(renderObject),
+    samples: _inspectTapTarget(renderObject).samples,
   );
   if (failure == null) {
     return;
@@ -300,12 +301,12 @@ TapInspection _tapInspectionFailure({
   required TapWidgetInfo? target,
   required Object reason,
   required String message,
-  TapTargetSearch? search,
+  TapSamples? samples,
 }) {
   return TapInspection(
     selectorDescription: selectorDescription,
     target: target,
-    search: search,
+    samples: samples,
     tapPosition: null,
     message: message,
     reason: reason,
@@ -346,7 +347,7 @@ TapInspection _inspectUntappableTarget({
   required Element targetElement,
   required RenderBox renderBox,
   required Offset position,
-  required TapTargetSearch search,
+  required TapSamples samples,
 }) {
   final probe = probeHitTest(position, renderBox);
   final renderElement = _elementForRenderBox(renderBox) ?? targetElement;
@@ -355,7 +356,7 @@ TapInspection _inspectUntappableTarget({
     target: target,
     targetElement: renderElement,
     hitTest: probe.hitTest,
-    search: search,
+    samples: samples,
   );
   if (absorbedFailure != null) {
     return absorbedFailure;
@@ -366,7 +367,7 @@ TapInspection _inspectUntappableTarget({
     target: target,
     targetElement: renderElement,
     hitTest: probe.hitTest,
-    search: search,
+    samples: samples,
   );
   if (ignoredFailure != null) {
     return ignoredFailure;
@@ -377,7 +378,7 @@ TapInspection _inspectUntappableTarget({
     target: target,
     targetElement: targetElement,
     renderBox: renderBox,
-    search: search,
+    samples: samples,
   );
   if (zeroSizeFailure != null) {
     return zeroSizeFailure;
@@ -388,7 +389,7 @@ TapInspection _inspectUntappableTarget({
     target: target,
     targetElement: targetElement,
     hitTest: probe.hitTest,
-    search: search,
+    samples: samples,
   );
   if (coveredFailure != null) {
     return coveredFailure;
@@ -397,13 +398,13 @@ TapInspection _inspectUntappableTarget({
   final reason = TapUnknownReason(
     position: position,
     hitTest: probe.hitTest,
-    search: search,
+    samples: samples,
   );
   return _tapInspectionFailure(
     selectorDescription: selectorDescription,
     target: target,
     reason: reason,
-    search: search,
+    samples: samples,
     message:
         "Widget '${target.widgetName}' can not be interacted with at position $position where its RenderObject $renderBox was found.\n"
         "The exact reason, why it doesn't receive hitTest events is unknown.\n"
@@ -425,7 +426,7 @@ TapInspection? _inspectAbsorbPointer({
   required TapWidgetInfo target,
   required Element targetElement,
   required TapHitTestInfo hitTest,
-  required TapTargetSearch search,
+  required TapSamples samples,
 }) {
   // parents starts at targetElement, an AbsorbPointer on the target itself
   // absorbs its own pointer events and has to be found here, too.
@@ -453,7 +454,7 @@ TapInspection? _inspectAbsorbPointer({
     selectorDescription: selectorDescription,
     target: target,
     reason: reason,
-    search: search,
+    samples: samples,
     message:
         "Widget '${target.widgetName}' is wrapped in AbsorbPointer and doesn't receive pointer events.\n"
         "AbsorbPointer is created at $location\n"
@@ -467,7 +468,7 @@ TapInspection? _inspectIgnorePointer({
   required TapWidgetInfo target,
   required Element targetElement,
   required TapHitTestInfo hitTest,
-  required TapTargetSearch search,
+  required TapSamples samples,
 }) {
   // parents starts at targetElement, see _inspectAbsorbPointer.
   final ignoreElement = targetElement.parents.firstOrNullWhere((it) {
@@ -494,7 +495,7 @@ TapInspection? _inspectIgnorePointer({
     selectorDescription: selectorDescription,
     target: target,
     reason: reason,
-    search: search,
+    samples: samples,
     message:
         "Widget '${target.widgetName}' is wrapped in IgnorePointer and doesn't receive pointer events.\n"
         "The IgnorePointer is located at $location",
@@ -518,7 +519,7 @@ TapInspection? _inspectZeroSize({
   required TapWidgetInfo target,
   required Element targetElement,
   required RenderBox renderBox,
-  required TapTargetSearch search,
+  required TapSamples samples,
 }) {
   if (renderBox.size != Size.zero) {
     return null;
@@ -545,7 +546,7 @@ TapInspection? _inspectZeroSize({
     selectorDescription: selectorDescription,
     target: target,
     reason: reason,
-    search: search,
+    samples: samples,
     message:
         "${target.element.toStringShort()} can't be interacted with because it has size ${Size.zero}.\n"
         "${shrinker.toStringShort()} forces ${target.element.toStringShort()} to have the size ${Size.zero}.\n"
@@ -558,7 +559,7 @@ TapInspection? _inspectCoveredWidget({
   required TapWidgetInfo target,
   required Element targetElement,
   required TapHitTestInfo hitTest,
-  required TapTargetSearch search,
+  required TapSamples samples,
 }) {
   final cover = hitTest.receiver;
   if (cover == null) {
@@ -590,7 +591,7 @@ TapInspection? _inspectCoveredWidget({
     selectorDescription: selectorDescription,
     target: target,
     reason: reason,
-    search: search,
+    samples: samples,
     message: createCoverWidgetMessage(
       targetName: target.widgetName,
       analysis: analysis,
@@ -600,9 +601,9 @@ TapInspection? _inspectCoveredWidget({
 
 String? _createPartialCoverageWarningMessage({
   required TapWidgetInfo target,
-  required TapTargetSearch search,
+  required TapSamples samples,
 }) {
-  final roundUp = search.hittablePercent.ceil();
+  final roundUp = samples.hittablePercent.ceil();
   if (roundUp > 80) {
     return null;
   }
@@ -621,12 +622,20 @@ String? _createPartialCoverageWarningMessage({
       " - Increase the Widget size\n";
 }
 
-TapTargetSearch _inspectTapTarget(RenderBox renderBox) {
+/// The sampled points of a target plus the position [Act.tap] would use.
+class _TapTargetProbe {
+  _TapTargetProbe({required this.samples, required this.bestTapPosition});
+
+  final TapSamples samples;
+  final Offset? bestTapPosition;
+}
+
+_TapTargetProbe _inspectTapTarget(RenderBox renderBox) {
   final pokablePositions = findPokablePositions(
     renderBox,
     collectHitTests: true,
   );
-  final samples = pokablePositions.samples.mapNotNull((it) {
+  final all = pokablePositions.samples.mapNotNull((it) {
     final hitTest = it.hitTest;
     if (hitTest == null) {
       return null;
@@ -638,10 +647,12 @@ TapTargetSearch _inspectTapTarget(RenderBox renderBox) {
       hitTest: hitTest,
     );
   }).toList();
-  return TapTargetSearch(
-    searchArea: pokablePositions.searchArea,
-    spacing: pokablePositions.spacing,
-    samples: samples,
+  return _TapTargetProbe(
+    samples: TapSamples(
+      searchArea: pokablePositions.searchArea,
+      spacing: pokablePositions.spacing,
+      all: all,
+    ),
     bestTapPosition: pokablePositions.mostCenterHittablePosition,
   );
 }
@@ -929,7 +940,7 @@ class TapInspection {
   TapInspection({
     required this.selectorDescription,
     required this.target,
-    required this.search,
+    required this.samples,
     required this.tapPosition,
     required this.message,
     required this.reason,
@@ -942,8 +953,8 @@ class TapInspection {
   /// The single widget selected as tap target, if one was found.
   final TapWidgetInfo? target;
 
-  /// Sampled hit-test information used to find a tappable point.
-  final TapTargetSearch? search;
+  /// The points that were poked to find out whether the target can be tapped.
+  final TapSamples? samples;
 
   /// The position [Act.tap] would use.
   final Offset? tapPosition;
@@ -1205,15 +1216,14 @@ class TapHitSample {
   }
 }
 
-/// Sampled search used to find a tappable position on a widget.
-class TapTargetSearch {
-  /// Creates tap-target search information.
-  TapTargetSearch({
+/// The points spot poked to find out whether a widget can be tapped.
+class TapSamples {
+  /// Creates sampled hit-test information.
+  TapSamples({
     required this.searchArea,
     required this.spacing,
-    required List<TapHitSample> samples,
-    required this.bestTapPosition,
-  }) : samples = List.unmodifiable(samples);
+    required List<TapHitSample> all,
+  }) : all = List.unmodifiable(all);
 
   /// The global rectangle covered by the sampled target.
   final Rect searchArea;
@@ -1225,42 +1235,29 @@ class TapTargetSearch {
   /// A future spot version may search differently.
   final int spacing;
 
-  /// All sampled hit-test points, see [spacing].
+  /// Every point that was poked, see [spacing].
   ///
   /// Prefer [blockers] and [hittablePercent] to answer what is in the way and
   /// how much of the target is reachable. They stay meaningful no matter how
   /// the points were picked.
-  final List<TapHitSample> samples;
+  final List<TapHitSample> all;
 
-  /// Best tap position selected from [hittablePositions].
-  final Offset? bestTapPosition;
-
-  /// Samples that reached the target render object.
-  List<TapHitSample> get hittableSamples {
-    return samples.where((it) => it.hitsTarget).toList();
+  /// Points that reached the target render object.
+  List<TapHitSample> get hittable {
+    return all.where((it) => it.hitsTarget).toList();
   }
 
-  /// Samples that did not reach the target render object.
-  List<TapHitSample> get blockedSamples {
-    return samples.where((it) => !it.hitsTarget).toList();
+  /// Points that did not reach the target render object.
+  List<TapHitSample> get blocked {
+    return all.where((it) => !it.hitsTarget).toList();
   }
 
-  /// Global positions that reached the target render object.
-  List<Offset> get hittablePositions {
-    return hittableSamples.map((it) => it.globalPosition).toList();
-  }
-
-  /// Global positions that did not reach the target render object.
-  List<Offset> get blockedPositions {
-    return blockedSamples.map((it) => it.globalPosition).toList();
-  }
-
-  /// Percentage of sampled points that reached the target render object.
+  /// Percentage of poked points that reached the target render object.
   double get hittablePercent {
-    if (samples.isEmpty) {
+    if (all.isEmpty) {
       return 0;
     }
-    return hittableSamples.length / samples.length * 100;
+    return hittable.length / all.length * 100;
   }
 
   /// The widgets that received pointer events instead of the target, the one
@@ -1269,13 +1266,13 @@ class TapTargetSearch {
   /// Answers what is in the way without walking [samples]:
   ///
   /// ```dart
-  /// final blocker = act.inspectTap(spot<MyButton>()).search!.blockers.first;
+  /// final blocker = act.inspectTap(spot<MyButton>()).samples!.blockers.first;
   /// print('${blocker.widget.widgetName} covers ${blocker.percent}%');
   /// ```
   List<TapBlocker> get blockers {
     final counts = <Element, int>{};
     final widgets = <Element, TapWidgetInfo>{};
-    for (final sample in blockedSamples) {
+    for (final sample in blocked) {
       final receiver = sample.blockedBy;
       if (receiver == null) {
         continue;
@@ -1287,7 +1284,7 @@ class TapTargetSearch {
       return TapBlocker(
         widget: widgets[entry.key]!,
         sampleCount: entry.value,
-        percent: samples.isEmpty ? 0 : entry.value / samples.length * 100,
+        percent: all.isEmpty ? 0 : entry.value / all.length * 100,
       );
     }).toList()
       ..sort((a, b) => b.sampleCount.compareTo(a.sampleCount));
@@ -1497,7 +1494,7 @@ class TapUnknownReason {
   TapUnknownReason({
     required this.position,
     required this.hitTest,
-    required this.search,
+    required this.samples,
   });
 
   /// Inspected global position.
@@ -1507,18 +1504,18 @@ class TapUnknownReason {
   final TapHitTestInfo hitTest;
 
   /// Sampled tap search data.
-  final TapTargetSearch search;
+  final TapSamples samples;
 }
 
 /// The target is tappable but only partially reacts to tap events.
 class TapPartialCoverageReason {
   /// Creates a partial-coverage tap warning reason.
   TapPartialCoverageReason({
-    required this.search,
+    required this.samples,
   });
 
   /// Sampled tap search data.
-  final TapTargetSearch search;
+  final TapSamples samples;
 }
 
 /// The outcome of a single hit test, see [probeHitTest].

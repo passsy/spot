@@ -9,13 +9,13 @@
   // the button is behind a full-screen overlay
   expect(inspection.tapCoveredReason.primaryCover?.widget, isA<ColoredBox>());
   ```
-  Every failure branch of `act.tap()` has a reason: `TapNotFoundReason`, `TapMultipleWidgetsFoundReason`, `TapNoRenderObjectReason`, `TapNonRenderBoxReason`, `TapOutsideViewportReason`, `TapAbsorbedReason`, `TapIgnoredReason`, `TapZeroSizeReason`, `TapCoveredReason` and `TapUnknownReason`. A tappable widget that is only partially reachable reports `TapPartialCoverageReason` as a warning. Read them via `inspection.reason`, or via a typed getter such as `tapCoveredReason` that fails the test when the widget turned out to be untappable for a different reason. Also adds `TapInspection`, `TapInspectionWarning`, `TapWidgetInfo`, `TapHitTestInfo`, `TapHitSample`, `TapTargetSearch` and `TapBlocker`.
+  Every failure branch of `act.tap()` has a reason: `TapNotFoundReason`, `TapMultipleWidgetsFoundReason`, `TapNoRenderObjectReason`, `TapNonRenderBoxReason`, `TapOutsideViewportReason`, `TapAbsorbedReason`, `TapIgnoredReason`, `TapZeroSizeReason`, `TapCoveredReason` and `TapUnknownReason`. A tappable widget that is only partially reachable reports `TapPartialCoverageReason` as a warning. Read them via `inspection.reason`, or via a typed getter such as `tapCoveredReason` that fails the test when the widget turned out to be untappable for a different reason. Also adds `TapInspection`, `TapInspectionWarning`, `TapWidgetInfo`, `TapHitTestInfo`, `TapHitSample`, `TapSamples` and `TapBlocker`.
 
-  `TapInspection.search` reports how much of the widget reacts to pointer events and what is in the way, for tappable widgets too.
+  `TapInspection.samples` reports how much of the widget reacts to pointer events and what is in the way, for tappable widgets too.
   ```dart
-  final search = act.inspectTap(spot<ElevatedButton>()).search!;
-  print('${search.hittablePercent}% reachable');
-  for (final blocker in search.blockers) {
+  final samples = act.inspectTap(spot<ElevatedButton>()).samples!;
+  print('${samples.hittablePercent}% of the button reacts to taps');
+  for (final blocker in samples.blockers) {
     print('${blocker.widget.widgetName} covers ${blocker.percent}%');
   }
   ```
