@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Improvement: The source location of a widget is resolved once per widget instead of on every lookup, which speeds up `act.tapAt()` timeline events and the diagnostics behind failing `act.tap()` calls. #154
 - New: `WidgetSelector<AnyText>.whereIsEditable()` and `whereIsNotEditable()` filter text matches by whether they come from an editable text input.
   ```dart
   spotText('username').whereIsEditable().existsOnce();
