@@ -1157,10 +1157,40 @@ Future<T> _alwaysPropagateDevicePointerEvents<T>(
   }
 }
 
+/// Caches the [WidgetLocation] of a [Widget], including a `null` result
+///
+/// Keyed by [Widget], not by [Element], because an [Element] survives a
+/// rebuild that replaces its widget with one created at a different location,
+/// while a [Widget] instance always originates from a single constructor call.
+class _CachedWidgetLocation {
+  _CachedWidgetLocation(this.location);
+
+  final WidgetLocation? location;
+}
+
+final Expando<_CachedWidgetLocation> _widgetLocationCache =
+    Expando<_CachedWidgetLocation>('debugWidgetLocation');
+
 /// Grants access to the location of a Widget via [WidgetInspectorService]
 extension WidgetLocationExt on Element {
   /// Returns where the widget was created in code
+  ///
+  /// The result is cached per [Widget]. Resolving a location serializes a
+  /// diagnostics node to JSON, which is far too expensive to repeat for every
+  /// widget on every hit test.
   WidgetLocation? get debugWidgetLocation {
+    final widget = this.widget;
+    final cached = _widgetLocationCache[widget];
+    if (cached != null) {
+      return cached.location;
+    }
+
+    final location = _resolveDebugWidgetLocation();
+    _widgetLocationCache[widget] = _CachedWidgetLocation(location);
+    return location;
+  }
+
+  WidgetLocation? _resolveDebugWidgetLocation() {
     try {
       final delegate = InspectorSerializationDelegate(
         service: WidgetInspectorService.instance,
