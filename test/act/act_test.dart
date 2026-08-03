@@ -424,8 +424,13 @@ void actTests() {
     });
   });
 
+  // Every reason [act.inspectTap] can report gets one test here, written the
+  // way an external consumer would assert "this widget is not tappable because
+  // of X". Each test checks the whole [TapInspection] envelope plus every
+  // property of the reason it carries.
   group('inspectTap', () {
-    testWidgets('returns tap position and sampled hit tests', (tester) async {
+    testWidgets('reports a tappable widget with sampled hit tests',
+        (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Center(
@@ -440,29 +445,231 @@ void actTests() {
       final result = act.inspectTap(spot<ElevatedButton>());
 
       expect(result.canTap, isTrue);
-      expect(result.tapPosition, isNotNull);
+      expect(result.selectorDescription, 'ElevatedButton');
       expect(result.reason, isNull);
       expect(result.message, isNull);
-      expect(result.target?.widget, isA<ElevatedButton>());
-      expect(result.target?.globalRect, isNotNull);
-      expect(result.search?.samples, isNotEmpty);
-      expect(result.search?.hittablePercent, greaterThan(0));
+      expect(result.warning, isNull);
+
+      final target = result.target!;
+      expect(target.widget, isA<ElevatedButton>());
+      expect(target.element.widget, same(target.widget));
+      expect(target.widgetName, 'ElevatedButton');
+      expect(target.renderObject, isA<RenderBox>());
+      expect(target.globalRect, isNotNull);
+      expect(target.size, target.globalRect!.size);
+      expect(target.globalCenter, target.globalRect!.center);
+      expect(target.paintBounds, Offset.zero & target.size!);
+      if (!kIsWeb) {
+        expect(target.sourceLocation, contains('act_test.dart:'));
+        expect(target.isUserCode, isTrue);
+      }
+
+      final search = result.search!;
+      expect(search.searchArea, target.globalRect);
+      expect(search.spacing, 8);
+      expect(search.samples, isNotEmpty);
+      expect(
+        search.samples.length,
+        search.hittableSamples.length + search.blockedSamples.length,
+      );
+      expect(search.blockedSamples, isEmpty);
+      expect(search.hittablePercent, 100);
+      expect(search.hittablePositions, hasLength(search.samples.length));
+      expect(search.blockedPositions, isEmpty);
+      expect(search.bestTapPosition, result.tapPosition);
+      expect(target.globalRect!.contains(result.tapPosition!), isTrue);
+
+      final sample = search.samples.first;
+      expect(sample.hitsTarget, isTrue);
+      expect(
+        sample.globalPosition,
+        target.globalRect!.topLeft + sample.localPosition,
+      );
+      expect(sample.hitTest.position, sample.globalPosition);
+      expect(sample.hitTest.path, isNotEmpty);
+      expect(sample.hitTest.receiver, same(sample.hitTest.path.first));
     });
 
-    testWidgets('returns a typed covered reason', (tester) async {
+    testWidgets('warns about partial coverage but stays tappable',
+        (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Stack(
-            children: [
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('Save'),
-                ),
+          home: Center(
+            child: SizedBox(
+              width: 100,
+              height: 100,
+              child: Stack(
+                children: [
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {},
+                    child: const SizedBox.expand(),
+                  ),
+                  const Positioned(
+                    left: 50,
+                    top: 0,
+                    bottom: 0,
+                    width: 50,
+                    child: ColoredBox(
+                      color: Colors.green,
+                    ),
+                  ),
+                ],
               ),
-              const Positioned.fill(
-                child: ColoredBox(
-                  color: Colors.green,
+            ),
+          ),
+        ),
+      );
+
+      final result = act.inspectTap(spot<GestureDetector>());
+
+      expect(result.canTap, isTrue);
+      expect(result.reason, isNull);
+      expect(result.message, isNull);
+      expect(result.tapPosition, isNotNull);
+
+      final warning = result.warning!;
+      expect(warning.reason, isA<TapPartialCoverageReason>());
+      expect(warning.message, contains('only partially reacting to tap'));
+      expect(warning.message, contains('~54%'));
+
+      // The warning reason carries the same search data as the inspection.
+      final reason = result.tapPartialCoverageReason;
+      expect(reason, same(warning.reason));
+      expect(reason.search, same(result.search));
+
+      final search = result.search!;
+      expect(search.hittableSamples, isNotEmpty);
+      expect(search.blockedSamples, isNotEmpty);
+      expect(search.hittablePositions, isNotEmpty);
+      expect(search.blockedPositions, isNotEmpty);
+      expect(search.hittablePercent, greaterThan(0));
+      expect(search.hittablePercent, lessThan(100));
+      // The right half is covered, so the tap lands on the left half.
+      expect(result.tapPosition!.dx, lessThan(search.searchArea.center.dx));
+    });
+
+    testWidgets('reports a not-found reason when nothing matches',
+        (tester) async {
+      await tester.pumpWidget(const MaterialApp(home: Text('Save')));
+
+      final result = act.inspectTap(spot<ElevatedButton>());
+      final reason = result.tapNotFoundReason;
+
+      expect(result.canTap, isFalse);
+      expect(result.selectorDescription, 'ElevatedButton');
+      expect(result.message, 'Could not find ElevatedButton in widget tree');
+      expect(result.warning, isNull);
+      // Nothing was found, so there is nothing to describe or search.
+      expect(result.target, isNull);
+      expect(result.search, isNull);
+      expect(result.tapPosition, isNull);
+
+      expect(reason.selectorDescription, result.selectorDescription);
+    });
+
+    testWidgets(
+        'reports a multiple-widgets reason when the selector is ambiguous',
+        (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Column(
+            children: [
+              Text('first'),
+              Text('second'),
+            ],
+          ),
+        ),
+      );
+
+      final result = act.inspectTap(spot<Text>());
+      final reason = result.tapMultipleWidgetsFoundReason;
+
+      expect(result.canTap, isFalse);
+      expect(result.message, 'Found 2 elements matching Text in widget tree');
+      expect(result.warning, isNull);
+      expect(result.target, isNull);
+      expect(result.search, isNull);
+      expect(result.tapPosition, isNull);
+
+      expect(reason.selectorDescription, 'Text');
+      expect(reason.matches, hasLength(2));
+      expect(
+        reason.matches.map((it) => (it.widget as Text).data),
+        ['first', 'second'],
+      );
+      expect(reason.matches.every((it) => it.globalRect != null), isTrue);
+    });
+
+    testWidgets('reports a no-render-object reason', (tester) async {
+      await tester.pumpWidget(_NoRenderObjectWidget());
+
+      final result = act.inspectTap(spot<_NoRenderObjectWidget>());
+
+      expect(result.canTap, isFalse);
+      expect(result.reason, isA<TapNoRenderObjectReason>());
+      expect(result.tapNoRenderObjectReason, same(result.reason));
+      expect(
+        result.message,
+        contains(
+            "Widget '_NoRenderObjectWidget' has no associated RenderObject"),
+      );
+      expect(result.warning, isNull);
+      expect(result.search, isNull);
+      expect(result.tapPosition, isNull);
+
+      // The widget itself is known, only its render object is missing.
+      final target = result.target!;
+      expect(target.widget, isA<_NoRenderObjectWidget>());
+      expect(target.renderObject, isNull);
+      expect(target.globalRect, isNull);
+      expect(target.size, isNull);
+      expect(target.globalCenter, isNull);
+      expect(target.paintBounds, isNull);
+    });
+
+    testWidgets('reports a non-render-box reason', (tester) async {
+      await tester.pumpWidget(_NonCartesianWidget());
+
+      final result = act.inspectTap(spot<_NonCartesianWidget>());
+      final reason = result.tapNonRenderBoxReason;
+
+      expect(result.canTap, isFalse);
+      expect(
+        result.message,
+        contains('is not a RenderObject in the 2D Cartesian coordinate system'),
+      );
+      expect(result.warning, isNull);
+      expect(result.search, isNull);
+      expect(result.tapPosition, isNull);
+
+      final target = result.target!;
+      expect(target.widget, isA<_NonCartesianWidget>());
+      // A RenderObject exists, it is just not positionable in 2D.
+      expect(target.renderObject, isNotNull);
+      expect(target.renderObject, isNot(isA<RenderBox>()));
+      expect(target.globalRect, isNull);
+      expect(target.paintBounds, isNull);
+
+      expect(reason.renderObject, isA<_CustomRenderObject>());
+      expect(reason.renderObject, isNot(isA<RenderBox>()));
+    });
+
+    testWidgets('reports an outside-viewport reason', (tester) async {
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Positioned(
+                left: 1000,
+                top: 20,
+                width: 50,
+                height: 30,
+                child: GestureDetector(
+                  onTap: () {},
+                  child: const SizedBox.expand(),
                 ),
               ),
             ],
@@ -470,31 +677,35 @@ void actTests() {
         ),
       );
 
-      final result = act.inspectTap(spot<ElevatedButton>());
-      final reason = result.tapCoveredReason;
+      final result = act.inspectTap(spot<GestureDetector>());
+      final reason = result.tapOutsideViewportReason;
 
       expect(result.canTap, isFalse);
-      expect(result.reason, isA<TapCoveredReason>());
-      expect(result.message, contains('can not be interacted with directly'));
-      expect(result.target?.widget, isA<ElevatedButton>());
-      expect(reason.coveringWidgets, isNotEmpty);
-      expect(reason.coveringWidgets.first.widget, isA<ColoredBox>());
-      expect(reason.hitTest.position, isNotNull);
-      expect(result.target?.globalRect, isNotNull);
-      expect(reason.primaryCover?.globalRect, isNotNull);
       expect(
-        act.inspectTap(spot<ElevatedButton>()).tapCoveredReason,
-        isA<TapCoveredReason>()
-            .having((it) => it.coveringWidgets, 'coveringWidgets', isNotEmpty),
+        result.message,
+        "Widget 'GestureDetector' is located outside the viewport "
+        '(Rect.fromLTRB(1000.0, 20.0, 1050.0, 50.0)).',
       );
+      expect(result.warning, isNull);
+      // Sampling is skipped, nothing inside the viewport could be hit.
+      expect(result.search, isNull);
+      expect(result.tapPosition, isNull);
+      expect(result.target?.widget, isA<GestureDetector>());
+
+      expect(reason.viewport, const Rect.fromLTRB(0, 0, 800, 600));
+      expect(reason.targetRect, const Rect.fromLTRB(1000, 20, 1050, 50));
+      expect(reason.targetRect, result.target?.globalRect);
+      // This reason is only reported when the target and the viewport do not
+      // overlap at all, so both values are always empty.
+      expect(reason.visibleRect, Rect.zero);
+      expect(reason.visibleFraction, 0);
     });
 
-    testWidgets('returns an ignore reason with source and receiver',
-        (tester) async {
+    testWidgets('reports an absorbed reason', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Center(
-            child: IgnorePointer(
+            child: AbsorbPointer(
               child: ElevatedButton(
                 onPressed: () {},
                 child: const Text('Save'),
@@ -505,33 +716,34 @@ void actTests() {
       );
 
       final result = act.inspectTap(spot<ElevatedButton>());
-      final reason = result.tapIgnoredReason;
+      final reason = result.tapAbsorbedReason;
 
-      expect(result.target?.widget, isA<ElevatedButton>());
-      expect(reason.ignorePointer.widget, isA<IgnorePointer>());
-      expect(reason.ignorePointer.globalRect, isNotNull);
-      expect(reason.hitReceiver, isNotNull);
-      expect(reason.hitTest.path, isNotEmpty);
-    });
-
-    testWidgets(
-        'returns an ignore reason for a widget that builds IgnorePointer',
-        (tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: Center(
-            child: _IgnoredButtonWrapper(),
-          ),
+      expect(result.canTap, isFalse);
+      expect(
+        result.message,
+        contains(
+          "Widget 'ElevatedButton' is wrapped in AbsorbPointer and doesn't "
+          'receive pointer events.',
         ),
       );
+      expect(result.warning, isNull);
+      expect(result.tapPosition, isNull);
+      expect(result.target?.widget, isA<ElevatedButton>());
+      // Sampling ran and found no hittable point, that is why the inspection
+      // looked for a cause in the first place.
+      expect(result.search?.hittableSamples, isEmpty);
 
-      final result = act.inspectTap(spot<_IgnoredButtonWrapper>());
-      final reason = result.tapIgnoredReason;
-
-      expect(result.reason, isA<TapIgnoredReason>());
-      expect(() => result.tapUnknownReason, throwsA(isA<TestFailure>()));
-      expect(reason.ignorePointer.widget, isA<IgnorePointer>());
-      expect(reason.ignorePointer.globalRect, isNotNull);
+      expect(reason.absorbPointer.widget, isA<AbsorbPointer>());
+      expect(reason.absorbPointer.globalRect, result.target?.globalRect);
+      if (!kIsWeb) {
+        expect(reason.absorbPointer.sourceLocation, contains('act_test.dart:'));
+      }
+      // The AbsorbPointer swallows the event, something behind it answers.
+      expect(reason.hitReceiver, isNotNull);
+      expect(reason.hitReceiver!.widget, isNot(isA<ElevatedButton>()));
+      expect(reason.hitTest.path, isNotEmpty);
+      expect(reason.hitTest.receiver, same(reason.hitTest.path.first));
+      expect(reason.hitTest.position, result.target?.globalCenter);
     });
 
     testWidgets('reports the AbsorbPointer above the target, not below the hit',
@@ -567,6 +779,225 @@ void actTests() {
       expect(reason.hitTest.path, isNotEmpty);
     });
 
+    testWidgets('reports an ignored reason', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Center(
+            child: IgnorePointer(
+              child: ElevatedButton(
+                onPressed: () {},
+                child: const Text('Save'),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final result = act.inspectTap(spot<ElevatedButton>());
+      final reason = result.tapIgnoredReason;
+
+      expect(result.canTap, isFalse);
+      expect(
+        result.message,
+        contains(
+          "Widget 'ElevatedButton' is wrapped in IgnorePointer and doesn't "
+          'receive pointer events.',
+        ),
+      );
+      expect(result.warning, isNull);
+      expect(result.tapPosition, isNull);
+      expect(result.target?.widget, isA<ElevatedButton>());
+      expect(result.search?.hittableSamples, isEmpty);
+
+      expect(reason.ignorePointer.widget, isA<IgnorePointer>());
+      expect(reason.ignorePointer.globalRect, result.target?.globalRect);
+      if (!kIsWeb) {
+        expect(reason.ignorePointer.sourceLocation, contains('act_test.dart:'));
+      }
+      // The IgnorePointer is written inline here, so the closest user-code
+      // ancestor is the widget that wraps it.
+      expect(reason.introducedBy?.widget, isA<Center>());
+      expect(reason.hitReceiver, isNotNull);
+      expect(reason.hitReceiver!.widget, isNot(isA<ElevatedButton>()));
+      expect(reason.hitTest.path, isNotEmpty);
+      expect(reason.hitTest.receiver, same(reason.hitTest.path.first));
+      expect(reason.hitTest.position, result.target?.globalCenter);
+    });
+
+    testWidgets('names the widget that introduced the IgnorePointer',
+        (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Center(
+            child: _IgnoredButtonWrapper(),
+          ),
+        ),
+      );
+
+      final result = act.inspectTap(spot<_IgnoredButtonWrapper>());
+      final reason = result.tapIgnoredReason;
+
+      expect(result.reason, isA<TapIgnoredReason>());
+      expect(() => result.tapUnknownReason, throwsA(isA<TestFailure>()));
+      expect(reason.ignorePointer.widget, isA<IgnorePointer>());
+      expect(reason.ignorePointer.globalRect, isNotNull);
+      // The IgnorePointer is created inside _IgnoredButtonWrapper.build, which
+      // is the widget a test author has to change to make the button tappable.
+      expect(reason.introducedBy?.widget, isA<_IgnoredButtonWrapper>());
+    });
+
+    testWidgets('reports a zero-size reason', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Center(
+            child: SizedBox.shrink(
+              child: Padding(
+                padding: const EdgeInsets.all(4),
+                child: ElevatedButton(
+                  onPressed: () {},
+                  child: const Text('Save'),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final result = act.inspectTap(spot<ElevatedButton>());
+      final reason = result.tapZeroSizeReason;
+
+      expect(result.canTap, isFalse);
+      expect(
+        result.message,
+        contains(
+          "ElevatedButton can't be interacted with because it has size "
+          'Size(0.0, 0.0)',
+        ),
+      );
+      expect(result.message, contains('SizedBox.shrink forces ElevatedButton'));
+      expect(result.warning, isNull);
+      expect(result.tapPosition, isNull);
+      expect(result.target?.size, Size.zero);
+
+      // The outermost ancestor that is already zero-sized, changing anything
+      // below it cannot give the target a size.
+      expect(reason.shrinker.widget, isA<SizedBox>());
+      expect(reason.shrinker.widgetName, 'SizedBox.shrink');
+      expect(reason.shrinker.size, Size.zero);
+      if (!kIsWeb) {
+        expect(reason.shrinker.sourceLocation, contains('act_test.dart:'));
+      }
+      // Walks from the target up to, but excluding, the shrinker. Despite the
+      // name the chain starts at the target itself.
+      expect(
+        reason.shrinkChain.map((it) => it.widgetName),
+        ['ElevatedButton', 'Padding'],
+      );
+      expect(reason.shrinkChain.every((it) => it.size == Size.zero), isTrue);
+    });
+
+    testWidgets('reports a covered reason', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Stack(
+            children: [
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {},
+                  child: const Text('Save'),
+                ),
+              ),
+              const Positioned.fill(
+                child: ColoredBox(
+                  color: Colors.green,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+
+      final result = act.inspectTap(spot<ElevatedButton>());
+      final reason = result.tapCoveredReason;
+
+      expect(result.canTap, isFalse);
+      expect(result.message, contains('can not be interacted with directly'));
+      expect(result.warning, isNull);
+      expect(result.tapPosition, isNull);
+      expect(result.target?.widget, isA<ElevatedButton>());
+      expect(result.search?.hittableSamples, isEmpty);
+
+      // Everything from the covering widget up to the common ancestor.
+      expect(
+        reason.coveringWidgets.map((it) => it.widgetName),
+        ['ColoredBox', 'Positioned'],
+      );
+      expect(
+        reason.relevantCoveringWidgets.map((it) => it.widgetName),
+        ['ColoredBox', 'Positioned'],
+      );
+      expect(reason.primaryCover?.widget, isA<ColoredBox>());
+      expect(reason.primaryCover, same(reason.coveringWidgets.first));
+      expect(
+        reason.coverChain.map((it) => it.widgetName),
+        reason.coveringWidgets.map((it) => it.widgetName),
+      );
+      // The Stack renders both branches, it is where they start to diverge.
+      expect(reason.commonAncestor.widget, isA<Stack>());
+      expect(reason.userRelevantAncestor?.widget, isA<MaterialApp>());
+      expect(
+        reason.targetChain.map((it) => it.widgetName),
+        ['ElevatedButton', 'Center'],
+      );
+      expect(reason.hitTest.path, isNotEmpty);
+      expect(reason.hitTest.receiver?.widget, isA<ColoredBox>());
+      expect(reason.hitTest.position, result.target?.globalCenter);
+    });
+
+    testWidgets('reports an unknown reason when nothing else explains it',
+        (tester) async {
+      // A sized widget that neither reacts to hit tests itself nor has an
+      // ancestor that does. Nothing absorbs, ignores, shrinks or covers it.
+      await tester.pumpWidget(
+        const Directionality(
+          textDirection: TextDirection.ltr,
+          child: Center(
+            child: SizedBox(width: 100, height: 100),
+          ),
+        ),
+      );
+
+      final result = act.inspectTap(spot<SizedBox>());
+      final reason = result.tapUnknownReason;
+
+      expect(result.canTap, isFalse);
+      expect(
+        result.message,
+        contains(
+          "The exact reason, why it doesn't receive hitTest events is unknown.",
+        ),
+      );
+      expect(result.message, contains('https://github.com/passsy/spot'));
+      expect(result.warning, isNull);
+      expect(result.tapPosition, isNull);
+      expect(result.target?.size, const Size(100, 100));
+
+      expect(reason.position, result.target?.globalCenter);
+      expect(reason.hitTest.position, reason.position);
+      expect(reason.hitTest.path, isNotEmpty);
+      expect(reason.hitTest.receiver?.widget, isNot(isA<SizedBox>()));
+      expect(reason.search, same(result.search));
+      expect(reason.search.searchArea, result.target?.globalRect);
+      expect(reason.search.spacing, 8);
+      expect(reason.search.samples, isNotEmpty);
+      expect(reason.search.hittableSamples, isEmpty);
+      expect(reason.search.blockedSamples,
+          hasLength(reason.search.samples.length));
+      expect(reason.search.hittablePositions, isEmpty);
+      expect(reason.search.hittablePercent, 0);
+      expect(reason.search.bestTapPosition, isNull);
+    });
+
     testWidgets('typed reason getters fail when the reason changes',
         (tester) async {
       await tester.pumpWidget(
@@ -591,48 +1022,6 @@ void actTests() {
           "Widget 'ElevatedButton' is wrapped in IgnorePointer and doesn't receive pointer events.",
         ]),
       );
-    });
-
-    testWidgets('reports partial coverage as sampled search data',
-        (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Center(
-            child: SizedBox(
-              width: 100,
-              height: 100,
-              child: Stack(
-                children: [
-                  GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () {},
-                    child: const SizedBox.expand(),
-                  ),
-                  const Positioned(
-                    left: 50,
-                    top: 0,
-                    bottom: 0,
-                    width: 50,
-                    child: ColoredBox(
-                      color: Colors.green,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      );
-
-      final result = act.inspectTap(spot<GestureDetector>());
-      final warning = result.warning;
-
-      expect(result.canTap, isTrue);
-      expect(warning?.reason, isA<TapPartialCoverageReason>());
-      expect(result.tapPartialCoverageReason.search, same(result.search));
-      expect(result.search?.hittablePositions, isNotEmpty);
-      expect(result.search?.blockedPositions, isNotEmpty);
-      expect(result.search?.hittablePercent, lessThan(100));
     });
   });
 
