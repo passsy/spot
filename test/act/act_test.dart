@@ -695,8 +695,8 @@ void actTests() {
       expect(reason.viewport, const Rect.fromLTRB(0, 0, 800, 600));
       expect(reason.targetRect, const Rect.fromLTRB(1000, 20, 1050, 50));
       expect(reason.targetRect, result.target?.globalRect);
-      // This reason is only reported when the target and the viewport do not
-      // overlap at all, so both values are always empty.
+      // Derived from the intersection, not hardcoded. Empty here because the
+      // target is fully off-screen.
       expect(reason.visibleRect, Rect.zero);
       expect(reason.visibleFraction, 0);
     });

@@ -148,6 +148,22 @@ class _ViewBounds {
     return intersection.width < 0 || intersection.height < 0;
   }
 
+  /// The part of the target that is inside the viewport.
+  Rect get visibleRect {
+    final intersection = viewport.intersect(targetRect);
+    return intersection.isEmpty ? Rect.zero : intersection;
+  }
+
+  /// How much of the target is inside the viewport, from `0` to `1`.
+  double get visibleFraction {
+    final targetArea = targetRect.width * targetRect.height;
+    if (targetArea <= 0) {
+      return 0;
+    }
+    final visible = visibleRect;
+    return visible.width * visible.height / targetArea;
+  }
+
   String messageFor(String selectorDescription) {
     return "Widget '$selectorDescription' is located outside the viewport "
         '($targetRect).';
@@ -287,10 +303,11 @@ TapInspection? _inspectViewBounds({
   final reason = TapOutsideViewportReason(
     viewport: bounds.viewport,
     targetRect: bounds.targetRect,
-    // The reason is only reported when the target and the viewport do not
-    // overlap, so nothing of it is visible.
-    visibleRect: Rect.zero,
-    visibleFraction: 0,
+    // Both are 0 as long as this reason is only reported for targets that do
+    // not overlap the viewport at all. They stay correct once partially
+    // visible targets are reported here too.
+    visibleRect: bounds.visibleRect,
+    visibleFraction: bounds.visibleFraction,
   );
   return _tapInspectionFailure(
     selectorDescription: selectorDescription,
