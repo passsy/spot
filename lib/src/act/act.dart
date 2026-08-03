@@ -8,7 +8,7 @@ import 'package:spot/spot.dart';
 import 'package:spot/src/act/act_tap.dart';
 import 'package:spot/src/act/gestures.dart';
 import 'package:spot/src/screenshot/screenshot_annotator.dart';
-import 'package:spot/src/spot/element_extensions.dart';
+import 'package:spot/src/spot/widget_location.dart';
 
 /// Top level entry point to interact with widgets on the screen.
 ///

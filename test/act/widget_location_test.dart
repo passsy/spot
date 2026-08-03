@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
-import 'package:spot/src/spot/element_extensions.dart';
+import 'package:spot/src/spot/widget_location.dart';
 
 void main() {
   testWidgets('reports the location where the widget was created',

@@ -1,12 +1,11 @@
-// ignore_for_file: public_member_api_docs
-
-import 'package:dartx/dartx_io.dart';
+import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/src/spot/element_extensions.dart';
 import 'package:spot/src/spot/selectors.dart';
 import 'package:spot/src/spot/snapshot.dart';
+import 'package:spot/src/spot/widget_location.dart';
 import 'package:spot/src/spot/widget_selector.dart';
 
 /// Inspects whether [selector] can be tapped.
@@ -120,27 +119,49 @@ TapInspection inspectTapSelector(WidgetSelector selector) {
   );
 }
 
-/// Validates that the widget is at least partially located in the viewport.
-bool validateViewBounds(
+/// Throws when the widget is not at least partially located in the viewport.
+void validateViewBounds(
   RenderBox renderBox, {
   required WidgetSelector selector,
-  bool throwWhenNotInViewport = true,
 }) {
+  final bounds = _viewBoundsOf(renderBox);
+  if (bounds.isOutside) {
+    throw TestFailure(bounds.messageFor(selector.toStringBreadcrumb()));
+  }
+  // TODO handle case when location is partially outside viewport
+}
+
+/// Where a widget sits relative to the viewport.
+///
+/// Shared by the throwing [validateViewBounds] and the reporting
+/// [_inspectViewBounds] so both agree on what "outside the viewport" means and
+/// phrase it the same way.
+class _ViewBounds {
+  _ViewBounds({required this.viewport, required this.targetRect});
+
+  final Rect viewport;
+  final Rect targetRect;
+
+  /// Whether the target does not overlap the viewport at all.
+  bool get isOutside {
+    final intersection = viewport.intersect(targetRect);
+    return intersection.width < 0 || intersection.height < 0;
+  }
+
+  String messageFor(String selectorDescription) {
+    return "Widget '$selectorDescription' is located outside the viewport "
+        '($targetRect).';
+  }
+}
+
+_ViewBounds _viewBoundsOf(RenderBox renderBox) {
   // ignore: deprecated_member_use
   final view = WidgetsBinding.instance.renderView;
-  final Rect viewport = Offset.zero & view.size;
-  final Rect location =
-      renderBox.localToGlobal(Offset.zero) & renderBox.paintBounds.size;
-
-  final intersection = viewport.intersect(location);
-  final isNotInViewport = intersection.width < 0 || intersection.height < 0;
-  if (isNotInViewport && throwWhenNotInViewport) {
-    throw TestFailure(
-      "Widget '${selector.toStringBreadcrumb()}' is located outside the viewport ($location).",
-    );
-  }
-  return !isNotInViewport;
-  // TODO handle case when location is partially outside viewport
+  return _ViewBounds(
+    viewport: Offset.zero & view.size,
+    targetRect:
+        renderBox.localToGlobal(Offset.zero) & renderBox.paintBounds.size,
+  );
 }
 
 /// Throws a warning when the widget is only partially reacting to tap events.
@@ -258,20 +279,16 @@ TapInspection? _inspectViewBounds({
   required TapWidgetInfo target,
   required RenderBox renderBox,
 }) {
-  // ignore: deprecated_member_use
-  final view = WidgetsBinding.instance.renderView;
-  final viewport = Offset.zero & view.size;
-  final targetRect =
-      renderBox.localToGlobal(Offset.zero) & renderBox.paintBounds.size;
-  final intersection = viewport.intersect(targetRect);
-  final isOutside = intersection.width < 0 || intersection.height < 0;
-  if (!isOutside) {
+  final bounds = _viewBoundsOf(renderBox);
+  if (!bounds.isOutside) {
     return null;
   }
 
   final reason = TapOutsideViewportReason(
-    viewport: viewport,
-    targetRect: targetRect,
+    viewport: bounds.viewport,
+    targetRect: bounds.targetRect,
+    // The reason is only reported when the target and the viewport do not
+    // overlap, so nothing of it is visible.
     visibleRect: Rect.zero,
     visibleFraction: 0,
   );
@@ -279,8 +296,7 @@ TapInspection? _inspectViewBounds({
     selectorDescription: selectorDescription,
     target: target,
     reason: reason,
-    message:
-        "Widget '$selectorDescription' is located outside the viewport ($targetRect).",
+    message: bounds.messageFor(selectorDescription),
   );
 }
 
@@ -371,7 +387,9 @@ TapInspection? _inspectAbsorbPointer({
   required TapHitTestInfo hitTest,
   required TapTargetSearch search,
 }) {
-  final absorbElement = _selfAndParents(targetElement).firstOrNullWhere((it) {
+  // parents starts at targetElement, an AbsorbPointer on the target itself
+  // absorbs its own pointer events and has to be found here, too.
+  final absorbElement = targetElement.parents.firstOrNullWhere((it) {
     if (it.widget is! AbsorbPointer) {
       return false;
     }
@@ -411,7 +429,8 @@ TapInspection? _inspectIgnorePointer({
   required TapHitTestInfo hitTest,
   required TapTargetSearch search,
 }) {
-  final ignoreElement = _selfAndParents(targetElement).firstOrNullWhere((it) {
+  // parents starts at targetElement, see _inspectAbsorbPointer.
+  final ignoreElement = targetElement.parents.firstOrNullWhere((it) {
     if (it.widget is! IgnorePointer) {
       return false;
     }
@@ -440,11 +459,6 @@ TapInspection? _inspectIgnorePointer({
         "Widget '${target.widgetName}' is wrapped in IgnorePointer and doesn't receive pointer events.\n"
         "The IgnorePointer is located at $location",
   );
-}
-
-Iterable<Element> _selfAndParents(Element element) sync* {
-  yield element;
-  yield* element.parents;
 }
 
 Element? _findIgnorePointerIntroducer(Element ignoreElement) {
@@ -592,6 +606,11 @@ TapTargetSearch _inspectTapTarget(RenderBox renderBox) {
   );
 }
 
+/// Works out how [coverElement] ends up in front of [targetElement].
+///
+/// Returns `null` when the two are not siblings under a common ancestor, for
+/// example when the cover is an ancestor of the target and therefore does not
+/// cover anything.
 CoverWidgetAnalysis? analyzeCoverWidget({
   required Element coverElement,
   required Element targetElement,
@@ -638,6 +657,7 @@ ${firstUsefulParent.toStringShort()} (${firstUsefulParent.debugWidgetLocation?.f
   );
 }
 
+/// Renders [analysis] as the failure message shown when a widget is covered.
 String createCoverWidgetMessage({
   required String targetName,
   required CoverWidgetAnalysis analysis,
@@ -657,6 +677,7 @@ String createCoverWidgetMessage({
       "${removeEmptyLines(analysis.diagram)}\n";
 }
 
+/// Drops all blank lines from [value].
 String removeEmptyLines(String value) {
   return value.split('\n').where((line) => line.trim().isNotEmpty).join('\n');
 }
@@ -787,6 +808,7 @@ PokablePositions findPokablePositions(
   );
 }
 
+/// Hit-tests [position] once and reports whether [target] was reached.
 TapHitTestProbe probeHitTest(Offset position, RenderObject target) {
   final entries = _hitTestEntriesAt(position);
   final hitsTarget = entries.any((it) => it.target == target);
@@ -856,6 +878,12 @@ String _createColumns(String receiver, String target) {
 }
 
 /// Result of checking whether [Act.tap] can tap a selector.
+///
+/// A snapshot of the widget tree at the time [Act.inspectTap] was called. It
+/// holds on to [Element]s, [RenderObject]s and the [Rect]s they had back then.
+/// Pumping a frame does not update it, and the elements it points at may be
+/// unmounted by the next build. Read it before continuing the test, do not
+/// keep it around.
 class TapInspection {
   /// Creates a tap inspection result.
   TapInspection({
@@ -1058,8 +1086,8 @@ class TapHitTestInfo {
   /// Creates hit-test information.
   TapHitTestInfo({
     required this.position,
-    required this.path,
-  });
+    required List<TapWidgetInfo> path,
+  }) : path = List.unmodifiable(path);
 
   /// The global screen position that was hit-tested.
   final Offset position;
@@ -1105,9 +1133,9 @@ class TapTargetSearch {
   TapTargetSearch({
     required this.searchArea,
     required this.spacing,
-    required this.samples,
+    required List<TapHitSample> samples,
     required this.bestTapPosition,
-  });
+  }) : samples = List.unmodifiable(samples);
 
   /// The global rectangle covered by the sampled target.
   final Rect searchArea;
@@ -1166,8 +1194,8 @@ class TapMultipleWidgetsFoundReason {
   /// Creates a multiple-widgets tap failure reason.
   TapMultipleWidgetsFoundReason({
     required this.selectorDescription,
-    required this.matches,
-  });
+    required List<TapWidgetInfo> matches,
+  }) : matches = List.unmodifiable(matches);
 
   /// Human-readable selector description.
   final String selectorDescription;
@@ -1221,13 +1249,13 @@ class TapZeroSizeReason {
   /// Creates a zero-size tap failure reason.
   TapZeroSizeReason({
     required this.shrinker,
-    required this.shrinkChain,
-  });
+    required List<TapWidgetInfo> shrinkChain,
+  }) : shrinkChain = List.unmodifiable(shrinkChain);
 
   /// Closest ancestor that forces the target to zero size.
   final TapWidgetInfo shrinker;
 
-  /// Widgets between [shrinker] and [target].
+  /// Widgets from the target up to, but excluding, [shrinker].
   final List<TapWidgetInfo> shrinkChain;
 }
 
@@ -1278,13 +1306,16 @@ class TapCoveredReason {
   /// Creates a covered tap failure reason.
   TapCoveredReason({
     required this.hitTest,
-    required this.coveringWidgets,
-    required this.relevantCoveringWidgets,
+    required List<TapWidgetInfo> coveringWidgets,
+    required List<TapWidgetInfo> relevantCoveringWidgets,
     required this.commonAncestor,
     required this.userRelevantAncestor,
-    required this.targetChain,
-    required this.coverChain,
-  });
+    required List<TapWidgetInfo> targetChain,
+    required List<TapWidgetInfo> coverChain,
+  })  : coveringWidgets = List.unmodifiable(coveringWidgets),
+        relevantCoveringWidgets = List.unmodifiable(relevantCoveringWidgets),
+        targetChain = List.unmodifiable(targetChain),
+        coverChain = List.unmodifiable(coverChain);
 
   /// Hit-test path at the inspected position.
   final TapHitTestInfo hitTest;
@@ -1349,17 +1380,24 @@ class TapPartialCoverageReason {
   final TapTargetSearch search;
 }
 
+/// The outcome of a single hit test, see [probeHitTest].
 class TapHitTestProbe {
+  /// Creates a hit-test probe result.
   TapHitTestProbe({
     required this.hitsTarget,
     required this.hitTest,
   });
 
+  /// Whether the probed target was on the hit-test path.
   final bool hitsTarget;
+
+  /// The full hit-test path at the probed position.
   final TapHitTestInfo hitTest;
 }
 
+/// Describes how a covering widget relates to the widget it covers.
 class CoverWidgetAnalysis {
+  /// Creates a cover analysis.
   CoverWidgetAnalysis({
     required this.coverElement,
     required this.commonAncestor,
@@ -1369,11 +1407,23 @@ class CoverWidgetAnalysis {
     required this.diagram,
   });
 
+  /// The widget that receives the pointer events instead of the target.
   final Element coverElement;
+
+  /// The closest ancestor that contains both the cover and the target.
   final Element commonAncestor;
+
+  /// The closest ancestor above [commonAncestor] that is worth naming to a
+  /// test author, usually a widget from their own code.
   final Element firstUsefulParent;
+
+  /// Widgets from [coverElement] up to, but excluding, [commonAncestor].
   final List<Element> coverChain;
+
+  /// Widgets from the target up to, but excluding, [commonAncestor].
   final List<Element> targetChain;
+
+  /// Both chains rendered side by side for the failure message.
   final String diagram;
 }
 

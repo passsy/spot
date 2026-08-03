@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/checks/checks_nullability.dart';
 import 'package:spot/src/screenshot/screenshot_annotator.dart';
-import 'package:spot/src/spot/element_extensions.dart';
+import 'package:spot/src/spot/widget_location.dart';
 
 export 'package:checks/context.dart';
 
