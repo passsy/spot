@@ -8,11 +8,11 @@
   expect(inspection.canTap, isFalse);
   // the button is behind a full-screen overlay
   expect(
-    inspection.tapFailure.tapCoveredReason.primaryCover?.widget,
+    inspection.tapFailure?.tapCoveredReason.primaryCover?.widget,
     isA<ColoredBox>(),
   );
   ```
-  Every failure branch of `act.tap()` has a reason: `TapNotFoundReason`, `TapMultipleWidgetsFoundReason`, `TapNoRenderObjectReason`, `TapNonRenderBoxReason`, `TapOutsideViewportReason`, `TapAbsorbedReason`, `TapIgnoredReason`, `TapZeroSizeReason`, `TapCoveredReason` and `TapUnknownReason`. A tappable widget that is only partially reachable reports `TapPartialCoverageReason` as a warning. Read them via `inspection.tapFailure.reason`, or via a typed getter such as `tapFailure.tapCoveredReason` that fails the test when the widget turned out to be untappable for a different reason. Also adds `TapInspection`, `TapFailureReason`, `TapInspectionWarning`, `TapWidgetInfo`, `TapHitTestInfo`, `TapHitSample`, `TapSamples` and `TapBlocker`.
+  Every failure branch of `act.tap()` has a reason: `TapNotFoundReason`, `TapMultipleWidgetsFoundReason`, `TapNoRenderObjectReason`, `TapNonRenderBoxReason`, `TapOutsideViewportReason`, `TapAbsorbedReason`, `TapIgnoredReason`, `TapZeroSizeReason`, `TapCoveredReason` and `TapUnknownReason`. A tappable widget that is only partially reachable reports `TapPartialCoverageReason` as a warning. `inspection.tapFailure` is `null` when the widget can be tapped. Read the failure via `tapFailure.reason`, or via a typed getter such as `tapFailure.tapCoveredReason` that fails the test when the widget turned out to be untappable for a different reason. Printing `tapFailure` gives the reason type and the summary line, `inspection.message` the full diagnostics. Also adds `TapInspection`, `TapFailureReason`, `TapInspectionWarning`, `TapWidgetInfo`, `TapHitTestInfo`, `TapHitSample`, `TapSamples` and `TapBlocker`.
 
   `TapInspection.samples` reports how much of the widget reacts to pointer events and what is in the way, for tappable widgets too.
   ```dart
@@ -28,7 +28,7 @@
     () => act.tap(spot<ElevatedButton>()),
     throwsA(
       isA<TapFailure>().having(
-        (it) => it.inspection.tapFailure.reason,
+        (it) => it.inspection.tapFailure?.reason,
         'reason',
         isA<TapCoveredReason>(),
       ),

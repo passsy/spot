@@ -962,11 +962,17 @@ class TapInspection {
   /// A plain-text message describing why [Act.tap] cannot tap the selector.
   final String? message;
 
-  /// Why [Act.tap] can not tap the selector.
+  /// Why [Act.tap] can not tap the selector, `null` when it can.
   ///
-  /// A view on this inspection that casts the failure to one of the
-  /// `Tap*Reason` types, see [TapFailureReason].
-  TapFailureReason get tapFailure => TapFailureReason._(this);
+  /// Casts the failure to one of the `Tap*Reason` types, see
+  /// [TapFailureReason].
+  TapFailureReason? get tapFailure {
+    final tapFailure = _tapFailure;
+    if (tapFailure == null) {
+      return null;
+    }
+    return TapFailureReason._(this, tapFailure);
+  }
 
   final Object? _tapFailure;
 
@@ -1004,28 +1010,27 @@ class TapInspection {
 /// Why [Act.tap] can not tap the widget of a [TapInspection].
 ///
 /// Every getter casts the failure to one concrete reason. When the tap failed
-/// for a different reason, or did not fail at all, it throws a [TestFailure]
-/// with the full tap diagnostics attached, which makes it safe to read a
-/// property right away:
+/// for a different reason, it throws a [TestFailure] with the full tap
+/// diagnostics attached, which makes it safe to read a property right away:
 ///
 /// ```dart
 /// final inspection = act.inspectTap(spot<ElevatedButton>());
-/// expect(inspection.tapFailure.tapCoveredReason.primaryCover?.widget,
+/// expect(inspection.tapFailure?.tapCoveredReason.primaryCover?.widget,
 ///     isA<ColoredBox>());
 /// ```
 ///
 /// Read [reason] to branch on the failure instead of asserting one, for
 /// example with `isA<TapCoveredReason>()`.
 class TapFailureReason {
-  TapFailureReason._(this._inspection);
+  TapFailureReason._(this._inspection, this.reason);
 
   final TapInspection _inspection;
 
-  /// The failure object, `null` when the widget can be tapped.
+  /// The failure object.
   ///
   /// One of the `Tap*Reason` types. It is intentionally untyped: adding a new
   /// reason must not break callers that switch over the known ones.
-  Object? get reason => _inspection._tapFailure;
+  final Object reason;
 
   /// Returns the not-found reason or throws a [TestFailure].
   TapNotFoundReason get tapNotFoundReason {
@@ -1077,14 +1082,27 @@ class TapFailureReason {
     return _as<TapUnknownReason>();
   }
 
+  /// The reason type and the first line of [TapInspection.message].
+  ///
+  /// ```txt
+  /// TapCoveredReason: Widget 'ElevatedButton' can not be interacted with
+  /// directly, because another widget (ColoredBox) inside Padding is
+  /// completely covering it and consumes all pointer events.
+  /// ```
+  ///
+  /// Print [TapInspection.message] for the full diagnostics, including the
+  /// widget trees of the target and whatever is in its way.
+  @override
+  String toString() {
+    final summary = _inspection.message?.split('\n').first.trim();
+    if (summary == null || summary.isEmpty) {
+      return '${reason.runtimeType}';
+    }
+    return '${reason.runtimeType}: $summary';
+  }
+
   R _as<R extends Object>() {
     final reason = this.reason;
-    if (reason == null) {
-      throw TestFailure(
-        'Expected $R but ${_inspection.selectorDescription} can be tapped.',
-      );
-    }
-
     if (reason is R) {
       return reason;
     }

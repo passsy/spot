@@ -451,7 +451,7 @@ void actTests() {
           isA<TapFailure>()
               .having((it) => it.inspection.canTap, 'canTap', isFalse)
               .having(
-                (it) => it.inspection.tapFailure.reason,
+                (it) => it.inspection.tapFailure?.reason,
                 'reason',
                 isA<TapCoveredReason>().having(
                   (it) => it.primaryCover?.widget,
@@ -495,7 +495,7 @@ void actTests() {
         () => act.tap(button),
         throwsA(
           isA<TapFailure>().having(
-            (it) => it.inspection.tapFailure.reason,
+            (it) => it.inspection.tapFailure?.reason,
             'reason',
             isA<TapOutsideViewportReason>(),
           ),
@@ -526,7 +526,7 @@ void actTests() {
 
       expect(inspection.canTap, isTrue);
       expect(inspection.selectorDescription, 'ElevatedButton');
-      expect(inspection.tapFailure.reason, isNull);
+      expect(inspection.tapFailure, isNull);
       expect(inspection.message, isNull);
       expect(inspection.warning, isNull);
 
@@ -606,7 +606,7 @@ void actTests() {
       final inspection = act.inspectTap(spot<GestureDetector>());
 
       expect(inspection.canTap, isTrue);
-      expect(inspection.tapFailure.reason, isNull);
+      expect(inspection.tapFailure, isNull);
       expect(inspection.message, isNull);
       expect(inspection.tapPosition, isNotNull);
 
@@ -655,10 +655,14 @@ void actTests() {
       await tester.pumpWidget(const MaterialApp(home: Text('Save')));
 
       final inspection = act.inspectTap(spot<ElevatedButton>());
-      final reason = inspection.tapFailure.tapNotFoundReason;
+      final reason = inspection.tapFailure!.tapNotFoundReason;
 
       expect(inspection.canTap, isFalse);
       expect(inspection.selectorDescription, 'ElevatedButton');
+      expect(
+        inspection.tapFailure!.toString(),
+        'TapNotFoundReason: Could not find ElevatedButton in widget tree',
+      );
       expect(
           inspection.message, 'Could not find ElevatedButton in widget tree');
       expect(inspection.warning, isNull);
@@ -685,7 +689,7 @@ void actTests() {
       );
 
       final inspection = act.inspectTap(spot<Text>());
-      final reason = inspection.tapFailure.tapMultipleWidgetsFoundReason;
+      final reason = inspection.tapFailure!.tapMultipleWidgetsFoundReason;
 
       expect(inspection.canTap, isFalse);
       expect(
@@ -710,9 +714,9 @@ void actTests() {
       final inspection = act.inspectTap(spot<_NoRenderObjectWidget>());
 
       expect(inspection.canTap, isFalse);
-      expect(inspection.tapFailure.reason, isA<TapNoRenderObjectReason>());
-      expect(inspection.tapFailure.tapNoRenderObjectReason,
-          same(inspection.tapFailure.reason));
+      expect(inspection.tapFailure!.reason, isA<TapNoRenderObjectReason>());
+      expect(inspection.tapFailure!.tapNoRenderObjectReason,
+          same(inspection.tapFailure!.reason));
       expect(
         inspection.message,
         contains(
@@ -736,7 +740,7 @@ void actTests() {
       await tester.pumpWidget(_NonCartesianWidget());
 
       final inspection = act.inspectTap(spot<_NonCartesianWidget>());
-      final reason = inspection.tapFailure.tapNonRenderBoxReason;
+      final reason = inspection.tapFailure!.tapNonRenderBoxReason;
 
       expect(inspection.canTap, isFalse);
       expect(
@@ -782,7 +786,7 @@ void actTests() {
       );
 
       final inspection = act.inspectTap(spot<GestureDetector>());
-      final reason = inspection.tapFailure.tapOutsideViewportReason;
+      final reason = inspection.tapFailure!.tapOutsideViewportReason;
 
       expect(inspection.canTap, isFalse);
       expect(
@@ -820,7 +824,7 @@ void actTests() {
       );
 
       final inspection = act.inspectTap(spot<ElevatedButton>());
-      final reason = inspection.tapFailure.tapAbsorbedReason;
+      final reason = inspection.tapFailure!.tapAbsorbedReason;
 
       expect(inspection.canTap, isFalse);
       expect(
@@ -868,7 +872,7 @@ void actTests() {
           .evaluate()
           .single;
       final inspection = act.inspectTap(spot<ElevatedButton>());
-      final reason = inspection.tapFailure.tapAbsorbedReason;
+      final reason = inspection.tapFailure!.tapAbsorbedReason;
 
       expect(inspection.canTap, isFalse);
       expect(inspection.target?.widget, isA<ElevatedButton>());
@@ -898,7 +902,7 @@ void actTests() {
       );
 
       final inspection = act.inspectTap(spot<ElevatedButton>());
-      final reason = inspection.tapFailure.tapIgnoredReason;
+      final reason = inspection.tapFailure!.tapIgnoredReason;
 
       expect(inspection.canTap, isFalse);
       expect(
@@ -939,10 +943,10 @@ void actTests() {
       );
 
       final inspection = act.inspectTap(spot<_IgnoredButtonWrapper>());
-      final reason = inspection.tapFailure.tapIgnoredReason;
+      final reason = inspection.tapFailure!.tapIgnoredReason;
 
-      expect(inspection.tapFailure.reason, isA<TapIgnoredReason>());
-      expect(() => inspection.tapFailure.tapUnknownReason,
+      expect(inspection.tapFailure!.reason, isA<TapIgnoredReason>());
+      expect(() => inspection.tapFailure!.tapUnknownReason,
           throwsA(isA<TestFailure>()));
       expect(reason.ignorePointer.widget, isA<IgnorePointer>());
       expect(reason.ignorePointer.globalRect, isNotNull);
@@ -969,7 +973,7 @@ void actTests() {
       );
 
       final inspection = act.inspectTap(spot<ElevatedButton>());
-      final reason = inspection.tapFailure.tapZeroSizeReason;
+      final reason = inspection.tapFailure!.tapZeroSizeReason;
 
       expect(inspection.canTap, isFalse);
       expect(
@@ -1024,11 +1028,16 @@ void actTests() {
       );
 
       final inspection = act.inspectTap(spot<ElevatedButton>());
-      final reason = inspection.tapFailure.tapCoveredReason;
+      final reason = inspection.tapFailure!.tapCoveredReason;
 
       expect(inspection.canTap, isFalse);
       expect(
           inspection.message, contains('can not be interacted with directly'));
+      // The full diagnostics, prefixed with the reason that produced them.
+      expect(
+        inspection.tapFailure!.toString(),
+        'TapCoveredReason: ${inspection.message!.split('\n').first}',
+      );
       expect(inspection.warning, isNull);
       expect(inspection.tapPosition, isNull);
       expect(inspection.target?.widget, isA<ElevatedButton>());
@@ -1082,7 +1091,7 @@ void actTests() {
       );
 
       final inspection = act.inspectTap(spot<SizedBox>());
-      final reason = inspection.tapFailure.tapUnknownReason;
+      final reason = inspection.tapFailure!.tapUnknownReason;
 
       expect(inspection.canTap, isFalse);
       expect(
@@ -1128,7 +1137,7 @@ void actTests() {
       final inspection = act.inspectTap(spot<ElevatedButton>());
 
       expect(
-        () => inspection.tapFailure.tapCoveredReason,
+        () => inspection.tapFailure!.tapCoveredReason,
         throwsSpotErrorContaining([
           'Expected TapCoveredReason but tap failed with TapIgnoredReason.',
           "Widget 'ElevatedButton' is wrapped in IgnorePointer and doesn't receive pointer events.",
