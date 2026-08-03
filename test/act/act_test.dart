@@ -398,6 +398,185 @@ void actTests() {
     });
   });
 
+  group('inspectTap', () {
+    testWidgets('returns tap position and sampled hit tests', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Center(
+            child: ElevatedButton(
+              onPressed: () {},
+              child: const Text('Save'),
+            ),
+          ),
+        ),
+      );
+
+      final result = act.inspectTap(spot<ElevatedButton>());
+
+      expect(result.canTap, isTrue);
+      expect(result.tapPosition, isNotNull);
+      expect(result.reason, isNull);
+      expect(result.message, isNull);
+      expect(result.target?.widget, isA<ElevatedButton>());
+      expect(result.target?.globalRect, isNotNull);
+      expect(result.search?.samples, isNotEmpty);
+      expect(result.search?.hittablePercent, greaterThan(0));
+    });
+
+    testWidgets('returns a typed covered reason', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Stack(
+            children: [
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {},
+                  child: const Text('Save'),
+                ),
+              ),
+              const Positioned.fill(
+                child: ColoredBox(
+                  color: Colors.green,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+
+      final result = act.inspectTap(spot<ElevatedButton>());
+      final reason = result.tapCoveredReason;
+
+      expect(result.canTap, isFalse);
+      expect(result.reason, isA<TapCoveredReason>());
+      expect(result.message, contains('can not be interacted with directly'));
+      expect(result.target?.widget, isA<ElevatedButton>());
+      expect(reason.coveringWidgets, isNotEmpty);
+      expect(reason.coveringWidgets.first.widget, isA<ColoredBox>());
+      expect(reason.hitTest.position, isNotNull);
+      expect(result.target?.globalRect, isNotNull);
+      expect(reason.primaryCover?.globalRect, isNotNull);
+      expect(
+        act.inspectTap(spot<ElevatedButton>()).tapCoveredReason,
+        isA<TapCoveredReason>()
+            .having((it) => it.coveringWidgets, 'coveringWidgets', isNotEmpty),
+      );
+    });
+
+    testWidgets('returns an ignore reason with source and receiver',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Center(
+            child: IgnorePointer(
+              child: ElevatedButton(
+                onPressed: () {},
+                child: const Text('Save'),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final result = act.inspectTap(spot<ElevatedButton>());
+      final reason = result.tapIgnoredReason;
+
+      expect(result.target?.widget, isA<ElevatedButton>());
+      expect(reason.ignorePointer.widget, isA<IgnorePointer>());
+      expect(reason.ignorePointer.globalRect, isNotNull);
+      expect(reason.hitReceiver, isNotNull);
+      expect(reason.hitTest.path, isNotEmpty);
+    });
+
+    testWidgets(
+        'returns an ignore reason for a widget that builds IgnorePointer',
+        (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Center(
+            child: _IgnoredButtonWrapper(),
+          ),
+        ),
+      );
+
+      final result = act.inspectTap(spot<_IgnoredButtonWrapper>());
+      final reason = result.tapIgnoredReason;
+
+      expect(result.reason, isA<TapIgnoredReason>());
+      expect(() => result.tapUnknownReason, throwsA(isA<TestFailure>()));
+      expect(reason.ignorePointer.widget, isA<IgnorePointer>());
+      expect(reason.ignorePointer.globalRect, isNotNull);
+    });
+
+    testWidgets('typed reason getters fail when the reason changes',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Center(
+            child: IgnorePointer(
+              child: ElevatedButton(
+                onPressed: () {},
+                child: const Text('Save'),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final result = act.inspectTap(spot<ElevatedButton>());
+
+      expect(
+        () => result.tapCoveredReason,
+        throwsSpotErrorContaining([
+          'Expected TapCoveredReason but tap failed with TapIgnoredReason.',
+          "Widget 'ElevatedButton' is wrapped in IgnorePointer and doesn't receive pointer events.",
+        ]),
+      );
+    });
+
+    testWidgets('reports partial coverage as sampled search data',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Center(
+            child: SizedBox(
+              width: 100,
+              height: 100,
+              child: Stack(
+                children: [
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {},
+                    child: const SizedBox.expand(),
+                  ),
+                  const Positioned(
+                    left: 50,
+                    top: 0,
+                    bottom: 0,
+                    width: 50,
+                    child: ColoredBox(
+                      color: Colors.green,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final result = act.inspectTap(spot<GestureDetector>());
+      final warning = result.warning;
+
+      expect(result.canTap, isTrue);
+      expect(warning?.reason, isA<TapPartialCoverageReason>());
+      expect(result.tapPartialCoverageReason.search, same(result.search));
+      expect(result.search?.hittablePositions, isNotEmpty);
+      expect(result.search?.blockedPositions, isNotEmpty);
+      expect(result.search?.hittablePercent, lessThan(100));
+    });
+  });
+
   group('tapAt', () {
     testWidgets('tapAt', (tester) async {
       Offset? tapPosition;
@@ -664,4 +843,18 @@ class _NoRenderObjectElement extends StatelessElement {
 
   @override
   RenderObject? get renderObject => null;
+}
+
+class _IgnoredButtonWrapper extends StatelessWidget {
+  const _IgnoredButtonWrapper();
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      child: ElevatedButton(
+        onPressed: () {},
+        child: const Text('Save'),
+      ),
+    );
+  }
 }
