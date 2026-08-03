@@ -528,7 +528,6 @@ void actTests() {
       expect(inspection.selectorDescription, 'ElevatedButton');
       expect(inspection.tapFailure, isNull);
       expect(inspection.message, isNull);
-      expect(inspection.warning, isNull);
 
       final target = inspection.target!;
       expect(target.widget, isA<ElevatedButton>());
@@ -610,17 +609,9 @@ void actTests() {
       expect(inspection.message, isNull);
       expect(inspection.tapPosition, isNotNull);
 
-      final warning = inspection.warning!;
-      expect(warning.reason, isA<TapPartialCoverageReason>());
-      expect(warning.message, contains('only partially reacting to tap'));
-      expect(warning.message, contains('~54%'));
-
-      // The warning reason carries the same search data as the inspection.
-      final reason = inspection.tapPartialCoverageReason;
-      expect(reason, same(warning.reason));
-      expect(reason.samples, same(inspection.samples));
-
+      // Tappable, but not everywhere. The limitation is in the samples.
       final samples = inspection.samples!;
+      expect(samples.hittablePercent, closeTo(54, 1));
       expect(samples.hittable, isNotEmpty);
       expect(samples.blocked, isNotEmpty);
       expect(samples.hittable.map((it) => it.globalPosition), isNotEmpty);
@@ -632,7 +623,7 @@ void actTests() {
       // the caller having to group 169 samples by hit-test receiver.
       expect(samples.blockers, hasLength(1));
       final blocker = samples.blockers.single;
-      expect(blocker.widget.widget, isA<ColoredBox>());
+      expect(blocker.receiver.widget, isA<ColoredBox>());
       expect(blocker.sampleCount, samples.blocked.length);
       expect(blocker.percent, closeTo(46, 1));
       expect(blocker.toString(), 'ColoredBox (46%)');
@@ -665,7 +656,6 @@ void actTests() {
       );
       expect(
           inspection.message, 'Could not find ElevatedButton in widget tree');
-      expect(inspection.warning, isNull);
       // Nothing was found, so there is nothing to describe or search.
       expect(inspection.target, isNull);
       expect(inspection.samples, isNull);
@@ -694,7 +684,6 @@ void actTests() {
       expect(inspection.canTap, isFalse);
       expect(
           inspection.message, 'Found 2 elements matching Text in widget tree');
-      expect(inspection.warning, isNull);
       expect(inspection.target, isNull);
       expect(inspection.samples, isNull);
       expect(inspection.tapPosition, isNull);
@@ -722,7 +711,6 @@ void actTests() {
         contains(
             "Widget '_NoRenderObjectWidget' has no associated RenderObject"),
       );
-      expect(inspection.warning, isNull);
       expect(inspection.samples, isNull);
       expect(inspection.tapPosition, isNull);
 
@@ -747,7 +735,6 @@ void actTests() {
         inspection.message,
         contains('is not a RenderObject in the 2D Cartesian coordinate system'),
       );
-      expect(inspection.warning, isNull);
       expect(inspection.samples, isNull);
       expect(inspection.tapPosition, isNull);
 
@@ -794,7 +781,6 @@ void actTests() {
         "Widget 'GestureDetector' is located outside the viewport "
         '(Rect.fromLTRB(1000.0, 20.0, 1050.0, 50.0)).',
       );
-      expect(inspection.warning, isNull);
       // Sampling is skipped, nothing inside the viewport could be hit.
       expect(inspection.samples, isNull);
       expect(inspection.tapPosition, isNull);
@@ -834,7 +820,6 @@ void actTests() {
           'receive pointer events.',
         ),
       );
-      expect(inspection.warning, isNull);
       expect(inspection.tapPosition, isNull);
       expect(inspection.target?.widget, isA<ElevatedButton>());
       // Sampling ran and found no hittable point, that is why the inspection
@@ -912,7 +897,6 @@ void actTests() {
           'receive pointer events.',
         ),
       );
-      expect(inspection.warning, isNull);
       expect(inspection.tapPosition, isNull);
       expect(inspection.target?.widget, isA<ElevatedButton>());
       expect(inspection.samples?.hittable, isEmpty);
@@ -985,7 +969,6 @@ void actTests() {
       );
       expect(inspection.message,
           contains('SizedBox.shrink forces ElevatedButton'));
-      expect(inspection.warning, isNull);
       expect(inspection.tapPosition, isNull);
       expect(inspection.target?.size, Size.zero);
 
@@ -1038,7 +1021,6 @@ void actTests() {
         inspection.tapFailure!.toString(),
         'TapCoveredReason: ${inspection.message!.split('\n').first}',
       );
-      expect(inspection.warning, isNull);
       expect(inspection.tapPosition, isNull);
       expect(inspection.target?.widget, isA<ElevatedButton>());
       expect(inspection.samples?.hittable, isEmpty);
@@ -1073,7 +1055,7 @@ void actTests() {
       final samples = inspection.samples!;
       expect(samples.hittable.map((it) => it.globalPosition), isEmpty);
       expect(samples.blockers, hasLength(1));
-      expect(samples.blockers.single.widget.widget, isA<ColoredBox>());
+      expect(samples.blockers.single.receiver.widget, isA<ColoredBox>());
       expect(samples.blockers.single.percent, 100);
     });
 
@@ -1101,7 +1083,6 @@ void actTests() {
         ),
       );
       expect(inspection.message, contains('https://github.com/passsy/spot'));
-      expect(inspection.warning, isNull);
       expect(inspection.tapPosition, isNull);
       expect(inspection.target?.size, const Size(100, 100));
 

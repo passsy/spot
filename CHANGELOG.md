@@ -12,14 +12,14 @@
     isA<ColoredBox>(),
   );
   ```
-  Every failure branch of `act.tap()` has a reason: `TapNotFoundReason`, `TapMultipleWidgetsFoundReason`, `TapNoRenderObjectReason`, `TapNonRenderBoxReason`, `TapOutsideViewportReason`, `TapAbsorbedReason`, `TapIgnoredReason`, `TapZeroSizeReason`, `TapCoveredReason` and `TapUnknownReason`. A tappable widget that is only partially reachable reports `TapPartialCoverageReason` as a warning. `inspection.tapFailure` is `null` when the widget can be tapped. Read the failure via `tapFailure.reason`, or via a typed getter such as `tapFailure.tapCoveredReason` that fails the test when the widget turned out to be untappable for a different reason. Printing `tapFailure` gives the reason type and the summary line, `inspection.message` the full diagnostics. Also adds `TapInspection`, `TapFailureReason`, `TapInspectionWarning`, `TapWidgetInfo`, `TapHitTestInfo`, `TapHitSample`, `TapSamples` and `TapBlocker`.
+  Every failure branch of `act.tap()` has a reason: `TapNotFoundReason`, `TapMultipleWidgetsFoundReason`, `TapNoRenderObjectReason`, `TapNonRenderBoxReason`, `TapOutsideViewportReason`, `TapAbsorbedReason`, `TapIgnoredReason`, `TapZeroSizeReason`, `TapCoveredReason` and `TapUnknownReason`. `inspection.tapFailure` is `null` when the widget can be tapped. Read the failure via `tapFailure.reason`, or via a typed getter such as `tapFailure.tapCoveredReason` that fails the test when the widget turned out to be untappable for a different reason. Printing `tapFailure` gives the reason type and the summary line, `inspection.message` the full diagnostics. Also adds `TapInspection`, `TapFailureReason`, `TapWidgetInfo`, `TapHitTestInfo`, `TapHitSample`, `TapSamples` and `TapBlocker`.
 
-  `TapInspection.samples` reports how much of the widget reacts to pointer events and what is in the way, for tappable widgets too.
+  `TapInspection.samples` reports how much of the widget reacts to pointer events and what is in the way, for tappable widgets too. A widget that is tappable but only partially reachable has no failure to assert on, so assert on the samples.
   ```dart
   final samples = act.inspectTap(spot<ElevatedButton>()).samples!;
   print('${samples.hittablePercent}% of the button reacts to taps');
   for (final blocker in samples.blockers) {
-    print('${blocker.widget.widgetName} covers ${blocker.percent}%');
+    print('${blocker.receiver.widgetName} covers ${blocker.percent}%');
   }
   ```
 - New: `act.tap()` throws a `TapFailure` that carries the `TapInspection` explaining the failure, so the reason can be asserted without matching on the message. `TapFailure` extends `TestFailure`, existing expectations keep working. #150

@@ -92,23 +92,6 @@ TapInspection inspectTapSelector(WidgetSelector selector) {
     );
   }
 
-  final reason = TapPartialCoverageReason(
-    samples: samples,
-  );
-  final warningMessage = _createPartialCoverageWarningMessage(
-    target: target,
-    samples: samples,
-  );
-  final warning = () {
-    if (warningMessage == null) {
-      return null;
-    }
-    return TapInspectionWarning(
-      message: warningMessage,
-      reason: reason,
-    );
-  }();
-
   return TapInspection(
     selectorDescription: selectorDescription,
     target: target,
@@ -116,7 +99,6 @@ TapInspection inspectTapSelector(WidgetSelector selector) {
     tapPosition: probe.bestTapPosition,
     message: null,
     tapFailure: null,
-    warning: warning,
   );
 }
 
@@ -310,7 +292,6 @@ TapInspection _tapInspectionFailure({
     tapPosition: null,
     message: message,
     tapFailure: reason,
-    warning: null,
   );
 }
 
@@ -597,29 +578,6 @@ TapInspection? _inspectCoveredWidget({
       analysis: analysis,
     ),
   );
-}
-
-String? _createPartialCoverageWarningMessage({
-  required TapWidgetInfo target,
-  required TapSamples samples,
-}) {
-  final roundUp = samples.hittablePercent.ceil();
-  if (roundUp > 80) {
-    return null;
-  }
-
-  return "Warning: The '${target.widgetName}' is only partially reacting to tap events. "
-      "Only ~$roundUp% of the widget reacts to hitTest events.\n"
-      "\n"
-      "Possible causes:\n"
-      " - The widget is partially positioned out of view\n"
-      " - It is covered by another widget.\n"
-      " - It is too small (<8x8)\n"
-      "\n"
-      "Possible solutions:\n"
-      " - Scroll the widget into view using act.dragUntilVisible()\n"
-      " - Make sure no other Widget is overlapping on small screens\n"
-      " - Increase the Widget size\n";
 }
 
 /// The sampled points of a target plus the position [Act.tap] would use.
@@ -944,7 +902,6 @@ class TapInspection {
     required this.tapPosition,
     required this.message,
     required Object? tapFailure,
-    required this.warning,
   }) : _tapFailure = tapFailure;
 
   /// Human-readable selector description used in diagnostics.
@@ -976,35 +933,9 @@ class TapInspection {
 
   final Object? _tapFailure;
 
-  /// Non-fatal diagnostic information about a tappable target.
-  final TapInspectionWarning? warning;
-
   /// Whether [Act.tap] can tap the selector.
   bool get canTap => _tapFailure == null && tapPosition != null;
 
-  /// Returns the partial-coverage warning reason or throws a [TestFailure].
-  TapPartialCoverageReason get tapPartialCoverageReason {
-    return _warningReason<TapPartialCoverageReason>();
-  }
-
-  R _warningReason<R extends Object>() {
-    final warning = this.warning;
-    if (warning == null) {
-      throw TestFailure(
-        'Expected $R but $selectorDescription has no tap warning.',
-      );
-    }
-
-    final reason = warning.reason;
-    if (reason is R) {
-      return reason;
-    }
-
-    throw TestFailure(
-      'Expected $R but tap warning is ${reason.runtimeType}.\n'
-      '${warning.message}',
-    );
-  }
 }
 
 /// Why [Act.tap] can not tap the widget of a [TapInspection].
@@ -1140,21 +1071,6 @@ class TapFailure extends TestFailure {
 
   /// Describes the widget and why [Act.tap] could not tap it.
   final TapInspection inspection;
-}
-
-/// Non-fatal warning produced by [Act.inspectTap].
-class TapInspectionWarning {
-  /// Creates a tap inspection warning.
-  TapInspectionWarning({
-    required this.message,
-    required this.reason,
-  });
-
-  /// A plain-text message describing the warning.
-  final String message;
-
-  /// Typed warning metadata.
-  final Object? reason;
 }
 
 /// Details about a widget involved in tap inspection.
@@ -1317,7 +1233,7 @@ class TapSamples {
   ///
   /// ```dart
   /// final blocker = act.inspectTap(spot<MyButton>()).samples!.blockers.first;
-  /// print('${blocker.widget.widgetName} covers ${blocker.percent}%');
+  /// print('${blocker.receiver.widgetName} covers ${blocker.percent}%');
   /// ```
   List<TapBlocker> get blockers {
     final counts = <Element, int>{};
@@ -1332,7 +1248,7 @@ class TapSamples {
     }
     final blockers = counts.entries.map((entry) {
       return TapBlocker(
-        widget: widgets[entry.key]!,
+        receiver: widgets[entry.key]!,
         sampleCount: entry.value,
         percent: all.isEmpty ? 0 : entry.value / all.length * 100,
       );
@@ -1346,13 +1262,13 @@ class TapSamples {
 class TapBlocker {
   /// Creates a blocker.
   TapBlocker({
-    required this.widget,
+    required this.receiver,
     required this.sampleCount,
     required this.percent,
   });
 
-  /// The widget that received the pointer events.
-  final TapWidgetInfo widget;
+  /// The widget that received the pointer events instead of the target.
+  final TapWidgetInfo receiver;
 
   /// How many sampled points this widget intercepted.
   final int sampleCount;
@@ -1362,7 +1278,7 @@ class TapBlocker {
 
   @override
   String toString() {
-    return '${widget.widgetName} (${percent.round()}%)';
+    return '${receiver.widgetName} (${percent.round()}%)';
   }
 }
 
@@ -1552,17 +1468,6 @@ class TapUnknownReason {
 
   /// Hit-test path at [position].
   final TapHitTestInfo hitTest;
-
-  /// Sampled tap search data.
-  final TapSamples samples;
-}
-
-/// The target is tappable but only partially reacts to tap events.
-class TapPartialCoverageReason {
-  /// Creates a partial-coverage tap warning reason.
-  TapPartialCoverageReason({
-    required this.samples,
-  });
 
   /// Sampled tap search data.
   final TapSamples samples;
