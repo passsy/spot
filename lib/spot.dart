@@ -19,6 +19,7 @@ export 'package:spot/src/act/act.dart' show Act, act;
 export 'package:spot/src/act/act_tap.dart'
     show
         TapAbsorbedReason,
+        TapBlocker,
         TapCoveredReason,
         TapHitSample,
         TapHitTestInfo,

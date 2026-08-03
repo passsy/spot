@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -1142,6 +1144,16 @@ class TapHitSample {
 
   /// Hit-test path for [globalPosition].
   final TapHitTestInfo hitTest;
+
+  /// The widget that received this point instead of the target.
+  ///
+  /// `null` when the point reached the target, or when nothing was hit.
+  TapWidgetInfo? get blockedBy {
+    if (hitsTarget) {
+      return null;
+    }
+    return hitTest.receiver;
+  }
 }
 
 /// Sampled search used to find a tappable position on a widget.
@@ -1158,9 +1170,17 @@ class TapTargetSearch {
   final Rect searchArea;
 
   /// Pixel distance between sampled points.
+  ///
+  /// Describes the search that produced this result: [samples] holds one entry
+  /// per point of a uniform grid with this step size, covering [searchArea].
+  /// A future spot version may search differently.
   final int spacing;
 
-  /// All sampled hit-test points.
+  /// All sampled hit-test points, see [spacing].
+  ///
+  /// Prefer [blockers] and [hittablePercent] to answer what is in the way and
+  /// how much of the target is reachable. They stay meaningful no matter how
+  /// the points were picked.
   final List<TapHitSample> samples;
 
   /// Best tap position selected from [hittablePositions].
@@ -1192,6 +1212,88 @@ class TapTargetSearch {
       return 0;
     }
     return hittableSamples.length / samples.length * 100;
+  }
+
+  /// Whether every sampled point reached the target.
+  bool get isFullyHittable {
+    return samples.isNotEmpty && blockedSamples.isEmpty;
+  }
+
+  /// Whether no sampled point reached the target.
+  bool get isUnreachable {
+    return hittableSamples.isEmpty;
+  }
+
+  /// The area of [searchArea] that actually reacts to pointer events.
+  ///
+  /// `null` when nothing was reachable. Derived from sampled points, so it is
+  /// accurate to [spacing] rather than to the pixel.
+  Rect? get hittableBounds {
+    final positions = hittablePositions;
+    if (positions.isEmpty) {
+      return null;
+    }
+    return Rect.fromLTRB(
+      positions.map((it) => it.dx).reduce(min),
+      positions.map((it) => it.dy).reduce(min),
+      positions.map((it) => it.dx).reduce(max),
+      positions.map((it) => it.dy).reduce(max),
+    );
+  }
+
+  /// The widgets that received pointer events instead of the target, the one
+  /// covering the most of it first.
+  ///
+  /// Answers what is in the way without walking [samples]:
+  ///
+  /// ```dart
+  /// final blocker = act.inspectTap(spot<MyButton>()).search!.blockers.first;
+  /// print('${blocker.widget.widgetName} covers ${blocker.percent}%');
+  /// ```
+  List<TapBlocker> get blockers {
+    final counts = <Element, int>{};
+    final widgets = <Element, TapWidgetInfo>{};
+    for (final sample in blockedSamples) {
+      final receiver = sample.blockedBy;
+      if (receiver == null) {
+        continue;
+      }
+      counts[receiver.element] = (counts[receiver.element] ?? 0) + 1;
+      widgets[receiver.element] ??= receiver;
+    }
+    final blockers = counts.entries.map((entry) {
+      return TapBlocker(
+        widget: widgets[entry.key]!,
+        sampleCount: entry.value,
+        percent: samples.isEmpty ? 0 : entry.value / samples.length * 100,
+      );
+    }).toList()
+      ..sort((a, b) => b.sampleCount.compareTo(a.sampleCount));
+    return List.unmodifiable(blockers);
+  }
+}
+
+/// A widget that receives pointer events meant for the inspected target.
+class TapBlocker {
+  /// Creates a blocker.
+  TapBlocker({
+    required this.widget,
+    required this.sampleCount,
+    required this.percent,
+  });
+
+  /// The widget that received the pointer events.
+  final TapWidgetInfo widget;
+
+  /// How many sampled points this widget intercepted.
+  final int sampleCount;
+
+  /// Percentage of the target this widget covers, measured in sampled points.
+  final double percent;
+
+  @override
+  String toString() {
+    return '${widget.widgetName} (${percent.round()}%)';
   }
 }
 
