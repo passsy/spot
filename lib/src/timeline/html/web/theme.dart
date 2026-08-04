@@ -115,7 +115,7 @@ const timelineCSS = '''
   --accent-strong: #4c8df6;
   --focus: #a8c7fa;
   --track-cell-width: 132px;
-  --gap-cell-width: 86px;
+  --gap-cell-width: 24px;
   --filmstrip-height: 142px;
   --header-height: 48px;
   --timeline-height: 256px;
@@ -416,57 +416,30 @@ kbd {
 /* A stretch of frames the test rendered and recorded nothing in. */
 .frame-gap {
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 1px;
   min-width: 0;
   height: 100%;
-  padding: 4px;
+  padding: 6px 0;
   border-right: 1px solid var(--border);
-  color: var(--text-muted);
   background:
     repeating-linear-gradient(
       135deg,
       transparent 0 6px,
       #22242a 6px 12px);
+  cursor: help;
+}
+
+/* Set sideways, so the column is only as wide as the text is tall. */
+.frame-gap__frames {
+  max-height: 100%;
+  overflow: hidden;
+  color: var(--text-secondary);
   font-size: 10px;
   font-variant-numeric: tabular-nums;
-  text-align: center;
-}
-
-.frame-gap__ellipsis {
-  margin-bottom: 2px;
-  color: var(--border-strong);
-  font-size: 16px;
-  line-height: 1;
-}
-
-.frame-gap__frames {
-  color: var(--text-secondary);
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.frame-gap__label {
-  text-transform: uppercase;
-  letter-spacing: .06em;
-  font-size: 9px;
-}
-
-.frame-gap__time {
-  display: flex;
-  gap: 4px;
-  align-items: baseline;
-}
-
-.frame-gap__time:first-of-type {
-  margin-top: 5px;
-}
-
-.frame-gap__clock {
-  color: #6b7280;
-  font-size: 9px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  writing-mode: vertical-rl;
 }
 
 .ruler-cell.is-gap,

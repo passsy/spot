@@ -1084,6 +1084,10 @@ class TimelineAppState extends State<TimelineApp> {
 
   /// The frames the test rendered without recording anything in them.
   ///
+  /// A sliver between two frames, holding only the count, set sideways so the
+  /// column stays as narrow as the text is tall. The timings are one hover
+  /// away, and the strip is read for the frames either side of the gap.
+  ///
   /// Deliberately not selectable: there is nothing behind it to show, and the
   /// arrow keys walk frames, so they step straight over it.
   Component _frameGap(TimelineGap gap) {
@@ -1100,21 +1104,7 @@ class TimelineAppState extends State<TimelineApp> {
             '${_durationLabel(gap.wallClock)} wall clock',
       },
       [
-        const span(classes: 'frame-gap__ellipsis', [Component.text('⋯')]),
-        span(classes: 'frame-gap__frames', [
-          Component.text(_count(gap.frames)),
-        ]),
-        span(classes: 'frame-gap__label', [
-          Component.text(gap.frames == 1 ? 'frame' : 'frames'),
-        ]),
-        span(classes: 'frame-gap__time', [
-          Component.text(_durationLabel(gap.testClock)),
-          const span(classes: 'frame-gap__clock', [Component.text('test')]),
-        ]),
-        span(classes: 'frame-gap__time', [
-          Component.text(_durationLabel(gap.wallClock)),
-          const span(classes: 'frame-gap__clock', [Component.text('wall')]),
-        ]),
+        span(classes: 'frame-gap__frames', [Component.text(frames)]),
       ],
     );
   }
