@@ -37,10 +37,10 @@ class TimelineApp extends StatefulComponent {
 
 class TimelineAppState extends State<TimelineApp> {
   // ignore: prefer_const_constructors
-  final GlobalKey<SnackBarState> _snackBar = GlobalKey();
+  final GlobalStateKey<SnackBarState> _snackBar = GlobalStateKey();
 
   // ignore: prefer_const_constructors
-  final GlobalKey<ModalState> _modal = GlobalKey();
+  final GlobalStateKey<ModalState> _modal = GlobalStateKey();
 
   @override
   Iterable<Component> build(BuildContext context) {

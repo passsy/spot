@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Breaking: Require Dart 3.4 / Flutter 3.22 and update Jaspr to 0.17.1.
+- Fix: Restore screenshots and interactivity in the hot-restart timeline.
 - New: `act.inspectTap()` reports whether a widget can be tapped and why not, as a value instead of a thrown error. It sends no pointer events and pumps no frame, so a test can assert that something is untappable *for a specific reason* rather than matching on message strings. #150
   ```dart
   final inspection = act.inspectTap(spot<ElevatedButton>());

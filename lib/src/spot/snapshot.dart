@@ -699,7 +699,8 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
           );
         }
         fail(
-            'Could not find ${unconstrainedSelector.toStringBreadcrumb()} in widget tree');
+          'Could not find ${unconstrainedSelector.toStringBreadcrumb()} in widget tree',
+        );
       }
     }
 
@@ -828,11 +829,14 @@ void _tryMatchingLessSpecificCriteria(
           final RegExpMatch? match = dynamicRegexp.firstMatch(typeName);
           if (match != null) {
             errorBuilder.writeln(
-                '\nWARNING: You are using a "dynamic" in your selector (ex: spot<$typeName>), this may be why you got no results:');
+              '\nWARNING: You are using a "dynamic" in your selector (ex: spot<$typeName>), this may be why you got no results:',
+            );
             errorBuilder.writeln(
-                "-> a spot<$typeName>() doesn't match a ${typeName.replaceAll("dynamic", "String")}.");
+              "-> a spot<$typeName>() doesn't match a ${typeName.replaceAll("dynamic", "String")}.",
+            );
             errorBuilder.writeln(
-                "-> \"dynamic\" is used when you don't specify a generic type.\n");
+              "-> \"dynamic\" is used when you don't specify a generic type.\n",
+            );
           }
         }
       }
