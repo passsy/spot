@@ -1496,22 +1496,37 @@ body.is-resizing-rows * {
   text-align: center;
 }
 
-.lightbox__close {
+.lightbox__actions {
   position: absolute;
+  z-index: 1;
   top: 12px;
   right: 16px;
+  display: flex;
+  gap: 8px;
+  cursor: default;
+}
+
+.lightbox__action {
   padding: 6px 12px;
   border: 1px solid var(--border);
   border-radius: 6px;
   background: #1d1e22;
   color: var(--text);
-  font-size: 14px;
+  font-size: 12px;
   cursor: pointer;
 }
 
-.lightbox__close:hover {
+.lightbox__action:hover {
   border-color: var(--accent);
   color: var(--accent);
+}
+
+.lightbox__action[aria-pressed="false"] {
+  color: var(--text-muted);
+}
+
+.tree-spacer {
+  flex: none;
 }
 
 .metadata-row {

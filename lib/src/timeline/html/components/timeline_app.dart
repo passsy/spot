@@ -39,14 +39,94 @@ class TimelineApp extends StatefulComponent {
 
 enum _InspectorTab { details, widgetInspector, widgetTree, raw }
 
-const _largeWidgetTreeNodeLimit = 800;
-const _largeWidgetTreeInitialDepth = 4;
 const _treeTextPageLineCount = 250;
 
 /// The source pane and the caller line inside it, so the pane can be scrolled
 /// to the caller after a selection changes.
 const _sourceCodeId = 'source-code';
 const _callerLineId = 'source-caller-line';
+
+/// The widget tree's scroll container, so it can be scrolled to a match.
+const _widgetTreeId = 'interactive-tree';
+
+/// Height of one widget tree row, matching `.tree-node__row` in the CSS.
+///
+/// The tree renders only the rows in view, which needs the height of a row
+/// that has not been rendered yet. Keeping every row the same height is what
+/// makes that possible.
+const double _treeRowHeight = 25;
+
+/// How much of one indentation step a row takes, matching the CSS.
+const double _treeIndentWidth = 14;
+
+/// Rows rendered above and below the viewport, so scrolling does not flash.
+const int _treeOverscanRows = 16;
+
+/// One row of the flattened widget tree.
+class TreeRow {
+  TreeRow({
+    required this.node,
+    required this.depth,
+    required this.hasChildren,
+    required this.expanded,
+  });
+
+  final Map<String, dynamic> node;
+
+  /// Indentation steps, not the depth in the tree, see [flattenWidgetTree].
+  final int depth;
+  final bool hasChildren;
+  final bool expanded;
+
+  String get id => node['id'] as String;
+}
+
+/// Flattens the expanded parts of [root] into the rows to display.
+///
+/// A chain of single-child widgets stays at one indentation, the way Flutter's
+/// own inspector shows it. Widget trees are mostly such chains, and indenting
+/// every one of them pushes the interesting rows off the right edge.
+///
+/// Rendering reads this list by index, which is what lets the tree draw only
+/// the rows in view instead of thousands of DOM nodes.
+List<TreeRow> flattenWidgetTree(
+  Map<String, dynamic>? root, {
+  required Set<String> expandedNodeIds,
+  required Set<String> visibleNodeIds,
+  required bool searchActive,
+}) {
+  if (root == null) {
+    return const [];
+  }
+  final rows = <TreeRow>[];
+
+  void walk(Map<String, dynamic> node, int depth) {
+    final children = _structuredNodeChildren(node)
+        .where((child) => !searchActive || visibleNodeIds.contains(child['id']))
+        .toList(growable: false);
+    // A search shows every node on the way to a match, collapsing them would
+    // hide the matches the search just found.
+    final expanded = searchActive || expandedNodeIds.contains(node['id']);
+    rows.add(
+      TreeRow(
+        node: node,
+        depth: depth,
+        hasChildren: children.isNotEmpty,
+        expanded: expanded,
+      ),
+    );
+    if (!expanded) {
+      return;
+    }
+    final childDepth = children.length > 1 ? depth + 1 : depth;
+    for (final child in children) {
+      walk(child, childDepth);
+    }
+  }
+
+  walk(root, 0);
+  return rows;
+}
 
 enum _ResizeTarget { timeline, captureTree, treeDetails }
 
@@ -272,11 +352,16 @@ class TimelineAppState extends State<TimelineApp> {
   _InspectorTab _selectedTab = _InspectorTab.details;
   final Set<String> _expandedWidgetNodes = {'0'};
   final Map<int, TimelineEvent> _decodedFrameData = {};
-  bool _limitedWidgetTreeExpansion = false;
   String? _selectedWidgetNodeId;
   String _widgetTreeSearch = '';
   bool _showFullRawData = false;
   bool _showCaptureOverlays = true;
+
+  /// Where the widget tree is scrolled to, and how tall its viewport is.
+  ///
+  /// Together they decide which rows are rendered, see [_widgetTreeRows].
+  double _treeScrollTop = 0;
+  double _treeViewportHeight = 640;
 
   /// The event whose capture is open full screen, `null` when none is.
   TimelineEvent? _lightboxEvent;
@@ -334,7 +419,13 @@ class TimelineAppState extends State<TimelineApp> {
   @override
   void initState() {
     super.initState();
-    _selectedIndex = _initialSelection();
+    final initialSelection = _initialSelection();
+    _selectedIndex = initialSelection;
+    if (initialSelection != null) {
+      _expandedWidgetNodes
+        ..clear()
+        ..addAll(_expandedNodeIdsFor(initialSelection));
+    }
     _scrollCallerIntoView();
     if (kIsWeb) {
       _keySubscription = window.onKeyDown.listen((event) {
@@ -550,27 +641,26 @@ class TimelineAppState extends State<TimelineApp> {
     _select(index);
   }
 
+  /// Every node of the tree captured for the event at [index].
+  ///
+  /// Everything is expanded: only the rows in view are rendered, so the size
+  /// of the tree no longer decides what it costs to show it.
+  Set<String> _expandedNodeIdsFor(int index) {
+    final root = _widgetTreeRoot(component.timelineEvents[index]);
+    return root == null ? const {'0'} : collectStructuredWidgetNodeIds(root);
+  }
+
   void _select(int index) {
     if (index < 0 || index >= component.timelineEvents.length) {
       return;
     }
-    final root = _widgetTreeRoot(component.timelineEvents[index]);
-    final allNodeIds = root == null
-        ? const {'0'}
-        : collectStructuredWidgetNodeIds(root);
-    final limitExpansion = allNodeIds.length > _largeWidgetTreeNodeLimit;
-    final expandedIds = root == null || !limitExpansion
-        ? allNodeIds
-        : collectStructuredWidgetNodeIds(
-            root,
-            maxDepth: _largeWidgetTreeInitialDepth,
-          );
+    final expandedIds = _expandedNodeIdsFor(index);
     setState(() {
       _selectedIndex = index;
       _selectedWidgetNodeId = null;
       _showFullRawData = false;
       _treeTextStartLine = 1;
-      _limitedWidgetTreeExpansion = limitExpansion;
+      _treeScrollTop = 0;
       _expandedWidgetNodes
         ..clear()
         ..addAll(expandedIds);
@@ -1128,10 +1218,6 @@ class TimelineAppState extends State<TimelineApp> {
         div(classes: 'pane-toolbar pane-toolbar--tree', [
           const span(classes: 'pane-title', [Component.text('Widget tree')]),
           div(classes: 'tree-toolbar-controls', [
-            if (_limitedWidgetTreeExpansion && !searchActive)
-              const span(classes: 'search-result-count', [
-                Component.text('Large tree · top levels expanded'),
-              ]),
             input<String>(
               type: InputType.search,
               value: _widgetTreeSearch,
@@ -1191,20 +1277,11 @@ class TimelineAppState extends State<TimelineApp> {
             Component.text('No widget types match “$_widgetTreeSearch”.'),
           ])
         else
-          div(
-            classes: 'interactive-tree',
-            attributes: const {
-              'role': 'tree',
-              'aria-label': 'Flutter widget tree',
-            },
-            [
-              _widgetTreeNode(
-                root,
-                depth: 0,
-                visibleNodeIds: searchResult.visible,
-                matchingNodeIds: searchResult.matches,
-              ),
-            ],
+          _widgetTreeRows(
+            root,
+            visibleNodeIds: searchResult.visible,
+            matchingNodeIds: searchResult.matches,
+            searchActive: searchActive,
           ),
         _resizeHandle(
           _ResizeTarget.treeDetails,
@@ -1288,18 +1365,88 @@ class TimelineAppState extends State<TimelineApp> {
     ]);
   }
 
-  Component _widgetTreeNode(
-    Map<String, dynamic> node, {
-    required int depth,
+  /// The widget tree, rendering only the rows that are in view.
+  ///
+  /// A captured tree runs to thousands of nodes and each row is several DOM
+  /// elements, so rendering all of them blocks the page for seconds. The rows
+  /// are all the same height, so the ones outside the viewport can be replaced
+  /// by two spacers that keep the scrollbar honest.
+  Component _widgetTreeRows(
+    Map<String, dynamic>? root, {
     required Set<String> visibleNodeIds,
     required Set<String> matchingNodeIds,
+    required bool searchActive,
   }) {
-    final id = node['id'] as String;
-    final searchActive = _widgetTreeSearch.trim().isNotEmpty;
-    final children = _nodeChildren(
-      node,
-    ).where((child) => !searchActive || visibleNodeIds.contains(child['id']));
-    final expanded = searchActive || _expandedWidgetNodes.contains(id);
+    final rows = flattenWidgetTree(
+      root,
+      expandedNodeIds: _expandedWidgetNodes,
+      visibleNodeIds: visibleNodeIds,
+      searchActive: searchActive,
+    );
+    final firstVisible = math.max(
+      0,
+      (_treeScrollTop / _treeRowHeight).floor() - _treeOverscanRows,
+    );
+    final windowRows =
+        (_treeViewportHeight / _treeRowHeight).ceil() + _treeOverscanRows * 2;
+    final lastVisible = math.min(rows.length, firstVisible + windowRows);
+
+    return div(
+      id: _widgetTreeId,
+      classes: 'interactive-tree',
+      attributes: const {'role': 'tree', 'aria-label': 'Flutter widget tree'},
+      events: {'scroll': _onTreeScroll},
+      [
+        if (firstVisible > 0)
+          div(
+            classes: 'tree-spacer',
+            styles: Styles(
+              raw: {'height': '${firstVisible * _treeRowHeight}px'},
+            ),
+            const [],
+          ),
+        for (var index = firstVisible; index < lastVisible; index++)
+          _widgetTreeRow(rows[index], matchingNodeIds: matchingNodeIds),
+        if (lastVisible < rows.length)
+          div(
+            classes: 'tree-spacer',
+            styles: Styles(
+              raw: {
+                'height': '${(rows.length - lastVisible) * _treeRowHeight}px',
+              },
+            ),
+            const [],
+          ),
+      ],
+    );
+  }
+
+  void _onTreeScroll(dynamic event) {
+    final dynamic target = event.currentTarget ?? event.target;
+    if (target == null) {
+      return;
+    }
+    final double scrollTop = (target.scrollTop as num).toDouble();
+    final double height = (target.clientHeight as num).toDouble();
+    // Re-render only when the window of rows would actually change.
+    if ((scrollTop - _treeScrollTop).abs() < _treeRowHeight &&
+        height == _treeViewportHeight) {
+      return;
+    }
+    setState(() {
+      _treeScrollTop = scrollTop;
+      _treeViewportHeight = height;
+    });
+  }
+
+  Component _widgetTreeRow(
+    TreeRow row, {
+    required Set<String> matchingNodeIds,
+  }) {
+    final node = row.node;
+    final id = row.id;
+    final depth = row.depth;
+    final expanded = row.expanded;
     final selected = _selectedWidgetNodeId == id;
     final searchMatch = matchingNodeIds.contains(id);
     final offstage = node['offstage'] == true;
@@ -1309,7 +1456,7 @@ class TimelineAppState extends State<TimelineApp> {
       classes: 'tree-node',
       attributes: {
         'role': 'treeitem',
-        'aria-expanded': children.isEmpty ? 'false' : expanded.toString(),
+        'aria-expanded': !row.hasChildren ? 'false' : expanded.toString(),
         'aria-selected': selected.toString(),
       },
       [
@@ -1318,7 +1465,7 @@ class TimelineAppState extends State<TimelineApp> {
               'tree-node__row ${selected ? 'is-selected' : ''} ${searchMatch ? 'is-search-match' : ''} ${offstage ? 'is-offstage' : ''}',
           styles: Styles(raw: {'--tree-depth': depth.toString()}),
           [
-            if (children.isEmpty)
+            if (!row.hasChildren)
               const span(classes: 'tree-expander-spacer', [])
             else
               button(
@@ -1366,20 +1513,6 @@ class TimelineAppState extends State<TimelineApp> {
             ),
           ],
         ),
-        if (expanded && children.isNotEmpty)
-          div(
-            classes: 'tree-node__children',
-            attributes: const {'role': 'group'},
-            [
-              for (final child in children)
-                _widgetTreeNode(
-                  child,
-                  depth: depth + 1,
-                  visibleNodeIds: visibleNodeIds,
-                  matchingNodeIds: matchingNodeIds,
-                ),
-            ],
-          ),
       ],
     );
   }
@@ -1458,11 +1591,51 @@ class TimelineAppState extends State<TimelineApp> {
     }
 
     _selectWidgetNode(id);
-    if (kIsWeb) {
-      Future<void>.delayed(Duration.zero, () {
-        window.document.getElementById('widget-node-$id')?.scrollIntoView();
-      });
+    _scrollTreeToNode(root, id);
+  }
+
+  /// Brings the row for [id] into view, sideways as well as down.
+  ///
+  /// scrollIntoView is not enough: the row may not be rendered yet, because
+  /// the tree only renders what is in view, and a deep row can sit past the
+  /// right edge of the pane.
+  void _scrollTreeToNode(Map<String, dynamic>? root, String id) {
+    if (!kIsWeb) {
+      return;
     }
+    final rows = flattenWidgetTree(
+      root,
+      expandedNodeIds: _expandedWidgetNodes,
+      visibleNodeIds: searchStructuredWidgetTree(
+        root,
+        _widgetTreeSearch,
+      ).visible,
+      searchActive: _widgetTreeSearch.trim().isNotEmpty,
+    );
+    final index = rows.indexWhere((row) => row.id == id);
+    if (index == -1) {
+      return;
+    }
+
+    final dynamic tree = window.document.querySelector('#$_widgetTreeId');
+    if (tree == null) {
+      return;
+    }
+    final double viewport = (tree.clientHeight as num).toDouble();
+    final top = index * _treeRowHeight - (viewport - _treeRowHeight) / 2;
+    tree.scrollTop = top.clamp(0, double.infinity).round();
+    // Indentation is the only thing that pushes a row sideways, so the row's
+    // depth says how far to scroll to put its label back on screen.
+    final indent = rows[index].depth * _treeIndentWidth;
+    final double width = (tree.clientWidth as num).toDouble();
+    final currentLeft = (tree.scrollLeft as num).toDouble();
+    if (indent < currentLeft || indent > currentLeft + width - 120) {
+      tree.scrollLeft = math.max(0, indent - 40).round();
+    }
+    setState(() {
+      _treeScrollTop = top.clamp(0, double.infinity);
+      _treeViewportHeight = viewport;
+    });
   }
 
   void _toggleWidgetNode(String id) {
@@ -1487,7 +1660,6 @@ class TimelineAppState extends State<TimelineApp> {
     }
     final ids = collectStructuredWidgetNodeIds(root);
     setState(() {
-      _limitedWidgetTreeExpansion = false;
       _expandedWidgetNodes
         ..clear()
         ..addAll(ids);
@@ -1711,11 +1883,34 @@ class TimelineAppState extends State<TimelineApp> {
       },
       events: {'click': (dynamic _) => _closeLightbox()},
       [
-        button(
-          classes: 'lightbox__close',
-          attributes: const {'title': 'Close (Esc)'},
-          onClick: _closeLightbox,
-          const [Component.text('✕')],
+        div(
+          classes: 'lightbox__actions',
+          // Toggling overlays must not reach the backdrop, which dismisses.
+          events: {'click': (dynamic event) => event.stopPropagation()},
+          [
+            if (event.overlayUrls.isNotEmpty)
+              button(
+                classes: 'lightbox__action',
+                attributes: {
+                  'aria-pressed': _showCaptureOverlays.toString(),
+                  'title': 'Toggle the annotations drawn over the capture',
+                },
+                onClick: () {
+                  setState(() => _showCaptureOverlays = !_showCaptureOverlays);
+                },
+                [
+                  Component.text(
+                    _showCaptureOverlays ? 'Hide overlays' : 'Show overlays',
+                  ),
+                ],
+              ),
+            button(
+              classes: 'lightbox__action',
+              attributes: const {'title': 'Close (Esc)'},
+              onClick: _closeLightbox,
+              const [Component.text('✕')],
+            ),
+          ],
         ),
         div(
           classes: 'lightbox__stage',
