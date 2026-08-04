@@ -46,6 +46,9 @@ const _treeTextPageLineCount = 250;
 const _sourceCodeId = 'source-code';
 const _callerLineId = 'source-caller-line';
 
+/// Lines kept visible above the caller when the source pane scrolls to it.
+const int _sourceContextLinesAbove = 4;
+
 /// The widget tree's scroll container, so it can be scrolled to a match.
 const _widgetTreeId = 'interactive-tree';
 
@@ -1850,21 +1853,31 @@ class TimelineAppState extends State<TimelineApp> {
         return;
       }
 
-      // offsetTop is relative to the pane, which is the positioned ancestor.
-      final num lineTop = line.offsetTop as num;
-      final num lineHeight = line.offsetHeight as num;
-      final target = (lineTop - (paneHeight - lineHeight) / 2)
-          .clamp(0, double.infinity)
-          .round();
-      if ((pane.scrollTop as num).round() != target) {
+      // Measured against the pane rather than through offsetTop, which is
+      // relative to the closest positioned ancestor. The pane is not
+      // positioned, so offsetTop carried the pane's own distance down the page
+      // and scrolled the file that much too far.
+      final dynamic paneRect = pane.getBoundingClientRect();
+      final dynamic lineRect = line.getBoundingClientRect();
+      final num scrollTop = pane.scrollTop as num;
+      final num lineOffset = (lineRect.top as num) - (paneRect.top as num);
+      final num lineHeight = lineRect.height as num;
+      final maxScroll = (pane.scrollHeight as num) - paneHeight;
+      // A few lines of lead-in rather than the middle of the pane: the caller
+      // is easier to find when it sits near the top, and what follows it is
+      // usually what the reader wants next.
+      final target =
+          (scrollTop + lineOffset - _sourceContextLinesAbove * lineHeight)
+              .clamp(0, maxScroll)
+              .round();
+
+      if (scrollTop.round() != target) {
         pane.scrollTop = target;
       }
       // Hydration replaces the pane shortly after the first paint and takes
       // the scroll position with it, so hold the position for a few frames
       // rather than trusting the first assignment.
-      settledFrames =
-          (pane.scrollTop as num).round() == target ||
-              (target > 0 && (pane.scrollTop as num) > 0)
+      settledFrames = (pane.scrollTop as num).round() == target
           ? settledFrames + 1
           : 0;
       if (settledFrames < 3) {
