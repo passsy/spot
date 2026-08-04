@@ -1014,15 +1014,6 @@ class TimelineAppState extends State<TimelineApp> {
 
   Component _inspector() {
     final event = _selectedEvent;
-    final frames = groupTimelineFrames(component.timelineEvents);
-    final selectedFrameIndex = _selectedIndex == null
-        ? -1
-        : frames.indexWhere(
-            (frame) => frame.eventIndexes.contains(_selectedIndex),
-          );
-    final selectedFrame = selectedFrameIndex == -1
-        ? null
-        : frames[selectedFrameIndex];
     return section(id: 'inspector', classes: 'inspector', [
       if (event == null)
         const div(classes: 'inspector-empty', [
@@ -1034,44 +1025,8 @@ class TimelineAppState extends State<TimelineApp> {
             ),
           ]),
         ])
-      else ...[
-        div(classes: 'inspector-header', [
-          div(classes: 'selected-event-heading', [
-            span(
-              classes: 'selected-event-color',
-              styles: Styles(raw: {'--event-color': _eventColor(event)}),
-              const [],
-            ),
-            div([
-              h2([Component.text(event.eventType)]),
-              span(classes: 'selected-event-meta', [
-                Component.text(
-                  '${_elapsedLabel(event)} · Frame ${selectedFrame!.frameNumber} · Event ${selectedFrame.eventIndexes.indexOf(_selectedIndex!) + 1} of ${selectedFrame.eventIndexes.length}',
-                ),
-              ]),
-            ]),
-          ]),
-          div(classes: 'inspector-navigation', [
-            button(
-              type: ButtonType.button,
-              classes: 'icon-button',
-              disabled: selectedFrameIndex == 0,
-              attributes: const {'aria-label': 'Previous frame'},
-              onClick: () => _selectAdjacentFrame(-1),
-              const [Component.text('←')],
-            ),
-            button(
-              type: ButtonType.button,
-              classes: 'icon-button',
-              disabled: selectedFrameIndex == frames.length - 1,
-              attributes: const {'aria-label': 'Next frame'},
-              onClick: () => _selectAdjacentFrame(1),
-              const [Component.text('→')],
-            ),
-          ]),
-        ]),
+      else
         _eventWorkbench(event),
-      ],
     ]);
   }
 

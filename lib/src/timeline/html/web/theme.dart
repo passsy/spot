@@ -196,8 +196,6 @@ a:focus-visible {
 .shortcut-hint,
 .range-summary,
 .timeline-counts,
-.selected-event-heading,
-.inspector-navigation,
 .code-toolbar {
   display: flex;
   align-items: center;
@@ -594,7 +592,7 @@ kbd {
 
 .inspector {
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
   min-width: 0;
   min-height: 0;
   overflow: hidden;
@@ -632,61 +630,6 @@ kbd {
   max-width: 560px;
   font-size: 12px;
   line-height: 1.6;
-}
-
-.inspector-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  min-height: 54px;
-  padding: 7px 10px 7px 14px;
-  border-bottom: 1px solid var(--border);
-  background: var(--surface);
-}
-
-.selected-event-heading {
-  min-width: 0;
-  gap: 10px;
-}
-
-.selected-event-color {
-  width: 3px;
-  height: 31px;
-  border-radius: 2px;
-  background: var(--event-color);
-}
-
-.selected-event-heading h2 {
-  margin: 0 0 3px;
-  overflow: hidden;
-  color: var(--text);
-  font-size: 13px;
-  font-weight: 600;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.selected-event-meta {
-  display: block;
-  font-size: 10px;
-  font-variant-numeric: tabular-nums;
-}
-
-.inspector-navigation {
-  gap: 5px;
-}
-
-.icon-button {
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 28px;
-  padding: 0;
-}
-
-.icon-button:disabled {
-  opacity: .35;
-  cursor: default;
 }
 
 .inspector-tabs {
