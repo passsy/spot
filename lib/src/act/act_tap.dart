@@ -1252,8 +1252,10 @@ class TapWidgetInfo {
 
   /// Source location reported by Flutter's widget inspector, if available.
   ///
-  /// Resolved on access. A widget's creation location does not change, so this
-  /// stays accurate no matter when it is read, unlike [globalRect].
+  /// Resolved on access from the live [element], not from the captured
+  /// [widget]. A rebuild can swap the widget at [element], after which this
+  /// describes the widget mounted there now instead of [widget]. Read it
+  /// before pumping another frame, like the rest of the inspection.
   String? get sourceLocation => element.debugWidgetLocation?.file.path;
 
   /// Whether Flutter reports this widget as user code.
