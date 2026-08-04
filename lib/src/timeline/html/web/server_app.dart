@@ -3,7 +3,6 @@
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:spot/src/timeline/html/components/timeline_app.dart';
-import 'package:spot/src/timeline/html/web/theme.dart';
 import 'package:spot/src/timeline/html/web/timeline_event.dart';
 
 /// The main entry point for the timeline web app.
@@ -56,21 +55,5 @@ class ServerAppState extends State<ServerApp>
     );
   }
 
-  static List<StyleRule> get styles => [
-    css('*')
-        .styles(fontFamily: fontFamily)
-        .styles(raw: {'-webkit-font-smoothing': 'antialiased'}),
-    css('body')
-        .styles(
-          margin: Margin.all(10.px),
-          padding: Padding.only(bottom: 50.px),
-        )
-        .styles(backgroundColor: spotBackground),
-    css('h1, h2, h3, p, pre').styles(color: fontColor),
-    css('h1')
-        .styles(fontWeight: FontWeight.w400, fontSize: h1FontSize)
-        .styles(padding: h1Padding),
-    css('.header').styles(alignItems: AlignItems.center),
-    ...TimelineAppState.styles,
-  ];
+  static List<StyleRule> get styles => [...TimelineAppState.styles];
 }

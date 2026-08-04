@@ -1,18 +1,20 @@
-// ignore_for_file: public_member_api_docs
+// ignore_for_file: public_member_api_docs, avoid_dynamic_calls
 
 /// This library is compiled for both vm and web platforms.
 /// Therefore, this and all imported libraries need to be platform agnostic or stubbed.
 library;
 
+import 'dart:async';
+import 'dart:convert';
+import 'dart:developer' as developer;
+
 // ignore: avoid_web_libraries_in_flutter, deprecated_member_use
 import 'dart:html' if (dart.library.io) '../web/web_stubs.dart' show window;
+import 'dart:math' as math;
 
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
-import 'package:spot/src/timeline/html/components/events.dart';
-import 'package:spot/src/timeline/html/components/modal.dart';
 import 'package:spot/src/timeline/html/components/snackbar.dart';
-import 'package:spot/src/timeline/html/web/theme.dart';
 import 'package:spot/src/timeline/html/web/timeline_event.dart';
 
 /// The main entry point for the timeline web app.
@@ -23,125 +25,1570 @@ class TimelineApp extends StatefulComponent {
     required this.timelineEvents,
   });
 
-  /// The name of the test.
   final String testName;
-
-  /// The name of the test with the hierarchy.
   final String testNameWithHierarchy;
-
-  /// The events that occurred during the test.
   final List<TimelineEvent> timelineEvents;
 
   @override
   State<TimelineApp> createState() => TimelineAppState();
 }
 
+enum _InspectorTab { details, widgetInspector, widgetTree, raw }
+
+const _largeWidgetTreeNodeLimit = 800;
+const _largeWidgetTreeInitialDepth = 4;
+
+enum _ResizeTarget { timeline, captureTree, treeDetails }
+
+const double _headerHeight = 48;
+const double _resizeHandleSize = 6;
+const double _minimumTimelineHeight = 150;
+const double _minimumInspectorHeight = 180;
+
+double resizedTimelineHeight({
+  required double pointerY,
+  required double containerTop,
+  required double containerHeight,
+}) {
+  final maximum = math.max(
+    _minimumTimelineHeight,
+    containerHeight -
+        _headerHeight -
+        _resizeHandleSize -
+        _minimumInspectorHeight,
+  );
+  return (pointerY - containerTop - _headerHeight).clamp(
+    _minimumTimelineHeight,
+    maximum,
+  );
+}
+
+double resizedPanePercent({
+  required double pointer,
+  required double containerStart,
+  required double containerExtent,
+  required double minimum,
+  required double maximum,
+  double leadingInset = 0,
+}) {
+  if (containerExtent <= 0) {
+    return minimum;
+  }
+  return ((pointer - containerStart - leadingInset) / containerExtent * 100)
+      .clamp(minimum, maximum);
+}
+
+double adjustedPaneSize(
+  double current,
+  double delta, {
+  required double minimum,
+  required double maximum,
+}) => (current + delta).clamp(minimum, maximum);
+
+class TimelineFrameGroup {
+  TimelineFrameGroup({
+    required this.frameNumber,
+    required this.eventIndexes,
+    required this.screenshotUrl,
+  });
+
+  final int frameNumber;
+  final List<int> eventIndexes;
+  final String? screenshotUrl;
+}
+
+List<TimelineFrameGroup> groupTimelineFrames(List<TimelineEvent> events) {
+  final indexesByFrame = <int, List<int>>{};
+  for (var index = 0; index < events.length; index++) {
+    final frameNumber = events[index].frameNumber ?? index + 1;
+    indexesByFrame.putIfAbsent(frameNumber, () => []).add(index);
+  }
+  return indexesByFrame.entries
+      .map((entry) {
+        String? screenshotUrl;
+        for (final index in entry.value) {
+          screenshotUrl ??= events[index].screenshotUrl;
+        }
+        return TimelineFrameGroup(
+          frameNumber: entry.key,
+          eventIndexes: List.unmodifiable(entry.value),
+          screenshotUrl: screenshotUrl,
+        );
+      })
+      .toList(growable: false);
+}
+
+int? adjacentFrameEventIndex(
+  List<TimelineFrameGroup> frames,
+  int? selectedEventIndex,
+  int delta,
+) {
+  if (frames.isEmpty) {
+    return null;
+  }
+  if (selectedEventIndex == null) {
+    return delta < 0
+        ? frames.last.eventIndexes.first
+        : frames.first.eventIndexes.first;
+  }
+
+  final currentFrameIndex = frames.indexWhere(
+    (frame) => frame.eventIndexes.contains(selectedEventIndex),
+  );
+  if (currentFrameIndex == -1) {
+    return frames.first.eventIndexes.first;
+  }
+  final currentEventOffset = frames[currentFrameIndex].eventIndexes.indexOf(
+    selectedEventIndex,
+  );
+  final targetFrameIndex = (currentFrameIndex + delta).clamp(
+    0,
+    frames.length - 1,
+  );
+  final targetEvents = frames[targetFrameIndex].eventIndexes;
+  return targetEvents[currentEventOffset.clamp(0, targetEvents.length - 1)];
+}
+
+int? adjacentEventInFrameIndex(
+  List<TimelineFrameGroup> frames,
+  int? selectedEventIndex,
+  int delta,
+) {
+  if (frames.isEmpty) {
+    return null;
+  }
+  if (selectedEventIndex == null) {
+    final firstFrameEvents = frames.first.eventIndexes;
+    return delta < 0 ? firstFrameEvents.last : firstFrameEvents.first;
+  }
+
+  final frame = frames.where(
+    (frame) => frame.eventIndexes.contains(selectedEventIndex),
+  );
+  if (frame.isEmpty) {
+    return frames.first.eventIndexes.first;
+  }
+  final frameEvents = frame.first.eventIndexes;
+  final currentOffset = frameEvents.indexOf(selectedEventIndex);
+  return frameEvents[(currentOffset + delta).clamp(0, frameEvents.length - 1)];
+}
+
 class TimelineAppState extends State<TimelineApp> {
   // ignore: prefer_const_constructors
   final GlobalStateKey<SnackBarState> _snackBar = GlobalStateKey();
 
-  // ignore: prefer_const_constructors
-  final GlobalStateKey<ModalState> _modal = GlobalStateKey();
+  int? _selectedIndex;
+  _InspectorTab _selectedTab = _InspectorTab.details;
+  final Set<String> _expandedWidgetNodes = {'0'};
+  final Map<int, TimelineEvent> _decodedFrameData = {};
+  bool _limitedWidgetTreeExpansion = false;
+  String? _selectedWidgetNodeId;
+  String _widgetTreeSearch = '';
+  bool _showFullRawData = false;
+  double _timelineHeight = 256;
+  double _capturePanePercent = 57;
+  double _treePanePercent = 62;
+  _ResizeTarget? _resizeTarget;
+  StreamSubscription<dynamic>? _keySubscription;
+  StreamSubscription<dynamic>? _resizeMoveSubscription;
+  StreamSubscription<dynamic>? _resizeEndSubscription;
+
+  TimelineEvent? get _selectedEvent {
+    final index = _selectedIndex;
+    if (index == null || index >= component.timelineEvents.length) {
+      return null;
+    }
+    return component.timelineEvents[index];
+  }
+
+  DateTime? get _firstTimestamp => component.timelineEvents.isEmpty
+      ? null
+      : DateTime.tryParse(component.timelineEvents.first.timestamp);
+
+  Duration get _duration {
+    if (component.timelineEvents.length < 2) {
+      return Duration.zero;
+    }
+    final first = _firstTimestamp;
+    final last = DateTime.tryParse(component.timelineEvents.last.timestamp);
+    if (first == null || last == null) {
+      return Duration.zero;
+    }
+    return last.difference(first);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (kIsWeb) {
+      _keySubscription = window.onKeyDown.listen((event) {
+        final dynamic target = event.target;
+        final tagName = target?.tagName?.toString().toLowerCase();
+        if (tagName == 'input' ||
+            tagName == 'textarea' ||
+            tagName == 'select' ||
+            target?.isContentEditable == true) {
+          return;
+        }
+        switch (event.key) {
+          case 'ArrowLeft':
+            _selectAdjacentFrame(-1);
+          case 'ArrowRight':
+            _selectAdjacentFrame(1);
+          case 'ArrowUp':
+            _selectAdjacentEventInFrame(-1);
+          case 'ArrowDown':
+            _selectAdjacentEventInFrame(1);
+          case 'Home':
+            _select(0);
+          case 'End':
+            _select(component.timelineEvents.length - 1);
+          default:
+            return;
+        }
+        event.preventDefault();
+      });
+      _resizeMoveSubscription = window.onMouseMove.listen(_resizePane);
+      _resizeEndSubscription = window.onMouseUp.listen(_finishResizing);
+    }
+  }
+
+  @override
+  void dispose() {
+    _keySubscription?.cancel();
+    _resizeMoveSubscription?.cancel();
+    _resizeEndSubscription?.cancel();
+    super.dispose();
+  }
+
+  void _startResizing(_ResizeTarget target, dynamic event) {
+    event.preventDefault();
+    _resizeTarget = target;
+    if (kIsWeb) {
+      final className = switch (target) {
+        _ResizeTarget.captureTree => 'is-resizing-columns',
+        _ResizeTarget.timeline ||
+        _ResizeTarget.treeDetails => 'is-resizing-rows',
+      };
+      window.document.querySelector('body')?.classes.add(className);
+    }
+  }
+
+  void _resizePane(dynamic event) {
+    final target = _resizeTarget;
+    if (!kIsWeb || target == null) {
+      return;
+    }
+
+    switch (target) {
+      case _ResizeTarget.timeline:
+        final element = window.document.getElementById('timeline-app');
+        if (element == null) {
+          return;
+        }
+        final rect = element.getBoundingClientRect();
+        final clientY = (event.client.y as num).toDouble();
+        _timelineHeight = resizedTimelineHeight(
+          pointerY: clientY,
+          containerTop: rect.top.toDouble(),
+          containerHeight: rect.height.toDouble(),
+        );
+        element.style.setProperty('--timeline-height', '${_timelineHeight}px');
+      case _ResizeTarget.captureTree:
+        final element = window.document.getElementById('interactive-inspector');
+        if (element == null) {
+          return;
+        }
+        final rect = element.getBoundingClientRect();
+        if (rect.width <= 0) {
+          return;
+        }
+        final clientX = (event.client.x as num).toDouble();
+        _capturePanePercent = resizedPanePercent(
+          pointer: clientX,
+          containerStart: rect.left.toDouble(),
+          containerExtent: rect.width.toDouble(),
+          minimum: 20,
+          maximum: 80,
+        );
+        element.style.setProperty(
+          '--capture-pane-width',
+          '$_capturePanePercent%',
+        );
+      case _ResizeTarget.treeDetails:
+        final element = window.document.getElementById('widget-explorer');
+        if (element == null) {
+          return;
+        }
+        final rect = element.getBoundingClientRect();
+        if (rect.height <= 0) {
+          return;
+        }
+        final clientY = (event.client.y as num).toDouble();
+        _treePanePercent = resizedPanePercent(
+          pointer: clientY,
+          containerStart: rect.top.toDouble(),
+          containerExtent: rect.height.toDouble(),
+          leadingInset: 34,
+          minimum: 25,
+          maximum: 82,
+        );
+        element.style.setProperty('--tree-pane-height', '$_treePanePercent%');
+    }
+  }
+
+  void _finishResizing(dynamic _) {
+    if (_resizeTarget == null) {
+      return;
+    }
+    _resizeTarget = null;
+    if (kIsWeb) {
+      window.document.querySelector('body')?.classes
+        ?..remove('is-resizing-columns')
+        ..remove('is-resizing-rows');
+    }
+    setState(() {});
+  }
+
+  void _resizeWithKeyboard(_ResizeTarget target, dynamic event) {
+    final key = event.key as String?;
+    final delta = switch ((target, key)) {
+      (_ResizeTarget.captureTree, 'ArrowLeft') => -4.0,
+      (_ResizeTarget.captureTree, 'ArrowRight') => 4.0,
+      (_ResizeTarget.timeline, 'ArrowUp') => -24.0,
+      (_ResizeTarget.timeline, 'ArrowDown') => 24.0,
+      (_ResizeTarget.treeDetails, 'ArrowUp') => -5.0,
+      (_ResizeTarget.treeDetails, 'ArrowDown') => 5.0,
+      _ => null,
+    };
+    if (delta == null) {
+      return;
+    }
+    event.stopPropagation();
+    event.preventDefault();
+    setState(() {
+      switch (target) {
+        case _ResizeTarget.timeline:
+          final element = kIsWeb
+              ? window.document.getElementById('timeline-app')
+              : null;
+          final maximum = element == null
+              ? 600.0
+              : math.max(
+                  _minimumTimelineHeight,
+                  element.getBoundingClientRect().height -
+                      _headerHeight -
+                      _resizeHandleSize -
+                      _minimumInspectorHeight,
+                );
+          _timelineHeight = adjustedPaneSize(
+            _timelineHeight,
+            delta,
+            minimum: _minimumTimelineHeight,
+            maximum: maximum,
+          );
+        case _ResizeTarget.captureTree:
+          _capturePanePercent = adjustedPaneSize(
+            _capturePanePercent,
+            delta,
+            minimum: 20,
+            maximum: 80,
+          );
+        case _ResizeTarget.treeDetails:
+          _treePanePercent = adjustedPaneSize(
+            _treePanePercent,
+            delta,
+            minimum: 25,
+            maximum: 82,
+          );
+      }
+    });
+  }
+
+  void _selectAdjacentFrame(int delta) {
+    final index = adjacentFrameEventIndex(
+      groupTimelineFrames(component.timelineEvents),
+      _selectedIndex,
+      delta,
+    );
+    if (index == null) {
+      return;
+    }
+    _select(index);
+  }
+
+  void _selectAdjacentEventInFrame(int delta) {
+    final index = adjacentEventInFrameIndex(
+      groupTimelineFrames(component.timelineEvents),
+      _selectedIndex,
+      delta,
+    );
+    if (index == null) {
+      return;
+    }
+    _select(index);
+  }
+
+  void _select(int index) {
+    if (index < 0 || index >= component.timelineEvents.length) {
+      return;
+    }
+    final root = _widgetTreeRoot(component.timelineEvents[index]);
+    final allNodeIds = root == null
+        ? const {'0'}
+        : collectStructuredWidgetNodeIds(root);
+    final limitExpansion = allNodeIds.length > _largeWidgetTreeNodeLimit;
+    final expandedIds = root == null || !limitExpansion
+        ? allNodeIds
+        : collectStructuredWidgetNodeIds(
+            root,
+            maxDepth: _largeWidgetTreeInitialDepth,
+          );
+    setState(() {
+      _selectedIndex = index;
+      _selectedWidgetNodeId = null;
+      _showFullRawData = false;
+      _limitedWidgetTreeExpansion = limitExpansion;
+      _expandedWidgetNodes
+        ..clear()
+        ..addAll(expandedIds);
+    });
+    if (kIsWeb) {
+      Future<void>.delayed(Duration.zero, () {
+        window.document
+            .getElementById('timeline-event-$index')
+            ?.scrollIntoView();
+      });
+    }
+  }
+
+  void _selectTab(_InspectorTab tab) {
+    setState(() => _selectedTab = tab);
+  }
+
+  String _eventColor(TimelineEvent event) {
+    final value = event.color;
+    if (value == null) {
+      return '#77808f';
+    }
+    return '#${value.toRadixString(16).padLeft(6, '0')}';
+  }
+
+  String _elapsedLabel(TimelineEvent event) {
+    final first = _firstTimestamp;
+    final timestamp = DateTime.tryParse(event.timestamp);
+    if (first == null || timestamp == null) {
+      return event.timestamp;
+    }
+    final milliseconds = timestamp.difference(first).inMicroseconds / 1000;
+    if (milliseconds >= 1000) {
+      return '+${(milliseconds / 1000).toStringAsFixed(2)} s';
+    }
+    return '+${milliseconds.toStringAsFixed(0)} ms';
+  }
+
+  String _durationLabel(Duration duration) {
+    final milliseconds = duration.inMicroseconds / 1000;
+    if (milliseconds >= 1000) {
+      return '${(milliseconds / 1000).toStringAsFixed(2)} s';
+    }
+    return '${milliseconds.toStringAsFixed(0)} ms';
+  }
 
   @override
   Component build(BuildContext context) {
-    return Component.fragment([
-      const div(classes: "header", [
-        img(
-          src:
-              "https://user-images.githubusercontent.com/1096485/188243198-7abfc785-8ecd-40cb-bb28-5561610432a4.png",
-          height: 100,
-        ),
-        h1([Component.text("Timeline")]),
-      ]),
-      const div(classes: "horizontal-spacer", [
-        h2([Component.text("Info")]),
-      ]),
-      p([
-        const strong([Component.text("Test:")]),
-        Component.text(" ${component.testNameWithHierarchy}"),
-      ]),
-      button(
-        classes: "button-spot",
-        onClick: () async {
-          final command = 'flutter test --plain-name="${component.testName}"';
-          try {
-            await window.navigator.clipboard?.writeText(command);
-            _snackBar.currentState!.show("Test command copied to clipboard");
-          } catch (_) {
-            _snackBar.currentState!.show("Failed to copy test command");
-          }
-        },
-        const [Component.text("Copy test command")],
+    final events = component.timelineEvents;
+    final frames = groupTimelineFrames(events);
+    final capturedFrames = frames
+        .where((frame) => frame.screenshotUrl != null)
+        .length;
+    final frameByEvent = {
+      for (final frame in frames)
+        for (final index in frame.eventIndexes) index: frame,
+    };
+
+    return main_(
+      id: 'timeline-app',
+      classes: 'timeline-app',
+      styles: Styles(
+        raw: {'--timeline-height': '${_timelineHeight.toStringAsFixed(0)}px'},
       ),
-      SnackBar(key: _snackBar),
-      if (component.timelineEvents.isNotEmpty) ...[
-        const div(classes: "horizontal-spacer", [
-          h2([Component.text("Events")]),
+      [
+        const a(href: '#inspector', classes: 'skip-link', [
+          Component.text('Skip to inspector'),
         ]),
-        section(classes: "events", [
-          Events(
-            timeLineEvents: component.timelineEvents,
-            onClick: (event) {
-              _modal.currentState!.open(event);
-            },
-          ),
+        header(classes: 'app-bar', [
+          const div(classes: 'brand', [
+            span(classes: 'brand-mark', [Component.text('S')]),
+            span(classes: 'brand-name', [Component.text('Spot timeline')]),
+          ]),
+          div(classes: 'test-title', [
+            const span(classes: 'test-title__label', [Component.text('Test')]),
+            span(classes: 'test-title__value', [
+              Component.text(component.testNameWithHierarchy),
+            ]),
+          ]),
+          div(classes: 'app-actions', [
+            span(classes: 'shortcut-hint', [
+              const Component.text('Frames'),
+              _keyboardKey('←'),
+              _keyboardKey('→'),
+              const Component.text('Events'),
+              _keyboardKey('↑'),
+              _keyboardKey('↓'),
+            ]),
+            button(
+              type: ButtonType.button,
+              classes: 'toolbar-button',
+              attributes: const {'aria-label': 'Copy test command'},
+              onClick: () async {
+                final command =
+                    'flutter test --plain-name="${component.testName}"';
+                try {
+                  await window.navigator.clipboard?.writeText(command);
+                  _snackBar.currentState!.show('Test command copied');
+                } catch (error, stackTrace) {
+                  developer.log(
+                    'Could not copy the test command',
+                    name: 'spot.timeline',
+                    error: error,
+                    stackTrace: stackTrace,
+                  );
+                  _snackBar.currentState!.show('Failed to copy test command');
+                }
+              },
+              const [Component.text('Copy command')],
+            ),
+          ]),
+        ]),
+        section(
+          classes: 'timeline-panel',
+          attributes: const {'aria-label': 'Test event timeline'},
+          [
+            div(classes: 'timeline-summary', [
+              div(classes: 'range-summary', [
+                const span(classes: 'range-label', [
+                  Component.text('Full range'),
+                ]),
+                strong([Component.text(_durationLabel(_duration))]),
+                if (_selectedIndex != null)
+                  span(classes: 'selection-summary', [
+                    Component.text(
+                      'Frame ${frameByEvent[_selectedIndex]!.frameNumber} · Event ${frameByEvent[_selectedIndex]!.eventIndexes.indexOf(_selectedIndex!) + 1} of ${frameByEvent[_selectedIndex]!.eventIndexes.length}',
+                    ),
+                  ]),
+              ]),
+              div(classes: 'timeline-counts', [
+                span([
+                  Component.text(
+                    '${events.length} ${events.length == 1 ? 'event' : 'events'}',
+                  ),
+                ]),
+                span([
+                  Component.text(
+                    '${frames.length} ${frames.length == 1 ? 'frame' : 'frames'}',
+                  ),
+                ]),
+                span([Component.text('$capturedFrames captured')]),
+              ]),
+            ]),
+            if (events.isEmpty)
+              const div(classes: 'empty-timeline', [
+                Component.text('No timeline events were recorded.'),
+              ])
+            else
+              div(classes: 'timeline-scroll', [
+                div(
+                  classes: 'timeline-track',
+                  styles: Styles(
+                    raw: {'--frame-count': frames.length.toString()},
+                  ),
+                  [
+                    div(classes: 'time-ruler', [
+                      for (final frame in frames)
+                        div(classes: 'ruler-cell', [
+                          span(classes: 'ruler-cell__time', [
+                            Component.text(
+                              _elapsedLabel(events[frame.eventIndexes.first]),
+                            ),
+                          ]),
+                          span(
+                            classes:
+                                'ruler-cell__frame ${frame.screenshotUrl == null ? 'is-missing' : ''}',
+                            [Component.text('Frame ${frame.frameNumber}')],
+                          ),
+                        ]),
+                    ]),
+                    div(classes: 'filmstrip', [
+                      for (final frame in frames) _frameCapture(frame),
+                    ]),
+                    div(classes: 'event-lane', [
+                      div(classes: 'lane-events', [
+                        for (final frame in frames)
+                          div(
+                            classes: 'frame-events',
+                            attributes: {
+                              'role': 'group',
+                              'aria-label':
+                                  'Events for frame ${frame.frameNumber}',
+                            },
+                            [
+                              for (final index in frame.eventIndexes)
+                                _eventMarker(events[index], index),
+                            ],
+                          ),
+                      ]),
+                    ]),
+                  ],
+                ),
+              ]),
+          ],
+        ),
+        _resizeHandle(
+          _ResizeTarget.timeline,
+          orientation: 'horizontal',
+          label: 'Resize timeline and inspector',
+        ),
+        _inspector(),
+        SnackBar(key: _snackBar),
+      ],
+    );
+  }
+
+  Component _resizeHandle(
+    _ResizeTarget target, {
+    required String orientation,
+    required String label,
+  }) {
+    final (value, minimum, maximum, unit) = switch (target) {
+      _ResizeTarget.timeline => (
+        _timelineHeight,
+        _minimumTimelineHeight,
+        600,
+        'pixels',
+      ),
+      _ResizeTarget.captureTree => (_capturePanePercent, 20, 80, 'percent'),
+      _ResizeTarget.treeDetails => (_treePanePercent, 25, 82, 'percent'),
+    };
+    return button(
+      type: ButtonType.button,
+      classes: 'resize-handle resize-handle--$orientation',
+      attributes: {
+        'role': 'separator',
+        'aria-label': label,
+        'aria-orientation': orientation,
+        'aria-valuemin': minimum.toString(),
+        'aria-valuemax': maximum.toString(),
+        'aria-valuenow': value.round().toString(),
+        'aria-valuetext': '${value.round()} $unit',
+        'title': '$label. Drag or use arrow keys.',
+      },
+      events: {
+        'mousedown': (event) => _startResizing(target, event),
+        'keydown': (event) => _resizeWithKeyboard(target, event),
+      },
+      const [span(classes: 'resize-handle__grip', [])],
+    );
+  }
+
+  Component _frameCapture(TimelineFrameGroup frame) {
+    final firstEventIndex = frame.eventIndexes.first;
+    final event = component.timelineEvents[firstEventIndex];
+    final selected =
+        _selectedIndex != null && frame.eventIndexes.contains(_selectedIndex);
+    final assertionCount = frame.eventIndexes
+        .where(
+          (index) => component.timelineEvents[index].eventType
+              .toLowerCase()
+              .startsWith('assertion'),
+        )
+        .length;
+    final eventSummary = assertionCount == frame.eventIndexes.length
+        ? '$assertionCount ${assertionCount == 1 ? 'assertion' : 'assertions'}'
+        : '${frame.eventIndexes.length} ${frame.eventIndexes.length == 1 ? 'event' : 'events'}';
+    return button(
+      type: ButtonType.button,
+      classes: 'capture ${selected ? 'is-selected' : ''}',
+      styles: Styles(raw: {'--event-color': _eventColor(event)}),
+      attributes: {
+        'aria-label':
+            'Frame ${frame.frameNumber}, $eventSummary, ${frame.screenshotUrl == null ? 'not captured' : 'captured'}',
+        'aria-pressed': selected.toString(),
+        'tabindex': selected || (_selectedIndex == null && firstEventIndex == 0)
+            ? '0'
+            : '-1',
+        'title': 'Frame ${frame.frameNumber} · $eventSummary',
+      },
+      onClick: () => _select(selected ? _selectedIndex! : firstEventIndex),
+      [
+        div(classes: 'capture-image', [
+          if (frame.screenshotUrl != null)
+            img(
+              src: frame.screenshotUrl!,
+              alt: 'Capture for frame ${frame.frameNumber}',
+              attributes: const {'loading': 'lazy', 'decoding': 'async'},
+            )
+          else
+            div(classes: 'capture-placeholder', [
+              span(classes: 'capture-placeholder__index', [
+                Component.text('${frame.frameNumber}'),
+              ]),
+              const span([Component.text('No capture')]),
+            ]),
+        ]),
+        div(classes: 'capture-caption', [
+          span(classes: 'capture-number', [
+            Component.text('F${frame.frameNumber.toString().padLeft(2, '0')}'),
+          ]),
+          span(classes: 'capture-name', [Component.text(eventSummary)]),
         ]),
       ],
-      const div([
-        Component.text("Tell us how to improve the timeline at "),
-        a(href: "https://github.com/passsy/spot/issues", [
-          Component.text("github.com/passsy/spot"),
+    );
+  }
+
+  Component _keyboardKey(String value) {
+    return Component.element(tag: 'kbd', children: [Component.text(value)]);
+  }
+
+  Component _eventMarker(TimelineEvent event, int index) {
+    final selected = _selectedIndex == index;
+    return button(
+      id: 'timeline-event-$index',
+      type: ButtonType.button,
+      classes: 'event-marker ${selected ? 'is-selected' : ''}',
+      styles: Styles(raw: {'--event-color': _eventColor(event)}),
+      attributes: {
+        'aria-label': 'Select ${event.eventType}',
+        'aria-pressed': selected.toString(),
+        'tabindex': '-1',
+        'title': '${event.eventType} · ${_elapsedLabel(event)}',
+      },
+      onClick: () => _select(index),
+      [
+        const span(classes: 'event-marker__dot', []),
+        span(classes: 'event-marker__label', [Component.text(event.eventType)]),
+      ],
+    );
+  }
+
+  Component _inspector() {
+    final event = _selectedEvent;
+    final frames = groupTimelineFrames(component.timelineEvents);
+    final selectedFrameIndex = _selectedIndex == null
+        ? -1
+        : frames.indexWhere(
+            (frame) => frame.eventIndexes.contains(_selectedIndex),
+          );
+    final selectedFrame = selectedFrameIndex == -1
+        ? null
+        : frames[selectedFrameIndex];
+    return section(id: 'inspector', classes: 'inspector', [
+      if (event == null)
+        const div(classes: 'inspector-empty', [
+          div(classes: 'inspector-empty__icon', [Component.text('◇')]),
+          h2([Component.text('Select an event')]),
+          p([
+            Component.text(
+              'Choose a capture or event marker above. Use left and right to move between frames, and up and down to move between events.',
+            ),
+          ]),
+        ])
+      else ...[
+        div(classes: 'inspector-header', [
+          div(classes: 'selected-event-heading', [
+            span(
+              classes: 'selected-event-color',
+              styles: Styles(raw: {'--event-color': _eventColor(event)}),
+              const [],
+            ),
+            div([
+              h2([Component.text(event.eventType)]),
+              span(classes: 'selected-event-meta', [
+                Component.text(
+                  '${_elapsedLabel(event)} · Frame ${selectedFrame!.frameNumber} · Event ${selectedFrame.eventIndexes.indexOf(_selectedIndex!) + 1} of ${selectedFrame.eventIndexes.length}',
+                ),
+              ]),
+            ]),
+          ]),
+          div(classes: 'inspector-navigation', [
+            button(
+              type: ButtonType.button,
+              classes: 'icon-button',
+              disabled: selectedFrameIndex == 0,
+              attributes: const {'aria-label': 'Previous frame'},
+              onClick: () => _selectAdjacentFrame(-1),
+              const [Component.text('←')],
+            ),
+            button(
+              type: ButtonType.button,
+              classes: 'icon-button',
+              disabled: selectedFrameIndex == frames.length - 1,
+              attributes: const {'aria-label': 'Next frame'},
+              onClick: () => _selectAdjacentFrame(1),
+              const [Component.text('→')],
+            ),
+          ]),
         ]),
-      ]),
-      Modal(events: component.timelineEvents, key: _modal),
+        _eventWorkbench(event),
+      ],
     ]);
   }
 
-  static List<StyleRule> get styles => [
-    css('.button-spot', [
-      css('&')
-          .styles(
-            border: Border.none,
-            radius: BorderRadius.circular(4.px),
-            padding: Padding.symmetric(vertical: 8.px, horizontal: 16.px),
-            cursor: Cursor.pointer,
-            transition: const Transition(
-              'background-color',
-              duration: Duration(milliseconds: 300),
-              curve: Curve.ease,
-            ),
-          )
-          .styles(color: buttonColor, fontSize: 16.px)
-          .styles(backgroundColor: buttonBackgroundColor),
-      css('&:hover').styles(backgroundColor: buttonHoverBackgroundColor),
-    ]),
-    css('.horizontal-spacer', [
-      css('&').styles(
-        border: Border.only(
-          bottom: BorderSide.solid(
-            width: 1.px,
-            color: horizontalSpacerBorderColor,
-          ),
-        ),
-        padding: horizontalSpacerPadding,
+  Component _tabButton(
+    _InspectorTab tab,
+    String label, {
+    required String panelId,
+  }) {
+    final selected = _selectedTab == tab;
+    return button(
+      id: 'inspector-tab-${tab.name}',
+      type: ButtonType.button,
+      classes: 'tab-button ${selected ? 'is-selected' : ''}',
+      attributes: {
+        'role': 'tab',
+        'aria-selected': selected.toString(),
+        'aria-controls': panelId,
+        'tabindex': selected ? '0' : '-1',
+      },
+      onClick: () => _selectTab(tab),
+      [Component.text(label)],
+    );
+  }
+
+  Component _eventWorkbench(TimelineEvent event) {
+    final root = _widgetTreeRoot(event);
+    final selectedNode = root == null
+        ? null
+        : _findWidgetNode(root, _selectedWidgetNodeId);
+
+    return div(
+      id: 'interactive-inspector',
+      classes: 'interactive-inspector',
+      styles: Styles(
+        raw: {
+          '--capture-pane-width': '${_capturePanePercent.toStringAsFixed(2)}%',
+        },
       ),
-      css('h2').styles(margin: Margin.zero, padding: Padding.zero),
-    ]),
-    ...Events.styles,
-    ...SnackBarState.styles,
-    ...ModalState.styles,
-    ...textStyles,
-  ];
+      [
+        div(classes: 'capture-workbench', [
+          div(classes: 'pane-toolbar', [
+            const span(classes: 'pane-title', [Component.text('Capture')]),
+            if (selectedNode != null)
+              span(classes: 'selected-widget-label', [
+                Component.text(_nodeName(selectedNode)),
+              ]),
+          ]),
+          _captureWithOutline(event, selectedNode),
+        ]),
+        _resizeHandle(
+          _ResizeTarget.captureTree,
+          orientation: 'vertical',
+          label: 'Resize capture and event inspector',
+        ),
+        div(classes: 'inspector-sidebar', [
+          nav(
+            classes: 'inspector-tabs',
+            attributes: const {
+              'aria-label': 'Event inspector',
+              'role': 'tablist',
+            },
+            [
+              _tabButton(
+                _InspectorTab.details,
+                'Event details',
+                panelId: 'event-details-panel',
+              ),
+              _tabButton(
+                _InspectorTab.widgetInspector,
+                'Widget tree',
+                panelId: 'widget-inspector-panel',
+              ),
+              _tabButton(
+                _InspectorTab.widgetTree,
+                'Tree text',
+                panelId: 'tree-text-panel',
+              ),
+              _tabButton(
+                _InspectorTab.raw,
+                'Raw data',
+                panelId: 'raw-data-panel',
+              ),
+            ],
+          ),
+          div(
+            id: switch (_selectedTab) {
+              _InspectorTab.details => 'event-details-panel',
+              _InspectorTab.widgetInspector => 'widget-inspector-panel',
+              _InspectorTab.widgetTree => 'tree-text-panel',
+              _InspectorTab.raw => 'raw-data-panel',
+            },
+            classes: 'inspector-content',
+            attributes: const {'role': 'tabpanel'},
+            [
+              switch (_selectedTab) {
+                _InspectorTab.details => _detailsPanel(event),
+                _InspectorTab.widgetInspector => _widgetExplorer(event),
+                _InspectorTab.widgetTree => _widgetTreePanel(event),
+                _InspectorTab.raw => _rawPanel(event),
+              },
+            ],
+          ),
+        ]),
+      ],
+    );
+  }
+
+  Component _widgetExplorer(TimelineEvent event) {
+    final root = _widgetTreeRoot(event);
+    final selectedNode = root == null
+        ? null
+        : _findWidgetNode(root, _selectedWidgetNodeId);
+    final searchResult = searchStructuredWidgetTree(root, _widgetTreeSearch);
+    final searchActive = _widgetTreeSearch.trim().isNotEmpty;
+
+    return div(
+      id: 'widget-explorer',
+      classes: 'widget-explorer',
+      styles: Styles(
+        raw: {'--tree-pane-height': '${_treePanePercent.toStringAsFixed(2)}%'},
+      ),
+      [
+        div(classes: 'pane-toolbar pane-toolbar--tree', [
+          const span(classes: 'pane-title', [Component.text('Widget tree')]),
+          div(classes: 'tree-toolbar-controls', [
+            if (_limitedWidgetTreeExpansion && !searchActive)
+              const span(classes: 'search-result-count', [
+                Component.text('Large tree · top levels expanded'),
+              ]),
+            input<String>(
+              type: InputType.search,
+              value: _widgetTreeSearch,
+              classes: 'widget-search',
+              attributes: const {
+                'aria-label': 'Search widget types',
+                'placeholder': 'Search widget types',
+                'autocomplete': 'off',
+                'spellcheck': 'false',
+              },
+              onInput: (value) {
+                setState(() => _widgetTreeSearch = value);
+              },
+              events: {
+                'keydown': (event) {
+                  final dynamic keyboardEvent = event;
+                  if (keyboardEvent.key != 'Enter') {
+                    return;
+                  }
+                  keyboardEvent.preventDefault();
+                  _selectNextSearchMatch(
+                    root,
+                    reverse: keyboardEvent.shiftKey == true,
+                  );
+                },
+              },
+            ),
+            if (searchActive)
+              span(classes: 'search-result-count', [
+                Component.text(
+                  '${searchResult.matches.length} ${searchResult.matches.length == 1 ? 'match' : 'matches'}',
+                ),
+              ]),
+            if (!searchActive)
+              div(classes: 'tree-actions', [
+                button(
+                  type: ButtonType.button,
+                  classes: 'text-button',
+                  onClick: () => _collapseWidgetTree(root),
+                  const [Component.text('Collapse')],
+                ),
+                button(
+                  type: ButtonType.button,
+                  classes: 'text-button',
+                  onClick: () => _expandWidgetTree(root),
+                  const [Component.text('Expand all')],
+                ),
+              ]),
+          ]),
+        ]),
+        if (root == null)
+          const div(classes: 'tree-empty', [
+            Component.text('No structured widget tree was captured.'),
+          ])
+        else if (searchActive && searchResult.matches.isEmpty)
+          div(classes: 'tree-empty', [
+            Component.text('No widget types match “$_widgetTreeSearch”.'),
+          ])
+        else
+          div(
+            classes: 'interactive-tree',
+            attributes: const {
+              'role': 'tree',
+              'aria-label': 'Flutter widget tree',
+            },
+            [
+              _widgetTreeNode(
+                root,
+                depth: 0,
+                visibleNodeIds: searchResult.visible,
+                matchingNodeIds: searchResult.matches,
+              ),
+            ],
+          ),
+        _resizeHandle(
+          _ResizeTarget.treeDetails,
+          orientation: 'horizontal',
+          label: 'Resize widget tree and widget details',
+        ),
+        _widgetProperties(selectedNode),
+      ],
+    );
+  }
+
+  Component _captureWithOutline(
+    TimelineEvent event,
+    Map<String, dynamic>? selectedNode,
+  ) {
+    final frameData = _frameDataFor(event);
+    final screenshotUrl = event.screenshotUrl;
+    if (screenshotUrl == null) {
+      return const div(classes: 'capture-empty', [
+        h3([Component.text('No capture for this event')]),
+        p([
+          Component.text(
+            'The widget tree is still available, but widgets cannot be outlined without an image.',
+          ),
+        ]),
+      ]);
+    }
+
+    final bounds = _asStringMap(selectedNode?['bounds']);
+    final captureWidth = frameData.structuredWidgetTree['captureWidth'] as num?;
+    final captureHeight =
+        frameData.structuredWidgetTree['captureHeight'] as num?;
+    final canOutline =
+        bounds != null &&
+        captureWidth != null &&
+        captureWidth > 0 &&
+        captureHeight != null &&
+        captureHeight > 0;
+
+    return div(classes: 'capture-viewport', [
+      div(classes: 'capture-canvas', [
+        img(src: screenshotUrl, alt: 'Full capture for ${event.eventType}'),
+        if (canOutline)
+          div(
+            classes: 'widget-outline',
+            styles: Styles(
+              raw: {
+                'left':
+                    '${((bounds['x'] as num) / captureWidth * 100).toStringAsFixed(4)}%',
+                'top':
+                    '${((bounds['y'] as num) / captureHeight * 100).toStringAsFixed(4)}%',
+                'width':
+                    '${((bounds['width'] as num) / captureWidth * 100).toStringAsFixed(4)}%',
+                'height':
+                    '${((bounds['height'] as num) / captureHeight * 100).toStringAsFixed(4)}%',
+              },
+            ),
+            attributes: {'aria-label': 'Bounds of ${_nodeName(selectedNode!)}'},
+            const [],
+          ),
+      ]),
+    ]);
+  }
+
+  Component _widgetTreeNode(
+    Map<String, dynamic> node, {
+    required int depth,
+    required Set<String> visibleNodeIds,
+    required Set<String> matchingNodeIds,
+  }) {
+    final id = node['id'] as String;
+    final searchActive = _widgetTreeSearch.trim().isNotEmpty;
+    final children = _nodeChildren(
+      node,
+    ).where((child) => !searchActive || visibleNodeIds.contains(child['id']));
+    final expanded = searchActive || _expandedWidgetNodes.contains(id);
+    final selected = _selectedWidgetNodeId == id;
+    final searchMatch = matchingNodeIds.contains(id);
+    final offstage = node['offstage'] == true;
+    final hasBounds = node['bounds'] != null;
+
+    return div(
+      classes: 'tree-node',
+      attributes: {
+        'role': 'treeitem',
+        'aria-expanded': children.isEmpty ? 'false' : expanded.toString(),
+        'aria-selected': selected.toString(),
+      },
+      [
+        div(
+          classes:
+              'tree-node__row ${selected ? 'is-selected' : ''} ${searchMatch ? 'is-search-match' : ''} ${offstage ? 'is-offstage' : ''}',
+          styles: Styles(raw: {'--tree-depth': depth.toString()}),
+          [
+            if (children.isEmpty)
+              const span(classes: 'tree-expander-spacer', [])
+            else
+              button(
+                type: ButtonType.button,
+                classes: 'tree-expander',
+                attributes: {
+                  'aria-label':
+                      '${expanded ? 'Collapse' : 'Expand'} ${_nodeName(node)}',
+                  'tabindex': '-1',
+                },
+                onClick: () => _toggleWidgetNode(id),
+                [Component.text(expanded ? '▾' : '▸')],
+              ),
+            button(
+              id: 'widget-node-$id',
+              type: ButtonType.button,
+              classes: 'tree-node__select',
+              attributes: {
+                'aria-label': 'Inspect ${_nodeDescription(node)}',
+                'tabindex':
+                    selected || (_selectedWidgetNodeId == null && id == '0')
+                    ? '0'
+                    : '-1',
+              },
+              onClick: () => _selectWidgetNode(id),
+              [
+                span(classes: 'tree-node__name', [
+                  Component.text(_nodeName(node)),
+                ]),
+                if (_nodeDescription(node) != _nodeName(node))
+                  span(classes: 'tree-node__description', [
+                    Component.text(_nodeDescription(node)),
+                  ]),
+                if (offstage)
+                  const span(classes: 'node-badge', [
+                    Component.text('offstage'),
+                  ]),
+                if (hasBounds)
+                  const span(
+                    classes: 'bounds-indicator',
+                    attributes: {'title': 'Can be highlighted on capture'},
+                    [],
+                  ),
+              ],
+            ),
+          ],
+        ),
+        if (expanded && children.isNotEmpty)
+          div(
+            classes: 'tree-node__children',
+            attributes: const {'role': 'group'},
+            [
+              for (final child in children)
+                _widgetTreeNode(
+                  child,
+                  depth: depth + 1,
+                  visibleNodeIds: visibleNodeIds,
+                  matchingNodeIds: matchingNodeIds,
+                ),
+            ],
+          ),
+      ],
+    );
+  }
+
+  Component _widgetProperties(Map<String, dynamic>? node) {
+    if (node == null) {
+      return const div(classes: 'widget-properties widget-properties--empty', [
+        Component.text('Select a widget to inspect its properties.'),
+      ]);
+    }
+
+    final widgetProperties = _nodeProperties(node, 'widgetProperties');
+    final renderProperties = _nodeProperties(node, 'renderProperties');
+    final bounds = _asStringMap(node['bounds']);
+
+    return div(classes: 'widget-properties', [
+      div(classes: 'properties-heading', [
+        div([
+          strong([Component.text(_nodeName(node))]),
+          span([Component.text(node['elementType'] as String? ?? 'Element')]),
+        ]),
+        if (bounds != null)
+          span(classes: 'bounds-summary', [
+            Component.text(
+              '${(bounds['width'] as num).toStringAsFixed(1)} × ${(bounds['height'] as num).toStringAsFixed(1)}',
+            ),
+          ]),
+      ]),
+      div(classes: 'properties-scroll', [
+        _propertyGroup('Widget properties', widgetProperties),
+        _propertyGroup('Render object', renderProperties),
+      ]),
+    ]);
+  }
+
+  Component _propertyGroup(
+    String label,
+    List<Map<String, dynamic>> properties,
+  ) {
+    return div(classes: 'property-group', [
+      h3([Component.text(label)]),
+      if (properties.isEmpty)
+        const p(classes: 'property-empty', [
+          Component.text('No diagnostic properties'),
+        ])
+      else
+        dl([
+          for (final property in properties)
+            div(classes: 'property-row', [
+              dt([Component.text(property['name'] as String? ?? '')]),
+              dd([Component.text(property['value'] as String? ?? '')]),
+            ]),
+        ]),
+    ]);
+  }
+
+  void _selectWidgetNode(String id) {
+    setState(() => _selectedWidgetNodeId = id);
+  }
+
+  void _selectNextSearchMatch(
+    Map<String, dynamic>? root, {
+    required bool reverse,
+  }) {
+    final matches = searchStructuredWidgetTree(
+      root,
+      _widgetTreeSearch,
+    ).matches.toList(growable: false);
+    final id = nextStructuredWidgetSearchMatch(
+      matches,
+      _selectedWidgetNodeId,
+      reverse: reverse,
+    );
+    if (id == null) {
+      return;
+    }
+
+    _selectWidgetNode(id);
+    if (kIsWeb) {
+      Future<void>.delayed(Duration.zero, () {
+        window.document.getElementById('widget-node-$id')?.scrollIntoView();
+      });
+    }
+  }
+
+  void _toggleWidgetNode(String id) {
+    setState(() {
+      if (!_expandedWidgetNodes.remove(id)) {
+        _expandedWidgetNodes.add(id);
+      }
+    });
+  }
+
+  void _collapseWidgetTree(Map<String, dynamic>? root) {
+    setState(() {
+      _expandedWidgetNodes
+        ..clear()
+        ..add(root?['id'] as String? ?? '0');
+    });
+  }
+
+  void _expandWidgetTree(Map<String, dynamic>? root) {
+    if (root == null) {
+      return;
+    }
+    final ids = collectStructuredWidgetNodeIds(root);
+    setState(() {
+      _limitedWidgetTreeExpansion = false;
+      _expandedWidgetNodes
+        ..clear()
+        ..addAll(ids);
+    });
+  }
+
+  Map<String, dynamic>? _widgetTreeRoot(TimelineEvent event) {
+    return _asStringMap(_frameDataFor(event).structuredWidgetTree['root']);
+  }
+
+  TimelineEvent _frameDataFor(TimelineEvent event) {
+    if (event.widgetTree.isNotEmpty || event.structuredWidgetTree.isNotEmpty) {
+      return event;
+    }
+    final frameNumber = event.frameNumber;
+    if (frameNumber != null) {
+      final decoded = _decodedFrameData[frameNumber];
+      if (decoded != null) {
+        return decoded;
+      }
+    }
+    final payloadEvent = component.timelineEvents.firstWhere(
+      (candidate) =>
+          candidate.frameNumber == event.frameNumber &&
+          (candidate.widgetTree.isNotEmpty ||
+              candidate.structuredWidgetTree.isNotEmpty ||
+              candidate.compressedFrameData != null),
+      orElse: () => event,
+    );
+    final compressed = payloadEvent.compressedFrameData;
+    if (compressed == null) {
+      return payloadEvent;
+    }
+    final data = decompressTimelineFrameData(compressed);
+    final decoded = TimelineEvent(
+      eventType: payloadEvent.eventType,
+      color: payloadEvent.color,
+      screenshotUrl: payloadEvent.screenshotUrl,
+      details: payloadEvent.details,
+      timestamp: payloadEvent.timestamp,
+      caller: payloadEvent.caller,
+      jetBrainsLink: payloadEvent.jetBrainsLink,
+      widgetTree: data.widgetTree,
+      structuredWidgetTree: data.structuredWidgetTree,
+      frameNumber: payloadEvent.frameNumber,
+    );
+    if (frameNumber != null) {
+      _decodedFrameData[frameNumber] = decoded;
+    }
+    return decoded;
+  }
+
+  Map<String, dynamic>? _findWidgetNode(Map<String, dynamic> node, String? id) {
+    if (id == null) {
+      return null;
+    }
+    if (node['id'] == id) {
+      return node;
+    }
+    for (final child in _nodeChildren(node)) {
+      final match = _findWidgetNode(child, id);
+      if (match != null) {
+        return match;
+      }
+    }
+    return null;
+  }
+
+  List<Map<String, dynamic>> _nodeChildren(Map<String, dynamic> node) {
+    final children = node['children'];
+    if (children is! List) {
+      return const [];
+    }
+    return children
+        .map(_asStringMap)
+        .whereType<Map<String, dynamic>>()
+        .toList(growable: false);
+  }
+
+  List<Map<String, dynamic>> _nodeProperties(
+    Map<String, dynamic> node,
+    String key,
+  ) {
+    final properties = node[key];
+    if (properties is! List) {
+      return const [];
+    }
+    return properties
+        .map(_asStringMap)
+        .whereType<Map<String, dynamic>>()
+        .toList(growable: false);
+  }
+
+  Map<String, dynamic>? _asStringMap(Object? value) {
+    if (value is! Map) {
+      return null;
+    }
+    return value.cast<String, dynamic>();
+  }
+
+  String _nodeName(Map<String, dynamic> node) {
+    return node['name'] as String? ?? 'Widget';
+  }
+
+  String _nodeDescription(Map<String, dynamic> node) {
+    return node['description'] as String? ?? _nodeName(node);
+  }
+
+  Component _detailsPanel(TimelineEvent event) {
+    return div(classes: 'details-panel', [
+      div(classes: 'details-primary', [
+        const h3([Component.text('Event details')]),
+        pre(classes: 'details-copy', [Component.text(event.details)]),
+      ]),
+      dl(classes: 'metadata-grid', [
+        _metadata('Type', event.eventType),
+        _metadata('Timestamp', event.timestamp),
+        _metadata('Elapsed', _elapsedLabel(event)),
+        _metadataLink('Caller', event.caller, event.jetBrainsLink),
+        _metadata(
+          'Capture',
+          event.screenshotUrl == null ? 'Not captured' : 'Available',
+        ),
+      ]),
+    ]);
+  }
+
+  Component _metadata(String label, String value) {
+    return div(classes: 'metadata-row', [
+      dt([Component.text(label)]),
+      dd([Component.text(value)]),
+    ]);
+  }
+
+  Component _metadataLink(String label, String value, String? href) {
+    return div(classes: 'metadata-row', [
+      dt([Component.text(label)]),
+      dd([
+        if (href != null)
+          a(href: href, [Component.text(value)])
+        else
+          Component.text(value),
+      ]),
+    ]);
+  }
+
+  Component _widgetTreePanel(TimelineEvent event) {
+    final frameData = _frameDataFor(event);
+    if (frameData.widgetTree.trim().isEmpty) {
+      return const div(classes: 'panel-empty', [
+        h3([Component.text('No widget tree was captured')]),
+      ]);
+    }
+    return div(classes: 'tree-panel', [
+      const div(classes: 'code-toolbar', [
+        span([Component.text('Flutter element tree')]),
+        span([Component.text('Captured with event')]),
+      ]),
+      pre(classes: 'tree-output', [Component.text(frameData.widgetTree)]),
+    ]);
+  }
+
+  Component _rawPanel(TimelineEvent event) {
+    final frameData = _frameDataFor(event);
+    final json = _showFullRawData
+        ? jsonEncode({
+            ...event.toMap(),
+            'widgetTree': frameData.widgetTree,
+            'structuredWidgetTree': frameData.structuredWidgetTree,
+          })
+        : const JsonEncoder.withIndent('  ').convert(_rawDataSummary(event));
+    return div(classes: 'tree-panel', [
+      div(classes: 'code-toolbar', [
+        span([
+          Component.text(
+            _showFullRawData ? 'Full event payload' : 'Event payload summary',
+          ),
+        ]),
+        button(
+          type: ButtonType.button,
+          classes: 'text-button',
+          onClick: () {
+            setState(() => _showFullRawData = !_showFullRawData);
+          },
+          [
+            Component.text(
+              _showFullRawData ? 'Show summary' : 'Load full compact JSON',
+            ),
+          ],
+        ),
+      ]),
+      pre(classes: 'tree-output', [Component.text(json)]),
+    ]);
+  }
+
+  Map<String, dynamic> _rawDataSummary(TimelineEvent event) {
+    final frameData = _frameDataFor(event);
+    final root = _widgetTreeRoot(event);
+    return {
+      ...event.toMap(),
+      'widgetTree':
+          '<available in Tree text · ${frameData.widgetTree.length} characters>',
+      'structuredWidgetTree': {
+        'available': root != null,
+        'root': root?['name'],
+        'captureWidth': frameData.structuredWidgetTree['captureWidth'],
+        'captureHeight': frameData.structuredWidgetTree['captureHeight'],
+        'hint': 'Open Inspector or load the full compact JSON payload.',
+      },
+    };
+  }
+
+  static List<StyleRule> get styles => [...SnackBarState.styles];
 }
 
-List<StyleRule> get textStyles => [
-  css('p') //
-      .styles(
-        raw: {
-          'word-break': 'break-word',
-          'overflow-wrap': 'break-word',
-          'text-align': 'start',
-        },
-      ), //
-];
+Set<String> collectStructuredWidgetNodeIds(
+  Map<String, dynamic> root, {
+  int? maxDepth,
+}) {
+  final ids = <String>{};
+
+  void collect(Map<String, dynamic> node, int depth) {
+    ids.add(node['id'] as String);
+    if (maxDepth != null && depth >= maxDepth) {
+      return;
+    }
+    for (final child in _structuredNodeChildren(node)) {
+      collect(child, depth + 1);
+    }
+  }
+
+  collect(root, 0);
+  return ids;
+}
+
+({Set<String> visible, Set<String> matches}) searchStructuredWidgetTree(
+  Map<String, dynamic>? root,
+  String searchTerm,
+) {
+  final query = searchTerm.trim().toLowerCase();
+  if (root == null || query.isEmpty) {
+    return (visible: const {}, matches: const {});
+  }
+
+  final visible = <String>{};
+  final matches = <String>{};
+
+  bool visit(Map<String, dynamic> node) {
+    final id = node['id'] as String;
+    final name = node['name'] as String? ?? 'Widget';
+    final matchesType = name.toLowerCase().contains(query);
+    if (matchesType) {
+      matches.add(id);
+    }
+    var descendantMatches = false;
+    for (final child in _structuredNodeChildren(node)) {
+      descendantMatches = visit(child) || descendantMatches;
+    }
+    if (matchesType || descendantMatches) {
+      visible.add(id);
+      return true;
+    }
+    return false;
+  }
+
+  visit(root);
+  return (visible: visible, matches: matches);
+}
+
+String? nextStructuredWidgetSearchMatch(
+  List<String> matches,
+  String? current, {
+  required bool reverse,
+}) {
+  if (matches.isEmpty) {
+    return null;
+  }
+  final currentIndex = current == null ? -1 : matches.indexOf(current);
+  if (currentIndex == -1) {
+    return reverse ? matches.last : matches.first;
+  }
+  final delta = reverse ? -1 : 1;
+  return matches[(currentIndex + delta) % matches.length];
+}
+
+List<Map<String, dynamic>> _structuredNodeChildren(Map<String, dynamic> node) {
+  final children = node['children'];
+  if (children is! List) {
+    return const [];
+  }
+  return children
+      .whereType<Map>()
+      .map((child) => child.cast<String, dynamic>())
+      .toList(growable: false);
+}

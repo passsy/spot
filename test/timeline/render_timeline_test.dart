@@ -4,25 +4,145 @@ import 'package:spot/src/timeline/html/render_timeline.dart';
 import 'package:spot/src/timeline/html/web/timeline_event.dart';
 
 void main() {
+  test('timeline frame data survives gzip round-trip', () {
+    final encoded = compressTimelineFrameData(
+      widgetTree: 'RenderView\n  Text("Large tree")',
+      structuredWidgetTree: {
+        'captureWidth': 800,
+        'captureHeight': 600,
+        'root': {
+          'id': '0',
+          'name': 'RenderView',
+          'children': [
+            {'id': '1', 'name': 'Text', 'children': <Object>[]},
+          ],
+        },
+      },
+    );
+
+    final decoded = decompressTimelineFrameData(encoded);
+
+    expect(decoded.widgetTree, contains('Large tree'));
+    expect(decoded.structuredWidgetTree['captureWidth'], 800);
+    expect((decoded.structuredWidgetTree['root'] as Map)['name'], 'RenderView');
+  });
+
+  TimelineEvent event({
+    required int index,
+    String? screenshotUrl,
+    int? frameNumber,
+  }) {
+    return TimelineEvent(
+      eventType: 'Assertion $index',
+      color: null,
+      screenshotUrl: screenshotUrl,
+      details: 'Example event $index',
+      timestamp: DateTime(2026, 8, 4, 0, 0, 0, index).toIso8601String(),
+      caller: 'example_test.dart:$index',
+      jetBrainsLink: null,
+      widgetTree: 'RenderView\n  Text("Example $index")',
+      structuredWidgetTree: {
+        'captureWidth': 800,
+        'captureHeight': 600,
+        'root': {
+          'id': '0',
+          'name': 'Text',
+          'description': 'Text("Example $index")',
+          'elementType': 'StatelessElement',
+          'renderObjectType': 'RenderParagraph',
+          'offstage': false,
+          'bounds': {'x': 10, 'y': 20, 'width': 100, 'height': 30},
+          'widgetProperties': const [
+            {'name': 'data', 'value': 'Example'},
+          ],
+          'renderProperties': const [],
+          'children': const [],
+        },
+      },
+      frameNumber: frameNumber,
+    );
+  }
+
   test(
     'timelines preserve relative screenshot URLs',
     () async {
       final html = await renderTimelineWithJaspr([
-        TimelineEvent(
-          eventType: 'Assertion',
-          color: null,
-          screenshotUrl: './screenshots/example.png',
-          details: 'Example event',
-          timestamp: '2026-08-04T00:00:00.000',
-          caller: 'example_test.dart:1',
-          jetBrainsLink: null,
-        ),
+        event(index: 1, screenshotUrl: './screenshots/example.png'),
       ]);
 
       expect(html, isNot(contains('<base href="/"/>')));
       expect(html, contains('<script>'));
       expect(html, isNot(contains('src="/script.js"')));
       expect(html, contains('src="./screenshots/example.png"'));
+      expect(html, contains('Widget tree'));
+      expect(html, contains('Event details'));
+      expect(html, contains('Tree text'));
+      expect(html, contains('Raw data'));
+      expect(html, contains('.interactive-inspector'));
+      expect(html, contains('.inspector-sidebar'));
+      expect(html, contains('.widget-outline'));
+      expect(html, contains('Resize timeline and inspector'));
+      expect(html, contains('.resize-handle'));
+      expect(html, isNot(contains('class="lane-label"')));
+      expect(html, contains('48px'));
+      expect(html, contains(r'"widgetTree":"RenderView\n'));
+      expect(html, contains('"structuredWidgetTree":{'));
+      expect(html, contains('"bounds":{"x":10'));
+    },
+    skip: kIsWeb ? 'Jaspr server rendering requires the Dart VM' : false,
+  );
+
+  test(
+    'timelines render 200 selectable events',
+    () async {
+      final html = await renderTimelineWithJaspr([
+        for (var index = 1; index <= 200; index++)
+          event(
+            index: index,
+            screenshotUrl: index.isEven
+                ? './screenshots/example-$index.png'
+                : null,
+          ),
+      ]);
+
+      expect(html, contains('200 events'));
+      expect(html, contains('200 frames'));
+      expect(html, contains('100 captured'));
+      expect(html, contains('Frame 1'));
+      expect(html, contains('Frame 100'));
+      expect(html, contains('--frame-count: 200'));
+    },
+    skip: kIsWeb ? 'Jaspr server rendering requires the Dart VM' : false,
+  );
+
+  test(
+    'multiple assertions on one frame share one filmstrip capture',
+    () async {
+      final html = await renderTimelineWithJaspr([
+        event(
+          index: 1,
+          frameNumber: 1,
+          screenshotUrl: './screenshots/frame-1.png',
+        ),
+        event(
+          index: 2,
+          frameNumber: 1,
+          screenshotUrl: './screenshots/frame-1.png',
+        ),
+      ]);
+
+      expect(html, contains('2 events'));
+      expect(html, contains('1 frame'));
+      expect(html, contains('1 captured'));
+      expect(html, contains('2 assertions'));
+      expect(html, contains('--frame-count: 1'));
+      expect(html, contains('class="frame-events"'));
+      expect(RegExp('class="ruler-cell"').allMatches(html), hasLength(1));
+      expect(html, contains('object-position: left center'));
+      expect(
+        RegExp('<img[^>]*src="./screenshots/frame-1.png"').allMatches(html),
+        hasLength(1),
+      );
     },
     skip: kIsWeb ? 'Jaspr server rendering requires the Dart VM' : false,
   );

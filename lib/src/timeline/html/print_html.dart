@@ -95,39 +95,63 @@ extension HtmlTimelinePrinter on Timeline {
     final screenshotsDir = spotTempDir.directory(screenshotsDirName);
     screenshotsDir.createSync(recursive: true);
 
+    final screenshotsByFrame = <int, TimelineEvent>{};
+    for (final event in this.events) {
+      if (event.screenshot != null) {
+        screenshotsByFrame.putIfAbsent(event.frameNumber, () => event);
+      }
+    }
+
+    final screenshotUrlsByFrame = <int, String>{};
+    for (final entry in screenshotsByFrame.entries) {
+      final screenshot = entry.value.screenshot!;
+      final pngName = screenshot.name.takeLast(maxScreenshotFilenameLength);
+      final screenshotFile = screenshotsDir.file('$pngName.png');
+      final flattened = await screenshot.flattenedImage();
+      final pngBytes = await flattened.readPngBytes();
+      screenshotFile.writeAsBytesSync(pngBytes);
+      screenshotUrlsByFrame[entry.key] = './$screenshotsDirName/$pngName.png';
+    }
+
     final events = spotTempDir.file('events.json');
     final List<x.TimelineEvent> jsonTimelineEvents = [];
+    final firstEventByFrame = <int, TimelineEvent>{};
+    for (final event in this.events) {
+      firstEventByFrame.putIfAbsent(event.frameNumber, () => event);
+    }
+    final framesWithPayload = <int>{};
     for (final e in this.events) {
-      final screenshot = e.screenshot;
-      File? screenshotFile;
-      final pngName = screenshot?.name.takeLast(maxScreenshotFilenameLength);
-      if (screenshot != null) {
-        // save screenshots relative to the events.json file in screenshots/
-        screenshotFile = screenshotsDir.file('$pngName.png');
-        final flattened = await screenshot.flattenedImage();
-        final pngBytes = await flattened.readPngBytes();
-        screenshotFile.writeAsBytesSync(pngBytes);
-      }
-
+      final includeFramePayload = framesWithPayload.add(e.frameNumber);
+      final framePayloadEvent =
+          screenshotsByFrame[e.frameNumber] ??
+          firstEventByFrame[e.frameNumber]!;
+      final compressedFrameData = includeFramePayload
+          ? x.compressTimelineFrameData(
+              widgetTree: framePayloadEvent.widgetTree,
+              structuredWidgetTree: framePayloadEvent.structuredWidgetTree,
+            )
+          : null;
       final timelineEvent = x.TimelineEvent(
         eventType: e.eventType.label,
         details: e.details,
         timestamp: e.timestamp.toIso8601String(),
-        screenshotUrl: screenshotFile != null
-            ? './$screenshotsDirName/$pngName.png'
-            : null,
+        screenshotUrl: screenshotUrlsByFrame[e.frameNumber],
+        frameNumber: e.frameNumber,
         color: e.color == flt.Colors.grey
             ? null
             // ignore: deprecated_member_use
             : e.color.value & 0xFFFFFF,
         caller: _eventCaller(e.initiator) ?? 'N/A',
         jetBrainsLink: _jetBrainsURL(e),
+        widgetTree: '',
+        structuredWidgetTree: const {},
+        compressedFrameData: compressedFrameData,
       );
       jsonTimelineEvents.add(timelineEvent);
     }
-    final json = const JsonEncoder.withIndent(
-      '  ',
-    ).convert(jsonTimelineEvents.map((e) => e.toMap()).toList());
+    final json = jsonEncode(
+      jsonTimelineEvents.map((event) => event.toMap()).toList(),
+    );
     events.writeAsStringSync(json);
 
     final htmlFile = spotTempDir.file('index.html');
@@ -212,7 +236,7 @@ Future<bool> _isHotRestartServerRunning() async {
     );
     print('Server is running on $host:$port');
     return true;
-  } on SocketException catch (_) {
+  } on SocketException {
     return false;
   } finally {
     socket?.destroy();
@@ -240,13 +264,17 @@ String? _projectName() {
     dir = parentDir;
   }
 
-  if (projectDir == null) return null;
+  if (projectDir == null) {
+    return null;
+  }
   final name = projectDir.split('/').lastOrNull;
   return name;
 }
 
 String? _eventCaller(Frame? initiator, {String? line}) {
-  if (initiator == null) return null;
+  if (initiator == null) {
+    return null;
+  }
 
   final memberPart = initiator.member != null ? '${initiator.member} ' : '';
   final uriPart = initiator.uri;

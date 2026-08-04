@@ -9,6 +9,7 @@ environment:
   flutter: ">=3.32.0"
 
 dependencies:
+  archive: ^4.0.9
   checks: ^0.3.0
   ci: ^0.1.0
   clock: ^1.1.0

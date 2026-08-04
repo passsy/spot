@@ -30,14 +30,9 @@ Future<String> renderTimelineWithJaspr(
       base: null,
       title: "Timeline Events",
       head: [
-        const link(
-          href:
-              "https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap",
-          rel: "stylesheet",
-        ),
         const Component.element(
           tag: 'style',
-          children: [RawText(animationsCSS)],
+          children: [RawText('$timelineCSS\n$animationsCSS')],
         ),
         if (hotRestart)
           const Component.element(

@@ -736,6 +736,8 @@ void dragTests() {
     testWidgets(
       'engineered small final adjustment does not register as tap',
       (tester) async {
+
+        timeline.mode = TimelineMode.always;
         // Engineer a final adjustment smaller than kDragSlopDefault (20):
         // moveStep is tuned so step 1 stops with the target's top just a few
         // pixels above the viewport top, leaving < 20 px of final alignment.

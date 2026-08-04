@@ -1,13 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
+import 'package:spot/src/timeline/html/components/timeline_app.dart';
 
 void main() {
+  testWidgets('multiple assertions in the same frame share one capture', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const MaterialApp(home: Text('same frame')));
+
+    spot<Text>().existsOnce();
+    spot<Text>().existsOnce();
+
+    expect(timeline.events, hasLength(2));
+    expect(timeline.events.map((event) => event.frameNumber), [1, 1]);
+  });
+
   testWidgets('existsOnce adds to timeline', (tester) async {
     await tester.pumpWidget(MaterialApp(home: Scaffold(appBar: AppBar())));
     spot<AppBar>().existsOnce();
     final existsOnceEvent = timeline.events.single;
     expect(existsOnceEvent.details, contains('AppBar exists once.'));
+    expect(existsOnceEvent.widgetTree, contains('AppBar'));
+    expect(existsOnceEvent.structuredWidgetTree.toString(), contains('AppBar'));
+    expect(
+      existsOnceEvent.structuredWidgetTree.toString(),
+      contains('bounds: {'),
+    );
+    final appBar = _findStructuredNode(
+      existsOnceEvent.structuredWidgetTree['root'] as Map<String, dynamic>,
+      'AppBar',
+    );
+    final root =
+        existsOnceEvent.structuredWidgetTree['root'] as Map<String, dynamic>;
+    final appBarNode = appBar!;
+    final searchResult = searchStructuredWidgetTree(root, 'appbar');
+    expect(searchResult.matches, contains(appBarNode['id']));
+    expect(searchResult.visible, contains(root['id']));
+    expect(collectStructuredWidgetNodeIds(root).length, greaterThan(100));
+    final bounds = appBarNode['bounds'] as Map<String, dynamic>;
+    expect(
+      bounds['width'] as num,
+      lessThanOrEqualTo(
+        existsOnceEvent.structuredWidgetTree['captureWidth'] as num,
+      ),
+    );
   });
 
   testWidgets('existsOnce adds to timeline - error', (tester) async {
@@ -272,4 +309,20 @@ void main() {
       );
     });
   });
+}
+
+Map<String, dynamic>? _findStructuredNode(
+  Map<String, dynamic> node,
+  String name,
+) {
+  if (node['name'] == name) {
+    return node;
+  }
+  for (final child in node['children'] as List<dynamic>) {
+    final match = _findStructuredNode(child as Map<String, dynamic>, name);
+    if (match != null) {
+      return match;
+    }
+  }
+  return null;
 }

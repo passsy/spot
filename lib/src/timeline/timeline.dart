@@ -165,6 +165,11 @@ final class _Timeline extends Timeline {
   @override
   List<TimelineEvent> get events => List.unmodifiable(_events);
   final List<TimelineEvent> _events = [];
+  WidgetTreeSnapshot? _lastEventTreeSnapshot;
+  String? _currentFrameWidgetTree;
+  final Map<(RenderObject?, Rect?), Map<String, dynamic>>
+  _currentFrameStructuredTrees = {};
+  int _currentFrameNumber = 0;
 
   TimelineMode _mode = _globalTimelineMode;
 
@@ -177,20 +182,16 @@ final class _Timeline extends Timeline {
     if (value == _mode) {
       return;
     }
-    // ignore: avoid_print
-    print(
-      switch (value) {
-        TimelineMode.live =>
-          '🔴 - Live! Shows all timeline events as they happen',
-        TimelineMode.always => '🔴 - Always shows the timeline',
-        TimelineMode.reportOnError =>
-          '🔴 - Shows the timeline when the test fails',
-        // ignore: deprecated_member_use_from_same_package
-        TimelineMode.record =>
-          '🔴 - Recording, but only showing on test failure',
-        TimelineMode.off => '⏸︎ - Timeline recording is off',
-      },
-    );
+    debugPrint(switch (value) {
+      TimelineMode.live =>
+        '🔴 - Live! Shows all timeline events as they happen',
+      TimelineMode.always => '🔴 - Always shows the timeline',
+      TimelineMode.reportOnError =>
+        '🔴 - Shows the timeline when the test fails',
+      // ignore: deprecated_member_use_from_same_package
+      TimelineMode.record => '🔴 - Recording, but only showing on test failure',
+      TimelineMode.off => '⏸︎ - Timeline recording is off',
+    });
 
     _mode = value;
   }
@@ -208,8 +209,28 @@ final class _Timeline extends Timeline {
     Color? color,
   }) {
     final id = TimelineEventId.random();
+    final treeSnapshot = currentWidgetTreeSnapshot();
+    if (!identical(treeSnapshot, _lastEventTreeSnapshot)) {
+      _lastEventTreeSnapshot = treeSnapshot;
+      _currentFrameNumber++;
+      _currentFrameWidgetTree = treeSnapshot.toStringDeep();
+      _currentFrameStructuredTrees.clear();
+    }
+    final widgetTree = _currentFrameWidgetTree ??= treeSnapshot.toStringDeep();
+    final structuredTreeKey = (
+      screenshot?.captureRenderObject,
+      screenshot?.capturePaintBounds,
+    );
+    final structuredWidgetTree = _currentFrameStructuredTrees.putIfAbsent(
+      structuredTreeKey,
+      () => treeSnapshot.toStructuredData(
+        captureRenderObject: screenshot?.captureRenderObject,
+        capturePaintBounds: screenshot?.capturePaintBounds,
+      ),
+    );
     final event = TimelineEvent(
       id: id,
+      frameNumber: _currentFrameNumber,
       details: details,
       screenshot: screenshot,
       initiator: mostRelevantCaller(
@@ -217,11 +238,10 @@ final class _Timeline extends Timeline {
       ),
       timestamp: clock.now(),
       color: color ?? Colors.white,
-      treeSnapshot: currentWidgetTreeSnapshot(),
-      eventType: TimelineEventType(
-        label: eventType,
-        color: color,
-      ),
+      treeSnapshot: treeSnapshot,
+      widgetTree: widgetTree,
+      structuredWidgetTree: structuredWidgetTree,
+      eventType: TimelineEventType(label: eventType, color: color),
     );
     _addRawEvent(event);
     return id;
@@ -269,17 +289,21 @@ final class _Timeline extends Timeline {
             label: eventType as String,
             color: updatedColor,
           );
-    final updatedScreenshot =
-        screenshot == _undefined ? event.screenshot : screenshot as Screenshot?;
+    final updatedScreenshot = screenshot == _undefined
+        ? event.screenshot
+        : screenshot as Screenshot?;
 
     final updated = TimelineEvent(
       id: id,
+      frameNumber: event.frameNumber,
       details: updatedDetails,
       eventType: updatedEventType,
       color: updatedColor,
       screenshot: updatedScreenshot,
       timestamp: event.timestamp,
       treeSnapshot: event.treeSnapshot,
+      widgetTree: event.widgetTree,
+      structuredWidgetTree: event.structuredWidgetTree,
       initiator: event.initiator,
     );
     final index = _events.indexOf(event);
@@ -339,8 +363,7 @@ final class _Timeline extends Timeline {
   Future<void> _renderTimeline() async {
     Future<void> reportOnError() async {
       if (!test.state.result.isPassing) {
-        // ignore: avoid_print
-        print('Test failed, generating timeline report');
+        debugPrint('Test failed, generating timeline report');
         if (!kIsWeb) {
           await processPendingScreenshots();
         }
@@ -364,8 +387,7 @@ final class _Timeline extends Timeline {
           await printHTML();
         }
       case TimelineMode.always:
-        // ignore: avoid_print
-        print('Generating timeline report');
+        debugPrint('Generating timeline report');
         if (!kIsWeb) {
           await processPendingScreenshots();
         }
@@ -398,10 +420,7 @@ class TimelineEventType {
   final Color? color;
 
   /// Creates a new timeline event type.
-  const TimelineEventType({
-    required this.label,
-    this.color,
-  });
+  const TimelineEventType({required this.label, this.color});
 
   @override
   String toString() {
@@ -414,8 +433,11 @@ class TimelineEvent {
   /// Creates a new timeline event.
   const TimelineEvent({
     required this.id,
+    required this.frameNumber,
     required this.timestamp,
     required this.treeSnapshot,
+    required this.widgetTree,
+    required this.structuredWidgetTree,
     required this.details,
     required this.eventType,
     this.initiator,
@@ -425,6 +447,12 @@ class TimelineEvent {
 
   /// The unique identifier of the event used to update the event later.
   final TimelineEventId id;
+
+  /// The rendered frame this event belongs to.
+  ///
+  /// Multiple assertions can occur without pumping another frame. Those
+  /// events share this number and therefore share one capture in reports.
+  final int frameNumber;
 
   /// The type of event that occurred.
   final TimelineEventType eventType;
@@ -441,6 +469,16 @@ class TimelineEvent {
   /// The widget tree snapshot at the time of the event.
   final WidgetTreeSnapshot treeSnapshot;
 
+  /// A serializable diagnostic representation of [treeSnapshot].
+  ///
+  /// The underlying snapshot references live Flutter elements, so this string
+  /// is captured with the event while those elements still represent the
+  /// intended frame.
+  final String widgetTree;
+
+  /// Structured widget data and optional screenshot-relative layout bounds.
+  final Map<String, dynamic> structuredWidgetTree;
+
   /// The frame that initiated the event.
   final Frame? initiator;
 
@@ -449,7 +487,7 @@ class TimelineEvent {
 
   @override
   String toString() {
-    return 'TimelineEvent{id: $id, eventType: $eventType, screenshot: $screenshot, details: $details, timestamp: $timestamp, treeSnapshot: $treeSnapshot, initiator: $initiator, color: $color}';
+    return 'TimelineEvent{id: $id, frameNumber: $frameNumber, eventType: $eventType, screenshot: $screenshot, details: $details, timestamp: $timestamp, treeSnapshot: $treeSnapshot, initiator: $initiator, color: $color}';
   }
 }
 
@@ -499,7 +537,7 @@ enum TimelineMode {
   record,
 
   /// No events will be recorded, the timeline is not generated after the test
-  off;
+  off,
 }
 
 /// Returns the most relevant caller that is part of the user code.
