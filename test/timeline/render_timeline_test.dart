@@ -31,6 +31,7 @@ void main() {
     required int index,
     String? screenshotUrl,
     int? frameNumber,
+    int? renderedFrameNumber,
   }) {
     return TimelineEvent(
       eventType: 'Assertion $index',
@@ -74,6 +75,7 @@ void main() {
         },
       },
       frameNumber: frameNumber,
+      renderedFrameNumber: renderedFrameNumber,
     );
   }
 

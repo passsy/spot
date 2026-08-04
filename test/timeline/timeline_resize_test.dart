@@ -1,10 +1,16 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/src/timeline/html/components/timeline_app.dart';
+import 'package:spot/src/timeline/html/web/timeline_event.dart';
 
 void main() {
-  TimelineFrameGroup frame(int number, List<int> eventIndexes) {
+  TimelineFrameGroup frame(
+    int number,
+    List<int> eventIndexes, {
+    int? renderedFrameNumber,
+  }) {
     return TimelineFrameGroup(
       frameNumber: number,
+      renderedFrameNumber: renderedFrameNumber ?? number,
       eventIndexes: eventIndexes,
       screenshotUrl: null,
     );
@@ -107,6 +113,119 @@ void main() {
     // Backwards out of the first frame stays on its first event.
     expect(adjacentFrameEventIndex(frames, 1, -1), 0);
     expect(adjacentFrameEventIndex(frames, 0, -1), 0);
+  });
+
+  group('gaps between recorded frames', () {
+    TimelineEvent event({
+      required int testClockMs,
+      required int wallClockMs,
+      required int renderedFrameNumber,
+    }) {
+      return TimelineEvent(
+        eventType: 'Assertion',
+        color: null,
+        screenshotUrl: null,
+        overlayUrls: const [],
+        details: 'example',
+        timestamp: DateTime(
+          2026,
+          8,
+          4,
+          12,
+          0,
+          0,
+          testClockMs,
+        ).toIso8601String(),
+        wallTimestamp: DateTime(
+          2026,
+          8,
+          4,
+          12,
+          0,
+          0,
+          wallClockMs,
+        ).toIso8601String(),
+        caller: 'example_test.dart:1',
+        ideLink: null,
+        ideName: null,
+        sourcePath: null,
+        callerLine: null,
+        isFailure: false,
+        widgetTree: '',
+        structuredWidgetTree: const {},
+        renderedFrameNumber: renderedFrameNumber,
+      );
+    }
+
+    test('two frames the test rendered nothing between have no gap', () {
+      final events = [
+        event(testClockMs: 0, wallClockMs: 0, renderedFrameNumber: 7),
+        event(testClockMs: 16, wallClockMs: 2, renderedFrameNumber: 8),
+      ];
+
+      expect(gapBetween(events, frame(1, [0]), frame(2, [1])), isNull);
+    });
+
+    test('the frames rendered in between are the gap', () {
+      final events = [
+        event(testClockMs: 0, wallClockMs: 0, renderedFrameNumber: 7),
+        event(testClockMs: 500, wallClockMs: 120, renderedFrameNumber: 307),
+      ];
+
+      final gap = gapBetween(
+        events,
+        frame(1, [0], renderedFrameNumber: 7),
+        frame(2, [1], renderedFrameNumber: 307),
+      );
+
+      // 7 and 307 were both recorded in, the 299 between them were not.
+      expect(gap!.frames, 299);
+      expect(gap.testClock, const Duration(milliseconds: 500));
+      expect(gap.wallClock, const Duration(milliseconds: 120));
+    });
+
+    test('a gap is measured from the last event to the next one', () {
+      final events = [
+        event(testClockMs: 0, wallClockMs: 0, renderedFrameNumber: 1),
+        // Same frame as the one before, and the last thing before the gap.
+        event(testClockMs: 30, wallClockMs: 8, renderedFrameNumber: 1),
+        event(testClockMs: 130, wallClockMs: 40, renderedFrameNumber: 60),
+      ];
+
+      final gap = gapBetween(
+        events,
+        frame(1, [0, 1], renderedFrameNumber: 1),
+        frame(2, [2], renderedFrameNumber: 60),
+      )!;
+
+      expect(gap.testClock, const Duration(milliseconds: 100));
+      expect(gap.wallClock, const Duration(milliseconds: 32));
+    });
+
+    test('gap columns sit between the frames, and nowhere else', () {
+      final events = [
+        event(testClockMs: 0, wallClockMs: 0, renderedFrameNumber: 1),
+        event(testClockMs: 100, wallClockMs: 30, renderedFrameNumber: 90),
+        event(testClockMs: 116, wallClockMs: 33, renderedFrameNumber: 91),
+      ];
+      final frames = [
+        frame(1, [0], renderedFrameNumber: 1),
+        frame(2, [1], renderedFrameNumber: 90),
+        frame(3, [2], renderedFrameNumber: 91),
+      ];
+
+      final columns = timelineTrackColumns(events, frames);
+
+      // frame, gap, frame, frame: no gap before the first, none between the
+      // two adjacent ones.
+      expect(columns.map((column) => column.gap == null), [
+        true,
+        false,
+        true,
+        true,
+      ]);
+      expect(columns[1].gap!.frames, 88);
+    });
   });
 
   test('vertical navigation stays within the selected frame', () {

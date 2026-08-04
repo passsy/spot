@@ -12,6 +12,7 @@ class ServerApp extends StatefulComponent {
     required this.testNameWithHierarchy,
     required this.timelineEvents,
     required this.sourceFiles,
+    required this.renderedFrameCount,
     super.key,
   });
 
@@ -26,6 +27,9 @@ class ServerApp extends StatefulComponent {
 
   /// Every source file the events point into, keyed by path.
   final Map<String, TimelineSourceFile> sourceFiles;
+
+  /// Frames the test rendered in total, recorded in or not.
+  final int renderedFrameCount;
 
   @override
   State<ServerApp> createState() => ServerAppState();
@@ -43,6 +47,7 @@ class ServerAppState extends State<ServerApp>
       'sourceFiles': component.sourceFiles.map(
         (filePath, file) => MapEntry(filePath, file.toMap()),
       ),
+      'renderedFrameCount': component.renderedFrameCount,
     };
   }
 
@@ -60,6 +65,7 @@ class ServerAppState extends State<ServerApp>
       testNameWithHierarchy: component.testNameWithHierarchy,
       timelineEvents: component.timelineEvents,
       sourceFiles: component.sourceFiles,
+      renderedFrameCount: component.renderedFrameCount,
     );
   }
 

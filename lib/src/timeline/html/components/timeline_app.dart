@@ -24,6 +24,7 @@ class TimelineApp extends StatefulComponent {
     required this.testNameWithHierarchy,
     required this.timelineEvents,
     required this.sourceFiles,
+    required this.renderedFrameCount,
   });
 
   final String testName;
@@ -32,6 +33,10 @@ class TimelineApp extends StatefulComponent {
 
   /// Every source file the events point into, keyed by path.
   final Map<String, TimelineSourceFile> sourceFiles;
+
+  /// Frames the test rendered in total, whether anything was recorded in them
+  /// or not. What a test costs, in the one unit that always applies.
+  final int renderedFrameCount;
 
   @override
   State<TimelineApp> createState() => TimelineAppState();
@@ -297,11 +302,18 @@ TimelineTextSlice sliceTimelineText(
 class TimelineFrameGroup {
   TimelineFrameGroup({
     required this.frameNumber,
+    required this.renderedFrameNumber,
     required this.eventIndexes,
     required this.screenshotUrl,
   });
 
   final int frameNumber;
+
+  /// How many frames the test had rendered when this group was recorded.
+  ///
+  /// Falls back to [frameNumber] for reports written before frames were
+  /// counted, which leaves consecutive groups adjacent and so shows no gaps.
+  final int renderedFrameNumber;
   final List<int> eventIndexes;
   final String? screenshotUrl;
 }
@@ -320,11 +332,99 @@ List<TimelineFrameGroup> groupTimelineFrames(List<TimelineEvent> events) {
         }
         return TimelineFrameGroup(
           frameNumber: entry.key,
+          renderedFrameNumber:
+              events[entry.value.first].renderedFrameNumber ?? entry.key,
           eventIndexes: List.unmodifiable(entry.value),
           screenshotUrl: screenshotUrl,
         );
       })
       .toList(growable: false);
+}
+
+/// The stretch between two frames the timeline has information for.
+///
+/// Everything inside it was laid out and painted and then never looked at: no
+/// event, no assertion, no capture. Its size is what makes the difference
+/// between a `pump` and a `pumpAndSettle` visible.
+class TimelineGap {
+  const TimelineGap({
+    required this.frames,
+    required this.testClock,
+    required this.wallClock,
+  });
+
+  /// Frames rendered inside the gap.
+  final int frames;
+
+  /// How long the gap took on the test's simulated clock, which is what the
+  /// test asked for by pumping durations.
+  final Duration testClock;
+
+  /// How long the gap really took, which is what it costs to run the test.
+  final Duration wallClock;
+}
+
+/// The gap between [previous] and [next], or `null` when there is none.
+///
+/// `null` rather than an empty gap when the two are adjacent, and for reports
+/// written before frames were counted.
+TimelineGap? gapBetween(
+  List<TimelineEvent> events,
+  TimelineFrameGroup previous,
+  TimelineFrameGroup next,
+) {
+  final frames = next.renderedFrameNumber - previous.renderedFrameNumber - 1;
+  if (frames <= 0) {
+    return null;
+  }
+  // Measured from the last thing recorded before the gap to the first thing
+  // recorded after it, which is exactly the span nothing was recorded in.
+  final before = events[previous.eventIndexes.last];
+  final after = events[next.eventIndexes.first];
+  return TimelineGap(
+    frames: frames,
+    testClock: _between(before.timestamp, after.timestamp),
+    wallClock: _between(before.wallTimestamp, after.wallTimestamp),
+  );
+}
+
+/// One column of the timeline strip: a frame that was recorded, or a gap.
+class TrackColumn {
+  const TrackColumn.frame(TimelineFrameGroup this.frame) : gap = null;
+  const TrackColumn.gap(TimelineGap this.gap) : frame = null;
+
+  final TimelineFrameGroup? frame;
+  final TimelineGap? gap;
+}
+
+/// The columns of the timeline strip, in order.
+///
+/// Every row of the strip walks this same list, which is what keeps the ruler,
+/// the captures and the event lanes lined up once gaps sit between them.
+List<TrackColumn> timelineTrackColumns(
+  List<TimelineEvent> events,
+  List<TimelineFrameGroup> frames,
+) {
+  final columns = <TrackColumn>[];
+  for (final (index, frame) in frames.indexed) {
+    if (index > 0) {
+      final gap = gapBetween(events, frames[index - 1], frame);
+      if (gap != null) {
+        columns.add(TrackColumn.gap(gap));
+      }
+    }
+    columns.add(TrackColumn.frame(frame));
+  }
+  return columns;
+}
+
+Duration _between(String from, String to) {
+  final start = DateTime.tryParse(from);
+  final end = DateTime.tryParse(to);
+  if (start == null || end == null) {
+    return Duration.zero;
+  }
+  return end.difference(start);
 }
 
 /// The event to select when moving [delta] frames away from
@@ -952,6 +1052,94 @@ class TimelineAppState extends State<TimelineApp> {
     return '+${milliseconds.toStringAsFixed(0)} ms';
   }
 
+  Component _rulerCell(TimelineFrameGroup frame, List<TimelineEvent> events) {
+    return div(classes: 'ruler-cell', [
+      span(classes: 'ruler-cell__time', [
+        Component.text(_elapsedLabel(events[frame.eventIndexes.first])),
+      ]),
+      span(
+        classes:
+            'ruler-cell__frame ${frame.screenshotUrl == null ? 'is-missing' : ''}',
+        [Component.text(_frameLabel(frame))],
+      ),
+    ]);
+  }
+
+  Component _frameEventMarkers(
+    TimelineFrameGroup frame,
+    List<TimelineEvent> events,
+  ) {
+    return div(
+      classes: 'frame-events',
+      attributes: {
+        'role': 'group',
+        'aria-label': 'Events for ${_frameLabel(frame)}',
+      },
+      [
+        for (final index in frame.eventIndexes)
+          _eventMarker(events[index], index),
+      ],
+    );
+  }
+
+  /// The frames the test rendered without recording anything in them.
+  ///
+  /// Deliberately not selectable: there is nothing behind it to show, and the
+  /// arrow keys walk frames, so they step straight over it.
+  Component _frameGap(TimelineGap gap) {
+    final frames =
+        '${_count(gap.frames)} '
+        '${gap.frames == 1 ? 'frame' : 'frames'}';
+    return div(
+      classes: 'frame-gap',
+      attributes: {
+        'aria-hidden': 'true',
+        'title':
+            '$frames rendered without an event · '
+            '${_durationLabel(gap.testClock)} test clock · '
+            '${_durationLabel(gap.wallClock)} wall clock',
+      },
+      [
+        const span(classes: 'frame-gap__ellipsis', [Component.text('⋯')]),
+        span(classes: 'frame-gap__frames', [
+          Component.text(_count(gap.frames)),
+        ]),
+        span(classes: 'frame-gap__label', [
+          Component.text(gap.frames == 1 ? 'frame' : 'frames'),
+        ]),
+        span(classes: 'frame-gap__time', [
+          Component.text(_durationLabel(gap.testClock)),
+          const span(classes: 'frame-gap__clock', [Component.text('test')]),
+        ]),
+        span(classes: 'frame-gap__time', [
+          Component.text(_durationLabel(gap.wallClock)),
+          const span(classes: 'frame-gap__clock', [Component.text('wall')]),
+        ]),
+      ],
+    );
+  }
+
+  /// The frame a group was rendered in, counted the way the test rendered it.
+  ///
+  /// Falls back to the group's own number for reports written before frames
+  /// were counted.
+  String _frameLabel(TimelineFrameGroup frame) {
+    return 'Frame ${_count(frame.renderedFrameNumber)}';
+  }
+
+  /// [value] with thousands separators, because frame counts reach five digits.
+  String _count(int value) {
+    final digits = value.abs().toString();
+    final buffer = StringBuffer(value < 0 ? '-' : '');
+    for (var index = 0; index < digits.length; index++) {
+      if (index > 0 && (digits.length - index) % 3 == 0) {
+        buffer.write(',');
+      }
+      buffer.write(digits[index]);
+    }
+    return buffer.toString();
+  }
+
   String _durationLabel(Duration duration) {
     final milliseconds = duration.inMicroseconds / 1000;
     if (milliseconds >= 1000) {
@@ -964,6 +1152,7 @@ class TimelineAppState extends State<TimelineApp> {
   Component build(BuildContext context) {
     final events = component.timelineEvents;
     final frames = groupTimelineFrames(events);
+    final columns = timelineTrackColumns(events, frames);
     final capturedFrames = frames
         .where((frame) => frame.screenshotUrl != null)
         .length;
@@ -1039,7 +1228,7 @@ class TimelineAppState extends State<TimelineApp> {
                 if (_selectedIndex != null)
                   span(classes: 'selection-summary', [
                     Component.text(
-                      'Frame ${frameByEvent[_selectedIndex]!.frameNumber} · Event ${frameByEvent[_selectedIndex]!.eventIndexes.indexOf(_selectedIndex!) + 1} of ${frameByEvent[_selectedIndex]!.eventIndexes.length}',
+                      '${_frameLabel(frameByEvent[_selectedIndex]!)} · Event ${frameByEvent[_selectedIndex]!.eventIndexes.indexOf(_selectedIndex!) + 1} of ${frameByEvent[_selectedIndex]!.eventIndexes.length}',
                     ),
                   ]),
               ]),
@@ -1055,6 +1244,21 @@ class TimelineAppState extends State<TimelineApp> {
                   ),
                 ]),
                 span([Component.text('$capturedFrames captured')]),
+                if (component.renderedFrameCount > 0)
+                  span(
+                    classes: 'timeline-counts__rendered',
+                    attributes: const {
+                      'title':
+                          'Frames the test rendered in total. Fewer frames is '
+                          'a faster test: prefer pump over pumpAndSettle where '
+                          'it does the job.',
+                    },
+                    [
+                      Component.text(
+                        '${_count(component.renderedFrameCount)} rendered',
+                      ),
+                    ],
+                  ),
               ]),
             ]),
             if (events.isEmpty)
@@ -1066,42 +1270,42 @@ class TimelineAppState extends State<TimelineApp> {
                 div(
                   classes: 'timeline-track',
                   styles: Styles(
-                    raw: {'--frame-count': frames.length.toString()},
+                    raw: {
+                      '--frame-count': frames.length.toString(),
+                      '--gap-count': columns
+                          .where((column) => column.gap != null)
+                          .length
+                          .toString(),
+                      // The three rows below are separate grids, so they only
+                      // line up while they share one set of track widths.
+                      '--track-columns': columns
+                          .map(
+                            (column) => column.gap == null
+                                ? 'var(--track-cell-width)'
+                                : 'var(--gap-cell-width)',
+                          )
+                          .join(' '),
+                    },
                   ),
                   [
                     div(classes: 'time-ruler', [
-                      for (final frame in frames)
-                        div(classes: 'ruler-cell', [
-                          span(classes: 'ruler-cell__time', [
-                            Component.text(
-                              _elapsedLabel(events[frame.eventIndexes.first]),
-                            ),
-                          ]),
-                          span(
-                            classes:
-                                'ruler-cell__frame ${frame.screenshotUrl == null ? 'is-missing' : ''}',
-                            [Component.text('Frame ${frame.frameNumber}')],
-                          ),
-                        ]),
+                      for (final column in columns)
+                        column.gap != null
+                            ? const div(classes: 'ruler-cell is-gap', [])
+                            : _rulerCell(column.frame!, events),
                     ]),
                     div(classes: 'filmstrip', [
-                      for (final frame in frames) _frameCapture(frame),
+                      for (final column in columns)
+                        column.gap != null
+                            ? _frameGap(column.gap!)
+                            : _frameCapture(column.frame!),
                     ]),
                     div(classes: 'event-lane', [
                       div(classes: 'lane-events', [
-                        for (final frame in frames)
-                          div(
-                            classes: 'frame-events',
-                            attributes: {
-                              'role': 'group',
-                              'aria-label':
-                                  'Events for frame ${frame.frameNumber}',
-                            },
-                            [
-                              for (final index in frame.eventIndexes)
-                                _eventMarker(events[index], index),
-                            ],
-                          ),
+                        for (final column in columns)
+                          column.gap != null
+                              ? const div(classes: 'frame-events is-gap', [])
+                              : _frameEventMarkers(column.frame!, events),
                       ]),
                     ]),
                   ],
@@ -1178,12 +1382,12 @@ class TimelineAppState extends State<TimelineApp> {
       styles: Styles(raw: {'--event-color': _eventColor(event)}),
       attributes: {
         'aria-label':
-            'Frame ${frame.frameNumber}, $eventSummary, ${frame.screenshotUrl == null ? 'not captured' : 'captured'}',
+            '${_frameLabel(frame)}, $eventSummary, ${frame.screenshotUrl == null ? 'not captured' : 'captured'}',
         'aria-pressed': selected.toString(),
         'tabindex': selected || (_selectedIndex == null && firstEventIndex == 0)
             ? '0'
             : '-1',
-        'title': 'Frame ${frame.frameNumber} · $eventSummary',
+        'title': '${_frameLabel(frame)} · $eventSummary',
       },
       onClick: () => _select(selected ? _selectedIndex! : firstEventIndex),
       [
@@ -1191,20 +1395,22 @@ class TimelineAppState extends State<TimelineApp> {
           if (frame.screenshotUrl != null)
             img(
               src: frame.screenshotUrl!,
-              alt: 'Capture for frame ${frame.frameNumber}',
+              alt: 'Capture for frame ${frame.renderedFrameNumber}',
               attributes: const {'loading': 'lazy', 'decoding': 'async'},
             )
           else
             div(classes: 'capture-placeholder', [
               span(classes: 'capture-placeholder__index', [
-                Component.text('${frame.frameNumber}'),
+                Component.text('${frame.renderedFrameNumber}'),
               ]),
               const span([Component.text('No capture')]),
             ]),
         ]),
         div(classes: 'capture-caption', [
           span(classes: 'capture-number', [
-            Component.text('F${frame.frameNumber.toString().padLeft(2, '0')}'),
+            Component.text(
+              'F${frame.renderedFrameNumber.toString().padLeft(2, '0')}',
+            ),
           ]),
           span(classes: 'capture-name', [Component.text(eventSummary)]),
         ]),

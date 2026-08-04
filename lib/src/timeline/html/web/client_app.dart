@@ -67,6 +67,9 @@ class _ClientAppState extends State<ClientApp>
   /// Every source file the events point into, keyed by path.
   late final Map<String, TimelineSourceFile> sourceFiles;
 
+  /// Frames the test rendered in total, recorded in or not.
+  late final int renderedFrameCount;
+
   @override
   void updateState(Map<String, dynamic> value) {
     // This uses Jasprs sync mechanism to retrieve the synced server state from the rendered HTML.
@@ -83,6 +86,7 @@ class _ClientAppState extends State<ClientApp>
     );
     testName = value['testName'] as String;
     testNameWithHierarchy = value['testNameWithHierarchy'] as String;
+    renderedFrameCount = value['renderedFrameCount'] as int? ?? 0;
   }
 
   @override
@@ -97,6 +101,7 @@ class _ClientAppState extends State<ClientApp>
       testNameWithHierarchy: testNameWithHierarchy,
       timelineEvents: timelineEvents,
       sourceFiles: sourceFiles,
+      renderedFrameCount: renderedFrameCount,
     );
   }
 }

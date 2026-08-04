@@ -162,6 +162,7 @@ extension HtmlTimelinePrinter on Timeline {
         screenshotUrl: screenshotUrlsByFrame[e.frameNumber],
         overlayUrls: overlayUrlsByEvent[e.id] ?? const [],
         frameNumber: e.frameNumber,
+        renderedFrameNumber: e.renderedFrameNumber,
         color: e.color == flt.Colors.grey
             ? null
             // ignore: deprecated_member_use
@@ -190,6 +191,7 @@ extension HtmlTimelinePrinter on Timeline {
       final content = await renderTimelineWithJaspr(
         jsonTimelineEvents,
         sourceFiles: sourceFiles,
+        renderedFrameCount: renderedFrameCount,
         hotRestart: isHotReloadServerRunning,
       );
       stopwatch.stop();

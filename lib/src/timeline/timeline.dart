@@ -6,6 +6,7 @@ import 'package:clock/clock.dart';
 import 'package:dartx/dartx.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nanoid2/nanoid2.dart';
 import 'package:spot/src/flutter/frame_clock.dart';
@@ -52,6 +53,24 @@ TimelineMode? getTimelineModeFromEnv() {
     'off' => TimelineMode.off,
     _ => null,
   };
+}
+
+/// Frames drawn since the first timeline of this process was created.
+///
+/// [SchedulerBinding] keeps no frame counter and persistent frame callbacks
+/// cannot be removed again, so one callback counts for the whole process and
+/// every timeline reads a delta off it.
+int _renderedFrames = 0;
+bool _isCountingRenderedFrames = false;
+
+void _startCountingRenderedFrames() {
+  if (_isCountingRenderedFrames) {
+    return;
+  }
+  _isCountingRenderedFrames = true;
+  SchedulerBinding.instance.addPersistentFrameCallback((_) {
+    _renderedFrames++;
+  });
 }
 
 final Map<LiveTest, Timeline> _timelines = {};
@@ -109,6 +128,13 @@ abstract interface class Timeline {
   /// The events that have recording during the test.
   List<TimelineEvent> get events;
 
+  /// How many frames the test has rendered since the timeline started.
+  ///
+  /// Counts every frame, not just the ones an event was recorded in. It is a
+  /// direct measure of what a test costs: a `pumpAndSettle` where a single
+  /// `pump` would do shows up here as hundreds of frames.
+  int get renderedFrameCount;
+
   /// The mode of the timeline. Defaults to [TimelineMode.reportOnError].
   TimelineMode get mode;
 
@@ -155,9 +181,19 @@ abstract interface class Timeline {
 
 /// The actual implementation of the [Timeline].
 final class _Timeline extends Timeline {
-  _Timeline._(this.test) {
+  _Timeline._(this.test) : _renderedFramesAtStart = _renderedFrames {
+    _startCountingRenderedFrames();
     _startCapturingFlutterErrors();
   }
+
+  /// Frames the process had already drawn when this timeline started.
+  ///
+  /// The counter runs for the whole process, this is what makes the numbers
+  /// relative to this test.
+  final int _renderedFramesAtStart;
+
+  @override
+  int get renderedFrameCount => _renderedFrames - _renderedFramesAtStart;
 
   /// The test that the timeline is associated with.
   @override
@@ -286,6 +322,7 @@ final class _Timeline extends Timeline {
     final event = TimelineEvent(
       id: id,
       frameNumber: _currentFrameNumber,
+      renderedFrameNumber: renderedFrameCount,
       details: details,
       screenshot: screenshot,
       initiator: mostRelevantCaller(
@@ -355,6 +392,7 @@ final class _Timeline extends Timeline {
     final updated = TimelineEvent(
       id: id,
       frameNumber: event.frameNumber,
+      renderedFrameNumber: event.renderedFrameNumber,
       details: updatedDetails,
       eventType: updatedEventType,
       color: updatedColor,
@@ -452,6 +490,7 @@ final class _Timeline extends Timeline {
       TimelineEvent(
         id: TimelineEventId.random(),
         frameNumber: _currentFrameNumber,
+        renderedFrameNumber: renderedFrameCount,
         details: '${failure.error.toString().trimRight()}\n\n$trace',
         screenshot: screenshot,
         initiator: mostRelevantCaller(trace: trace),
@@ -606,6 +645,7 @@ class TimelineEvent {
   const TimelineEvent({
     required this.id,
     required this.frameNumber,
+    required this.renderedFrameNumber,
     required this.timestamp,
     required this.wallTime,
     required this.treeSnapshot,
@@ -625,7 +665,16 @@ class TimelineEvent {
   ///
   /// Multiple assertions can occur without pumping another frame. Those
   /// events share this number and therefore share one capture in reports.
+  ///
+  /// It counts the frames events were recorded in, not the frames the test
+  /// rendered. See [renderedFrameNumber] for that.
   final int frameNumber;
+
+  /// How many frames the test had rendered when this event was recorded.
+  ///
+  /// Unlike [frameNumber] this counts every frame, so the distance between two
+  /// events says how much rendering happened in between.
+  final int renderedFrameNumber;
 
   /// The type of event that occurred.
   final TimelineEventType eventType;

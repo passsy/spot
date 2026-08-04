@@ -20,6 +20,7 @@ import 'package:test_api/src/backend/invoker.dart';
 Future<String> renderTimelineWithJaspr(
   List<x.TimelineEvent> events, {
   Map<String, x.TimelineSourceFile> sourceFiles = const {},
+  int renderedFrameCount = 0,
   bool inlineScripts = true,
   bool hotRestart = false,
 }) async {
@@ -52,6 +53,7 @@ Future<String> renderTimelineWithJaspr(
         testNameWithHierarchy: nameWithHierarchy,
         timelineEvents: events,
         sourceFiles: sourceFiles,
+        renderedFrameCount: renderedFrameCount,
       ),
     ),
     standalone: true,

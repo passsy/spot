@@ -115,6 +115,7 @@ const timelineCSS = '''
   --accent-strong: #4c8df6;
   --focus: #a8c7fa;
   --track-cell-width: 132px;
+  --gap-cell-width: 86px;
   --filmstrip-height: 142px;
   --header-height: 48px;
   --timeline-height: 256px;
@@ -344,7 +345,9 @@ kbd {
 }
 
 .timeline-track {
-  width: max(100%, calc(var(--frame-count, 1) * var(--track-cell-width)));
+  width: max(100%, calc(
+    var(--frame-count, 1) * var(--track-cell-width) +
+    var(--gap-count, 0) * var(--gap-cell-width)));
   min-width: max-content;
 }
 
@@ -354,14 +357,23 @@ kbd {
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: var(--track-cell-width);
+  grid-template-columns: var(--track-columns);
 }
 
 .time-ruler {
   height: 27px;
   border-bottom: 1px solid var(--border);
-  background:
-    linear-gradient(to right, transparent calc(100% - 1px), #454851 calc(100% - 1px))
-    0 0 / var(--track-cell-width) 100%;
+}
+
+/* Drawn per cell, because gap columns are narrower than frame columns. */
+.ruler-cell::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 1px;
+  height: 100%;
+  background: #454851;
 }
 
 .ruler-cell {
@@ -399,6 +411,78 @@ kbd {
   width: 1px;
   height: 6px;
   background: var(--border-strong);
+}
+
+/* A stretch of frames the test rendered and recorded nothing in. */
+.frame-gap {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1px;
+  min-width: 0;
+  height: 100%;
+  padding: 4px;
+  border-right: 1px solid var(--border);
+  color: var(--text-muted);
+  background:
+    repeating-linear-gradient(
+      135deg,
+      transparent 0 6px,
+      #22242a 6px 12px);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.frame-gap__ellipsis {
+  margin-bottom: 2px;
+  color: var(--border-strong);
+  font-size: 16px;
+  line-height: 1;
+}
+
+.frame-gap__frames {
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.frame-gap__label {
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  font-size: 9px;
+}
+
+.frame-gap__time {
+  display: flex;
+  gap: 4px;
+  align-items: baseline;
+}
+
+.frame-gap__time:first-of-type {
+  margin-top: 5px;
+}
+
+.frame-gap__clock {
+  color: #6b7280;
+  font-size: 9px;
+}
+
+.ruler-cell.is-gap,
+.frame-events.is-gap {
+  border-right: 1px solid var(--border);
+  background: #1b1d22;
+}
+
+.ruler-cell.is-gap::after,
+.ruler-cell.is-gap::before {
+  content: none;
+}
+
+.timeline-counts__rendered {
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
 }
 
 .filmstrip {

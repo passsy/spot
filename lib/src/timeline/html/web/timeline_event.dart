@@ -26,6 +26,7 @@ class TimelineEvent {
     required this.structuredWidgetTree,
     this.compressedFrameData,
     this.frameNumber,
+    this.renderedFrameNumber,
   });
 
   final String eventType;
@@ -61,6 +62,13 @@ class TimelineEvent {
   final String? compressedFrameData;
   final int? frameNumber;
 
+  /// How many frames the test had rendered when the event was recorded.
+  ///
+  /// Unlike [frameNumber], which only counts frames events happened in, this
+  /// counts every frame. The distance between two events is how much rendering
+  /// the test did in between without recording anything.
+  final int? renderedFrameNumber;
+
   Map<String, dynamic> toMap() {
     return {
       'eventType': eventType,
@@ -80,6 +88,7 @@ class TimelineEvent {
       'structuredWidgetTree': structuredWidgetTree,
       'compressedFrameData': compressedFrameData,
       'frameNumber': frameNumber,
+      'renderedFrameNumber': renderedFrameNumber,
     };
   }
 
@@ -105,6 +114,7 @@ class TimelineEvent {
           const {},
       compressedFrameData: map['compressedFrameData'] as String?,
       frameNumber: map['frameNumber'] as int?,
+      renderedFrameNumber: map['renderedFrameNumber'] as int?,
     );
   }
 }
