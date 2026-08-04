@@ -549,17 +549,23 @@ void main() {
   group('visible text normalization', () {
     test('normalizeVisibleText removes invisible characters', () {
       expect(AnyText.normalizeVisibleText('f\u200Bo\u200Bo'), 'foo'); // ZWSP
-      expect(AnyText.normalizeVisibleText('soft\u00ADhyphen'),
-          'softhyphen'); // SHY
       expect(
-          AnyText.normalizeVisibleText('word\u2060joiner'), 'wordjoiner'); // WJ
+        AnyText.normalizeVisibleText('soft\u00ADhyphen'),
+        'softhyphen',
+      ); // SHY
+      expect(
+        AnyText.normalizeVisibleText('word\u2060joiner'),
+        'wordjoiner',
+      ); // WJ
       expect(AnyText.normalizeVisibleText('\uFEFFbom'), 'bom'); // ZWNBSP / BOM
     });
 
     test('normalizeVisibleText folds space separators to a regular space', () {
       expect(AnyText.normalizeVisibleText('foo\u00A0bar'), 'foo bar'); // NBSP
       expect(
-          AnyText.normalizeVisibleText('1\u202F234'), '1 234'); // NARROW NBSP
+        AnyText.normalizeVisibleText('1\u202F234'),
+        '1 234',
+      ); // NARROW NBSP
       expect(AnyText.normalizeVisibleText('thin\u2009space'), 'thin space');
       expect(AnyText.normalizeVisibleText('em\u2003space'), 'em space');
       expect(AnyText.normalizeVisibleText('ogham\u1680mark'), 'ogham mark');

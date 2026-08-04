@@ -73,7 +73,7 @@ extension HtmlTimelinePrinter on Timeline {
       timelineBuildDir.absolute.path.length,
       'screenshots'.length,
       maxScreenshotFilenameLength,
-      10 // padding for slashes, file extensions and other miscalculations
+      10, // padding for slashes, file extensions and other miscalculations
     ];
     final remainingSpace = 256 - reserved.reduce((a, b) => a + b);
     assert(
@@ -81,7 +81,8 @@ extension HtmlTimelinePrinter on Timeline {
         'The remaining space for the timeline directory name is too small: $remainingSpace/256 left. '
         'The plan was to place the timeline in ${timelineDirName(maxLength: 1000)}');
     final timelineDirNameTrimmed = timelineDirName(
-        maxLength: remainingSpace.clamp(0, maxTimelineDirNameLength));
+      maxLength: remainingSpace.clamp(0, maxTimelineDirNameLength),
+    );
 
     final spotTempDir = timelineBuildDir.directory(timelineDirNameTrimmed);
     if (spotTempDir.existsSync()) {

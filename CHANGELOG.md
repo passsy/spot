@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Breaking: spot now requires Dart 3.4 / Flutter 3.22. Jaspr, which renders the timeline report, is updated to 0.17.1.
+
 ## 0.20.1
 
 - Fix: `act.tap()` and `act.tapAt()` now use a fresh pointer id per tap instead of always reusing pointer 0. Previously, when an earlier test left a gesture arena unresolved, the next tap joined that stale arena and was silently swallowed. #165 (thx @peter-trost)

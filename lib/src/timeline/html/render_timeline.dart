@@ -32,7 +32,10 @@ Future<String> renderTimelineWithJaspr(
           rel: "stylesheet",
         ),
         if (!inlineScripts)
-          const DomComponent(tag: 'script', attributes: {'src': 'script.js'})
+          DomComponent(
+            tag: 'script',
+            attributes: {'src': hotRestart ? '/script.js' : 'script.js'},
+          )
         else
           DomComponent(tag: 'script', child: raw(timelineJS)),
         DomComponent(tag: 'style', child: raw(animationsCSS)),
