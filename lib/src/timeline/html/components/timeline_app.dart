@@ -510,8 +510,8 @@ class TimelineAppState extends State<TimelineApp> {
   /// The event whose capture is open full screen, `null` when none is.
   TimelineEvent? _lightboxEvent;
   int _treeTextStartLine = 1;
-  // Room for the summary, the two ruler rows, a capture and two event rows.
-  double _timelineHeight = 270;
+  // Room for the summary, the two ruler rows, a capture and four event rows.
+  double _timelineHeight = 320;
   double _capturePanePercent = 57;
   double _treePanePercent = 62;
   _ResizeTarget? _resizeTarget;
@@ -1192,7 +1192,7 @@ class TimelineAppState extends State<TimelineApp> {
         ]),
         header(classes: 'app-bar', [
           const div(classes: 'brand', [
-            span(classes: 'brand-mark', [Component.text('S')]),
+            span(classes: 'brand-mark', []),
             span(classes: 'brand-name', [Component.text('Spot timeline')]),
           ]),
           div(classes: 'test-title', [

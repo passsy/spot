@@ -118,7 +118,7 @@ const timelineCSS = '''
   --gap-cell-width: 24px;
   --filmstrip-height: 142px;
   --header-height: 48px;
-  --timeline-height: 270px;
+  --timeline-height: 320px;
   font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-synthesis: none;
 }
@@ -210,16 +210,11 @@ a:focus-visible {
   white-space: nowrap;
 }
 
+/* The spot magnifier, inline so the report stays a single file. */
 .brand-mark {
-  display: grid;
-  place-items: center;
-  width: 24px;
-  height: 24px;
-  border: 1px solid #dd8b3d;
-  border-radius: 5px;
-  color: #f0a45d;
-  font-size: 13px;
-  font-weight: 700;
+  width: 26px;
+  height: 26px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cg stroke='%23222a35' stroke-linecap='round'%3E%3Cline x1='39' y1='39' x2='55' y2='55' stroke-width='15'/%3E%3Cline x1='39' y1='39' x2='55' y2='55' stroke='%233f9df5' stroke-width='9'/%3E%3Cline x1='36.5' y1='36.5' x2='39.5' y2='39.5' stroke-width='12'/%3E%3Cline x1='36.5' y1='36.5' x2='38' y2='38' stroke='%23b9bfc9' stroke-width='8'/%3E%3Cline x1='38.6' y1='38.6' x2='39.8' y2='39.8' stroke='%23ee7513' stroke-width='8'/%3E%3Ccircle cx='25' cy='25' r='19' fill='%23fff' stroke-width='3.2'/%3E%3Ccircle cx='25' cy='25' r='13.6' fill='%235cabf7' stroke-width='3'/%3E%3Cpath d='M16.4 21A9.5 9.5 0 0 1 24.2 15.5' stroke='%23fff' stroke-width='3' fill='none'/%3E%3Cpath d='M33.6 29A9.5 9.5 0 0 1 29 33.6' stroke='%23fff' stroke-width='3' fill='none'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat;
 }
 
 .brand-name {

@@ -2222,8 +2222,8 @@ B.a.p(b,q)
 B.a.p(b,r)},
 nC(a,b,c,d,e){return new A.bX(a,b.h("@<0>").A(c).A(d).A(e).h("bX<1,2,3,4>"))},
 cH(a,b,c,d){var s
-if(B.h===c)return A.nW(J.am(a),J.am(b),$.j4())
-if(B.h===d){s=J.am(a)
+if(B.i===c)return A.nW(J.am(a),J.am(b),$.j4())
+if(B.i===d){s=J.am(a)
 b=J.am(b)
 c=J.am(c)
 return A.k0(A.bv(A.bv(A.bv($.j4(),s),b),c))}s=A.qB(J.am(a),J.am(b),J.am(c),J.am(d),$.j4())
@@ -3030,7 +3030,7 @@ to(a,b,c){var s,r,q,p,o,n="Must be positive"
 if(c<1)throw A.b(A.d4(c,"startLine",n))
 if(b<1)throw A.b(A.d4(b,"maximumLines",n))
 s=a.length
-if(s===0)return B.ck
+if(s===0)return B.ci
 for(--s,r=0,q=1;q<c;++q){p=B.d.dH(a,"\n",r)
 if(p===-1||p===s)return new A.cM("",c,0,!0,!1)
 r=p+1}for(o=r,q=1;q<=b;++q){p=B.d.dH(a,"\n",o)
@@ -3168,7 +3168,7 @@ _.at=0
 _.ax=640
 _.ay=null
 _.ch=1
-_.CW=270
+_.CW=320
 _.cx=57
 _.cy=62
 _.c=_.a=_.fx=_.fr=_.dy=_.dx=_.db=null},
@@ -3309,7 +3309,7 @@ q=A.es(s.j(a,"color"))
 p=A.a5(s.j(a,"screenshotUrl"))
 o=t.bM.a(s.j(a,"overlayUrls"))
 o=o==null?null:J.mr(o,t.N)
-if(o==null)o=B.b5
+if(o==null)o=B.b4
 n=A.z(s.j(a,"details"))
 m=A.z(s.j(a,"timestamp"))
 l=A.z(s.j(a,"wallTimestamp"))
@@ -3417,7 +3417,7 @@ $iN:1}
 J.a.prototype={$ih:1}
 J.bM.prototype={
 gE(a){return 0},
-gI(a){return B.cs},
+gI(a){return B.cq},
 k(a){return String(a)}}
 J.fS.prototype={}
 J.cN.prototype={}
@@ -4207,12 +4207,12 @@ A.cj.prototype={
 bQ(){return[this.a,this.b]},
 M(a,b){if(b==null)return!1
 return b instanceof A.cj&&this.$s===b.$s&&J.a8(this.a,b.a)&&J.a8(this.b,b.b)},
-gE(a){return A.cH(this.$s,this.a,this.b,B.h)}}
+gE(a){return A.cH(this.$s,this.a,this.b,B.i)}}
 A.cS.prototype={
 bQ(){return this.a},
 M(a,b){if(b==null)return!1
 return b instanceof A.cS&&this.$s===b.$s&&A.qW(this.a,b.a)},
-gE(a){return A.cH(this.$s,A.qm(this.a),B.h,B.h)}}
+gE(a){return A.cH(this.$s,A.qm(this.a),B.i,B.i)}}
 A.fu.prototype={
 k(a){return"RegExp/"+this.a+"/"+this.b.flags},
 geT(){var s=this,r=s.c
@@ -4261,7 +4261,7 @@ return!0}}m.b=m.d=null
 return!1},
 $iI:1}
 A.c9.prototype={
-gI(a){return B.cl},
+gI(a){return B.cj},
 dz(a,b,c){var s=new Uint8Array(a,b,c)
 return s},
 $iN:1,
@@ -4277,7 +4277,7 @@ dz(a,b,c){var s=A.qk(this.a,b,c)
 s.$flags=3
 return s}}
 A.fF.prototype={
-gI(a){return B.cm},
+gI(a){return B.ck},
 $iN:1}
 A.ag.prototype={
 gi(a){return a.length},
@@ -4316,45 +4316,45 @@ $ik:1,
 $if:1,
 $io:1}
 A.fG.prototype={
-gI(a){return B.cn},
+gI(a){return B.cl},
 $iN:1}
 A.fH.prototype={
-gI(a){return B.co},
+gI(a){return B.cm},
 $iN:1}
 A.fI.prototype={
-gI(a){return B.cp},
+gI(a){return B.cn},
 j(a,b){A.bD(b,a,a.length)
 return a[b]},
 $iN:1}
 A.fJ.prototype={
-gI(a){return B.cq},
+gI(a){return B.co},
 j(a,b){A.bD(b,a,a.length)
 return a[b]},
 $iN:1}
 A.fK.prototype={
-gI(a){return B.cr},
+gI(a){return B.cp},
 j(a,b){A.bD(b,a,a.length)
 return a[b]},
 $iN:1}
 A.fL.prototype={
-gI(a){return B.cv},
+gI(a){return B.ct},
 j(a,b){A.bD(b,a,a.length)
 return a[b]},
 $iN:1}
 A.fM.prototype={
-gI(a){return B.cw},
+gI(a){return B.cu},
 j(a,b){A.bD(b,a,a.length)
 return a[b]},
 $iN:1,
 $imL:1}
 A.dz.prototype={
-gI(a){return B.cx},
+gI(a){return B.cv},
 gi(a){return a.length},
 j(a,b){A.bD(b,a,a.length)
 return a[b]},
 $iN:1}
 A.ca.prototype={
-gI(a){return B.cy},
+gI(a){return B.cw},
 gi(a){return a.length},
 j(a,b){A.bD(b,a,a.length)
 return a[b]},
@@ -5451,7 +5451,7 @@ A.bk.prototype={
 aJ(a){return new A.b2(this.b-a.b+1000*(this.a-a.a))},
 M(a,b){if(b==null)return!1
 return b instanceof A.bk&&this.a===b.a&&this.b===b.b&&this.c===b.c},
-gE(a){return A.cH(this.a,this.b,B.h,B.h)},
+gE(a){return A.cH(this.a,this.b,B.i,B.i)},
 a0(a,b){var s
 t.dy.a(b)
 s=B.b.a0(this.a,b.a)
@@ -6861,7 +6861,7 @@ if(r>19)return-1
 q=new Uint8Array(19)
 for(p=0;p<r;++p){o=i.U(3)
 if(o===-1)return-1
-n=B.b8[p]
+n=B.b7[p]
 if(!(n<19))return A.j(q,n)
 q[n]=o}m=A.fl(q)
 n=h+s
@@ -6882,7 +6882,7 @@ if(!(p>=0&&p<q.length))return A.j(q,p)
 q[p]=r&255
 continue}o=r-257
 if(!(o>=0&&o<29))return A.j(B.S,o)
-n=B.S[o]+k.U(B.bd[o])
+n=B.S[o]+k.U(B.bc[o])
 m=k.bU(b)
 if(m<0||m>29)return-1
 if(!(m>=0&&m<30))return A.j(B.T,m)
@@ -7021,7 +7021,7 @@ A.f9.prototype={
 gW(){var s=this.d
 s===$&&A.a7()
 return s},
-bH(a){var s,r,q=this,p=B.bs.j(0,a)
+bH(a){var s,r,q=this,p=B.br.j(0,a)
 if(p==null){s=q.a
 if(s==null)s=null
 else s=s.gW() instanceof $.nb()
@@ -7278,7 +7278,7 @@ if(s<0||s>4294967295)A.aU(A.ad(s,0,4294967295,"length",null))
 r=J.nt(new Array(s),t.m)
 for(q=0;q<s;++q){p=A.a_(A.a_(o.files).item(q))
 p.toString
-r[q]=p}o=r}else o=B.b6
+r[q]=p}o=r}else o=B.b5
 break A}if(B.H===n){o=new A.cO(A.z(o.value))
 break A}o=A.z(o.value)
 break A}return o},
@@ -7390,7 +7390,7 @@ if(r===0)q=b instanceof A.cU&&b.b===0
 else q=!1
 if(!q)s=b instanceof A.cU&&A.cr(p)===A.cr(b)&&p.a===b.a&&r===b.b}return s},
 gE(a){var s=this.b
-return s===0?0:A.cH(this.a,s,B.h,B.h)},
+return s===0?0:A.cH(this.a,s,B.i,B.i)},
 $imM:1}
 A.hO.prototype={}
 A.id.prototype={}
@@ -7444,9 +7444,9 @@ B.a.V(r)
 for(r=q.length,s=0;s<q.length;q.length===r||(0,A.as)(q),++s)q[s].$0()}}
 A.jR.prototype={
 $0(){var s=this.a,r=t.M.a(this.b)
-s.a$=B.bI
+s.a$=B.bH
 r.$0()
-s.a$=B.bJ
+s.a$=B.bI
 s.cX()
 s.a$=B.X
 return null},
@@ -7552,7 +7552,7 @@ au(a){return!0},
 ao(){var s,r,q,p,o,n,m=this,l=null,k=null
 try{k=m.dC()}catch(q){s=A.aV(q)
 r=A.bh(q)
-k=new A.Q("div",l,l,B.cH,l,l,A.c([new A.m("Error on building component: "+A.v(s),l)],t.i),l)
+k=new A.Q("div",l,l,B.cF,l,l,A.c([new A.m("Error on building component: "+A.v(s),l)],t.i),l)
 m.r.he(m,s,r)}finally{m.at=!1}p=m.cy
 o=k
 n=m.c
@@ -7627,7 +7627,7 @@ A.hS.prototype={
 c4(){var s=this.f
 s.toString
 t.fU.a(s)
-return B.i},
+return B.h},
 aG(){var s,r,q=this.CW.d$
 q.toString
 s=t.W
@@ -7835,11 +7835,11 @@ if(r.at)r.w.cs(r)
 if(o)r.bc()},
 ak(){var s,r,q=this,p=q.Q
 if(p!=null&&p.a!==0)for(s=A.r(p),p=new A.bB(p,p.bF(),s.h("bB<1>")),s=s.c;p.m();){r=p.d;(r==null?s.a(r):r).ht(q)}q.z=null
-q.x=B.cB},
+q.x=B.cz},
 cn(){var s=this,r=s.gB().a
 if(r instanceof A.bK)if(J.a8($.eZ.j(0,r),s))$.eZ.H(0,r)
 s.Q=s.f=s.CW=null
-s.x=B.cC},
+s.x=B.cA},
 b3(){var s=this.a
 this.z=s==null?null:s.z},
 du(){var s=this.a
@@ -7888,7 +7888,7 @@ A.bJ.prototype={
 M(a,b){if(b==null)return!1
 if(J.nh(b)!==A.cr(this))return!1
 return b instanceof A.bJ&&this.c===b.c&&J.a8(this.b,b.b)},
-gE(a){return A.cH(this.c,this.b,B.h,B.h)},
+gE(a){return A.cH(this.c,this.b,B.i,B.i)},
 gN(a){return this.a}}
 A.hX.prototype={
 ds(a){a.X(new A.lr(this))
@@ -7917,7 +7917,7 @@ q.toString}A.r(this).c.a(q)
 break A}q=null
 break A}return q}}
 A.cD.prototype={
-k(a){if(A.cr(this)===B.ct)return"[GlobalKey#"+A.oV(this)+"]"
+k(a){if(A.cr(this)===B.cr)return"[GlobalKey#"+A.oV(this)+"]"
 return"["+("<optimized out>#"+A.oV(this))+"]"}}
 A.dp.prototype={
 aN(a,b){this.aV(a,b)},
@@ -8336,7 +8336,7 @@ this.ag(s)},
 cV(a){var s,r=this.a.e
 if(!(a>=0&&a<r.length))return A.j(r,a)
 s=this.aE(r[a])
-return s==null?B.bK:A.oI(s)},
+return s==null?B.bJ:A.oI(s)},
 ag(a){var s,r=this
 if(a<0||a>=r.a.e.length)return
 r.J(new A.kA(r,a,r.cV(a)))
@@ -8417,8 +8417,8 @@ for(s=a5.length,r=0;r<a5.length;a5.length===s||(0,A.as)(a5),++r){q=a5[r]
 for(p=q.c,o=p.length,n=0;n<o;++n)a7.l(0,p[n],q)}s=t.N
 p=A.bf(A.K(["--timeline-height",B.c.S(d.CW,0)+"px"],s,s))
 o=t.i
-m=A.c([B.cN,new A.q(c,"test-title",c,c,c,A.c([B.dc,A.a3(A.c([new A.m(d.a.d,c)],o),c,"test-title__value",c,c)],o),c),new A.q(c,"app-actions",c,c,c,A.c([A.a3(A.c([B.bT,new A.Q(a,c,c,c,c,c,A.c([new A.m("\u2190",c)],o),c),new A.Q(a,c,c,c,c,c,A.c([new A.m("\u2192",c)],o),c),B.bS,new A.Q(a,c,c,c,c,c,A.c([new A.m("\u2191",c)],o),c),new A.Q(a,c,c,c,c,c,A.c([new A.m("\u2193",c)],o),c)],o),c,"shortcut-hint",c,c),A.aG(B.b9,B.bt,"toolbar-button",c,c,new A.kR(d),c,B.f)],o),c)],o)
-l=A.c([B.da,A.oW(A.c([new A.m(d.bK(d.geB()),c)],o),c)],o)
+m=A.c([B.cQ,new A.q(c,"test-title",c,c,c,A.c([B.db,A.a3(A.c([new A.m(d.a.d,c)],o),c,"test-title__value",c,c)],o),c),new A.q(c,"app-actions",c,c,c,A.c([A.a3(A.c([B.bS,new A.Q(a,c,c,c,c,c,A.c([new A.m("\u2190",c)],o),c),new A.Q(a,c,c,c,c,c,A.c([new A.m("\u2192",c)],o),c),B.bR,new A.Q(a,c,c,c,c,c,A.c([new A.m("\u2191",c)],o),c),new A.Q(a,c,c,c,c,c,A.c([new A.m("\u2193",c)],o),c)],o),c,"shortcut-hint",c,c),A.aG(B.b8,B.bs,"toolbar-button",c,c,new A.kR(d),c,B.f)],o),c)],o)
+l=A.c([B.d9,A.oW(A.c([new A.m(d.bK(d.geB()),c)],o),c)],o)
 k=d.e
 if(k!=null){k=d.a6(0,a7.j(0,k).b)
 j=a7.j(0,d.e).c
@@ -8431,14 +8431,14 @@ a7=a5.length
 j=a7===1?"frame":"frames"
 j=A.c([k,A.a3(A.c([new A.m(""+a7+" "+j,c)],o),c,c,c,c),A.a3(A.c([new A.m(""+a8+" captured",c)],o),c,c,c,c)],o)
 a7=d.a.r
-if(a7>0)j.push(A.a3(A.c([new A.m(d.a6(0,a7)+" rendered",c)],o),B.bn,"timeline-counts__rendered",c,c))
+if(a7>0)j.push(A.a3(A.c([new A.m(d.a6(0,a7)+" rendered",c)],o),B.bm,"timeline-counts__rendered",c,c))
 a7=A.c([new A.q(c,"timeline-summary",c,c,c,A.c([new A.q(c,"range-summary",c,c,c,l,c),new A.q(c,"timeline-counts",c,c,c,j,c)],o),c)],o)
-if(a4.length===0)a7.push(B.cJ)
+if(a4.length===0)a7.push(B.cH)
 else{l=A.a4(a6)
 s=A.bf(A.K(["--frame-count",B.b.k(a5.length),"--gap-count",B.b.k(new A.ar(a6,l.h("E(1)").a(new A.kS()),l.h("ar<1>")).gi(0)),"--track-columns",new A.b5(a6,l.h("e(1)").a(new A.kT()),l.h("b5<1,e>")).ad(0," ")],s,s))
 l=A.c([],o)
 for(k=a6.length,j=t.r,r=0;r<a6.length;a6.length===k||(0,A.as)(a6),++r){h=a6[r]
-if(h.b!=null)i=B.cP
+if(h.b!=null)i=B.cM
 else{i=h.a
 i.toString
 j.a(a4)
@@ -8447,32 +8447,32 @@ if(!(g>=0&&g<a4.length))return A.j(a4,g)
 f=a4[g]
 g=d.a.e
 g=g.length===0?c:A.bI(B.a.gq(g).f)
-g=A.c([new A.m(d.aa(g,f.f),c),B.d0],o)
+g=A.c([new A.m(d.aa(g,f.f),c),B.d_],o)
 e=i.d==null?"is-missing":""
 e=A.c([new A.M(c,a1,c,c,g,c),new A.M(c,"ruler-cell__frame "+e,c,c,A.c([new A.m("Frame "+d.a6(0,i.b),c)],o),c)],o)
 g=d.a.e
 g=g.length===0?c:A.bI(B.a.gq(g).r)
-i=new A.q(c,"ruler-cell",c,c,c,A.c([new A.q(c,a0,c,c,c,e,c),new A.q(c,a0,c,c,c,A.c([new A.M(c,a1,c,c,A.c([new A.m(d.aa(g,f.r),c),B.d8],o),c),new A.M(c,"ruler-cell__spot-frame",c,c,A.c([new A.m("Spot "+d.a6(0,i.a),c)],o),c)],o),c)],o),c)}l.push(i)}k=A.c([],o)
+i=new A.q(c,"ruler-cell",c,c,c,A.c([new A.q(c,a0,c,c,c,e,c),new A.q(c,a0,c,c,c,A.c([new A.M(c,a1,c,c,A.c([new A.m(d.aa(g,f.r),c),B.d7],o),c),new A.M(c,"ruler-cell__spot-frame",c,c,A.c([new A.m("Spot "+d.a6(0,i.a),c)],o),c)],o),c)],o),c)}l.push(i)}k=A.c([],o)
 for(j=a6.length,r=0;r<a6.length;a6.length===j||(0,A.as)(a6),++r){h=a6[r]
 i=h.b
 if(i!=null){g=i.a
 e=d.a6(0,g)
 g=g===1?"frame":"frames"
 a5=e+" "+g
-i=new A.q(c,"frame-gap",c,B.V,c,A.c([new A.M(c,"frame-gap__frames",c,c,A.c([new A.m(a5,c)],o),c),new A.q(c,"frame-gap__card",c,c,c,A.c([new A.eC("frame-gap__card-title",A.c([new A.m(a5,c)],o),c),B.dg,new A.q(c,a2,c,c,c,A.c([B.d6,new A.M(c,c,c,c,A.c([new A.m(d.bK(i.b),c)],o),c)],o),c),new A.q(c,a2,c,c,c,A.c([B.db,new A.M(c,c,c,c,A.c([new A.m(d.bK(i.c),c)],o),c)],o),c)],o),c)],o),c)}else{i=h.a
+i=new A.q(c,"frame-gap",c,B.V,c,A.c([new A.M(c,"frame-gap__frames",c,c,A.c([new A.m(a5,c)],o),c),new A.q(c,"frame-gap__card",c,c,c,A.c([new A.eC("frame-gap__card-title",A.c([new A.m(a5,c)],o),c),B.de,new A.q(c,a2,c,c,c,A.c([B.d5,new A.M(c,c,c,c,A.c([new A.m(d.bK(i.b),c)],o),c)],o),c),new A.q(c,a2,c,c,c,A.c([B.da,new A.M(c,c,c,c,A.c([new A.m(d.bK(i.c),c)],o),c)],o),c)],o),c)],o),c)}else{i=h.a
 i.toString
 i=d.eL(i)}k.push(i)}j=A.c([],o)
 for(i=a6.length,r=0;r<a6.length;a6.length===i||(0,A.as)(a6),++r){h=a6[r]
-if(h.b!=null)g=B.cM
+if(h.b!=null)g=B.cK
 else{g=h.a
 g.toString
-g=d.eM(g,a4)}j.push(g)}a7.push(new A.q(c,"timeline-scroll",c,c,c,A.c([new A.q(c,"timeline-track",s,c,c,A.c([new A.q(c,"time-ruler",c,c,c,l,c),new A.q(c,"filmstrip",c,c,c,k,c),new A.q(c,"event-lane",c,c,c,A.c([new A.q(c,"lane-events",c,c,c,j,c)],o),c)],o),c)],o),c))}a7=A.n7(a7,B.bx,"timeline-panel",c)
+g=d.eM(g,a4)}j.push(g)}a7.push(new A.q(c,"timeline-scroll",c,c,c,A.c([new A.q(c,"timeline-track",s,c,c,A.c([new A.q(c,"time-ruler",c,c,c,l,c),new A.q(c,"filmstrip",c,c,c,k,c),new A.q(c,"event-lane",c,c,c,A.c([new A.q(c,"lane-events",c,c,c,j,c)],o),c)],o),c)],o),c))}a7=A.n7(a7,B.bw,"timeline-panel",c)
 s=d.bV(B.x,"Resize timeline and inspector","horizontal")
 f=d.gbY()
 l=A.c([],o)
-if(f==null)l.push(B.cR)
+if(f==null)l.push(B.cO)
 else l.push(d.eE(f))
-a7=A.c([B.cI,new A.iV("app-bar",m,c),a7,s,A.n7(l,c,a3,a3),new A.cI(d.d)],o)
+a7=A.c([B.cG,new A.iV("app-bar",m,c),a7,s,A.n7(l,c,a3,a3),new A.cI(d.d)],o)
 s=d.ay
 if(s!=null)a7.push(d.eS(s))
 return new A.iZ(b,b,p,a7,c)},
@@ -8492,7 +8492,7 @@ s=B.b.k(q)
 n=B.b.k(p)
 m=B.c.D(r)
 l=t.N
-return A.aG(B.bb,A.K(["role","separator","aria-label",b,"aria-orientation",c,"aria-valuemin",s,"aria-valuemax",n,"aria-valuenow",B.b.k(m),"aria-valuetext",""+m+" "+o,"title",b+". Drag or use arrow keys."],l,l),"resize-handle resize-handle--"+c,A.K(["mousedown",new A.ko(k,a),"keydown",new A.kp(k,a)],l,t.v),j,j,j,B.f)},
+return A.aG(B.ba,A.K(["role","separator","aria-label",b,"aria-orientation",c,"aria-valuemin",s,"aria-valuemax",n,"aria-valuenow",B.b.k(m),"aria-valuetext",""+m+" "+o,"title",b+". Drag or use arrow keys."],l,l),"resize-handle resize-handle--"+c,A.K(["mousedown",new A.ko(k,a),"keydown",new A.kp(k,a)],l,t.v),j,j,j,B.f)},
 eL(a){var s,r,q,p,o,n,m,l,k,j,i,h,g=this,f=null,e=a.c,d=B.a.gq(e),c=g.a.e
 if(!(d>=0&&d<c.length))return A.j(c,d)
 s=c[d]
@@ -8519,23 +8519,23 @@ c=A.K(["aria-label","Frame "+m+", "+p+", "+j,"aria-pressed",i,"tabindex",h,"titl
 h=t.i
 i=A.c([],h)
 m=""+n
-if(!k)i.push(A.iX("Capture for frame "+m,B.bq,f,l))
-else i.push(new A.q(f,"capture-placeholder",f,f,f,A.c([A.a3(A.c([new A.m(m,f)],h),f,"capture-placeholder__index",f,f),B.d4],h),f))
+if(!k)i.push(A.iX("Capture for frame "+m,B.bp,f,l))
+else i.push(new A.q(f,"capture-placeholder",f,f,f,A.c([A.a3(A.c([new A.m(m,f)],h),f,"capture-placeholder__index",f,f),B.d3],h),f))
 return A.aG(A.c([new A.q(f,"capture-image",f,f,f,i,f),new A.q(f,"capture-caption",f,f,f,A.c([A.a3(A.c([new A.m("F"+B.d.an(B.b.k(n),2,"0"),f)],h),f,"capture-number",f,f),A.a3(A.c([new A.m(p,f)],h),f,"capture-name",f,f)],h),f)],h),c,"capture "+e,f,f,new A.kb(g,r,d),o,B.f)},
 eD(a,b){var s,r=this,q=null,p=r.e===b,o=p?"is-selected":"",n=t.N,m=A.bf(A.K(["--event-color",r.bN(a)],n,n)),l=a.a
 n=A.K(["aria-label","Select "+l,"aria-pressed",String(p),"tabindex","-1","title",l+" \xb7 "+r.aa(r.gb_(),a.f)+" test clock \xb7 "+r.aa(r.gcW(),a.r)+" wall clock"],n,n)
 s=t.i
-return A.aG(A.c([B.d1,A.a3(A.c([new A.m(l,q)],s),q,"event-marker__label",q,q)],s),n,"event-marker "+o,q,"timeline-event-"+b,new A.k5(r,b),m,B.f)},
+return A.aG(A.c([B.d0,A.a3(A.c([new A.m(l,q)],s),q,"event-marker__label",q,q)],s),n,"event-marker "+o,q,"timeline-event-"+b,new A.k5(r,b),m,B.f)},
 b1(a,b,c){var s=this.f===a,r=s?"is-selected":"",q=String(s),p=s?"0":"-1",o=t.N
 o=A.K(["role","tab","aria-selected",q,"aria-controls",c,"tabindex",p],o,o)
 return A.aG(A.c([new A.m(b,null)],t.i),o,"tab-button "+r,null,"inspector-tab-"+a.b,new A.kB(this,a),null,B.f)},
 eE(a2){var s,r,q,p,o,n,m=this,l=null,k="interactive-inspector",j="event-details-panel",i="widget-inspector-panel",h="tree-text-panel",g="raw-data-panel",f=m.aE(a2),e=f==null?l:m.bP(f,m.x),d=a2.c,c=t.N,b=A.bf(A.K(["--capture-pane-width",B.c.S(m.cx,2)+"%"],c,c)),a=t.i,a0=A.c([],a),a1=e!=null
 if(a1)a0.push(A.a3(A.c([new A.m(m.ab(e),l)],a),l,"selected-widget-label",l,l))
 if(J.eF(a2.d)||a1){a1=A.K(["aria-label","Toggle capture overlays","aria-pressed",String(m.Q)],c,c)
-a0.push(A.aG(A.c([new A.m(m.Q?"Hide overlays":"Show overlays",l)],a),a1,"text-button",l,l,new A.k7(m),l,B.f))}if(d!=null)a0.push(A.oF(B.aF,B.bh,"text-button capture-image-link",d,B.bL))
-a0=A.c([new A.q(l,"pane-toolbar",l,l,l,A.c([B.d2,new A.q(l,"capture-toolbar-actions",l,l,l,a0,l)],a),l),m.eq(a2,e)],a)
+a0.push(A.aG(A.c([new A.m(m.Q?"Hide overlays":"Show overlays",l)],a),a1,"text-button",l,l,new A.k7(m),l,B.f))}if(d!=null)a0.push(A.oF(B.aF,B.bg,"text-button capture-image-link",d,B.bK))
+a0=A.c([new A.q(l,"pane-toolbar",l,l,l,A.c([B.d1,new A.q(l,"capture-toolbar-actions",l,l,l,a0,l)],a),l),m.eq(a2,e)],a)
 a1=m.bV(B.y,"Resize capture and event inspector","vertical")
-s=A.c([m.b1(B.w,"Event details",j),m.b1(B.cD,"Widget tree",i),m.b1(B.cE,"Tree text",h),m.b1(B.cF,"Raw data",g)],a)
+s=A.c([m.b1(B.w,"Event details",j),m.b1(B.cB,"Widget tree",i),m.b1(B.cC,"Tree text",h),m.b1(B.cD,"Raw data",g)],a)
 r=m.f.a
 switch(r){case 0:q=j
 break
@@ -8549,7 +8549,7 @@ default:q=l}switch(r){case 0:p=m.fg(a2)
 r=a2.as?"is-failure":""
 o=a2.f
 n=a2.r
-n=A.c([new A.q(l,"details-primary",l,l,l,A.c([A.oO(A.c([A.a3(B.i,l,"details-heading__dot "+r,l,A.bf(A.K(["--event-color",m.bN(a2)],c,c))),new A.m(a2.a,l)],a),"details-heading"),A.ml(A.c([new A.m(a2.e,l)],a),l,"details-copy",l),new A.q(l,"timings",l,l,l,A.c([m.b2("Elapsed test clock",m.aa(m.gb_(),o)),m.b2("Elapsed wall clock",m.aa(m.gcW(),n)),m.b2("At test clock",m.dk(o)),m.b2("At wall clock",m.dk(n))],a),l)],a),l)],a)
+n=A.c([new A.q(l,"details-primary",l,l,l,A.c([A.oO(A.c([A.a3(B.h,l,"details-heading__dot "+r,l,A.bf(A.K(["--event-color",m.bN(a2)],c,c))),new A.m(a2.a,l)],a),"details-heading"),A.ml(A.c([new A.m(a2.e,l)],a),l,"details-copy",l),new A.q(l,"timings",l,l,l,A.c([m.b2("Elapsed test clock",m.aa(m.gb_(),o)),m.b2("Elapsed wall clock",m.aa(m.gcW(),n)),m.b2("At test clock",m.dk(o)),m.b2("At wall clock",m.dk(n))],a),l)],a),l)],a)
 if(p!=null)n.push(m.fh(p,a2.Q,a2.x))
 c=new A.q(l,"details-panel",l,l,l,A.c([new A.q(l,"details-content",l,l,l,n,l)],a),l)
 break
@@ -8559,15 +8559,15 @@ case 2:c=m.fs(a2)
 break
 case 3:c=m.f1(a2)
 break
-default:c=l}return new A.q(k,k,b,l,l,A.c([new A.q(l,"capture-workbench",l,l,l,a0,l),a1,new A.q(l,"inspector-sidebar",l,l,l,A.c([new A.j_("inspector-tabs",B.bj,s,l),new A.q(q,"inspector-content",l,B.bi,l,A.c([c],a),l)],a),l)],a),l)},
+default:c=l}return new A.q(k,k,b,l,l,A.c([new A.q(l,"capture-workbench",l,l,l,a0,l),a1,new A.q(l,"inspector-sidebar",l,l,l,A.c([new A.j_("inspector-tabs",B.bi,s,l),new A.q(q,"inspector-content",l,B.bh,l,A.c([c],a),l)],a),l)],a),l)},
 fp(a){var s,r,q=this,p=null,o="widget-explorer",n="text-button",m=q.aE(a),l=m==null,k=l?p:q.bP(m,q.x),j=A.n6(m,q.y),i=B.d.ap(q.y).length===0,h=!i,g=t.N,f=A.bf(A.K(["--tree-pane-height",B.c.S(q.cy,2)+"%"],g,g)),e=t.i
-g=A.c([new A.eB(B.O,q.y,new A.kG(q),"widget-search",B.bg,A.K(["keydown",new A.kH(q,m)],g,t.v),p,t.a5)],e)
+g=A.c([new A.eB(B.O,q.y,new A.kG(q),"widget-search",B.bf,A.K(["keydown",new A.kH(q,m)],g,t.v),p,t.a5)],e)
 if(h){s=j.a
 r=s.gi(s)
 s=s.gi(s)===1?"match":"matches"
 g.push(A.a3(A.c([new A.m(""+r+" "+s,p)],e),p,"search-result-count",p,p))}if(i)g.push(new A.q(p,"tree-actions",p,p,p,A.c([A.aG(B.aT,p,n,p,p,new A.kI(q,m),p,B.f),A.aG(B.aO,p,n,p,p,new A.kJ(q,m),p,B.f)],e),p))
-i=A.c([new A.q(p,"pane-toolbar pane-toolbar--tree",p,p,p,A.c([B.de,new A.q(p,"tree-toolbar-controls",p,p,p,g,p)],e),p)],e)
-if(l)i.push(B.cL)
+i=A.c([new A.q(p,"pane-toolbar pane-toolbar--tree",p,p,p,A.c([B.dc,new A.q(p,"tree-toolbar-controls",p,p,p,g,p)],e),p)],e)
+if(l)i.push(B.cJ)
 else{if(h){l=j.a
 l=l.gv(l)}else l=!1
 if(l)i.push(new A.q(p,"tree-empty",p,p,p,A.c([new A.m("No widget types match \u201c"+q.y+"\u201d.",p)],e),p))
@@ -8578,7 +8578,7 @@ eq(a,b){var s,r,q,p,o,n,m,l,k,j,i,h,g,f=this,e=null
 t.Q.a(b)
 s=f.aB(a)
 r=a.c
-if(r==null)return B.cO
+if(r==null)return B.cL
 q=f.aX(b==null?e:J.ac(b,"bounds"))
 p=s.ax
 o=A.lK(p.j(0,"captureWidth"))
@@ -8594,7 +8594,7 @@ h=J.a2(i)
 g=q.$ti.h("4?")
 i=A.bf(A.K(["left",B.c.S(A.cm(g.a(h.j(i,"x")))/o*100,4)+"%","top",B.c.S(A.cm(g.a(h.j(i,"y")))/n*100,4)+"%","width",B.c.S(A.cm(g.a(h.j(i,"width")))/o*100,4)+"%","height",B.c.S(A.cm(g.a(h.j(i,"height")))/n*100,4)+"%"],p,p))
 b.toString
-j.push(new A.q(e,"widget-outline",i,A.K(["aria-label","Bounds of "+f.ab(b)],p,p),e,B.i,e))}return new A.q(e,"capture-viewport",e,e,e,A.c([new A.q(e,"capture-canvas is-zoomable",e,B.bp,l,j,e)],k),e)},
+j.push(new A.q(e,"widget-outline",i,A.K(["aria-label","Bounds of "+f.ab(b)],p,p),e,B.h,e))}return new A.q(e,"capture-viewport",e,e,e,A.c([new A.q(e,"capture-canvas is-zoomable",e,B.bo,l,j,e)],k),e)},
 fu(a,b,c,d){var s,r,q,p,o,n,m,l,k,j=this,i=null,h="tree-spacer"
 t.Q.a(a)
 s=t.R
@@ -8608,11 +8608,11 @@ s=j.as?"has-arrow-keys":""
 o=t.N
 n=A.K(["scroll",j.geV()],o,t.v)
 m=A.c([],t.i)
-if(q>0)m.push(new A.q(i,h,A.bf(A.K(["height",""+q*25+"px"],o,o)),i,i,B.i,i))
+if(q>0)m.push(new A.q(i,h,A.bf(A.K(["height",""+q*25+"px"],o,o)),i,i,B.h,i))
 for(l=q;l<p;++l){if(!(l>=0&&l<r.length))return A.j(r,l)
 m.push(j.ft(r[l],b))}k=r.length
-if(p<k)m.push(new A.q(i,h,A.bf(A.K(["height",""+(k-p)*25+"px"],o,o)),i,i,B.i,i))
-return new A.q("interactive-tree","interactive-tree "+s,i,B.bk,n,m,i)},
+if(p<k)m.push(new A.q(i,h,A.bf(A.K(["height",""+(k-p)*25+"px"],o,o)),i,i,B.h,i))
+return new A.q("interactive-tree","interactive-tree "+s,i,B.bj,n,m,i)},
 eW(a){var s,r,q=this,p=J.ae(a),o=p.gfG(a)
 if(o==null)o=p.gN(a)
 if(o==null)return
@@ -8641,7 +8641,7 @@ g=m?"is-offstage":""
 f=A.bf(A.K(["--tree-depth",B.b.k(a0.b)],j,j))
 e=t.i
 d=A.c([],e)
-if(l)d.push(B.d7)
+if(l)d.push(B.d6)
 else{l=p?"Collapse":"Expand"
 l=A.K(["aria-label",l+" "+b.ab(s),"tabindex","-1"],j,j)
 d.push(A.aG(A.c([new A.m(p?"\u25be":"\u25b8",a)],e),l,"tree-expander",a,a,new A.kO(b,q),a,B.f))}l=b.bT(s)
@@ -8651,13 +8651,13 @@ c=c?"0":"-1"
 j=A.K(["aria-label","Inspect "+l,"tabindex",c],j,j)
 c=A.c([A.a3(A.c([new A.m(b.ab(s),a)],e),a,"tree-node__name",a,a)],e)
 if(b.bT(s)!==b.ab(s))c.push(A.a3(A.c([new A.m(b.bT(s),a)],e),a,"tree-node__description",a,a))
-if(m)c.push(B.d5)
-if(r!=null)c.push(B.df)
+if(m)c.push(B.d4)
+if(r!=null)c.push(B.dd)
 d.push(A.aG(c,j,"tree-node__select",a,"widget-node-"+q,new A.kP(b,q),a,B.f))
 return new A.q(a,"tree-node",a,k,a,A.c([new A.q(a,"tree-node__row "+i+" "+h+" "+g,f,a,a,d,a)],e),a)},
 fq(a){var s,r,q,p,o,n,m,l,k=this,j=null
 t.Q.a(a)
-if(a==null)return B.cQ
+if(a==null)return B.cN
 s=k.d5(a,"widgetProperties")
 r=k.d5(a,"renderProperties")
 q=J.a2(a)
@@ -8674,7 +8674,7 @@ d8(a,b){var s,r,q,p,o,n,m,l,k=null
 t.fO.a(b)
 s=t.i
 r=A.c([A.oO(A.c([new A.m(a,k)],s),k)],s)
-if(b.length===0)r.push(B.cZ)
+if(b.length===0)r.push(B.cX)
 else{q=A.c([],s)
 for(p=b.length,o=0;o<b.length;b.length===p||(0,A.as)(b),++o){n=b[o]
 m=J.a2(n)
@@ -8793,19 +8793,19 @@ n=A.c([],o)
 m=a.d
 l=J.a2(m)
 if(l.gC(m)){k=A.K(["aria-pressed",String(j.Q),"title","Toggle the annotations drawn over the capture"],s,s)
-n.push(A.aG(A.c([new A.m(j.Q?"Hide overlays":"Show overlays",i)],o),k,h,i,i,new A.ki(j),i,i))}n.push(A.aG(B.ax,B.bo,h,i,i,j.ger(),i,i))
+n.push(A.aG(A.c([new A.m(j.Q?"Hide overlays":"Show overlays",i)],o),k,h,i,i,new A.ki(j),i,i))}n.push(A.aG(B.ax,B.bn,h,i,i,j.ger(),i,i))
 s=A.K(["click",new A.kj()],s,r)
 r=a.a
 k=A.c([A.iX("Capture for "+r,i,"lightbox__image",g)],o)
 if(j.Q)for(m=l.gu(m);m.m();)k.push(A.iX("",i,"lightbox__image lightbox__image--overlay",m.gn(m)))
-return new A.q(i,"lightbox",i,B.bl,q,A.c([new A.q(i,"lightbox__actions",i,i,p,n,i),new A.q(i,"lightbox__stage",i,i,s,k,i),new A.q(i,"lightbox__caption",i,i,i,A.c([new A.m(r+" \xb7 "+j.aa(j.gb_(),a.f),i)],o),i)],o),i)},
+return new A.q(i,"lightbox",i,B.bk,q,A.c([new A.q(i,"lightbox__actions",i,i,p,n,i),new A.q(i,"lightbox__stage",i,i,s,k,i),new A.q(i,"lightbox__caption",i,i,i,A.c([new A.m(r+" \xb7 "+j.aa(j.gb_(),a.f),i)],o),i)],o),i)},
 fg(a){var s=a.z
 if(s==null)return null
 return this.a.f.j(0,s)},
 fh(a,b,c){var s,r,q,p,o,n,m,l,k,j,i,h,g,f=null,e="source-code",d=a.a
 d=b==null?d:d+":"+A.v(b)
 s=t.i
-r=A.c([B.cV],s)
+r=A.c([B.cT],s)
 if(c!=null)r.push(A.oF(A.c([new A.m(d,f)],s),f,f,c,f))
 else r.push(A.a3(A.c([new A.m(d,f)],s),f,f,f,f))
 if(a.c)r.push(A.a3(A.c([new A.m("Showing the first "+J.aI(a.b.a)+" lines",f)],s),f,"source-panel__note",f,f))
@@ -8816,9 +8816,9 @@ i=j?"source-caller-line":f
 h=j?A.K(["data-line",""+k],m,m):f
 j=j?"is-caller":""
 g=A.c([new A.m(""+k,f)],s)
-q.push(new A.M(i,"source-line "+j,f,h,A.c([new A.M(f,"source-line__number",f,f,g,f),new A.M(f,"source-line__content",f,f,A.c([new A.m(J.aI(p.a(n.j(o,l)))===0?" ":p.a(n.j(o,l)),f)],s),f)],s),f))}return A.n7(A.c([new A.q(f,"source-panel__header",f,f,f,r,f),A.ml(q,B.bw,e,e)],s),f,"source-panel",f)},
+q.push(new A.M(i,"source-line "+j,f,h,A.c([new A.M(f,"source-line__number",f,f,g,f),new A.M(f,"source-line__content",f,f,A.c([new A.m(J.aI(p.a(n.j(o,l)))===0?" ":p.a(n.j(o,l)),f)],s),f)],s),f))}return A.n7(A.c([new A.q(f,"source-panel__header",f,f,f,r,f),A.ml(q,B.bv,e,e)],s),f,"source-panel",f)},
 fs(a){var s,r,q,p=this,o=null,n="text-button",m=p.aB(a).at
-if(B.d.ap(m).length===0)return B.cK
+if(B.d.ap(m).length===0)return B.cI
 s=A.to(m,250,p.ch)
 m=s.e
 r=s.b
@@ -8827,9 +8827,9 @@ r+=s.c
 r=m?"Lines "+q+"\u2013"+(r-1):"Lines "+q+"\u2013"+(r-1)+" \xb7 complete"
 q=t.i
 r=A.c([A.a3(A.c([new A.m(r,o)],q),o,o,o,o)],q)
-if(s.d)r.push(A.aG(B.aV,B.bu,n,o,o,new A.kM(p),o,B.f))
-if(m)r.push(A.aG(B.aU,B.bv,n,o,o,new A.kN(p),o,B.f))
-return new A.q(o,"tree-panel",o,o,o,A.c([new A.q(o,"code-toolbar",o,o,o,A.c([B.d3,new A.q(o,"tree-text-progress",o,o,o,r,o)],q),o),A.ml(A.c([new A.m(s.a,o)],q),o,"tree-output",o)],q),o)},
+if(s.d)r.push(A.aG(B.aV,B.bt,n,o,o,new A.kM(p),o,B.f))
+if(m)r.push(A.aG(B.aU,B.bu,n,o,o,new A.kN(p),o,B.f))
+return new A.q(o,"tree-panel",o,o,o,A.c([new A.q(o,"code-toolbar",o,o,o,A.c([B.d2,new A.q(o,"tree-text-progress",o,o,o,r,o)],q),o),A.ml(A.c([new A.m(s.a,o)],q),o,"tree-output",o)],q),o)},
 f1(a){var s,r,q,p,o,n,m=this,l="widgetTree",k="structuredWidgetTree",j=null,i=m.aB(a),h=t.N,g=t.z
 if(m.z){h=A.ny(a.dT(),h,g)
 h.l(0,l,i.at)
@@ -9208,7 +9208,7 @@ t.r.a(o)
 p.f!==$&&A.bU()
 p.f=o
 o=t.Y.a(s.j(a,"sourceFiles"))
-if(o==null)o=B.br
+if(o==null)o=B.bq
 o=t.fH.a(J.pC(o,new A.l6(),t.N,t.eS))
 p.r!==$&&A.bU()
 p.r=o
@@ -9705,7 +9705,7 @@ B.D=function(hooks) { return hooks; }
 
 B.r=new A.fw()
 B.a9=new A.fQ()
-B.h=new A.jS()
+B.i=new A.jS()
 B.ab=new A.lp()
 B.e=new A.ih()
 B.o=new A.ir()
@@ -9715,7 +9715,7 @@ B.p=new A.b2(0)
 B.E=new A.b2(16e3)
 B.ae=new A.b2(2e5)
 B.af=new A.b2(3e6)
-B.i=s([],t.i)
+B.h=s([],t.i)
 B.ag=new A.dj(null)
 B.F=new A.P("datetime-local",5,"dateTimeLocal")
 B.G=new A.P("checkbox",2,"checkbox")
@@ -9731,11 +9731,11 @@ B.P=new A.P("time",19,"time")
 B.Q=new A.P("week",21,"week")
 B.av=new A.jC(null)
 B.aw=new A.jD(null,null)
-B.c5=new A.m("\u2715",null)
-B.ax=s([B.c5],t.i)
-B.aC=s([5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5],t.t)
-B.bV=new A.m("Open image",null)
-B.aF=s([B.bV],t.i)
+B.c3=new A.m("\u2715",null)
+B.ax=s([B.c3],t.i)
+B.aB=s([5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5],t.t)
+B.bU=new A.m("Open image",null)
+B.aF=s([B.bU],t.i)
 B.aq=new A.P("text",0,"text")
 B.ai=new A.P("button",1,"button")
 B.aj=new A.P("email",6,"email")
@@ -9748,193 +9748,191 @@ B.ap=new A.P("tel",18,"tel")
 B.ar=new A.P("url",20,"url")
 B.aJ=s([B.aq,B.ai,B.G,B.H,B.I,B.F,B.aj,B.J,B.ak,B.al,B.K,B.L,B.am,B.M,B.N,B.an,B.O,B.ao,B.ap,B.P,B.ar,B.Q],A.bF("R<P>"))
 B.aK=s([0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13],t.t)
-B.bU=new A.m("Expand all",null)
-B.aO=s([B.bU],t.i)
-B.c4=new A.m("Select an event",null)
-B.aQ=s([B.c4],t.i)
-B.bR=new A.m("Collapse",null)
-B.aT=s([B.bR],t.i)
-B.bX=new A.m("Next",null)
-B.aU=s([B.bX],t.i)
-B.bZ=new A.m("Previous",null)
-B.aV=s([B.bZ],t.i)
-B.b6=s([],t.W)
+B.bT=new A.m("Expand all",null)
+B.aO=s([B.bT],t.i)
+B.c2=new A.m("Select an event",null)
+B.aQ=s([B.c2],t.i)
+B.bQ=new A.m("Collapse",null)
+B.aT=s([B.bQ],t.i)
+B.bW=new A.m("Next",null)
+B.aU=s([B.bW],t.i)
+B.bY=new A.m("Previous",null)
+B.aV=s([B.bY],t.i)
+B.b5=s([],t.W)
 B.t=s([],A.bF("R<B<e,@>>"))
-B.b5=s([],t.s)
+B.b4=s([],t.s)
 B.R=s([],t.fR)
-B.b8=s([16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15],t.t)
-B.bO=new A.m("Copy command",null)
-B.b9=s([B.bO],t.i)
+B.b7=s([16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15],t.t)
+B.bN=new A.m("Copy command",null)
+B.b8=s([B.bN],t.i)
 B.S=s([3,4,5,6,7,8,9,10,11,13,15,17,19,23,27,31,35,43,51,59,67,83,99,115,131,163,195,227,258],t.t)
 B.T=s([1,2,3,4,5,7,9,13,17,25,33,49,65,97,129,193,257,385,513,769,1025,1537,2049,3073,4097,6145,8193,12289,16385,24577],t.t)
-B.d_=new A.M(null,"resize-handle__grip",null,null,B.i,null)
-B.bb=s([B.d_],t.i)
-B.bc=s([8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,8,8,8,8,8,8,8,8],t.t)
-B.bd=s([0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0,0,0],t.t)
-B.bC={"aria-label":0,placeholder:1,autocomplete:2,spellcheck:3}
-B.bg=new A.V(B.bC,["Search widget types","Search widget types","off","false"],t.w)
-B.bF={rel:0}
-B.bh=new A.V(B.bF,["noopener"],t.w)
-B.bG={role:0}
-B.bi=new A.V(B.bG,["tabpanel"],t.w)
-B.bB={"aria-label":0,role:1}
-B.bj=new A.V(B.bB,["Event inspector","tablist"],t.w)
-B.bz={role:0,"aria-label":1}
-B.bk=new A.V(B.bz,["tree","Flutter widget tree"],t.w)
-B.bD={role:0,"aria-modal":1,"aria-label":2}
-B.bl=new A.V(B.bD,["dialog","true","Capture, full screen"],t.w)
+B.cZ=new A.M(null,"resize-handle__grip",null,null,B.h,null)
+B.ba=s([B.cZ],t.i)
+B.bb=s([8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,8,8,8,8,8,8,8,8],t.t)
+B.bc=s([0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0,0,0],t.t)
+B.bB={"aria-label":0,placeholder:1,autocomplete:2,spellcheck:3}
+B.bf=new A.V(B.bB,["Search widget types","Search widget types","off","false"],t.w)
+B.bE={rel:0}
+B.bg=new A.V(B.bE,["noopener"],t.w)
+B.bF={role:0}
+B.bh=new A.V(B.bF,["tabpanel"],t.w)
+B.bA={"aria-label":0,role:1}
+B.bi=new A.V(B.bA,["Event inspector","tablist"],t.w)
+B.by={role:0,"aria-label":1}
+B.bj=new A.V(B.by,["tree","Flutter widget tree"],t.w)
+B.bC={role:0,"aria-modal":1,"aria-label":2}
+B.bk=new A.V(B.bC,["dialog","true","Capture, full screen"],t.w)
 B.q={title:0}
-B.bn=new A.V(B.q,["Frames the test rendered in total. Fewer frames is a faster test: prefer pump over pumpAndSettle where it does the job."],t.w)
-B.bo=new A.V(B.q,["Close (Esc)"],t.w)
-B.bp=new A.V(B.q,["Click to open the capture full screen"],t.w)
-B.bE={loading:0,decoding:1}
-B.bq=new A.V(B.bE,["lazy","async"],t.w)
+B.bm=new A.V(B.q,["Frames the test rendered in total. Fewer frames is a faster test: prefer pump over pumpAndSettle where it does the job."],t.w)
+B.bn=new A.V(B.q,["Close (Esc)"],t.w)
+B.bo=new A.V(B.q,["Click to open the capture full screen"],t.w)
+B.bD={loading:0,decoding:1}
+B.bp=new A.V(B.bD,["lazy","async"],t.w)
 B.u={}
 B.U=new A.V(B.u,[],A.bF("V<e,@>"))
-B.br=new A.V(B.u,[],A.bF("V<@,@>"))
-B.by={"aria-hidden":0}
-B.V=new A.V(B.by,["true"],t.w)
-B.bH={svg:0,math:1}
-B.bs=new A.V(B.bH,["http://www.w3.org/2000/svg","http://www.w3.org/1998/Math/MathML"],t.w)
+B.bq=new A.V(B.u,[],A.bF("V<@,@>"))
+B.bx={"aria-hidden":0}
+B.V=new A.V(B.bx,["true"],t.w)
+B.bG={svg:0,math:1}
+B.br=new A.V(B.bG,["http://www.w3.org/2000/svg","http://www.w3.org/1998/Math/MathML"],t.w)
 B.n={"aria-label":0}
-B.bt=new A.V(B.n,["Copy test command"],t.w)
-B.bu=new A.V(B.n,["Show previous widget tree text page"],t.w)
-B.bv=new A.V(B.n,["Show next widget tree text page"],t.w)
-B.bw=new A.V(B.n,["Source code of the event caller"],t.w)
-B.bx=new A.V(B.n,["Test event timeline"],t.w)
+B.bs=new A.V(B.n,["Copy test command"],t.w)
+B.bt=new A.V(B.n,["Show previous widget tree text page"],t.w)
+B.bu=new A.V(B.n,["Show next widget tree text page"],t.w)
+B.bv=new A.V(B.n,["Source code of the event caller"],t.w)
+B.bw=new A.V(B.n,["Test event timeline"],t.w)
 B.X=new A.dJ(0,"idle")
-B.bI=new A.dJ(1,"midFrameCallback")
-B.bJ=new A.dJ(2,"postFrameCallbacks")
-B.bA={"0":0}
-B.bK=new A.cx(B.bA,1,t.en)
+B.bH=new A.dJ(1,"midFrameCallback")
+B.bI=new A.dJ(2,"postFrameCallbacks")
+B.bz={"0":0}
+B.bJ=new A.cx(B.bz,1,t.en)
 B.Y=new A.cx(B.u,0,t.en)
-B.bL=new A.k1(1,"blank")
-B.bS=new A.m("Events",null)
-B.bT=new A.m("Frames",null)
-B.ck=new A.cM("",1,0,!1,!1)
-B.cl=A.aH("tC")
-B.cm=A.aH("tD")
-B.cn=A.aH("q0")
-B.co=A.aH("q1")
-B.cp=A.aH("q6")
-B.cq=A.aH("q7")
-B.cr=A.aH("q8")
-B.cs=A.aH("h")
-B.ct=A.aH("cD<aC<bu>>")
-B.cu=A.aH("D")
-B.cv=A.aH("qE")
-B.cw=A.aH("mL")
-B.cx=A.aH("qF")
-B.cy=A.aH("kY")
+B.bK=new A.k1(1,"blank")
+B.bR=new A.m("Events",null)
+B.bS=new A.m("Frames",null)
+B.ci=new A.cM("",1,0,!1,!1)
+B.cj=A.aH("tC")
+B.ck=A.aH("tD")
+B.cl=A.aH("q0")
+B.cm=A.aH("q1")
+B.cn=A.aH("q6")
+B.co=A.aH("q7")
+B.cp=A.aH("q8")
+B.cq=A.aH("h")
+B.cr=A.aH("cD<aC<bu>>")
+B.cs=A.aH("D")
+B.ct=A.aH("qE")
+B.cu=A.aH("mL")
+B.cv=A.aH("qF")
+B.cw=A.aH("kY")
 B.Z=A.aH("rb")
 B.a_=new A.kZ(!1)
 B.k=new A.cP(0,"initial")
 B.l=new A.cP(1,"active")
-B.cB=new A.cP(2,"inactive")
-B.cC=new A.cP(3,"defunct")
-B.dh=new A.hO("em",2)
+B.cz=new A.cP(2,"inactive")
+B.cA=new A.cP(3,"defunct")
+B.df=new A.hO("em",2)
 B.w=new A.cR(0,"details")
-B.cD=new A.cR(1,"widgetInspector")
-B.cE=new A.cR(2,"widgetTree")
-B.cF=new A.cR(3,"raw")
+B.cB=new A.cR(1,"widgetInspector")
+B.cC=new A.cR(2,"widgetTree")
+B.cD=new A.cR(3,"raw")
 B.x=new A.ea(0,"timeline")
 B.y=new A.ea(1,"captureTree")
 B.z=new A.ea(2,"treeDetails")
 B.aa=new A.hu()
-B.cA=new A.cO("yellow")
-B.cG=new A.id("rem",1)
-B.cz=new A.cO("red")
-B.cH=new A.eh(B.aa,B.cA,B.cG,B.cz,null)
-B.c6=new A.m("Skip to inspector",null)
-B.aD=s([B.c6],t.i)
-B.cI=new A.eA("#inspector",null,"skip-link",null,B.aD,null)
-B.ci=new A.m("No timeline events were recorded.",null)
-B.ba=s([B.ci],t.i)
-B.cJ=new A.q(null,"empty-timeline",null,null,null,B.ba,null)
-B.bN=new A.m("No widget tree was captured",null)
-B.aB=s([B.bN],t.i)
-B.cU=new A.cs(null,B.aB,null)
-B.aG=s([B.cU],t.i)
-B.cK=new A.q(null,"panel-empty",null,null,null,B.aG,null)
-B.bY=new A.m("No structured widget tree was captured.",null)
-B.bf=s([B.bY],t.i)
-B.cL=new A.q(null,"tree-empty",null,null,null,B.bf,null)
-B.cM=new A.q(null,"frame-events is-gap",null,null,null,B.i,null)
-B.c_=new A.m("S",null)
-B.aW=s([B.c_],t.i)
-B.dd=new A.M(null,"brand-mark",null,null,B.aW,null)
-B.c2=new A.m("Spot timeline",null)
-B.aE=s([B.c2],t.i)
-B.d9=new A.M(null,"brand-name",null,null,B.aE,null)
-B.az=s([B.dd,B.d9],t.i)
-B.cN=new A.q(null,"brand",null,null,null,B.az,null)
-B.c7=new A.m("No capture for this event",null)
-B.be=s([B.c7],t.i)
-B.cW=new A.cs(null,B.be,null)
-B.c3=new A.m("The widget tree is still available, but widgets cannot be outlined without an image.",null)
-B.b3=s([B.c3],t.i)
-B.cY=new A.d1(null,B.b3,null)
-B.aA=s([B.cW,B.cY],t.i)
-B.cO=new A.q(null,"capture-empty",null,null,null,B.aA,null)
-B.cP=new A.q(null,"ruler-cell is-gap",null,null,null,B.i,null)
-B.cg=new A.m("Select a widget to inspect its properties.",null)
-B.b4=s([B.cg],t.i)
-B.cQ=new A.q(null,"widget-properties widget-properties--empty",null,null,null,B.b4,null)
-B.bW=new A.m("\u25c7",null)
-B.aL=s([B.bW],t.i)
-B.cS=new A.q(null,"inspector-empty__icon",null,null,null,B.aL,null)
-B.cT=new A.iU(null)
-B.c8=new A.m("Choose a capture or event marker above. Use left and right to move between frames, and up and down to move between events.",null)
-B.ay=s([B.c8],t.i)
-B.cX=new A.d1(null,B.ay,null)
-B.aR=s([B.cS,B.cT,B.cX],t.i)
-B.cR=new A.q(null,"inspector-empty",null,null,null,B.aR,null)
-B.c0=new A.m("Source",null)
-B.aX=s([B.c0],t.i)
-B.cV=new A.cs(null,B.aX,null)
-B.c9=new A.m("No diagnostic properties",null)
-B.aP=s([B.c9],t.i)
-B.cZ=new A.d1("property-empty",B.aP,null)
-B.ce=new A.m("test",null)
-B.b_=s([B.ce],t.i)
-B.d0=new A.M(null,"ruler-cell__clock",null,null,B.b_,null)
-B.d1=new A.M(null,"event-marker__dot",null,null,B.i,null)
-B.bQ=new A.m("Capture",null)
-B.aS=s([B.bQ],t.i)
-B.d2=new A.M(null,"pane-title",null,null,B.aS,null)
-B.bP=new A.m("Flutter element tree",null)
-B.aH=s([B.bP],t.i)
-B.d3=new A.M(null,null,null,null,B.aH,null)
-B.cf=new A.m("No capture",null)
-B.aN=s([B.cf],t.i)
-B.d4=new A.M(null,null,null,null,B.aN,null)
-B.ca=new A.m("offstage",null)
-B.aZ=s([B.ca],t.i)
-B.d5=new A.M(null,"node-badge",null,null,B.aZ,null)
-B.cd=new A.m("Test clock",null)
-B.aM=s([B.cd],t.i)
-B.d6=new A.M(null,null,null,null,B.aM,null)
-B.d7=new A.M(null,"tree-expander-spacer",null,null,B.i,null)
-B.ch=new A.m("wall",null)
-B.b0=s([B.ch],t.i)
-B.d8=new A.M(null,"ruler-cell__clock",null,null,B.b0,null)
-B.cb=new A.m("Full range",null)
-B.aI=s([B.cb],t.i)
-B.da=new A.M(null,"range-label",null,null,B.aI,null)
-B.cc=new A.m("Wall clock",null)
-B.b1=s([B.cc],t.i)
-B.db=new A.M(null,null,null,null,B.b1,null)
-B.c1=new A.m("Test",null)
-B.aY=s([B.c1],t.i)
-B.dc=new A.M(null,"test-title__label",null,null,B.aY,null)
-B.bM=new A.m("Widget tree",null)
-B.b2=s([B.bM],t.i)
-B.de=new A.M(null,"pane-title",null,null,B.b2,null)
-B.bm=new A.V(B.q,["Can be highlighted on capture"],t.w)
-B.df=new A.M(null,"bounds-indicator",null,B.bm,B.i,null)
-B.cj=new A.m("rendered with nothing recorded",null)
-B.b7=s([B.cj],t.i)
-B.dg=new A.M(null,"frame-gap__card-note",null,null,B.b7,null)})();(function staticFields(){$.ls=null
+B.cy=new A.cO("yellow")
+B.cE=new A.id("rem",1)
+B.cx=new A.cO("red")
+B.cF=new A.eh(B.aa,B.cy,B.cE,B.cx,null)
+B.c4=new A.m("Skip to inspector",null)
+B.aC=s([B.c4],t.i)
+B.cG=new A.eA("#inspector",null,"skip-link",null,B.aC,null)
+B.cg=new A.m("No timeline events were recorded.",null)
+B.b9=s([B.cg],t.i)
+B.cH=new A.q(null,"empty-timeline",null,null,null,B.b9,null)
+B.bM=new A.m("No widget tree was captured",null)
+B.aA=s([B.bM],t.i)
+B.cS=new A.cs(null,B.aA,null)
+B.aG=s([B.cS],t.i)
+B.cI=new A.q(null,"panel-empty",null,null,null,B.aG,null)
+B.bX=new A.m("No structured widget tree was captured.",null)
+B.be=s([B.bX],t.i)
+B.cJ=new A.q(null,"tree-empty",null,null,null,B.be,null)
+B.cK=new A.q(null,"frame-events is-gap",null,null,null,B.h,null)
+B.c5=new A.m("No capture for this event",null)
+B.bd=s([B.c5],t.i)
+B.cU=new A.cs(null,B.bd,null)
+B.c1=new A.m("The widget tree is still available, but widgets cannot be outlined without an image.",null)
+B.b2=s([B.c1],t.i)
+B.cW=new A.d1(null,B.b2,null)
+B.az=s([B.cU,B.cW],t.i)
+B.cL=new A.q(null,"capture-empty",null,null,null,B.az,null)
+B.cM=new A.q(null,"ruler-cell is-gap",null,null,null,B.h,null)
+B.ce=new A.m("Select a widget to inspect its properties.",null)
+B.b3=s([B.ce],t.i)
+B.cN=new A.q(null,"widget-properties widget-properties--empty",null,null,null,B.b3,null)
+B.bV=new A.m("\u25c7",null)
+B.aL=s([B.bV],t.i)
+B.cP=new A.q(null,"inspector-empty__icon",null,null,null,B.aL,null)
+B.cR=new A.iU(null)
+B.c6=new A.m("Choose a capture or event marker above. Use left and right to move between frames, and up and down to move between events.",null)
+B.ay=s([B.c6],t.i)
+B.cV=new A.d1(null,B.ay,null)
+B.aR=s([B.cP,B.cR,B.cV],t.i)
+B.cO=new A.q(null,"inspector-empty",null,null,null,B.aR,null)
+B.cY=new A.M(null,"brand-mark",null,null,B.h,null)
+B.c0=new A.m("Spot timeline",null)
+B.aE=s([B.c0],t.i)
+B.d8=new A.M(null,"brand-name",null,null,B.aE,null)
+B.aD=s([B.cY,B.d8],t.i)
+B.cQ=new A.q(null,"brand",null,null,null,B.aD,null)
+B.bZ=new A.m("Source",null)
+B.aW=s([B.bZ],t.i)
+B.cT=new A.cs(null,B.aW,null)
+B.c7=new A.m("No diagnostic properties",null)
+B.aP=s([B.c7],t.i)
+B.cX=new A.d1("property-empty",B.aP,null)
+B.cc=new A.m("test",null)
+B.aZ=s([B.cc],t.i)
+B.d_=new A.M(null,"ruler-cell__clock",null,null,B.aZ,null)
+B.d0=new A.M(null,"event-marker__dot",null,null,B.h,null)
+B.bP=new A.m("Capture",null)
+B.aS=s([B.bP],t.i)
+B.d1=new A.M(null,"pane-title",null,null,B.aS,null)
+B.bO=new A.m("Flutter element tree",null)
+B.aH=s([B.bO],t.i)
+B.d2=new A.M(null,null,null,null,B.aH,null)
+B.cd=new A.m("No capture",null)
+B.aN=s([B.cd],t.i)
+B.d3=new A.M(null,null,null,null,B.aN,null)
+B.c8=new A.m("offstage",null)
+B.aY=s([B.c8],t.i)
+B.d4=new A.M(null,"node-badge",null,null,B.aY,null)
+B.cb=new A.m("Test clock",null)
+B.aM=s([B.cb],t.i)
+B.d5=new A.M(null,null,null,null,B.aM,null)
+B.d6=new A.M(null,"tree-expander-spacer",null,null,B.h,null)
+B.cf=new A.m("wall",null)
+B.b_=s([B.cf],t.i)
+B.d7=new A.M(null,"ruler-cell__clock",null,null,B.b_,null)
+B.c9=new A.m("Full range",null)
+B.aI=s([B.c9],t.i)
+B.d9=new A.M(null,"range-label",null,null,B.aI,null)
+B.ca=new A.m("Wall clock",null)
+B.b0=s([B.ca],t.i)
+B.da=new A.M(null,null,null,null,B.b0,null)
+B.c_=new A.m("Test",null)
+B.aX=s([B.c_],t.i)
+B.db=new A.M(null,"test-title__label",null,null,B.aX,null)
+B.bL=new A.m("Widget tree",null)
+B.b1=s([B.bL],t.i)
+B.dc=new A.M(null,"pane-title",null,null,B.b1,null)
+B.bl=new A.V(B.q,["Can be highlighted on capture"],t.w)
+B.dd=new A.M(null,"bounds-indicator",null,B.bl,B.h,null)
+B.ch=new A.m("rendered with nothing recorded",null)
+B.b6=s([B.ch],t.i)
+B.de=new A.M(null,"frame-gap__card-note",null,null,B.b6,null)})();(function staticFields(){$.ls=null
 $.aS=A.c([],t.e3)
 $.nG=null
 $.nm=null
@@ -9980,7 +9978,7 @@ s($,"uA","pm",()=>new A.lG().$0())
 s($,"uw","pk",()=>new Int8Array(A.op(A.c([-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-1,-2,-2,-2,-2,-2,62,-2,62,-2,63,52,53,54,55,56,57,58,59,60,61,-2,-2,-2,-1,-2,-2,-2,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,-2,-2,-2,-2,63,-2,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,-2,-2,-2,-2,-2],t.t))))
 s($,"uv","pj",()=>A.nD(0))
 s($,"tS","p0",()=>A.jP("^([+-]?\\d{4,6})-?(\\d\\d)-?(\\d\\d)(?:[ T](\\d\\d)(?::?(\\d\\d)(?::?(\\d\\d)(?:[.,](\\d+))?)?)?( ?[zZ]| ?([-+])(\\d\\d)(?::?(\\d\\d))?)?)?$"))
-s($,"uK","j4",()=>A.oP(B.cu))
+s($,"uK","j4",()=>A.oP(B.cs))
 s($,"tM","oZ",()=>({}))
 s($,"tI","oY",()=>A.jP("^\\S+$"))
 s($,"tW","n9",()=>B.d.ba(A.mw(),"Opera",0))
@@ -9991,8 +9989,8 @@ s($,"tX","p4",()=>{if($.p2())var r="moz"
 else if($.p3())r="ms"
 else r=$.n9()?"o":"webkit"
 return r})
-s($,"u6","p8",()=>A.fl(B.bc))
-s($,"u5","p7",()=>A.fl(B.aC))
+s($,"u6","p8",()=>A.fl(B.bb))
+s($,"u5","p7",()=>A.fl(B.aB))
 s($,"uD","nb",()=>A.cq(A.cu(),"Element",t.g))
 s($,"uF","j3",()=>A.cq(A.cu(),"HTMLInputElement",t.g))
 s($,"uE","pp",()=>A.cq(A.cu(),"HTMLAnchorElement",t.g))
