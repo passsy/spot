@@ -52,6 +52,12 @@ const int _sourceContextLinesAbove = 4;
 /// The widget tree's scroll container, so it can be scrolled to a match.
 const _widgetTreeId = 'interactive-tree';
 
+/// The timeline strip's scroll container, so it can be scrolled to an event.
+const _timelineScrollClass = 'timeline-scroll';
+
+/// Space left between an event and the edge it was scrolled in from.
+const double _timelineScrollPadding = 16;
+
 /// Height of one widget tree row, matching `.tree-node__row` in the CSS.
 ///
 /// The tree renders only the rows in view, which needs the height of a row
@@ -464,6 +470,9 @@ class TimelineAppState extends State<TimelineApp> {
       _expandedWidgetNodes
         ..clear()
         ..addAll(_expandedNodeIdsFor(initialSelection));
+      // The report usually opens on the failure, which is the last event of
+      // the run and sits off the right edge of a strip that opens at frame 1.
+      _scrollTimelineToEvent(initialSelection);
     }
     _scrollCallerIntoView(
       initialSelection == null
@@ -792,14 +801,114 @@ class TimelineAppState extends State<TimelineApp> {
         ..clear()
         ..addAll(expandedIds);
     });
-    if (kIsWeb) {
-      Future<void>.delayed(Duration.zero, () {
-        window.document
-            .getElementById('timeline-event-$index')
-            ?.scrollIntoView();
-      });
-    }
+    _scrollTimelineToEvent(index);
     _scrollCallerIntoView(component.timelineEvents[index].callerLine);
+  }
+
+  /// Brings the event at [index] into view in the timeline strip.
+  ///
+  /// The strip scrolls sideways between frames, and a frame holding more
+  /// events than fit scrolls its own column, so both are moved by the least
+  /// amount that puts the marker on screen.
+  ///
+  /// Waits for the marker to be laid out and then holds the position for a few
+  /// frames. On the first load the strip has nothing to scroll yet, and
+  /// hydration replaces it shortly after the first paint and takes the scroll
+  /// position with it.
+  void _scrollTimelineToEvent(int index) {
+    if (!kIsWeb) {
+      return;
+    }
+
+    var attemptsLeft = 60;
+    var settledFrames = 0;
+    void scrollWhenRendered() {
+      void retry() {
+        if (attemptsLeft-- > 0) {
+          Future<void>.delayed(
+            const Duration(milliseconds: 16),
+            scrollWhenRendered,
+          );
+        }
+      }
+
+      final dynamic marker = window.document.getElementById(
+        'timeline-event-$index',
+      );
+      final dynamic strip = window.document.querySelector(
+        '.$_timelineScrollClass',
+      );
+      if (marker == null || strip == null || (strip.clientWidth as num) <= 0) {
+        retry();
+        return;
+      }
+
+      final settled = [
+        _scrollPaneToChild(strip, marker, horizontal: true),
+        // The lane of one frame, which scrolls on its own when the frame holds
+        // more events than fit.
+        _scrollPaneToChild(
+          marker.closest('.frame-events'),
+          marker,
+          horizontal: false,
+        ),
+      ].every((atTarget) => atTarget);
+      settledFrames = settled ? settledFrames + 1 : 0;
+      if (settledFrames < 3) {
+        retry();
+      }
+    }
+
+    scrollWhenRendered();
+  }
+
+  /// Scrolls [pane] by the least amount that puts [child] inside it.
+  ///
+  /// Reports whether the pane sits where it should afterwards, which is how
+  /// the caller knows the position survived the last re-render.
+  bool _scrollPaneToChild(
+    dynamic pane,
+    dynamic child, {
+    required bool horizontal,
+  }) {
+    if (pane == null) {
+      return true;
+    }
+    final num viewSize =
+        (horizontal ? pane.clientWidth : pane.clientHeight) as num;
+    final num maxScroll =
+        ((horizontal ? pane.scrollWidth : pane.scrollHeight) as num) - viewSize;
+    if (maxScroll <= 0) {
+      // Everything fits, there is nothing to bring into view.
+      return true;
+    }
+
+    final dynamic paneRect = pane.getBoundingClientRect();
+    final dynamic childRect = child.getBoundingClientRect();
+    final num current = (horizontal ? pane.scrollLeft : pane.scrollTop) as num;
+    final num start =
+        current +
+        ((horizontal ? childRect.left : childRect.top) as num) -
+        ((horizontal ? paneRect.left : paneRect.top) as num);
+    final num end =
+        start + ((horizontal ? childRect.width : childRect.height) as num);
+
+    num target = current;
+    if (start - _timelineScrollPadding < current) {
+      target = start - _timelineScrollPadding;
+    } else if (end + _timelineScrollPadding > current + viewSize) {
+      target = end + _timelineScrollPadding - viewSize;
+    }
+    final rounded = target.clamp(0, maxScroll).round();
+    if (current.round() != rounded) {
+      if (horizontal) {
+        pane.scrollLeft = rounded;
+      } else {
+        pane.scrollTop = rounded;
+      }
+    }
+    final num after = (horizontal ? pane.scrollLeft : pane.scrollTop) as num;
+    return after.round() == rounded;
   }
 
   void _selectTab(_InspectorTab tab) {
@@ -953,7 +1062,7 @@ class TimelineAppState extends State<TimelineApp> {
                 Component.text('No timeline events were recorded.'),
               ])
             else
-              div(classes: 'timeline-scroll', [
+              div(classes: _timelineScrollClass, [
                 div(
                   classes: 'timeline-track',
                   styles: Styles(
@@ -1872,13 +1981,7 @@ class TimelineAppState extends State<TimelineApp> {
     ]);
   }
 
-  /// Puts the caller line in the middle of the source pane.
-  ///
-  /// The pane holds the whole file, so without this it opens at line 1 and the
-  /// caller is somewhere below the fold. Runs after the DOM caught up with the
-  /// state change, which is why it is scheduled rather than called directly.
-  /// Puts the line that triggered [callerLine] in the middle of the source
-  /// pane.
+  /// Puts [callerLine] near the top of the source pane.
   ///
   /// The pane holds the whole file, so without this it shows line 1 and the
   /// caller is somewhere below the fold.
