@@ -172,6 +172,13 @@ final class _Timeline extends Timeline {
   /// placeholder to the test framework in its place, so reading it back from
   /// the test is not an option.
   FlutterErrorDetails? _firstFlutterError;
+
+  /// The widget tree as it stood the moment the test failed.
+  ///
+  /// Kept because the failure event is built during teardown, which is long
+  /// after. Snapshots are per frame, so this doubles as the answer to whether
+  /// anything has been drawn since, see [_screenStillShowsTheFailure].
+  WidgetTreeSnapshot? _treeWhenTestFailed;
   FlutterExceptionHandler? _previousOnError;
   FlutterExceptionHandler? _installedOnError;
 
@@ -179,10 +186,26 @@ final class _Timeline extends Timeline {
     _previousOnError = FlutterError.onError;
     _installedOnError = (details) {
       // The first error ends the test. Whatever follows is its fallout.
-      _firstFlutterError ??= details;
+      if (_firstFlutterError == null) {
+        _firstFlutterError = details;
+        _treeWhenTestFailed = _currentTreeSnapshotOrNull();
+      }
       _previousOnError?.call(details);
     };
     FlutterError.onError = _installedOnError;
+  }
+
+  /// Whether the screen still shows what it showed when the test failed.
+  ///
+  /// A snapshot is only valid for the frame it was taken in, so getting the
+  /// same object back means no frame has been drawn since. Teardowns run after
+  /// the failure and are free to pump frames of their own, so without this a
+  /// capture taken now could be whatever a teardown left behind, presented as
+  /// the failure.
+  bool get _screenStillShowsTheFailure {
+    final atFailure = _treeWhenTestFailed;
+    return atFailure != null &&
+        identical(_currentTreeSnapshotOrNull(), atFailure);
   }
 
   void _stopCapturingFlutterErrors() {
@@ -405,14 +428,23 @@ final class _Timeline extends Timeline {
       return;
     }
     final lastEvent = _events.lastOrNull;
+    // The tree the test failed on, rather than whatever teardown is looking at
+    // by now.
     final treeSnapshot =
-        _currentTreeSnapshotOrNull() ?? lastEvent?.treeSnapshot;
+        _treeWhenTestFailed ??
+        _currentTreeSnapshotOrNull() ??
+        lastEvent?.treeSnapshot;
     if (treeSnapshot == null) {
       // A test that never built a widget has no frame to show the failure in,
       // and its report would be empty either way.
       return;
     }
-    final screenshot = await _failureScreenshot();
+    // Only capture what is on screen when it is still the failing frame. A
+    // capture of something else under a 'Test Failed' heading is worse than no
+    // capture at all.
+    final screenshot = _screenStillShowsTheFailure
+        ? await _failureScreenshot()
+        : null;
     final trace = _relevantTrace(failure.stackTrace);
 
     _currentFrameNumber++;
