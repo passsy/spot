@@ -545,22 +545,14 @@ void actTests() {
 
       final samples = inspection.samples!;
       expect(samples.searchArea, target.globalRect);
-      expect(samples.spacing, 8);
-      expect(samples.all, isNotEmpty);
-      expect(
-        samples.all.length,
-        samples.hittable.length + samples.blocked.length,
-      );
+      expect(samples.hittable, isNotEmpty);
       expect(samples.blocked, isEmpty);
       expect(samples.hittablePercent, 100);
       expect(samples.blockers, isEmpty);
-      expect(samples.hittable.map((it) => it.globalPosition),
-          hasLength(samples.all.length));
-      expect(samples.blocked.map((it) => it.globalPosition), isEmpty);
       expect(inspection.tapPosition, isNotNull);
       expect(target.globalRect!.contains(inspection.tapPosition!), isTrue);
 
-      final sample = samples.all.first;
+      final sample = samples.hittable.first;
       expect(sample.hitsTarget, isTrue);
       expect(
         sample.globalPosition,
@@ -1093,11 +1085,8 @@ void actTests() {
 
       final samples = inspection.samples!;
       expect(samples.searchArea, inspection.target?.globalRect);
-      expect(samples.spacing, 8);
-      expect(samples.all, isNotEmpty);
       expect(samples.hittable, isEmpty);
-      expect(samples.blocked, hasLength(samples.all.length));
-      expect(samples.hittable.map((it) => it.globalPosition), isEmpty);
+      expect(samples.blocked, isNotEmpty);
       expect(samples.hittablePercent, 0);
       // Collected once and kept, so reading twice does not hit test twice.
       expect(inspection.samples, same(samples));

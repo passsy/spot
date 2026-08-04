@@ -702,7 +702,6 @@ TapSamples _collectSamples(RenderBox renderBox) {
   }).toList();
   return TapSamples(
     searchArea: pokablePositions.searchArea,
-    spacing: pokablePositions.spacing,
     all: all,
   );
 }
@@ -1347,49 +1346,38 @@ class TapSamples {
   /// Creates sampled hit-test information.
   TapSamples({
     required this.searchArea,
-    required this.spacing,
     required List<TapHitSample> all,
-  }) : all = List.unmodifiable(all);
+  }) : _all = List.unmodifiable(all);
 
   /// The global rectangle covered by the sampled target.
   final Rect searchArea;
 
-  /// Pixel distance between sampled points.
-  ///
-  /// Describes the search that produced this result: [all] holds one entry
-  /// per point of a uniform grid with this step size, covering [searchArea].
-  /// A future spot version may search differently.
-  final int spacing;
-
-  /// Every point that was poked, see [spacing].
-  ///
-  /// Prefer [blockers] and [hittablePercent] to answer what is in the way and
-  /// how much of the target is reachable. They stay meaningful no matter how
-  /// the points were picked.
-  final List<TapHitSample> all;
+  /// Every point that was poked. How the points are picked is not part of the
+  /// API, a future spot version may search differently.
+  final List<TapHitSample> _all;
 
   /// Points that reached the target render object.
   List<TapHitSample> get hittable {
-    return all.where((it) => it.hitsTarget).toList();
+    return _all.where((it) => it.hitsTarget).toList();
   }
 
   /// Points that did not reach the target render object.
   List<TapHitSample> get blocked {
-    return all.where((it) => !it.hitsTarget).toList();
+    return _all.where((it) => !it.hitsTarget).toList();
   }
 
   /// Percentage of poked points that reached the target render object.
   double get hittablePercent {
-    if (all.isEmpty) {
+    if (_all.isEmpty) {
       return 0;
     }
-    return hittable.length / all.length * 100;
+    return hittable.length / _all.length * 100;
   }
 
   /// The widgets that received pointer events instead of the target, the one
   /// covering the most of it first.
   ///
-  /// Answers what is in the way without walking [all]:
+  /// Answers what is in the way without walking every sample:
   ///
   /// ```dart
   /// final blocker = act.inspectTap(spot<MyButton>()).samples!.blockers.first;
@@ -1410,7 +1398,7 @@ class TapSamples {
       return TapBlocker(
         receiver: widgets[entry.key]!,
         sampleCount: entry.value,
-        percent: all.isEmpty ? 0 : entry.value / all.length * 100,
+        percent: _all.isEmpty ? 0 : entry.value / _all.length * 100,
       );
     }).toList()
       ..sort((a, b) => b.sampleCount.compareTo(a.sampleCount));
