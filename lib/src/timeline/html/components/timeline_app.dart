@@ -510,7 +510,8 @@ class TimelineAppState extends State<TimelineApp> {
   /// The event whose capture is open full screen, `null` when none is.
   TimelineEvent? _lightboxEvent;
   int _treeTextStartLine = 1;
-  double _timelineHeight = 256;
+  // Room for the summary, the two ruler rows, a capture and two event rows.
+  double _timelineHeight = 270;
   double _capturePanePercent = 57;
   double _treePanePercent = 62;
   _ResizeTarget? _resizeTarget;
@@ -1052,16 +1053,35 @@ class TimelineAppState extends State<TimelineApp> {
     return '+${milliseconds.toStringAsFixed(0)} ms';
   }
 
+  /// The two clocks and the two frame counts of one frame.
+  ///
+  /// Clocks on the left, counts on the right. `Frame` is the frame Flutter
+  /// rendered, which skips ahead by whatever happened in between; `Spot` counts
+  /// only the frames that made it into this timeline, so it is always the
+  /// column's position in the strip.
   Component _rulerCell(TimelineFrameGroup frame, List<TimelineEvent> events) {
+    final event = events[frame.eventIndexes.first];
     return div(classes: 'ruler-cell', [
-      span(classes: 'ruler-cell__time', [
-        Component.text(_elapsedLabel(events[frame.eventIndexes.first])),
+      div(classes: 'ruler-cell__row', [
+        span(classes: 'ruler-cell__time', [
+          Component.text(_elapsedLabel(event)),
+          const span(classes: 'ruler-cell__clock', [Component.text('test')]),
+        ]),
+        span(
+          classes:
+              'ruler-cell__frame ${frame.screenshotUrl == null ? 'is-missing' : ''}',
+          [Component.text('Frame ${_count(frame.renderedFrameNumber)}')],
+        ),
       ]),
-      span(
-        classes:
-            'ruler-cell__frame ${frame.screenshotUrl == null ? 'is-missing' : ''}',
-        [Component.text(_frameLabel(frame))],
-      ),
+      div(classes: 'ruler-cell__row', [
+        span(classes: 'ruler-cell__time', [
+          Component.text(_wallElapsedLabel(event)),
+          const span(classes: 'ruler-cell__clock', [Component.text('wall')]),
+        ]),
+        span(classes: 'ruler-cell__spot-frame', [
+          Component.text('Spot ${_count(frame.frameNumber)}'),
+        ]),
+      ]),
     ]);
   }
 

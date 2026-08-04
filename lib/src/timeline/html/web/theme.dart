@@ -118,7 +118,7 @@ const timelineCSS = '''
   --gap-cell-width: 24px;
   --filmstrip-height: 142px;
   --header-height: 48px;
-  --timeline-height: 256px;
+  --timeline-height: 270px;
   font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-synthesis: none;
 }
@@ -361,7 +361,7 @@ kbd {
 }
 
 .time-ruler {
-  height: 27px;
+  height: 40px;
   border-bottom: 1px solid var(--border);
 }
 
@@ -379,13 +379,36 @@ kbd {
 .ruler-cell {
   position: relative;
   display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 6px;
-  padding: 6px 8px 0;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  gap: 1px;
+  padding: 0 8px;
   color: var(--text-secondary);
   font-size: 10px;
   font-variant-numeric: tabular-nums;
+}
+
+.ruler-cell__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  min-width: 0;
+  gap: 6px;
+  line-height: 1.4;
+}
+
+.ruler-cell__clock {
+  margin-left: 3px;
+  color: var(--text-muted);
+  font-size: 9px;
+}
+
+.ruler-cell__spot-frame {
+  overflow: hidden;
+  color: var(--text-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .ruler-cell__time,
@@ -647,7 +670,7 @@ kbd {
 .event-lane {
   height: max(
     48px,
-    calc(var(--timeline-height) - 65px - var(--filmstrip-height))
+    calc(var(--timeline-height) - 78px - var(--filmstrip-height))
   );
   background: #1c1d21;
 }
