@@ -4,6 +4,7 @@
 
 - Breaking: Require Dart 3.8 / Flutter 3.32 and update Jaspr to 0.23.2.
 - Fix: Restore screenshots and interactivity in the hot-restart timeline.
+- New: Whatever failed the test is now the last event of the timeline, in a frame of its own, and the HTML report opens on it. Previously only spot's own assertions reported their failure, so a plain `expect` or an exception from the widget under test left the report ending at the last thing that worked. The event carries the real error message, a stack trace with the test framework folded out, a capture of the screen as the test left it, and the line that threw.
 - New: `act.inspectTap()` reports whether a widget can be tapped and why not, as a value instead of a thrown error. It sends no pointer events and pumps no frame, so a test can assert that something is untappable *for a specific reason* rather than matching on message strings. #150
   ```dart
   final inspection = act.inspectTap(spot<ElevatedButton>());

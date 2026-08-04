@@ -155,11 +155,43 @@ abstract interface class Timeline {
 
 /// The actual implementation of the [Timeline].
 final class _Timeline extends Timeline {
-  _Timeline._(this.test);
+  _Timeline._(this.test) {
+    _startCapturingFlutterErrors();
+  }
 
   /// The test that the timeline is associated with.
   @override
   final LiveTest test;
+
+  /// The first error [FlutterError.onError] saw, which is the only place the
+  /// exception that failed the test survives.
+  ///
+  /// By the time the timeline is rendered, `test.errors` holds nothing but
+  /// 'Test failed. See exception logs above.' with an empty stack trace.
+  /// flutter_test dumps the real exception to the console and reports that
+  /// placeholder to the test framework in its place, so reading it back from
+  /// the test is not an option.
+  FlutterErrorDetails? _firstFlutterError;
+  FlutterExceptionHandler? _previousOnError;
+  FlutterExceptionHandler? _installedOnError;
+
+  void _startCapturingFlutterErrors() {
+    _previousOnError = FlutterError.onError;
+    _installedOnError = (details) {
+      // The first error ends the test. Whatever follows is its fallout.
+      _firstFlutterError ??= details;
+      _previousOnError?.call(details);
+    };
+    FlutterError.onError = _installedOnError;
+  }
+
+  void _stopCapturingFlutterErrors() {
+    // A widget test's binding puts its own handler back once the test is over.
+    // A plain test has no binding doing that, so it is done here.
+    if (identical(FlutterError.onError, _installedOnError)) {
+      FlutterError.onError = _previousOnError;
+    }
+  }
 
   /// The events that have recording during the test.
   @override
@@ -354,10 +386,113 @@ final class _Timeline extends Timeline {
     }
   }
 
+  /// Records whatever failed the test as the final event of the timeline.
+  ///
+  /// Only spot's own assertions report their failure through [addEvent]. A
+  /// plain `expect`, or anything else the test throws, never reaches the
+  /// timeline, so without this the report ends at the last thing that worked
+  /// and never shows what went wrong.
+  ///
+  /// The failure gets a frame of its own at the end. No frame is pumped
+  /// between the last event and the failure, so it would otherwise be filed
+  /// under the preceding frame and sit behind the assertions that passed.
+  Future<void> _addTestFailureEvent() async {
+    if (mode == TimelineMode.off || test.state.result.isPassing) {
+      return;
+    }
+    final failure = _testFailure();
+    if (failure == null) {
+      return;
+    }
+    final lastEvent = _events.lastOrNull;
+    final treeSnapshot =
+        _currentTreeSnapshotOrNull() ?? lastEvent?.treeSnapshot;
+    if (treeSnapshot == null) {
+      // A test that never built a widget has no frame to show the failure in,
+      // and its report would be empty either way.
+      return;
+    }
+    final screenshot = await _failureScreenshot();
+    final trace = _relevantTrace(failure.stackTrace);
+
+    _currentFrameNumber++;
+    _addRawEvent(
+      TimelineEvent(
+        id: TimelineEventId.random(),
+        frameNumber: _currentFrameNumber,
+        details: '${failure.error.toString().trimRight()}\n\n$trace',
+        screenshot: screenshot,
+        initiator: mostRelevantCaller(trace: trace),
+        timestamp: clock.now(),
+        // Deliberately not clock.now(), for the reason given in addEvent.
+        wallTime: DateTime.now(),
+        color: Colors.red,
+        treeSnapshot: treeSnapshot,
+        // The tree is usually the one the last event already stringified.
+        widgetTree: identical(treeSnapshot, lastEvent?.treeSnapshot)
+            ? lastEvent!.widgetTree
+            : treeSnapshot.toStringDeep(),
+        structuredWidgetTree: treeSnapshot.toStructuredData(
+          captureRenderObject: screenshot?.captureRenderObject,
+          capturePaintBounds: screenshot?.capturePaintBounds,
+        ),
+        eventType: const TimelineEventType(
+          label: 'Test Failed',
+          color: Colors.red,
+        ),
+      ),
+    );
+  }
+
+  /// What failed the test, or `null` when nothing did.
+  ///
+  /// Prefers what [FlutterError.onError] saw, because that is the real
+  /// exception with the stack trace pointing at the line that threw it. The
+  /// test's own error is the fallback for failures that never went through
+  /// Flutter, such as one thrown from a plain `test`.
+  AsyncError? _testFailure() {
+    final flutterError = _firstFlutterError;
+    if (flutterError != null) {
+      return AsyncError(
+        flutterError.exception,
+        flutterError.stack ?? StackTrace.empty,
+      );
+    }
+    return test.errors.firstOrNull;
+  }
+
+  /// The widget tree as it stands right now, or `null` when there is none.
+  ///
+  /// Reaching the tree force-unwraps the root element, which a test that never
+  /// pumped a widget does not have.
+  WidgetTreeSnapshot? _currentTreeSnapshotOrNull() {
+    try {
+      return currentWidgetTreeSnapshot();
+      // Converted to a value right here, so the stack trace has nothing to add.
+      // ignore: avoid_catching_errors
+    } on Error {
+      return null;
+    }
+  }
+
+  /// A capture of the screen as the failing test left it, or `null` when one
+  /// cannot be taken anymore.
+  Future<Screenshot?> _failureScreenshot() async {
+    try {
+      return await takeScreenshot(name: 'test-failure', print: false);
+      // Converted to a value right here, so the stack trace has nothing to add.
+      // ignore: avoid_catching_errors
+    } catch (_) {
+      return null;
+    }
+  }
+
   /// Event handler after the [test] has completed.
   ///
   /// Prints the timeline to console, as link to a html file or plain text
   Future<void> _onPostTest() async {
+    _stopCapturingFlutterErrors();
+    await _addTestFailureEvent();
     await _renderTimeline();
     for (final tearDown in _tearDowns.toList()) {
       await tearDown();
@@ -555,6 +690,50 @@ enum TimelineMode {
 
   /// No events will be recorded, the timeline is not generated after the test
   off,
+}
+
+/// Packages that are never the reason a test failed.
+const Set<String> _frameworkPackages = {
+  'clock',
+  'fake_async',
+  'flutter',
+  'flutter_test',
+  'matcher',
+  'spot',
+  'stack_trace',
+  'stream_channel',
+  'test_api',
+  'test_core',
+};
+
+bool _isFrameworkFrame(Frame frame) =>
+    frame.isCore || _frameworkPackages.contains(frame.package);
+
+/// The frames of [stackTrace] that belong to the code under test.
+///
+/// A failure inside Flutter is reached through a dozen frames of gesture
+/// arenas, fake async and the test runner, and every async gap repeats them.
+/// Dropping them leaves the path through the test and the app, which is the
+/// part worth reading. The console still gets the full trace.
+///
+/// Falls back to the folded stack when the failure happened entirely inside a
+/// package and nothing would be left otherwise.
+Trace _relevantTrace(StackTrace stackTrace) {
+  final full = Chain.forTrace(stackTrace).toTrace();
+  final ownFrames = <Frame>[];
+  final seen = <String>{};
+  for (final frame in full.frames) {
+    if (_isFrameworkFrame(frame)) {
+      continue;
+    }
+    if (seen.add(frame.toString())) {
+      ownFrames.add(frame);
+    }
+  }
+  if (ownFrames.isEmpty) {
+    return full.foldFrames(_isFrameworkFrame, terse: true);
+  }
+  return Trace(ownFrames);
 }
 
 /// Returns the most relevant caller that is part of the user code.
