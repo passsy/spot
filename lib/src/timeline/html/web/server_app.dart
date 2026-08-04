@@ -1,6 +1,5 @@
 // ignore_for_file: public_member_api_docs
 
-import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:spot/src/timeline/html/components/timeline_app.dart';
 import 'package:spot/src/timeline/html/web/timeline_event.dart';
@@ -69,5 +68,4 @@ class ServerAppState extends State<ServerApp>
     );
   }
 
-  static List<StyleRule> get styles => [...TimelineAppState.styles];
 }

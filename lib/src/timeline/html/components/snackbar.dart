@@ -4,7 +4,6 @@ import 'dart:async';
 
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
-import 'package:spot/src/timeline/html/web/theme.dart';
 
 /// A snackbar to show messages to the user.
 class SnackBar extends StatefulComponent {
@@ -29,6 +28,13 @@ class SnackBarState extends State<SnackBar> {
   }
 
   @override
+  void dispose() {
+    // Without this the timer outlives the component and calls setState on it.
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
   Component build(BuildContext context) {
     return div(
       id: "snackbar",
@@ -36,28 +42,4 @@ class SnackBarState extends State<SnackBar> {
       [Component.text(_message ?? '')],
     );
   }
-
-  static List<StyleRule> get styles => [
-    css('.snackbar', [
-      css('&').styles(
-        display: Display.none,
-        minWidth: 250.px,
-        margin: Margin.only(left: (-125).px),
-        radius: BorderRadius.circular(2.px),
-        padding: Padding.all(16.px),
-        position: Position.fixed(left: 50.percent, bottom: 30.px),
-        backgroundColor: snackbarBackgroundColor,
-        color: snackbarColor,
-        textAlign: TextAlign.center,
-        zIndex: const ZIndex(1),
-      ),
-      css('&.show').styles(
-        display: Display.block,
-        raw: {
-          'animation': 'fadein 0.5s, fadeout 0.5s 2.5s',
-          '-webkit-animation': 'fadein 0.5s, fadeout 0.5s 2.5s',
-        },
-      ),
-    ]),
-  ];
 }

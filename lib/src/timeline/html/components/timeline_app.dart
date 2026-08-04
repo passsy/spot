@@ -2726,7 +2726,6 @@ class TimelineAppState extends State<TimelineApp> {
     };
   }
 
-  static List<StyleRule> get styles => [...SnackBarState.styles];
 }
 
 Set<String> collectStructuredWidgetNodeIds(

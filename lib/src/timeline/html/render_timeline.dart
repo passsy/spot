@@ -34,7 +34,7 @@ Future<String> renderTimelineWithJaspr(
       head: [
         const Component.element(
           tag: 'style',
-          children: [RawText('$timelineCSS\n$animationsCSS')],
+          children: [RawText(timelineCSS)],
         ),
         if (hotRestart)
           const Component.element(
@@ -47,7 +47,6 @@ Future<String> renderTimelineWithJaspr(
             children: [RawText(_upgradeToLocalhostJS)],
           ),
       ],
-      styles: ServerAppState.styles,
       body: ServerApp(
         testName: Invoker.current?.liveTest.test.name ?? 'Missing filename',
         testNameWithHierarchy: nameWithHierarchy,
