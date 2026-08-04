@@ -1400,14 +1400,21 @@ body.is-resizing-rows * {
 .details-panel {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  min-height: 100%;
+  height: 100%;
 }
 
+/* The event details sit on top at whatever height they need, and the source
+   takes everything that is left, so dragging the inspector taller shows more
+   of the file rather than more empty background. */
 .details-content {
+  display: flex;
+  flex-direction: column;
   min-width: 0;
+  height: 100%;
 }
 
 .details-primary {
+  flex: 0 0 auto;
   min-width: 0;
   padding: 18px;
 }
@@ -1430,7 +1437,13 @@ body.is-resizing-rows * {
 }
 
 .source-panel {
+  display: grid;
+  flex: 1 1 0;
+  grid-template-rows: auto minmax(0, 1fr);
   min-width: 0;
+  /* Enough to read a method by, however short the inspector is dragged. What
+     does not fit scrolls in the inspector, the way it did before. */
+  min-height: 220px;
   border-top: 1px solid var(--border);
   background: #17181c;
 }
@@ -1471,7 +1484,7 @@ body.is-resizing-rows * {
 }
 
 .source-code {
-  max-height: 360px;
+  min-height: 0;
   margin: 0;
   padding: 8px 0;
   overflow: auto;
