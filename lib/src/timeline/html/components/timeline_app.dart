@@ -1096,15 +1096,24 @@ class TimelineAppState extends State<TimelineApp> {
         '${gap.frames == 1 ? 'frame' : 'frames'}';
     return div(
       classes: 'frame-gap',
-      attributes: {
-        'aria-hidden': 'true',
-        'title':
-            '$frames rendered without an event · '
-            '${_durationLabel(gap.testClock)} test clock · '
-            '${_durationLabel(gap.wallClock)} wall clock',
-      },
+      attributes: const {'aria-hidden': 'true'},
       [
         span(classes: 'frame-gap__frames', [Component.text(frames)]),
+        // Shown on hover by CSS alone, so it works before the page hydrates.
+        div(classes: 'frame-gap__card', [
+          strong(classes: 'frame-gap__card-title', [Component.text(frames)]),
+          const span(classes: 'frame-gap__card-note', [
+            Component.text('rendered with nothing recorded'),
+          ]),
+          div(classes: 'frame-gap__card-row', [
+            const span([Component.text('Test clock')]),
+            span([Component.text(_durationLabel(gap.testClock))]),
+          ]),
+          div(classes: 'frame-gap__card-row', [
+            const span([Component.text('Wall clock')]),
+            span([Component.text(_durationLabel(gap.wallClock))]),
+          ]),
+        ]),
       ],
     );
   }

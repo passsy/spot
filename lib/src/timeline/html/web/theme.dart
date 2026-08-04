@@ -415,6 +415,7 @@ kbd {
 
 /* A stretch of frames the test rendered and recorded nothing in. */
 .frame-gap {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -428,6 +429,89 @@ kbd {
       transparent 0 6px,
       #22242a 6px 12px);
   cursor: help;
+}
+
+.frame-gap:hover {
+  background:
+    repeating-linear-gradient(
+      135deg,
+      transparent 0 6px,
+      #2b2e36 6px 12px);
+}
+
+/* The timings, on hover. The native tooltip took about a second to show up
+   and cannot be styled, so this is built here instead. */
+.frame-gap__card {
+  position: absolute;
+  z-index: 30;
+  top: 50%;
+  left: 50%;
+  width: 192px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 7px;
+  background: #2a2d34;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .5);
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, -50%) scale(.96);
+  pointer-events: none;
+  font-size: 11px;
+  transition:
+    opacity 110ms ease,
+    transform 110ms ease,
+    visibility 0s linear 110ms;
+}
+
+/* Nothing happens for 300ms, so brushing past a gap does not flash a card. */
+.frame-gap:hover .frame-gap__card {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -50%) scale(1);
+  transition:
+    opacity 110ms ease 300ms,
+    transform 110ms ease 300ms,
+    visibility 0s linear 300ms;
+}
+
+.frame-gap__card-title {
+  display: block;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.frame-gap__card-note {
+  display: block;
+  padding-bottom: 8px;
+  margin-bottom: 7px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.frame-gap__card-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.frame-gap__card-row span:last-child {
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .frame-gap__card {
+    transition: none;
+  }
+
+  .frame-gap:hover .frame-gap__card {
+    transition: opacity 0s linear 300ms, visibility 0s linear 300ms;
+  }
 }
 
 /* Set sideways, so the column is only as wide as the text is tall. */
