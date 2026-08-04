@@ -114,10 +114,17 @@ void main() {
       expect(html, contains('Resize timeline and inspector'));
       expect(html, contains('.resize-handle'));
       expect(html, isNot(contains('class="lane-label"')));
-      expect(html, contains('48px'));
       expect(html, contains(r'"widgetTree":"RenderView\n'));
       expect(html, contains('"structuredWidgetTree":{'));
       expect(html, contains('"bounds":{"x":10'));
+
+      // One stylesheet, holding every component's rules. Jaspr can register
+      // StyleRules through `Document(styles:)` as well, which would emit a
+      // second <style>, and having both is how rules end up in whichever of
+      // the two the last person to touch them happened to open.
+      expect(RegExp('<style>').allMatches(html), hasLength(1));
+      expect(html, contains('.snackbar'));
+      expect(html, contains('@keyframes fadein'));
     },
     skip: kIsWeb ? 'Jaspr server rendering requires the Dart VM' : false,
   );

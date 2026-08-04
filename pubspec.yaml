@@ -24,6 +24,10 @@ dependencies:
   nanoid2: ^2.0.0
   stack_trace: ^1.11.0
   test_api: ">=0.5.0 <0.8.0"
+  # DOM access for the timeline report. Compiles on the VM too (stubs that
+  # throw), so the components can be shared between the server render and the
+  # client bundle without a hand written stub library.
+  universal_web: ^1.1.0
 
 dev_dependencies:
   lint: ^2.1.0

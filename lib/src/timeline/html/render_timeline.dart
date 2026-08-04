@@ -2,7 +2,7 @@
 import 'dart:convert';
 
 import 'package:jaspr/dom.dart';
-import 'package:jaspr/server.dart' hide ServerApp;
+import 'package:jaspr/server.dart';
 import 'package:spot/src/timeline/html/sources/script.js.g.dart';
 import 'package:spot/src/timeline/html/web/server_app.dart';
 import 'package:spot/src/timeline/html/web/theme.dart';
@@ -24,7 +24,10 @@ Future<String> renderTimelineWithJaspr(
   bool inlineScripts = true,
   bool hotRestart = false,
 }) async {
-  // Turn off isolate rendering.
+  // The clientId is what makes Jaspr emit a `<script src="/script.js" defer>`
+  // into the head, which the inlining below then replaces with the script
+  // itself. Without it Jaspr renders no script tag at all and the report stays
+  // static. Isolate rendering is off by default and stays off.
   Jaspr.initializeApp(options: const ServerOptions(clientId: 'script.js'));
   final nameWithHierarchy = testNameWithHierarchy();
   final html = await renderComponent(
@@ -32,10 +35,7 @@ Future<String> renderTimelineWithJaspr(
       base: null,
       title: "Timeline Events",
       head: [
-        const Component.element(
-          tag: 'style',
-          children: [RawText(timelineCSS)],
-        ),
+        const Component.element(tag: 'style', children: [RawText(timelineCSS)]),
         if (hotRestart)
           const Component.element(
             tag: 'meta',
@@ -47,7 +47,7 @@ Future<String> renderTimelineWithJaspr(
             children: [RawText(_upgradeToLocalhostJS)],
           ),
       ],
-      body: ServerApp(
+      body: TimelineServerApp(
         testName: Invoker.current?.liveTest.test.name ?? 'Missing filename',
         testNameWithHierarchy: nameWithHierarchy,
         timelineEvents: events,

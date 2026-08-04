@@ -1,21 +1,24 @@
-// ignore_for_file: public_member_api_docs, avoid_dynamic_calls
+// ignore_for_file: public_member_api_docs
 
 /// This library is compiled for both vm and web platforms.
-/// Therefore, this and all imported libraries need to be platform agnostic or stubbed.
+///
+/// `package:universal_web` is what makes that possible: it is `package:web` in
+/// the browser and a set of stubs that throw on the VM, so every browser API
+/// used here has to sit behind a [kIsWeb] check, and the analyzer still sees
+/// the real types on both sides.
 library;
 
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer' as developer;
-
-// ignore: avoid_web_libraries_in_flutter, deprecated_member_use
-import 'dart:html' if (dart.library.io) '../web/web_stubs.dart' show window;
 import 'dart:math' as math;
 
 import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:spot/src/timeline/html/components/snackbar.dart';
 import 'package:spot/src/timeline/html/web/timeline_event.dart';
+import 'package:universal_web/js_interop.dart';
+import 'package:universal_web/web.dart' as web;
 
 /// The main entry point for the timeline web app.
 class TimelineApp extends StatefulComponent {
@@ -541,10 +544,10 @@ class TimelineAppState extends State<TimelineApp> {
   double _capturePanePercent = 57;
   double _treePanePercent = 62;
   _ResizeTarget? _resizeTarget;
-  StreamSubscription<dynamic>? _keySubscription;
-  StreamSubscription<dynamic>? _pointerDownSubscription;
-  StreamSubscription<dynamic>? _resizeMoveSubscription;
-  StreamSubscription<dynamic>? _resizeEndSubscription;
+  StreamSubscription<web.KeyboardEvent>? _keySubscription;
+  StreamSubscription<web.MouseEvent>? _pointerDownSubscription;
+  StreamSubscription<web.MouseEvent>? _resizeMoveSubscription;
+  StreamSubscription<web.MouseEvent>? _resizeEndSubscription;
 
   TimelineEvent? get _selectedEvent {
     final index = _selectedIndex;
@@ -607,13 +610,8 @@ class TimelineAppState extends State<TimelineApp> {
           : component.timelineEvents[initialSelection].callerLine,
     );
     if (kIsWeb) {
-      _keySubscription = window.onKeyDown.listen((event) {
-        final dynamic target = event.target;
-        final tagName = target?.tagName?.toString().toLowerCase();
-        if (tagName == 'input' ||
-            tagName == 'textarea' ||
-            tagName == 'select' ||
-            target?.isContentEditable == true) {
+      _keySubscription = web.window.onKeyDown.listen((event) {
+        if (_isTextEntry(event.target)) {
           return;
         }
         // The lightbox covers everything, so it takes the keyboard with it.
@@ -647,10 +645,42 @@ class TimelineAppState extends State<TimelineApp> {
         }
         event.preventDefault();
       });
-      _pointerDownSubscription = window.onMouseDown.listen(_updateArrowTarget);
-      _resizeMoveSubscription = window.onMouseMove.listen(_resizePane);
-      _resizeEndSubscription = window.onMouseUp.listen(_finishResizing);
+      // Window has no onMouseDown/Move/Up getters, only Element does, so these
+      // go through the providers those getters are built on.
+      _pointerDownSubscription = web.EventStreamProviders.mouseDownEvent
+          .forTarget(web.window)
+          .listen(_updateArrowTarget);
+      _resizeMoveSubscription = web.EventStreamProviders.mouseMoveEvent
+          .forTarget(web.window)
+          .listen(_resizePane);
+      _resizeEndSubscription = web.EventStreamProviders.mouseUpEvent
+          .forTarget(web.window)
+          .listen(_finishResizing);
     }
+  }
+
+  /// Whether [target] is something the user types into.
+  ///
+  /// The shortcuts are single keys, so they have to stay out of the way of the
+  /// widget tree's search field and anything else that takes text.
+  /// `isA` rather than `as`: casting between interop types is unchecked, so a
+  /// plain cast would succeed on anything and read a property that is not there.
+  bool _isTextEntry(web.EventTarget? target) {
+    if (target == null) {
+      return false;
+    }
+    if (target.isA<web.HTMLElement>() &&
+        (target as web.HTMLElement).isContentEditable) {
+      return true;
+    }
+    if (!target.isA<web.Element>()) {
+      return false;
+    }
+    return const {
+      'INPUT',
+      'TEXTAREA',
+      'SELECT',
+    }.contains((target as web.Element).tagName);
   }
 
   @override
@@ -666,9 +696,11 @@ class TimelineAppState extends State<TimelineApp> {
   ///
   /// The tree needs all four arrows for itself, so it claims them once it is
   /// clicked into and gives them back on the next click anywhere else.
-  void _updateArrowTarget(dynamic event) {
-    final dynamic target = event.target;
-    final inTree = target != null && target.closest('#$_widgetTreeId') != null;
+  void _updateArrowTarget(web.MouseEvent event) {
+    final target = event.target;
+    final inTree =
+        target.isA<web.Element>() &&
+        (target! as web.Element).closest('#$_widgetTreeId') != null;
     if (inTree == _arrowsDriveWidgetTree) {
       return;
     }
@@ -740,7 +772,7 @@ class TimelineAppState extends State<TimelineApp> {
     _toggleWidgetNode(row.id);
   }
 
-  void _startResizing(_ResizeTarget target, dynamic event) {
+  void _startResizing(_ResizeTarget target, web.Event event) {
     event.preventDefault();
     _resizeTarget = target;
     if (kIsWeb) {
@@ -749,11 +781,20 @@ class TimelineAppState extends State<TimelineApp> {
         _ResizeTarget.timeline ||
         _ResizeTarget.treeDetails => 'is-resizing-rows',
       };
-      window.document.querySelector('body')?.classes.add(className);
+      web.document.body?.classList.add(className);
     }
   }
 
-  void _resizePane(dynamic event) {
+  /// The element a resize is measured against, `null` when it is not rendered.
+  web.HTMLElement? _resizeContainer(String id) {
+    if (!kIsWeb) {
+      return null;
+    }
+    final element = web.document.getElementById(id);
+    return element.isA<web.HTMLElement>() ? element! as web.HTMLElement : null;
+  }
+
+  void _resizePane(web.MouseEvent event) {
     final target = _resizeTarget;
     if (!kIsWeb || target == null) {
       return;
@@ -761,20 +802,19 @@ class TimelineAppState extends State<TimelineApp> {
 
     switch (target) {
       case _ResizeTarget.timeline:
-        final element = window.document.getElementById('timeline-app');
+        final element = _resizeContainer('timeline-app');
         if (element == null) {
           return;
         }
         final rect = element.getBoundingClientRect();
-        final clientY = (event.client.y as num).toDouble();
         _timelineHeight = resizedTimelineHeight(
-          pointerY: clientY,
-          containerTop: rect.top.toDouble(),
-          containerHeight: rect.height.toDouble(),
+          pointerY: event.clientY.toDouble(),
+          containerTop: rect.top,
+          containerHeight: rect.height,
         );
         element.style.setProperty('--timeline-height', '${_timelineHeight}px');
       case _ResizeTarget.captureTree:
-        final element = window.document.getElementById('interactive-inspector');
+        final element = _resizeContainer('interactive-inspector');
         if (element == null) {
           return;
         }
@@ -782,11 +822,10 @@ class TimelineAppState extends State<TimelineApp> {
         if (rect.width <= 0) {
           return;
         }
-        final clientX = (event.client.x as num).toDouble();
         _capturePanePercent = resizedPanePercent(
-          pointer: clientX,
-          containerStart: rect.left.toDouble(),
-          containerExtent: rect.width.toDouble(),
+          pointer: event.clientX.toDouble(),
+          containerStart: rect.left,
+          containerExtent: rect.width,
           minimum: 20,
           maximum: 80,
         );
@@ -795,7 +834,7 @@ class TimelineAppState extends State<TimelineApp> {
           '$_capturePanePercent%',
         );
       case _ResizeTarget.treeDetails:
-        final element = window.document.getElementById('widget-explorer');
+        final element = _resizeContainer('widget-explorer');
         if (element == null) {
           return;
         }
@@ -803,11 +842,10 @@ class TimelineAppState extends State<TimelineApp> {
         if (rect.height <= 0) {
           return;
         }
-        final clientY = (event.client.y as num).toDouble();
         _treePanePercent = resizedPanePercent(
-          pointer: clientY,
-          containerStart: rect.top.toDouble(),
-          containerExtent: rect.height.toDouble(),
+          pointer: event.clientY.toDouble(),
+          containerStart: rect.top,
+          containerExtent: rect.height,
           leadingInset: 34,
           minimum: 25,
           maximum: 82,
@@ -816,21 +854,23 @@ class TimelineAppState extends State<TimelineApp> {
     }
   }
 
-  void _finishResizing(dynamic _) {
+  void _finishResizing(web.MouseEvent _) {
     if (_resizeTarget == null) {
       return;
     }
     _resizeTarget = null;
     if (kIsWeb) {
-      window.document.querySelector('body')?.classes
+      web.document.body?.classList
         ?..remove('is-resizing-columns')
         ..remove('is-resizing-rows');
     }
     setState(() {});
   }
 
-  void _resizeWithKeyboard(_ResizeTarget target, dynamic event) {
-    final key = event.key as String?;
+  void _resizeWithKeyboard(_ResizeTarget target, web.Event event) {
+    final key = event.isA<web.KeyboardEvent>()
+        ? (event as web.KeyboardEvent).key
+        : null;
     final delta = switch ((target, key)) {
       (_ResizeTarget.captureTree, 'ArrowLeft') => -4.0,
       (_ResizeTarget.captureTree, 'ArrowRight') => 4.0,
@@ -848,9 +888,7 @@ class TimelineAppState extends State<TimelineApp> {
     setState(() {
       switch (target) {
         case _ResizeTarget.timeline:
-          final element = kIsWeb
-              ? window.document.getElementById('timeline-app')
-              : null;
+          final element = _resizeContainer('timeline-app');
           final maximum = element == null
               ? 600.0
               : math.max(
@@ -963,13 +1001,9 @@ class TimelineAppState extends State<TimelineApp> {
         }
       }
 
-      final dynamic marker = window.document.getElementById(
-        'timeline-event-$index',
-      );
-      final dynamic strip = window.document.querySelector(
-        '.$_timelineScrollClass',
-      );
-      if (marker == null || strip == null || (strip.clientWidth as num) <= 0) {
+      final marker = web.document.getElementById('timeline-event-$index');
+      final strip = web.document.querySelector('.$_timelineScrollClass');
+      if (marker == null || strip == null || strip.clientWidth <= 0) {
         retry();
         return;
       }
@@ -998,31 +1032,29 @@ class TimelineAppState extends State<TimelineApp> {
   /// Reports whether the pane sits where it should afterwards, which is how
   /// the caller knows the position survived the last re-render.
   bool _scrollPaneToChild(
-    dynamic pane,
-    dynamic child, {
+    web.Element? pane,
+    web.Element child, {
     required bool horizontal,
   }) {
     if (pane == null) {
       return true;
     }
-    final num viewSize =
-        (horizontal ? pane.clientWidth : pane.clientHeight) as num;
-    final num maxScroll =
-        ((horizontal ? pane.scrollWidth : pane.scrollHeight) as num) - viewSize;
+    final viewSize = horizontal ? pane.clientWidth : pane.clientHeight;
+    final maxScroll =
+        (horizontal ? pane.scrollWidth : pane.scrollHeight) - viewSize;
     if (maxScroll <= 0) {
       // Everything fits, there is nothing to bring into view.
       return true;
     }
 
-    final dynamic paneRect = pane.getBoundingClientRect();
-    final dynamic childRect = child.getBoundingClientRect();
-    final num current = (horizontal ? pane.scrollLeft : pane.scrollTop) as num;
+    final paneRect = pane.getBoundingClientRect();
+    final childRect = child.getBoundingClientRect();
+    final num current = horizontal ? pane.scrollLeft : pane.scrollTop;
     final num start =
         current +
-        ((horizontal ? childRect.left : childRect.top) as num) -
-        ((horizontal ? paneRect.left : paneRect.top) as num);
-    final num end =
-        start + ((horizontal ? childRect.width : childRect.height) as num);
+        (horizontal ? childRect.left : childRect.top) -
+        (horizontal ? paneRect.left : paneRect.top);
+    final num end = start + (horizontal ? childRect.width : childRect.height);
 
     num target = current;
     if (start - _timelineScrollPadding < current) {
@@ -1038,7 +1070,7 @@ class TimelineAppState extends State<TimelineApp> {
         pane.scrollTop = rounded;
       }
     }
-    final num after = (horizontal ? pane.scrollLeft : pane.scrollTop) as num;
+    final num after = horizontal ? pane.scrollLeft : pane.scrollTop;
     return after.round() == rounded;
   }
 
@@ -1250,8 +1282,13 @@ class TimelineAppState extends State<TimelineApp> {
                 final command =
                     'flutter test --plain-name="${component.testName}"';
                 try {
-                  await window.navigator.clipboard?.writeText(command);
-                  _snackBar.currentState!.show('Test command copied');
+                  await web.window.navigator.clipboard
+                      .writeText(command)
+                      .toDart;
+                  // Not `!`: a null state here would throw after the
+                  // clipboard write already succeeded, and the catch below
+                  // would then report a failure that did not happen.
+                  _snackBar.currentState?.show('Test command copied');
                 } catch (error, stackTrace) {
                   developer.log(
                     'Could not copy the test command',
@@ -1259,7 +1296,7 @@ class TimelineAppState extends State<TimelineApp> {
                     error: error,
                     stackTrace: stackTrace,
                   );
-                  _snackBar.currentState!.show('Failed to copy test command');
+                  _snackBar.currentState?.show('Failed to copy test command');
                 }
               },
               const [Component.text('Copy command')],
@@ -1681,15 +1718,15 @@ class TimelineAppState extends State<TimelineApp> {
               },
               events: {
                 'keydown': (event) {
-                  final dynamic keyboardEvent = event;
+                  if (!event.isA<web.KeyboardEvent>()) {
+                    return;
+                  }
+                  final keyboardEvent = event as web.KeyboardEvent;
                   if (keyboardEvent.key != 'Enter') {
                     return;
                   }
                   keyboardEvent.preventDefault();
-                  _selectNextSearchMatch(
-                    root,
-                    reverse: keyboardEvent.shiftKey == true,
-                  );
+                  _selectNextSearchMatch(root, reverse: keyboardEvent.shiftKey);
                 },
               },
             ),
@@ -1773,7 +1810,7 @@ class TimelineAppState extends State<TimelineApp> {
       div(
         classes: 'capture-canvas is-zoomable',
         attributes: const {'title': 'Click to open the capture full screen'},
-        events: {'click': (dynamic _) => _openLightbox(event)},
+        events: {'click': (_) => _openLightbox(event)},
         [
           img(
             src: screenshotUrl,
@@ -1870,13 +1907,14 @@ class TimelineAppState extends State<TimelineApp> {
     );
   }
 
-  void _onTreeScroll(dynamic event) {
-    final dynamic target = event.currentTarget ?? event.target;
-    if (target == null) {
+  void _onTreeScroll(web.Event event) {
+    final scrolled = event.currentTarget ?? event.target;
+    if (!scrolled.isA<web.Element>()) {
       return;
     }
-    final double scrollTop = (target.scrollTop as num).toDouble();
-    final double height = (target.clientHeight as num).toDouble();
+    final target = scrolled! as web.Element;
+    final scrollTop = target.scrollTop;
+    final height = target.clientHeight.toDouble();
     // Re-render only when the window of rows would actually change.
     if ((scrollTop - _treeScrollTop).abs() < _treeRowHeight &&
         height == _treeViewportHeight) {
@@ -2058,18 +2096,18 @@ class TimelineAppState extends State<TimelineApp> {
       return;
     }
 
-    final dynamic tree = window.document.querySelector('#$_widgetTreeId');
+    final tree = web.document.querySelector('#$_widgetTreeId');
     if (tree == null) {
       return;
     }
-    final double viewport = (tree.clientHeight as num).toDouble();
+    final viewport = tree.clientHeight.toDouble();
     final top = index * _treeRowHeight - (viewport - _treeRowHeight) / 2;
     tree.scrollTop = top.clamp(0, double.infinity).round();
     // Indentation is the only thing that pushes a row sideways, so the row's
     // depth says how far to scroll to put its label back on screen.
     final indent = rows[index].depth * _treeIndentWidth;
-    final double width = (tree.clientWidth as num).toDouble();
-    final currentLeft = (tree.scrollLeft as num).toDouble();
+    final width = tree.clientWidth.toDouble();
+    final currentLeft = tree.scrollLeft;
     if (indent < currentLeft || indent > currentLeft + width - 120) {
       tree.scrollLeft = math.max(0, indent - 40).round();
     }
@@ -2264,19 +2302,19 @@ class TimelineAppState extends State<TimelineApp> {
         }
       }
 
-      final dynamic pane = window.document.querySelector('#$_sourceCodeId');
-      final dynamic line = window.document.querySelector('#$_callerLineId');
+      final pane = web.document.querySelector('#$_sourceCodeId');
+      final line = web.document.querySelector('#$_callerLineId');
       final rendered = line == null
           ? null
-          : int.tryParse('${line.getAttribute('data-line')}');
+          : int.tryParse(line.getAttribute('data-line') ?? '');
       if (pane == null || line == null || rendered != callerLine) {
         retry();
         return;
       }
       // Assigning scrollTop does nothing while the pane has nothing to
       // scroll, which is the case until it has been laid out.
-      final num paneHeight = pane.clientHeight as num;
-      if (paneHeight <= 0 || (pane.scrollHeight as num) <= paneHeight) {
+      final paneHeight = pane.clientHeight;
+      if (paneHeight <= 0 || pane.scrollHeight <= paneHeight) {
         retry();
         return;
       }
@@ -2285,12 +2323,12 @@ class TimelineAppState extends State<TimelineApp> {
       // relative to the closest positioned ancestor. The pane is not
       // positioned, so offsetTop carried the pane's own distance down the page
       // and scrolled the file that much too far.
-      final dynamic paneRect = pane.getBoundingClientRect();
-      final dynamic lineRect = line.getBoundingClientRect();
-      final num scrollTop = pane.scrollTop as num;
-      final num lineOffset = (lineRect.top as num) - (paneRect.top as num);
-      final num lineHeight = lineRect.height as num;
-      final maxScroll = (pane.scrollHeight as num) - paneHeight;
+      final paneRect = pane.getBoundingClientRect();
+      final lineRect = line.getBoundingClientRect();
+      final scrollTop = pane.scrollTop;
+      final lineOffset = lineRect.top - paneRect.top;
+      final lineHeight = lineRect.height;
+      final maxScroll = pane.scrollHeight - paneHeight;
       // A few lines of lead-in rather than the middle of the pane: the caller
       // is easier to find when it sits near the top, and what follows it is
       // usually what the reader wants next.
@@ -2305,9 +2343,7 @@ class TimelineAppState extends State<TimelineApp> {
       // Hydration replaces the pane shortly after the first paint and takes
       // the scroll position with it, so hold the position for a few frames
       // rather than trusting the first assignment.
-      settledFrames = (pane.scrollTop as num).round() == target
-          ? settledFrames + 1
-          : 0;
+      settledFrames = pane.scrollTop.round() == target ? settledFrames + 1 : 0;
       if (settledFrames < 3) {
         retry();
       }
@@ -2473,12 +2509,12 @@ class TimelineAppState extends State<TimelineApp> {
         'aria-modal': 'true',
         'aria-label': 'Capture, full screen',
       },
-      events: {'click': (dynamic _) => _closeLightbox()},
+      events: {'click': (_) => _closeLightbox()},
       [
         div(
           classes: 'lightbox__actions',
           // Toggling overlays must not reach the backdrop, which dismisses.
-          events: {'click': (dynamic event) => event.stopPropagation()},
+          events: {'click': (event) => event.stopPropagation()},
           [
             if (event.overlayUrls.isNotEmpty)
               button(
@@ -2507,7 +2543,7 @@ class TimelineAppState extends State<TimelineApp> {
         div(
           classes: 'lightbox__stage',
           // The stage swallows the click so only the backdrop dismisses.
-          events: {'click': (dynamic event) => event.stopPropagation()},
+          events: {'click': (event) => event.stopPropagation()},
           [
             img(
               src: screenshotUrl,
@@ -2725,7 +2761,6 @@ class TimelineAppState extends State<TimelineApp> {
       },
     };
   }
-
 }
 
 Set<String> collectStructuredWidgetNodeIds(

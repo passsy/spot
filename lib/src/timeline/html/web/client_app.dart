@@ -1,79 +1,103 @@
 // ignore_for_file: public_member_api_docs
 
 import 'dart:async';
-// ignore: avoid_web_libraries_in_flutter, deprecated_member_use
-import 'dart:html';
 
 import 'package:jaspr/client.dart';
 import 'package:spot/src/timeline/html/components/timeline_app.dart';
 import 'package:spot/src/timeline/html/web/timeline_event.dart';
+import 'package:universal_web/js_interop.dart';
+import 'package:universal_web/web.dart' as web;
 
 void main() async {
-  await window.onLoad.first;
+  await web.window.onLoad.first;
 
-  final selector = window.document.querySelector('meta[hot-restart="true"]');
+  final selector = web.document.querySelector('meta[hot-restart="true"]');
   if (selector != null) {
     _registerHotRestart();
   }
 
   // hydrate static HTML with the client side js to make it interactive
-  runApp(const ClientApp());
+  runApp(const TimelineClientApp());
 }
 
 void _registerHotRestart() {
-  if (window.location.protocol == 'file:') {
+  if (web.window.location.protocol == 'file:') {
     return;
   }
-  Timer.periodic(const Duration(milliseconds: 200), (timer) {
-    reloadOnChange('/script.js');
-    reloadOnChange(window.location.href);
+  // One pass at a time, a second apart. The document runs to a few hundred
+  // kilobytes and re-downloading it is the whole check, so a pass that starts
+  // while the previous one is still in flight only piles requests up. A second
+  // is well inside how long a test rerun takes to write a new report.
+  var checking = false;
+  Timer.periodic(const Duration(seconds: 1), (timer) async {
+    if (checking) {
+      return;
+    }
+    checking = true;
+    try {
+      final changed =
+          await _hasChanged('/script.js') ||
+          await _hasChanged(web.window.location.href);
+      if (changed) {
+        timer.cancel();
+        web.window.location.reload();
+      }
+    } finally {
+      checking = false;
+    }
   });
 }
 
-final Map<String, String?> previousContentMap = {};
+final Map<String, String?> _previousContent = {};
 
-Future<void> reloadOnChange(String url) async {
-  final response = await HttpRequest.request(
-    url,
-    requestHeaders: {'cache': 'no-cache'},
-  );
-  final currentContent = response.responseText;
-  final previousContent = previousContentMap[url];
-  if (previousContent != null && previousContent != currentContent) {
-    window.location.reload();
-  }
-  previousContentMap[url] = currentContent; // Cache the current content
+/// Whether [url] serves something other than it did on the previous pass.
+///
+/// The first pass only records what is there, so opening the report does not
+/// immediately reload it.
+Future<bool> _hasChanged(String url) async {
+  final response = await web.window
+      .fetch(url.toJS, web.RequestInit(cache: 'no-store'))
+      .toDart;
+  final current = (await response.text().toDart).toDart;
+  final previous = _previousContent[url];
+  _previousContent[url] = current;
+  return previous != null && previous != current;
 }
 
 /// The main entry point for the timeline web app.
-class ClientApp extends StatefulComponent {
-  const ClientApp({super.key});
+class TimelineClientApp extends StatefulComponent {
+  const TimelineClientApp({super.key});
 
   @override
-  State<ClientApp> createState() => _ClientAppState();
+  State<TimelineClientApp> createState() => _TimelineClientAppState();
 }
 
-class _ClientAppState extends State<ClientApp>
-    with SyncStateMixin<ClientApp, Map<String, dynamic>> {
+class _TimelineClientAppState extends State<TimelineClientApp>
+    with SyncStateMixin<TimelineClientApp, Map<String, dynamic>> {
+  // Defaults rather than `late`, because [updateState] only runs when the
+  // sync marker is found in the rendered HTML. A report served without it
+  // would throw out of [build] instead of showing the empty timeline, and a
+  // page that renders nothing is a worse report than a page that says so.
+
   /// The name of the test.
-  late final String testName;
+  String testName = '';
 
   /// The name of the test with the hierarchy.
-  late final String testNameWithHierarchy;
+  String testNameWithHierarchy = '';
 
   /// The events that occurred during the test.
-  late final List<TimelineEvent> timelineEvents;
+  List<TimelineEvent> timelineEvents = const [];
 
   /// Every source file the events point into, keyed by path.
-  late final Map<String, TimelineSourceFile> sourceFiles;
+  Map<String, TimelineSourceFile> sourceFiles = const {};
 
   /// Frames the test rendered in total, recorded in or not.
-  late final int renderedFrameCount;
+  int renderedFrameCount = 0;
 
   @override
   void updateState(Map<String, dynamic> value) {
     // This uses Jasprs sync mechanism to retrieve the synced server state from the rendered HTML.
-    // See ServerApp.getState() where the server injects the data
+    // See TimelineServerApp.getState() where the server injects the data
     timelineEvents = (value['timelineEvents'] as List)
         .cast<Map<String, dynamic>>()
         .map(TimelineEvent.fromMap)

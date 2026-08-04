@@ -5,8 +5,8 @@ import 'package:spot/src/timeline/html/components/timeline_app.dart';
 import 'package:spot/src/timeline/html/web/timeline_event.dart';
 
 /// The main entry point for the timeline web app.
-class ServerApp extends StatefulComponent {
-  const ServerApp({
+class TimelineServerApp extends StatefulComponent {
+  const TimelineServerApp({
     required this.testName,
     required this.testNameWithHierarchy,
     required this.timelineEvents,
@@ -31,11 +31,11 @@ class ServerApp extends StatefulComponent {
   final int renderedFrameCount;
 
   @override
-  State<ServerApp> createState() => ServerAppState();
+  State<TimelineServerApp> createState() => TimelineServerAppState();
 }
 
-class ServerAppState extends State<ServerApp>
-    with SyncStateMixin<ServerApp, Map<String, dynamic>> {
+class TimelineServerAppState extends State<TimelineServerApp>
+    with SyncStateMixin<TimelineServerApp, Map<String, dynamic>> {
   @override
   Map<String, dynamic> getState() {
     // This uses Jasprs sync mechanism to embed the server state into the rendered HTML.
@@ -52,13 +52,13 @@ class ServerAppState extends State<ServerApp>
 
   @override
   void updateState(Map<String, dynamic> value) {
-    // See ClientApp.updateState() for the client side implementation.
+    // See TimelineClientApp.updateState() for the client side implementation.
     throw UnimplementedError("Not implemented for server app");
   }
 
   @override
   Component build(BuildContext context) {
-    // Keep in sync with ClientApp.build(). Both should render the same components or hydration changes the DOM.
+    // Keep in sync with TimelineClientApp.build(). Both should render the same components or hydration changes the DOM.
     return TimelineApp(
       testName: component.testName,
       testNameWithHierarchy: component.testNameWithHierarchy,
@@ -67,5 +67,4 @@ class ServerAppState extends State<ServerApp>
       renderedFrameCount: component.renderedFrameCount,
     );
   }
-
 }
