@@ -36,6 +36,7 @@ visualizes the steps of a widget test as HTML report with automatic screenshots,
   - [Find offstage widgets](#find-offstage-widgets)
 - [act - tap, drag, type](#act---tap-drag-type-click)
   - [tap](#tap)
+  - [inspectTap](#inspecttap)
   - [tapAt](#tapat)
   - [enterText](#entertext)
   - [dragUntilVisible](#draguntilvisible)
@@ -706,6 +707,57 @@ Tapping a widget looks almost identical to the `WidgetTester` API but with a few
 - Adds screenshot with crosshair annotation to the Timeline
 - pumps automatically after the tap
 - When multiple widgets are found, it prints a useful error message
+
+### inspectTap
+
+Answers whether a widget can be tapped, and why not, without tapping it.
+
+```dart
+final inspection = act.inspectTap(spot<SubmitButton>());
+
+expect(inspection.canTap, isFalse);
+```
+
+`act.inspectTap()` sends no pointer events and pumps no frame, so the app is in the same state afterwards.
+That makes it the way to assert that a widget is *not* tappable, because `act.tap()` proves the same thing by failing the test.
+
+`inspection.tapFailure` is `null` when the widget can be tapped, otherwise it carries the reason, with the widgets that explain it.
+The typed getters fail the test with the full diagnostics when the widget turned out to be untappable for a different reason than expected:
+
+```dart
+final reason = act.inspectTap(spot<SubmitButton>()).tapFailure!.tapCoveredReason;
+
+expect(reason.primaryCover?.widget, isA<ColoredBox>());
+```
+
+There is one reason per way a tap can fail: `TapNotFoundReason`, `TapMultipleWidgetsFoundReason`, `TapNoRenderObjectReason`, `TapNonRenderBoxReason`, `TapOutsideViewportReason`, `TapAbsorbedReason`, `TapIgnoredReason`, `TapOffstageReason`, `TapZeroSizeReason`, `TapCoveredReason` and `TapUnknownReason`.
+
+A widget that can be tapped may still be partially covered, which no failure can describe.
+`inspection.samples` answers that for tappable and untappable widgets alike:
+
+```dart
+final samples = act.inspectTap(spot<SubmitButton>()).samples!;
+
+print('${samples.hittablePercent}% of the button reacts to taps');
+for (final blocker in samples.blockers) {
+  print(blocker); // ColoredBox (46%)
+}
+```
+
+`act.tap()` throws a `TapFailure` carrying the same inspection, so the reason of a real tap can be asserted the same way:
+
+```dart
+await expectLater(
+  () => act.tap(spot<SubmitButton>()),
+  throwsA(
+    isA<TapFailure>().having(
+      (it) => it.inspection.tapFailure?.reason,
+      'reason',
+      isA<TapCoveredReason>(),
+    ),
+  ),
+);
+```
 
 ### tapAt
 

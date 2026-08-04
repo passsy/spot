@@ -455,6 +455,58 @@ void dragTests() {
         );
       },
     );
+
+    testWidgets(
+      'Throws a plain TestFailure, not a TapFailure, when the drag start is covered',
+      (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Stack(
+              children: [
+                ListView(
+                  children: [
+                    for (int i = 0; i < 30; i++)
+                      SizedBox(
+                        height: 100,
+                        child: Text('Item at index: $i'),
+                      ),
+                  ],
+                ),
+                const Positioned.fill(
+                  child: ColoredBox(color: Colors.green),
+                ),
+              ],
+            ),
+          ),
+        );
+
+        final firstItem = spotText('Item at index: 1', whole: true)
+          ..existsOnce();
+        final secondItem = spotText('Item at index: 27', whole: true)
+          ..doesNotExist();
+
+        // dragUntilVisible does not tap anything, so the failure must not
+        // claim it did. A TapFailure would hand out a TapInspection of the
+        // Scrollable, which is not the widget the caller named.
+        await expectLater(
+          () => act.dragUntilVisible(
+            dragStart: firstItem,
+            dragTarget: secondItem,
+          ),
+          throwsA(
+            allOf(
+              isA<TestFailure>(),
+              isNot(isA<TapFailure>()),
+              isA<TestFailure>().having(
+                (error) => error.message,
+                'message',
+                contains('can not be interacted with directly'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   });
 
   group('Padding parameter', () {

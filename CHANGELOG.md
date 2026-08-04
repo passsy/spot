@@ -2,6 +2,43 @@
 
 ## Unreleased
 
+- New: `act.inspectTap()` reports whether a widget can be tapped and why not, as a value instead of a thrown error. It sends no pointer events and pumps no frame, so a test can assert that something is untappable *for a specific reason* rather than matching on message strings. #150
+  ```dart
+  final inspection = act.inspectTap(spot<ElevatedButton>());
+  expect(inspection.canTap, isFalse);
+  // the button is behind a full-screen overlay
+  expect(
+    inspection.tapFailure?.tapCoveredReason.primaryCover?.widget,
+    isA<ColoredBox>(),
+  );
+  ```
+  Every failure branch of `act.tap()` has a reason: `TapNotFoundReason`, `TapMultipleWidgetsFoundReason`, `TapNoRenderObjectReason`, `TapNonRenderBoxReason`, `TapOutsideViewportReason`, `TapAbsorbedReason`, `TapIgnoredReason`, `TapOffstageReason`, `TapZeroSizeReason`, `TapCoveredReason` and `TapUnknownReason`. `inspection.tapFailure` is `null` when the widget can be tapped. Read the failure via `tapFailure.reason`, or via a typed getter such as `tapFailure.tapCoveredReason` that fails the test when the widget turned out to be untappable for a different reason. Printing `tapFailure` gives the reason type and the summary line, `inspection.message` the full diagnostics. Also adds `TapInspection`, `TapFailureReason`, `TapWidgetInfo`, `TapHitTestInfo`, `TapHitSample`, `TapSamples` and `TapBlocker`.
+
+  `TapInspection.samples` reports how much of the widget reacts to pointer events and what is in the way, for tappable widgets too. A widget that is tappable but only partially reachable has no failure to assert on, so assert on the samples.
+  ```dart
+  final samples = act.inspectTap(spot<ElevatedButton>()).samples!;
+  print('${samples.hittablePercent}% of the button reacts to taps');
+  for (final blocker in samples.blockers) {
+    print('${blocker.receiver.widgetName} covers ${blocker.percent}%');
+  }
+  ```
+  Sampling hit tests the whole widget on a grid, which costs far more than the rest of the inspection, so it happens on the first read of `samples` instead of up front. An inspection describes the tree of the frame it was created in, so reading `samples` after a pump throws instead of reporting what a different tree does.
+- New: `act.tap()` throws a `TapFailure` that carries the `TapInspection` explaining the failure, so the reason can be asserted without matching on the message. `TapFailure` extends `TestFailure`, existing expectations keep working. #150
+  ```dart
+  await expectLater(
+    () => act.tap(spot<ElevatedButton>()),
+    throwsA(
+      isA<TapFailure>().having(
+        (it) => it.inspection.tapFailure?.reason,
+        'reason',
+        isA<TapCoveredReason>(),
+      ),
+    ),
+  );
+  ```
+- Fix: `act.tap()` now finds an `AbsorbPointer` anywhere above the target. It previously only looked directly below the widget that received the hit test, so an `AbsorbPointer` created inside another widget's `build()` was missed and the failure reported an unknown reason. #150
+- Fix: `act.tap()` now reports the outermost `AbsorbPointer` or `IgnorePointer` above the target instead of the closest one. Hit testing walks from the root down and stops at the first one, so the outer widget is the one that has to change; removing the one that was reported before did not always make the widget tappable. #150
+- New: `act.tap()` explains offstage widgets instead of reporting an unknown reason. An `Offstage` ancestor takes a widget out of the layout and out of hit testing, which `TapOffstageReason` now names, together with the `Visibility` that built it where there is one. `spot()` skips offstage widgets, so this is what `spotOffstage()` selections report. #150
 - Improvement: The source location of a widget is resolved once per widget instead of on every lookup, which speeds up `act.tapAt()` timeline events and the diagnostics behind failing `act.tap()` calls. #154
 - New: `WidgetSelector<AnyText>.whereIsEditable()` and `whereIsNotEditable()` filter text matches by whether they come from an editable text input.
   ```dart

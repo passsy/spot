@@ -16,6 +16,27 @@ export 'package:checks/context.dart'
     show Condition, Context, ContextExtension, Extracted, Rejection, Subject;
 export 'package:meta/meta.dart' show useResult;
 export 'package:spot/src/act/act.dart' show Act, act;
+export 'package:spot/src/act/act_tap.dart'
+    show
+        TapAbsorbedReason,
+        TapBlocker,
+        TapCoveredReason,
+        TapFailure,
+        TapFailureReason,
+        TapHitSample,
+        TapHitTestInfo,
+        TapIgnoredReason,
+        TapInspection,
+        TapMultipleWidgetsFoundReason,
+        TapNoRenderObjectReason,
+        TapNonRenderBoxReason,
+        TapNotFoundReason,
+        TapOffstageReason,
+        TapOutsideViewportReason,
+        TapSamples,
+        TapUnknownReason,
+        TapWidgetInfo,
+        TapZeroSizeReason;
 export 'package:spot/src/screenshot/load_fonts.dart'
     show loadAppFonts, loadFont;
 export 'package:spot/src/screenshot/screenshot.dart'
