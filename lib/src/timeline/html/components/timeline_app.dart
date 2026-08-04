@@ -636,6 +636,8 @@ class TimelineAppState extends State<TimelineApp> {
             _selectAdjacentEventInFrame(-1);
           case 'ArrowDown':
             _selectAdjacentEventInFrame(1);
+          case ' ':
+            _openSelectedCapture();
           case 'Home':
             _select(0);
           case 'End':
@@ -1237,6 +1239,8 @@ class TimelineAppState extends State<TimelineApp> {
               const Component.text('Events'),
               _keyboardKey('↑'),
               _keyboardKey('↓'),
+              const Component.text('Capture'),
+              _keyboardKey('Space'),
             ]),
             button(
               type: ButtonType.button,
@@ -2351,6 +2355,19 @@ class TimelineAppState extends State<TimelineApp> {
     setState(() => _lightboxEvent = event);
   }
 
+  /// Opens the selected event's capture full screen.
+  ///
+  /// Every event of a captured frame carries its URL, so this is also the
+  /// check for whether the frame has a capture at all. Without one there is
+  /// nothing to open.
+  void _openSelectedCapture() {
+    final event = _selectedEvent;
+    if (event == null || event.screenshotUrl == null) {
+      return;
+    }
+    _openLightbox(event);
+  }
+
   void _closeLightbox() {
     setState(() => _lightboxEvent = null);
   }
@@ -2376,7 +2393,7 @@ class TimelineAppState extends State<TimelineApp> {
   /// Handles [key] while the lightbox is open, and reports whether it did.
   bool _handleLightboxKey(Object? key) {
     switch (key) {
-      case 'Escape':
+      case 'Escape' || ' ':
         _closeLightbox();
       case 'ArrowLeft':
         _showAdjacentCapture(-1);
@@ -2479,14 +2496,6 @@ class TimelineAppState extends State<TimelineApp> {
                   ),
                 ],
               ),
-            span(classes: 'lightbox__hint', [
-              _keyboardKey('←'),
-              _keyboardKey('→'),
-              const Component.text('Captures'),
-              _keyboardKey('↑'),
-              _keyboardKey('↓'),
-              const Component.text('Events'),
-            ]),
             button(
               classes: 'lightbox__action',
               attributes: const {'title': 'Close (Esc)'},

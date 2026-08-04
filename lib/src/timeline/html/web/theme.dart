@@ -1596,16 +1596,6 @@ body.is-resizing-rows * {
   pointer-events: none;
 }
 
-.lightbox__hint {
-  display: flex;
-  gap: 5px;
-  align-items: center;
-  margin-right: 4px;
-  color: var(--text-muted);
-  font-size: 11px;
-  white-space: nowrap;
-}
-
 .lightbox__position {
   display: block;
   margin-top: 3px;
