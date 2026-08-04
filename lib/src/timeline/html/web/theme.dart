@@ -987,6 +987,11 @@ body.is-resizing-rows * {
   scrollbar-width: thin;
 }
 
+/* The tree took the arrow keys over, which is worth showing. */
+.interactive-tree.has-arrow-keys {
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
 .tree-node {
   min-width: max-content;
 }

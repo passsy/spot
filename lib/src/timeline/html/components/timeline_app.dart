@@ -131,6 +131,35 @@ List<TreeRow> flattenWidgetTree(
   return rows;
 }
 
+/// The row the widget tree's arrow keys act on, or `null` when it has none.
+///
+/// The first row when nothing is selected, which is the row the tree already
+/// draws as selected in that case.
+TreeRow? selectedTreeRow(List<TreeRow> rows, String? selectedNodeId) {
+  if (rows.isEmpty) {
+    return null;
+  }
+  final index = rows.indexWhere((row) => row.id == selectedNodeId);
+  return rows[index == -1 ? 0 : index];
+}
+
+/// The node to select when moving [delta] rows from [selectedNodeId].
+///
+/// Stops at the ends instead of wrapping, so holding an arrow down settles at
+/// the top or the bottom of the tree.
+String? adjacentTreeNodeId(
+  List<TreeRow> rows,
+  String? selectedNodeId,
+  int delta,
+) {
+  final from = selectedTreeRow(rows, selectedNodeId);
+  if (from == null) {
+    return null;
+  }
+  final index = (rows.indexOf(from) + delta).clamp(0, rows.length - 1);
+  return rows[index].id;
+}
+
 enum _ResizeTarget { timeline, captureTree, treeDetails }
 
 const double _headerHeight = 48;
@@ -362,6 +391,10 @@ class TimelineAppState extends State<TimelineApp> {
   bool _showFullRawData = false;
   bool _showCaptureOverlays = true;
 
+  /// Whether the arrow keys move through the widget tree instead of the
+  /// timeline, see [_updateArrowTarget].
+  bool _arrowsDriveWidgetTree = false;
+
   /// Where the widget tree is scrolled to, and how tall its viewport is.
   ///
   /// Together they decide which rows are rendered, see [_widgetTreeRows].
@@ -376,6 +409,7 @@ class TimelineAppState extends State<TimelineApp> {
   double _treePanePercent = 62;
   _ResizeTarget? _resizeTarget;
   StreamSubscription<dynamic>? _keySubscription;
+  StreamSubscription<dynamic>? _pointerDownSubscription;
   StreamSubscription<dynamic>? _resizeMoveSubscription;
   StreamSubscription<dynamic>? _resizeEndSubscription;
 
@@ -451,6 +485,10 @@ class TimelineAppState extends State<TimelineApp> {
           event.preventDefault();
           return;
         }
+        if (_arrowsDriveWidgetTree && _handleWidgetTreeKey(event.key)) {
+          event.preventDefault();
+          return;
+        }
         switch (event.key) {
           case 'ArrowLeft':
             _selectAdjacentFrame(-1);
@@ -469,6 +507,7 @@ class TimelineAppState extends State<TimelineApp> {
         }
         event.preventDefault();
       });
+      _pointerDownSubscription = window.onMouseDown.listen(_updateArrowTarget);
       _resizeMoveSubscription = window.onMouseMove.listen(_resizePane);
       _resizeEndSubscription = window.onMouseUp.listen(_finishResizing);
     }
@@ -477,9 +516,88 @@ class TimelineAppState extends State<TimelineApp> {
   @override
   void dispose() {
     _keySubscription?.cancel();
+    _pointerDownSubscription?.cancel();
     _resizeMoveSubscription?.cancel();
     _resizeEndSubscription?.cancel();
     super.dispose();
+  }
+
+  /// Hands the arrow keys to the widget tree, or takes them back.
+  ///
+  /// The tree needs all four arrows for itself, so it claims them once it is
+  /// clicked into and gives them back on the next click anywhere else.
+  void _updateArrowTarget(dynamic event) {
+    final dynamic target = event.target;
+    final inTree = target != null && target.closest('#$_widgetTreeId') != null;
+    if (inTree == _arrowsDriveWidgetTree) {
+      return;
+    }
+    setState(() => _arrowsDriveWidgetTree = inTree);
+  }
+
+  /// Handles [key] for the widget tree, and reports whether it did.
+  ///
+  /// Up and down walk the rows on screen, left and right close and open the
+  /// selected node. Everything else is left to the timeline, so Home and End
+  /// keep jumping between events while the tree holds the arrows.
+  bool _handleWidgetTreeKey(Object? key) {
+    switch (key) {
+      case 'ArrowUp':
+        _selectAdjacentWidgetNode(-1);
+      case 'ArrowDown':
+        _selectAdjacentWidgetNode(1);
+      case 'ArrowLeft':
+        _setSelectedWidgetNodeExpanded(expanded: false);
+      case 'ArrowRight':
+        _setSelectedWidgetNodeExpanded(expanded: true);
+      default:
+        return false;
+    }
+    return true;
+  }
+
+  /// The rows the widget tree shows right now.
+  ///
+  /// What is on screen depends on the selected event, what is expanded and
+  /// what the search leaves visible, so it is flattened again rather than
+  /// remembered.
+  List<TreeRow> _currentTreeRows() {
+    final event = _selectedEvent;
+    if (event == null) {
+      return const [];
+    }
+    final root = _widgetTreeRoot(event);
+    return flattenWidgetTree(
+      root,
+      expandedNodeIds: _expandedWidgetNodes,
+      visibleNodeIds: searchStructuredWidgetTree(
+        root,
+        _widgetTreeSearch,
+      ).visible,
+      searchActive: _widgetTreeSearch.trim().isNotEmpty,
+    );
+  }
+
+  void _selectAdjacentWidgetNode(int delta) {
+    final id = adjacentTreeNodeId(
+      _currentTreeRows(),
+      _selectedWidgetNodeId,
+      delta,
+    );
+    if (id == null) {
+      return;
+    }
+    _selectWidgetNode(id);
+    _scrollTreeToNode(id);
+  }
+
+  void _setSelectedWidgetNodeExpanded({required bool expanded}) {
+    final row = selectedTreeRow(_currentTreeRows(), _selectedWidgetNodeId);
+    // A leaf has nothing to open, and a search forces everything open anyway.
+    if (row == null || !row.hasChildren || row.expanded == expanded) {
+      return;
+    }
+    _toggleWidgetNode(row.id);
   }
 
   void _startResizing(_ResizeTarget target, dynamic event) {
@@ -1357,7 +1475,8 @@ class TimelineAppState extends State<TimelineApp> {
 
     return div(
       id: _widgetTreeId,
-      classes: 'interactive-tree',
+      classes:
+          'interactive-tree ${_arrowsDriveWidgetTree ? 'has-arrow-keys' : ''}',
       attributes: const {'role': 'tree', 'aria-label': 'Flutter widget tree'},
       events: {'scroll': _onTreeScroll},
       [
@@ -1555,7 +1674,7 @@ class TimelineAppState extends State<TimelineApp> {
     }
 
     _selectWidgetNode(id);
-    _scrollTreeToNode(root, id);
+    _scrollTreeToNode(id);
   }
 
   /// Brings the row for [id] into view, sideways as well as down.
@@ -1563,19 +1682,11 @@ class TimelineAppState extends State<TimelineApp> {
   /// scrollIntoView is not enough: the row may not be rendered yet, because
   /// the tree only renders what is in view, and a deep row can sit past the
   /// right edge of the pane.
-  void _scrollTreeToNode(Map<String, dynamic>? root, String id) {
+  void _scrollTreeToNode(String id) {
     if (!kIsWeb) {
       return;
     }
-    final rows = flattenWidgetTree(
-      root,
-      expandedNodeIds: _expandedWidgetNodes,
-      visibleNodeIds: searchStructuredWidgetTree(
-        root,
-        _widgetTreeSearch,
-      ).visible,
-      searchActive: _widgetTreeSearch.trim().isNotEmpty,
-    );
+    final rows = _currentTreeRows();
     final index = rows.indexWhere((row) => row.id == id);
     if (index == -1) {
       return;

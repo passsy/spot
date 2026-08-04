@@ -119,6 +119,57 @@ void main() {
     );
   });
 
+  group('arrow keys inside the tree', () {
+    final root = node(
+      'a',
+      children: [
+        node('b', children: [node('c')]),
+        node('d'),
+      ],
+    );
+
+    List<TreeRow> rows({Set<String>? expanded}) {
+      return flattenWidgetTree(
+        root,
+        expandedNodeIds: expanded ?? _allIds(root),
+        visibleNodeIds: const {},
+        searchActive: false,
+      );
+    }
+
+    test('up and down walk the rows on screen', () {
+      // a, b, c, d
+      expect(adjacentTreeNodeId(rows(), 'b', 1), 'c');
+      expect(adjacentTreeNodeId(rows(), 'c', -1), 'b');
+    });
+
+    test('a collapsed branch is stepped over, not into', () {
+      // b is collapsed, so c is not on screen and down lands on d.
+      expect(adjacentTreeNodeId(rows(expanded: {'a'}), 'b', 1), 'd');
+    });
+
+    test('the ends hold instead of wrapping', () {
+      expect(adjacentTreeNodeId(rows(), 'a', -1), 'a');
+      expect(adjacentTreeNodeId(rows(), 'd', 1), 'd');
+    });
+
+    test('nothing selected starts at the root, which the tree highlights', () {
+      expect(selectedTreeRow(rows(), null)?.id, 'a');
+      expect(adjacentTreeNodeId(rows(), null, 1), 'b');
+    });
+
+    test('a tree without rows has nothing to move to', () {
+      expect(selectedTreeRow(const [], 'a'), isNull);
+      expect(adjacentTreeNodeId(const [], 'a', 1), isNull);
+    });
+
+    test('a leaf reports no children, so it cannot be opened', () {
+      expect(selectedTreeRow(rows(), 'd')?.hasChildren, isFalse);
+      expect(selectedTreeRow(rows(), 'b')?.hasChildren, isTrue);
+      expect(selectedTreeRow(rows(expanded: {'a'}), 'b')?.expanded, isFalse);
+    });
+  });
+
   test('a search drops branches that hold no match', () {
     final root = node(
       'a',
