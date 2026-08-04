@@ -146,9 +146,53 @@ class Act {
     });
   }
 
-  /// Inspects whether [selector] can be tapped.
+  /// Answers whether [selector] can be tapped, and why not, without tapping it.
   ///
-  /// This does not send pointer events and does not pump a frame.
+  /// Sends no pointer events and pumps no frame, so the app is in the same
+  /// state afterwards. That makes it the way to assert untappability:
+  /// [Act.tap] proves a widget cannot be tapped by failing the test, which is
+  /// the opposite of what an assertion needs.
+  ///
+  /// ```dart
+  /// final inspection = act.inspectTap(spot<SubmitButton>());
+  /// expect(inspection.canTap, isFalse);
+  /// ```
+  ///
+  /// [TapInspection.tapFailure] is `null` when the widget can be tapped,
+  /// otherwise it carries the reason. Read it untyped via
+  /// [TapFailureReason.reason], or through a typed getter that fails the test
+  /// with the full diagnostics when the widget turned out to be untappable for
+  /// a different reason than expected:
+  ///
+  /// ```dart
+  /// final reason = act.inspectTap(spot<SubmitButton>())
+  ///     .tapFailure!
+  ///     .tapCoveredReason;
+  /// expect(reason.primaryCover?.widget, isA<ColoredBox>());
+  /// ```
+  ///
+  /// The reasons are [TapNotFoundReason], [TapMultipleWidgetsFoundReason],
+  /// [TapNoRenderObjectReason], [TapNonRenderBoxReason],
+  /// [TapOutsideViewportReason], [TapAbsorbedReason], [TapIgnoredReason],
+  /// [TapOffstageReason], [TapZeroSizeReason], [TapCoveredReason] and
+  /// [TapUnknownReason]. Each one carries the widgets that explain it, such as
+  /// the [AbsorbPointer] that swallowed the event or the ancestor that forced
+  /// the target to zero size.
+  ///
+  /// A widget that can be tapped may still be partially covered, which no
+  /// failure can describe. [TapInspection.samples] answers that for tappable
+  /// and untappable widgets alike:
+  ///
+  /// ```dart
+  /// final samples = act.inspectTap(spot<SubmitButton>()).samples!;
+  /// expect(samples.hittablePercent, 100);
+  /// expect(samples.blockers, isEmpty);
+  /// ```
+  ///
+  /// The result describes the frame it was taken in and does not update when a
+  /// frame is pumped, see [TapInspection]. [Act.tap] throws a [TapFailure]
+  /// carrying the same inspection, so the reason of a real tap can be asserted
+  /// the same way.
   TapInspection inspectTap(WidgetSelector selector) {
     return inspectTapSelector(selector);
   }

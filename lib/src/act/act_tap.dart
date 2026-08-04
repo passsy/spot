@@ -11,9 +11,9 @@ import 'package:spot/src/spot/snapshot.dart';
 import 'package:spot/src/spot/widget_location.dart';
 import 'package:spot/src/spot/widget_selector.dart';
 
-/// Inspects whether [selector] can be tapped.
-///
-/// This does not send pointer events and does not pump a frame.
+/// Implements [Act.inspectTap], which documents the behaviour and is what
+/// users call. Lives here because act.dart cannot be imported for anything but
+/// doc references.
 TapInspection inspectTapSelector(WidgetSelector selector) {
   final selectorDescription = selector.toStringBreadcrumb();
   final snapshot = selector.snapshot();
