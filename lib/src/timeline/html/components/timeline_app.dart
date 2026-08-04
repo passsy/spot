@@ -2378,10 +2378,14 @@ class TimelineAppState extends State<TimelineApp> {
     switch (key) {
       case 'Escape':
         _closeLightbox();
-      case 'ArrowLeft' || 'ArrowUp':
+      case 'ArrowLeft':
         _showAdjacentCapture(-1);
-      case 'ArrowRight' || 'ArrowDown':
+      case 'ArrowRight':
         _showAdjacentCapture(1);
+      case 'ArrowUp':
+        _showAdjacentOverlay(-1);
+      case 'ArrowDown':
+        _showAdjacentOverlay(1);
       default:
         return false;
     }
@@ -2402,6 +2406,31 @@ class TimelineAppState extends State<TimelineApp> {
       component.timelineEvents.indexOf(event),
       delta,
     );
+    _showInLightbox(index);
+  }
+
+  /// Moves the lightbox to the event [delta] rows away in the same frame.
+  ///
+  /// Every event of a frame shares its one capture, so the image stays put and
+  /// what changes is the overlay drawn on top: the widget that event matched.
+  void _showAdjacentOverlay(int delta) {
+    final event = _lightboxEvent;
+    if (event == null) {
+      return;
+    }
+    final index = adjacentEventInFrameIndex(
+      groupTimelineFrames(component.timelineEvents),
+      component.timelineEvents.indexOf(event),
+      delta,
+    );
+    _showInLightbox(index);
+  }
+
+  /// Puts the event at [index] in the lightbox, and selects it behind.
+  ///
+  /// The selection follows along, so closing the lightbox leaves the report on
+  /// what was last looked at rather than where it started.
+  void _showInLightbox(int? index) {
     if (index == null) {
       return;
     }
@@ -2450,6 +2479,14 @@ class TimelineAppState extends State<TimelineApp> {
                   ),
                 ],
               ),
+            span(classes: 'lightbox__hint', [
+              _keyboardKey('←'),
+              _keyboardKey('→'),
+              const Component.text('Captures'),
+              _keyboardKey('↑'),
+              _keyboardKey('↓'),
+              const Component.text('Events'),
+            ]),
             button(
               classes: 'lightbox__action',
               attributes: const {'title': 'Close (Esc)'},
@@ -2481,14 +2518,30 @@ class TimelineAppState extends State<TimelineApp> {
           Component.text('${event.eventType} · ${_elapsedLabel(event)}'),
           if (position != -1)
             span(classes: 'lightbox__position', [
-              Component.text(
-                '${_frameLabel(captured[position])} · '
-                '${position + 1} of ${captured.length} captured',
-              ),
+              Component.text(_lightboxPosition(captured, position, event)),
             ]),
         ]),
       ],
     );
+  }
+
+  /// Where the lightbox is: which capture, and which event within it.
+  String _lightboxPosition(
+    List<TimelineFrameGroup> captured,
+    int position,
+    TimelineEvent event,
+  ) {
+    final frame = captured[position];
+    final label =
+        '${_frameLabel(frame)} · '
+        '${position + 1} of ${captured.length} captured';
+    if (frame.eventIndexes.length == 1) {
+      return label;
+    }
+    final inFrame = frame.eventIndexes.indexOf(
+      component.timelineEvents.indexOf(event),
+    );
+    return '$label · Event ${inFrame + 1} of ${frame.eventIndexes.length}';
   }
 
   /// The source file [event] was triggered from, `null` when none was stored.
