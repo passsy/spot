@@ -446,7 +446,6 @@ kbd {
       135deg,
       transparent 0 6px,
       #22242a 6px 12px);
-  cursor: help;
 }
 
 .frame-gap:hover {
