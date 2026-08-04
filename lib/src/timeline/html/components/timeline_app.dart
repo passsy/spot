@@ -426,7 +426,11 @@ class TimelineAppState extends State<TimelineApp> {
         ..clear()
         ..addAll(_expandedNodeIdsFor(initialSelection));
     }
-    _scrollCallerIntoView();
+    _scrollCallerIntoView(
+      initialSelection == null
+          ? null
+          : component.timelineEvents[initialSelection].callerLine,
+    );
     if (kIsWeb) {
       _keySubscription = window.onKeyDown.listen((event) {
         final dynamic target = event.target;
@@ -672,13 +676,13 @@ class TimelineAppState extends State<TimelineApp> {
             ?.scrollIntoView();
       });
     }
-    _scrollCallerIntoView();
+    _scrollCallerIntoView(component.timelineEvents[index].callerLine);
   }
 
   void _selectTab(_InspectorTab tab) {
     setState(() => _selectedTab = tab);
     if (tab == _InspectorTab.details) {
-      _scrollCallerIntoView();
+      _scrollCallerIntoView(_selectedEvent?.callerLine);
     }
   }
 
@@ -1802,24 +1806,73 @@ class TimelineAppState extends State<TimelineApp> {
   /// The pane holds the whole file, so without this it opens at line 1 and the
   /// caller is somewhere below the fold. Runs after the DOM caught up with the
   /// state change, which is why it is scheduled rather than called directly.
-  void _scrollCallerIntoView() {
-    if (!kIsWeb) {
+  /// Puts the line that triggered [callerLine] in the middle of the source
+  /// pane.
+  ///
+  /// The pane holds the whole file, so without this it shows line 1 and the
+  /// caller is somewhere below the fold.
+  ///
+  /// Waits for the pane to actually hold [callerLine] before measuring.
+  /// Rendering happens after the state change, so scrolling straight away
+  /// would measure the previously selected event's line and leave the pane
+  /// wherever that happened to be.
+  void _scrollCallerIntoView(int? callerLine) {
+    if (!kIsWeb || callerLine == null) {
       return;
     }
-    Timer.run(() {
+
+    var attemptsLeft = 60;
+    var settledFrames = 0;
+    void scrollWhenRendered() {
+      void retry() {
+        if (attemptsLeft-- > 0) {
+          Future<void>.delayed(
+            const Duration(milliseconds: 16),
+            scrollWhenRendered,
+          );
+        }
+      }
+
       final dynamic pane = window.document.querySelector('#$_sourceCodeId');
       final dynamic line = window.document.querySelector('#$_callerLineId');
-      if (pane == null || line == null) {
+      final rendered = line == null
+          ? null
+          : int.tryParse('${line.getAttribute('data-line')}');
+      if (pane == null || line == null || rendered != callerLine) {
+        retry();
         return;
       }
+      // Assigning scrollTop does nothing while the pane has nothing to
+      // scroll, which is the case until it has been laid out.
+      final num paneHeight = pane.clientHeight as num;
+      if (paneHeight <= 0 || (pane.scrollHeight as num) <= paneHeight) {
+        retry();
+        return;
+      }
+
       // offsetTop is relative to the pane, which is the positioned ancestor.
       final num lineTop = line.offsetTop as num;
       final num lineHeight = line.offsetHeight as num;
-      final num paneHeight = pane.clientHeight as num;
-      pane.scrollTop = (lineTop - (paneHeight - lineHeight) / 2)
+      final target = (lineTop - (paneHeight - lineHeight) / 2)
           .clamp(0, double.infinity)
           .round();
-    });
+      if ((pane.scrollTop as num).round() != target) {
+        pane.scrollTop = target;
+      }
+      // Hydration replaces the pane shortly after the first paint and takes
+      // the scroll position with it, so hold the position for a few frames
+      // rather than trusting the first assignment.
+      settledFrames =
+          (pane.scrollTop as num).round() == target ||
+              (target > 0 && (pane.scrollTop as num) > 0)
+          ? settledFrames + 1
+          : 0;
+      if (settledFrames < 3) {
+        retry();
+      }
+    }
+
+    scrollWhenRendered();
   }
 
   /// When the event happened, on both clocks, in one line.
@@ -1979,6 +2032,9 @@ class TimelineAppState extends State<TimelineApp> {
           for (var index = 0; index < source.lines.length; index++)
             span(
               id: index + 1 == callerLine ? _callerLineId : null,
+              attributes: index + 1 == callerLine
+                  ? {'data-line': '${index + 1}'}
+                  : null,
               classes:
                   'source-line ${index + 1 == callerLine ? 'is-caller' : ''}',
               [
