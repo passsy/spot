@@ -1596,6 +1596,14 @@ body.is-resizing-rows * {
   pointer-events: none;
 }
 
+.lightbox__position {
+  display: block;
+  margin-top: 3px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
 .lightbox__caption {
   color: var(--text-secondary);
   font-size: 12px;

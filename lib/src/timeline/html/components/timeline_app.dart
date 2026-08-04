@@ -388,6 +388,32 @@ TimelineGap? gapBetween(
   );
 }
 
+/// The event to select when the lightbox moves [delta] captures along.
+///
+/// Only captured frames are stepped through. A frame without one has nothing
+/// to put on screen, and landing on an empty lightbox reads as the report
+/// having lost the image. Stops at the ends rather than wrapping.
+int? adjacentCapturedEventIndex(
+  List<TimelineFrameGroup> frames,
+  int? selectedEventIndex,
+  int delta,
+) {
+  final captured = frames
+      .where((frame) => frame.screenshotUrl != null)
+      .toList(growable: false);
+  if (captured.isEmpty) {
+    return null;
+  }
+  final current = captured.indexWhere(
+    (frame) => frame.eventIndexes.contains(selectedEventIndex),
+  );
+  final target = ((current == -1 ? 0 : current) + delta).clamp(
+    0,
+    captured.length - 1,
+  );
+  return captured[target].eventIndexes.first;
+}
+
 /// One column of the timeline strip: a frame that was recorded, or a gap.
 class TrackColumn {
   const TrackColumn.frame(TimelineFrameGroup this.frame) : gap = null;
@@ -590,9 +616,11 @@ class TimelineAppState extends State<TimelineApp> {
             target?.isContentEditable == true) {
           return;
         }
-        if (event.key == 'Escape' && _lightboxEvent != null) {
-          _closeLightbox();
-          event.preventDefault();
+        // The lightbox covers everything, so it takes the keyboard with it.
+        if (_lightboxEvent != null) {
+          if (_handleLightboxKey(event.key)) {
+            event.preventDefault();
+          }
           return;
         }
         if (_arrowsDriveWidgetTree && _handleWidgetTreeKey(event.key)) {
@@ -2327,6 +2355,60 @@ class TimelineAppState extends State<TimelineApp> {
     setState(() => _lightboxEvent = null);
   }
 
+  /// The frames that have a capture, which is what the lightbox steps through.
+  List<TimelineFrameGroup> _capturedFrames() {
+    return groupTimelineFrames(
+      component.timelineEvents,
+    ).where((frame) => frame.screenshotUrl != null).toList(growable: false);
+  }
+
+  /// Where [event] sits among [captured], or `-1` when its frame has none.
+  int _capturedFrameIndexOf(
+    List<TimelineFrameGroup> captured,
+    TimelineEvent event,
+  ) {
+    final eventIndex = component.timelineEvents.indexOf(event);
+    return captured.indexWhere(
+      (frame) => frame.eventIndexes.contains(eventIndex),
+    );
+  }
+
+  /// Handles [key] while the lightbox is open, and reports whether it did.
+  bool _handleLightboxKey(Object? key) {
+    switch (key) {
+      case 'Escape':
+        _closeLightbox();
+      case 'ArrowLeft' || 'ArrowUp':
+        _showAdjacentCapture(-1);
+      case 'ArrowRight' || 'ArrowDown':
+        _showAdjacentCapture(1);
+      default:
+        return false;
+    }
+    return true;
+  }
+
+  /// Moves the lightbox [delta] captures along.
+  ///
+  /// The selection follows along, so closing the lightbox leaves the report on
+  /// the capture that was last looked at rather than where it started.
+  void _showAdjacentCapture(int delta) {
+    final event = _lightboxEvent;
+    if (event == null) {
+      return;
+    }
+    final index = adjacentCapturedEventIndex(
+      groupTimelineFrames(component.timelineEvents),
+      component.timelineEvents.indexOf(event),
+      delta,
+    );
+    if (index == null) {
+      return;
+    }
+    _select(index);
+    setState(() => _lightboxEvent = component.timelineEvents[index]);
+  }
+
   /// The capture, full screen, over everything else.
   ///
   /// Dismissed by clicking the backdrop, the close button, or Escape. The
@@ -2336,6 +2418,8 @@ class TimelineAppState extends State<TimelineApp> {
     if (screenshotUrl == null) {
       return const Component.fragment([]);
     }
+    final captured = _capturedFrames();
+    final position = _capturedFrameIndexOf(captured, event);
     return div(
       classes: 'lightbox',
       attributes: const {
@@ -2395,6 +2479,13 @@ class TimelineAppState extends State<TimelineApp> {
         ),
         div(classes: 'lightbox__caption', [
           Component.text('${event.eventType} · ${_elapsedLabel(event)}'),
+          if (position != -1)
+            span(classes: 'lightbox__position', [
+              Component.text(
+                '${_frameLabel(captured[position])} · '
+                '${position + 1} of ${captured.length} captured',
+              ),
+            ]),
         ]),
       ],
     );

@@ -7,12 +7,13 @@ void main() {
     int number,
     List<int> eventIndexes, {
     int? renderedFrameNumber,
+    String? screenshotUrl,
   }) {
     return TimelineFrameGroup(
       frameNumber: number,
       renderedFrameNumber: renderedFrameNumber ?? number,
       eventIndexes: eventIndexes,
-      screenshotUrl: null,
+      screenshotUrl: screenshotUrl,
     );
   }
 
@@ -113,6 +114,48 @@ void main() {
     // Backwards out of the first frame stays on its first event.
     expect(adjacentFrameEventIndex(frames, 1, -1), 0);
     expect(adjacentFrameEventIndex(frames, 0, -1), 0);
+  });
+
+  group('stepping through the lightbox', () {
+    final frames = [
+      frame(1, [0], screenshotUrl: './frame-1.png'),
+      // Nothing was captured for these two.
+      frame(2, [1]),
+      frame(3, [2]),
+      frame(4, [3], screenshotUrl: './frame-4.png'),
+      frame(5, [4], screenshotUrl: './frame-5.png'),
+    ];
+
+    test('frames without a capture are stepped over', () {
+      // From frame 1 the next capture is frame 4, not frame 2.
+      expect(adjacentCapturedEventIndex(frames, 0, 1), 3);
+      expect(adjacentCapturedEventIndex(frames, 3, -1), 0);
+    });
+
+    test('the ends hold instead of wrapping', () {
+      expect(adjacentCapturedEventIndex(frames, 0, -1), 0);
+      expect(adjacentCapturedEventIndex(frames, 4, 1), 4);
+    });
+
+    test('a report without a single capture has nothing to step through', () {
+      expect(
+        adjacentCapturedEventIndex(
+          [
+            frame(1, [0]),
+          ],
+          0,
+          1,
+        ),
+        isNull,
+      );
+      expect(adjacentCapturedEventIndex(const [], null, 1), isNull);
+    });
+
+    test('stepping from an uncaptured frame starts at the first capture', () {
+      // The lightbox only opens on a capture, but the selection behind it can
+      // sit anywhere, so this must not walk off the list.
+      expect(adjacentCapturedEventIndex(frames, 1, 1), 3);
+    });
   });
 
   group('gaps between recorded frames', () {
