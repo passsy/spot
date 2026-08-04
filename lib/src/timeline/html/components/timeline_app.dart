@@ -292,6 +292,12 @@ List<TimelineFrameGroup> groupTimelineFrames(List<TimelineEvent> events) {
       .toList(growable: false);
 }
 
+/// The event to select when moving [delta] frames away from
+/// [selectedEventIndex].
+///
+/// Always the first event of the target frame. Frames are their own stories,
+/// so landing in the middle of one because that is where the previous frame
+/// was left off hides everything that happened before it.
 int? adjacentFrameEventIndex(
   List<TimelineFrameGroup> frames,
   int? selectedEventIndex,
@@ -312,15 +318,11 @@ int? adjacentFrameEventIndex(
   if (currentFrameIndex == -1) {
     return frames.first.eventIndexes.first;
   }
-  final currentEventOffset = frames[currentFrameIndex].eventIndexes.indexOf(
-    selectedEventIndex,
-  );
   final targetFrameIndex = (currentFrameIndex + delta).clamp(
     0,
     frames.length - 1,
   );
-  final targetEvents = frames[targetFrameIndex].eventIndexes;
-  return targetEvents[currentEventOffset.clamp(0, targetEvents.length - 1)];
+  return frames[targetFrameIndex].eventIndexes.first;
 }
 
 int? adjacentEventInFrameIndex(
@@ -887,7 +889,7 @@ class TimelineAppState extends State<TimelineApp> {
         ),
         _inspector(),
         SnackBar(key: _snackBar),
-        if (_lightboxEvent case final lightboxEvent?) _lightbox(lightboxEvent),
+        if (_lightboxEvent != null) _lightbox(_lightboxEvent!),
       ],
     );
   }

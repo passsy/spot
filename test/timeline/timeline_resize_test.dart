@@ -90,23 +90,24 @@ void main() {
     expect(adjustedPaneSize(57, 4, minimum: 20, maximum: 80), 61);
   });
 
-  test(
-    'horizontal navigation moves between frames and preserves event row',
-    () {
-      final frames = [
-        frame(1, [0, 1]),
-        frame(2, [2, 3, 4]),
-        frame(3, [5]),
-      ];
+  test('horizontal navigation lands on the first event of the frame', () {
+    final frames = [
+      frame(1, [0, 1]),
+      frame(2, [2, 3, 4]),
+      frame(3, [5]),
+    ];
 
-      expect(adjacentFrameEventIndex(frames, null, 1), 0);
-      expect(adjacentFrameEventIndex(frames, null, -1), 5);
-      expect(adjacentFrameEventIndex(frames, 1, 1), 3);
-      expect(adjacentFrameEventIndex(frames, 3, 1), 5);
-      expect(adjacentFrameEventIndex(frames, 5, -1), 2);
-      expect(adjacentFrameEventIndex(frames, 0, -1), 0);
-    },
-  );
+    expect(adjacentFrameEventIndex(frames, null, 1), 0);
+    expect(adjacentFrameEventIndex(frames, null, -1), 5);
+    // From the second event of frame 1 into frame 2: its first event, not the
+    // one that happens to sit in the same row.
+    expect(adjacentFrameEventIndex(frames, 1, 1), 2);
+    expect(adjacentFrameEventIndex(frames, 3, 1), 5);
+    expect(adjacentFrameEventIndex(frames, 5, -1), 2);
+    // Backwards out of the first frame stays on its first event.
+    expect(adjacentFrameEventIndex(frames, 1, -1), 0);
+    expect(adjacentFrameEventIndex(frames, 0, -1), 0);
+  });
 
   test('vertical navigation stays within the selected frame', () {
     final frames = [
