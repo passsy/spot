@@ -4,19 +4,10 @@ import 'package:spot/spot.dart';
 
 void main() {
   testWidgets('existsOnce adds to timeline', (tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          appBar: AppBar(),
-        ),
-      ),
-    );
+    await tester.pumpWidget(MaterialApp(home: Scaffold(appBar: AppBar())));
     spot<AppBar>().existsOnce();
     final existsOnceEvent = timeline.events.single;
-    expect(
-      existsOnceEvent.details,
-      contains('Found 1 widgets matching AppBar expected only one'),
-    );
+    expect(existsOnceEvent.details, contains('AppBar exists once.'));
   });
 
   testWidgets('existsOnce adds to timeline - error', (tester) async {
@@ -36,12 +27,7 @@ void main() {
     testWidgets('existsAtLeastOnce adds to timeline', (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Column(
-            children: [
-              Text('Text 1'),
-              Text('Text 2'),
-            ],
-          ),
+          home: Column(children: [Text('Text 1'), Text('Text 2')]),
         ),
       );
 
@@ -51,18 +37,14 @@ void main() {
       expect(timelineEvent.eventType.label, 'Assertion');
       expect(
         timelineEvent.details,
-        contains(
-          'Found 2 widgets matching Text expected at least one',
-        ),
+        contains('Text exists at least once, found 2.'),
       );
     });
 
     testWidgets('existsAtLeastOnce adds to timeline - error', (tester) async {
       // No Text widgets in the tree
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Center(child: SizedBox()),
-        ),
+        const MaterialApp(home: Center(child: SizedBox())),
       );
 
       try {
@@ -80,11 +62,7 @@ void main() {
     });
 
     testWidgets('existsAtMostOnce adds to timeline', (tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: Text('Hello'),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: Text('Hello')));
 
       spot<Text>().existsAtMostOnce();
 
@@ -92,9 +70,7 @@ void main() {
       expect(timelineEvent.eventType.label, 'Assertion');
       expect(
         timelineEvent.details,
-        contains(
-          'Found 1 widgets matching Text expected at most one',
-        ),
+        contains('Text exists at most once, found 1.'),
       );
     });
 
@@ -102,12 +78,7 @@ void main() {
       // Multiple Text widgets in the tree
       await tester.pumpWidget(
         const MaterialApp(
-          home: Column(
-            children: [
-              Text('Text 1'),
-              Text('Text 2'),
-            ],
-          ),
+          home: Column(children: [Text('Text 1'), Text('Text 2')]),
         ),
       );
 
@@ -129,28 +100,19 @@ void main() {
 
     testWidgets('doesNotExist adds to timeline', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Center(child: SizedBox()),
-        ),
+        const MaterialApp(home: Center(child: SizedBox())),
       );
 
       spot<Text>().doesNotExist();
 
       final timelineEvent = timeline.events.single;
       expect(timelineEvent.eventType.label, 'Assertion');
-      expect(
-        timelineEvent.details,
-        contains('Found 0 widgets matching Text expected none.'),
-      );
+      expect(timelineEvent.details, contains('Text does not exist.'));
     });
 
     testWidgets('doesNotExist adds to timeline - error', (tester) async {
       // Text widget exists when it shouldn't
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: Text('Hello'),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: Text('Hello')));
 
       try {
         spot<Text>().doesNotExist();
@@ -171,12 +133,7 @@ void main() {
     testWidgets('existsExactlyNTimes adds to timeline', (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Column(
-            children: [
-              Text('Text 1'),
-              Text('Text 2'),
-            ],
-          ),
+          home: Column(children: [Text('Text 1'), Text('Text 2')]),
         ),
       );
 
@@ -186,7 +143,7 @@ void main() {
       expect(timelineEvent.eventType.label, 'Assertion');
       expect(
         timelineEvent.details,
-        contains('Found 2 widgets matching Text expected exactly 2.'),
+        contains('Text exists exactly 2 times, found 2.'),
       );
     });
 
@@ -194,12 +151,7 @@ void main() {
       // Wrong number of Text widgets in the tree
       await tester.pumpWidget(
         const MaterialApp(
-          home: Column(
-            children: [
-              Text('Text 1'),
-              Text('Text 2'),
-            ],
-          ),
+          home: Column(children: [Text('Text 1'), Text('Text 2')]),
         ),
       );
 
@@ -223,11 +175,7 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: Column(
-            children: [
-              Text('Text 1'),
-              Text('Text 2'),
-              Text('Text 3'),
-            ],
+            children: [Text('Text 1'), Text('Text 2'), Text('Text 3')],
           ),
         ),
       );
@@ -238,22 +186,14 @@ void main() {
       expect(timelineEvent.eventType.label, 'Assertion');
       expect(
         timelineEvent.details,
-        contains(
-          'Found 3 widgets matching Text expected at least 2.',
-        ),
+        contains('Text exists at least 2 times, found 3.'),
       );
     });
 
     testWidgets('existsAtLeastNTimes adds to timeline - error', (tester) async {
       // Too few Text widgets in the tree
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Column(
-            children: [
-              Text('Text 1'),
-            ],
-          ),
-        ),
+        const MaterialApp(home: Column(children: [Text('Text 1')])),
       );
 
       try {
@@ -274,13 +214,7 @@ void main() {
 
     testWidgets('existsAtMostNTimes adds to timeline', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Column(
-            children: [
-              Text('Text 1'),
-            ],
-          ),
-        ),
+        const MaterialApp(home: Column(children: [Text('Text 1')])),
       );
 
       spot<Text>().existsAtMostNTimes(2);
@@ -289,9 +223,7 @@ void main() {
       expect(timelineEvent.eventType.label, 'Assertion');
       expect(
         timelineEvent.details,
-        contains(
-          'Found 1 widgets matching Text expected at most 2.',
-        ),
+        contains('Text exists at most 2 times, found 1.'),
       );
     });
 
@@ -300,11 +232,7 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: Column(
-            children: [
-              Text('Text 1'),
-              Text('Text 2'),
-              Text('Text 3'),
-            ],
+            children: [Text('Text 1'), Text('Text 2'), Text('Text 3')],
           ),
         ),
       );
@@ -327,9 +255,7 @@ void main() {
 
     testWidgets('failure cases add error events to timeline', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Center(child: SizedBox()),
-        ),
+        const MaterialApp(home: Center(child: SizedBox())),
       );
 
       try {
@@ -342,9 +268,7 @@ void main() {
       expect(timelineEvent.eventType.label, 'Assertion Failed');
       expect(
         timelineEvent.details,
-        contains(
-          'Could not find Text in widget tree, expected exactly 1.',
-        ),
+        contains('Could not find Text in widget tree, expected exactly 1.'),
       );
     });
   });

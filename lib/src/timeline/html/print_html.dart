@@ -77,9 +77,10 @@ extension HtmlTimelinePrinter on Timeline {
     ];
     final remainingSpace = 256 - reserved.reduce((a, b) => a + b);
     assert(
-        remainingSpace > 0,
-        'The remaining space for the timeline directory name is too small: $remainingSpace/256 left. '
-        'The plan was to place the timeline in ${timelineDirName(maxLength: 1000)}');
+      remainingSpace > 0,
+      'The remaining space for the timeline directory name is too small: $remainingSpace/256 left. '
+      'The plan was to place the timeline in ${timelineDirName(maxLength: 1000)}',
+    );
     final timelineDirNameTrimmed = timelineDirName(
       maxLength: remainingSpace.clamp(0, maxTimelineDirNameLength),
     );
@@ -124,8 +125,9 @@ extension HtmlTimelinePrinter on Timeline {
       );
       jsonTimelineEvents.add(timelineEvent);
     }
-    final json = const JsonEncoder.withIndent('  ')
-        .convert(jsonTimelineEvents.map((e) => e.toMap()).toList());
+    final json = const JsonEncoder.withIndent(
+      '  ',
+    ).convert(jsonTimelineEvents.map((e) => e.toMap()).toList());
     events.writeAsStringSync(json);
 
     final htmlFile = spotTempDir.file('index.html');
@@ -211,7 +213,6 @@ Future<bool> _isHotRestartServerRunning() async {
     print('Server is running on $host:$port');
     return true;
   } on SocketException catch (_) {
-    print('No server running on $host:$port');
     return false;
   } finally {
     socket?.destroy();

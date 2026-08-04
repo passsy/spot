@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs
 
+import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:spot/src/timeline/html/components/timeline_app.dart';
 import 'package:spot/src/timeline/html/web/theme.dart';
@@ -46,9 +47,9 @@ class ServerAppState extends State<ServerApp>
   }
 
   @override
-  Iterable<Component> build(BuildContext context) sync* {
+  Component build(BuildContext context) {
     // Keep in sync with ClientApp.build(). Both should render the same components or hydration changes the DOM.
-    yield TimelineApp(
+    return TimelineApp(
       testName: component.testName,
       testNameWithHierarchy: component.testNameWithHierarchy,
       timelineEvents: component.timelineEvents,
@@ -56,20 +57,20 @@ class ServerAppState extends State<ServerApp>
   }
 
   static List<StyleRule> get styles => [
-        css('*')
-            .text(fontFamily: fontFamily)
-            .raw({'-webkit-font-smoothing': 'antialiased'}),
-        css('body')
-            .box(
-              margin: EdgeInsets.all(10.px),
-              padding: EdgeInsets.only(bottom: 50.px),
-            )
-            .background(color: spotBackground),
-        css('h1, h2, h3, p, pre').text(color: fontColor),
-        css('h1')
-            .text(fontWeight: FontWeight.w400, fontSize: h1FontSize)
-            .box(padding: h1Padding),
-        css('.header').flexbox(alignItems: AlignItems.center),
-        ...TimelineAppState.styles,
-      ];
+    css('*')
+        .styles(fontFamily: fontFamily)
+        .styles(raw: {'-webkit-font-smoothing': 'antialiased'}),
+    css('body')
+        .styles(
+          margin: Margin.all(10.px),
+          padding: Padding.only(bottom: 50.px),
+        )
+        .styles(backgroundColor: spotBackground),
+    css('h1, h2, h3, p, pre').styles(color: fontColor),
+    css('h1')
+        .styles(fontWeight: FontWeight.w400, fontSize: h1FontSize)
+        .styles(padding: h1Padding),
+    css('.header').styles(alignItems: AlignItems.center),
+    ...TimelineAppState.styles,
+  ];
 }

@@ -1,4 +1,7 @@
 // ignore_for_file: avoid_print
+import 'dart:convert';
+
+import 'package:jaspr/dom.dart';
 import 'package:jaspr/server.dart' hide ServerApp;
 import 'package:spot/src/timeline/html/sources/script.js.g.dart';
 import 'package:spot/src/timeline/html/web/server_app.dart';
@@ -20,29 +23,32 @@ Future<String> renderTimelineWithJaspr(
   bool hotRestart = false,
 }) async {
   // Turn off isolate rendering.
-  Jaspr.initializeApp(useIsolates: false);
+  Jaspr.initializeApp(options: const ServerOptions(clientId: 'script.js'));
   final nameWithHierarchy = testNameWithHierarchy();
   final html = await renderComponent(
     Document(
+      base: null,
       title: "Timeline Events",
       head: [
-        link(
+        const link(
           href:
               "https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap",
           rel: "stylesheet",
         ),
-        if (!inlineScripts)
-          DomComponent(
+        const Component.element(
+          tag: 'style',
+          children: [RawText(animationsCSS)],
+        ),
+        if (hotRestart)
+          const Component.element(
+            tag: 'meta',
+            attributes: {'hot-restart': 'true'},
+          ),
+        if (hotRestart)
+          const Component.element(
             tag: 'script',
-            attributes: {'src': hotRestart ? '/script.js' : 'script.js'},
-          )
-        else
-          DomComponent(tag: 'script', child: raw(timelineJS)),
-        DomComponent(tag: 'style', child: raw(animationsCSS)),
-        if (hotRestart)
-          const DomComponent(tag: 'meta', attributes: {'hot-restart': 'true'}),
-        if (hotRestart)
-          DomComponent(tag: 'script', child: raw(_upgradeToLocalhostJS)),
+            children: [RawText(_upgradeToLocalhostJS)],
+          ),
       ],
       styles: ServerAppState.styles,
       body: ServerApp(
@@ -54,7 +60,21 @@ Future<String> renderTimelineWithJaspr(
     standalone: true,
   );
 
-  return '<!DOCTYPE html>\n$html';
+  var renderedHtml = utf8.decode(html.body);
+  const clientScriptTag = '<script src="/script.js" defer></script>';
+  if (inlineScripts) {
+    renderedHtml = renderedHtml.replaceFirst(
+      clientScriptTag,
+      '<script>$timelineJS</script>',
+    );
+  } else if (!hotRestart) {
+    renderedHtml = renderedHtml.replaceFirst(
+      'src="/script.js"',
+      'src="script.js"',
+    );
+  }
+
+  return '<!DOCTYPE html>\n$renderedHtml';
 }
 
 /// Returns the test name including the group hierarchy.
@@ -65,7 +85,8 @@ String testNameWithHierarchy() {
   }
 
   // Group names are concatenated with the name of the previous group
-  final rawGroupNames = Invoker.current?.liveTest.groups
+  final rawGroupNames =
+      Invoker.current?.liveTest.groups
           .map((group) {
             if (group.name.isEmpty) {
               return null;

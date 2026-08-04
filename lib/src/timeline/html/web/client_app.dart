@@ -4,7 +4,7 @@ import 'dart:async';
 // ignore: avoid_web_libraries_in_flutter, deprecated_member_use
 import 'dart:html';
 
-import 'package:jaspr/browser.dart';
+import 'package:jaspr/client.dart';
 import 'package:spot/src/timeline/html/components/timeline_app.dart';
 import 'package:spot/src/timeline/html/web/timeline_event.dart';
 
@@ -25,7 +25,7 @@ void _registerHotRestart() {
     return;
   }
   Timer.periodic(const Duration(milliseconds: 200), (timer) {
-    reloadOnChange('script.js');
+    reloadOnChange('/script.js');
     reloadOnChange(window.location.href);
   });
 }
@@ -82,8 +82,8 @@ class _ClientAppState extends State<ClientApp>
   }
 
   @override
-  Iterable<Component> build(BuildContext context) sync* {
-    yield TimelineApp(
+  Component build(BuildContext context) {
+    return TimelineApp(
       testName: testName,
       testNameWithHierarchy: testNameWithHierarchy,
       timelineEvents: timelineEvents,

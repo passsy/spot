@@ -7,6 +7,7 @@ library;
 // ignore: avoid_web_libraries_in_flutter, deprecated_member_use
 import 'dart:html' if (dart.library.io) '../web/web_stubs.dart' show window;
 
+import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:spot/src/timeline/html/components/events.dart';
 import 'package:spot/src/timeline/html/components/modal.dart';
@@ -43,38 +44,40 @@ class TimelineAppState extends State<TimelineApp> {
   final GlobalStateKey<ModalState> _modal = GlobalStateKey();
 
   @override
-  Iterable<Component> build(BuildContext context) {
-    return [
-      div(classes: "header", [
+  Component build(BuildContext context) {
+    return Component.fragment([
+      const div(classes: "header", [
         img(
           src:
               "https://user-images.githubusercontent.com/1096485/188243198-7abfc785-8ecd-40cb-bb28-5561610432a4.png",
           height: 100,
         ),
-        h1([text("Timeline")]),
+        h1([Component.text("Timeline")]),
       ]),
-      div(classes: "horizontal-spacer", [
-        h2([text("Info")]),
+      const div(classes: "horizontal-spacer", [
+        h2([Component.text("Info")]),
       ]),
       p([
-        strong([text("Test:")]),
-        text(" ${component.testNameWithHierarchy}"),
+        const strong([Component.text("Test:")]),
+        Component.text(" ${component.testNameWithHierarchy}"),
       ]),
-      button(classes: "button-spot", onClick: () async {
-        final command = 'flutter test --plain-name="${component.testName}"';
-        try {
-          await window.navigator.clipboard?.writeText(command);
-          _snackBar.currentState!.show("Test command copied to clipboard");
-        } catch (_) {
-          _snackBar.currentState!.show("Failed to copy test command");
-        }
-      }, [
-        text("Copy test command"),
-      ]),
+      button(
+        classes: "button-spot",
+        onClick: () async {
+          final command = 'flutter test --plain-name="${component.testName}"';
+          try {
+            await window.navigator.clipboard?.writeText(command);
+            _snackBar.currentState!.show("Test command copied to clipboard");
+          } catch (_) {
+            _snackBar.currentState!.show("Failed to copy test command");
+          }
+        },
+        const [Component.text("Copy test command")],
+      ),
       SnackBar(key: _snackBar),
       if (component.timelineEvents.isNotEmpty) ...[
-        div(classes: "horizontal-spacer", [
-          h2([text("Events")]),
+        const div(classes: "horizontal-spacer", [
+          h2([Component.text("Events")]),
         ]),
         section(classes: "events", [
           Events(
@@ -85,58 +88,60 @@ class TimelineAppState extends State<TimelineApp> {
           ),
         ]),
       ],
-      div([
-        text("Tell us how to improve the timeline at "),
-        a(
-          href: "https://github.com/passsy/spot/issues",
-          [text("github.com/passsy/spot")],
-        ),
+      const div([
+        Component.text("Tell us how to improve the timeline at "),
+        a(href: "https://github.com/passsy/spot/issues", [
+          Component.text("github.com/passsy/spot"),
+        ]),
       ]),
       Modal(events: component.timelineEvents, key: _modal),
-    ];
+    ]);
   }
 
   static List<StyleRule> get styles => [
-        css('.button-spot', [
-          css('&')
-              .box(
-                border: const Border.all(BorderSide.none()),
-                radius: BorderRadius.circular(4.px),
-                padding:
-                    EdgeInsets.symmetric(vertical: 8.px, horizontal: 16.px),
-                cursor: Cursor.pointer,
-                transition: const Transition(
-                  'background-color',
-                  duration: 300,
-                  curve: Curve.ease,
-                ),
-              )
-              .text(color: buttonColor, fontSize: 16.px)
-              .background(color: buttonBackgroundColor),
-          css('&:hover').background(color: buttonHoverBackgroundColor),
-        ]),
-        css('.horizontal-spacer', [
-          css('&').box(
-            border: Border.only(
-              bottom: BorderSide.solid(
-                width: 1.px,
-                color: horizontalSpacerBorderColor,
-              ),
+    css('.button-spot', [
+      css('&')
+          .styles(
+            border: Border.none,
+            radius: BorderRadius.circular(4.px),
+            padding: Padding.symmetric(vertical: 8.px, horizontal: 16.px),
+            cursor: Cursor.pointer,
+            transition: const Transition(
+              'background-color',
+              duration: Duration(milliseconds: 300),
+              curve: Curve.ease,
             ),
-            padding: horizontalSpacerPadding,
+          )
+          .styles(color: buttonColor, fontSize: 16.px)
+          .styles(backgroundColor: buttonBackgroundColor),
+      css('&:hover').styles(backgroundColor: buttonHoverBackgroundColor),
+    ]),
+    css('.horizontal-spacer', [
+      css('&').styles(
+        border: Border.only(
+          bottom: BorderSide.solid(
+            width: 1.px,
+            color: horizontalSpacerBorderColor,
           ),
-          css('h2').box(margin: EdgeInsets.zero, padding: EdgeInsets.zero),
-        ]),
-        ...Events.styles,
-        ...SnackBarState.styles,
-        ...ModalState.styles,
-        ...textStyles,
-      ];
+        ),
+        padding: horizontalSpacerPadding,
+      ),
+      css('h2').styles(margin: Margin.zero, padding: Padding.zero),
+    ]),
+    ...Events.styles,
+    ...SnackBarState.styles,
+    ...ModalState.styles,
+    ...textStyles,
+  ];
 }
 
 List<StyleRule> get textStyles => [
-      css('p') //
-          .raw({'word-break': 'break-word'}) //
-          .raw({'overflow-wrap': 'break-word'}) //
-          .raw({'text-align': 'start'}), //
-    ];
+  css('p') //
+      .styles(
+        raw: {
+          'word-break': 'break-word',
+          'overflow-wrap': 'break-word',
+          'text-align': 'start',
+        },
+      ), //
+];

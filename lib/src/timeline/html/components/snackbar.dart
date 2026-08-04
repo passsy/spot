@@ -2,6 +2,7 @@
 
 import 'dart:async';
 
+import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:spot/src/timeline/html/web/theme.dart';
 
@@ -28,34 +29,35 @@ class SnackBarState extends State<SnackBar> {
   }
 
   @override
-  Iterable<Component> build(BuildContext context) sync* {
-    yield div(
+  Component build(BuildContext context) {
+    return div(
       id: "snackbar",
       classes: "snackbar ${_message != null ? 'show' : ''}",
-      [
-        text(_message ?? ''),
-      ],
+      [Component.text(_message ?? '')],
     );
   }
 
   static List<StyleRule> get styles => [
-        css('.snackbar', [
-          css('&')
-              .box(
-                display: Display.none,
-                minWidth: 250.px,
-                margin: EdgeInsets.only(left: (-125).px),
-                radius: BorderRadius.circular(2.px),
-                padding: EdgeInsets.all(16.px),
-                position: Position.fixed(left: 50.percent, bottom: 30.px),
-              )
-              .background(color: snackbarBackgroundColor)
-              .text(color: snackbarColor, align: TextAlign.center)
-              .raw({'z-index': '1'}),
-          css('&.show').box(display: Display.block).raw({
-            'animation': 'fadein 0.5s, fadeout 0.5s 2.5s',
-            '-webkit-animation': 'fadein 0.5s, fadeout 0.5s 2.5s',
-          }),
-        ]),
-      ];
+    css('.snackbar', [
+      css('&').styles(
+        display: Display.none,
+        minWidth: 250.px,
+        margin: Margin.only(left: (-125).px),
+        radius: BorderRadius.circular(2.px),
+        padding: Padding.all(16.px),
+        position: Position.fixed(left: 50.percent, bottom: 30.px),
+        backgroundColor: snackbarBackgroundColor,
+        color: snackbarColor,
+        textAlign: TextAlign.center,
+        zIndex: const ZIndex(1),
+      ),
+      css('&.show').styles(
+        display: Display.block,
+        raw: {
+          'animation': 'fadein 0.5s, fadeout 0.5s 2.5s',
+          '-webkit-animation': 'fadein 0.5s, fadeout 0.5s 2.5s',
+        },
+      ),
+    ]),
+  ];
 }
