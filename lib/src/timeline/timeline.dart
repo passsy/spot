@@ -573,19 +573,21 @@ final class _Timeline extends Timeline {
 
   Future<void> _renderTimeline() async {
     Future<void> reportOnError() async {
-      if (!test.state.result.isPassing) {
-        debugPrint('Test failed, generating timeline report');
-        if (!kIsWeb) {
-          await processPendingScreenshots();
-        }
-        if (isCI) {
-          // best for CI, prints the full timeline and doesn't require archiving the html timeline file
-          printToConsole();
-        }
-        // best for humans
-        if (!kIsWeb) {
-          await printHTML();
-        }
+      if (test.state.result.isPassing) {
+        _discardPreviousReport();
+        return;
+      }
+      debugPrint('Test failed, generating timeline report');
+      if (!kIsWeb) {
+        await processPendingScreenshots();
+      }
+      if (isCI) {
+        // best for CI, prints the full timeline and doesn't require archiving the html timeline file
+        printToConsole();
+      }
+      // best for humans
+      if (!kIsWeb) {
+        await printHTML();
       }
     }
 
@@ -616,9 +618,20 @@ final class _Timeline extends Timeline {
       case TimelineMode.reportOnError:
         await reportOnError();
       case TimelineMode.off:
-        // do nothing
-        break;
+        _discardPreviousReport();
     }
+  }
+
+  /// Removes the report an earlier run of this test wrote.
+  ///
+  /// This run has nothing to show, and leaving the old report in place makes
+  /// the link printed back then keep working while showing the source and the
+  /// events of a run that no longer exists.
+  void _discardPreviousReport() {
+    if (kIsWeb) {
+      return;
+    }
+    deleteHtmlReport();
   }
 }
 

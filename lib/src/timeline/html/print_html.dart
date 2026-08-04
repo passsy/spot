@@ -14,15 +14,15 @@ import 'package:stack_trace/stack_trace.dart';
 
 /// Writes the timeline as an HTML file
 extension HtmlTimelinePrinter on Timeline {
-  /// Prints the timeline as an HTML file.
-  Future<void> printHTML() async {
+  /// Where the report for this test goes, `null` when it cannot be written.
+  ///
+  /// Derived from the test name alone, so a rerun of the same test replaces
+  /// its previous report instead of piling up.
+  Directory? reportDirectory() {
     final pubspecYaml = File('pubspec.yaml');
     if (!pubspecYaml.existsSync()) {
       // test is executed on a device (or simulator), we can't store the file to be accessible from the host system
-      flt.debugPrint(
-        'Warning: The timeline is only available for widget tests on the host system, not on a device',
-      );
-      return;
+      return null;
     }
 
     String timelineDirName({int maxLength = 50}) {
@@ -87,7 +87,42 @@ extension HtmlTimelinePrinter on Timeline {
       maxLength: remainingSpace.clamp(0, maxTimelineDirNameLength),
     );
 
-    final spotTempDir = timelineBuildDir.directory(timelineDirNameTrimmed);
+    return timelineBuildDir.directory(timelineDirNameTrimmed);
+  }
+
+  /// Removes the report an earlier run of this test left behind.
+  ///
+  /// A run that writes no report used to leave the previous one in place, and
+  /// the link printed back then kept opening it. What it showed - the source,
+  /// the events, the captures - was from a run that no longer exists, which
+  /// reads as the timeline being stale rather than absent.
+  void deleteHtmlReport() {
+    final directory = reportDirectory();
+    if (directory == null || !directory.existsSync()) {
+      return;
+    }
+    try {
+      directory.deleteSync(recursive: true);
+    } on FileSystemException catch (e, stackTrace) {
+      developer.log(
+        'Could not remove the previous timeline report',
+        name: 'spot.timeline',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
+  }
+
+  /// Prints the timeline as an HTML file.
+  Future<void> printHTML() async {
+    final spotTempDir = reportDirectory();
+    if (spotTempDir == null) {
+      // test is executed on a device (or simulator), we can't store the file to be accessible from the host system
+      flt.debugPrint(
+        'Warning: The timeline is only available for widget tests on the host system, not on a device',
+      );
+      return;
+    }
     if (spotTempDir.existsSync()) {
       spotTempDir.deleteSync(recursive: true);
     }
@@ -201,7 +236,8 @@ extension HtmlTimelinePrinter on Timeline {
       htmlFile.writeAsStringSync(content);
       if (await _isTimelineHotRestartServerRunning()) {
         flt.debugPrint(
-          'View timeline here: http://localhost:5907/$timelineDirName',
+          'View timeline here: '
+          'http://localhost:5907/${spotTempDir.name}',
         );
       } else {
         flt.debugPrint('View timeline here: file://${htmlFile.path}');
