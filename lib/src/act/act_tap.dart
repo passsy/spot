@@ -521,7 +521,6 @@ TapInspection? _inspectPointerBlocker({
       samples: samples,
       reason: TapAbsorbedReason(
         absorbPointer: blocker,
-        hitReceiver: hitTest.receiver,
         hitTest: hitTest,
       ),
       message:
@@ -540,7 +539,6 @@ TapInspection? _inspectPointerBlocker({
       reason: TapIgnoredReason(
         ignorePointer: blocker,
         introducedBy: introducedBy,
-        hitReceiver: hitTest.receiver,
         hitTest: hitTest,
       ),
       message:
@@ -556,7 +554,6 @@ TapInspection? _inspectPointerBlocker({
     reason: TapOffstageReason(
       offstage: blocker,
       introducedBy: introducedBy,
-      hitReceiver: hitTest.receiver,
       hitTest: hitTest,
     ),
     message:
@@ -652,18 +649,17 @@ TapInspection? _inspectCoveredWidget({
     return null;
   }
 
-  final coveringWidgets = analysis.coverChain.map(_tapWidgetInfo).toList();
-  final relevantCoveringWidgets = coveringWidgets.where((it) {
+  final coverChain = analysis.coverChain.map(_tapWidgetInfo).toList();
+  final relevantCoveringWidgets = coverChain.where((it) {
     return it.isUserCode ?? false;
   }).toList();
   final reason = TapCoveredReason(
     hitTest: hitTest,
-    coveringWidgets: coveringWidgets,
     relevantCoveringWidgets: relevantCoveringWidgets,
     commonAncestor: _tapWidgetInfo(analysis.commonAncestor),
     userRelevantAncestor: _tapWidgetInfo(analysis.firstUsefulParent),
     targetChain: analysis.targetChain.map(_tapWidgetInfo).toList(),
-    coverChain: analysis.coverChain.map(_tapWidgetInfo).toList(),
+    coverChain: coverChain,
   );
   return _tapInspectionFailure(
     selectorDescription: selectorDescription,
@@ -958,7 +954,6 @@ TapWidgetInfo _tapWidgetInfo(Element element) {
     element: element,
     renderObject: renderObject,
     widgetName: element.toStringShort(),
-    paintBounds: renderBox?.paintBounds,
     globalRect: renderBox?.globalRect,
   );
 }
@@ -1240,7 +1235,6 @@ class TapWidgetInfo {
     required this.element,
     required this.renderObject,
     required this.widgetName,
-    required this.paintBounds,
     required this.globalRect,
   });
 
@@ -1267,17 +1261,8 @@ class TapWidgetInfo {
   /// Resolved on access, see [sourceLocation].
   bool? get isUserCode => element.debugWidgetLocation?.isUserCode;
 
-  /// The render object's local paint bounds, if it is a [RenderBox].
-  final Rect? paintBounds;
-
   /// The render object's global rectangle, if it is a [RenderBox].
   final Rect? globalRect;
-
-  /// The render object's size, if it is a [RenderBox].
-  Size? get size => globalRect?.size;
-
-  /// The center of [globalRect], if available.
-  Offset? get globalCenter => globalRect?.center;
 
   @override
   String toString() {
@@ -1516,15 +1501,11 @@ class TapAbsorbedReason {
   /// Creates an absorbed tap failure reason.
   TapAbsorbedReason({
     required this.absorbPointer,
-    required this.hitReceiver,
     required this.hitTest,
   });
 
   /// The [AbsorbPointer] that absorbs pointer events.
   final TapWidgetInfo absorbPointer;
-
-  /// The widget that received the inspected hit-test first.
-  final TapWidgetInfo? hitReceiver;
 
   /// Hit-test path at the inspected position.
   final TapHitTestInfo hitTest;
@@ -1540,7 +1521,6 @@ class TapOffstageReason {
   TapOffstageReason({
     required this.offstage,
     required this.introducedBy,
-    required this.hitReceiver,
     required this.hitTest,
   });
 
@@ -1553,9 +1533,6 @@ class TapOffstageReason {
   /// ancestor from user code.
   final TapWidgetInfo? introducedBy;
 
-  /// The widget that received the inspected hit-test first.
-  final TapWidgetInfo? hitReceiver;
-
   /// Hit-test path at the inspected position.
   final TapHitTestInfo hitTest;
 }
@@ -1566,7 +1543,6 @@ class TapIgnoredReason {
   TapIgnoredReason({
     required this.ignorePointer,
     required this.introducedBy,
-    required this.hitReceiver,
     required this.hitTest,
   });
 
@@ -1579,9 +1555,6 @@ class TapIgnoredReason {
   /// ancestor from user code.
   final TapWidgetInfo? introducedBy;
 
-  /// The widget that received the inspected hit-test first.
-  final TapWidgetInfo? hitReceiver;
-
   /// Hit-test path at the inspected position.
   final TapHitTestInfo hitTest;
 }
@@ -1591,22 +1564,17 @@ class TapCoveredReason {
   /// Creates a covered tap failure reason.
   TapCoveredReason({
     required this.hitTest,
-    required List<TapWidgetInfo> coveringWidgets,
     required List<TapWidgetInfo> relevantCoveringWidgets,
     required this.commonAncestor,
     required this.userRelevantAncestor,
     required List<TapWidgetInfo> targetChain,
     required List<TapWidgetInfo> coverChain,
-  })  : coveringWidgets = List.unmodifiable(coveringWidgets),
-        relevantCoveringWidgets = List.unmodifiable(relevantCoveringWidgets),
+  })  : relevantCoveringWidgets = List.unmodifiable(relevantCoveringWidgets),
         targetChain = List.unmodifiable(targetChain),
         coverChain = List.unmodifiable(coverChain);
 
   /// Hit-test path at the inspected position.
   final TapHitTestInfo hitTest;
-
-  /// Widgets that cover the target before the common ancestor.
-  final List<TapWidgetInfo> coveringWidgets;
 
   /// Covering widgets likely to be useful for test authors.
   final List<TapWidgetInfo> relevantCoveringWidgets;
@@ -1628,10 +1596,10 @@ class TapCoveredReason {
     if (relevantCoveringWidgets.isNotEmpty) {
       return relevantCoveringWidgets.first;
     }
-    if (coveringWidgets.isEmpty) {
+    if (coverChain.isEmpty) {
       return null;
     }
-    return coveringWidgets.first;
+    return coverChain.first;
   }
 }
 

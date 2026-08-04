@@ -535,9 +535,6 @@ void actTests() {
       expect(target.widgetName, 'ElevatedButton');
       expect(target.renderObject, isA<RenderBox>());
       expect(target.globalRect, isNotNull);
-      expect(target.size, target.globalRect!.size);
-      expect(target.globalCenter, target.globalRect!.center);
-      expect(target.paintBounds, Offset.zero & target.size!);
       if (!kIsWeb) {
         expect(target.sourceLocation, contains('act_test.dart:'));
         expect(target.isUserCode, isTrue);
@@ -711,9 +708,6 @@ void actTests() {
       expect(target.widget, isA<_NoRenderObjectWidget>());
       expect(target.renderObject, isNull);
       expect(target.globalRect, isNull);
-      expect(target.size, isNull);
-      expect(target.globalCenter, isNull);
-      expect(target.paintBounds, isNull);
     });
 
     testWidgets('reports a non-render-box reason', (tester) async {
@@ -736,7 +730,6 @@ void actTests() {
       expect(target.renderObject, isNotNull);
       expect(target.renderObject, isNot(isA<RenderBox>()));
       expect(target.globalRect, isNull);
-      expect(target.paintBounds, isNull);
 
       expect(reason.renderObject, isA<_CustomRenderObject>());
       expect(reason.renderObject, isNot(isA<RenderBox>()));
@@ -824,11 +817,11 @@ void actTests() {
         expect(reason.absorbPointer.sourceLocation, contains('act_test.dart:'));
       }
       // The AbsorbPointer swallows the event, something behind it answers.
-      expect(reason.hitReceiver, isNotNull);
-      expect(reason.hitReceiver!.widget, isNot(isA<ElevatedButton>()));
+      expect(reason.hitTest.receiver, isNotNull);
+      expect(reason.hitTest.receiver!.widget, isNot(isA<ElevatedButton>()));
       expect(reason.hitTest.path, isNotEmpty);
       expect(reason.hitTest.receiver, same(reason.hitTest.path.first));
-      expect(reason.hitTest.position, inspection.target?.globalCenter);
+      expect(reason.hitTest.position, inspection.target?.globalRect?.center);
     });
 
     testWidgets('reports the AbsorbPointer above the target, not below the hit',
@@ -860,7 +853,7 @@ void actTests() {
       expect(reason.absorbPointer.widget, isA<AbsorbPointer>());
       // The hit stops above the wrapper, which is why walking down from the
       // receiver cannot find the AbsorbPointer.
-      expect(reason.hitReceiver?.widget, isNot(isA<AbsorbPointer>()));
+      expect(reason.hitTest.receiver?.widget, isNot(isA<AbsorbPointer>()));
       expect(reason.hitTest.path, isNotEmpty);
     });
 
@@ -901,11 +894,11 @@ void actTests() {
       // The IgnorePointer is written inline here, so the closest user-code
       // ancestor is the widget that wraps it.
       expect(reason.introducedBy?.widget, isA<Center>());
-      expect(reason.hitReceiver, isNotNull);
-      expect(reason.hitReceiver!.widget, isNot(isA<ElevatedButton>()));
+      expect(reason.hitTest.receiver, isNotNull);
+      expect(reason.hitTest.receiver!.widget, isNot(isA<ElevatedButton>()));
       expect(reason.hitTest.path, isNotEmpty);
       expect(reason.hitTest.receiver, same(reason.hitTest.path.first));
-      expect(reason.hitTest.position, inspection.target?.globalCenter);
+      expect(reason.hitTest.position, inspection.target?.globalRect?.center);
     });
 
     testWidgets('names the widget that introduced the IgnorePointer',
@@ -962,13 +955,13 @@ void actTests() {
       expect(inspection.message,
           contains('SizedBox.shrink forces ElevatedButton'));
       expect(inspection.tapPosition, isNull);
-      expect(inspection.target?.size, Size.zero);
+      expect(inspection.target?.globalRect?.size, Size.zero);
 
       // The outermost ancestor that is already zero-sized, changing anything
       // below it cannot give the target a size.
       expect(reason.shrinker.widget, isA<SizedBox>());
       expect(reason.shrinker.widgetName, 'SizedBox.shrink');
-      expect(reason.shrinker.size, Size.zero);
+      expect(reason.shrinker.globalRect?.size, Size.zero);
       if (!kIsWeb) {
         expect(reason.shrinker.sourceLocation, contains('act_test.dart:'));
       }
@@ -978,7 +971,10 @@ void actTests() {
         reason.shrinkChain.map((it) => it.widgetName),
         ['ElevatedButton', 'Padding'],
       );
-      expect(reason.shrinkChain.every((it) => it.size == Size.zero), isTrue);
+      expect(
+        reason.shrinkChain.where((it) => it.globalRect?.size != Size.zero),
+        isEmpty,
+      );
     });
 
     testWidgets('reports a covered reason', (tester) async {
@@ -1019,7 +1015,7 @@ void actTests() {
 
       // Everything from the covering widget up to the common ancestor.
       expect(
-        reason.coveringWidgets.map((it) => it.widgetName),
+        reason.coverChain.map((it) => it.widgetName),
         ['ColoredBox', 'Positioned'],
       );
       expect(
@@ -1027,11 +1023,7 @@ void actTests() {
         ['ColoredBox', 'Positioned'],
       );
       expect(reason.primaryCover?.widget, isA<ColoredBox>());
-      expect(reason.primaryCover, same(reason.coveringWidgets.first));
-      expect(
-        reason.coverChain.map((it) => it.widgetName),
-        reason.coveringWidgets.map((it) => it.widgetName),
-      );
+      expect(reason.primaryCover, same(reason.relevantCoveringWidgets.first));
       // The Stack renders both branches, it is where they start to diverge.
       expect(reason.commonAncestor.widget, isA<Stack>());
       expect(reason.userRelevantAncestor?.widget, isA<MaterialApp>());
@@ -1041,7 +1033,7 @@ void actTests() {
       );
       expect(reason.hitTest.path, isNotEmpty);
       expect(reason.hitTest.receiver?.widget, isA<ColoredBox>());
-      expect(reason.hitTest.position, inspection.target?.globalCenter);
+      expect(reason.hitTest.position, inspection.target?.globalRect?.center);
 
       // The whole surface is blocked by the same widget.
       final samples = inspection.samples!;
@@ -1076,9 +1068,9 @@ void actTests() {
       );
       expect(inspection.message, contains('https://github.com/passsy/spot'));
       expect(inspection.tapPosition, isNull);
-      expect(inspection.target?.size, const Size(100, 100));
+      expect(inspection.target?.globalRect?.size, const Size(100, 100));
 
-      expect(reason.position, inspection.target?.globalCenter);
+      expect(reason.position, inspection.target?.globalRect?.center);
       expect(reason.hitTest.position, reason.position);
       expect(reason.hitTest.path, isNotEmpty);
       expect(reason.hitTest.receiver?.widget, isNot(isA<SizedBox>()));
