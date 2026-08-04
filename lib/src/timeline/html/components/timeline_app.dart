@@ -23,11 +23,15 @@ class TimelineApp extends StatefulComponent {
     required this.testName,
     required this.testNameWithHierarchy,
     required this.timelineEvents,
+    required this.sourceFiles,
   });
 
   final String testName;
   final String testNameWithHierarchy;
   final List<TimelineEvent> timelineEvents;
+
+  /// Every source file the events point into, keyed by path.
+  final Map<String, TimelineSourceFile> sourceFiles;
 
   @override
   State<TimelineApp> createState() => TimelineAppState();
@@ -37,6 +41,12 @@ enum _InspectorTab { details, widgetInspector, widgetTree, raw }
 
 const _largeWidgetTreeNodeLimit = 800;
 const _largeWidgetTreeInitialDepth = 4;
+const _treeTextPageLineCount = 250;
+
+/// The source pane and the caller line inside it, so the pane can be scrolled
+/// to the caller after a selection changes.
+const _sourceCodeId = 'source-code';
+const _callerLineId = 'source-caller-line';
 
 enum _ResizeTarget { timeline, captureTree, treeDetails }
 
@@ -84,6 +94,87 @@ double adjustedPaneSize(
   required double minimum,
   required double maximum,
 }) => (current + delta).clamp(minimum, maximum);
+
+class TimelineTextSlice {
+  const TimelineTextSlice({
+    required this.text,
+    required this.startLine,
+    required this.visibleLineCount,
+    required this.hasPrevious,
+    required this.hasMore,
+  });
+
+  final String text;
+  final int startLine;
+  final int visibleLineCount;
+  final bool hasPrevious;
+  final bool hasMore;
+
+  int get endLine => startLine + visibleLineCount - 1;
+}
+
+TimelineTextSlice sliceTimelineText(
+  String text, {
+  required int startLine,
+  required int maximumLines,
+}) {
+  if (startLine < 1) {
+    throw ArgumentError.value(startLine, 'startLine', 'Must be positive');
+  }
+  if (maximumLines < 1) {
+    throw ArgumentError.value(maximumLines, 'maximumLines', 'Must be positive');
+  }
+  if (text.isEmpty) {
+    return const TimelineTextSlice(
+      text: '',
+      startLine: 1,
+      visibleLineCount: 0,
+      hasPrevious: false,
+      hasMore: false,
+    );
+  }
+
+  var sliceStart = 0;
+  for (var line = 1; line < startLine; line++) {
+    final lineEnd = text.indexOf('\n', sliceStart);
+    if (lineEnd == -1 || lineEnd == text.length - 1) {
+      return TimelineTextSlice(
+        text: '',
+        startLine: startLine,
+        visibleLineCount: 0,
+        hasPrevious: true,
+        hasMore: false,
+      );
+    }
+    sliceStart = lineEnd + 1;
+  }
+
+  var searchStart = sliceStart;
+  for (var line = 1; line <= maximumLines; line++) {
+    final lineEnd = text.indexOf('\n', searchStart);
+    if (lineEnd == -1 || lineEnd == text.length - 1) {
+      return TimelineTextSlice(
+        text: text.substring(sliceStart),
+        startLine: startLine,
+        visibleLineCount: line,
+        hasPrevious: startLine > 1,
+        hasMore: false,
+      );
+    }
+    if (line == maximumLines) {
+      return TimelineTextSlice(
+        text: text.substring(sliceStart, lineEnd),
+        startLine: startLine,
+        visibleLineCount: line,
+        hasPrevious: startLine > 1,
+        hasMore: true,
+      );
+    }
+    searchStart = lineEnd + 1;
+  }
+
+  throw StateError('Unreachable');
+}
 
 class TimelineFrameGroup {
   TimelineFrameGroup({
@@ -185,6 +276,11 @@ class TimelineAppState extends State<TimelineApp> {
   String? _selectedWidgetNodeId;
   String _widgetTreeSearch = '';
   bool _showFullRawData = false;
+  bool _showCaptureOverlays = true;
+
+  /// The event whose capture is open full screen, `null` when none is.
+  TimelineEvent? _lightboxEvent;
+  int _treeTextStartLine = 1;
   double _timelineHeight = 256;
   double _capturePanePercent = 57;
   double _treePanePercent = 62;
@@ -205,6 +301,10 @@ class TimelineAppState extends State<TimelineApp> {
       ? null
       : DateTime.tryParse(component.timelineEvents.first.timestamp);
 
+  DateTime? get _firstWallTimestamp => component.timelineEvents.isEmpty
+      ? null
+      : DateTime.tryParse(component.timelineEvents.first.wallTimestamp);
+
   Duration get _duration {
     if (component.timelineEvents.length < 2) {
       return Duration.zero;
@@ -217,9 +317,25 @@ class TimelineAppState extends State<TimelineApp> {
     return last.difference(first);
   }
 
+  /// What the report opens on.
+  ///
+  /// The failure, because that is the reason the report is being read at all.
+  /// The last one when several were recorded, since that is where the test
+  /// stopped. Otherwise the first event, so the report never opens empty.
+  int? _initialSelection() {
+    final events = component.timelineEvents;
+    if (events.isEmpty) {
+      return null;
+    }
+    final lastFailure = events.lastIndexWhere((event) => event.isFailure);
+    return lastFailure == -1 ? 0 : lastFailure;
+  }
+
   @override
   void initState() {
     super.initState();
+    _selectedIndex = _initialSelection();
+    _scrollCallerIntoView();
     if (kIsWeb) {
       _keySubscription = window.onKeyDown.listen((event) {
         final dynamic target = event.target;
@@ -228,6 +344,11 @@ class TimelineAppState extends State<TimelineApp> {
             tagName == 'textarea' ||
             tagName == 'select' ||
             target?.isContentEditable == true) {
+          return;
+        }
+        if (event.key == 'Escape' && _lightboxEvent != null) {
+          _closeLightbox();
+          event.preventDefault();
           return;
         }
         switch (event.key) {
@@ -448,6 +569,7 @@ class TimelineAppState extends State<TimelineApp> {
       _selectedIndex = index;
       _selectedWidgetNodeId = null;
       _showFullRawData = false;
+      _treeTextStartLine = 1;
       _limitedWidgetTreeExpansion = limitExpansion;
       _expandedWidgetNodes
         ..clear()
@@ -460,10 +582,14 @@ class TimelineAppState extends State<TimelineApp> {
             ?.scrollIntoView();
       });
     }
+    _scrollCallerIntoView();
   }
 
   void _selectTab(_InspectorTab tab) {
     setState(() => _selectedTab = tab);
+    if (tab == _InspectorTab.details) {
+      _scrollCallerIntoView();
+    }
   }
 
   String _eventColor(TimelineEvent event) {
@@ -474,13 +600,26 @@ class TimelineAppState extends State<TimelineApp> {
     return '#${value.toRadixString(16).padLeft(6, '0')}';
   }
 
+  /// How far into the test the event happened, on the simulated clock.
   String _elapsedLabel(TimelineEvent event) {
-    final first = _firstTimestamp;
-    final timestamp = DateTime.tryParse(event.timestamp);
-    if (first == null || timestamp == null) {
-      return event.timestamp;
+    return _elapsedSince(_firstTimestamp, event.timestamp);
+  }
+
+  /// How far into the test the event happened, in real time.
+  ///
+  /// Diverges from [_elapsedLabel] as soon as the test pumps a duration: the
+  /// simulated clock jumps ahead while the wall clock reports the milliseconds
+  /// the work really took.
+  String _wallElapsedLabel(TimelineEvent event) {
+    return _elapsedSince(_firstWallTimestamp, event.wallTimestamp);
+  }
+
+  String _elapsedSince(DateTime? first, String timestamp) {
+    final parsed = DateTime.tryParse(timestamp);
+    if (first == null || parsed == null) {
+      return timestamp;
     }
-    final milliseconds = timestamp.difference(first).inMicroseconds / 1000;
+    final milliseconds = parsed.difference(first).inMicroseconds / 1000;
     if (milliseconds >= 1000) {
       return '+${(milliseconds / 1000).toStringAsFixed(2)} s';
     }
@@ -651,6 +790,7 @@ class TimelineAppState extends State<TimelineApp> {
         ),
         _inspector(),
         SnackBar(key: _snackBar),
+        if (_lightboxEvent case final lightboxEvent?) _lightbox(lightboxEvent),
       ],
     );
   }
@@ -761,7 +901,9 @@ class TimelineAppState extends State<TimelineApp> {
         'aria-label': 'Select ${event.eventType}',
         'aria-pressed': selected.toString(),
         'tabindex': '-1',
-        'title': '${event.eventType} · ${_elapsedLabel(event)}',
+        'title':
+            '${event.eventType} · ${_elapsedLabel(event)} test clock '
+            '· ${_wallElapsedLabel(event)} wall clock',
       },
       onClick: () => _select(index),
       [
@@ -860,6 +1002,7 @@ class TimelineAppState extends State<TimelineApp> {
     final selectedNode = root == null
         ? null
         : _findWidgetNode(root, _selectedWidgetNodeId);
+    final screenshotUrl = event.screenshotUrl;
 
     return div(
       id: 'interactive-inspector',
@@ -873,10 +1016,39 @@ class TimelineAppState extends State<TimelineApp> {
         div(classes: 'capture-workbench', [
           div(classes: 'pane-toolbar', [
             const span(classes: 'pane-title', [Component.text('Capture')]),
-            if (selectedNode != null)
-              span(classes: 'selected-widget-label', [
-                Component.text(_nodeName(selectedNode)),
-              ]),
+            div(classes: 'capture-toolbar-actions', [
+              if (selectedNode != null)
+                span(classes: 'selected-widget-label', [
+                  Component.text(_nodeName(selectedNode)),
+                ]),
+              if (event.overlayUrls.isNotEmpty || selectedNode != null)
+                button(
+                  type: ButtonType.button,
+                  classes: 'text-button',
+                  attributes: {
+                    'aria-label': 'Toggle capture overlays',
+                    'aria-pressed': _showCaptureOverlays.toString(),
+                  },
+                  onClick: () {
+                    setState(
+                      () => _showCaptureOverlays = !_showCaptureOverlays,
+                    );
+                  },
+                  [
+                    Component.text(
+                      _showCaptureOverlays ? 'Hide overlays' : 'Show overlays',
+                    ),
+                  ],
+                ),
+              if (screenshotUrl != null)
+                a(
+                  href: screenshotUrl,
+                  target: Target.blank,
+                  classes: 'text-button capture-image-link',
+                  attributes: const {'rel': 'noopener'},
+                  const [Component.text('Open image')],
+                ),
+            ]),
           ]),
           _captureWithOutline(event, selectedNode),
         ]),
@@ -1073,27 +1245,46 @@ class TimelineAppState extends State<TimelineApp> {
         captureHeight > 0;
 
     return div(classes: 'capture-viewport', [
-      div(classes: 'capture-canvas', [
-        img(src: screenshotUrl, alt: 'Full capture for ${event.eventType}'),
-        if (canOutline)
-          div(
-            classes: 'widget-outline',
-            styles: Styles(
-              raw: {
-                'left':
-                    '${((bounds['x'] as num) / captureWidth * 100).toStringAsFixed(4)}%',
-                'top':
-                    '${((bounds['y'] as num) / captureHeight * 100).toStringAsFixed(4)}%',
-                'width':
-                    '${((bounds['width'] as num) / captureWidth * 100).toStringAsFixed(4)}%',
-                'height':
-                    '${((bounds['height'] as num) / captureHeight * 100).toStringAsFixed(4)}%',
-              },
-            ),
-            attributes: {'aria-label': 'Bounds of ${_nodeName(selectedNode!)}'},
-            const [],
+      div(
+        classes: 'capture-canvas is-zoomable',
+        attributes: const {'title': 'Click to open the capture full screen'},
+        events: {'click': (dynamic _) => _openLightbox(event)},
+        [
+          img(
+            src: screenshotUrl,
+            classes: 'capture-base-image',
+            alt: 'Frame capture for ${event.eventType}',
           ),
-      ]),
+          if (_showCaptureOverlays)
+            for (final overlayUrl in event.overlayUrls)
+              img(
+                src: overlayUrl,
+                classes: 'capture-event-overlay',
+                alt: '',
+                attributes: const {'aria-hidden': 'true'},
+              ),
+          if (_showCaptureOverlays && canOutline)
+            div(
+              classes: 'widget-outline',
+              styles: Styles(
+                raw: {
+                  'left':
+                      '${((bounds['x'] as num) / captureWidth * 100).toStringAsFixed(4)}%',
+                  'top':
+                      '${((bounds['y'] as num) / captureHeight * 100).toStringAsFixed(4)}%',
+                  'width':
+                      '${((bounds['width'] as num) / captureWidth * 100).toStringAsFixed(4)}%',
+                  'height':
+                      '${((bounds['height'] as num) / captureHeight * 100).toStringAsFixed(4)}%',
+                },
+              ),
+              attributes: {
+                'aria-label': 'Bounds of ${_nodeName(selectedNode!)}',
+              },
+              const [],
+            ),
+        ],
+      ),
     ]);
   }
 
@@ -1335,10 +1526,16 @@ class TimelineAppState extends State<TimelineApp> {
       eventType: payloadEvent.eventType,
       color: payloadEvent.color,
       screenshotUrl: payloadEvent.screenshotUrl,
+      overlayUrls: payloadEvent.overlayUrls,
       details: payloadEvent.details,
       timestamp: payloadEvent.timestamp,
+      wallTimestamp: payloadEvent.wallTimestamp,
       caller: payloadEvent.caller,
-      jetBrainsLink: payloadEvent.jetBrainsLink,
+      ideLink: payloadEvent.ideLink,
+      ideName: payloadEvent.ideName,
+      sourcePath: payloadEvent.sourcePath,
+      callerLine: payloadEvent.callerLine,
+      isFailure: payloadEvent.isFailure,
       widgetTree: data.widgetTree,
       structuredWidgetTree: data.structuredWidgetTree,
       frameNumber: payloadEvent.frameNumber,
@@ -1406,40 +1603,202 @@ class TimelineAppState extends State<TimelineApp> {
   }
 
   Component _detailsPanel(TimelineEvent event) {
+    final source = _sourceFileFor(event);
     return div(classes: 'details-panel', [
-      div(classes: 'details-primary', [
-        const h3([Component.text('Event details')]),
-        pre(classes: 'details-copy', [Component.text(event.details)]),
+      div(classes: 'details-content', [
+        div(classes: 'details-primary', [
+          h3(classes: 'details-heading', [
+            span(
+              classes:
+                  'details-heading__dot ${event.isFailure ? 'is-failure' : ''}',
+              styles: Styles(raw: {'--event-color': _eventColor(event)}),
+              const [],
+            ),
+            Component.text(event.eventType),
+          ]),
+          pre(classes: 'details-copy', [Component.text(event.details)]),
+          _timings(event),
+        ]),
+        if (source != null)
+          _sourceView(source, event.callerLine, event.ideLink),
       ]),
-      dl(classes: 'metadata-grid', [
-        _metadata('Type', event.eventType),
-        _metadata('Timestamp', event.timestamp),
-        _metadata('Elapsed', _elapsedLabel(event)),
-        _metadataLink('Caller', event.caller, event.jetBrainsLink),
-        _metadata(
-          'Capture',
-          event.screenshotUrl == null ? 'Not captured' : 'Available',
+    ]);
+  }
+
+  /// Puts the caller line in the middle of the source pane.
+  ///
+  /// The pane holds the whole file, so without this it opens at line 1 and the
+  /// caller is somewhere below the fold. Runs after the DOM caught up with the
+  /// state change, which is why it is scheduled rather than called directly.
+  void _scrollCallerIntoView() {
+    if (!kIsWeb) {
+      return;
+    }
+    Timer.run(() {
+      final dynamic pane = window.document.querySelector('#$_sourceCodeId');
+      final dynamic line = window.document.querySelector('#$_callerLineId');
+      if (pane == null || line == null) {
+        return;
+      }
+      // offsetTop is relative to the pane, which is the positioned ancestor.
+      final num lineTop = line.offsetTop as num;
+      final num lineHeight = line.offsetHeight as num;
+      final num paneHeight = pane.clientHeight as num;
+      pane.scrollTop = (lineTop - (paneHeight - lineHeight) / 2)
+          .clamp(0, double.infinity)
+          .round();
+    });
+  }
+
+  /// When the event happened, on both clocks, in one line.
+  ///
+  /// The test clock is what `fakeAsync` simulated, the wall clock is the time
+  /// that really passed. They diverge as soon as a test pumps a duration, which
+  /// is the whole reason both are shown.
+  Component _timings(TimelineEvent event) {
+    return div(classes: 'timings', [
+      _timing('Elapsed test clock', _elapsedLabel(event)),
+      _timing('Elapsed wall clock', _wallElapsedLabel(event)),
+      _timing('At test clock', _timeOfDay(event.timestamp)),
+      _timing('At wall clock', _timeOfDay(event.wallTimestamp)),
+    ]);
+  }
+
+  Component _timing(String label, String value) {
+    return div(classes: 'timings__item', [
+      span(classes: 'timings__label', [Component.text(label)]),
+      span(classes: 'timings__value', [Component.text(value)]),
+    ]);
+  }
+
+  /// The clock time of [timestamp], without the date.
+  ///
+  /// A test runs in one day, so the date is noise on every row.
+  String _timeOfDay(String timestamp) {
+    final parsed = DateTime.tryParse(timestamp);
+    if (parsed == null) {
+      return timestamp;
+    }
+    String two(int value) => value.toString().padLeft(2, '0');
+    final millis = parsed.millisecond.toString().padLeft(3, '0');
+    return '${two(parsed.hour)}:${two(parsed.minute)}:${two(parsed.second)}'
+        '.$millis';
+  }
+
+  void _openLightbox(TimelineEvent event) {
+    setState(() => _lightboxEvent = event);
+  }
+
+  void _closeLightbox() {
+    setState(() => _lightboxEvent = null);
+  }
+
+  /// The capture, full screen, over everything else.
+  ///
+  /// Dismissed by clicking the backdrop, the close button, or Escape. The
+  /// overlays follow the capture pane's toggle so the two show the same thing.
+  Component _lightbox(TimelineEvent event) {
+    final screenshotUrl = event.screenshotUrl;
+    if (screenshotUrl == null) {
+      return const Component.fragment([]);
+    }
+    return div(
+      classes: 'lightbox',
+      attributes: const {
+        'role': 'dialog',
+        'aria-modal': 'true',
+        'aria-label': 'Capture, full screen',
+      },
+      events: {'click': (dynamic _) => _closeLightbox()},
+      [
+        button(
+          classes: 'lightbox__close',
+          attributes: const {'title': 'Close (Esc)'},
+          onClick: _closeLightbox,
+          const [Component.text('✕')],
         ),
-      ]),
-    ]);
+        div(
+          classes: 'lightbox__stage',
+          // The stage swallows the click so only the backdrop dismisses.
+          events: {'click': (dynamic event) => event.stopPropagation()},
+          [
+            img(
+              src: screenshotUrl,
+              classes: 'lightbox__image',
+              alt: 'Capture for ${event.eventType}',
+            ),
+            if (_showCaptureOverlays)
+              for (final overlayUrl in event.overlayUrls)
+                img(
+                  src: overlayUrl,
+                  classes: 'lightbox__image lightbox__image--overlay',
+                  alt: '',
+                ),
+          ],
+        ),
+        div(classes: 'lightbox__caption', [
+          Component.text('${event.eventType} · ${_elapsedLabel(event)}'),
+        ]),
+      ],
+    );
   }
 
-  Component _metadata(String label, String value) {
-    return div(classes: 'metadata-row', [
-      dt([Component.text(label)]),
-      dd([Component.text(value)]),
-    ]);
+  /// The source file [event] was triggered from, `null` when none was stored.
+  TimelineSourceFile? _sourceFileFor(TimelineEvent event) {
+    final path = event.sourcePath;
+    if (path == null) {
+      return null;
+    }
+    return component.sourceFiles[path];
   }
 
-  Component _metadataLink(String label, String value, String? href) {
-    return div(classes: 'metadata-row', [
-      dt([Component.text(label)]),
-      dd([
-        if (href != null)
-          a(href: href, [Component.text(value)])
+  /// The whole file, with the caller line highlighted and scrolled to.
+  ///
+  /// Shows every line rather than a window around the caller, because any
+  /// window cuts off the part of the method that explains the event.
+  Component _sourceView(
+    TimelineSourceFile source,
+    int? callerLine,
+    String? ideLink,
+  ) {
+    final location = callerLine == null
+        ? source.path
+        : '${source.path}:$callerLine';
+    return section(classes: 'source-panel', [
+      div(classes: 'source-panel__header', [
+        const h3([Component.text('Source')]),
+        if (ideLink != null)
+          a(href: ideLink, [Component.text(location)])
         else
-          Component.text(value),
+          span([Component.text(location)]),
+        if (source.truncated)
+          span(classes: 'source-panel__note', [
+            Component.text('Showing the first ${source.lines.length} lines'),
+          ]),
       ]),
+      pre(
+        id: _sourceCodeId,
+        classes: 'source-code',
+        attributes: const {'aria-label': 'Source code of the event caller'},
+        [
+          for (var index = 0; index < source.lines.length; index++)
+            span(
+              id: index + 1 == callerLine ? _callerLineId : null,
+              classes:
+                  'source-line ${index + 1 == callerLine ? 'is-caller' : ''}',
+              [
+                span(classes: 'source-line__number', [
+                  Component.text('${index + 1}'),
+                ]),
+                span(classes: 'source-line__content', [
+                  Component.text(
+                    source.lines[index].isEmpty ? ' ' : source.lines[index],
+                  ),
+                ]),
+              ],
+            ),
+        ],
+      ),
     ]);
   }
 
@@ -1450,12 +1809,57 @@ class TimelineAppState extends State<TimelineApp> {
         h3([Component.text('No widget tree was captured')]),
       ]);
     }
+    final visibleTree = sliceTimelineText(
+      frameData.widgetTree,
+      startLine: _treeTextStartLine,
+      maximumLines: _treeTextPageLineCount,
+    );
     return div(classes: 'tree-panel', [
-      const div(classes: 'code-toolbar', [
-        span([Component.text('Flutter element tree')]),
-        span([Component.text('Captured with event')]),
+      div(classes: 'code-toolbar', [
+        const span([Component.text('Flutter element tree')]),
+        div(classes: 'tree-text-progress', [
+          span([
+            Component.text(
+              visibleTree.hasMore
+                  ? 'Lines ${visibleTree.startLine}–${visibleTree.endLine}'
+                  : 'Lines ${visibleTree.startLine}–${visibleTree.endLine} · complete',
+            ),
+          ]),
+          if (visibleTree.hasPrevious)
+            button(
+              type: ButtonType.button,
+              classes: 'text-button',
+              attributes: const {
+                'aria-label': 'Show previous widget tree text page',
+              },
+              onClick: () {
+                setState(() {
+                  _treeTextStartLine =
+                      (_treeTextStartLine - _treeTextPageLineCount).clamp(
+                        1,
+                        _treeTextStartLine,
+                      );
+                });
+              },
+              const [Component.text('Previous')],
+            ),
+          if (visibleTree.hasMore)
+            button(
+              type: ButtonType.button,
+              classes: 'text-button',
+              attributes: const {
+                'aria-label': 'Show next widget tree text page',
+              },
+              onClick: () {
+                setState(() {
+                  _treeTextStartLine += _treeTextPageLineCount;
+                });
+              },
+              const [Component.text('Next')],
+            ),
+        ]),
       ]),
-      pre(classes: 'tree-output', [Component.text(frameData.widgetTree)]),
+      pre(classes: 'tree-output', [Component.text(visibleTree.text)]),
     ]);
   }
 

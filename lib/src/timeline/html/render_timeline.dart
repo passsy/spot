@@ -19,6 +19,7 @@ import 'package:test_api/src/backend/invoker.dart';
 /// [hotRestart] causes the site to constantly poll itself for changes, auto-reloading
 Future<String> renderTimelineWithJaspr(
   List<x.TimelineEvent> events, {
+  Map<String, x.TimelineSourceFile> sourceFiles = const {},
   bool inlineScripts = true,
   bool hotRestart = false,
 }) async {
@@ -50,6 +51,7 @@ Future<String> renderTimelineWithJaspr(
         testName: Invoker.current?.liveTest.test.name ?? 'Missing filename',
         testNameWithHierarchy: nameWithHierarchy,
         timelineEvents: events,
+        sourceFiles: sourceFiles,
       ),
     ),
     standalone: true,

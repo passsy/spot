@@ -36,10 +36,24 @@ void main() {
       eventType: 'Assertion $index',
       color: null,
       screenshotUrl: screenshotUrl,
+      overlayUrls: const ['./screenshots/example-overlay.png'],
       details: 'Example event $index',
       timestamp: DateTime(2026, 8, 4, 0, 0, 0, index).toIso8601String(),
+      wallTimestamp: DateTime(
+        2026,
+        8,
+        4,
+        9,
+        30,
+        0,
+        index * 7,
+      ).toIso8601String(),
       caller: 'example_test.dart:$index',
-      jetBrainsLink: null,
+      ideLink: null,
+      ideName: null,
+      sourcePath: 'test/example_test.dart',
+      callerLine: 2,
+      isFailure: false,
       widgetTree: 'RenderView\n  Text("Example $index")',
       structuredWidgetTree: {
         'captureWidth': 800,
@@ -66,16 +80,30 @@ void main() {
   test(
     'timelines preserve relative screenshot URLs',
     () async {
-      final html = await renderTimelineWithJaspr([
-        event(index: 1, screenshotUrl: './screenshots/example.png'),
-      ]);
+      final html = await renderTimelineWithJaspr(
+        [event(index: 1, screenshotUrl: './screenshots/example.png')],
+        sourceFiles: const {
+          'test/example_test.dart': TimelineSourceFile(
+            path: 'test/example_test.dart',
+            lines: ['testWidgets(', '  expect(value, isTrue);', ');'],
+            truncated: false,
+          ),
+        },
+      );
 
       expect(html, isNot(contains('<base href="/"/>')));
       expect(html, contains('<script>'));
       expect(html, isNot(contains('src="/script.js"')));
       expect(html, contains('src="./screenshots/example.png"'));
+      expect(html, contains('./screenshots/example-overlay.png'));
       expect(html, contains('Widget tree'));
       expect(html, contains('Event details'));
+      expect(
+        html,
+        contains('"sourcePath":"test/example_test.dart","callerLine":2'),
+      );
+      expect(html, contains('expect(value, isTrue);'));
+      expect(html, contains('.source-line.is-caller'));
       expect(html, contains('Tree text'));
       expect(html, contains('Raw data'));
       expect(html, contains('.interactive-inspector'));
@@ -139,8 +167,13 @@ void main() {
       expect(html, contains('class="frame-events"'));
       expect(RegExp('class="ruler-cell"').allMatches(html), hasLength(1));
       expect(html, contains('object-position: left center'));
+      // One filmstrip capture for the frame, however many assertions share it.
+      // Scoped to the filmstrip because the report also shows the selected
+      // event's capture in the capture pane and as a thumbnail next to it.
       expect(
-        RegExp('<img[^>]*src="./screenshots/frame-1.png"').allMatches(html),
+        RegExp(
+          r'alt="Capture for frame 1" src="\./screenshots/frame-1\.png"',
+        ).allMatches(html),
         hasLength(1),
       );
     },

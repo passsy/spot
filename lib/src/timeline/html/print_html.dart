@@ -1,10 +1,12 @@
-// ignore_for_file: avoid_print
 import 'dart:convert';
+import 'dart:developer' as developer;
 import 'dart:io';
 
 import 'package:dartx/dartx_io.dart';
 import 'package:flutter/material.dart' as flt;
+import 'package:spot/src/timeline/html/ide_link.dart';
 import 'package:spot/src/timeline/html/render_timeline.dart';
+import 'package:spot/src/timeline/html/source_excerpt.dart';
 import 'package:spot/src/timeline/html/web/timeline_event.dart' as x;
 import 'package:spot/src/timeline/timeline.dart';
 import 'package:spot/src/utils/invoker.dart';
@@ -17,7 +19,7 @@ extension HtmlTimelinePrinter on Timeline {
     final pubspecYaml = File('pubspec.yaml');
     if (!pubspecYaml.existsSync()) {
       // test is executed on a device (or simulator), we can't store the file to be accessible from the host system
-      print(
+      flt.debugPrint(
         'Warning: The timeline is only available for widget tests on the host system, not on a device',
       );
       return;
@@ -105,12 +107,25 @@ extension HtmlTimelinePrinter on Timeline {
     final screenshotUrlsByFrame = <int, String>{};
     for (final entry in screenshotsByFrame.entries) {
       final screenshot = entry.value.screenshot!;
-      final pngName = screenshot.name.takeLast(maxScreenshotFilenameLength);
+      final pngName = 'frame-${entry.key}';
       final screenshotFile = screenshotsDir.file('$pngName.png');
-      final flattened = await screenshot.flattenedImage();
-      final pngBytes = await flattened.readPngBytes();
+      final pngBytes = await screenshot.readPngBytes();
       screenshotFile.writeAsBytesSync(pngBytes);
       screenshotUrlsByFrame[entry.key] = './$screenshotsDirName/$pngName.png';
+    }
+
+    final overlayUrlsByEvent = <TimelineEventId, List<String>>{};
+    for (final (eventIndex, event) in this.events.indexed) {
+      final annotations = event.screenshot?.annotations ?? const [];
+      final overlayUrls = <String>[];
+      for (final (annotationIndex, annotation) in annotations.indexed) {
+        final pngName =
+            'frame-${event.frameNumber}-event-$eventIndex-overlay-$annotationIndex';
+        final annotationFile = screenshotsDir.file('$pngName.png');
+        annotationFile.writeAsBytesSync(await annotation.image.readPngBytes());
+        overlayUrls.add('./$screenshotsDirName/$pngName.png');
+      }
+      overlayUrlsByEvent[event.id] = overlayUrls;
     }
 
     final events = spotTempDir.file('events.json');
@@ -120,6 +135,9 @@ extension HtmlTimelinePrinter on Timeline {
       firstEventByFrame.putIfAbsent(event.frameNumber, () => event);
     }
     final framesWithPayload = <int>{};
+    final sourceFiles = readTimelineSourceFiles(
+      this.events.map((event) => event.initiator),
+    );
     for (final e in this.events) {
       final includeFramePayload = framesWithPayload.add(e.frameNumber);
       final framePayloadEvent =
@@ -131,18 +149,29 @@ extension HtmlTimelinePrinter on Timeline {
               structuredWidgetTree: framePayloadEvent.structuredWidgetTree,
             )
           : null;
+      final ideLink = ideLinkFor(
+        e.initiator,
+        environment: Platform.environment,
+        workingDirectory: Directory.current,
+      );
       final timelineEvent = x.TimelineEvent(
         eventType: e.eventType.label,
         details: e.details,
         timestamp: e.timestamp.toIso8601String(),
+        wallTimestamp: e.wallTime.toIso8601String(),
         screenshotUrl: screenshotUrlsByFrame[e.frameNumber],
+        overlayUrls: overlayUrlsByEvent[e.id] ?? const [],
         frameNumber: e.frameNumber,
         color: e.color == flt.Colors.grey
             ? null
             // ignore: deprecated_member_use
             : e.color.value & 0xFFFFFF,
         caller: _eventCaller(e.initiator) ?? 'N/A',
-        jetBrainsLink: _jetBrainsURL(e),
+        ideLink: ideLink?.url,
+        ideName: ideLink?.name,
+        sourcePath: sourceFilePathOf(e.initiator),
+        callerLine: e.initiator?.line,
+        isFailure: _isFailureEvent(e),
         widgetTree: '',
         structuredWidgetTree: const {},
         compressedFrameData: compressedFrameData,
@@ -160,20 +189,28 @@ extension HtmlTimelinePrinter on Timeline {
       final Stopwatch stopwatch = Stopwatch()..start();
       final content = await renderTimelineWithJaspr(
         jsonTimelineEvents,
+        sourceFiles: sourceFiles,
         hotRestart: isHotReloadServerRunning,
       );
       stopwatch.stop();
       if (stopwatch.elapsed > const Duration(seconds: 1)) {
-        print('Rendered HTML in ${stopwatch.elapsedMilliseconds}ms');
+        flt.debugPrint('Rendered HTML in ${stopwatch.elapsedMilliseconds}ms');
       }
       htmlFile.writeAsStringSync(content);
       if (await _isTimelineHotRestartServerRunning()) {
-        print('View timeline here: http://localhost:5907/$timelineDirName');
+        flt.debugPrint(
+          'View timeline here: http://localhost:5907/$timelineDirName',
+        );
       } else {
-        print('View timeline here: file://${htmlFile.path}');
+        flt.debugPrint('View timeline here: file://${htmlFile.path}');
       }
     } catch (e, st) {
-      print('Error writing HTML file: $e $st');
+      developer.log(
+        'Error writing timeline HTML file',
+        name: 'spot.timeline',
+        error: e,
+        stackTrace: st,
+      );
     }
   }
 }
@@ -234,7 +271,7 @@ Future<bool> _isHotRestartServerRunning() async {
       port,
       timeout: const Duration(seconds: 1),
     );
-    print('Server is running on $host:$port');
+    flt.debugPrint('Server is running on $host:$port');
     return true;
   } on SocketException {
     return false;
@@ -243,32 +280,14 @@ Future<bool> _isHotRestartServerRunning() async {
   }
 }
 
-String? _projectName() {
-  Directory? dir = Directory.current;
-  String? projectDir;
-
-  while (dir != null) {
-    final ideaDir = Directory('${dir.path}/.idea');
-    if (ideaDir.existsSync()) {
-      // Update to the current directory path
-      projectDir = dir.path;
-      break;
-    }
-
-    // Move up to the parent directory
-    final parentDir = dir.parent;
-    if (dir.path == parentDir.path) {
-      // Reached the root directory
-      break;
-    }
-    dir = parentDir;
-  }
-
-  if (projectDir == null) {
-    return null;
-  }
-  final name = projectDir.split('/').lastOrNull;
-  return name;
+/// Whether [event] is the test failing.
+///
+/// Failures are reported through `addEvent` like everything else, so the label
+/// is the only thing that separates them. Kept here, next to the labels spot
+/// itself writes, rather than in the report UI.
+bool _isFailureEvent(TimelineEvent event) {
+  final label = event.eventType.label;
+  return label.contains('Failed') || label.contains('Error');
 }
 
 String? _eventCaller(Frame? initiator, {String? line}) {
@@ -282,30 +301,6 @@ String? _eventCaller(Frame? initiator, {String? line}) {
   final columnPart = initiator.column?.toString() ?? '0';
 
   return '$memberPart$uriPart:$linePart:$columnPart';
-}
-
-String? _jetBrainsURL(TimelineEvent event) {
-  final initiator = event.initiator;
-  if (initiator == null) return null;
-
-  final isIntelliJ = Platform.environment.values.any(
-    (value) => value.toLowerCase().contains('intellij'),
-  );
-  if (!isIntelliJ) return null;
-
-  final lineNumber = (initiator.line ?? 0) - 1;
-  final clampedLine = lineNumber >= 0 ? lineNumber.toString() : '0';
-
-  final caller = _eventCaller(initiator, line: clampedLine);
-  final name = _projectName();
-  if (caller == null || name == null) return null;
-
-  final path = caller.trim().split(name).last.trim();
-  if (path.isEmpty) return null;
-
-  final normalizedPath = path.startsWith('/') ? path.substring(1) : path;
-
-  return 'jetbrains://idea/navigate/reference?project=$name&path=$normalizedPath';
 }
 
 extension on String {

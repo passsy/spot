@@ -870,6 +870,19 @@ body.is-resizing-rows * {
   white-space: nowrap;
 }
 
+.capture-toolbar-actions {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 4px;
+}
+
+.capture-image-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
 .tree-actions {
   display: flex;
   gap: 3px;
@@ -955,13 +968,22 @@ body.is-resizing-rows * {
   box-shadow: 0 8px 28px rgba(0, 0, 0, .35);
 }
 
-.capture-canvas img {
+.capture-base-image {
   display: block;
   width: auto;
   height: auto;
   max-width: 100%;
   max-height: calc(100vh - var(--header-height) - var(--timeline-height) - 160px);
   object-fit: contain;
+}
+
+.capture-event-overlay {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 
 .widget-outline {
@@ -1271,14 +1293,17 @@ body.is-resizing-rows * {
 
 .details-panel {
   display: grid;
-  grid-template-columns: minmax(280px, 1.3fr) minmax(260px, .7fr);
+  grid-template-columns: minmax(0, 1fr);
   min-height: 100%;
+}
+
+.details-content {
+  min-width: 0;
 }
 
 .details-primary {
   min-width: 0;
   padding: 18px;
-  border-right: 1px solid var(--border);
 }
 
 .details-primary h3 {
@@ -1298,14 +1323,200 @@ body.is-resizing-rows * {
   overflow-wrap: anywhere;
 }
 
-.metadata-grid {
+.source-panel {
+  min-width: 0;
+  border-top: 1px solid var(--border);
+  background: #17181c;
+}
+
+.source-panel__header {
+  display: grid;
+  min-height: 36px;
+  gap: 4px;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--border);
+  background: #1d1e22;
+}
+
+.source-panel__header h3 {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+}
+
+.source-panel__header a,
+.source-panel__header span {
+  min-width: 0;
+  color: var(--text-muted);
+  font: 10px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  overflow-wrap: anywhere;
+}
+
+.source-panel__header a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.source-panel__header a:hover {
+  text-decoration: underline;
+}
+
+.source-code {
+  max-height: 360px;
   margin: 0;
   padding: 8px 0;
+  overflow: auto;
+  color: #cbd1db;
+  font: 11px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  tab-size: 2;
+}
+
+.source-line {
+  display: grid;
+  grid-template-columns: 48px max-content;
+  min-width: max-content;
+  border-left: 2px solid transparent;
+}
+
+.source-line.is-caller {
+  border-left-color: var(--accent);
+  background: rgba(103, 166, 255, .13);
+}
+
+.source-line__number {
+  padding: 0 10px 0 6px;
+  color: #777c86;
+  text-align: right;
+  user-select: none;
+}
+
+.source-line.is-caller .source-line__number {
+  color: var(--accent);
+}
+
+.source-line__content {
+  padding-right: 18px;
+  color: inherit;
+  white-space: pre;
+}
+
+.details-primary .details-heading {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin: 0 0 10px;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.details-heading__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--event-color, #77808f);
+  flex: none;
+}
+
+.details-heading__dot.is-failure {
+  box-shadow: 0 0 0 3px rgba(244, 67, 54, .25);
+}
+
+.timings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 22px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.timings__item {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+  font-size: 11px;
+}
+
+.timings__label {
+  color: var(--text-muted);
+}
+
+.timings__value {
+  color: var(--text-secondary);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.capture-canvas.is-zoomable {
+  cursor: zoom-in;
+}
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 12px;
+  padding: 32px;
+  background: rgba(9, 10, 12, .92);
+  cursor: zoom-out;
+}
+
+.lightbox__stage {
+  position: relative;
+  min-height: 0;
+  cursor: default;
+}
+
+/* Absolute rather than a centred grid item: the percentage height of a
+   replaced element does not resolve against a non-stretched grid area, and the
+   image overflowed the viewport. This also gives the capture and its overlays
+   the exact same box, so they line up however the image letterboxes. */
+.lightbox__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.lightbox__image--overlay {
+  pointer-events: none;
+}
+
+.lightbox__caption {
+  color: var(--text-secondary);
+  font-size: 12px;
+  text-align: center;
+}
+
+.lightbox__close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #1d1e22;
+  color: var(--text);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.lightbox__close:hover {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .metadata-row {
   display: grid;
-  grid-template-columns: 86px minmax(0, 1fr);
+  grid-template-columns: 170px minmax(0, 1fr);
   gap: 12px;
   padding: 8px 14px;
   border-bottom: 1px solid #2b2d33;
@@ -1335,7 +1546,11 @@ body.is-resizing-rows * {
 .tree-panel {
   display: grid;
   grid-template-rows: 32px minmax(0, 1fr);
+  width: 100%;
+  height: 100%;
+  min-width: 0;
   min-height: 100%;
+  overflow: hidden;
 }
 
 .code-toolbar {
@@ -1351,13 +1566,24 @@ body.is-resizing-rows * {
 }
 
 .tree-output {
+  min-width: 0;
+  min-height: 0;
   margin: 0;
   padding: 14px 16px 40px;
+  overflow: auto;
   color: #cbd1db;
   background: #17181c;
   font: 11px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   tab-size: 2;
   white-space: pre;
+}
+
+.tree-text-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
 }
 
 @media (max-width: 760px) {

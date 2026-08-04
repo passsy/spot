@@ -64,6 +64,9 @@ class _ClientAppState extends State<ClientApp>
   /// The events that occurred during the test.
   late final List<TimelineEvent> timelineEvents;
 
+  /// Every source file the events point into, keyed by path.
+  late final Map<String, TimelineSourceFile> sourceFiles;
+
   @override
   void updateState(Map<String, dynamic> value) {
     // This uses Jasprs sync mechanism to retrieve the synced server state from the rendered HTML.
@@ -72,6 +75,12 @@ class _ClientAppState extends State<ClientApp>
         .cast<Map<String, dynamic>>()
         .map(TimelineEvent.fromMap)
         .toList();
+    sourceFiles = (value['sourceFiles'] as Map? ?? const {}).map(
+      (path, file) => MapEntry(
+        path as String,
+        TimelineSourceFile.fromMap((file as Map).cast<String, dynamic>()),
+      ),
+    );
     testName = value['testName'] as String;
     testNameWithHierarchy = value['testNameWithHierarchy'] as String;
   }
@@ -87,6 +96,7 @@ class _ClientAppState extends State<ClientApp>
       testName: testName,
       testNameWithHierarchy: testNameWithHierarchy,
       timelineEvents: timelineEvents,
+      sourceFiles: sourceFiles,
     );
   }
 }

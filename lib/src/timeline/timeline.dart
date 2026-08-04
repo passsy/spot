@@ -237,6 +237,10 @@ final class _Timeline extends Timeline {
         fallback: initiator ?? screenshot?.initiator,
       ),
       timestamp: clock.now(),
+      // Deliberately not clock.now(). Inside fakeAsync that returns the
+      // simulated time, which is what `timestamp` already is. This is the one
+      // place that wants the time that actually passed.
+      wallTime: DateTime.now(),
       color: color ?? Colors.white,
       treeSnapshot: treeSnapshot,
       widgetTree: widgetTree,
@@ -301,6 +305,7 @@ final class _Timeline extends Timeline {
       color: updatedColor,
       screenshot: updatedScreenshot,
       timestamp: event.timestamp,
+      wallTime: event.wallTime,
       treeSnapshot: event.treeSnapshot,
       widgetTree: event.widgetTree,
       structuredWidgetTree: event.structuredWidgetTree,
@@ -435,6 +440,7 @@ class TimelineEvent {
     required this.id,
     required this.frameNumber,
     required this.timestamp,
+    required this.wallTime,
     required this.treeSnapshot,
     required this.widgetTree,
     required this.structuredWidgetTree,
@@ -463,8 +469,19 @@ class TimelineEvent {
   /// The details of the event.
   final String details;
 
-  /// The time at which the event occurred.
+  /// The time at which the event occurred, on the test's clock.
+  ///
+  /// Widget tests run inside `fakeAsync`, so this is simulated time: it jumps
+  /// by whatever a `pump(duration)` was given and stands still during work that
+  /// does not await a timer. Use it to reason about what the test asked for.
+  /// See [wallTime] for the time that actually passed.
   final DateTime timestamp;
+
+  /// The time at which the event occurred, on the wall clock.
+  ///
+  /// Real time, unaffected by `fakeAsync`. Use it to reason about how long
+  /// something really took, which [timestamp] cannot answer.
+  final DateTime wallTime;
 
   /// The widget tree snapshot at the time of the event.
   final WidgetTreeSnapshot treeSnapshot;

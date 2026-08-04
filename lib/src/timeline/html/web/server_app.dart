@@ -11,6 +11,7 @@ class ServerApp extends StatefulComponent {
     required this.testName,
     required this.testNameWithHierarchy,
     required this.timelineEvents,
+    required this.sourceFiles,
     super.key,
   });
 
@@ -22,6 +23,9 @@ class ServerApp extends StatefulComponent {
 
   /// The events that occurred during the test.
   final List<TimelineEvent> timelineEvents;
+
+  /// Every source file the events point into, keyed by path.
+  final Map<String, TimelineSourceFile> sourceFiles;
 
   @override
   State<ServerApp> createState() => ServerAppState();
@@ -36,6 +40,9 @@ class ServerAppState extends State<ServerApp>
       'testName': component.testName,
       'testNameWithHierarchy': component.testNameWithHierarchy,
       'timelineEvents': component.timelineEvents.map((e) => e.toMap()).toList(),
+      'sourceFiles': component.sourceFiles.map(
+        (filePath, file) => MapEntry(filePath, file.toMap()),
+      ),
     };
   }
 
@@ -52,6 +59,7 @@ class ServerAppState extends State<ServerApp>
       testName: component.testName,
       testNameWithHierarchy: component.testNameWithHierarchy,
       timelineEvents: component.timelineEvents,
+      sourceFiles: component.sourceFiles,
     );
   }
 

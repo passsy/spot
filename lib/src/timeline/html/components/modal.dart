@@ -143,6 +143,7 @@ class ModalState extends State<Modal> {
           div(styles: Styles(height: 10.px), const []),
           h3([Component.text(event?.eventType ?? '')]),
           p([Component.text(event?.timestamp ?? '')]),
+          p([Component.text(event?.wallTimestamp ?? '')]),
           p(
             events: {
               'click': (dynamic e) {
@@ -150,7 +151,7 @@ class ModalState extends State<Modal> {
               },
             },
             [
-              a(href: event?.jetBrainsLink ?? '', [
+              a(href: event?.ideLink ?? '', [
                 Component.text(event?.caller ?? ''),
               ]),
             ],

@@ -41,18 +41,23 @@ class Events extends StatelessComponent {
             div(classes: "event-details", [
               ExpandableBox(title: "Event Type", content: event.eventType),
               ExpandableBox(title: "Details", content: event.details),
-              ExpandableBox(title: "Timestamp", content: event.timestamp),
+              ExpandableBox(
+                title: "Timestamp",
+                content:
+                    '${event.timestamp} (test clock)\n'
+                    '${event.wallTimestamp} (wall clock)',
+              ),
               div(classes: "code-location", [
                 ExpandableBox(title: "Caller", content: event.caller),
-                if (event.jetBrainsLink case final jetBrainsLink?)
-                  a(href: jetBrainsLink, const [
+                if (event.ideLink case final ideLink?)
+                  a(href: ideLink, [
                     button(
                       classes: "secondary-button secondary-button--animated",
                       [
                         span(classes: "secondary-button__text", [
-                          Component.text("IDEA"),
+                          Component.text(event.ideName ?? 'IDE'),
                         ]),
-                        span(classes: "secondary-button__icon", [
+                        const span(classes: "secondary-button__icon", [
                           Component.text("→"),
                         ]),
                       ],
