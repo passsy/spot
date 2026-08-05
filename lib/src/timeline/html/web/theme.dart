@@ -520,7 +520,6 @@ kbd {
   grid-template-rows: minmax(0, 1fr) 27px;
   min-width: 0;
   min-height: 0;
-  overflow: hidden;
   padding: 0;
   border: 0;
   border-right: 1px solid var(--border);
