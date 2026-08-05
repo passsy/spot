@@ -1594,9 +1594,9 @@ class TimelineAppState extends State<TimelineApp> {
           else
             div(classes: 'capture-placeholder', [
               span(classes: 'capture-placeholder__index', [
-                Component.text('${frame.renderedFrameNumber}'),
+                Component.text('Frame ${frame.renderedFrameNumber}'),
               ]),
-              const span([Component.text('No capture')]),
+              const span([Component.text('No screenshot')]),
             ]),
         ]),
         div(classes: 'capture-caption', [

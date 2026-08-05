@@ -563,7 +563,7 @@ kbd {
 
 .capture-placeholder__index {
   color: #8b919d;
-  font-size: 18px;
+  font-size: 12px;
   font-variant-numeric: tabular-nums;
 }
 
