@@ -55,14 +55,6 @@ TimelineMode? getTimelineModeFromEnv() {
   };
 }
 
-/// Frames drawn since the first timeline of this process was created.
-///
-/// [SchedulerBinding] keeps no frame counter and persistent frame callbacks
-/// cannot be removed again, so one callback counts for the whole process and
-/// every timeline reads a delta off it.
-int _renderedFrames = 0;
-bool _isCountingRenderedFrames = false;
-
 /// Real time the framework spent building, laying out and painting frames.
 int _frameGenerationMicros = 0;
 
@@ -88,26 +80,26 @@ Duration _lastFrameTimeStamp = Duration.zero;
 final Stopwatch _insideFrame = Stopwatch();
 final Stopwatch _betweenFrames = Stopwatch();
 
-/// Brackets every frame the process draws.
+/// Closes the bracket around every frame the process draws.
 ///
 /// A transient callback runs in `handleBeginFrame`, before build, layout and
 /// paint. A persistent one runs in `handleDrawFrame`, after them. Between the
 /// two is the framework generating a frame; between one frame's end and the
 /// next one's start is the test doing its own work.
 ///
-/// `scheduleNewFrame: false` is what makes the transient callback safe here.
-/// The usual `scheduleFrameCallback` requests a frame, which would leave one
-/// permanently scheduled, inflate the frame count and stop `pumpAndSettle`
-/// from ever settling.
-void _startCountingRenderedFrames() {
-  if (_isCountingRenderedFrames) {
+/// Only the costs are measured here. How many frames went by is [FrameClock]'s
+/// answer, which counts for the whole process off a callback of its own.
+///
+/// Persistent frame callbacks cannot be removed again, so this one is installed
+/// once and does nothing while [_measuringFrames] is `false`.
+void _installFrameEndCallback() {
+  if (_frameEndCallbackInstalled) {
     return;
   }
-  _isCountingRenderedFrames = true;
+  _frameEndCallbackInstalled = true;
 
   SchedulerBinding.instance.addPersistentFrameCallback((_) {
     _insideFrame.stop();
-    _renderedFrames++;
     // Without the matching frame start there is nothing to measure against,
     // which happens for the first frame after the scheduler went idle.
     _lastFrameGenerationMicros = _sawFrameStart
@@ -123,6 +115,9 @@ void _startCountingRenderedFrames() {
   });
 }
 
+/// Whether the persistent callback that closes a frame is on the scheduler.
+bool _frameEndCallbackInstalled = false;
+
 /// The transient callback waiting for the next frame to begin, if any.
 int? _pendingFrameStartId;
 
@@ -132,6 +127,11 @@ bool _measuringFrames = false;
 /// Puts a callback in front of the next frame, if one is wanted.
 ///
 /// Re-armed after every frame because transient callbacks fire once.
+///
+/// `scheduleNewFrame: false` is what makes it safe. The usual
+/// `scheduleFrameCallback` requests a frame, which would leave one permanently
+/// scheduled, inflate the frame count and stop `pumpAndSettle` from ever
+/// settling.
 void _armFrameStart() {
   if (!_measuringFrames || _pendingFrameStartId != null) {
     return;
@@ -301,18 +301,18 @@ abstract interface class Timeline {
 /// The actual implementation of the [Timeline].
 final class _Timeline extends Timeline {
   _Timeline._(this.test)
-    : _renderedFramesAtStart = _renderedFrames,
+    : _renderedFramesAtStart = FrameClock.frameNumberInProcess,
       _generationMicrosAtStart = _frameGenerationMicros,
       _testWorkMicrosAtStart = _testWorkMicros {
-    _startCountingRenderedFrames();
+    _installFrameEndCallback();
     _measuringFrames = true;
     _armFrameStart();
     _startCapturingFlutterErrors();
   }
 
-  /// Frames the process had already drawn when this timeline started.
+  /// [FrameClock] when this timeline started.
   ///
-  /// The counter runs for the whole process, this is what makes the numbers
+  /// The clock runs for the whole process, this is what makes the numbers
   /// relative to this test.
   final int _renderedFramesAtStart;
 
@@ -322,7 +322,8 @@ final class _Timeline extends Timeline {
   final int _testWorkMicrosAtStart;
 
   @override
-  int get renderedFrameCount => _renderedFrames - _renderedFramesAtStart;
+  int get renderedFrameCount =>
+      FrameClock.frameNumberInProcess - _renderedFramesAtStart;
 
   /// The test that the timeline is associated with.
   @override
