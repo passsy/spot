@@ -54,9 +54,10 @@ Future<void> main() async {
       final map = e as Map<String, dynamic>;
       final screenshotPath = map['screenshotUrl'] as String?;
       if (screenshotPath != null) {
-        final relative =
-            path.relative(screenshotPath, from: globalTimelineDir.path);
-        map['screenshotUrl'] = relative;
+        map['screenshotUrl'] = relativeScreenshotPath(
+          timelineDirPath: timelineDir.path,
+          screenshotPath: screenshotPath,
+        );
       }
       return TimelineEvent.fromMap(map);
     }).toList();
@@ -68,4 +69,14 @@ Future<void> main() async {
     );
     file.writeAsStringSync(htmlText);
   }
+}
+
+String relativeScreenshotPath({
+  required String timelineDirPath,
+  required String screenshotPath,
+}) {
+  final absoluteScreenshotPath = path.isAbsolute(screenshotPath)
+      ? screenshotPath
+      : path.join(timelineDirPath, screenshotPath);
+  return path.relative(absoluteScreenshotPath, from: timelineDirPath);
 }

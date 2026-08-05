@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dartx/dartx.dart';
@@ -195,6 +196,37 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       htmlLine.endsWith(
         '$prefix-live-timeline-without-error-prints-html${Platform.pathSeparator}index.html',
       ),
+      isTrue,
+    );
+
+    final htmlUri = Uri.parse(htmlLine.split('View timeline here: ').last);
+    final reportDirectory = File.fromUri(htmlUri).parent;
+    final events =
+        (jsonDecode(
+                  File(
+                    '${reportDirectory.path}${Platform.pathSeparator}events.json',
+                  ).readAsStringSync(),
+                )
+                as List)
+            .cast<Map<String, dynamic>>();
+    final eventWithOverlay = events.firstWhere(
+      (event) => (event['overlayUrls'] as List).isNotEmpty,
+    );
+    final frameUrl = eventWithOverlay['screenshotUrl'] as String;
+    final overlayUrl =
+        (eventWithOverlay['overlayUrls'] as List).single as String;
+
+    expect(frameUrl, startsWith('./screenshots/frame-'));
+    expect(
+      File(
+        '${reportDirectory.path}${Platform.pathSeparator}${frameUrl.substring(2)}',
+      ).existsSync(),
+      isTrue,
+    );
+    expect(
+      File(
+        '${reportDirectory.path}${Platform.pathSeparator}${overlayUrl.substring(2)}',
+      ).existsSync(),
       isTrue,
     );
   }

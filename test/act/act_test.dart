@@ -627,7 +627,9 @@ void actTests() {
         isTrue,
       );
       expect(
-          inspection.tapPosition!.dx, lessThan(samples.searchArea.center.dx));
+        inspection.tapPosition!.dx,
+        lessThan(samples.searchArea.center.dx),
+      );
     });
 
     testWidgets('reports a not-found reason when nothing matches',
@@ -644,7 +646,9 @@ void actTests() {
         'TapNotFoundReason: Could not find ElevatedButton in widget tree',
       );
       expect(
-          inspection.message, 'Could not find ElevatedButton in widget tree');
+        inspection.message,
+        'Could not find ElevatedButton in widget tree',
+      );
       // Nothing was found, so there is nothing to describe or search.
       expect(inspection.target, isNull);
       expect(inspection.samples, isNull);
@@ -672,7 +676,9 @@ void actTests() {
 
       expect(inspection.canTap, isFalse);
       expect(
-          inspection.message, 'Found 2 elements matching Text in widget tree');
+        inspection.message,
+        'Found 2 elements matching Text in widget tree',
+      );
       expect(inspection.target, isNull);
       expect(inspection.samples, isNull);
       expect(inspection.tapPosition, isNull);
@@ -693,12 +699,15 @@ void actTests() {
 
       expect(inspection.canTap, isFalse);
       expect(inspection.tapFailure!.reason, isA<TapNoRenderObjectReason>());
-      expect(inspection.tapFailure!.tapNoRenderObjectReason,
-          same(inspection.tapFailure!.reason));
+      expect(
+        inspection.tapFailure!.tapNoRenderObjectReason,
+        same(inspection.tapFailure!.reason),
+      );
       expect(
         inspection.message,
         contains(
-            "Widget '_NoRenderObjectWidget' has no associated RenderObject"),
+          "Widget '_NoRenderObjectWidget' has no associated RenderObject",
+        ),
       );
       expect(inspection.samples, isNull);
       expect(inspection.tapPosition, isNull);
@@ -915,8 +924,10 @@ void actTests() {
       final reason = inspection.tapFailure!.tapIgnoredReason;
 
       expect(inspection.tapFailure!.reason, isA<TapIgnoredReason>());
-      expect(() => inspection.tapFailure!.tapUnknownReason,
-          throwsA(isA<TestFailure>()));
+      expect(
+        () => inspection.tapFailure!.tapUnknownReason,
+        throwsA(isA<TestFailure>()),
+      );
       expect(reason.ignorePointer.widget, isA<IgnorePointer>());
       expect(reason.ignorePointer.globalRect, isNotNull);
       // The IgnorePointer is created inside _IgnoredButtonWrapper.build, which
@@ -952,8 +963,10 @@ void actTests() {
           'Size(0.0, 0.0)',
         ),
       );
-      expect(inspection.message,
-          contains('SizedBox.shrink forces ElevatedButton'));
+      expect(
+        inspection.message,
+        contains('SizedBox.shrink forces ElevatedButton'),
+      );
       expect(inspection.tapPosition, isNull);
       expect(inspection.target?.globalRect?.size, Size.zero);
 
@@ -1003,7 +1016,9 @@ void actTests() {
 
       expect(inspection.canTap, isFalse);
       expect(
-          inspection.message, contains('can not be interacted with directly'));
+        inspection.message,
+        contains('can not be interacted with directly'),
+      );
       // The full diagnostics, prefixed with the reason that produced them.
       expect(
         inspection.tapFailure!.toString(),
@@ -1161,8 +1176,10 @@ void actTests() {
       // spot() skips offstage widgets, so the default selector cannot even see
       // it. spotOffstage() is what the docs point at, and it used to land in
       // TapUnknownReason.
-      expect(act.inspectTap(spot<ElevatedButton>()).tapFailure!.reason,
-          isA<TapNotFoundReason>());
+      expect(
+        act.inspectTap(spot<ElevatedButton>()).tapFailure!.reason,
+        isA<TapNotFoundReason>(),
+      );
 
       final inspection = act.inspectTap(
         spotOffstage().spot<ElevatedButton>().atMost(1),
