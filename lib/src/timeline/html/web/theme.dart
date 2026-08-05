@@ -369,6 +369,8 @@ kbd {
   min-width: 0;
   height: 100%;
   padding: 6px 0;
+  /* A label, not content. Dragging across the strip should not pick it up. */
+  user-select: none;
   border-right: 1px solid var(--border);
   background:
     repeating-linear-gradient(
