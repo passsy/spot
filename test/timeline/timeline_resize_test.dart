@@ -245,6 +245,65 @@ void main() {
       expect(gap.wallClock, const Duration(milliseconds: 32));
     });
 
+    test('the first frame has no step to report', () {
+      final events = [
+        event(testClockMs: 0, wallClockMs: 0, renderedFrameNumber: 1),
+      ];
+
+      expect(frameStepCost(events, null, frame(1, [0])), isNull);
+    });
+
+    test('a frame reports the step from the previous one', () {
+      final events = [
+        event(testClockMs: 0, wallClockMs: 0, renderedFrameNumber: 7),
+        event(testClockMs: 16, wallClockMs: 4, renderedFrameNumber: 8),
+      ];
+
+      final cost = frameStepCost(
+        events,
+        frame(1, [0], renderedFrameNumber: 7),
+        frame(2, [1], renderedFrameNumber: 8),
+      )!;
+
+      expect(cost.testClock, const Duration(milliseconds: 16));
+      expect(cost.wallClock, const Duration(milliseconds: 4));
+    });
+
+    test('a step is measured from the last event of the frame before', () {
+      final events = [
+        event(testClockMs: 0, wallClockMs: 0, renderedFrameNumber: 1),
+        // Same frame as the one before, so this is where the step starts.
+        event(testClockMs: 30, wallClockMs: 8, renderedFrameNumber: 1),
+        event(testClockMs: 46, wallClockMs: 12, renderedFrameNumber: 2),
+      ];
+
+      final cost = frameStepCost(
+        events,
+        frame(1, [0, 1], renderedFrameNumber: 1),
+        frame(2, [2], renderedFrameNumber: 2),
+      )!;
+
+      expect(cost.testClock, const Duration(milliseconds: 16));
+      expect(cost.wallClock, const Duration(milliseconds: 4));
+    });
+
+    test('a step across a gap spans the gap, so it matches it', () {
+      final events = [
+        event(testClockMs: 0, wallClockMs: 0, renderedFrameNumber: 1),
+        event(testClockMs: 500, wallClockMs: 120, renderedFrameNumber: 307),
+      ];
+      final previous = frame(1, [0], renderedFrameNumber: 1);
+      final next = frame(2, [1], renderedFrameNumber: 307);
+
+      final cost = frameStepCost(events, previous, next)!;
+      final gap = gapBetween(events, previous, next)!;
+
+      // The card says "gap included" for exactly this reason: the two report
+      // the same span, because everything in it happened inside the gap.
+      expect(cost.testClock, gap.testClock);
+      expect(cost.wallClock, gap.wallClock);
+    });
+
     test('gap columns sit between the frames, and nowhere else', () {
       final events = [
         event(testClockMs: 0, wallClockMs: 0, renderedFrameNumber: 1),

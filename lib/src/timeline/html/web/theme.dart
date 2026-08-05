@@ -369,9 +369,10 @@ kbd {
       #2b2e36 6px 12px);
 }
 
-/* The timings, on hover. The native tooltip took about a second to show up
-   and cannot be styled, so this is built here instead. */
-.frame-gap__card {
+/* The timings, on hover, for a gap and for a frame alike. The native tooltip
+   took about a second to show up and cannot be styled, so this is built here
+   instead. */
+.hover-card {
   position: absolute;
   z-index: 30;
   top: 50%;
@@ -384,7 +385,9 @@ kbd {
   box-shadow: 0 8px 24px rgba(0, 0, 0, .5);
   opacity: 0;
   visibility: hidden;
-  transform: translate(-50%, -50%) scale(.96);
+  /* Overridden per owner, see .capture .hover-card. */
+  --card-x: -50%;
+  transform: translate(var(--card-x), -50%) scale(.96);
   pointer-events: none;
   font-size: 11px;
   transition:
@@ -393,18 +396,29 @@ kbd {
     visibility 0s linear 110ms;
 }
 
-/* Nothing happens for 300ms, so brushing past a gap does not flash a card. */
-.frame-gap:hover .frame-gap__card {
+/* Nothing happens for 300ms, so dragging across the strip does not flash a
+   card in every column on the way. */
+.frame-gap:hover .hover-card,
+.capture:hover .hover-card {
   opacity: 1;
   visibility: visible;
-  transform: translate(-50%, -50%) scale(1);
+  transform: translate(var(--card-x), -50%) scale(1);
   transition:
     opacity 110ms ease 300ms,
     transform 110ms ease 300ms,
     visibility 0s linear 300ms;
 }
 
-.frame-gap__card-title {
+/* Anchored to the left edge of the cell rather than centred on it. A card
+   centred on the first frame reaches past the left edge of the strip, and a
+   scroll container cannot be scrolled to reveal it. Overflow to the right just
+   extends the scrollable area. Gaps never sit first, so they stay centred. */
+.capture .hover-card {
+  --card-x: 0;
+  left: 6px;
+}
+
+.hover-card__title {
   display: block;
   color: var(--text);
   font-size: 13px;
@@ -412,7 +426,7 @@ kbd {
   font-variant-numeric: tabular-nums;
 }
 
-.frame-gap__card-note {
+.hover-card__note {
   display: block;
   padding-bottom: 8px;
   margin-bottom: 7px;
@@ -421,7 +435,7 @@ kbd {
   font-size: 10px;
 }
 
-.frame-gap__card-row {
+.hover-card__row {
   display: flex;
   justify-content: space-between;
   gap: 12px;
@@ -429,17 +443,18 @@ kbd {
   line-height: 1.7;
 }
 
-.frame-gap__card-row span:last-child {
+.hover-card__row span:last-child {
   color: var(--text);
   font-variant-numeric: tabular-nums;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .frame-gap__card {
+  .hover-card {
     transition: none;
   }
 
-  .frame-gap:hover .frame-gap__card {
+  .frame-gap:hover .hover-card,
+  .capture:hover .hover-card {
     transition: opacity 0s linear 300ms, visibility 0s linear 300ms;
   }
 }
@@ -484,7 +499,6 @@ kbd {
   grid-template-rows: minmax(0, 1fr) 27px;
   min-width: 0;
   padding: 0;
-  overflow: hidden;
   border: 0;
   border-right: 1px solid var(--border);
   border-bottom: 3px solid transparent;

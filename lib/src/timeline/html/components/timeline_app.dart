@@ -391,6 +391,30 @@ TimelineGap? gapBetween(
   );
 }
 
+/// What reaching [frame] cost, or `null` when nothing was recorded before it.
+///
+/// Measured from the last thing recorded before the frame to the first thing
+/// recorded in it, which is the same span [gapBetween] reports. That is what
+/// makes a frame and the gap beside it readable against one another.
+///
+/// It is the cost of the step, not of the paint: when a gap sits in between,
+/// everything the gap covers is in here too, which is why the card says so.
+({Duration testClock, Duration wallClock})? frameStepCost(
+  List<TimelineEvent> events,
+  TimelineFrameGroup? previous,
+  TimelineFrameGroup frame,
+) {
+  if (previous == null) {
+    return null;
+  }
+  final before = events[previous.eventIndexes.last];
+  final after = events[frame.eventIndexes.first];
+  return (
+    testClock: _between(before.timestamp, after.timestamp),
+    wallClock: _between(before.wallTimestamp, after.wallTimestamp),
+  );
+}
+
 /// The event to select when the lightbox moves [delta] captures along.
 ///
 /// Only captured frames are stepped through. A frame without one has nothing
@@ -1188,23 +1212,40 @@ class TimelineAppState extends State<TimelineApp> {
       attributes: const {'aria-hidden': 'true'},
       [
         span(classes: 'frame-gap__frames', [Component.text(frames)]),
-        // Shown on hover by CSS alone, so it works before the page hydrates.
-        div(classes: 'frame-gap__card', [
-          strong(classes: 'frame-gap__card-title', [Component.text(frames)]),
-          const span(classes: 'frame-gap__card-note', [
-            Component.text('rendered with nothing recorded'),
-          ]),
-          div(classes: 'frame-gap__card-row', [
-            const span([Component.text('Test clock')]),
-            span([Component.text(_durationLabel(gap.testClock))]),
-          ]),
-          div(classes: 'frame-gap__card-row', [
-            const span([Component.text('Wall clock')]),
-            span([Component.text(_durationLabel(gap.wallClock))]),
-          ]),
-        ]),
+        _hoverCard(
+          title: frames,
+          note: 'rendered with nothing recorded',
+          testClock: gap.testClock,
+          wallClock: gap.wallClock,
+        ),
       ],
     );
+  }
+
+  /// The card shown after hovering a column of the strip for a moment.
+  ///
+  /// Shown by CSS alone, so it works before the page hydrates. The native
+  /// tooltip took about a second to appear and cannot be styled.
+  Component _hoverCard({
+    required String title,
+    required String note,
+    Duration? testClock,
+    Duration? wallClock,
+  }) {
+    return div(classes: 'hover-card', [
+      strong(classes: 'hover-card__title', [Component.text(title)]),
+      span(classes: 'hover-card__note', [Component.text(note)]),
+      if (testClock != null)
+        div(classes: 'hover-card__row', [
+          const span([Component.text('Test clock')]),
+          span([Component.text(_durationLabel(testClock))]),
+        ]),
+      if (wallClock != null)
+        div(classes: 'hover-card__row', [
+          const span([Component.text('Wall clock')]),
+          span([Component.text(_durationLabel(wallClock))]),
+        ]),
+    ]);
   }
 
   /// The frame a group was rendered in, counted the way the test rendered it.
@@ -1247,6 +1288,19 @@ class TimelineAppState extends State<TimelineApp> {
     final frameByEvent = {
       for (final frame in frames)
         for (final index in frame.eventIndexes) index: frame,
+    };
+    // The frame each column is measured against, and whether a gap sits in
+    // between. Walked once here rather than searched per cell.
+    final previousFrame = <TimelineFrameGroup, TimelineFrameGroup>{};
+    for (final (index, frame) in frames.indexed) {
+      if (index > 0) {
+        previousFrame[frame] = frames[index - 1];
+      }
+    }
+    final framesAfterGap = <TimelineFrameGroup>{
+      for (final (index, column) in columns.indexed)
+        if (column.frame != null && index > 0 && columns[index - 1].gap != null)
+          column.frame!,
     };
 
     return main_(
@@ -1393,7 +1447,11 @@ class TimelineAppState extends State<TimelineApp> {
                       for (final column in columns)
                         column.gap != null
                             ? _frameGap(column.gap!)
-                            : _frameCapture(column.frame!),
+                            : _frameCapture(
+                                column.frame!,
+                                previousFrame[column.frame!],
+                                afterGap: framesAfterGap.contains(column.frame),
+                              ),
                     ]),
                     div(classes: 'event-lane', [
                       div(classes: 'lane-events', [
@@ -1456,7 +1514,11 @@ class TimelineAppState extends State<TimelineApp> {
     );
   }
 
-  Component _frameCapture(TimelineFrameGroup frame) {
+  Component _frameCapture(
+    TimelineFrameGroup frame,
+    TimelineFrameGroup? previousFrame, {
+    required bool afterGap,
+  }) {
     final firstEventIndex = frame.eventIndexes.first;
     final event = component.timelineEvents[firstEventIndex];
     final selected =
@@ -1482,7 +1544,6 @@ class TimelineAppState extends State<TimelineApp> {
         'tabindex': selected || (_selectedIndex == null && firstEventIndex == 0)
             ? '0'
             : '-1',
-        'title': '${_frameLabel(frame)} · $eventSummary',
       },
       onClick: () => _select(selected ? _selectedIndex! : firstEventIndex),
       [
@@ -1509,7 +1570,36 @@ class TimelineAppState extends State<TimelineApp> {
           ]),
           span(classes: 'capture-name', [Component.text(eventSummary)]),
         ]),
+        _captureCard(frame, previousFrame, eventSummary, afterGap: afterGap),
       ],
+    );
+  }
+
+  /// What the step to this frame cost, on hover.
+  ///
+  /// The same two clocks a gap reports, measured the same way, so the frames
+  /// and the gaps between them can be read as one sequence.
+  Component _captureCard(
+    TimelineFrameGroup frame,
+    TimelineFrameGroup? previousFrame,
+    String eventSummary, {
+    required bool afterGap,
+  }) {
+    final cost = frameStepCost(component.timelineEvents, previousFrame, frame);
+    final note = cost == null
+        // Nothing came before it, so there is no span to report.
+        ? '$eventSummary · first recorded frame'
+        : afterGap
+        // The span runs from before the gap, not from the end of it, and the
+        // gap's own card reports the same numbers. Saying so is what stops
+        // this being read as the cost of painting this one frame.
+        ? '$eventSummary · since the previous frame, gap included'
+        : '$eventSummary · since the previous frame';
+    return _hoverCard(
+      title: _frameLabel(frame),
+      note: note,
+      testClock: cost?.testClock,
+      wallClock: cost?.wallClock,
     );
   }
 
