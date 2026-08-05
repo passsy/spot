@@ -111,27 +111,39 @@ Map<String, String> _ownBuildDirectory() {
   });
 
   final settings = jsonEncode({'build-dir': _buildDirectoryOfTestFile()});
-  // Linux and macOS read `$XDG_CONFIG_HOME/settings`, Windows reads
-  // `$APPDATA/.flutter_settings`. Writing both means not caring which one runs.
+  // Flutter looks for `$HOME/.flutter_settings` first and falls back to
+  // `$XDG_CONFIG_HOME/settings`, on Windows it reads `$APPDATA/.flutter_settings`.
+  // Both files exist here and all three variables point at them, so the config
+  // the nested run finds is this one whichever rule it follows. Pointing only
+  // `XDG_CONFIG_HOME` here would leave machines that still carry the long
+  // deprecated `$HOME/.flutter_settings` with the shared build directory.
   File('${configDir.path}/settings').writeAsStringSync(settings);
   File('${configDir.path}/.flutter_settings').writeAsStringSync(settings);
 
-  final home = Platform.environment['HOME'];
-  if (!Platform.isWindows &&
-      home != null &&
-      File('$home/.flutter_settings').existsSync()) {
-    printOnFailure(
-      'Nested test runs share one build directory on this machine, because '
-      '$home/.flutter_settings takes precedence over the config file they were '
-      'given. Deleting that file (Flutter has not written it since 2021) makes '
-      'them independent again.',
-    );
-  }
-
+  final pubCache = _pubCache();
   return {
+    'HOME': configDir.path,
     'XDG_CONFIG_HOME': configDir.path,
     'APPDATA': configDir.path,
+    if (pubCache != null) 'PUB_CACHE': pubCache,
   };
+}
+
+/// The package cache this process resolved its own dependencies from.
+///
+/// It is named explicitly because the nested run looks for it in the home
+/// directory it just lost, and would download everything again into the
+/// throwaway one.
+String? _pubCache() {
+  final configured = Platform.environment['PUB_CACHE'];
+  if (configured != null) {
+    return configured;
+  }
+  final home = Platform.environment['HOME'];
+  if (home == null) {
+    return null;
+  }
+  return '$home/.pub-cache';
 }
 
 /// A directory under `build/`, named after the test file that is running.
