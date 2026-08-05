@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:spot/src/flutter/frame_clock.dart';
 import 'package:spot/src/spot/element_extensions.dart';
 import 'package:spot/src/spot/query_stats.dart';
 
@@ -128,13 +129,11 @@ class WidgetTreeSnapshot extends ScopedWidgetTreeSnapshot {
   /// Query results cached for the lifetime of this tree snapshot.
   final WidgetTreeQueryCache queryCache = WidgetTreeQueryCache();
 
-  bool _isNextFrame = false;
-
   /// Creates a snapshot of the widget tree at the given [timestamp].
   ///
   /// The snapshot is initialized with the `origin` of the current widget scope
-  /// and the specified [timestamp]. It sets up a post-frame callback to mark
-  /// the snapshot as outdated when the next frame is pumped.
+  /// and the specified [timestamp]. It records the current frame so that it
+  /// reports itself as outdated once the next frame is pumped.
   ///
   /// The snapshot captures the state of the widget tree at the exact moment of
   /// its creation, allowing for analysis of the tree state at that specific
@@ -145,21 +144,18 @@ class WidgetTreeSnapshot extends ScopedWidgetTreeSnapshot {
   WidgetTreeSnapshot({
     required super.origin,
     required this.timestamp,
-  }) : super(parentScope: null) {
-    // A snapshot is only valid until the next frame is pumped
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _isNextFrame = true;
-    });
-  }
+  })  : _frameNumber = FrameClock.frameNumberInProcess,
+        super(parentScope: null);
+
+  /// The frame this snapshot was taken in.
+  ///
+  /// A snapshot is only valid until the next frame is pumped, and comparing
+  /// against [FrameClock.frameNumberInProcess] says so without this snapshot
+  /// having to register a frame callback of its own.
+  final int _frameNumber;
 
   @override
-  bool get isFromThisFrame {
-    if (_isNextFrame) {
-      // A new frame has been pumped
-      return false;
-    }
-    return true;
-  }
+  bool get isFromThisFrame => _frameNumber == FrameClock.frameNumberInProcess;
 
   @override
   String toString() {
