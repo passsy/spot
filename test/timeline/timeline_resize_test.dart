@@ -163,6 +163,12 @@ void main() {
       required int testClockMs,
       required int wallClockMs,
       required int renderedFrameNumber,
+      int? frameNumber,
+      int? frameGenerationMicros,
+      int? testWorkMicros,
+      int? frameClockStepMicros,
+      int? totalGenerationMicros,
+      int? totalTestWorkMicros,
     }) {
       return TimelineEvent(
         eventType: 'Assertion',
@@ -197,6 +203,12 @@ void main() {
         widgetTree: '',
         structuredWidgetTree: const {},
         renderedFrameNumber: renderedFrameNumber,
+        frameNumber: frameNumber,
+        frameGenerationMicros: frameGenerationMicros,
+        testWorkMicros: testWorkMicros,
+        frameClockStepMicros: frameClockStepMicros,
+        totalGenerationMicros: totalGenerationMicros,
+        totalTestWorkMicros: totalTestWorkMicros,
       );
     }
 
@@ -245,64 +257,101 @@ void main() {
       expect(gap.wallClock, const Duration(milliseconds: 32));
     });
 
-    test('the first frame has no step to report', () {
+    test('a frame carries the timings measured on it', () {
       final events = [
-        event(testClockMs: 0, wallClockMs: 0, renderedFrameNumber: 1),
+        event(
+          testClockMs: 0,
+          wallClockMs: 0,
+          renderedFrameNumber: 7,
+          frameNumber: 1,
+          frameGenerationMicros: 812,
+          testWorkMicros: 40,
+          frameClockStepMicros: 16000,
+        ),
+        // A second assertion in the same frame, further from its end.
+        event(
+          testClockMs: 0,
+          wallClockMs: 3,
+          renderedFrameNumber: 7,
+          frameNumber: 1,
+          frameGenerationMicros: 812,
+          testWorkMicros: 3100,
+          frameClockStepMicros: 16000,
+        ),
       ];
 
-      expect(frameCost(events, null, frame(1, [0])), isNull);
+      final group = groupTimelineFrames(events).single;
+
+      expect(group.generation, const Duration(microseconds: 812));
+      // The last event's figure: by then it covers both assertions.
+      expect(group.testWork, const Duration(microseconds: 3100));
+      expect(group.clockStep, const Duration(milliseconds: 16));
     });
 
-    test('a frame right after another reports the step between them', () {
-      final events = [
-        event(testClockMs: 0, wallClockMs: 0, renderedFrameNumber: 7),
-        event(testClockMs: 16, wallClockMs: 4, renderedFrameNumber: 8),
-      ];
-
-      final cost = frameCost(
-        events,
-        frame(1, [0], renderedFrameNumber: 7),
-        frame(2, [1], renderedFrameNumber: 8),
-      )!;
-
-      expect(cost.testClock, const Duration(milliseconds: 16));
-      expect(cost.wallClock, const Duration(milliseconds: 4));
-    });
-
-    test('a step is measured from the last event of the frame before', () {
+    test('a frame after a gap still reports its own timings', () {
       final events = [
         event(testClockMs: 0, wallClockMs: 0, renderedFrameNumber: 1),
-        // Same frame as the one before, so this is where the step starts.
-        event(testClockMs: 30, wallClockMs: 8, renderedFrameNumber: 1),
-        event(testClockMs: 46, wallClockMs: 12, renderedFrameNumber: 2),
+        event(
+          testClockMs: 500,
+          wallClockMs: 120,
+          renderedFrameNumber: 307,
+          frameGenerationMicros: 640,
+          testWorkMicros: 55,
+          frameClockStepMicros: 16000,
+        ),
       ];
 
-      final cost = frameCost(
-        events,
-        frame(1, [0, 1], renderedFrameNumber: 1),
-        frame(2, [2], renderedFrameNumber: 2),
-      )!;
+      // Measured on the frame rather than worked out from the distance to its
+      // neighbour, so 305 unrecorded frames in between change nothing.
+      final group = groupTimelineFrames(events).last;
 
-      expect(cost.testClock, const Duration(milliseconds: 16));
-      expect(cost.wallClock, const Duration(milliseconds: 4));
+      expect(group.generation, const Duration(microseconds: 640));
+      expect(group.testWork, const Duration(microseconds: 55));
     });
 
-    test('a frame after a gap has no cost of its own', () {
+    test('a gap is priced from the totals, with its neighbours removed', () {
       final events = [
-        event(testClockMs: 0, wallClockMs: 0, renderedFrameNumber: 1),
-        event(testClockMs: 500, wallClockMs: 120, renderedFrameNumber: 307),
+        event(
+          testClockMs: 0,
+          wallClockMs: 0,
+          renderedFrameNumber: 1,
+          testWorkMicros: 200,
+          totalGenerationMicros: 1000,
+          totalTestWorkMicros: 500,
+        ),
+        event(
+          testClockMs: 500,
+          wallClockMs: 120,
+          renderedFrameNumber: 61,
+          frameGenerationMicros: 800,
+          totalGenerationMicros: 40000,
+          totalTestWorkMicros: 6000,
+        ),
       ];
       final previous = frame(1, [0], renderedFrameNumber: 1);
-      final next = frame(2, [1], renderedFrameNumber: 307);
+      final next = frame(2, [1], renderedFrameNumber: 61);
 
-      // Nothing records where the 305 unrecorded frames end and this one
-      // begins, so the whole span belongs to the gap. Reporting it here too
-      // would put the same 500ms on screen twice, once as the gap and once as
-      // the cost of the single frame after it.
-      expect(frameCost(events, previous, next), isNull);
+      final work = gapWork(events, previous, next)!;
+
+      // 40000 - 1000 total, less the 800 the frame after the gap reports.
+      expect(work.generation, const Duration(microseconds: 38200));
+      // 6000 - 500 total, less the 200 the frame before already reported.
+      expect(work.testWork, const Duration(microseconds: 5300));
+    });
+
+    test('a gap from a report written before timings has no work to show', () {
+      final events = [
+        event(testClockMs: 0, wallClockMs: 0, renderedFrameNumber: 1),
+        event(testClockMs: 500, wallClockMs: 120, renderedFrameNumber: 61),
+      ];
+
       expect(
-        gapBetween(events, previous, next)!.testClock,
-        const Duration(milliseconds: 500),
+        gapWork(
+          events,
+          frame(1, [0], renderedFrameNumber: 1),
+          frame(2, [1], renderedFrameNumber: 61),
+        ),
+        isNull,
       );
     });
 

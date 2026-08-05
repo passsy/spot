@@ -308,6 +308,9 @@ class TimelineFrameGroup {
     required this.renderedFrameNumber,
     required this.eventIndexes,
     required this.screenshotUrl,
+    this.generation,
+    this.testWork,
+    this.clockStep,
   });
 
   final int frameNumber;
@@ -319,7 +322,20 @@ class TimelineFrameGroup {
   final int renderedFrameNumber;
   final List<int> eventIndexes;
   final String? screenshotUrl;
+
+  /// What the framework spent generating this frame, measured around build,
+  /// layout and paint. `null` for reports written before it was recorded.
+  final Duration? generation;
+
+  /// What the test spent after the frame, up to its last event here.
+  final Duration? testWork;
+
+  /// How far the test's clock stepped into this frame.
+  final Duration? clockStep;
 }
+
+Duration? _micros(int? value) =>
+    value == null ? null : Duration(microseconds: value);
 
 List<TimelineFrameGroup> groupTimelineFrames(List<TimelineEvent> events) {
   final indexesByFrame = <int, List<int>>{};
@@ -333,12 +349,18 @@ List<TimelineFrameGroup> groupTimelineFrames(List<TimelineEvent> events) {
         for (final index in entry.value) {
           screenshotUrl ??= events[index].screenshotUrl;
         }
+        final first = events[entry.value.first];
+        // The last event's figure, because it is measured from the end of the
+        // frame: by then it covers every assertion made in this frame.
+        final last = events[entry.value.last];
         return TimelineFrameGroup(
           frameNumber: entry.key,
-          renderedFrameNumber:
-              events[entry.value.first].renderedFrameNumber ?? entry.key,
+          renderedFrameNumber: first.renderedFrameNumber ?? entry.key,
           eventIndexes: List.unmodifiable(entry.value),
           screenshotUrl: screenshotUrl,
+          generation: _micros(first.frameGenerationMicros),
+          testWork: _micros(last.testWorkMicros),
+          clockStep: _micros(first.frameClockStepMicros),
         );
       })
       .toList(growable: false);
@@ -354,6 +376,8 @@ class TimelineGap {
     required this.frames,
     required this.testClock,
     required this.wallClock,
+    this.generation,
+    this.testWork,
   });
 
   /// Frames rendered inside the gap.
@@ -365,6 +389,14 @@ class TimelineGap {
 
   /// How long the gap really took, which is what it costs to run the test.
   final Duration wallClock;
+
+  /// The half of [wallClock] the framework spent generating those frames.
+  ///
+  /// `null` for reports written before it was measured.
+  final Duration? generation;
+
+  /// The half the test spent between them, for the same reason.
+  final Duration? testWork;
 }
 
 /// The gap between [previous] and [next], or `null` when there is none.
@@ -384,37 +416,51 @@ TimelineGap? gapBetween(
   // recorded after it, which is exactly the span nothing was recorded in.
   final before = events[previous.eventIndexes.last];
   final after = events[next.eventIndexes.first];
+  final work = gapWork(events, previous, next);
   return TimelineGap(
     frames: frames,
     testClock: _between(before.timestamp, after.timestamp),
     wallClock: _between(before.wallTimestamp, after.wallTimestamp),
+    generation: work?.generation,
+    testWork: work?.testWork,
   );
 }
 
-/// What [frame] cost, or `null` when the recording cannot say.
+/// What a stretch of unrecorded frames cost, from the running totals.
 ///
-/// Measured from the last thing recorded before the frame to the first thing
-/// recorded in it. That span is the frame's own cost only while the two are
-/// next to each other.
-///
-/// As soon as unrecorded frames sit in between there is no timestamp marking
-/// where they end and this frame begins, so the span covers all of them
-/// together. It belongs to the gap, which already reports it - see
-/// [gapBetween]. Returning it here as well would be the same number claimed
-/// twice, once as a stretch of dead frames and once as the cost of one frame.
-({Duration testClock, Duration wallClock})? frameCost(
+/// [gapBetween] reports the whole span the gap sits in; this splits out the two
+/// halves that are measured rather than inferred. The frames either side are
+/// removed, so what is left belongs to the gap alone.
+({Duration generation, Duration testWork})? gapWork(
   List<TimelineEvent> events,
-  TimelineFrameGroup? previous,
-  TimelineFrameGroup frame,
+  TimelineFrameGroup previous,
+  TimelineFrameGroup next,
 ) {
-  if (previous == null || gapBetween(events, previous, frame) != null) {
+  final before = events[previous.eventIndexes.last];
+  final after = events[next.eventIndexes.first];
+  final totalGenerationBefore = before.totalGenerationMicros;
+  final totalGenerationAfter = after.totalGenerationMicros;
+  final totalTestWorkBefore = before.totalTestWorkMicros;
+  final totalTestWorkAfter = after.totalTestWorkMicros;
+  if (totalGenerationBefore == null ||
+      totalGenerationAfter == null ||
+      totalTestWorkBefore == null ||
+      totalTestWorkAfter == null) {
     return null;
   }
-  final before = events[previous.eventIndexes.last];
-  final after = events[frame.eventIndexes.first];
+  // The frame after the gap is in the running total by now, and it reports
+  // itself, so take it back out.
+  final generation =
+      totalGenerationAfter -
+      totalGenerationBefore -
+      (after.frameGenerationMicros ?? 0);
+  // Likewise the stretch of test work the frame before the gap already
+  // reported as its own.
+  final testWork =
+      totalTestWorkAfter - totalTestWorkBefore - (before.testWorkMicros ?? 0);
   return (
-    testClock: _between(before.timestamp, after.timestamp),
-    wallClock: _between(before.wallTimestamp, after.wallTimestamp),
+    generation: Duration(microseconds: math.max(0, generation)),
+    testWork: Duration(microseconds: math.max(0, testWork)),
   );
 }
 
@@ -1218,8 +1264,12 @@ class TimelineAppState extends State<TimelineApp> {
         _hoverCard(
           title: frames,
           note: 'rendered with nothing recorded',
-          testClock: gap.testClock,
-          wallClock: gap.wallClock,
+          rows: [
+            ('Generation', gap.generation),
+            ('Test work', gap.testWork),
+            ('Clock step', gap.testClock),
+            ('Wall clock', gap.wallClock),
+          ],
         ),
       ],
     );
@@ -1232,22 +1282,17 @@ class TimelineAppState extends State<TimelineApp> {
   Component _hoverCard({
     required String title,
     required String note,
-    Duration? testClock,
-    Duration? wallClock,
+    required List<(String, Duration?)> rows,
   }) {
     return div(classes: 'hover-card', [
       strong(classes: 'hover-card__title', [Component.text(title)]),
       span(classes: 'hover-card__note', [Component.text(note)]),
-      if (testClock != null)
-        div(classes: 'hover-card__row', [
-          const span([Component.text('Test clock')]),
-          span([Component.text(_durationLabel(testClock))]),
-        ]),
-      if (wallClock != null)
-        div(classes: 'hover-card__row', [
-          const span([Component.text('Wall clock')]),
-          span([Component.text(_durationLabel(wallClock))]),
-        ]),
+      for (final (label, value) in rows)
+        if (value != null)
+          div(classes: 'hover-card__row', [
+            span([Component.text(label)]),
+            span([Component.text(_durationLabel(value))]),
+          ]),
     ]);
   }
 
@@ -1272,12 +1317,22 @@ class TimelineAppState extends State<TimelineApp> {
     return buffer.toString();
   }
 
+  /// A duration, at whatever scale keeps it readable.
+  ///
+  /// Frame generation runs to hundreds of microseconds, so rounding everything
+  /// to whole milliseconds would print `0 ms` for most frames of a test.
   String _durationLabel(Duration duration) {
-    final milliseconds = duration.inMicroseconds / 1000;
-    if (milliseconds >= 1000) {
-      return '${(milliseconds / 1000).toStringAsFixed(2)} s';
+    final micros = duration.inMicroseconds;
+    if (micros >= 1000000) {
+      return '${(micros / 1000000).toStringAsFixed(2)} s';
     }
-    return '${milliseconds.toStringAsFixed(0)} ms';
+    if (micros >= 10000) {
+      return '${(micros / 1000).toStringAsFixed(0)} ms';
+    }
+    if (micros >= 1000) {
+      return '${(micros / 1000).toStringAsFixed(1)} ms';
+    }
+    return '$micros \u00b5s';
   }
 
   @override
@@ -1292,14 +1347,6 @@ class TimelineAppState extends State<TimelineApp> {
       for (final frame in frames)
         for (final index in frame.eventIndexes) index: frame,
     };
-    // The frame each column is measured against, and whether a gap sits in
-    // between. Walked once here rather than searched per cell.
-    final previousFrame = <TimelineFrameGroup, TimelineFrameGroup>{};
-    for (final (index, frame) in frames.indexed) {
-      if (index > 0) {
-        previousFrame[frame] = frames[index - 1];
-      }
-    }
 
     return main_(
       id: 'timeline-app',
@@ -1445,10 +1492,7 @@ class TimelineAppState extends State<TimelineApp> {
                       for (final column in columns)
                         column.gap != null
                             ? _frameGap(column.gap!)
-                            : _frameCapture(
-                                column.frame!,
-                                previousFrame[column.frame!],
-                              ),
+                            : _frameCapture(column.frame!),
                     ]),
                     div(classes: 'event-lane', [
                       div(classes: 'lane-events', [
@@ -1511,10 +1555,7 @@ class TimelineAppState extends State<TimelineApp> {
     );
   }
 
-  Component _frameCapture(
-    TimelineFrameGroup frame,
-    TimelineFrameGroup? previousFrame,
-  ) {
+  Component _frameCapture(TimelineFrameGroup frame) {
     final firstEventIndex = frame.eventIndexes.first;
     final event = component.timelineEvents[firstEventIndex];
     final selected =
@@ -1566,37 +1607,30 @@ class TimelineAppState extends State<TimelineApp> {
           ]),
           span(classes: 'capture-name', [Component.text(eventSummary)]),
         ]),
-        _captureCard(frame, previousFrame, eventSummary),
+        _captureCard(frame, eventSummary),
       ],
     );
   }
 
   /// What this frame cost, on hover.
   ///
-  /// The same two clocks a gap reports, measured the same way, so a frame and
-  /// the gap beside it read as one sequence rather than two scales.
+  /// All three are measured on the frame itself rather than worked out from
+  /// the distance to its neighbour, so a frame reports the same way whether or
+  /// not a stretch of unrecorded frames sits in front of it.
   ///
-  /// A frame the recording cannot price says so instead of borrowing the
-  /// number next to it, see [frameCost].
-  Component _captureCard(
-    TimelineFrameGroup frame,
-    TimelineFrameGroup? previousFrame,
-    String eventSummary,
-  ) {
-    final cost = frameCost(component.timelineEvents, previousFrame, frame);
-    final String note;
-    if (cost != null) {
-      note = '$eventSummary · since the previous frame';
-    } else if (previousFrame == null) {
-      note = '$eventSummary · first recorded frame';
-    } else {
-      note = '$eventSummary · timed with the gap before it';
-    }
+  /// Generation and test work are real time. The clock step is not a cost at
+  /// all: it is what a `pump(duration)` asked the simulated clock for, and it
+  /// is the only simulated figure a single frame has, because `fakeAsync`
+  /// holds its clock still while real work happens.
+  Component _captureCard(TimelineFrameGroup frame, String eventSummary) {
     return _hoverCard(
       title: _frameLabel(frame),
-      note: note,
-      testClock: cost?.testClock,
-      wallClock: cost?.wallClock,
+      note: eventSummary,
+      rows: [
+        ('Generation', frame.generation),
+        ('Test work', frame.testWork),
+        ('Clock step', frame.clockStep),
+      ],
     );
   }
 

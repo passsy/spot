@@ -27,6 +27,11 @@ class TimelineEvent {
     this.compressedFrameData,
     this.frameNumber,
     this.renderedFrameNumber,
+    this.frameGenerationMicros,
+    this.testWorkMicros,
+    this.frameClockStepMicros,
+    this.totalGenerationMicros,
+    this.totalTestWorkMicros,
   });
 
   final String eventType;
@@ -69,6 +74,20 @@ class TimelineEvent {
   /// the test did in between without recording anything.
   final int? renderedFrameNumber;
 
+  /// Real microseconds the framework spent generating this event's frame.
+  final int? frameGenerationMicros;
+
+  /// Real microseconds the test spent between that frame and this event.
+  final int? testWorkMicros;
+
+  /// Simulated microseconds the test's clock moved into this event's frame.
+  final int? frameClockStepMicros;
+
+  /// [frameGenerationMicros] and [testWorkMicros] summed over the test so far,
+  /// which is what prices the frames no event was recorded in.
+  final int? totalGenerationMicros;
+  final int? totalTestWorkMicros;
+
   Map<String, dynamic> toMap() {
     return {
       'eventType': eventType,
@@ -89,6 +108,11 @@ class TimelineEvent {
       'compressedFrameData': compressedFrameData,
       'frameNumber': frameNumber,
       'renderedFrameNumber': renderedFrameNumber,
+      'frameGenerationMicros': frameGenerationMicros,
+      'testWorkMicros': testWorkMicros,
+      'frameClockStepMicros': frameClockStepMicros,
+      'totalGenerationMicros': totalGenerationMicros,
+      'totalTestWorkMicros': totalTestWorkMicros,
     };
   }
 
@@ -115,6 +139,11 @@ class TimelineEvent {
       compressedFrameData: map['compressedFrameData'] as String?,
       frameNumber: map['frameNumber'] as int?,
       renderedFrameNumber: map['renderedFrameNumber'] as int?,
+      frameGenerationMicros: map['frameGenerationMicros'] as int?,
+      testWorkMicros: map['testWorkMicros'] as int?,
+      frameClockStepMicros: map['frameClockStepMicros'] as int?,
+      totalGenerationMicros: map['totalGenerationMicros'] as int?,
+      totalTestWorkMicros: map['totalTestWorkMicros'] as int?,
     );
   }
 }

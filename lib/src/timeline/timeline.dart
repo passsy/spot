@@ -63,14 +63,133 @@ TimelineMode? getTimelineModeFromEnv() {
 int _renderedFrames = 0;
 bool _isCountingRenderedFrames = false;
 
+/// Real time the framework spent building, laying out and painting frames.
+int _frameGenerationMicros = 0;
+
+/// Real time that passed between frames, which is the test's own work.
+int _testWorkMicros = 0;
+
+/// What the last frame alone cost to generate, `null` when it was not seen
+/// from the start.
+int? _lastFrameGenerationMicros;
+
+/// Whether the frame being drawn had its start measured.
+bool _sawFrameStart = false;
+
+/// How far the test's clock moved into the last frame.
+Duration _lastFrameClockStep = Duration.zero;
+Duration _lastFrameTimeStamp = Duration.zero;
+
+/// Runs while the framework is inside a frame, and while it is not.
+///
+/// Stopwatches rather than clocks: this has to be real elapsed time, and
+/// `clock.now()` is the simulated one inside `fakeAsync` while `DateTime.now()`
+/// is not monotonic.
+final Stopwatch _insideFrame = Stopwatch();
+final Stopwatch _betweenFrames = Stopwatch();
+
+/// Brackets every frame the process draws.
+///
+/// A transient callback runs in `handleBeginFrame`, before build, layout and
+/// paint. A persistent one runs in `handleDrawFrame`, after them. Between the
+/// two is the framework generating a frame; between one frame's end and the
+/// next one's start is the test doing its own work.
+///
+/// `scheduleNewFrame: false` is what makes the transient callback safe here.
+/// The usual `scheduleFrameCallback` requests a frame, which would leave one
+/// permanently scheduled, inflate the frame count and stop `pumpAndSettle`
+/// from ever settling.
 void _startCountingRenderedFrames() {
   if (_isCountingRenderedFrames) {
     return;
   }
   _isCountingRenderedFrames = true;
+
   SchedulerBinding.instance.addPersistentFrameCallback((_) {
+    _insideFrame.stop();
     _renderedFrames++;
+    // Without the matching frame start there is nothing to measure against,
+    // which happens for the first frame after the scheduler went idle.
+    _lastFrameGenerationMicros = _sawFrameStart
+        ? _insideFrame.elapsedMicroseconds
+        : null;
+    _frameGenerationMicros += _lastFrameGenerationMicros ?? 0;
+    _sawFrameStart = false;
+    _betweenFrames
+      ..reset()
+      ..start();
+    _armFrameStart();
+    SchedulerBinding.instance.addPostFrameCallback((_) => _disarmIfIdle());
   });
+}
+
+/// The transient callback waiting for the next frame to begin, if any.
+int? _pendingFrameStartId;
+
+/// Whether a test is running that wants its frames measured.
+bool _measuringFrames = false;
+
+/// Puts a callback in front of the next frame, if one is wanted.
+///
+/// Re-armed after every frame because transient callbacks fire once.
+void _armFrameStart() {
+  if (!_measuringFrames || _pendingFrameStartId != null) {
+    return;
+  }
+  // Only under the binding that draws frames on demand. A live binding keeps
+  // drawing from a real vsync, so nothing at the end of a frame says whether
+  // another one is coming, and the callback would still be armed when
+  // flutter_test checks for leftovers.
+  if (SchedulerBinding.instance is! AutomatedTestWidgetsFlutterBinding) {
+    return;
+  }
+  _pendingFrameStartId = SchedulerBinding.instance.scheduleFrameCallback((
+    timeStamp,
+  ) {
+    _pendingFrameStartId = null;
+    _sawFrameStart = true;
+    _betweenFrames.stop();
+    _testWorkMicros += _betweenFrames.elapsedMicroseconds;
+    _betweenFrames.reset();
+    _lastFrameClockStep = timeStamp - _lastFrameTimeStamp;
+    _lastFrameTimeStamp = timeStamp;
+    _insideFrame
+      ..reset()
+      ..start();
+  }, scheduleNewFrame: false);
+}
+
+/// Takes the pending callback back off the scheduler.
+///
+/// `flutter_test` fails a test that leaves a transient callback behind, on the
+/// grounds that it is an animation still running after the tree was disposed.
+/// A permanently armed callback is exactly that, so measuring only lasts as
+/// long as the test does.
+void _stopMeasuringFrames() {
+  _measuringFrames = false;
+  _cancelPendingFrameStart();
+  _insideFrame.stop();
+  _betweenFrames.stop();
+}
+
+/// Drops the armed callback once no further frame is coming.
+///
+/// Runs at the end of every frame. `flutter_test` checks for leftover
+/// transient callbacks straight after the test body, well before any teardown,
+/// so the callback cannot simply be cleaned up when the timeline ends.
+void _disarmIfIdle() {
+  if (SchedulerBinding.instance.hasScheduledFrame) {
+    return;
+  }
+  _cancelPendingFrameStart();
+}
+
+void _cancelPendingFrameStart() {
+  final id = _pendingFrameStartId;
+  if (id != null) {
+    SchedulerBinding.instance.cancelFrameCallbackWithId(id);
+    _pendingFrameStartId = null;
+  }
 }
 
 final Map<LiveTest, Timeline> _timelines = {};
@@ -181,8 +300,13 @@ abstract interface class Timeline {
 
 /// The actual implementation of the [Timeline].
 final class _Timeline extends Timeline {
-  _Timeline._(this.test) : _renderedFramesAtStart = _renderedFrames {
+  _Timeline._(this.test)
+    : _renderedFramesAtStart = _renderedFrames,
+      _generationMicrosAtStart = _frameGenerationMicros,
+      _testWorkMicrosAtStart = _testWorkMicros {
     _startCountingRenderedFrames();
+    _measuringFrames = true;
+    _armFrameStart();
     _startCapturingFlutterErrors();
   }
 
@@ -191,6 +315,11 @@ final class _Timeline extends Timeline {
   /// The counter runs for the whole process, this is what makes the numbers
   /// relative to this test.
   final int _renderedFramesAtStart;
+
+  /// The two wall-clock totals when this timeline started, for the same reason
+  /// as [_renderedFramesAtStart]: the counters run for the whole process.
+  final int _generationMicrosAtStart;
+  final int _testWorkMicrosAtStart;
 
   @override
   int get renderedFrameCount => _renderedFrames - _renderedFramesAtStart;
@@ -300,6 +429,9 @@ final class _Timeline extends Timeline {
     Color? color,
   }) {
     final id = TimelineEventId.random();
+    // A pump usually follows an assertion, and by now the scheduler may have
+    // gone idle and dropped the armed callback.
+    _armFrameStart();
     final treeSnapshot = currentWidgetTreeSnapshot();
     if (!identical(treeSnapshot, _lastEventTreeSnapshot)) {
       _lastEventTreeSnapshot = treeSnapshot;
@@ -323,6 +455,11 @@ final class _Timeline extends Timeline {
       id: id,
       frameNumber: _currentFrameNumber,
       renderedFrameNumber: renderedFrameCount,
+      frameGenerationMicros: _lastFrameGenerationMicros,
+      testWorkMicros: _betweenFrames.elapsedMicroseconds,
+      frameClockStep: _lastFrameClockStep,
+      totalGenerationMicros: _frameGenerationMicros - _generationMicrosAtStart,
+      totalTestWorkMicros: _testWorkMicros - _testWorkMicrosAtStart,
       details: details,
       screenshot: screenshot,
       initiator: mostRelevantCaller(
@@ -393,6 +530,11 @@ final class _Timeline extends Timeline {
       id: id,
       frameNumber: event.frameNumber,
       renderedFrameNumber: event.renderedFrameNumber,
+      frameGenerationMicros: event.frameGenerationMicros,
+      testWorkMicros: event.testWorkMicros,
+      frameClockStep: event.frameClockStep,
+      totalGenerationMicros: event.totalGenerationMicros,
+      totalTestWorkMicros: event.totalTestWorkMicros,
       details: updatedDetails,
       eventType: updatedEventType,
       color: updatedColor,
@@ -491,6 +633,12 @@ final class _Timeline extends Timeline {
         id: TimelineEventId.random(),
         frameNumber: _currentFrameNumber,
         renderedFrameNumber: renderedFrameCount,
+        frameGenerationMicros: _lastFrameGenerationMicros,
+        testWorkMicros: _betweenFrames.elapsedMicroseconds,
+        frameClockStep: _lastFrameClockStep,
+        totalGenerationMicros:
+            _frameGenerationMicros - _generationMicrosAtStart,
+        totalTestWorkMicros: _testWorkMicros - _testWorkMicrosAtStart,
         details: '${failure.error.toString().trimRight()}\n\n$trace',
         screenshot: screenshot,
         initiator: mostRelevantCaller(trace: trace),
@@ -562,6 +710,7 @@ final class _Timeline extends Timeline {
   ///
   /// Prints the timeline to console, as link to a html file or plain text
   Future<void> _onPostTest() async {
+    _stopMeasuringFrames();
     _stopCapturingFlutterErrors();
     await _addTestFailureEvent();
     await _renderTimeline();
@@ -659,6 +808,11 @@ class TimelineEvent {
     required this.id,
     required this.frameNumber,
     required this.renderedFrameNumber,
+    this.frameGenerationMicros,
+    required this.testWorkMicros,
+    required this.frameClockStep,
+    required this.totalGenerationMicros,
+    required this.totalTestWorkMicros,
     required this.timestamp,
     required this.wallTime,
     required this.treeSnapshot,
@@ -688,6 +842,36 @@ class TimelineEvent {
   /// Unlike [frameNumber] this counts every frame, so the distance between two
   /// events says how much rendering happened in between.
   final int renderedFrameNumber;
+
+  /// Real time the framework spent building, laying out and painting the frame
+  /// this event was recorded in.
+  ///
+  /// Measured from `handleBeginFrame` to the end of `handleDrawFrame`, so it is
+  /// the cost of the frame itself with none of the test's own work in it.
+  ///
+  /// `null` when the frame was already under way before spot could measure it,
+  /// which is better than reporting a number measured from the wrong place.
+  final int? frameGenerationMicros;
+
+  /// Real time the test spent between that frame ending and this event.
+  ///
+  /// Assertions, whatever the test computes on the way to them, and spot's own
+  /// work capturing screenshots and walking the widget tree.
+  final int testWorkMicros;
+
+  /// How far the test's clock moved into this event's frame.
+  ///
+  /// What a `pump(duration)` asked for rather than anything that was spent:
+  /// `fakeAsync` holds its clock still during real work, so this is the only
+  /// simulated-time figure a single frame has.
+  final Duration frameClockStep;
+
+  /// [frameGenerationMicros] summed over the whole test so far, which is what
+  /// lets a stretch of unrecorded frames be priced.
+  final int totalGenerationMicros;
+
+  /// [testWorkMicros] summed over the whole test so far, for the same reason.
+  final int totalTestWorkMicros;
 
   /// The type of event that occurred.
   final TimelineEventType eventType;

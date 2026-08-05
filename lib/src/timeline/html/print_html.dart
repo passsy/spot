@@ -198,6 +198,11 @@ extension HtmlTimelinePrinter on Timeline {
         overlayUrls: overlayUrlsByEvent[e.id] ?? const [],
         frameNumber: e.frameNumber,
         renderedFrameNumber: e.renderedFrameNumber,
+        frameGenerationMicros: e.frameGenerationMicros,
+        testWorkMicros: e.testWorkMicros,
+        frameClockStepMicros: e.frameClockStep.inMicroseconds,
+        totalGenerationMicros: e.totalGenerationMicros,
+        totalTestWorkMicros: e.totalTestWorkMicros,
         color: e.color == flt.Colors.grey
             ? null
             // ignore: deprecated_member_use
