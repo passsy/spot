@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Improve: Assertions no longer rasterize the same screen once each. Every assertion records a screenshot for the timeline, rasterizing costs around 30ms, and a layer tree cannot repaint between frames, so a burst of assertions between two pumps was photographing an identical screen over and over. The raster is now reused for the rest of the frame. In one app's test suite this cut the capture time from 9.7s to 1.9s, 261 screenshots over 58 frames.
+- Improve: Identical annotations are rendered once per test instead of once per screenshot. `HighlightAnnotator`, `CrosshairAnnotator` and `ArrowAnnotator` compare by their inputs, and a test that asserts on the same widgets repeatedly draws the same overlay every time. The same test above rendered 214 highlight overlays of which 36 were distinct. Annotators outside spot keep identity equality and are rendered every time; implement `==` and `hashCode` to opt in.
+
 - Fix: A `WidgetMatcher` reports the widget it matched, not whatever is in the tree when you read it. `getDiagnosticProp` used to re-read the live widget while `matcher.widget` returned the matched one, so a matcher held across a pump could answer with two different values. All of them now read the matched widget; take a new matcher to assert against the current tree. #159
 
 - Improvement: `hasDiagnosticProp`, `getDiagnosticProp` and `withDiagnosticProp` share one cache of a widget's diagnostic properties instead of running `debugFillProperties` again on every call. Every matcher in a chain used to rebuild the properties of the same widget, and so did every query that inspected a widget an earlier query had already inspected. Over a tree of 200 `Text`s, repeated property queries are around 1.5x faster. #159
