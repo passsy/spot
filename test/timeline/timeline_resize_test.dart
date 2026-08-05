@@ -250,16 +250,16 @@ void main() {
         event(testClockMs: 0, wallClockMs: 0, renderedFrameNumber: 1),
       ];
 
-      expect(frameStepCost(events, null, frame(1, [0])), isNull);
+      expect(frameCost(events, null, frame(1, [0])), isNull);
     });
 
-    test('a frame reports the step from the previous one', () {
+    test('a frame right after another reports the step between them', () {
       final events = [
         event(testClockMs: 0, wallClockMs: 0, renderedFrameNumber: 7),
         event(testClockMs: 16, wallClockMs: 4, renderedFrameNumber: 8),
       ];
 
-      final cost = frameStepCost(
+      final cost = frameCost(
         events,
         frame(1, [0], renderedFrameNumber: 7),
         frame(2, [1], renderedFrameNumber: 8),
@@ -277,7 +277,7 @@ void main() {
         event(testClockMs: 46, wallClockMs: 12, renderedFrameNumber: 2),
       ];
 
-      final cost = frameStepCost(
+      final cost = frameCost(
         events,
         frame(1, [0, 1], renderedFrameNumber: 1),
         frame(2, [2], renderedFrameNumber: 2),
@@ -287,7 +287,7 @@ void main() {
       expect(cost.wallClock, const Duration(milliseconds: 4));
     });
 
-    test('a step across a gap spans the gap, so it matches it', () {
+    test('a frame after a gap has no cost of its own', () {
       final events = [
         event(testClockMs: 0, wallClockMs: 0, renderedFrameNumber: 1),
         event(testClockMs: 500, wallClockMs: 120, renderedFrameNumber: 307),
@@ -295,13 +295,15 @@ void main() {
       final previous = frame(1, [0], renderedFrameNumber: 1);
       final next = frame(2, [1], renderedFrameNumber: 307);
 
-      final cost = frameStepCost(events, previous, next)!;
-      final gap = gapBetween(events, previous, next)!;
-
-      // The card says "gap included" for exactly this reason: the two report
-      // the same span, because everything in it happened inside the gap.
-      expect(cost.testClock, gap.testClock);
-      expect(cost.wallClock, gap.wallClock);
+      // Nothing records where the 305 unrecorded frames end and this one
+      // begins, so the whole span belongs to the gap. Reporting it here too
+      // would put the same 500ms on screen twice, once as the gap and once as
+      // the cost of the single frame after it.
+      expect(frameCost(events, previous, next), isNull);
+      expect(
+        gapBetween(events, previous, next)!.testClock,
+        const Duration(milliseconds: 500),
+      );
     });
 
     test('gap columns sit between the frames, and nowhere else', () {

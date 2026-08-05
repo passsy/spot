@@ -391,20 +391,23 @@ TimelineGap? gapBetween(
   );
 }
 
-/// What reaching [frame] cost, or `null` when nothing was recorded before it.
+/// What [frame] cost, or `null` when the recording cannot say.
 ///
 /// Measured from the last thing recorded before the frame to the first thing
-/// recorded in it, which is the same span [gapBetween] reports. That is what
-/// makes a frame and the gap beside it readable against one another.
+/// recorded in it. That span is the frame's own cost only while the two are
+/// next to each other.
 ///
-/// It is the cost of the step, not of the paint: when a gap sits in between,
-/// everything the gap covers is in here too, which is why the card says so.
-({Duration testClock, Duration wallClock})? frameStepCost(
+/// As soon as unrecorded frames sit in between there is no timestamp marking
+/// where they end and this frame begins, so the span covers all of them
+/// together. It belongs to the gap, which already reports it - see
+/// [gapBetween]. Returning it here as well would be the same number claimed
+/// twice, once as a stretch of dead frames and once as the cost of one frame.
+({Duration testClock, Duration wallClock})? frameCost(
   List<TimelineEvent> events,
   TimelineFrameGroup? previous,
   TimelineFrameGroup frame,
 ) {
-  if (previous == null) {
+  if (previous == null || gapBetween(events, previous, frame) != null) {
     return null;
   }
   final before = events[previous.eventIndexes.last];
@@ -1297,11 +1300,6 @@ class TimelineAppState extends State<TimelineApp> {
         previousFrame[frame] = frames[index - 1];
       }
     }
-    final framesAfterGap = <TimelineFrameGroup>{
-      for (final (index, column) in columns.indexed)
-        if (column.frame != null && index > 0 && columns[index - 1].gap != null)
-          column.frame!,
-    };
 
     return main_(
       id: 'timeline-app',
@@ -1450,7 +1448,6 @@ class TimelineAppState extends State<TimelineApp> {
                             : _frameCapture(
                                 column.frame!,
                                 previousFrame[column.frame!],
-                                afterGap: framesAfterGap.contains(column.frame),
                               ),
                     ]),
                     div(classes: 'event-lane', [
@@ -1516,9 +1513,8 @@ class TimelineAppState extends State<TimelineApp> {
 
   Component _frameCapture(
     TimelineFrameGroup frame,
-    TimelineFrameGroup? previousFrame, {
-    required bool afterGap,
-  }) {
+    TimelineFrameGroup? previousFrame,
+  ) {
     final firstEventIndex = frame.eventIndexes.first;
     final event = component.timelineEvents[firstEventIndex];
     final selected =
@@ -1570,31 +1566,32 @@ class TimelineAppState extends State<TimelineApp> {
           ]),
           span(classes: 'capture-name', [Component.text(eventSummary)]),
         ]),
-        _captureCard(frame, previousFrame, eventSummary, afterGap: afterGap),
+        _captureCard(frame, previousFrame, eventSummary),
       ],
     );
   }
 
-  /// What the step to this frame cost, on hover.
+  /// What this frame cost, on hover.
   ///
-  /// The same two clocks a gap reports, measured the same way, so the frames
-  /// and the gaps between them can be read as one sequence.
+  /// The same two clocks a gap reports, measured the same way, so a frame and
+  /// the gap beside it read as one sequence rather than two scales.
+  ///
+  /// A frame the recording cannot price says so instead of borrowing the
+  /// number next to it, see [frameCost].
   Component _captureCard(
     TimelineFrameGroup frame,
     TimelineFrameGroup? previousFrame,
-    String eventSummary, {
-    required bool afterGap,
-  }) {
-    final cost = frameStepCost(component.timelineEvents, previousFrame, frame);
-    final note = cost == null
-        // Nothing came before it, so there is no span to report.
-        ? '$eventSummary · first recorded frame'
-        : afterGap
-        // The span runs from before the gap, not from the end of it, and the
-        // gap's own card reports the same numbers. Saying so is what stops
-        // this being read as the cost of painting this one frame.
-        ? '$eventSummary · since the previous frame, gap included'
-        : '$eventSummary · since the previous frame';
+    String eventSummary,
+  ) {
+    final cost = frameCost(component.timelineEvents, previousFrame, frame);
+    final String note;
+    if (cost != null) {
+      note = '$eventSummary · since the previous frame';
+    } else if (previousFrame == null) {
+      note = '$eventSummary · first recorded frame';
+    } else {
+      note = '$eventSummary · timed with the gap before it';
+    }
     return _hoverCard(
       title: _frameLabel(frame),
       note: note,
