@@ -11,6 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:image/image.dart' as img;
 import 'package:nanoid2/nanoid2.dart';
 import 'package:spot/spot.dart';
+import 'package:spot/src/flutter/frame_clock.dart';
 import 'package:spot/src/screenshot/screenshot.dart' as self
     show takeScreenshot;
 import 'package:spot/src/screenshot/screenshot_annotator.dart';
@@ -40,6 +41,9 @@ Future<Screenshot> takeScreenshot({
   double? devicePixelRatio,
 }) async {
   assert(devicePixelRatio == null || devicePixelRatio > 0.0);
+  // A screenshot is spot in use, and it only shows the frame it was taken in,
+  // which the frame number is what dates.
+  FrameClock.startCounting();
   final binding = TestWidgetsFlutterBinding.instance;
   final pixelRatio = devicePixelRatio ??
       binding.platformDispatcher.implicitView?.devicePixelRatio ??

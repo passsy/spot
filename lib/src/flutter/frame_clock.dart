@@ -22,11 +22,12 @@ abstract final class FrameClock {
   /// Frames rendered since spot was introduced in the current test.
   ///
   /// spot counts from its first use, so frames a test rendered before that
-  /// are not in the number. Introducing spot before the test — see
-  /// [startCounting] — makes this count from the test's first frame. Once
-  /// counting runs, every later test in the process is counted from its
-  /// first frame either way, because each frame is attributed to the test it
-  /// rendered in.
+  /// are not in the number. Introducing spot before the test makes this
+  /// count from the test's first frame: `loadAppFonts()` in a project's
+  /// `flutter_test_config.dart` and setting `globalTimelineMode` in `main()`
+  /// both count as use. Once counting runs, every later test in the process
+  /// is counted from its first frame either way, because each frame is
+  /// attributed to the test it rendered in.
   ///
   /// Every rendered frame counts, not just the ones the test body pumped:
   /// `flutter_test` resets the tree with a frame of its own before each body
@@ -39,25 +40,23 @@ abstract final class FrameClock {
 
   /// Installs the persistent frame callback that counts. Idempotent.
   ///
-  /// Everything here starts itself on first use, so the one reason to call
-  /// this is a project's `flutter_test_config.dart`, where it runs before any
-  /// test has rendered a frame and [frameNumberInTest] counts every test from
-  /// its first frame:
+  /// spot's entry points call this on first use, so nobody else ever needs
+  /// to: using spot is what starts the counting.
   ///
-  /// ```dart
-  /// Future<void> testExecutable(FutureOr<void> Function() testMain) async {
-  ///   TestWidgetsFlutterBinding.ensureInitialized();
-  ///   FrameClock.startCounting();
-  ///   await testMain();
-  /// }
-  /// ```
+  /// Before a binding exists there is no scheduler to count with, and the
+  /// call is skipped — setting `globalTimelineMode` at the top of `main()`
+  /// runs this early. The next spot use tries again.
   static void startCounting() {
     if (_counting) {
       return;
     }
+    final binding = _bindingIfInitialized();
+    if (binding == null) {
+      return;
+    }
     _counting = true;
     _testOfFrame = getLiveTest();
-    SchedulerBinding.instance.addPersistentFrameCallback((_) {
+    binding.addPersistentFrameCallback((_) {
       final test = getLiveTest();
       if (!identical(test, _testOfFrame)) {
         // The first counted frame of a test the counter has not seen, so the
@@ -73,6 +72,20 @@ abstract final class FrameClock {
 
 int _frames = 0;
 bool _counting = false;
+
+/// The scheduler, or `null` before a binding was initialized.
+///
+/// [SchedulerBinding.instance] throws before a binding exists, and that throw
+/// is its whole answer to "is there one yet", so it is converted to a value
+/// right here.
+SchedulerBinding? _bindingIfInitialized() {
+  try {
+    return SchedulerBinding.instance;
+    // ignore: avoid_catching_errors
+  } on Error {
+    return null;
+  }
+}
 
 /// The test the frames since [_framesAtTestStart] belong to.
 ///
