@@ -97,6 +97,98 @@ void main() {
       );
     });
 
+    testWidgets('reads fresh props after a rebuild', (tester) async {
+      // Props are cached per widget instance. A rebuild creates a new instance,
+      // which must not read the previous instance's props.
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Text('a', maxLines: 4),
+        ),
+      );
+      spot<Text>().existsOnce().hasMaxLines(4);
+      spot<Text>().withMaxLines(4).existsOnce();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Text('a', maxLines: 7),
+        ),
+      );
+      spot<Text>().existsOnce().hasMaxLines(7);
+      spot<Text>().withMaxLines(7).existsOnce();
+      spot<Text>().withMaxLines(4).doesNotExist();
+      expect(spot<Text>().existsOnce().getDiagnosticProp<int>('maxLines'), 7);
+    });
+
+    testWidgets('reads fresh text after a controller change', (tester) async {
+      // AnyText reads the text off the live controller, and a bare
+      // EditableText keeps its widget instance while its text changes. The
+      // props of one frame must not be served in the next.
+      final controller = TextEditingController(text: 'before');
+      final focusNode = FocusNode();
+      addTearDown(controller.dispose);
+      addTearDown(focusNode.dispose);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: EditableText(
+              controller: controller,
+              focusNode: focusNode,
+              style: TextStyle(fontSize: 12),
+              cursorColor: Colors.red,
+              backgroundCursorColor: Colors.grey,
+            ),
+          ),
+        ),
+      );
+      // Read the prop, not the text filter, so this goes through the cache.
+      expect(
+        spotTextWhere((it) => it.isNotEmpty())
+            .existsOnce()
+            .getDiagnosticProp<String>('text'),
+        'before',
+      );
+
+      final widgetBefore = find.byType(EditableText).evaluate().first.widget;
+      controller.text = 'after';
+      await tester.pump();
+      final widgetAfter = find.byType(EditableText).evaluate().first.widget;
+      // The premise of the test: the same instance now reports a new text.
+      expect(identical(widgetBefore, widgetAfter), isTrue);
+
+      expect(
+        spotTextWhere((it) => it.isNotEmpty())
+            .existsOnce()
+            .getDiagnosticProp<String>('text'),
+        'after',
+      );
+    });
+
+    testWidgets('selectors deriving different widgets do not collide',
+        (tester) async {
+      // spot<RichText>() and spotText() resolve to the same element but derive
+      // different widgets from it, so they must not read each other's props.
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Text('a', maxLines: 4, style: TextStyle(fontSize: 12)),
+        ),
+      );
+
+      // Each has props the other lacks: AnyText flattens the TextStyle into
+      // font_*, RichText reports a textWidthBasis. Reading the other one's
+      // props finds neither.
+      expect(
+        spot<RichText>()
+            .existsOnce()
+            .getDiagnosticProp<TextWidthBasis>('textWidthBasis'),
+        TextWidthBasis.parent,
+      );
+      expect(
+        spotText('a').existsOnce().getDiagnosticProp<double>('font_size'),
+        12,
+      );
+    });
+
     testWidgets('generated withDiagnosticProp', (tester) async {
       await tester.pumpWidget(
         MaterialApp(

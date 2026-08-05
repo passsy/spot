@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Improve: `hasDiagnosticProp`, `getDiagnosticProp` and `withDiagnosticProp` share one cache of a widget's diagnostic properties instead of running `debugFillProperties` again on every call. Every matcher in a chain used to rebuild the properties of the same widget, and every `with*` selector rebuilt them for every widget in the tree. Measured over a tree of 200 `Text`s, one `with*` filter went from 523µs to 228µs for `spotText` and from 145µs to 135µs for `spot<Text>()`. `WidgetSelector.mapElementToWidget` now has to return a widget with the same properties every time it is called with the same element within one frame; it may still return a new instance per call, as the `AnyText` selectors behind `spotText` do.
 - New: `act.inspectTap()` reports whether a widget can be tapped and why not, as a value instead of a thrown error. It sends no pointer events and pumps no frame, so a test can assert that something is untappable *for a specific reason* rather than matching on message strings. #150
   ```dart
   final inspection = act.inspectTap(spot<ElevatedButton>());

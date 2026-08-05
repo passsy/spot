@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/checks/checks_nullability.dart';
+import 'package:spot/src/flutter/frame_clock.dart';
 import 'package:spot/src/spot/selectors.dart';
 import 'package:spot/src/spot/widget_matcher.dart';
 
@@ -49,10 +50,9 @@ extension DiagnosticPropWidgetSelector<W extends Widget> on WidgetSelector<W> {
 
     return whereElement(
       (element) {
-        final diagnosticsNode = mapElementToWidget(element).toDiagnosticsNode();
-        final DiagnosticsNode? prop = diagnosticsNode
-            .getProperties()
-            .firstOrNullWhere((e) => e.name == propName);
+        final DiagnosticsNode? prop =
+            _diagnosticProps(element, mapElementToWidget)
+                .firstOrNullWhere((e) => e.name == propName);
 
         final actual = prop?.value as T? ?? prop?.getDefaultValue<T>();
 
@@ -101,11 +101,9 @@ extension DiagnosticPropWidgetMatcher<W extends Widget> on WidgetMatcher<W> {
   /// final checked = spot<Checkbox>().existsOnce().getDiagnosticProp<bool>('value');
   /// ```
   T getDiagnosticProp<T>(String propName) {
-    final diagnosticsNode =
-        selector.mapElementToWidget(element).toDiagnosticsNode();
-    final DiagnosticsNode? prop = diagnosticsNode
-        .getProperties()
-        .firstOrNullWhere((e) => e.name == propName);
+    final DiagnosticsNode? prop =
+        _diagnosticProps(element, selector.mapElementToWidget)
+            .firstOrNullWhere((e) => e.name == propName);
     final actual = prop?.value as T? ?? prop?.getDefaultValue<T>();
     return actual as T;
   }
@@ -117,10 +115,9 @@ extension DiagnosticPropWidgetMatcher<W extends Widget> on WidgetMatcher<W> {
     String propName,
     MatchProp<T> match,
   ) {
-    final diagnosticsNode = widget.toDiagnosticsNode();
-    final DiagnosticsNode? prop = diagnosticsNode
-        .getProperties()
-        .firstOrNullWhere((e) => e.name == propName);
+    final DiagnosticsNode? prop =
+        _diagnosticProps(element, selector.mapElementToWidget)
+            .firstOrNullWhere((e) => e.name == propName);
 
     final actual = prop?.value as T? ?? prop?.getDefaultValue<T>();
     void condition(Subject<T?> subject) {
@@ -149,6 +146,58 @@ extension DiagnosticPropWidgetMatcher<W extends Widget> on WidgetMatcher<W> {
     final failure = softCheckHideNull(actual, condition);
     failure.throwPropertyCheckFailure(condition, element);
     return this;
+  }
+}
+
+/// The [DiagnosticsProperty]s of the widget [mapElementToWidget] derives from
+/// [element], cached for the duration of the current frame.
+///
+/// [Widget.toDiagnosticsNode] returns a fresh node on every call, and each node
+/// only caches [DiagnosticsNode.getProperties] for itself. Without this cache
+/// every matcher in a chain re-runs `debugFillProperties` for the same widget,
+/// and every `with*` selector re-runs it for every widget in the tree.
+///
+/// The cache is keyed on the [Element]'s own widget rather than the derived
+/// one, because [WidgetSelector.mapElementToWidget] may synthesize a widget per
+/// call, as the [AnyText] selectors do. [mapElementToWidget] is part of the key
+/// so that two selectors deriving different widgets from one element, such as
+/// `spot<RichText>()` and `spotText()`, don't read each other's properties.
+///
+/// A frame is the longest span over which a derived widget is guaranteed to
+/// keep reporting the same properties. Widgets themselves are immutable, but a
+/// derived widget can read live state: [AnyText.fromEditableText] takes the
+/// text from the controller, and an [EditableText] keeps its widget instance
+/// while its text changes. Holding entries past the frame that produced them
+/// would serve the text a test just replaced.
+List<DiagnosticsNode> _diagnosticProps(
+  Element element,
+  Widget Function(Element element) mapElementToWidget,
+) {
+  _dropCacheOnNewFrame();
+  final derived = _propsCache[element.widget] ??= {};
+  return derived[mapElementToWidget] ??=
+      mapElementToWidget(element).toDiagnosticsNode().getProperties();
+}
+
+/// Maps an [Element]'s widget to the properties of every widget derived from it
+/// in the current frame, keyed by the function that derived it.
+///
+/// An [Expando] because the keys are widgets of a tree the test may tear down
+/// at any point, and holding them here must not keep them alive.
+Expando<Map<Function, List<DiagnosticsNode>>> _propsCache = Expando();
+
+int _cachedFrame = -1;
+
+/// Drops everything cached in an earlier frame.
+///
+/// [FrameClock] counts frames for the whole process, so this only has to
+/// notice that the number moved. Nothing here registers a frame callback of
+/// its own.
+void _dropCacheOnNewFrame() {
+  final frame = FrameClock.frameNumberInProcess;
+  if (frame != _cachedFrame) {
+    _cachedFrame = frame;
+    _propsCache = Expando();
   }
 }
 
