@@ -11,9 +11,9 @@ import 'package:nanoid2/nanoid2.dart';
 import 'package:spot/src/screenshot/screenshot.dart';
 import 'package:spot/src/spot/tree_snapshot.dart';
 import 'package:spot/src/timeline/html/print_html.dart';
-import 'package:spot/src/timeline/invoker.dart';
 import 'package:spot/src/timeline/print_console.dart';
 import 'package:spot/src/utils/ci.dart';
+import 'package:spot/src/utils/invoker.dart';
 import 'package:stack_trace/stack_trace.dart';
 
 TimelineMode _globalTimelineMode =
