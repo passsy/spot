@@ -25,6 +25,8 @@ class TimelineEvent {
     required this.widgetTree,
     required this.structuredWidgetTree,
     this.compressedFrameData,
+    this.captureWidth,
+    this.captureHeight,
     this.frameNumber,
     this.renderedFrameNumber,
     this.frameGenerationMicros,
@@ -65,6 +67,14 @@ class TimelineEvent {
   final String widgetTree;
   final Map<String, dynamic> structuredWidgetTree;
   final String? compressedFrameData;
+
+  /// Size of this event's capture, repeated outside [compressedFrameData].
+  ///
+  /// The filmstrip shapes every tile from the captures, which it would
+  /// otherwise have to decompress every frame's widget tree to learn.
+  final num? captureWidth;
+  final num? captureHeight;
+
   final int? frameNumber;
 
   /// How many frames the test had rendered when the event was recorded.
@@ -106,6 +116,8 @@ class TimelineEvent {
       'widgetTree': widgetTree,
       'structuredWidgetTree': structuredWidgetTree,
       'compressedFrameData': compressedFrameData,
+      'captureWidth': captureWidth,
+      'captureHeight': captureHeight,
       'frameNumber': frameNumber,
       'renderedFrameNumber': renderedFrameNumber,
       'frameGenerationMicros': frameGenerationMicros,
@@ -137,6 +149,8 @@ class TimelineEvent {
           (map['structuredWidgetTree'] as Map?)?.cast<String, dynamic>() ??
           const {},
       compressedFrameData: map['compressedFrameData'] as String?,
+      captureWidth: map['captureWidth'] as num?,
+      captureHeight: map['captureHeight'] as num?,
       frameNumber: map['frameNumber'] as int?,
       renderedFrameNumber: map['renderedFrameNumber'] as int?,
       frameGenerationMicros: map['frameGenerationMicros'] as int?,

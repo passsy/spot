@@ -381,6 +381,91 @@ void main() {
     });
   });
 
+  group('the shape the filmstrip takes', () {
+    TimelineEvent capture({
+      required int frameNumber,
+      num? width,
+      num? height,
+      bool captured = true,
+    }) {
+      return TimelineEvent(
+        eventType: 'Assertion',
+        color: null,
+        screenshotUrl: captured ? './screenshots/frame-$frameNumber.png' : null,
+        overlayUrls: const [],
+        details: 'example',
+        timestamp: DateTime(2026, 8, 4).toIso8601String(),
+        wallTimestamp: DateTime(2026, 8, 4).toIso8601String(),
+        caller: 'example_test.dart:1',
+        ideLink: null,
+        ideName: null,
+        sourcePath: null,
+        callerLine: null,
+        isFailure: false,
+        widgetTree: '',
+        structuredWidgetTree: const {},
+        frameNumber: frameNumber,
+        captureWidth: width,
+        captureHeight: height,
+      );
+    }
+
+    test('is the shape of the captures', () {
+      expect(
+        filmstripAspect([
+          capture(frameNumber: 1, width: 800, height: 600),
+          capture(frameNumber: 2, width: 800, height: 600),
+        ]),
+        closeTo(4 / 3, 0.0001),
+      );
+    });
+
+    test('is the shape most of the captures have', () {
+      // A test that resizes the surface halfway through leaves the strip with
+      // two shapes to choose between. The odd one out letterboxes in its tile.
+      expect(
+        filmstripAspect([
+          capture(frameNumber: 1, width: 800, height: 600),
+          capture(frameNumber: 2, width: 400, height: 800),
+          capture(frameNumber: 3, width: 800, height: 600),
+        ]),
+        closeTo(4 / 3, 0.0001),
+      );
+    });
+
+    test('counts a frame once, however many events it recorded', () {
+      expect(
+        filmstripAspect([
+          capture(frameNumber: 1, width: 400, height: 800),
+          capture(frameNumber: 1, width: 400, height: 800),
+          capture(frameNumber: 1, width: 400, height: 800),
+          capture(frameNumber: 2, width: 800, height: 600),
+          capture(frameNumber: 3, width: 800, height: 600),
+        ]),
+        closeTo(4 / 3, 0.0001),
+      );
+    });
+
+    test('ignores frames without a capture to shape a tile from', () {
+      expect(
+        filmstripAspect([
+          capture(frameNumber: 1, width: 400, height: 800, captured: false),
+          capture(frameNumber: 2, width: 800, height: 600),
+        ]),
+        closeTo(4 / 3, 0.0001),
+      );
+    });
+
+    test('is unknown when no capture reports its size', () {
+      expect(filmstripAspect([capture(frameNumber: 1)]), isNull);
+      expect(filmstripAspect(const []), isNull);
+      expect(
+        filmstripAspect([capture(frameNumber: 1, width: 800, height: 0)]),
+        isNull,
+      );
+    });
+  });
+
   test('vertical navigation stays within the selected frame', () {
     final frames = [
       frame(1, [0, 1]),

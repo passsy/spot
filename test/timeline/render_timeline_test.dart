@@ -181,6 +181,8 @@ void main() {
       // A definite filmstrip row. Without it a capture taller than its tile
       // stretches the row over the caption and the event lane below it.
       expect(html, contains('grid-template-rows: 100%'));
+      // The tile takes the shape of the captures, 4:3 here.
+      expect(html, contains('--strip-aspect: 1.3333'));
       // One filmstrip capture for the frame, however many assertions share it.
       // Scoped to the filmstrip because the report also shows the selected
       // event's capture in the capture pane and as a thumbnail next to it.

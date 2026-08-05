@@ -29,7 +29,9 @@ const timelineCSS = '''
   --focus: #a8c7fa;
   --track-cell-width: 132px;
   --gap-cell-width: 24px;
-  --filmstrip-height: 142px;
+  /* Width over height of the captures, which the report overrides per test.
+     4:3 is the surface a widget test starts with. */
+  --strip-aspect: 1.3333;
   --header-height: 48px;
   --timeline-height: 320px;
   font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -67,6 +69,20 @@ a:focus-visible {
 }
 
 .timeline-app {
+  /* A tile shaped like the captures, so a portrait capture gets a portrait
+     tile rather than a letterboxed sliver, and nothing is ever cropped.
+
+     Bounded at both ends, because a test is free to render at any size: a very
+     wide capture must not squash the tile to a line, and a very tall one must
+     not push the ruler and the event lane out of the panel. The upper bound is
+     what the panel has left, so dragging the panel taller grows the captures
+     until they reach their own shape. 31px is the tile's caption and border,
+     126px what the ruler and the shortest event lane need. */
+  --capture-tile-height: clamp(
+    64px,
+    calc(var(--track-cell-width) / var(--strip-aspect)),
+    max(64px, calc(var(--timeline-height) - 157px)));
+  --filmstrip-height: calc(var(--capture-tile-height) + 31px);
   display: grid;
   grid-template-rows:
     var(--header-height)
@@ -1686,7 +1702,6 @@ body.is-resizing-rows * {
 @media (max-width: 760px) {
   :root {
     --header-height: 44px;
-    --filmstrip-height: 126px;
     --timeline-height: 258px;
     --track-cell-width: 112px;
   }

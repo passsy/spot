@@ -216,6 +216,10 @@ extension HtmlTimelinePrinter on Timeline {
         widgetTree: '',
         structuredWidgetTree: const {},
         compressedFrameData: compressedFrameData,
+        captureWidth:
+            framePayloadEvent.structuredWidgetTree['captureWidth'] as num?,
+        captureHeight:
+            framePayloadEvent.structuredWidgetTree['captureHeight'] as num?,
       );
       jsonTimelineEvents.add(timelineEvent);
     }

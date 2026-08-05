@@ -221,6 +221,43 @@ double adjustedPaneSize(
   required double maximum,
 }) => (current + delta).clamp(minimum, maximum);
 
+/// Width over height of the captures the filmstrip shapes its tiles from.
+///
+/// A test is free to resize the surface halfway through, so the captures do not
+/// all share a shape. The strip has one, and takes the shape most of the
+/// captures have; the odd frame of another shape letterboxes inside its tile.
+///
+/// `null` when no capture reports its size, which leaves the tile at the
+/// stylesheet's default shape.
+double? filmstripAspect(List<TimelineEvent> events) {
+  final framesSeen = <int>{};
+  final countByAspect = <double, int>{};
+  for (final event in events) {
+    final tree = event.structuredWidgetTree;
+    final width = event.captureWidth ?? tree['captureWidth'] as num?;
+    final height = event.captureHeight ?? tree['captureHeight'] as num?;
+    if (event.screenshotUrl == null ||
+        width == null ||
+        height == null ||
+        width <= 0 ||
+        height <= 0) {
+      continue;
+    }
+    // Once per frame, however many events were recorded in it.
+    if (event.frameNumber != null && !framesSeen.add(event.frameNumber!)) {
+      continue;
+    }
+    final aspect = width / height;
+    countByAspect[aspect] = (countByAspect[aspect] ?? 0) + 1;
+  }
+  if (countByAspect.isEmpty) {
+    return null;
+  }
+  return countByAspect.entries
+      .reduce((winner, next) => next.value > winner.value ? next : winner)
+      .key;
+}
+
 class TimelineTextSlice {
   const TimelineTextSlice({
     required this.text,
@@ -1347,12 +1384,17 @@ class TimelineAppState extends State<TimelineApp> {
       for (final frame in frames)
         for (final index in frame.eventIndexes) index: frame,
     };
+    final stripAspect = filmstripAspect(events);
 
     return main_(
       id: 'timeline-app',
       classes: 'timeline-app',
       styles: Styles(
-        raw: {'--timeline-height': '${_timelineHeight.toStringAsFixed(0)}px'},
+        raw: {
+          '--timeline-height': '${_timelineHeight.toStringAsFixed(0)}px',
+          if (stripAspect != null)
+            '--strip-aspect': stripAspect.toStringAsFixed(4),
+        },
       ),
       [
         const a(href: '#inspector', classes: 'skip-link', [
@@ -1924,8 +1966,11 @@ class TimelineAppState extends State<TimelineApp> {
     }
 
     final bounds = _asStringMap(selectedNode?['bounds']);
-    final captureWidth = frameData.structuredWidgetTree['captureWidth'] as num?;
+    final captureWidth =
+        event.captureWidth ??
+        frameData.structuredWidgetTree['captureWidth'] as num?;
     final captureHeight =
+        event.captureHeight ??
         frameData.structuredWidgetTree['captureHeight'] as num?;
     final knownSize =
         captureWidth != null &&
