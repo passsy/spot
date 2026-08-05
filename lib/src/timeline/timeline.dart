@@ -8,12 +8,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nanoid2/nanoid2.dart';
+import 'package:spot/src/flutter/frame_clock.dart';
 import 'package:spot/src/screenshot/screenshot.dart';
 import 'package:spot/src/spot/tree_snapshot.dart';
 import 'package:spot/src/timeline/html/print_html.dart';
-import 'package:spot/src/timeline/invoker.dart';
 import 'package:spot/src/timeline/print_console.dart';
 import 'package:spot/src/utils/ci.dart';
+import 'package:spot/src/utils/invoker.dart';
 import 'package:stack_trace/stack_trace.dart';
 
 TimelineMode _globalTimelineMode =
@@ -23,6 +24,10 @@ TimelineMode _globalTimelineMode =
 TimelineMode get globalTimelineMode => _globalTimelineMode;
 
 set globalTimelineMode(TimelineMode value) {
+  // Setting the mode at the top of main() is spot's earliest possible use,
+  // before any test ran. When it runs before the binding exists, the counting
+  // starts at the next spot use instead.
+  FrameClock.startCounting();
   final test = getLiveTest();
   if (test != null) {
     throw StateError('''
@@ -65,6 +70,9 @@ Timeline get timeline {
   }
 
   // create new timeline
+  // A timeline coming alive is spot in use, and the earliest moment a test
+  // that sets timeline.mode before its first assertion shows it.
+  FrameClock.startCounting();
   final newTimeline = _Timeline._(test);
 
   addTearDown(() async {

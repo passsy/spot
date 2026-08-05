@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/src/flutter/flutter_sdk.dart';
+import 'package:spot/src/flutter/frame_clock.dart';
 
 Future<void>? _loadAppFontsFuture;
 
@@ -68,6 +69,11 @@ Future<void>? _loadAppFontsFuture;
 /// Because showing emojis in test requires changes to you app code (set fallback)
 /// [loadAppFonts] does not automatically load system emoji fonts for you.
 Future<void> loadAppFonts() async {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  // Loading fonts is spot in use, usually from flutter_test_config.dart
+  // before any test ran, which is what makes the first test's frames counted
+  // from the very first one.
+  FrameClock.startCounting();
   final existingFuture = _loadAppFontsFuture;
   if (existingFuture != null) {
     return existingFuture;
