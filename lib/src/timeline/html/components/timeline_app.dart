@@ -1103,6 +1103,13 @@ class TimelineAppState extends State<TimelineApp> {
     return _elapsedSince(_firstWallTimestamp, event.wallTimestamp);
   }
 
+  /// How far into the test [timestamp] is, measured from [first].
+  ///
+  /// No leading `+`: every column of the strip is measured from the start of
+  /// the test, and a sign reads as a delta from the column next to it. The unit
+  /// stays, because this is a duration and because the scale changes at one
+  /// second - without it a `590` and a `1.59` would sit side by side in the
+  /// same column meaning 0.59 s and 1.59 s.
   String _elapsedSince(DateTime? first, String timestamp) {
     final parsed = DateTime.tryParse(timestamp);
     if (first == null || parsed == null) {
@@ -1110,9 +1117,9 @@ class TimelineAppState extends State<TimelineApp> {
     }
     final milliseconds = parsed.difference(first).inMicroseconds / 1000;
     if (milliseconds >= 1000) {
-      return '+${(milliseconds / 1000).toStringAsFixed(2)} s';
+      return '${(milliseconds / 1000).toStringAsFixed(2)} s';
     }
-    return '+${milliseconds.toStringAsFixed(0)} ms';
+    return '${milliseconds.toStringAsFixed(0)} ms';
   }
 
   /// The two clocks and the two frame counts of one frame.
