@@ -489,6 +489,9 @@ kbd {
 
 .filmstrip {
   height: var(--filmstrip-height);
+  /* A definite row, so a capture taller than the cell letterboxes instead of
+     stretching the row over the caption and the event lane below it. */
+  grid-template-rows: 100%;
   border-bottom: 1px solid var(--border);
   background: #1a1b1f;
 }
@@ -498,6 +501,8 @@ kbd {
   display: grid;
   grid-template-rows: minmax(0, 1fr) 27px;
   min-width: 0;
+  min-height: 0;
+  overflow: hidden;
   padding: 0;
   border: 0;
   border-right: 1px solid var(--border);
@@ -527,23 +532,28 @@ kbd {
 }
 
 .capture-image {
+  position: relative;
   display: grid;
   place-items: center start;
   justify-self: start;
   width: 100%;
   min-width: 0;
   min-height: 0;
-  padding: 4px;
   overflow: hidden;
   border-right: 1px solid var(--border);
 }
 
+/* Taken out of flow, so `object-fit` has a definite box to fit into. A
+   percentage height against the auto-sized row resolves to the image's own
+   aspect ratio instead, which crops a tall capture to its top edge. */
 .capture-image img {
+  position: absolute;
   display: block;
+  inset: 0;
   width: 100%;
   height: 100%;
+  padding: 4px;
   object-fit: contain;
-  object-position: left center;
   background: #101114;
 }
 
@@ -969,13 +979,10 @@ body.is-resizing-rows * {
 }
 
 .capture-viewport {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: relative;
   min-width: 0;
   min-height: 0;
-  padding: 14px;
-  overflow: auto;
+  overflow: hidden;
   background:
     linear-gradient(45deg, #1b1c20 25%, transparent 25%),
     linear-gradient(-45deg, #1b1c20 25%, transparent 25%),
@@ -985,11 +992,24 @@ body.is-resizing-rows * {
   background-size: 12px 12px;
 }
 
+/* Sized from the capture's own ratio, not from the image, so the canvas is
+   exactly the image box however tall or wide the capture is and the outline
+   percentages land on the right pixels. An image that sizes the canvas needs a
+   max-height, and there is no ancestor to take a percentage of without a cycle.
+
+   Out of flow with both offsets and auto margins, so the box fits the pane in
+   whichever axis binds first. The 28px stands in for a 14px inset, which
+   padding cannot provide: `inset` resolves against the padding box. */
 .capture-canvas {
-  position: relative;
-  display: inline-block;
-  max-width: 100%;
-  max-height: 100%;
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: calc(100% - 28px);
+  max-height: calc(100% - 28px);
+  margin: auto;
+  aspect-ratio: var(--capture-aspect, auto);
   overflow: hidden;
   line-height: 0;
   background: #101114;
@@ -998,19 +1018,21 @@ body.is-resizing-rows * {
 
 .capture-base-image {
   display: block;
-  width: auto;
-  height: auto;
-  max-width: 100%;
-  max-height: calc(100vh - var(--header-height) - var(--timeline-height) - 160px);
+  width: 100%;
+  height: 100%;
   object-fit: contain;
 }
 
+/* Same intrinsic ratio and the same fit as the base image, so the two stay
+   aligned even when the capture's dimensions are unknown and the canvas is
+   wider than the image. */
 .capture-event-overlay {
   position: absolute;
   z-index: 1;
   inset: 0;
   width: 100%;
   height: 100%;
+  object-fit: contain;
   pointer-events: none;
 }
 
@@ -1285,30 +1307,6 @@ body.is-resizing-rows * {
   padding: 8px 10px;
   color: #747a85;
   font-size: 9px;
-}
-
-.capture-panel {
-  display: grid;
-  place-items: center;
-  width: 100%;
-  min-height: 100%;
-  padding: 16px;
-  background:
-    linear-gradient(45deg, #1b1c20 25%, transparent 25%),
-    linear-gradient(-45deg, #1b1c20 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, #1b1c20 75%),
-    linear-gradient(-45deg, transparent 75%, #1b1c20 75%);
-  background-position: 0 0, 0 6px, 6px -6px, -6px 0;
-  background-size: 12px 12px;
-}
-
-.capture-panel img {
-  display: block;
-  max-width: 100%;
-  max-height: calc(100vh - var(--header-height) - var(--timeline-height) - 124px);
-  object-fit: contain;
-  background: #101114;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, .35);
 }
 
 .panel-empty {

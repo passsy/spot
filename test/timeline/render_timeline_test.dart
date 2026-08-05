@@ -111,6 +111,9 @@ void main() {
       expect(html, contains('.interactive-inspector'));
       expect(html, contains('.inspector-sidebar'));
       expect(html, contains('.widget-outline'));
+      // The capture's own ratio, so the canvas is exactly the image box and the
+      // outline percentages land on the right pixels whatever the shape is.
+      expect(html, contains('--capture-aspect: 800 / 600'));
       expect(html, contains('Resize timeline and inspector'));
       expect(html, contains('.resize-handle'));
       expect(html, isNot(contains('class="lane-label"')));
@@ -175,7 +178,9 @@ void main() {
       expect(html, contains('--frame-count: 1'));
       expect(html, contains('class="frame-events"'));
       expect(RegExp('class="ruler-cell"').allMatches(html), hasLength(1));
-      expect(html, contains('object-position: left center'));
+      // A definite filmstrip row. Without it a capture taller than its tile
+      // stretches the row over the caption and the event lane below it.
+      expect(html, contains('grid-template-rows: 100%'));
       // One filmstrip capture for the frame, however many assertions share it.
       // Scoped to the filmstrip because the report also shows the selected
       // event's capture in the capture pane and as a thumbnail next to it.

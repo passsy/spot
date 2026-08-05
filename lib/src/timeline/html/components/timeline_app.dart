@@ -1927,17 +1927,20 @@ class TimelineAppState extends State<TimelineApp> {
     final captureWidth = frameData.structuredWidgetTree['captureWidth'] as num?;
     final captureHeight =
         frameData.structuredWidgetTree['captureHeight'] as num?;
-    final canOutline =
-        bounds != null &&
+    final knownSize =
         captureWidth != null &&
         captureWidth > 0 &&
         captureHeight != null &&
         captureHeight > 0;
+    final canOutline = bounds != null && knownSize;
 
     return div(classes: 'capture-viewport', [
       div(
         classes: 'capture-canvas is-zoomable',
         attributes: const {'title': 'Click to open the capture full screen'},
+        styles: knownSize
+            ? Styles(raw: {'--capture-aspect': '$captureWidth / $captureHeight'})
+            : null,
         events: {'click': (_) => _openLightbox(event)},
         [
           img(
