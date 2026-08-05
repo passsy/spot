@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/src/flutter/frame_clock.dart';
 import 'package:spot/src/spot/element_extensions.dart';
 import 'package:spot/src/spot/query_stats.dart';
+import 'package:spot/src/spot/widget_location.dart';
 
 /// caching the tree for the current frame
 WidgetTreeSnapshot? _cachedTree;
@@ -199,6 +200,7 @@ class WidgetTreeSnapshot extends ScopedWidgetTreeSnapshot {
         'description': widget.toStringShort(),
         'elementType': node.element.runtimeType.toString(),
         'renderObjectType': renderObject?.runtimeType.toString(),
+        'isUserCode': node.element.debugWidgetLocation?.isUserCode,
         'offstage': node.isOffstage,
         'bounds': bounds == null
             ? null

@@ -127,6 +127,7 @@ void main() {
       // the two the last person to touch them happened to open.
       expect(RegExp('<style>').allMatches(html), hasLength(1));
       expect(html, contains('.snackbar'));
+      expect(html, contains('.tree-filter-button.is-active'));
       expect(html, contains('@keyframes fadein'));
     },
     skip: kIsWeb ? 'Jaspr server rendering requires the Dart VM' : false,
@@ -178,6 +179,20 @@ void main() {
       expect(html, contains('--frame-count: 1'));
       expect(html, contains('class="frame-events"'));
       expect(RegExp('class="ruler-cell"').allMatches(html), hasLength(1));
+      expect(
+        RegExp(
+          '<div class="ruler-cell">.*?class="hover-card"',
+          dotAll: true,
+        ).hasMatch(html),
+        isTrue,
+      );
+      expect(
+        RegExp(
+          '<button class="capture[^>]*>.*?class="hover-card"',
+          dotAll: true,
+        ).hasMatch(html),
+        isFalse,
+      );
       // A definite filmstrip row. Without it a capture taller than its tile
       // stretches the row over the caption and the event lane below it.
       expect(html, contains('grid-template-rows: 100%'));

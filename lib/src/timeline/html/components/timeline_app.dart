@@ -111,16 +111,50 @@ List<TreeRow> flattenWidgetTree(
   required Set<String> expandedNodeIds,
   required Set<String> visibleNodeIds,
   required bool searchActive,
+  bool promoteVisibleNodes = false,
 }) {
   if (root == null) {
     return const [];
   }
   final rows = <TreeRow>[];
 
+  bool shouldDisplay(Map<String, dynamic> node) {
+    if (!searchActive || !promoteVisibleNodes) {
+      return !searchActive || visibleNodeIds.contains(node['id']);
+    }
+    return visibleNodeIds.contains(node['id']) ||
+        _structuredNodeChildren(node).length > 1;
+  }
+
+  List<Map<String, dynamic>> filteredChildren(Map<String, dynamic> node) {
+    final children = _structuredNodeChildren(node);
+    if (!searchActive || !promoteVisibleNodes) {
+      return children
+          .where(
+            (child) => !searchActive || visibleNodeIds.contains(child['id']),
+          )
+          .toList(growable: false);
+    }
+
+    final displayed = <Map<String, dynamic>>[];
+    for (final child in children) {
+      if (shouldDisplay(child)) {
+        displayed.add(child);
+      } else {
+        displayed.addAll(filteredChildren(child));
+      }
+    }
+    return displayed;
+  }
+
   void walk(Map<String, dynamic> node, int depth) {
-    final children = _structuredNodeChildren(node)
-        .where((child) => !searchActive || visibleNodeIds.contains(child['id']))
-        .toList(growable: false);
+    if (searchActive && promoteVisibleNodes && !shouldDisplay(node)) {
+      for (final child in filteredChildren(node)) {
+        walk(child, depth);
+      }
+      return;
+    }
+    final children = filteredChildren(node);
     // A search shows every node on the way to a match, collapsing them would
     // hide the matches the search just found.
     final expanded = searchActive || expandedNodeIds.contains(node['id']);
@@ -172,6 +206,19 @@ String? adjacentTreeNodeId(
   }
   final index = (rows.indexOf(from) + delta).clamp(0, rows.length - 1);
   return rows[index].id;
+}
+
+/// Adjusts the virtual tree scroll position so [selectedNodeId] stays on the
+/// same screen row after the rows above it change.
+double treeScrollTopPreservingSelectedRow({
+  required double currentScrollTop,
+  required int previousIndex,
+  required int nextIndex,
+}) {
+  return math.max(
+    0,
+    currentScrollTop + (nextIndex - previousIndex) * _treeRowHeight,
+  );
 }
 
 enum _ResizeTarget { timeline, captureTree, treeDetails }
@@ -633,6 +680,7 @@ class TimelineAppState extends State<TimelineApp> {
   final Map<int, TimelineEvent> _decodedFrameData = {};
   String? _selectedWidgetNodeId;
   String _widgetTreeSearch = '';
+  bool _showOnlyUserCodeWidgets = true;
   bool _showFullRawData = false;
   bool _showCaptureOverlays = true;
 
@@ -855,8 +903,12 @@ class TimelineAppState extends State<TimelineApp> {
       visibleNodeIds: searchStructuredWidgetTree(
         root,
         _widgetTreeSearch,
+        userCodeOnly: _showOnlyUserCodeWidgets,
+        includeAncestorPaths: !_showOnlyUserCodeWidgets,
       ).visible,
-      searchActive: _widgetTreeSearch.trim().isNotEmpty,
+      searchActive:
+          _widgetTreeSearch.trim().isNotEmpty || _showOnlyUserCodeWidgets,
+      promoteVisibleNodes: _showOnlyUserCodeWidgets,
     );
   }
 
@@ -1261,6 +1313,7 @@ class TimelineAppState extends State<TimelineApp> {
           Component.text('Spot ${_count(frame.frameNumber)}'),
         ]),
       ]),
+      _frameCard(frame, _frameEventSummary(frame, events)),
     ]);
   }
 
@@ -1602,16 +1655,7 @@ class TimelineAppState extends State<TimelineApp> {
     final event = component.timelineEvents[firstEventIndex];
     final selected =
         _selectedIndex != null && frame.eventIndexes.contains(_selectedIndex);
-    final assertionCount = frame.eventIndexes
-        .where(
-          (index) => component.timelineEvents[index].eventType
-              .toLowerCase()
-              .startsWith('assertion'),
-        )
-        .length;
-    final eventSummary = assertionCount == frame.eventIndexes.length
-        ? '$assertionCount ${assertionCount == 1 ? 'assertion' : 'assertions'}'
-        : '${frame.eventIndexes.length} ${frame.eventIndexes.length == 1 ? 'event' : 'events'}';
+    final eventSummary = _frameEventSummary(frame, component.timelineEvents);
     return button(
       type: ButtonType.button,
       classes: 'capture ${selected ? 'is-selected' : ''}',
@@ -1649,12 +1693,26 @@ class TimelineAppState extends State<TimelineApp> {
           ]),
           span(classes: 'capture-name', [Component.text(eventSummary)]),
         ]),
-        _captureCard(frame, eventSummary),
       ],
     );
   }
 
-  /// What this frame cost, on hover.
+  String _frameEventSummary(
+    TimelineFrameGroup frame,
+    List<TimelineEvent> events,
+  ) {
+    final assertionCount = frame.eventIndexes
+        .where(
+          (index) =>
+              events[index].eventType.toLowerCase().startsWith('assertion'),
+        )
+        .length;
+    return assertionCount == frame.eventIndexes.length
+        ? '$assertionCount ${assertionCount == 1 ? 'assertion' : 'assertions'}'
+        : '${frame.eventIndexes.length} ${frame.eventIndexes.length == 1 ? 'event' : 'events'}';
+  }
+
+  /// What this frame cost, when hovering its ruler header.
   ///
   /// All three are measured on the frame itself rather than worked out from
   /// the distance to its neighbour, so a frame reports the same way whether or
@@ -1664,7 +1722,7 @@ class TimelineAppState extends State<TimelineApp> {
   /// all: it is what a `pump(duration)` asked the simulated clock for, and it
   /// is the only simulated figure a single frame has, because `fakeAsync`
   /// holds its clock still while real work happens.
-  Component _captureCard(TimelineFrameGroup frame, String eventSummary) {
+  Component _frameCard(TimelineFrameGroup frame, String eventSummary) {
     return _hoverCard(
       title: _frameLabel(frame),
       note: eventSummary,
@@ -1860,8 +1918,14 @@ class TimelineAppState extends State<TimelineApp> {
     final selectedNode = root == null
         ? null
         : _findWidgetNode(root, _selectedWidgetNodeId);
-    final searchResult = searchStructuredWidgetTree(root, _widgetTreeSearch);
+    final searchResult = searchStructuredWidgetTree(
+      root,
+      _widgetTreeSearch,
+      userCodeOnly: _showOnlyUserCodeWidgets,
+      includeAncestorPaths: !_showOnlyUserCodeWidgets,
+    );
     final searchActive = _widgetTreeSearch.trim().isNotEmpty;
+    final filterActive = searchActive || _showOnlyUserCodeWidgets;
 
     return div(
       id: 'widget-explorer',
@@ -1873,6 +1937,18 @@ class TimelineAppState extends State<TimelineApp> {
         div(classes: 'pane-toolbar pane-toolbar--tree', [
           const span(classes: 'pane-title', [Component.text('Widget tree')]),
           div(classes: 'tree-toolbar-controls', [
+            button(
+              type: ButtonType.button,
+              classes:
+                  'text-button tree-filter-button ${_showOnlyUserCodeWidgets ? 'is-active' : ''}',
+              attributes: {
+                'aria-label': 'Show user-code widgets only',
+                'aria-pressed': _showOnlyUserCodeWidgets ? 'true' : 'false',
+                'title': 'Show user-code widgets only',
+              },
+              onClick: _toggleUserCodeWidgets,
+              const [Component.text('User code')],
+            ),
             input<String>(
               type: InputType.search,
               value: _widgetTreeSearch,
@@ -1900,13 +1976,13 @@ class TimelineAppState extends State<TimelineApp> {
                 },
               },
             ),
-            if (searchActive)
+            if (filterActive)
               span(classes: 'search-result-count', [
                 Component.text(
-                  '${searchResult.matches.length} ${searchResult.matches.length == 1 ? 'match' : 'matches'}',
+                  '${searchResult.matches.length} ${searchActive ? (searchResult.matches.length == 1 ? 'match' : 'matches') : (searchResult.matches.length == 1 ? 'widget' : 'widgets')}',
                 ),
               ]),
-            if (!searchActive)
+            if (!filterActive)
               div(classes: 'tree-actions', [
                 button(
                   type: ButtonType.button,
@@ -1927,16 +2003,23 @@ class TimelineAppState extends State<TimelineApp> {
           const div(classes: 'tree-empty', [
             Component.text('No structured widget tree was captured.'),
           ])
-        else if (searchActive && searchResult.matches.isEmpty)
+        else if (filterActive && searchResult.matches.isEmpty)
           div(classes: 'tree-empty', [
-            Component.text('No widget types match “$_widgetTreeSearch”.'),
+            Component.text(
+              _showOnlyUserCodeWidgets
+                  ? searchActive
+                        ? 'No user-code widgets match “$_widgetTreeSearch”.'
+                        : 'No user-code widgets were captured.'
+                  : 'No widget types match “$_widgetTreeSearch”.',
+            ),
           ])
         else
           _widgetTreeRows(
             root,
             visibleNodeIds: searchResult.visible,
-            matchingNodeIds: searchResult.matches,
-            searchActive: searchActive,
+            matchingNodeIds: searchActive ? searchResult.matches : const {},
+            searchActive: filterActive,
+            promoteVisibleNodes: _showOnlyUserCodeWidgets,
           ),
         _resizeHandle(
           _ResizeTarget.treeDetails,
@@ -1984,7 +2067,9 @@ class TimelineAppState extends State<TimelineApp> {
         classes: 'capture-canvas is-zoomable',
         attributes: const {'title': 'Click to open the capture full screen'},
         styles: knownSize
-            ? Styles(raw: {'--capture-aspect': '$captureWidth / $captureHeight'})
+            ? Styles(
+                raw: {'--capture-aspect': '$captureWidth / $captureHeight'},
+              )
             : null,
         events: {'click': (_) => _openLightbox(event)},
         [
@@ -2037,12 +2122,14 @@ class TimelineAppState extends State<TimelineApp> {
     required Set<String> visibleNodeIds,
     required Set<String> matchingNodeIds,
     required bool searchActive,
+    required bool promoteVisibleNodes,
   }) {
     final rows = flattenWidgetTree(
       root,
       expandedNodeIds: _expandedWidgetNodes,
       visibleNodeIds: visibleNodeIds,
       searchActive: searchActive,
+      promoteVisibleNodes: promoteVisibleNodes,
     );
     final firstVisible = math.max(
       0,
@@ -2236,6 +2323,49 @@ class TimelineAppState extends State<TimelineApp> {
     setState(() => _selectedWidgetNodeId = id);
   }
 
+  void _toggleUserCodeWidgets() {
+    final selectedId = _selectedWidgetNodeId;
+    final previousRows = _currentTreeRows();
+    final previousIndex = selectedId == null
+        ? -1
+        : previousRows.indexWhere((row) => row.id == selectedId);
+
+    setState(() {
+      _showOnlyUserCodeWidgets = !_showOnlyUserCodeWidgets;
+      if (previousIndex == -1) {
+        return;
+      }
+      final nextIndex = _currentTreeRows().indexWhere(
+        (row) => row.id == selectedId,
+      );
+      if (nextIndex != -1) {
+        _treeScrollTop = treeScrollTopPreservingSelectedRow(
+          currentScrollTop: _treeScrollTop,
+          previousIndex: previousIndex,
+          nextIndex: nextIndex,
+        );
+      }
+    });
+    _synchronizeTreeScrollPosition();
+  }
+
+  /// Keeps the browser's scroll container in sync with the virtualized rows.
+  ///
+  /// Updating [_treeScrollTop] alone decides which rows Jaspr renders, but it
+  /// does not move the DOM element. Run after the state update so the new
+  /// spacers exist before setting its physical scroll position.
+  void _synchronizeTreeScrollPosition() {
+    if (!kIsWeb) {
+      return;
+    }
+    Future<void>.delayed(Duration.zero, () {
+      final tree = web.document.querySelector('#$_widgetTreeId');
+      if (tree != null) {
+        tree.scrollTop = _treeScrollTop.round();
+      }
+    });
+  }
+
   void _selectNextSearchMatch(
     Map<String, dynamic>? root, {
     required bool reverse,
@@ -2243,6 +2373,8 @@ class TimelineAppState extends State<TimelineApp> {
     final matches = searchStructuredWidgetTree(
       root,
       _widgetTreeSearch,
+      userCodeOnly: _showOnlyUserCodeWidgets,
+      includeAncestorPaths: !_showOnlyUserCodeWidgets,
     ).matches.toList(growable: false);
     final id = nextStructuredWidgetSearchMatch(
       matches,
@@ -2961,10 +3093,12 @@ Set<String> collectStructuredWidgetNodeIds(
 
 ({Set<String> visible, Set<String> matches}) searchStructuredWidgetTree(
   Map<String, dynamic>? root,
-  String searchTerm,
-) {
+  String searchTerm, {
+  bool userCodeOnly = false,
+  bool includeAncestorPaths = true,
+}) {
   final query = searchTerm.trim().toLowerCase();
-  if (root == null || query.isEmpty) {
+  if (root == null || (query.isEmpty && !userCodeOnly)) {
     return (visible: const {}, matches: const {});
   }
 
@@ -2974,15 +3108,17 @@ Set<String> collectStructuredWidgetNodeIds(
   bool visit(Map<String, dynamic> node) {
     final id = node['id'] as String;
     final name = node['name'] as String? ?? 'Widget';
-    final matchesType = name.toLowerCase().contains(query);
-    if (matchesType) {
+    final matchesType = query.isEmpty || name.toLowerCase().contains(query);
+    final matchesUserCode = !userCodeOnly || node['isUserCode'] == true;
+    final matchesFilters = matchesType && matchesUserCode;
+    if (matchesFilters) {
       matches.add(id);
     }
     var descendantMatches = false;
     for (final child in _structuredNodeChildren(node)) {
       descendantMatches = visit(child) || descendantMatches;
     }
-    if (matchesType || descendantMatches) {
+    if (matchesFilters || (includeAncestorPaths && descendantMatches)) {
       visible.add(id);
       return true;
     }

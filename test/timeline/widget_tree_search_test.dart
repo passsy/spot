@@ -16,7 +16,12 @@ void main() {
             'name': 'Column',
             'children': [
               {'id': '4', 'name': 'Text', 'children': <dynamic>[]},
-              {'id': '5', 'name': 'TextButton', 'children': <dynamic>[]},
+              {
+                'id': '5',
+                'name': 'TextButton',
+                'isUserCode': true,
+                'children': <dynamic>[],
+              },
             ],
           },
         ],
@@ -54,6 +59,116 @@ void main() {
   test('empty and unknown searches produce no filtered nodes', () {
     expect(searchStructuredWidgetTree(tree, '').matches, isEmpty);
     expect(searchStructuredWidgetTree(tree, 'ListView').visible, isEmpty);
+  });
+
+  test('keeps a selected tree row in place when rows are added above it', () {
+    expect(
+      treeScrollTopPreservingSelectedRow(
+        currentScrollTop: 125,
+        previousIndex: 4,
+        nextIndex: 9,
+      ),
+      250,
+    );
+    expect(
+      treeScrollTopPreservingSelectedRow(
+        currentScrollTop: 25,
+        previousIndex: 4,
+        nextIndex: 9,
+      ),
+      150,
+    );
+    expect(
+      treeScrollTopPreservingSelectedRow(
+        currentScrollTop: 25,
+        previousIndex: 9,
+        nextIndex: 11,
+      ),
+      75,
+    );
+    expect(
+      treeScrollTopPreservingSelectedRow(
+        currentScrollTop: 25,
+        previousIndex: 9,
+        nextIndex: 0,
+      ),
+      0,
+    );
+  });
+
+  test('user-code filter keeps only user-code widgets', () {
+    final result = searchStructuredWidgetTree(
+      tree,
+      '',
+      userCodeOnly: true,
+      includeAncestorPaths: false,
+    );
+
+    expect(result.matches, {'5'});
+    expect(result.visible, {'5'});
+    expect(result.visible, isNot(contains('0')));
+    expect(result.visible, isNot(contains('1')));
+    expect(result.visible, isNot(contains('3')));
+    expect(result.visible, isNot(contains('2')));
+    expect(result.visible, isNot(contains('4')));
+  });
+
+  test('search and user-code filter apply together', () {
+    final result = searchStructuredWidgetTree(
+      tree,
+      'text',
+      userCodeOnly: true,
+      includeAncestorPaths: false,
+    );
+
+    expect(result.matches, {'5'});
+    expect(result.visible, {'5'});
+  });
+
+  test('user-code tree keeps framework branch points, not wrappers', () {
+    final tree = <String, dynamic>{
+      'id': '0',
+      'name': 'RootWidget',
+      'children': [
+        {
+          'id': '1',
+          'name': 'Column',
+          'children': [
+            {'id': '2', 'name': 'TripCard', 'isUserCode': true},
+            {'id': '3', 'name': 'MapCard', 'isUserCode': true},
+          ],
+        },
+        {
+          'id': '4',
+          'name': 'Padding',
+          'children': [
+            {'id': '5', 'name': 'SaveButton', 'isUserCode': true},
+          ],
+        },
+      ],
+    };
+    final visible = searchStructuredWidgetTree(
+      tree,
+      '',
+      userCodeOnly: true,
+      includeAncestorPaths: false,
+    ).visible;
+
+    final rows = flattenWidgetTree(
+      tree,
+      expandedNodeIds: const {},
+      visibleNodeIds: visible,
+      searchActive: true,
+      promoteVisibleNodes: true,
+    );
+
+    expect(rows.map((row) => row.node['name']), [
+      'RootWidget',
+      'Column',
+      'TripCard',
+      'MapCard',
+      'SaveButton',
+    ]);
   });
 
   test('Enter navigation cycles through matches in tree order', () {

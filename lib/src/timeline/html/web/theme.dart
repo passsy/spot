@@ -403,7 +403,7 @@ kbd {
   box-shadow: 0 8px 24px rgba(0, 0, 0, .5);
   opacity: 0;
   visibility: hidden;
-  /* Overridden per owner, see .capture .hover-card. */
+  /* Overridden per owner, see .ruler-cell .hover-card. */
   --card-x: -50%;
   transform: translate(var(--card-x), -50%) scale(.96);
   pointer-events: none;
@@ -417,7 +417,7 @@ kbd {
 /* Nothing happens for 300ms, so dragging across the strip does not flash a
    card in every column on the way. */
 .frame-gap:hover .hover-card,
-.capture:hover .hover-card {
+.ruler-cell:hover .hover-card {
   opacity: 1;
   visibility: visible;
   transform: translate(var(--card-x), -50%) scale(1);
@@ -427,13 +427,18 @@ kbd {
     visibility 0s linear 300ms;
 }
 
-/* Anchored to the left edge of the cell rather than centred on it. A card
-   centred on the first frame reaches past the left edge of the strip, and a
-   scroll container cannot be scrolled to reveal it. Overflow to the right just
-   extends the scrollable area. Gaps never sit first, so they stay centred. */
-.capture .hover-card {
+/* The frame card belongs to the time ruler, where its two clock values and
+   frame numbers already live. Anchoring it below the cell keeps screenshots
+   clear while the card remains within the timeline's scrollable area. */
+.ruler-cell .hover-card {
+  top: calc(100% + 6px);
   --card-x: 0;
   left: 6px;
+  transform: translate(var(--card-x), 0) scale(.96);
+}
+
+.ruler-cell:hover .hover-card {
+  transform: translate(var(--card-x), 0) scale(1);
 }
 
 .hover-card__title {
@@ -472,7 +477,7 @@ kbd {
   }
 
   .frame-gap:hover .hover-card,
-  .capture:hover .hover-card {
+  .ruler-cell:hover .hover-card {
     transition: opacity 0s linear 300ms, visibility 0s linear 300ms;
   }
 }
@@ -993,6 +998,12 @@ body.is-resizing-rows * {
 .text-button:hover {
   color: var(--text);
   background: var(--surface-hover);
+}
+
+.tree-filter-button.is-active {
+  color: var(--accent);
+  background: var(--surface-hover);
+  box-shadow: inset 0 0 0 1px var(--accent);
 }
 
 .capture-viewport {

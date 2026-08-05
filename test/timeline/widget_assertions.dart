@@ -34,6 +34,7 @@ void main() {
     final root =
         existsOnceEvent.structuredWidgetTree['root'] as Map<String, dynamic>;
     final appBarNode = appBar!;
+    expect(appBarNode['isUserCode'], isTrue);
     final searchResult = searchStructuredWidgetTree(root, 'appbar');
     expect(searchResult.matches, contains(appBarNode['id']));
     expect(searchResult.visible, contains(root['id']));
