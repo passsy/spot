@@ -125,10 +125,61 @@ void main() {
       expect(spot<Icon>().existsOnce().getDiagnosticProp<double>('size'), 7);
     });
 
+    testWidgets('a matcher keeps reporting the widget it matched',
+        (tester) async {
+      // A matcher describes the moment it was created, like the snapshot it
+      // came from. Reading a prop off it later must not answer for a widget
+      // it never matched.
+      final controller = TextEditingController(text: 'before');
+      final focusNode = FocusNode();
+      addTearDown(controller.dispose);
+      addTearDown(focusNode.dispose);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: EditableText(
+              controller: controller,
+              focusNode: focusNode,
+              style: TextStyle(fontSize: 12),
+              cursorColor: Colors.red,
+              backgroundCursorColor: Colors.grey,
+            ),
+          ),
+        ),
+      );
+
+      final matcher = spotTextWhere((it) => it.isNotEmpty()).existsOnce();
+      // The other matcher implementation, built from an element instead of
+      // holding a snapshot.
+      final discovered = spotTextWhere((it) => it.isNotEmpty())
+          .existsExactlyNTimes(1)
+          .discovered
+          .single;
+
+      controller.text = 'after';
+      await tester.pump();
+
+      expect(matcher.widget.text, 'before');
+      expect(matcher.getDiagnosticProp<String>('text'), 'before');
+      matcher.hasDiagnosticProp<String>('text', (it) => it.equals('before'));
+
+      expect(discovered.widget.text, 'before');
+      expect(discovered.getDiagnosticProp<String>('text'), 'before');
+
+      // Only the matcher is frozen. A new query sees the current tree.
+      expect(
+        spotTextWhere((it) => it.isNotEmpty())
+            .existsOnce()
+            .getDiagnosticProp<String>('text'),
+        'after',
+      );
+    });
+
     testWidgets('reads fresh text after a controller change', (tester) async {
       // AnyText reads the text off the live controller, and a bare
-      // EditableText keeps its widget instance while its text changes. The
-      // props of one frame must not be served in the next.
+      // EditableText keeps its widget instance while its text changes. A
+      // matcher taken after the change must see it.
       final controller = TextEditingController(text: 'before');
       final focusNode = FocusNode();
       addTearDown(controller.dispose);

@@ -49,9 +49,9 @@ extension DiagnosticPropWidgetSelector<W extends Widget> on WidgetSelector<W> {
 
     return whereElement(
       (element) {
+        final props = _diagnosticProps(mapElementToWidget(element));
         final DiagnosticsNode? prop =
-            _diagnosticProps(element, mapElementToWidget)
-                .firstOrNullWhere((e) => e.name == propName);
+            props.firstOrNullWhere((e) => e.name == propName);
 
         final actual = prop?.value as T? ?? prop?.getDefaultValue<T>();
 
@@ -100,9 +100,9 @@ extension DiagnosticPropWidgetMatcher<W extends Widget> on WidgetMatcher<W> {
   /// final checked = spot<Checkbox>().existsOnce().getDiagnosticProp<bool>('value');
   /// ```
   T getDiagnosticProp<T>(String propName) {
+    final props = _diagnosticProps(widget);
     final DiagnosticsNode? prop =
-        _diagnosticProps(element, selector.mapElementToWidget)
-            .firstOrNullWhere((e) => e.name == propName);
+        props.firstOrNullWhere((e) => e.name == propName);
     final actual = prop?.value as T? ?? prop?.getDefaultValue<T>();
     return actual as T;
   }
@@ -114,9 +114,9 @@ extension DiagnosticPropWidgetMatcher<W extends Widget> on WidgetMatcher<W> {
     String propName,
     MatchProp<T> match,
   ) {
+    final props = _diagnosticProps(widget);
     final DiagnosticsNode? prop =
-        _diagnosticProps(element, selector.mapElementToWidget)
-            .firstOrNullWhere((e) => e.name == propName);
+        props.firstOrNullWhere((e) => e.name == propName);
 
     final actual = prop?.value as T? ?? prop?.getDefaultValue<T>();
     void condition(Subject<T?> subject) {
@@ -148,8 +148,7 @@ extension DiagnosticPropWidgetMatcher<W extends Widget> on WidgetMatcher<W> {
   }
 }
 
-/// The [DiagnosticsProperty]s of the widget [mapElementToWidget] derives from
-/// [element], cached on that widget.
+/// The [DiagnosticsProperty]s of [widget], cached on it.
 ///
 /// [Widget.toDiagnosticsNode] returns a fresh node on every call, and each node
 /// only caches [DiagnosticsNode.getProperties] for itself. Without this cache
@@ -167,11 +166,7 @@ extension DiagnosticPropWidgetMatcher<W extends Widget> on WidgetMatcher<W> {
 /// behind [spotText] are the ones that would pay for that, which is why
 /// [AnyTextWidgetSelector] hands out the same instance for an element until
 /// something it was derived from changes.
-List<DiagnosticsNode> _diagnosticProps(
-  Element element,
-  Widget Function(Element element) mapElementToWidget,
-) {
-  final widget = mapElementToWidget(element);
+List<DiagnosticsNode> _diagnosticProps(Widget widget) {
   return _propsCache[widget] ??=
       List.unmodifiable(widget.toDiagnosticsNode().getProperties());
 }
