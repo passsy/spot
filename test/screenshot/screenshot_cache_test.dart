@@ -35,6 +35,54 @@ void main() {
       expect(await _pixelAt(red, 50, 50), Color(0xffff0000));
       expect(await _pixelAt(green, 50, 50), Color(0xff00ff00));
     });
+
+    testWidgets('each repaint boundary is rastered on its own', (
+      tester,
+    ) async {
+      // Rasters are cached per repaint boundary, not per frame. Two
+      // widget-scoped screenshots of one frame must not hand each other the
+      // raster of the wrong layer.
+      tester.view.physicalSize = const Size(100, 100);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: Column(
+            children: const [
+              RepaintBoundary(
+                key: Key('top'),
+                child: SizedBox(
+                  width: 100,
+                  height: 50,
+                  child: ColoredBox(color: Color(0xffff0000)),
+                ),
+              ),
+              RepaintBoundary(
+                key: Key('bottom'),
+                child: SizedBox(
+                  width: 100,
+                  height: 50,
+                  child: ColoredBox(color: Color(0xff00ff00)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+
+      final top = timeline.takeScreenshotSync(
+        name: 'top',
+        element: tester.element(find.byKey(Key('top'))),
+      );
+      final bottom = timeline.takeScreenshotSync(
+        name: 'bottom',
+        element: tester.element(find.byKey(Key('bottom'))),
+      );
+
+      expect(await _pixelAt(top, 50, 25), Color(0xffff0000));
+      expect(await _pixelAt(bottom, 50, 25), Color(0xff00ff00));
+    });
   });
 
   group('annotation reuse within a test', () {
