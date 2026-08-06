@@ -123,6 +123,42 @@ void main() {
       expect(renders, ['a', 'b']);
     });
 
+    testWidgets('the timeline shares one annotation between screenshots', (
+      tester,
+    ) async {
+      // What every assertion in spot actually does: takeScreenshotSync queues
+      // the rendering and the timeline drains that queue after the test, while
+      // rendering its report. The direct renderAnnotationLayers calls above
+      // never touch that path.
+      final renders = <String>[];
+      final screenshots = <Screenshot>[];
+      // Registered before the timeline exists, so it runs after the timeline's
+      // own teardown, which is the thing that drains the queue.
+      addTearDown(() {
+        expect(renders, ['deferred']);
+        expect(
+          identical(
+            screenshots[0].annotations.single,
+            screenshots[1].annotations.single,
+          ),
+          isTrue,
+        );
+      });
+
+      timeline.mode = TimelineMode.always;
+      await _pumpColor(tester, Color(0xffff0000));
+
+      for (final name in ['first', 'second']) {
+        screenshots.add(
+          timeline.takeScreenshotSync(
+            name: name,
+            annotators: [_CountingAnnotator('deferred', renders)],
+          ),
+        );
+      }
+      expect(renders, isEmpty, reason: 'rendering is deferred, not immediate');
+    });
+
     testWidgets('a previous test leaves nothing behind', (tester) async {
       // Same annotator id as the two tests above. Their annotations hold
       // images those tests have since disposed.
