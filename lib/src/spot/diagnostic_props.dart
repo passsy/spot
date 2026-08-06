@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/checks/checks_nullability.dart';
-import 'package:spot/src/flutter/frame_clock.dart';
 import 'package:spot/src/spot/selectors.dart';
 import 'package:spot/src/spot/widget_matcher.dart';
 
@@ -150,56 +149,41 @@ extension DiagnosticPropWidgetMatcher<W extends Widget> on WidgetMatcher<W> {
 }
 
 /// The [DiagnosticsProperty]s of the widget [mapElementToWidget] derives from
-/// [element], cached for the duration of the current frame.
+/// [element], cached on that widget.
 ///
 /// [Widget.toDiagnosticsNode] returns a fresh node on every call, and each node
 /// only caches [DiagnosticsNode.getProperties] for itself. Without this cache
 /// every matcher in a chain re-runs `debugFillProperties` for the same widget,
-/// and every `with*` selector re-runs it for every widget in the tree.
+/// and so does every query that inspects a widget an earlier query already
+/// inspected.
 ///
-/// The cache is keyed on the [Element]'s own widget rather than the derived
-/// one, because [WidgetSelector.mapElementToWidget] may synthesize a widget per
-/// call, as the [AnyText] selectors do. [mapElementToWidget] is part of the key
-/// so that two selectors deriving different widgets from one element, such as
-/// `spot<RichText>()` and `spotText()`, don't read each other's properties.
+/// Keyed on the derived widget itself, which is the only thing the properties
+/// depend on. A [Widget] is immutable, so what it fills in cannot change while
+/// the instance lives; a rebuild creates a new instance and with it a new
+/// entry. Nothing has to notice a frame here.
 ///
-/// A frame is the longest span over which a derived widget is guaranteed to
-/// keep reporting the same properties. Widgets themselves are immutable, but a
-/// derived widget can read live state: [AnyText.fromEditableText] takes the
-/// text from the controller, and an [EditableText] keeps its widget instance
-/// while its text changes. Holding entries past the frame that produced them
-/// would serve the text a test just replaced.
+/// A [WidgetSelector] that synthesizes a widget per call gets a new entry per
+/// call and never a hit — correct, just uncached. The [AnyText] selectors
+/// behind [spotText] are the ones that would pay for that, which is why
+/// [AnyTextWidgetSelector] hands out the same instance for the same element
+/// within a frame.
 List<DiagnosticsNode> _diagnosticProps(
   Element element,
   Widget Function(Element element) mapElementToWidget,
 ) {
-  _dropCacheOnNewFrame();
-  final derived = _propsCache[element.widget] ??= {};
-  return derived[mapElementToWidget] ??=
-      mapElementToWidget(element).toDiagnosticsNode().getProperties();
+  final widget = mapElementToWidget(element);
+  return _propsCache[widget] ??=
+      List.unmodifiable(widget.toDiagnosticsNode().getProperties());
 }
 
-/// Maps an [Element]'s widget to the properties of every widget derived from it
-/// in the current frame, keyed by the function that derived it.
+/// The [DiagnosticsProperty]s of a [Widget], for as long as that widget lives.
 ///
 /// An [Expando] because the keys are widgets of a tree the test may tear down
 /// at any point, and holding them here must not keep them alive.
-Expando<Map<Function, List<DiagnosticsNode>>> _propsCache = Expando();
-
-int _cachedFrame = -1;
-
-/// Drops everything cached in an earlier frame.
 ///
-/// [FrameClock] counts frames for the whole process, so this only has to
-/// notice that the number moved. Nothing here registers a frame callback of
-/// its own.
-void _dropCacheOnNewFrame() {
-  final frame = FrameClock.frameNumberInProcess;
-  if (frame != _cachedFrame) {
-    _cachedFrame = frame;
-    _propsCache = Expando();
-  }
-}
+/// The lists are unmodifiable because every caller in the process now reads the
+/// same instance.
+final Expando<List<DiagnosticsNode>> _propsCache = Expando();
 
 extension on DiagnosticsNode {
   T? getDefaultValue<T>() {

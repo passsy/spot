@@ -325,6 +325,30 @@ void main() {
     }
   });
 
+  group('AnyText instances', () {
+    testWidgets('are reused for an element within a frame', (tester) async {
+      // AnyText is synthesized per call, which makes it useless as a cache key
+      // for anything derived from it. Handing out one instance per element and
+      // frame is what lets callers cache, e.g. the diagnostic properties.
+      await tester.pumpWidget(_stage(children: [Text('foo')]));
+      final selector = spotText('foo');
+      final element = find.byType(RichText).evaluate().first;
+
+      final first = selector.mapElementToWidget(element);
+      expect(identical(selector.mapElementToWidget(element), first), isTrue);
+
+      await tester.pumpWidget(_stage(children: [Text('foo')]));
+      final elementAfterFrame = find.byType(RichText).evaluate().first;
+      // The premise: the frame is the only thing that changed, the element is
+      // still the same one.
+      expect(identical(elementAfterFrame, element), isTrue);
+      expect(
+        identical(selector.mapElementToWidget(elementAfterFrame), first),
+        isFalse,
+      );
+    });
+  });
+
   group('deprecated', () {
     group('Text', () {
       testWidgets('spotTexts finds Text', (tester) async {

@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
@@ -189,6 +190,86 @@ void main() {
       );
     });
 
+    testWidgets('builds the props of a widget only once', (tester) async {
+      // Why the cache exists. All three entry points read through it, so a
+      // widget fills its properties once no matter how often it is inspected.
+      var fills = 0;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: _CountingProps(value: 4, onFillProperties: () => fills++),
+        ),
+      );
+
+      spot<_CountingProps>()
+          .existsOnce()
+          .hasDiagnosticProp<int>('value', (it) => it.equals(4));
+      expect(fills, 1);
+
+      spot<_CountingProps>().existsOnce().getDiagnosticProp<int>('value');
+      spot<_CountingProps>()
+          .withDiagnosticProp<int>('value', (it) => it.equals(4))
+          .existsOnce();
+      expect(fills, 1);
+
+      // A rebuild creates a new widget instance, which has its own properties.
+      await tester.pumpWidget(
+        MaterialApp(
+          home: _CountingProps(value: 7, onFillProperties: () => fills++),
+        ),
+      );
+      expect(
+        spot<_CountingProps>().existsOnce().getDiagnosticProp<int>('value'),
+        7,
+      );
+      expect(fills, 2);
+    });
+
+    testWidgets('does not share props between elements of one widget',
+        (tester) async {
+      // One widget instance can be mounted in several elements, and a selector
+      // deriving its widget from the element reports different props for each.
+      const shared = _Marker();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Column(
+            children: [
+              DefaultTextStyle(
+                style: TextStyle(fontSize: 10),
+                child: shared,
+              ),
+              DefaultTextStyle(
+                style: TextStyle(fontSize: 20),
+                child: shared,
+              ),
+            ],
+          ),
+        ),
+      );
+
+      expect(
+        _spotFontSizeOfContext()
+            .atIndex(0)
+            .existsOnce()
+            .getDiagnosticProp<double>('contextValue'),
+        10,
+      );
+      expect(
+        _spotFontSizeOfContext()
+            .atIndex(1)
+            .existsOnce()
+            .getDiagnosticProp<double>('contextValue'),
+        20,
+      );
+      // Both directions: reading the first element's props for the second one
+      // makes the filter match twice for 10 and never for 20.
+      _spotFontSizeOfContext()
+          .withDiagnosticProp<double>('contextValue', (it) => it.equals(10))
+          .existsOnce();
+      _spotFontSizeOfContext()
+          .withDiagnosticProp<double>('contextValue', (it) => it.equals(20))
+          .existsOnce();
+    });
+
     testWidgets('generated withDiagnosticProp', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -212,4 +293,56 @@ void main() {
       );
     });
   });
+}
+
+/// Reports how often it was asked for its diagnostic properties.
+class _CountingProps extends StatelessWidget {
+  const _CountingProps({required this.value, required this.onFillProperties});
+
+  final int value;
+  final void Function() onFillProperties;
+
+  @override
+  Widget build(BuildContext context) => const SizedBox();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    onFillProperties();
+    super.debugFillProperties(properties);
+    properties.add(IntProperty('value', value));
+  }
+}
+
+/// A widget without properties of its own, to be mounted more than once.
+class _Marker extends StatelessWidget {
+  const _Marker();
+
+  @override
+  Widget build(BuildContext context) => const SizedBox();
+}
+
+/// The properties of a [_Marker] element, taken from its context instead of
+/// from its widget, which is what makes two elements of one [_Marker] instance
+/// report different properties.
+class _FontSizeOfContext extends StatelessWidget {
+  const _FontSizeOfContext(this.contextValue);
+
+  final double contextValue;
+
+  @override
+  Widget build(BuildContext context) => const SizedBox();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DoubleProperty('contextValue', contextValue));
+  }
+}
+
+WidgetSelector<_FontSizeOfContext> _spotFontSizeOfContext() {
+  return WidgetSelector<_FontSizeOfContext>(
+    stages: [WidgetTypeFilter<_Marker>()],
+    mapElementToWidget: (element) =>
+        _FontSizeOfContext(DefaultTextStyle.of(element).style.fontSize!),
+  );
 }

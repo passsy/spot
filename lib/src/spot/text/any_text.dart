@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/checks/checks_nullability.dart';
+import 'package:spot/src/flutter/frame_clock.dart';
 import 'package:spot/src/spot/query_stats.dart';
 
 /// A union type for any text widget that can be found in the widget tree.
@@ -412,7 +413,28 @@ class AnyTextWidgetSelector extends WidgetSelector<AnyText> {
     required super.stages,
   }) : super(mapElementToWidget: _mapElementToAnyText);
 
+  /// The [AnyText] of [element], the same instance for the rest of the frame.
+  ///
+  /// [AnyText] is synthesized, so without this every caller would get a fresh
+  /// instance — [WidgetMatcher.widget], every `with*` filter and every property
+  /// read. Handing out one instance per element lets callers cache what they
+  /// derive from it, which is what makes the diagnostic property cache in
+  /// `diagnostic_props.dart` work for [spotText].
+  ///
+  /// Only for the frame that produced it. An [AnyText] copies live state:
+  /// [AnyText.fromEditableText] takes the text off the controller, and an
+  /// [EditableText] keeps its widget instance while its text changes. Serving
+  /// it in a later frame would serve the text a test just replaced.
   static AnyText _mapElementToAnyText(Element element) {
+    final frame = FrameClock.frameNumberInProcess;
+    if (frame != _memoizedFrame) {
+      _memoizedFrame = frame;
+      _anyTextOfElement = Expando();
+    }
+    return _anyTextOfElement[element] ??= _deriveAnyText(element);
+  }
+
+  static AnyText _deriveAnyText(Element element) {
     if (element.widget is RichText) {
       // RichText is used by Text and SelectableText under the hood
       return AnyText.fromRichText(element.widget as RichText);
@@ -427,6 +449,19 @@ class AnyTextWidgetSelector extends WidgetSelector<AnyText> {
     );
   }
 }
+
+/// The [AnyText] synthesized for an [Element] in frame [_memoizedFrame].
+///
+/// An [Expando] because the keys are elements of a tree the test may tear down
+/// at any point, and holding them here must not keep them alive.
+Expando<AnyText> _anyTextOfElement = Expando();
+
+/// The frame [_anyTextOfElement] holds instances of.
+///
+/// [FrameClock] counts frames for the whole process, so noticing that the
+/// number moved is all it takes to drop the previous frame's instances.
+/// Nothing here registers a frame callback of its own.
+int _memoizedFrame = -1;
 
 /// Matches text widgets ([EditableText] and [RichText]) on screen.
 ///

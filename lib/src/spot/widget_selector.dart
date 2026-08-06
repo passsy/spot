@@ -92,10 +92,9 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
   /// Overwrite this method when [W] is a synthetic widget like [AnyText] that
   /// combines multiple widgets of similar (but not exact) Type
   ///
-  /// Must return a widget with the same properties every time it is called with
-  /// the same [Element] within one frame. It may return a new instance each
-  /// call, and it may read state that changes between frames, but callers cache
-  /// what they derive from it for the length of a frame.
+  /// Called repeatedly for the same [Element], so returning the same instance
+  /// for the same element is worth it when synthesizing is expensive. Returning
+  /// a new instance each call is always correct.
   final W Function(Element element) mapElementToWidget;
 
   /// The runtime type of the widget this selector is intended for.
