@@ -681,13 +681,11 @@ ui.Image _rasterForFrame(RenderObject renderObject) {
   if (!identical(test, _rasterTest)) {
     _rasterTest = test;
     _dropRasters();
-    if (test != null) {
-      // The last raster of a test has no next frame to drop it, and a raster
-      // is keyed by the RenderObject it was taken from, so without this the
-      // finished test's render tree stays alive until some later test happens
-      // to capture again.
-      addTearDown(_dropRasters);
-    }
+    // The last raster of a test has no next frame to drop it, and a raster is
+    // keyed by the RenderObject it was taken from, so without this the
+    // finished test's render tree stays alive until some later test happens to
+    // capture again.
+    addTearDown(_dropRasters);
   }
   final frame = FrameClock.frameNumberInProcess;
   if (frame != _rasterFrame) {
