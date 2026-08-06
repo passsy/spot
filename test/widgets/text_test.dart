@@ -347,6 +347,22 @@ void main() {
         isFalse,
       );
     });
+
+    testWidgets('do not outlive the widget they were derived from',
+        (tester) async {
+      await tester.pumpWidget(_stage(children: [Text('foo')]));
+      expect(
+        spotText('foo').existsOnce().getDiagnosticProp<String>('text'),
+        'foo',
+      );
+
+      // The element is reused, only its RichText is replaced.
+      await tester.pumpWidget(_stage(children: [Text('bar')]));
+      expect(
+        spotText('bar').existsOnce().getDiagnosticProp<String>('text'),
+        'bar',
+      );
+    });
   });
 
   group('deprecated', () {
