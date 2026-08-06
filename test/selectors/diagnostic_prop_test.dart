@@ -12,44 +12,43 @@ void main() {
     testWidgets('getDiagnosticProp', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Text('a', maxLines: 4),
+          home: Icon(Icons.add, size: 4),
         ),
       );
 
-      final maxLines =
-          spot<Text>().existsOnce().getDiagnosticProp<int>('maxLines');
-      expect(maxLines, 4);
+      final size = spot<Icon>().existsOnce().getDiagnosticProp<double>('size');
+      expect(size, 4);
     });
 
     testWidgets('generated getDiagnosticProp', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Text('a', maxLines: 4),
+          home: Icon(Icons.add, size: 4),
         ),
       );
 
-      final maxLines2 = spot<Text>().existsOnce().getMaxLines();
-      expect(maxLines2, 4);
+      final size = spot<Icon>().existsOnce().getSize();
+      expect(size, 4);
     });
 
     testWidgets('hasDiagnosticProp', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Text('a', maxLines: 4),
+          home: Icon(Icons.add, size: 4),
         ),
       );
 
-      spot<Text>()
+      spot<Icon>()
           .existsOnce()
-          .hasDiagnosticProp<int>('maxLines', (it) => it.equals(4));
+          .hasDiagnosticProp<double>('size', (it) => it.equals(4));
 
       expect(
-        () => spot<Text>()
+        () => spot<Icon>()
             .existsOnce()
-            .hasDiagnosticProp<int>('maxLines', (it) => it.equals(2)),
+            .hasDiagnosticProp<double>('size', (it) => it.equals(2)),
         throwsSpotErrorContaining([
-          'Text with property maxLines',
-          'equals <2>, actual: <4>',
+          'Icon with property size',
+          'equals <2.0>, actual: <4.0>',
         ]),
       );
     });
@@ -57,20 +56,17 @@ void main() {
     testWidgets('generated hasDiagnosticProp', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Text('a', maxLines: 4),
+          home: Icon(Icons.add, size: 4),
         ),
       );
 
-      spot<Text>()
-          .existsOnce()
-          .hasMaxLines(4)
-          .hasMaxLinesWhere((it) => it.equals(4));
+      spot<Icon>().existsOnce().hasSize(4).hasSizeWhere((it) => it.equals(4));
 
       expect(
-        () => spot<Text>().existsOnce().hasMaxLines(2),
+        () => spot<Icon>().existsOnce().hasSize(2),
         throwsSpotErrorContaining([
-          'Text with property maxLines',
-          'equals <2>, actual: <4>',
+          'Icon with property size',
+          'equals <2.0>, actual: <4.0>',
         ]),
       );
     });
@@ -78,22 +74,22 @@ void main() {
     testWidgets('withDiagnosticProp', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Text('a', maxLines: 4),
+          home: Icon(Icons.add, size: 4),
         ),
       );
 
-      spot<Text>()
-          .withDiagnosticProp<int>('maxLines', (it) => it.equals(4))
+      spot<Icon>()
+          .withDiagnosticProp<double>('size', (it) => it.equals(4))
           .existsOnce();
 
       expect(
-        () => spot<Text>()
-            .withDiagnosticProp<int>('maxLines', (it) => it.equals(2))
+        () => spot<Icon>()
+            .withDiagnosticProp<double>('size', (it) => it.equals(2))
             .existsOnce(),
         throwsSpotErrorContaining([
-          'Could not find Text with prop "maxLines" equals <2> in widget tree',
-          'A less specific search (Text) discovered 1 matches!',
-          'Text("a", maxLines: 4,',
+          'Could not find Icon with prop "size" equals <2.0> in widget tree',
+          'A less specific search (Icon) discovered 1 matches!',
+          'Icon(IconData(U+0E047), size: 4.0',
         ]),
       );
     });
@@ -103,21 +99,21 @@ void main() {
       // which must not read the previous instance's props.
       await tester.pumpWidget(
         MaterialApp(
-          home: Text('a', maxLines: 4),
+          home: Icon(Icons.add, size: 4),
         ),
       );
-      spot<Text>().existsOnce().hasMaxLines(4);
-      spot<Text>().withMaxLines(4).existsOnce();
+      spot<Icon>().existsOnce().hasSize(4);
+      spot<Icon>().withSize(4).existsOnce();
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Text('a', maxLines: 7),
+          home: Icon(Icons.add, size: 7),
         ),
       );
-      spot<Text>().existsOnce().hasMaxLines(7);
-      spot<Text>().withMaxLines(7).existsOnce();
-      spot<Text>().withMaxLines(4).doesNotExist();
-      expect(spot<Text>().existsOnce().getDiagnosticProp<int>('maxLines'), 7);
+      spot<Icon>().existsOnce().hasSize(7);
+      spot<Icon>().withSize(7).existsOnce();
+      spot<Icon>().withSize(4).doesNotExist();
+      expect(spot<Icon>().existsOnce().getDiagnosticProp<double>('size'), 7);
     });
 
     testWidgets('reads fresh text after a controller change', (tester) async {
@@ -273,22 +269,22 @@ void main() {
     testWidgets('generated withDiagnosticProp', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Text('a', maxLines: 4),
+          home: Icon(Icons.add, size: 4),
         ),
       );
 
-      spot<Text>().withMaxLines(4).existsOnce();
-      spot<Text>().whereMaxLines((it) => it.equals(4)).existsOnce();
+      spot<Icon>().withSize(4).existsOnce();
+      spot<Icon>().whereSize((it) => it.equals(4)).existsOnce();
 
-      spot<Text>().withMaxLines(3).doesNotExist();
-      spot<Text>().whereMaxLines((it) => it.equals(3)).doesNotExist();
+      spot<Icon>().withSize(3).doesNotExist();
+      spot<Icon>().whereSize((it) => it.equals(3)).doesNotExist();
 
       expect(
-        () => spot<Text>().withMaxLines(2).existsOnce(),
+        () => spot<Icon>().withSize(2).existsOnce(),
         throwsSpotErrorContaining([
-          'Could not find Text with prop "maxLines" equals <2> in widget tree',
-          'A less specific search (Text) discovered 1 matches!',
-          'Text("a", maxLines: 4,',
+          'Could not find Icon with prop "size" equals <2.0> in widget tree',
+          'A less specific search (Icon) discovered 1 matches!',
+          'Icon(IconData(U+0E047), size: 4.0',
         ]),
       );
     });
