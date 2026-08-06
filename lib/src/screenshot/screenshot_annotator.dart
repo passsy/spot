@@ -124,11 +124,16 @@ class CrosshairAnnotator implements ScreenshotAnnotator {
 /// Highlights elements on a screenshot.
 class HighlightAnnotator implements ScreenshotAnnotator {
   /// Highlight plain rectangles on the screenshot with optional labels.
+  ///
+  /// The lists are copied, because equality is derived from them and an
+  /// annotator is used as a cache key while it is rendered.
   HighlightAnnotator.rects(
-    this.rects, {
+    List<Rect> rects, {
     this.color,
-    this.labels,
-  }) : assert(labels == null || rects.length == labels.length);
+    List<String>? labels,
+  })  : assert(labels == null || rects.length == labels.length),
+        rects = List.unmodifiable(rects),
+        labels = labels == null ? null : List.unmodifiable(labels);
 
   /// Highlight elements on the screenshot
   factory HighlightAnnotator.elements(List<Element> elements, {Color? color}) {
