@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/checks/checks_nullability.dart';
-import 'package:spot/src/flutter/frame_clock.dart';
 import 'package:spot/src/spot/query_stats.dart';
 
 /// A union type for any text widget that can be found in the widget tree.
@@ -413,7 +412,8 @@ class AnyTextWidgetSelector extends WidgetSelector<AnyText> {
     required super.stages,
   }) : super(mapElementToWidget: _mapElementToAnyText);
 
-  /// The [AnyText] of [element], the same instance for the rest of the frame.
+  /// The [AnyText] of [element], the same instance until something it was
+  /// derived from changes.
   ///
   /// [AnyText] is synthesized, so without this every caller would get a fresh
   /// instance — [WidgetMatcher.widget], every `with*` filter and every property
@@ -421,17 +421,34 @@ class AnyTextWidgetSelector extends WidgetSelector<AnyText> {
   /// derive from it, which is what makes the diagnostic property cache in
   /// `diagnostic_props.dart` work for [spotText].
   ///
-  /// Only for the frame that produced it. An [AnyText] copies live state:
-  /// [AnyText.fromEditableText] takes the text off the controller, and an
-  /// [EditableText] keeps its widget instance while its text changes. Serving
-  /// it in a later frame would serve the text a test just replaced.
+  /// An [AnyText] copies live state, so it is only good while that state is
+  /// unchanged. [_anyTextVersion] is what changed-or-not is decided on, which
+  /// keeps this exact rather than merely timely: a new instance appears the
+  /// moment the text does, not at the next frame.
   static AnyText _mapElementToAnyText(Element element) {
-    final frame = FrameClock.frameNumberInProcess;
-    if (frame != _memoizedFrame) {
-      _memoizedFrame = frame;
-      _anyTextOfElement = Expando();
+    final version = _anyTextVersion(element);
+    final memoized = _anyTextOfElement[element];
+    if (memoized != null && memoized.version == version) {
+      return memoized.anyText;
     }
-    return _anyTextOfElement[element] ??= _deriveAnyText(element);
+    final anyText = _deriveAnyText(element);
+    _anyTextOfElement[element] = _MemoizedAnyText(version, anyText);
+    return anyText;
+  }
+
+  /// Everything [_deriveAnyText] reads, as a value that compares equal when
+  /// none of it changed.
+  ///
+  /// A [RichText] carries its text, so the widget instance is the whole of it.
+  /// An [EditableText] does not: it keeps its instance while the controller's
+  /// value changes underneath, so that value is part of the version.
+  static Object _anyTextVersion(Element element) {
+    final widget = element.widget;
+    if (widget is EditableText) {
+      final state = (element as StatefulElement).state as EditableTextState;
+      return (widget, state.textEditingValue);
+    }
+    return widget;
   }
 
   static AnyText _deriveAnyText(Element element) {
@@ -450,18 +467,19 @@ class AnyTextWidgetSelector extends WidgetSelector<AnyText> {
   }
 }
 
-/// The [AnyText] synthesized for an [Element] in frame [_memoizedFrame].
+/// The [AnyText] synthesized for an [Element], together with the inputs it was
+/// derived from.
 ///
 /// An [Expando] because the keys are elements of a tree the test may tear down
 /// at any point, and holding them here must not keep them alive.
-Expando<AnyText> _anyTextOfElement = Expando();
+final Expando<_MemoizedAnyText> _anyTextOfElement = Expando();
 
-/// The frame [_anyTextOfElement] holds instances of.
-///
-/// [FrameClock] counts frames for the whole process, so noticing that the
-/// number moved is all it takes to drop the previous frame's instances.
-/// Nothing here registers a frame callback of its own.
-int _memoizedFrame = -1;
+class _MemoizedAnyText {
+  _MemoizedAnyText(this.version, this.anyText);
+
+  final Object version;
+  final AnyText anyText;
+}
 
 /// Matches text widgets ([EditableText] and [RichText]) on screen.
 ///

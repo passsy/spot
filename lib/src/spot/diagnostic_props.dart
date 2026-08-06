@@ -160,13 +160,13 @@ extension DiagnosticPropWidgetMatcher<W extends Widget> on WidgetMatcher<W> {
 /// Keyed on the derived widget itself, which is the only thing the properties
 /// depend on. A [Widget] is immutable, so what it fills in cannot change while
 /// the instance lives; a rebuild creates a new instance and with it a new
-/// entry. Nothing has to notice a frame here.
+/// entry. Nothing here needs invalidating.
 ///
 /// A [WidgetSelector] that synthesizes a widget per call gets a new entry per
 /// call and never a hit — correct, just uncached. The [AnyText] selectors
 /// behind [spotText] are the ones that would pay for that, which is why
-/// [AnyTextWidgetSelector] hands out the same instance for the same element
-/// within a frame.
+/// [AnyTextWidgetSelector] hands out the same instance for an element until
+/// something it was derived from changes.
 List<DiagnosticsNode> _diagnosticProps(
   Element element,
   Widget Function(Element element) mapElementToWidget,
