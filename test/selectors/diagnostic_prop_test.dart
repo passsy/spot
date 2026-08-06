@@ -12,43 +12,45 @@ void main() {
     testWidgets('getDiagnosticProp', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Icon(Icons.add, size: 4),
+          home: Icon(Icons.add, semanticLabel: 'add'),
         ),
       );
 
-      final size = spot<Icon>().existsOnce().getDiagnosticProp<double>('size');
-      expect(size, 4);
+      final label =
+          spot<Icon>().existsOnce().getDiagnosticProp<String>('semanticLabel');
+      expect(label, 'add');
     });
 
     testWidgets('generated getDiagnosticProp', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Icon(Icons.add, size: 4),
+          home: Icon(Icons.add, semanticLabel: 'add'),
         ),
       );
 
-      final size = spot<Icon>().existsOnce().getSize();
-      expect(size, 4);
+      final label = spot<Icon>().existsOnce().getSemanticLabel();
+      expect(label, 'add');
     });
 
     testWidgets('hasDiagnosticProp', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Icon(Icons.add, size: 4),
+          home: Icon(Icons.add, semanticLabel: 'add'),
         ),
       );
 
       spot<Icon>()
           .existsOnce()
-          .hasDiagnosticProp<double>('size', (it) => it.equals(4));
+          .hasDiagnosticProp<String>('semanticLabel', (it) => it.equals('add'));
 
       expect(
-        () => spot<Icon>()
-            .existsOnce()
-            .hasDiagnosticProp<double>('size', (it) => it.equals(2)),
+        () => spot<Icon>().existsOnce().hasDiagnosticProp<String>(
+              'semanticLabel',
+              (it) => it.equals('remove'),
+            ),
         throwsSpotErrorContaining([
-          'Icon with property size',
-          'equals <2.0>, actual: <4.0>',
+          'Icon with property semanticLabel',
+          "equals 'remove', actual: 'add'",
         ]),
       );
     });
@@ -56,17 +58,20 @@ void main() {
     testWidgets('generated hasDiagnosticProp', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Icon(Icons.add, size: 4),
+          home: Icon(Icons.add, semanticLabel: 'add'),
         ),
       );
 
-      spot<Icon>().existsOnce().hasSize(4).hasSizeWhere((it) => it.equals(4));
+      spot<Icon>()
+          .existsOnce()
+          .hasSemanticLabel('add')
+          .hasSemanticLabelWhere((it) => it.equals('add'));
 
       expect(
-        () => spot<Icon>().existsOnce().hasSize(2),
+        () => spot<Icon>().existsOnce().hasSemanticLabel('remove'),
         throwsSpotErrorContaining([
-          'Icon with property size',
-          'equals <2.0>, actual: <4.0>',
+          'Icon with property semanticLabel',
+          "equals 'remove', actual: 'add'",
         ]),
       );
     });
@@ -74,22 +79,26 @@ void main() {
     testWidgets('withDiagnosticProp', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Icon(Icons.add, size: 4),
+          home: Icon(Icons.add, semanticLabel: 'add'),
         ),
       );
 
       spot<Icon>()
-          .withDiagnosticProp<double>('size', (it) => it.equals(4))
+          .withDiagnosticProp<String>('semanticLabel', (it) => it.equals('add'))
           .existsOnce();
 
       expect(
         () => spot<Icon>()
-            .withDiagnosticProp<double>('size', (it) => it.equals(2))
+            .withDiagnosticProp<String>(
+              'semanticLabel',
+              (it) => it.equals('remove'),
+            )
             .existsOnce(),
         throwsSpotErrorContaining([
-          'Could not find Icon with prop "size" equals <2.0> in widget tree',
+          'Could not find Icon with prop "semanticLabel" equals \'remove\' '
+              'in widget tree',
           'A less specific search (Icon) discovered 1 matches!',
-          'Icon(IconData(U+0E047), size: 4.0',
+          'Icon(IconData(U+0E047), semanticLabel: "add"',
         ]),
       );
     });
@@ -269,22 +278,23 @@ void main() {
     testWidgets('generated withDiagnosticProp', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Icon(Icons.add, size: 4),
+          home: Icon(Icons.add, semanticLabel: 'add'),
         ),
       );
 
-      spot<Icon>().withSize(4).existsOnce();
-      spot<Icon>().whereSize((it) => it.equals(4)).existsOnce();
+      spot<Icon>().withSemanticLabel('add').existsOnce();
+      spot<Icon>().whereSemanticLabel((it) => it.equals('add')).existsOnce();
 
-      spot<Icon>().withSize(3).doesNotExist();
-      spot<Icon>().whereSize((it) => it.equals(3)).doesNotExist();
+      spot<Icon>().withSemanticLabel('edit').doesNotExist();
+      spot<Icon>().whereSemanticLabel((it) => it.equals('edit')).doesNotExist();
 
       expect(
-        () => spot<Icon>().withSize(2).existsOnce(),
+        () => spot<Icon>().withSemanticLabel('remove').existsOnce(),
         throwsSpotErrorContaining([
-          'Could not find Icon with prop "size" equals <2.0> in widget tree',
+          'Could not find Icon with prop "semanticLabel" equals \'remove\' '
+              'in widget tree',
           'A less specific search (Icon) discovered 1 matches!',
-          'Icon(IconData(U+0E047), size: 4.0',
+          'Icon(IconData(U+0E047), semanticLabel: "add"',
         ]),
       );
     });
