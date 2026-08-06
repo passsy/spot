@@ -325,6 +325,73 @@ void main() {
     }
   });
 
+  group('AnyText instances', () {
+    testWidgets('are reused while nothing they read changed', (tester) async {
+      // AnyText is synthesized per call, which makes it useless as a cache key
+      // for anything derived from it. Handing out one instance per element is
+      // what lets callers cache, e.g. the diagnostic properties.
+      await tester.pumpWidget(_stage(children: [Text('foo')]));
+      final selector = spotText('foo');
+      final element = find.byType(RichText).evaluate().first;
+
+      final first = selector.mapElementToWidget(element);
+      expect(identical(selector.mapElementToWidget(element), first), isTrue);
+
+      // A frame that rebuilds nothing changes nothing, so the instance stands.
+      tester.binding.scheduleFrame();
+      await tester.pump();
+      expect(identical(selector.mapElementToWidget(element), first), isTrue);
+    });
+
+    testWidgets('are replaced when the text changes without a rebuild',
+        (tester) async {
+      // An EditableText keeps its widget instance while its controller's text
+      // changes, and does not need a frame to do it.
+      final controller = TextEditingController(text: 'before');
+      final focusNode = FocusNode();
+      addTearDown(controller.dispose);
+      addTearDown(focusNode.dispose);
+      await tester.pumpWidget(
+        _stage(
+          children: [
+            EditableText(
+              controller: controller,
+              focusNode: focusNode,
+              style: testTextStyle,
+              cursorColor: Colors.red,
+              backgroundCursorColor: Colors.grey,
+            ),
+          ],
+        ),
+      );
+
+      String readText() => spotTextWhere((it) => it.isNotEmpty())
+          .existsOnce()
+          .getDiagnosticProp<String>('text');
+      expect(readText(), 'before');
+
+      controller.text = 'after';
+      // No pump. The widget instance is untouched, only the controller moved.
+      expect(readText(), 'after');
+    });
+
+    testWidgets('do not outlive the widget they were derived from',
+        (tester) async {
+      await tester.pumpWidget(_stage(children: [Text('foo')]));
+      expect(
+        spotText('foo').existsOnce().getDiagnosticProp<String>('text'),
+        'foo',
+      );
+
+      // The element is reused, only its RichText is replaced.
+      await tester.pumpWidget(_stage(children: [Text('bar')]));
+      expect(
+        spotText('bar').existsOnce().getDiagnosticProp<String>('text'),
+        'bar',
+      );
+    });
+  });
+
   group('deprecated', () {
     group('Text', () {
       testWidgets('spotTexts finds Text', (tester) async {

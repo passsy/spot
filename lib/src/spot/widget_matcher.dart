@@ -41,7 +41,7 @@ class _WidgetMatcherImpl<W extends Widget> implements WidgetMatcher<W> {
   _WidgetMatcherImpl({
     required this.element,
     required this.selector,
-  });
+  }) : widget = selector.mapElementToWidget(element);
 
   @override
   final Element element;
@@ -49,8 +49,11 @@ class _WidgetMatcherImpl<W extends Widget> implements WidgetMatcher<W> {
   @override
   final WidgetSelector<W> selector;
 
+  /// Captured when this matcher was created, like the widgets a
+  /// [WidgetSnapshot] holds, so everything the matcher reports describes one
+  /// point in time.
   @override
-  W get widget => selector.mapElementToWidget(element);
+  final W widget;
 }
 
 class _WidgetMatcherFromSnapshot<W extends Widget> implements WidgetMatcher<W> {

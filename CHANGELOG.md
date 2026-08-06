@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Fix: A `WidgetMatcher` reports the widget it matched, not whatever is in the tree when you read it. `getDiagnosticProp` used to re-read the live widget while `matcher.widget` returned the matched one, so a matcher held across a pump could answer with two different values. All of them now read the matched widget; take a new matcher to assert against the current tree. #159
+
+- Improvement: `hasDiagnosticProp`, `getDiagnosticProp` and `withDiagnosticProp` share one cache of a widget's diagnostic properties instead of running `debugFillProperties` again on every call. Every matcher in a chain used to rebuild the properties of the same widget, and so did every query that inspected a widget an earlier query had already inspected. Over a tree of 200 `Text`s, repeated property queries are around 1.5x faster. #159
 - New: `act.inspectTap()` reports whether a widget can be tapped and why not, as a value instead of a thrown error. It sends no pointer events and pumps no frame, so a test can assert that something is untappable *for a specific reason* rather than matching on message strings. #150
   ```dart
   final inspection = act.inspectTap(spot<ElevatedButton>());
