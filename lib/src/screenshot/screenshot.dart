@@ -669,18 +669,30 @@ ui.Image _captureImageSync(Element element) {
 final Map<RenderObject, ui.Image> _rasterOfFrame = {};
 int _rasterFrame = -1;
 
+/// The test the entries in [_rasterOfFrame] belong to.
+LiveTest? _rasterTest;
+
 /// The current frame's raster of [renderObject], as a handle the caller owns.
 ///
 /// Handles are independent, so the cache disposing its own when the frame ends
 /// leaves every screenshot taken from it holding a live image.
 ui.Image _rasterForFrame(RenderObject renderObject) {
+  final test = getLiveTest();
+  if (!identical(test, _rasterTest)) {
+    _rasterTest = test;
+    _dropRasters();
+    if (test != null) {
+      // The last raster of a test has no next frame to drop it, and a raster
+      // is keyed by the RenderObject it was taken from, so without this the
+      // finished test's render tree stays alive until some later test happens
+      // to capture again.
+      addTearDown(_dropRasters);
+    }
+  }
   final frame = FrameClock.frameNumberInProcess;
   if (frame != _rasterFrame) {
     _rasterFrame = frame;
-    for (final image in _rasterOfFrame.values) {
-      image.dispose();
-    }
-    _rasterOfFrame.clear();
+    _dropRasters();
   }
   final cached = _rasterOfFrame[renderObject];
   if (cached != null) {
@@ -690,6 +702,15 @@ ui.Image _rasterForFrame(RenderObject renderObject) {
   final ui.Image image = layer.toImageSync(renderObject.paintBounds);
   _rasterOfFrame[renderObject] = image;
   return image.clone();
+}
+
+/// Disposes the cache's own handles, leaving the screenshots taken from them
+/// with the live images they cloned.
+void _dropRasters() {
+  for (final image in _rasterOfFrame.values) {
+    image.dispose();
+  }
+  _rasterOfFrame.clear();
 }
 
 /// The closest [RepaintBoundary] at or above [element], which is the layer a
