@@ -95,8 +95,7 @@ void main() {
             )
             .existsOnce(),
         throwsSpotErrorContaining([
-          'Could not find Icon with prop "semanticLabel" equals \'remove\' '
-              'in widget tree',
+          notFoundMessage,
           'A less specific search (Icon) discovered 1 matches!',
           'Icon(IconData(U+0E047), semanticLabel: "add"',
         ]),
@@ -342,8 +341,7 @@ void main() {
       expect(
         () => spot<Icon>().withSemanticLabel('remove').existsOnce(),
         throwsSpotErrorContaining([
-          'Could not find Icon with prop "semanticLabel" equals \'remove\' '
-              'in widget tree',
+          notFoundMessage,
           'A less specific search (Icon) discovered 1 matches!',
           'Icon(IconData(U+0E047), semanticLabel: "add"',
         ]),
@@ -351,6 +349,14 @@ void main() {
     });
   });
 }
+
+/// The first line of the failure when no `Icon` has `semanticLabel: remove`.
+///
+/// A local so the two tests that assert it cannot drift apart, and because
+/// adjacent strings inside a list literal read as a forgotten comma.
+const notFoundMessage =
+    'Could not find Icon with prop "semanticLabel" equals \'remove\' '
+    'in widget tree';
 
 /// Reports how often it was asked for its diagnostic properties.
 class _CountingProps extends StatelessWidget {
