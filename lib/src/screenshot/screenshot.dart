@@ -16,6 +16,7 @@ import 'package:spot/src/screenshot/screenshot.dart' as self
     show takeScreenshot;
 import 'package:spot/src/screenshot/screenshot_io.dart'
     if (dart.library.html) 'package:spot/src/screenshot/screenshot_web.dart';
+import 'package:spot/src/utils/invoker.dart';
 import 'package:stack_trace/stack_trace.dart';
 
 export 'package:stack_trace/stack_trace.dart' show Frame;
@@ -199,13 +200,55 @@ extension TimelineSyncScreenshot on Timeline {
   }
 }
 
+/// Annotations already rendered for the running test.
+///
+/// An annotator that compares equal to one already rendered at the same image
+/// size draws the same overlay, and rendering plus encoding it again costs
+/// around 30ms. A test that asserts on the same widgets repeatedly produces the
+/// same overlay every time, so most of a report's annotations are repeats.
+final Map<(ScreenshotAnnotator, int, int, double), ScreenshotAnnotation>
+    _renderedAnnotations = {};
+
+/// The test the entries in [_renderedAnnotations] belong to.
+LiveTest? _annotationsTest;
+
+/// Drops the annotations rendered for an earlier test.
+///
+/// A test disposes the images it rendered when it ends, so nothing may be
+/// carried across. Scoping by the running test rather than by a timeline
+/// teardown covers `takeScreenshot`, which renders annotations whether a
+/// timeline exists or not.
+void _dropAnnotationsOnNewTest() {
+  final test = getLiveTest();
+  if (!identical(test, _annotationsTest)) {
+    _annotationsTest = test;
+    _renderedAnnotations.clear();
+  }
+}
+
 /// Renders all [annotators] as separate layers into the [screenshot].
 Future<void> renderAnnotationLayers(
   Screenshot screenshot,
   List<ScreenshotAnnotator> annotators,
 ) async {
+  _dropAnnotationsOnNewTest();
+  // An annotator draws from the view it renders in, not from its inputs
+  // alone: [ArrowAnnotator] scales its coordinates by the device pixel ratio,
+  // and [CrosshairAnnotator] maps the view's logical size onto the image. The
+  // image size alone does not tell those apart, because a ratio change with
+  // the physical size held still leaves the image exactly as large as before.
+  final binding = TestWidgetsFlutterBinding.instance;
+  final devicePixelRatio =
+      binding.platformDispatcher.implicitView?.devicePixelRatio ?? 1.0;
   for (final annotator in annotators) {
-    final annotation = await renderAnnotation(screenshot, annotator);
+    final key = (
+      annotator,
+      screenshot.width,
+      screenshot.height,
+      devicePixelRatio,
+    );
+    final annotation = _renderedAnnotations[key] ??=
+        await renderAnnotation(screenshot, annotator);
     screenshot.addAnnotation(annotation);
   }
 }
@@ -575,12 +618,7 @@ Element _findSingleElement({
 ///  * [OffsetLayer.toImage] which is the actual method being called.
 ///  * [_captureImageSync] sync version with known memory leak issue
 Future<ui.Image> _captureImage(Element element) async {
-  assert(element.renderObject != null);
-  RenderObject renderObject = element.renderObject!;
-  while (!renderObject.isRepaintBoundary) {
-    // ignore: unnecessary_cast
-    renderObject = renderObject.parent! as RenderObject;
-  }
+  final renderObject = _findCaptureRenderObject(element);
 
   final OffsetLayer layer = renderObject.debugLayer! as OffsetLayer;
   final ui.Image image = await layer.toImage(renderObject.paintBounds);
@@ -612,15 +650,8 @@ Future<ui.Image> _captureImage(Element element) async {
 ///  * [OffsetLayer.toImage] which is the actual method being called.
 ///  * [_captureImage] async version without memory leak
 ui.Image _captureImageSync(Element element) {
-  assert(element.renderObject != null);
-  RenderObject renderObject = element.renderObject!;
-  while (!renderObject.isRepaintBoundary) {
-    // ignore: unnecessary_cast
-    renderObject = renderObject.parent! as RenderObject;
-  }
-
-  final OffsetLayer layer = renderObject.debugLayer! as OffsetLayer;
-  final ui.Image image = layer.toImageSync(renderObject.paintBounds);
+  final renderObject = _findCaptureRenderObject(element);
+  final ui.Image image = _rasterForFrame(renderObject);
 
   if (element.renderObject is RenderBox) {
     final expectedSize = (element.renderObject as RenderBox?)!.size;
@@ -637,6 +668,71 @@ ui.Image _captureImageSync(Element element) {
   }
 
   return image;
+}
+
+/// The raster of each repaint boundary already captured in the current frame.
+///
+/// Rasterizing is what a screenshot costs, roughly 30ms for a full screen, and
+/// a layer tree cannot repaint between frames. Every screenshot of one repaint
+/// boundary within a frame is therefore the same image. Assertions run in
+/// bursts between pumps and each one records a screenshot for the timeline, so
+/// capturing the same screen several times over is the common case rather than
+/// a corner one.
+final Map<RenderObject, ui.Image> _rasterOfFrame = {};
+int _rasterFrame = -1;
+
+/// The test the entries in [_rasterOfFrame] belong to.
+LiveTest? _rasterTest;
+
+/// The current frame's raster of [renderObject], as a handle the caller owns.
+///
+/// Handles are independent, so the cache disposing its own when the frame ends
+/// leaves every screenshot taken from it holding a live image.
+ui.Image _rasterForFrame(RenderObject renderObject) {
+  final test = getLiveTest();
+  if (!identical(test, _rasterTest)) {
+    _rasterTest = test;
+    _dropRasters();
+    // The last raster of a test has no next frame to drop it, and a raster is
+    // keyed by the RenderObject it was taken from, so without this the
+    // finished test's render tree stays alive until some later test happens to
+    // capture again.
+    addTearDown(_dropRasters);
+  }
+  final frame = FrameClock.frameNumberInProcess;
+  if (frame != _rasterFrame) {
+    _rasterFrame = frame;
+    _dropRasters();
+  }
+  final cached = _rasterOfFrame[renderObject];
+  if (cached != null) {
+    return cached.clone();
+  }
+  final OffsetLayer layer = renderObject.debugLayer! as OffsetLayer;
+  final ui.Image image = layer.toImageSync(renderObject.paintBounds);
+  _rasterOfFrame[renderObject] = image;
+  return image.clone();
+}
+
+/// Disposes the cache's own handles, leaving the screenshots taken from them
+/// with the live images they cloned.
+void _dropRasters() {
+  for (final image in _rasterOfFrame.values) {
+    image.dispose();
+  }
+  _rasterOfFrame.clear();
+}
+
+/// The closest [RepaintBoundary] at or above [element], which is the layer a
+/// screenshot can be rendered from.
+RenderObject _findCaptureRenderObject(Element element) {
+  assert(element.renderObject != null);
+  RenderObject renderObject = element.renderObject!;
+  while (!renderObject.isRepaintBoundary) {
+    // ignore: unnecessary_cast
+    renderObject = renderObject.parent! as RenderObject;
+  }
+  return renderObject;
 }
 
 /// Renders a transparent image of the given size

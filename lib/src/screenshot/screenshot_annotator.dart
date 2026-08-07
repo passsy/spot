@@ -2,11 +2,19 @@ import 'dart:core';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// An annotator that can draw on a screenshot image.
+///
+/// Implement [operator ==] and [hashCode] when two annotators built from the
+/// same inputs draw the same thing. Rendering an annotation and encoding it to
+/// PNG costs far more than comparing the inputs, and a test asserting on the
+/// same widgets repeatedly produces the same overlay over and over. An
+/// annotator that draws something different every time keeps the default
+/// identity equality and is rendered every time.
 abstract class ScreenshotAnnotator {
   /// Annotate the [image] with additional graphics.
   Future<ui.Image> annotate(ui.Image image);
@@ -25,6 +33,16 @@ class CrosshairAnnotator implements ScreenshotAnnotator {
 
   /// Creates a [CrosshairAnnotator] with a [centerPosition].
   const CrosshairAnnotator({required this.centerPosition});
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CrosshairAnnotator &&
+          runtimeType == other.runtimeType &&
+          centerPosition == other.centerPosition;
+
+  @override
+  int get hashCode => centerPosition.hashCode;
 
   Offset _translateOffset(ui.Image image) {
     // ignore: deprecated_member_use
@@ -106,11 +124,16 @@ class CrosshairAnnotator implements ScreenshotAnnotator {
 /// Highlights elements on a screenshot.
 class HighlightAnnotator implements ScreenshotAnnotator {
   /// Highlight plain rectangles on the screenshot with optional labels.
+  ///
+  /// The lists are copied, because equality is derived from them and an
+  /// annotator is used as a cache key while it is rendered.
   HighlightAnnotator.rects(
-    this.rects, {
+    List<Rect> rects, {
     this.color,
-    this.labels,
-  }) : assert(labels == null || rects.length == labels.length);
+    List<String>? labels,
+  })  : assert(labels == null || rects.length == labels.length),
+        rects = List.unmodifiable(rects),
+        labels = labels == null ? null : List.unmodifiable(labels);
 
   /// Highlight elements on the screenshot
   factory HighlightAnnotator.elements(List<Element> elements, {Color? color}) {
@@ -157,6 +180,22 @@ class HighlightAnnotator implements ScreenshotAnnotator {
 
   @override
   String get name => 'Highlight Elements Annotator';
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is HighlightAnnotator &&
+          runtimeType == other.runtimeType &&
+          color == other.color &&
+          listEquals(rects, other.rects) &&
+          listEquals(labels, other.labels);
+
+  @override
+  int get hashCode => Object.hash(
+        color,
+        Object.hashAll(rects),
+        Object.hashAll(labels ?? const []),
+      );
 
   @override
   Future<ui.Image> annotate(ui.Image image) async {
@@ -234,6 +273,18 @@ class ArrowAnnotator extends ScreenshotAnnotator {
 
   @override
   String get name => 'Arrow Annotator';
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ArrowAnnotator &&
+          runtimeType == other.runtimeType &&
+          start == other.start &&
+          end == other.end &&
+          color == other.color;
+
+  @override
+  int get hashCode => Object.hash(start, end, color);
 
   @override
   Future<ui.Image> annotate(ui.Image image) async {
