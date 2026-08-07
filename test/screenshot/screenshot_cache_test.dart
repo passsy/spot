@@ -1,8 +1,8 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image/image.dart' as img;
@@ -158,7 +158,9 @@ void main() {
         );
       }
       expect(renders, isEmpty, reason: 'rendering is deferred, not immediate');
-    });
+      // On web the timeline guards every processPendingScreenshots() call
+      // behind !kIsWeb, so the queue this test is about is never drained.
+    }, skip: kIsWeb);
 
     testWidgets('an annotation is not reused across pixel ratios', (
       tester,
@@ -174,17 +176,22 @@ void main() {
       await tester.pumpWidget(ColoredBox(color: Color(0xffffffff)));
       final thin = await takeScreenshot(
         print: false,
-        annotators: [ArrowAnnotator(start: Offset(10, 10), end: Offset(40, 40))],
+        annotators: [
+          ArrowAnnotator(start: Offset(10, 10), end: Offset(40, 40))
+        ],
       );
 
       tester.view.devicePixelRatio = 2.0;
       await tester.pumpWidget(ColoredBox(color: Color(0xffffffff)));
       final wide = await takeScreenshot(
         print: false,
-        annotators: [ArrowAnnotator(start: Offset(10, 10), end: Offset(40, 40))],
+        annotators: [
+          ArrowAnnotator(start: Offset(10, 10), end: Offset(40, 40))
+        ],
       );
 
-      expect(await _pngOf(thin.annotations.single), isNot(await _pngOf(wide.annotations.single)));
+      expect(await _pngOf(thin.annotations.single),
+          isNot(await _pngOf(wide.annotations.single)));
     });
 
     testWidgets('a previous test leaves nothing behind', (tester) async {
