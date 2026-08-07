@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -159,6 +160,33 @@ void main() {
       expect(renders, isEmpty, reason: 'rendering is deferred, not immediate');
     });
 
+    testWidgets('an annotation is not reused across pixel ratios', (
+      tester,
+    ) async {
+      // The physical size stays put while the ratio doubles, so the image
+      // keeps its pixel dimensions and only the logical view shrinks.
+      // ArrowAnnotator scales its coordinates by the device pixel ratio, so
+      // the same annotator draws the arrow somewhere else.
+      tester.view.physicalSize = const Size(200, 200);
+      addTearDown(tester.view.reset);
+
+      tester.view.devicePixelRatio = 1.0;
+      await tester.pumpWidget(ColoredBox(color: Color(0xffffffff)));
+      final thin = await takeScreenshot(
+        print: false,
+        annotators: [ArrowAnnotator(start: Offset(10, 10), end: Offset(40, 40))],
+      );
+
+      tester.view.devicePixelRatio = 2.0;
+      await tester.pumpWidget(ColoredBox(color: Color(0xffffffff)));
+      final wide = await takeScreenshot(
+        print: false,
+        annotators: [ArrowAnnotator(start: Offset(10, 10), end: Offset(40, 40))],
+      );
+
+      expect(await _pngOf(thin.annotations.single), isNot(await _pngOf(wide.annotations.single)));
+    });
+
     testWidgets('a previous test leaves nothing behind', (tester) async {
       // Same annotator id as the two tests above. Their annotations hold
       // images those tests have since disposed.
@@ -252,6 +280,11 @@ class _CountingAnnotator implements ScreenshotAnnotator {
 
   @override
   int get hashCode => id.hashCode;
+}
+
+Future<Uint8List> _pngOf(ScreenshotAnnotation annotation) async {
+  final binding = TestWidgetsFlutterBinding.instance;
+  return (await binding.runAsync(annotation.image.readPngBytes))!;
 }
 
 Future<Color> _pixelAt(Screenshot screenshot, int x, int y) async {

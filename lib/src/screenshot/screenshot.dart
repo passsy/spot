@@ -207,7 +207,7 @@ extension TimelineSyncScreenshot on Timeline {
 /// size draws the same overlay, and rendering plus encoding it again costs
 /// around 30ms. A test that asserts on the same widgets repeatedly produces the
 /// same overlay every time, so most of a report's annotations are repeats.
-final Map<(ScreenshotAnnotator, int, int), ScreenshotAnnotation>
+final Map<(ScreenshotAnnotator, int, int, double), ScreenshotAnnotation>
     _renderedAnnotations = {};
 
 /// The test the entries in [_renderedAnnotations] belong to.
@@ -233,8 +233,21 @@ Future<void> renderAnnotationLayers(
   List<ScreenshotAnnotator> annotators,
 ) async {
   _dropAnnotationsOnNewTest();
+  // An annotator draws from the view it renders in, not from its inputs
+  // alone: [ArrowAnnotator] scales its coordinates by the device pixel ratio,
+  // and [CrosshairAnnotator] maps the view's logical size onto the image. The
+  // image size alone does not tell those apart, because a ratio change with
+  // the physical size held still leaves the image exactly as large as before.
+  final binding = TestWidgetsFlutterBinding.instance;
+  final devicePixelRatio =
+      binding.platformDispatcher.implicitView?.devicePixelRatio ?? 1.0;
   for (final annotator in annotators) {
-    final key = (annotator, screenshot.width, screenshot.height);
+    final key = (
+      annotator,
+      screenshot.width,
+      screenshot.height,
+      devicePixelRatio,
+    );
     final annotation = _renderedAnnotations[key] ??=
         await renderAnnotation(screenshot, annotator);
     screenshot.addAnnotation(annotation);
