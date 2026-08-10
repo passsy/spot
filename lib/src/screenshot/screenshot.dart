@@ -202,12 +202,20 @@ extension TimelineSyncScreenshot on Timeline {
 
 /// Annotations already rendered for the running test.
 ///
-/// An annotator that compares equal to one already rendered at the same image
-/// size draws the same overlay, and rendering plus encoding it again costs
-/// around 30ms. A test that asserts on the same widgets repeatedly produces the
-/// same overlay every time, so most of a report's annotations are repeats.
-final Map<(ScreenshotAnnotator, int, int, double), ScreenshotAnnotation>
-    _renderedAnnotations = {};
+/// An annotator that compares equal to one already rendered under the same
+/// [_AnnotationKey] draws the same overlay, and rendering plus encoding it
+/// again costs around 30ms. A test that asserts on the same widgets repeatedly
+/// produces the same overlay every time, so most of a report's annotations are
+/// repeats.
+final Map<_AnnotationKey, ScreenshotAnnotation> _renderedAnnotations = {};
+
+/// Everything an annotation's pixels depend on.
+typedef _AnnotationKey = ({
+  ScreenshotAnnotator annotator,
+  int width,
+  int height,
+  double devicePixelRatio,
+});
 
 /// The test the entries in [_renderedAnnotations] belong to.
 LiveTest? _annotationsTest;
@@ -242,10 +250,10 @@ Future<void> renderAnnotationLayers(
       binding.platformDispatcher.implicitView?.devicePixelRatio ?? 1.0;
   for (final annotator in annotators) {
     final key = (
-      annotator,
-      screenshot.width,
-      screenshot.height,
-      devicePixelRatio,
+      annotator: annotator,
+      width: screenshot.width,
+      height: screenshot.height,
+      devicePixelRatio: devicePixelRatio,
     );
     final annotation = _renderedAnnotations[key] ??=
         await renderAnnotation(screenshot, annotator);
