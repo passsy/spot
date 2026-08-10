@@ -1,5 +1,5 @@
 import 'package:flutter/scheduler.dart';
-import 'package:spot/src/utils/invoker.dart';
+import 'package:spot/src/utils/per_test_reset.dart';
 
 /// Identity of the frames the process draws.
 ///
@@ -55,16 +55,11 @@ abstract final class FrameClock {
       return;
     }
     _counting = true;
-    _testOfFrame = getLiveTest();
+    // Counting starts in whatever test is running now, so that test is not a
+    // boundary when its first frame arrives.
+    _testBaseline.resetOnNewTest();
     binding.addPersistentFrameCallback((_) {
-      final test = getLiveTest();
-      if (!identical(test, _testOfFrame)) {
-        // The first counted frame of a test the counter has not seen, so the
-        // count for it starts here, even when that test does not touch spot
-        // until much later.
-        _testOfFrame = test;
-        _framesAtTestStart = _frames;
-      }
+      _testBaseline.resetOnNewTest();
       _frames++;
     });
   }
@@ -87,13 +82,16 @@ SchedulerBinding? _bindingIfInitialized() {
   }
 }
 
-/// The test the frames since [_framesAtTestStart] belong to.
+/// Starts a test's count at its first counted frame.
 ///
-/// Deliberately held until the next test's first frame replaces it. Clearing
-/// it in a teardown instead would let a frame pumped by a later teardown of
-/// the same test read as a new test and re-baseline the count mid-test.
-LiveTest? _testOfFrame;
+/// A test the counter has not seen starts counting here, even when it does not
+/// touch spot until much later.
+///
+/// Deliberately latched until the next test's first frame. Resetting in a
+/// teardown instead would let a frame pumped by a later teardown of the same
+/// test read as a new test and re-baseline the count mid-test.
+final _testBaseline = PerTestReset(() => _framesAtTestStart = _frames);
 
-/// [_frames] when counting reached [_testOfFrame], which is its first frame
-/// unless counting started in the middle of it.
+/// [_frames] when counting reached the test [_testBaseline] holds, which is
+/// its first frame unless counting started in the middle of it.
 int _framesAtTestStart = 0;
