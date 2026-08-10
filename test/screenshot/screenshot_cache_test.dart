@@ -200,6 +200,50 @@ void main() {
           isNot(await _pngOf(wide.annotations.single)));
     });
 
+    testWidgets('an annotation is not reused across view sizes', (
+      tester,
+    ) async {
+      // CrosshairAnnotator places its crosshair by where the position falls in
+      // the view, not in the image. A widget-scoped capture of a fixed-size
+      // boundary keeps its pixel dimensions while the view around it grows, so
+      // neither the image size nor the pixel ratio moves and only the view
+      // tells the two overlays apart.
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
+      Future<Screenshot> captureBox() async {
+        await tester.pumpWidget(
+          Center(
+            child: RepaintBoundary(
+              key: const Key('box'),
+              child: const SizedBox(
+                width: 100,
+                height: 100,
+                child: ColoredBox(color: Color(0xffffffff)),
+              ),
+            ),
+          ),
+        );
+        return takeScreenshot(
+          print: false,
+          element: tester.element(find.byKey(const Key('box'))),
+          annotators: [CrosshairAnnotator(centerPosition: Offset(50, 50))],
+        );
+      }
+
+      tester.view.physicalSize = const Size(400, 400);
+      final inSmallView = await captureBox();
+
+      tester.view.physicalSize = const Size(800, 800);
+      final inLargeView = await captureBox();
+
+      expect(inSmallView.width, inLargeView.width);
+      expect(
+        await _pngOf(inSmallView.annotations.single),
+        isNot(await _pngOf(inLargeView.annotations.single)),
+      );
+    });
+
     testWidgets('a previous test leaves nothing behind', (tester) async {
       // Same annotator id as the two tests above. Their annotations hold
       // images those tests have since disposed.

@@ -215,6 +215,7 @@ typedef _AnnotationKey = ({
   int width,
   int height,
   double devicePixelRatio,
+  Size viewSize,
 });
 
 /// Drops the annotations rendered for an earlier test.
@@ -233,18 +234,24 @@ Future<void> renderAnnotationLayers(
   _clearAnnotations.runOnNewTest();
   // An annotator draws from the view it renders in, not from its inputs
   // alone: [ArrowAnnotator] scales its coordinates by the device pixel ratio,
-  // and [CrosshairAnnotator] maps the view's logical size onto the image. The
-  // image size alone does not tell those apart, because a ratio change with
-  // the physical size held still leaves the image exactly as large as before.
+  // and [CrosshairAnnotator] maps the view's logical size onto the image.
+  // Neither is implied by the image, which is the captured repaint boundary
+  // and not the view: a ratio change with the physical size held still leaves
+  // the image exactly as large as before, and a boundary of a fixed size keeps
+  // its pixels while the view around it resizes.
   final binding = TestWidgetsFlutterBinding.instance;
   final devicePixelRatio =
       binding.platformDispatcher.implicitView?.devicePixelRatio ?? 1.0;
+  // Read the way [CrosshairAnnotator] reads it, so the two cannot drift.
+  // ignore: deprecated_member_use
+  final viewSize = binding.renderView.size;
   for (final annotator in annotators) {
     final key = (
       annotator: annotator,
       width: screenshot.width,
       height: screenshot.height,
       devicePixelRatio: devicePixelRatio,
+      viewSize: viewSize,
     );
     final annotation =
         _annotationCache[key] ??= await renderAnnotation(screenshot, annotator);
