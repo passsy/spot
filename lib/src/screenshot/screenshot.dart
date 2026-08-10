@@ -16,7 +16,7 @@ import 'package:spot/src/screenshot/screenshot.dart' as self
     show takeScreenshot;
 import 'package:spot/src/screenshot/screenshot_io.dart'
     if (dart.library.html) 'package:spot/src/screenshot/screenshot_web.dart';
-import 'package:spot/src/utils/invoker.dart';
+import 'package:spot/src/utils/per_test_reset.dart';
 import 'package:stack_trace/stack_trace.dart';
 
 export 'package:stack_trace/stack_trace.dart' show Frame;
@@ -217,29 +217,20 @@ typedef _AnnotationKey = ({
   double devicePixelRatio,
 });
 
-/// The test the entries in [_renderedAnnotations] belong to.
-LiveTest? _annotationsTest;
-
 /// Drops the annotations rendered for an earlier test.
 ///
 /// A test disposes the images it rendered when it ends, so nothing may be
 /// carried across. Scoping by the running test rather than by a timeline
 /// teardown covers `takeScreenshot`, which renders annotations whether a
 /// timeline exists or not.
-void _dropAnnotationsOnNewTest() {
-  final test = getLiveTest();
-  if (!identical(test, _annotationsTest)) {
-    _annotationsTest = test;
-    _renderedAnnotations.clear();
-  }
-}
+final _annotationCache = PerTestReset(_renderedAnnotations.clear);
 
 /// Renders all [annotators] as separate layers into the [screenshot].
 Future<void> renderAnnotationLayers(
   Screenshot screenshot,
   List<ScreenshotAnnotator> annotators,
 ) async {
-  _dropAnnotationsOnNewTest();
+  _annotationCache.resetOnNewTest();
   // An annotator draws from the view it renders in, not from its inputs
   // alone: [ArrowAnnotator] scales its coordinates by the device pixel ratio,
   // and [CrosshairAnnotator] maps the view's logical size onto the image. The
@@ -689,24 +680,22 @@ ui.Image _captureImageSync(Element element) {
 final Map<RenderObject, ui.Image> _rasterOfFrame = {};
 int _rasterFrame = -1;
 
-/// The test the entries in [_rasterOfFrame] belong to.
-LiveTest? _rasterTest;
+/// Drops the rasters taken in an earlier test.
+final _rasterCache = PerTestReset(() {
+  _dropRasters();
+  // The last raster of a test has no next frame to drop it, and a raster is
+  // keyed by the RenderObject it was taken from, so without this the finished
+  // test's render tree stays alive until some later test happens to capture
+  // again.
+  addTearDown(_dropRasters);
+});
 
 /// The current frame's raster of [renderObject], as a handle the caller owns.
 ///
 /// Handles are independent, so the cache disposing its own when the frame ends
 /// leaves every screenshot taken from it holding a live image.
 ui.Image _rasterForFrame(RenderObject renderObject) {
-  final test = getLiveTest();
-  if (!identical(test, _rasterTest)) {
-    _rasterTest = test;
-    _dropRasters();
-    // The last raster of a test has no next frame to drop it, and a raster is
-    // keyed by the RenderObject it was taken from, so without this the
-    // finished test's render tree stays alive until some later test happens to
-    // capture again.
-    addTearDown(_dropRasters);
-  }
+  _rasterCache.resetOnNewTest();
   final frame = FrameClock.frameNumberInProcess;
   if (frame != _rasterFrame) {
     _rasterFrame = frame;
