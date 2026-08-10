@@ -93,7 +93,7 @@ void main() {
   });
 
   group('annotation reuse within a test', () {
-    testWidgets('an annotator that compares equal is rendered once', (
+    testWidgets('an annotator with the same props is rendered once', (
       tester,
     ) async {
       await _pumpColor(tester, Color(0xffff0000));
@@ -244,6 +244,30 @@ void main() {
       );
     });
 
+    testWidgets('props holding a list are compared by its items', (
+      tester,
+    ) async {
+      // Two separately built lists, equal item by item. This is what a record
+      // key could not express, because a record compares its fields with ==
+      // and two distinct lists never are.
+      await _pumpColor(tester, Color(0xffff0000));
+      final screenshot = await takeScreenshot(print: false);
+
+      for (int i = 0; i < 2; i++) {
+        await renderAnnotationLayers(screenshot, [
+          HighlightAnnotator.rects(
+            [Rect.fromLTWH(0, 0, 10, 10)],
+            labels: ['a'],
+          ),
+        ]);
+      }
+
+      expect(
+        identical(screenshot.annotations[0], screenshot.annotations[1]),
+        isTrue,
+      );
+    });
+
     testWidgets('an annotator that draws something new is never reused', (
       tester,
     ) async {
@@ -276,40 +300,48 @@ void main() {
     });
   });
 
-  testWidgets('the built-in annotators compare by their inputs', (
+  testWidgets('the built-in annotators report their inputs as props', (
     tester,
   ) async {
+    // Props are compared by their items, so the rects and labels of two
+    // separately built highlights match without either implementing equality.
     expect(
-      HighlightAnnotator.rects([Rect.fromLTWH(0, 0, 1, 1)], labels: ['a']),
-      HighlightAnnotator.rects([Rect.fromLTWH(0, 0, 1, 1)], labels: ['a']),
+      HighlightAnnotator.rects([Rect.fromLTWH(0, 0, 1, 1)], labels: ['a'])
+          .props,
+      HighlightAnnotator.rects([Rect.fromLTWH(0, 0, 1, 1)], labels: ['a'])
+          .props,
     );
     expect(
-      HighlightAnnotator.rects([Rect.fromLTWH(0, 0, 1, 1)], labels: ['a']),
+      HighlightAnnotator.rects([Rect.fromLTWH(0, 0, 1, 1)], labels: ['a'])
+          .props,
       isNot(
-        HighlightAnnotator.rects([Rect.fromLTWH(0, 0, 2, 2)], labels: ['a']),
+        HighlightAnnotator.rects([Rect.fromLTWH(0, 0, 2, 2)], labels: ['a'])
+            .props,
       ),
     );
     expect(
-      HighlightAnnotator.rects([Rect.fromLTWH(0, 0, 1, 1)], labels: ['a']),
+      HighlightAnnotator.rects([Rect.fromLTWH(0, 0, 1, 1)], labels: ['a'])
+          .props,
       isNot(
-        HighlightAnnotator.rects([Rect.fromLTWH(0, 0, 1, 1)], labels: ['b']),
+        HighlightAnnotator.rects([Rect.fromLTWH(0, 0, 1, 1)], labels: ['b'])
+            .props,
       ),
     );
     expect(
-      CrosshairAnnotator(centerPosition: Offset(1, 2)),
-      CrosshairAnnotator(centerPosition: Offset(1, 2)),
+      CrosshairAnnotator(centerPosition: Offset(1, 2)).props,
+      CrosshairAnnotator(centerPosition: Offset(1, 2)).props,
     );
     expect(
-      CrosshairAnnotator(centerPosition: Offset(1, 2)),
-      isNot(CrosshairAnnotator(centerPosition: Offset(3, 4))),
+      CrosshairAnnotator(centerPosition: Offset(1, 2)).props,
+      isNot(CrosshairAnnotator(centerPosition: Offset(3, 4)).props),
     );
     expect(
-      ArrowAnnotator(start: Offset.zero, end: Offset(1, 1)),
-      ArrowAnnotator(start: Offset.zero, end: Offset(1, 1)),
+      ArrowAnnotator(start: Offset.zero, end: Offset(1, 1)).props,
+      ArrowAnnotator(start: Offset.zero, end: Offset(1, 1)).props,
     );
     expect(
-      ArrowAnnotator(start: Offset.zero, end: Offset(1, 1)),
-      isNot(ArrowAnnotator(start: Offset.zero, end: Offset(2, 2))),
+      ArrowAnnotator(start: Offset.zero, end: Offset(1, 1)).props,
+      isNot(ArrowAnnotator(start: Offset.zero, end: Offset(2, 2)).props),
     );
   });
 }
@@ -346,14 +378,7 @@ class _CountingAnnotator implements CacheableScreenshotAnnotator {
   }
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is _CountingAnnotator &&
-          runtimeType == other.runtimeType &&
-          id == other.id;
-
-  @override
-  int get hashCode => id.hashCode;
+  List<Object?> get props => [id];
 }
 
 /// Draws a different number every time, and never compares equal to anything.

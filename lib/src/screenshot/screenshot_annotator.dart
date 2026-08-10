@@ -2,7 +2,6 @@ import 'dart:core';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -28,15 +27,28 @@ abstract class ScreenshotAnnotator {
 /// per test and hands the result to every screenshot that asks for the same
 /// again.
 ///
-/// Implement [operator ==] and [hashCode] alongside this, or two annotators
-/// built from the same inputs are not recognised as the same and nothing is
-/// reused.
-///
 /// Do not implement this when [annotate] draws something new each call, such
-/// as a counter or a timestamp. Passing one instance to two screenshots makes
-/// it equal to itself, so the first overlay would be attached to both.
+/// as a counter or a timestamp. One instance passed to two screenshots has one
+/// [props], so the first overlay would be attached to both.
 abstract interface class CacheableScreenshotAnnotator
-    implements ScreenshotAnnotator {}
+    implements ScreenshotAnnotator {
+  /// The fields [annotate] draws from.
+  ///
+  /// Two annotators of the same type with equal [props] are taken to draw the
+  /// same overlay:
+  ///
+  /// ```dart
+  /// @override
+  /// List<Object?> get props => [start, end, color];
+  /// ```
+  ///
+  /// Lists go in as they are, compared by their items, so there is no reason
+  /// to implement [operator ==] or [hashCode] for this. A prop of a type spot
+  /// cannot compare by value, a `Map` say, only ever costs the reuse and never
+  /// gives a wrong overlay: two annotators holding equal maps read as
+  /// different and are both drawn.
+  List<Object?> get props;
+}
 
 /// Annotator that draws a crosshair at a given position.
 class CrosshairAnnotator implements CacheableScreenshotAnnotator {
@@ -50,14 +62,7 @@ class CrosshairAnnotator implements CacheableScreenshotAnnotator {
   const CrosshairAnnotator({required this.centerPosition});
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is CrosshairAnnotator &&
-          runtimeType == other.runtimeType &&
-          centerPosition == other.centerPosition;
-
-  @override
-  int get hashCode => centerPosition.hashCode;
+  List<Object?> get props => [centerPosition];
 
   Offset _translateOffset(ui.Image image) {
     // ignore: deprecated_member_use
@@ -140,8 +145,8 @@ class CrosshairAnnotator implements CacheableScreenshotAnnotator {
 class HighlightAnnotator implements CacheableScreenshotAnnotator {
   /// Highlight plain rectangles on the screenshot with optional labels.
   ///
-  /// The lists are copied, because equality is derived from them and an
-  /// annotator is used as a cache key while it is rendered.
+  /// The lists are copied, because they are [props] and the annotation drawn
+  /// from them is kept under them for the rest of the test.
   HighlightAnnotator.rects(
     List<Rect> rects, {
     this.color,
@@ -197,20 +202,7 @@ class HighlightAnnotator implements CacheableScreenshotAnnotator {
   String get name => 'Highlight Elements Annotator';
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is HighlightAnnotator &&
-          runtimeType == other.runtimeType &&
-          color == other.color &&
-          listEquals(rects, other.rects) &&
-          listEquals(labels, other.labels);
-
-  @override
-  int get hashCode => Object.hash(
-        color,
-        Object.hashAll(rects),
-        Object.hashAll(labels ?? const []),
-      );
+  List<Object?> get props => [color, rects, labels];
 
   @override
   Future<ui.Image> annotate(ui.Image image) async {
@@ -291,16 +283,7 @@ class ArrowAnnotator extends ScreenshotAnnotator
   String get name => 'Arrow Annotator';
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is ArrowAnnotator &&
-          runtimeType == other.runtimeType &&
-          start == other.start &&
-          end == other.end &&
-          color == other.color;
-
-  @override
-  int get hashCode => Object.hash(start, end, color);
+  List<Object?> get props => [start, end, color];
 
   @override
   Future<ui.Image> annotate(ui.Image image) async {

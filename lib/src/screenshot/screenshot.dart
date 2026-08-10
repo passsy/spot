@@ -202,21 +202,63 @@ extension TimelineSyncScreenshot on Timeline {
 
 /// Annotations already rendered for the running test.
 ///
-/// An annotator that compares equal to one already rendered under the same
-/// [_AnnotationKey] draws the same overlay, and rendering plus encoding it
-/// again costs around 30ms. A test that asserts on the same widgets repeatedly
-/// produces the same overlay every time, so most of a report's annotations are
-/// repeats.
+/// An annotator whose [_AnnotationKey] is already in here draws what is
+/// already drawn, and rendering plus encoding it again costs around 30ms. A
+/// test that asserts on the same widgets repeatedly produces the same overlay
+/// every time, so most of a report's annotations are repeats.
 final Map<_AnnotationKey, ScreenshotAnnotation> _annotationCache = {};
 
 /// Everything an annotation's pixels depend on.
 typedef _AnnotationKey = ({
-  CacheableScreenshotAnnotator annotator,
+  Type annotatorType,
+  _Props annotatorProps,
   int width,
   int height,
   double devicePixelRatio,
   Size viewSize,
 });
+
+/// [CacheableScreenshotAnnotator.props] as something a map can key on.
+///
+/// A record cannot do it: record equality compares fields with `==`, and two
+/// distinct lists are never `==`, so a record holding props would never match
+/// another annotator's.
+class _Props {
+  _Props(this.values) : _hash = _hashDeep(values);
+
+  final List<Object?> values;
+  final int _hash;
+
+  @override
+  bool operator ==(Object other) =>
+      other is _Props && _equalDeep(values, other.values);
+
+  @override
+  int get hashCode => _hash;
+}
+
+/// Hashes lists by their items, so props holding one still hash by value.
+///
+/// Anything else falls through to its own [Object.hashCode], which for a type
+/// without value equality is its identity. That costs a cache miss and cannot
+/// produce a wrong hit, because [_equalDeep] stops at the same types.
+int _hashDeep(Object? value) =>
+    value is List ? Object.hashAll(value.map(_hashDeep)) : value.hashCode;
+
+bool _equalDeep(Object? a, Object? b) {
+  if (a is List && b is List) {
+    if (a.length != b.length) {
+      return false;
+    }
+    for (int i = 0; i < a.length; i++) {
+      if (!_equalDeep(a[i], b[i])) {
+        return false;
+      }
+    }
+    return true;
+  }
+  return a == b;
+}
 
 /// Drops the annotations rendered for an earlier test.
 ///
@@ -253,7 +295,10 @@ Future<void> renderAnnotationLayers(
       continue;
     }
     final key = (
-      annotator: annotator,
+      // The type too, so two annotators that happen to key on the same value,
+      // an Offset say, are not taken for each other.
+      annotatorType: annotator.runtimeType,
+      annotatorProps: _Props(annotator.props),
       width: screenshot.width,
       height: screenshot.height,
       devicePixelRatio: devicePixelRatio,
