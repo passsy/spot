@@ -207,7 +207,7 @@ extension TimelineSyncScreenshot on Timeline {
 /// again costs around 30ms. A test that asserts on the same widgets repeatedly
 /// produces the same overlay every time, so most of a report's annotations are
 /// repeats.
-final Map<_AnnotationKey, ScreenshotAnnotation> _renderedAnnotations = {};
+final Map<_AnnotationKey, ScreenshotAnnotation> _annotationCache = {};
 
 /// Everything an annotation's pixels depend on.
 typedef _AnnotationKey = ({
@@ -223,7 +223,7 @@ typedef _AnnotationKey = ({
 /// carried across. Scoping by the running test rather than by a timeline
 /// teardown covers `takeScreenshot`, which renders annotations whether a
 /// timeline exists or not.
-final _clearAnnotations = OncePerTest(_renderedAnnotations.clear);
+final _clearAnnotations = OncePerTest(_annotationCache.clear);
 
 /// Renders all [annotators] as separate layers into the [screenshot].
 Future<void> renderAnnotationLayers(
@@ -246,8 +246,8 @@ Future<void> renderAnnotationLayers(
       height: screenshot.height,
       devicePixelRatio: devicePixelRatio,
     );
-    final annotation = _renderedAnnotations[key] ??=
-        await renderAnnotation(screenshot, annotator);
+    final annotation =
+        _annotationCache[key] ??= await renderAnnotation(screenshot, annotator);
     screenshot.addAnnotation(annotation);
   }
 }
@@ -677,7 +677,7 @@ ui.Image _captureImageSync(Element element) {
 /// bursts between pumps and each one records a screenshot for the timeline, so
 /// capturing the same screen several times over is the common case rather than
 /// a corner one.
-final Map<RenderObject, ui.Image> _rasterOfFrame = {};
+final Map<RenderObject, ui.Image> _rasterCache = {};
 int _rasterFrame = -1;
 
 /// Drops the rasters taken in an earlier test, and arranges for this test's.
@@ -701,23 +701,23 @@ ui.Image _rasterForFrame(RenderObject renderObject) {
     _rasterFrame = frame;
     _dropRasters();
   }
-  final cached = _rasterOfFrame[renderObject];
+  final cached = _rasterCache[renderObject];
   if (cached != null) {
     return cached.clone();
   }
   final OffsetLayer layer = renderObject.debugLayer! as OffsetLayer;
   final ui.Image image = layer.toImageSync(renderObject.paintBounds);
-  _rasterOfFrame[renderObject] = image;
+  _rasterCache[renderObject] = image;
   return image.clone();
 }
 
 /// Disposes the cache's own handles, leaving the screenshots taken from them
 /// with the live images they cloned.
 void _dropRasters() {
-  for (final image in _rasterOfFrame.values) {
+  for (final image in _rasterCache.values) {
     image.dispose();
   }
-  _rasterOfFrame.clear();
+  _rasterCache.clear();
 }
 
 /// The closest [RepaintBoundary] at or above [element], which is the layer a
