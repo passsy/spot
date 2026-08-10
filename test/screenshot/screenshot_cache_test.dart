@@ -247,25 +247,24 @@ void main() {
     testWidgets('props holding a list are compared by its items', (
       tester,
     ) async {
-      // Two separately built lists, equal item by item. This is what a record
-      // key could not express, because a record compares its fields with ==
-      // and two distinct lists never are.
+      // Separately built lists, equal item by item. This is what a record key
+      // could not express, because a record compares its fields with == and
+      // two distinct lists never are.
       await _pumpColor(tester, Color(0xffff0000));
       final screenshot = await takeScreenshot(print: false);
 
-      for (int i = 0; i < 2; i++) {
-        await renderAnnotationLayers(screenshot, [
-          HighlightAnnotator.rects(
-            [Rect.fromLTWH(0, 0, 10, 10)],
-            labels: ['a'],
-          ),
-        ]);
-      }
+      final renders = <String>[];
+      await renderAnnotationLayers(screenshot, [
+        _ListAnnotator([1, 2], renders)
+      ]);
+      await renderAnnotationLayers(screenshot, [
+        _ListAnnotator([1, 2], renders)
+      ]);
+      await renderAnnotationLayers(screenshot, [
+        _ListAnnotator([1, 3], renders)
+      ]);
 
-      expect(
-        identical(screenshot.annotations[0], screenshot.annotations[1]),
-        isTrue,
-      );
+      expect(renders, ['1,2', '1,3']);
     });
 
     testWidgets('an annotator that draws something new is never reused', (
@@ -379,6 +378,31 @@ class _CountingAnnotator implements CacheableScreenshotAnnotator {
 
   @override
   List<Object?> get props => [id];
+}
+
+/// Keys on a list, which is the prop a record could not have carried.
+class _ListAnnotator implements CacheableScreenshotAnnotator {
+  _ListAnnotator(this.marks, this.renders);
+
+  final List<int> marks;
+  final List<String> renders;
+
+  @override
+  String get name => 'List Annotator ${marks.join(',')}';
+
+  @override
+  List<Object?> get props => [marks];
+
+  @override
+  Future<ui.Image> annotate(ui.Image image) {
+    renders.add(marks.join(','));
+    final recorder = ui.PictureRecorder();
+    Canvas(recorder).drawRect(
+      Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble()),
+      Paint()..color = const Color(0x00000000),
+    );
+    return recorder.endRecording().toImage(image.width, image.height);
+  }
 }
 
 /// Draws a different number every time, and never compares equal to anything.
