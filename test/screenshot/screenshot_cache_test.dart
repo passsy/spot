@@ -244,6 +244,23 @@ void main() {
       );
     });
 
+    testWidgets('an annotator that draws something new is never reused', (
+      tester,
+    ) async {
+      // The instance is the same one both times, so it is equal to itself
+      // whether or not it implements equality. Only opting in may grant reuse,
+      // or a stateful annotator silently attaches its first draw to every
+      // later screenshot.
+      await _pumpColor(tester, Color(0xffff0000));
+      final renders = <String>[];
+      final counter = _SequenceAnnotator(renders);
+
+      await takeScreenshot(print: false, annotators: [counter]);
+      await takeScreenshot(print: false, annotators: [counter]);
+
+      expect(renders, ['1', '2']);
+    });
+
     testWidgets('a previous test leaves nothing behind', (tester) async {
       // Same annotator id as the two tests above. Their annotations hold
       // images those tests have since disposed.
@@ -308,7 +325,7 @@ Future<void> _pumpColor(WidgetTester tester, Color color) async {
 ///
 /// [renders] is deliberately not part of the equality, so two annotators with
 /// the same [id] compare equal while still reporting to the same test.
-class _CountingAnnotator implements ScreenshotAnnotator {
+class _CountingAnnotator implements CacheableScreenshotAnnotator {
   _CountingAnnotator(this.id, this.renders);
 
   final String id;
@@ -337,6 +354,32 @@ class _CountingAnnotator implements ScreenshotAnnotator {
 
   @override
   int get hashCode => id.hashCode;
+}
+
+/// Draws a different number every time, and never compares equal to anything.
+///
+/// The kind of annotator the reuse must keep its hands off: it has no inputs
+/// to derive equality from, so it does not opt in.
+class _SequenceAnnotator implements ScreenshotAnnotator {
+  _SequenceAnnotator(this.renders);
+
+  final List<String> renders;
+  int _drawn = 0;
+
+  @override
+  String get name => 'Sequence Annotator';
+
+  @override
+  Future<ui.Image> annotate(ui.Image image) {
+    _drawn++;
+    renders.add('$_drawn');
+    final recorder = ui.PictureRecorder();
+    Canvas(recorder).drawRect(
+      Rect.fromLTWH(0, 0, _drawn.toDouble(), _drawn.toDouble()),
+      Paint()..color = const Color(0x11000000),
+    );
+    return recorder.endRecording().toImage(image.width, image.height);
+  }
 }
 
 Future<Uint8List> _pngOf(ScreenshotAnnotation annotation) async {

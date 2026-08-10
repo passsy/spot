@@ -9,12 +9,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 /// An annotator that can draw on a screenshot image.
 ///
-/// Implement [operator ==] and [hashCode] when two annotators built from the
-/// same inputs draw the same thing. Rendering an annotation and encoding it to
-/// PNG costs far more than comparing the inputs, and a test asserting on the
-/// same widgets repeatedly produces the same overlay over and over. An
-/// annotator that draws something different every time keeps the default
-/// identity equality and is rendered every time.
+/// [annotate] is called for every screenshot, unless the annotator opts into
+/// reuse through [CacheableScreenshotAnnotator].
 abstract class ScreenshotAnnotator {
   /// Annotate the [image] with additional graphics.
   Future<ui.Image> annotate(ui.Image image);
@@ -23,8 +19,27 @@ abstract class ScreenshotAnnotator {
   String get name;
 }
 
+/// An annotator that draws the same overlay whenever its inputs and the view
+/// are the same.
+///
+/// Rendering an annotation and encoding it to PNG costs around 30ms, far more
+/// than comparing inputs, and a test asserting on the same widgets repeatedly
+/// asks for the same overlay over and over. spot draws such an annotator once
+/// per test and hands the result to every screenshot that asks for the same
+/// again.
+///
+/// Implement [operator ==] and [hashCode] alongside this, or two annotators
+/// built from the same inputs are not recognised as the same and nothing is
+/// reused.
+///
+/// Do not implement this when [annotate] draws something new each call, such
+/// as a counter or a timestamp. Passing one instance to two screenshots makes
+/// it equal to itself, so the first overlay would be attached to both.
+abstract interface class CacheableScreenshotAnnotator
+    implements ScreenshotAnnotator {}
+
 /// Annotator that draws a crosshair at a given position.
-class CrosshairAnnotator implements ScreenshotAnnotator {
+class CrosshairAnnotator implements CacheableScreenshotAnnotator {
   /// The center position of the crosshair.
   final Offset centerPosition;
 
@@ -122,7 +137,7 @@ class CrosshairAnnotator implements ScreenshotAnnotator {
 }
 
 /// Highlights elements on a screenshot.
-class HighlightAnnotator implements ScreenshotAnnotator {
+class HighlightAnnotator implements CacheableScreenshotAnnotator {
   /// Highlight plain rectangles on the screenshot with optional labels.
   ///
   /// The lists are copied, because equality is derived from them and an
@@ -254,7 +269,8 @@ class HighlightAnnotator implements ScreenshotAnnotator {
 }
 
 /// Draws an arrow on a screenshot.
-class ArrowAnnotator extends ScreenshotAnnotator {
+class ArrowAnnotator extends ScreenshotAnnotator
+    implements CacheableScreenshotAnnotator {
   /// The end of the arrow
   final Offset start;
 

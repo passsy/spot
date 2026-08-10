@@ -211,7 +211,7 @@ final Map<_AnnotationKey, ScreenshotAnnotation> _annotationCache = {};
 
 /// Everything an annotation's pixels depend on.
 typedef _AnnotationKey = ({
-  ScreenshotAnnotator annotator,
+  CacheableScreenshotAnnotator annotator,
   int width,
   int height,
   double devicePixelRatio,
@@ -246,6 +246,12 @@ Future<void> renderAnnotationLayers(
   // ignore: deprecated_member_use
   final viewSize = binding.renderView.size;
   for (final annotator in annotators) {
+    if (annotator is! CacheableScreenshotAnnotator) {
+      // Every annotator is equal to itself, so passing one instance twice
+      // would reuse its first draw. Only opting in may grant that.
+      screenshot.addAnnotation(await renderAnnotation(screenshot, annotator));
+      continue;
+    }
     final key = (
       annotator: annotator,
       width: screenshot.width,
