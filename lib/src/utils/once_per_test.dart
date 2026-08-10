@@ -1,33 +1,36 @@
 import 'package:spot/src/utils/invoker.dart';
 
-/// Restores state that must not be carried from one test into the next.
+/// Runs something the first time it is reached in each test.
 ///
 /// A library has no hook that fires when a test starts: `addTearDown` only
 /// works from inside a test, and `setUp` lives in the project's
 /// `flutter_test_config.dart`. State scoped to a test therefore notices the
 /// boundary when it is next touched, by comparing the running test against the
-/// one it last reset for. Holding that comparison here keeps every cache from
+/// one it last ran for. Holding that comparison here keeps every cache from
 /// keeping a [LiveTest] of its own.
-class PerTestReset {
-  /// Guards the state [reset] restores.
-  PerTestReset(void Function() reset) : _reset = reset;
+///
+/// Nothing fires this on its own. [runOnNewTest] runs where it is called and
+/// nowhere else.
+class OncePerTest {
+  /// Runs [run] once in every test that reaches [runOnNewTest].
+  OncePerTest(void Function() run) : _run = run;
 
-  /// Puts the state back to how a test should find it.
-  final void Function() _reset;
+  /// What a test needs done before it touches the guarded state.
+  final void Function() _run;
 
-  /// The test [_reset] last ran for.
+  /// The test [_run] last ran for.
   LiveTest? _test;
 
-  /// Resets, unless this already reset for the running test.
+  /// Runs, unless this already ran in the running test.
   ///
   /// Call before every use of the state this guards, so no test ever sees what
   /// an earlier one left behind.
-  void resetOnNewTest() {
+  void runOnNewTest() {
     final test = getLiveTest();
     if (identical(test, _test)) {
       return;
     }
     _test = test;
-    _reset();
+    _run();
   }
 }

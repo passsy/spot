@@ -16,7 +16,7 @@ import 'package:spot/src/screenshot/screenshot.dart' as self
     show takeScreenshot;
 import 'package:spot/src/screenshot/screenshot_io.dart'
     if (dart.library.html) 'package:spot/src/screenshot/screenshot_web.dart';
-import 'package:spot/src/utils/per_test_reset.dart';
+import 'package:spot/src/utils/once_per_test.dart';
 import 'package:stack_trace/stack_trace.dart';
 
 export 'package:stack_trace/stack_trace.dart' show Frame;
@@ -223,14 +223,14 @@ typedef _AnnotationKey = ({
 /// carried across. Scoping by the running test rather than by a timeline
 /// teardown covers `takeScreenshot`, which renders annotations whether a
 /// timeline exists or not.
-final _annotationCache = PerTestReset(_renderedAnnotations.clear);
+final _clearAnnotations = OncePerTest(_renderedAnnotations.clear);
 
 /// Renders all [annotators] as separate layers into the [screenshot].
 Future<void> renderAnnotationLayers(
   Screenshot screenshot,
   List<ScreenshotAnnotator> annotators,
 ) async {
-  _annotationCache.resetOnNewTest();
+  _clearAnnotations.runOnNewTest();
   // An annotator draws from the view it renders in, not from its inputs
   // alone: [ArrowAnnotator] scales its coordinates by the device pixel ratio,
   // and [CrosshairAnnotator] maps the view's logical size onto the image. The
@@ -680,8 +680,8 @@ ui.Image _captureImageSync(Element element) {
 final Map<RenderObject, ui.Image> _rasterOfFrame = {};
 int _rasterFrame = -1;
 
-/// Drops the rasters taken in an earlier test.
-final _rasterCache = PerTestReset(() {
+/// Drops the rasters taken in an earlier test, and arranges for this test's.
+final _scopeRastersToTest = OncePerTest(() {
   _dropRasters();
   // The last raster of a test has no next frame to drop it, and a raster is
   // keyed by the RenderObject it was taken from, so without this the finished
@@ -695,7 +695,7 @@ final _rasterCache = PerTestReset(() {
 /// Handles are independent, so the cache disposing its own when the frame ends
 /// leaves every screenshot taken from it holding a live image.
 ui.Image _rasterForFrame(RenderObject renderObject) {
-  _rasterCache.resetOnNewTest();
+  _scopeRastersToTest.runOnNewTest();
   final frame = FrameClock.frameNumberInProcess;
   if (frame != _rasterFrame) {
     _rasterFrame = frame;
