@@ -7,35 +7,21 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// An annotator that can draw on a screenshot image.
-///
-/// [annotate] is called for every screenshot, unless the annotator opts into
-/// reuse through [CacheableScreenshotAnnotator].
 abstract class ScreenshotAnnotator {
   /// Annotate the [image] with additional graphics.
   Future<ui.Image> annotate(ui.Image image);
 
   /// The name of the annotator.
   String get name;
-}
 
-/// An annotator that draws the same overlay whenever its inputs and the view
-/// are the same.
-///
-/// Rendering an annotation and encoding it to PNG costs around 30ms, far more
-/// than comparing inputs, and a test asserting on the same widgets repeatedly
-/// asks for the same overlay over and over. spot draws such an annotator once
-/// per test and hands the result to every screenshot that asks for the same
-/// again.
-///
-/// Do not implement this when [annotate] draws something new each call, such
-/// as a counter or a timestamp. One instance passed to two screenshots has one
-/// [props], so the first overlay would be attached to both.
-abstract interface class CacheableScreenshotAnnotator
-    implements ScreenshotAnnotator {
-  /// The fields [annotate] draws from.
+  /// The fields [annotate] draws from, or `null` when it draws something new
+  /// each call.
   ///
-  /// Two annotators of the same type with equal [props] are taken to draw the
-  /// same overlay:
+  /// Rendering an annotation and encoding it to PNG costs around 30ms, far
+  /// more than comparing inputs, and a test asserting on the same widgets
+  /// repeatedly asks for the same overlay over and over. Two annotators of the
+  /// same type with equal props are taken to draw the same overlay, so spot
+  /// draws one of them and hands that to both:
   ///
   /// ```dart
   /// @override
@@ -47,11 +33,17 @@ abstract interface class CacheableScreenshotAnnotator
   /// cannot compare by value, a `Map` say, only ever costs the reuse and never
   /// gives a wrong overlay: two annotators holding equal maps read as
   /// different and are both drawn.
-  List<Object?> get props;
+  ///
+  /// Answer `null` when the drawing depends on anything the props do not name,
+  /// a counter or a timestamp say. One instance passed to two screenshots has
+  /// one set of props, so without `null` its first overlay would be attached
+  /// to both. An empty list is not the way to say this: it claims the drawing
+  /// depends on nothing, which is the strongest case for reuse.
+  List<Object?>? get props;
 }
 
 /// Annotator that draws a crosshair at a given position.
-class CrosshairAnnotator implements CacheableScreenshotAnnotator {
+class CrosshairAnnotator implements ScreenshotAnnotator {
   /// The center position of the crosshair.
   final Offset centerPosition;
 
@@ -142,7 +134,7 @@ class CrosshairAnnotator implements CacheableScreenshotAnnotator {
 }
 
 /// Highlights elements on a screenshot.
-class HighlightAnnotator implements CacheableScreenshotAnnotator {
+class HighlightAnnotator implements ScreenshotAnnotator {
   /// Highlight plain rectangles on the screenshot with optional labels.
   ///
   /// The lists are copied, because they are [props] and the annotation drawn
@@ -261,8 +253,7 @@ class HighlightAnnotator implements CacheableScreenshotAnnotator {
 }
 
 /// Draws an arrow on a screenshot.
-class ArrowAnnotator extends ScreenshotAnnotator
-    implements CacheableScreenshotAnnotator {
+class ArrowAnnotator extends ScreenshotAnnotator {
   /// The end of the arrow
   final Offset start;
 

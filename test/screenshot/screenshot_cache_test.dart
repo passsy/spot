@@ -356,7 +356,7 @@ Future<void> _pumpColor(WidgetTester tester, Color color) async {
 ///
 /// [renders] is deliberately not part of the equality, so two annotators with
 /// the same [id] compare equal while still reporting to the same test.
-class _CountingAnnotator implements CacheableScreenshotAnnotator {
+class _CountingAnnotator implements ScreenshotAnnotator {
   _CountingAnnotator(this.id, this.renders);
 
   final String id;
@@ -381,7 +381,7 @@ class _CountingAnnotator implements CacheableScreenshotAnnotator {
 }
 
 /// Keys on a list, which is the prop a record could not have carried.
-class _ListAnnotator implements CacheableScreenshotAnnotator {
+class _ListAnnotator implements ScreenshotAnnotator {
   _ListAnnotator(this.marks, this.renders);
 
   final List<int> marks;
@@ -405,10 +405,9 @@ class _ListAnnotator implements CacheableScreenshotAnnotator {
   }
 }
 
-/// Draws a different number every time, and never compares equal to anything.
+/// Draws a different number every time, so it has no props to be found by.
 ///
-/// The kind of annotator the reuse must keep its hands off: it has no inputs
-/// to derive equality from, so it does not opt in.
+/// The kind of annotator the reuse must keep its hands off.
 class _SequenceAnnotator implements ScreenshotAnnotator {
   _SequenceAnnotator(this.renders);
 
@@ -417,6 +416,9 @@ class _SequenceAnnotator implements ScreenshotAnnotator {
 
   @override
   String get name => 'Sequence Annotator';
+
+  @override
+  List<Object?>? get props => null;
 
   @override
   Future<ui.Image> annotate(ui.Image image) {

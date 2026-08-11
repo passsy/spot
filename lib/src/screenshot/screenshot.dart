@@ -218,7 +218,7 @@ typedef _AnnotationKey = ({
   Size viewSize,
 });
 
-/// [CacheableScreenshotAnnotator.props] as something a map can key on.
+/// [ScreenshotAnnotator.props] as something a map can key on.
 ///
 /// A record cannot do it: record equality compares fields with `==`, and two
 /// distinct lists are never `==`, so a record holding props would never match
@@ -288,9 +288,10 @@ Future<void> renderAnnotationLayers(
   // ignore: deprecated_member_use
   final viewSize = binding.renderView.size;
   for (final annotator in annotators) {
-    if (annotator is! CacheableScreenshotAnnotator) {
-      // Every annotator is equal to itself, so passing one instance twice
-      // would reuse its first draw. Only opting in may grant that.
+    final props = annotator.props;
+    if (props == null) {
+      // Draws something the props do not name, so nothing about it can be
+      // recognised again.
       screenshot.addAnnotation(await renderAnnotation(screenshot, annotator));
       continue;
     }
@@ -298,7 +299,7 @@ Future<void> renderAnnotationLayers(
       // The type too, so two annotators that happen to key on the same value,
       // an Offset say, are not taken for each other.
       annotatorType: annotator.runtimeType,
-      annotatorProps: _Props(annotator.props),
+      annotatorProps: _Props(props),
       width: screenshot.width,
       height: screenshot.height,
       devicePixelRatio: devicePixelRatio,

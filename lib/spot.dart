@@ -50,7 +50,7 @@ export 'package:spot/src/screenshot/screenshot.dart'
         TimelineSyncScreenshot,
         takeScreenshot;
 export 'package:spot/src/screenshot/screenshot_annotator.dart'
-    show CacheableScreenshotAnnotator, ScreenshotAnnotator;
+    show ScreenshotAnnotator;
 export 'package:spot/src/spot/default_selectors.dart'
     show DefaultWidgetMatchers, DefaultWidgetSelectors;
 export 'package:spot/src/spot/diagnostic_props.dart'
