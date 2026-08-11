@@ -2,8 +2,8 @@
 
 ## Unreleased
 
-- Improve: Screenshots are now cached per frame, reducing capture time by 3-4x
-- New: `ScreenshotAnnotator.cacheKey` (default => `null`) allows caching of annotations
+- Improve: Screenshots are now cached per frame, reducing capture time by 3-4x #160
+- New: `ScreenshotAnnotator.cacheKey` (default => `null`) allows caching of annotations #160
 - Fix: `ScreenshotAnnotator` is exported. `takeScreenshot(annotators: ...)` has always accepted them, but the type could not be named from `package:spot/spot.dart`, so writing one meant importing `package:spot/src/`.
 
 - Fix: A `WidgetMatcher` reports the widget it matched, not whatever is in the tree when you read it. `getDiagnosticProp` used to re-read the live widget while `matcher.widget` returned the matched one, so a matcher held across a pump could answer with two different values. All of them now read the matched widget; take a new matcher to assert against the current tree. #159
