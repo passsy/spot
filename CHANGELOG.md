@@ -2,8 +2,6 @@
 
 ## 0.20.0
 
-- Breaking: Require Dart 3.8 / Flutter 3.32 and update Jaspr to 0.23.2.
-
 ### Performance
 
 This release is mostly about speed. Two changes carry it:
@@ -95,6 +93,7 @@ The rest:
 - New: `WidgetSnapshot.queryStats` reports how much work the query engine performed to evaluate a selector, useful to debug slow queries. #148
 - Fix: A `WidgetMatcher` now always reports the widget of the frame it matched, not the current widget in the tree #159
 - Improvement: Untyped selectors (`spot`, `spotKey`, `spotWidget`, `spotElement`, `spotTexts`) no longer add a no-op `WidgetTypeFilter<Widget>` at the root.
+- Fix: `WidgetSnapshot.toString()` formatting #116
 
 ### Text matching
 
@@ -110,17 +109,12 @@ The rest:
 
 - New: `ScreenshotAnnotator.cacheKey` (default => `null`) allows caching of annotations #160
 - Fix: Export `ScreenshotAnnotator`, which has already been a parameter of `takeScreenshot(annotators: ...)`
+- Fix: Shorten screenshot filenames to avoid issues on some filesystems #124
+- Fix: Replace colons in screenshot filenames for Windows portability #114
 
 ### Fonts
 
 - Fix: `loadAppFonts()` now also registers a package's own fonts under `packages/<self>/MyFont`, so fonts referenced via `package: '<self>'` render instead of falling back to Ahem. #141
-
-
-## 0.19.0
-
-- Fix: Shorten screenshot filenames to avoid issues on some filesystems #124
-- Fix: Replace colons in screenshot filenames for Windows portability #114
-- Fix: `WidgetSnapshot.toString()` formatting #116
 - Fix: Handle whitespaces in dependency font family names #130
 
 ## 0.18.0
