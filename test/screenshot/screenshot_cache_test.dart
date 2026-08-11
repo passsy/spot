@@ -407,8 +407,10 @@ class _ListAnnotator implements ScreenshotAnnotator {
 
 /// Draws a different number every time, so it has no props to be found by.
 ///
-/// The kind of annotator the reuse must keep its hands off.
-class _SequenceAnnotator implements ScreenshotAnnotator {
+/// The kind of annotator the reuse must keep its hands off. Extends rather
+/// than implements, and states no props, so what keeps it out of the cache is
+/// the default.
+class _SequenceAnnotator extends ScreenshotAnnotator {
   _SequenceAnnotator(this.renders);
 
   final List<String> renders;
@@ -416,9 +418,6 @@ class _SequenceAnnotator implements ScreenshotAnnotator {
 
   @override
   String get name => 'Sequence Annotator';
-
-  @override
-  List<Object?>? get props => null;
 
   @override
   Future<ui.Image> annotate(ui.Image image) {

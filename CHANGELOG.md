@@ -10,7 +10,7 @@
     List<Object?> get props => [start, end, color];
   }
   ```
-  Lists are compared by their items, so `==` and `hashCode` are not needed, and a prop spot cannot compare by value only ever costs the reuse, never a wrong overlay. Answer `null` when the drawing depends on something the props do not name, a counter or a timestamp say, and the annotator is drawn for every screenshot. Existing annotators outside spot have to add `props`, which is the one breaking change here.
+  Lists are compared by their items, so `==` and `hashCode` are not needed, and a prop spot cannot compare by value only ever costs the reuse, never a wrong overlay. `props` defaults to `null`, which means the annotator draws something the props do not name, a counter or a timestamp say, and is drawn again for every screenshot. Annotators that `extend ScreenshotAnnotator` therefore keep working untouched. Ones that `implement` it have to add `props`, because Dart asks an implementing class for every member, default or not.
 - Fix: `ScreenshotAnnotator` is exported. `takeScreenshot(annotators: ...)` has always accepted them, but the type could not be named from `package:spot/spot.dart`, so writing one meant importing `package:spot/src/`.
 
 - Fix: A `WidgetMatcher` reports the widget it matched, not whatever is in the tree when you read it. `getDiagnosticProp` used to re-read the live widget while `matcher.widget` returned the matched one, so a matcher held across a pump could answer with two different values. All of them now read the matched widget; take a new matcher to assert against the current tree. #159

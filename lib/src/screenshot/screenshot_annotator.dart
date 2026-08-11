@@ -34,12 +34,18 @@ abstract class ScreenshotAnnotator {
   /// gives a wrong overlay: two annotators holding equal maps read as
   /// different and are both drawn.
   ///
-  /// Answer `null` when the drawing depends on anything the props do not name,
-  /// a counter or a timestamp say. One instance passed to two screenshots has
-  /// one set of props, so without `null` its first overlay would be attached
-  /// to both. An empty list is not the way to say this: it claims the drawing
-  /// depends on nothing, which is the strongest case for reuse.
-  List<Object?>? get props;
+  /// `null`, the default, when the drawing depends on anything the props do
+  /// not name, a counter or a timestamp say. One instance passed to two
+  /// screenshots has one set of props, so without `null` its first overlay
+  /// would be attached to both. An empty list is not the way to say this: it
+  /// claims the drawing depends on nothing, which is the strongest case for
+  /// reuse.
+  ///
+  /// The default costs speed and never correctness, so an annotator that has
+  /// not thought about this is drawn every time, as it was before props
+  /// existed. Note that only subclasses inherit it: Dart asks a class that
+  /// `implements` this one for every member, default or not.
+  List<Object?>? get props => null;
 }
 
 /// Annotator that draws a crosshair at a given position.
