@@ -2,8 +2,8 @@
 
 ## Unreleased
 
-- Improve: Screenshots of one frame share its raster, and identical annotations are drawn once per test. One app's capture time went from 9.7s to 1.9s.
-- Improve: `ScreenshotAnnotator` gains `cacheKey`, naming what its overlay is drawn from so spot can reuse it. Implementers must add it.
+- Improve: Screenshots are now cached per frame, reducing capture time by 3-4x
+- New: `ScreenshotAnnotator.cacheKey` (default => `null`) allows caching of annotations
 - Fix: `ScreenshotAnnotator` is exported. `takeScreenshot(annotators: ...)` has always accepted them, but the type could not be named from `package:spot/spot.dart`, so writing one meant importing `package:spot/src/`.
 
 - Fix: A `WidgetMatcher` reports the widget it matched, not whatever is in the tree when you read it. `getDiagnosticProp` used to re-read the live widget while `matcher.widget` returned the matched one, so a matcher held across a pump could answer with two different values. All of them now read the matched widget; take a new matcher to assert against the current tree. #159
