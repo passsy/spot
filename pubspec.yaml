@@ -5,10 +5,11 @@ repository: https://github.com/passsy/spot
 issue_tracker: https://github.com/passsy/spot/issues
 
 environment:
-  sdk: ">=3.0.0 <3.999.0"
-  flutter: ">=3.10.0 <4.0.0"
+  sdk: ">=3.8.0 <4.0.0"
+  flutter: ">=3.32.0"
 
 dependencies:
+  archive: ^4.0.9
   checks: ^0.3.0
   ci: ^0.1.0
   clock: ^1.1.0
@@ -18,11 +19,15 @@ dependencies:
   flutter_test:
     sdk: flutter
   image: ^4.5.4
-  jaspr: ^0.15.2
+  jaspr: ^0.23.2
   meta: ^1.8.0
   nanoid2: ^2.0.0
   stack_trace: ^1.11.0
   test_api: ">=0.5.0 <0.8.0"
+  # DOM access for the timeline report. Compiles on the VM too (stubs that
+  # throw), so the components can be shared between the server render and the
+  # client bundle without a hand written stub library.
+  universal_web: ^1.1.0
 
 dev_dependencies:
   lint: ^2.1.0

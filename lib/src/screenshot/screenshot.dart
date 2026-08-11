@@ -56,6 +56,7 @@ Future<Screenshot> takeScreenshot({
     selector: selector,
   );
 
+  final captureRenderObject = _findCaptureRenderObject(liveElement);
   final ui.Image? plainImage = await binding.runAsync(() async {
     return await _captureImage(liveElement);
   });
@@ -93,6 +94,8 @@ Future<Screenshot> takeScreenshot({
     pixelRatio: pixelRatio,
     name: screenshotName,
     initiator: frame,
+    captureRenderObject: captureRenderObject,
+    capturePaintBounds: captureRenderObject.paintBounds,
   );
 
   if (annotators.isNotEmpty) {
@@ -180,12 +183,15 @@ extension TimelineSyncScreenshot on Timeline {
       return '$n-$uniqueId';
     }();
 
+    final captureRenderObject = _findCaptureRenderObject(liveElement);
     final ui.Image plainImage = _captureImageSync(liveElement);
     final screenshot = Screenshot.fromImage(
       name: screenshotFileName,
       image: plainImage,
       pixelRatio: pixelRatio,
       initiator: frame,
+      captureRenderObject: captureRenderObject,
+      capturePaintBounds: captureRenderObject.paintBounds,
     );
     plainImage.dispose();
 
@@ -363,6 +369,8 @@ class Screenshot extends ImageDataRef {
     required super.pixelRatio,
     required super.name,
     this.initiator,
+    this.captureRenderObject,
+    this.capturePaintBounds,
   });
 
   /// Creates a [Screenshot] that holds a reference to a [ui.Image] and later loads the actual bytes
@@ -371,6 +379,8 @@ class Screenshot extends ImageDataRef {
     required super.pixelRatio,
     required super.name,
     this.initiator,
+    this.captureRenderObject,
+    this.capturePaintBounds,
   }) : super.fromImage();
 
   /// Returns the screenshot as File
@@ -411,6 +421,15 @@ class Screenshot extends ImageDataRef {
 
   /// Call stack of the code that initiated the screenshot
   final Frame? initiator;
+
+  /// The repaint boundary used as the coordinate space for this screenshot.
+  ///
+  /// This is only retained while the widget test is running so timeline
+  /// metadata can map render boxes onto the exported image.
+  final RenderObject? captureRenderObject;
+
+  /// The part of [captureRenderObject] that was rendered into the screenshot.
+  final Rect? capturePaintBounds;
 
   final List<ScreenshotAnnotation> _annotations = [];
 
