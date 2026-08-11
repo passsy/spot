@@ -342,9 +342,15 @@ final class _Timeline extends Timeline {
   /// The widget tree as it stood the moment the test failed.
   ///
   /// Kept because the failure event is built during teardown, which is long
-  /// after. Snapshots are per frame, so this doubles as the answer to whether
-  /// anything has been drawn since, see [_screenStillShowsTheFailure].
+  /// after.
   WidgetTreeSnapshot? _treeWhenTestFailed;
+
+  /// The screen as it stood the moment the test failed.
+  ///
+  /// A test's own teardown runs before the timeline teardown and may pump a
+  /// different frame. Capturing synchronously from the error handler keeps the
+  /// failure frame available for the final event even then.
+  Screenshot? _screenshotWhenTestFailed;
   FlutterExceptionHandler? _previousOnError;
   FlutterExceptionHandler? _installedOnError;
 
@@ -355,23 +361,11 @@ final class _Timeline extends Timeline {
       if (_firstFlutterError == null) {
         _firstFlutterError = details;
         _treeWhenTestFailed = _currentTreeSnapshotOrNull();
+        _screenshotWhenTestFailed = _failureScreenshotSync();
       }
       _previousOnError?.call(details);
     };
     FlutterError.onError = _installedOnError;
-  }
-
-  /// Whether the screen still shows what it showed when the test failed.
-  ///
-  /// A snapshot is only valid for the frame it was taken in, so getting the
-  /// same object back means no frame has been drawn since. Teardowns run after
-  /// the failure and are free to pump frames of their own, so without this a
-  /// capture taken now could be whatever a teardown left behind, presented as
-  /// the failure.
-  bool get _screenStillShowsTheFailure {
-    final atFailure = _treeWhenTestFailed;
-    return atFailure != null &&
-        identical(_currentTreeSnapshotOrNull(), atFailure);
   }
 
   void _stopCapturingFlutterErrors() {
@@ -626,12 +620,10 @@ final class _Timeline extends Timeline {
       // and its report would be empty either way.
       return;
     }
-    // Only capture what is on screen when it is still the failing frame. A
-    // capture of something else under a 'Test Failed' heading is worse than no
-    // capture at all.
-    final screenshot = _screenStillShowsTheFailure
-        ? await _failureScreenshot()
-        : null;
+    // Flutter failures are captured at the instant they are reported. The
+    // asynchronous fallback covers errors reported directly to package:test,
+    // which bypass FlutterError.onError.
+    final screenshot = _screenshotWhenTestFailed ?? await _failureScreenshot();
     final trace = _relevantTrace(failure.stackTrace);
 
     _currentFrameNumber++;
@@ -701,8 +693,20 @@ final class _Timeline extends Timeline {
     }
   }
 
-  /// A capture of the screen as the failing test left it, or `null` when one
-  /// cannot be taken anymore.
+  /// Captures the failing frame before a test's own teardown can replace it.
+  Screenshot? _failureScreenshotSync() {
+    if (mode == TimelineMode.off || _treeWhenTestFailed == null) {
+      return null;
+    }
+    try {
+      return takeScreenshotSync(name: 'test-failure');
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// A teardown-time fallback capture for errors that bypass Flutter's error
+  /// handler, or `null` when no screen can be captured.
   Future<Screenshot?> _failureScreenshot() async {
     try {
       return await takeScreenshot(name: 'test-failure', print: false);

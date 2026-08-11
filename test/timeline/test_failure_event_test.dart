@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:image/image.dart' as img;
 
 import '../util/run_test_in_process.dart' as process;
 import 'timeline_test_shared.dart' as shared;
@@ -23,7 +25,12 @@ void main() {
       $teardown
     });
     await tester.pumpWidget(
-      const MaterialApp(home: Scaffold(body: Text('Counter: 3'))),
+      const MaterialApp(
+        home: Scaffold(
+          backgroundColor: Colors.green,
+          body: Text('Counter: 3'),
+        ),
+      ),
     );
     spotText('Counter: 3').existsOnce();
     $failure
@@ -62,6 +69,25 @@ String _failureEventBlock(String output) {
   return output.substring(start, end == -1 ? output.length : end);
 }
 
+File _expectLastFailureHasScreenshot() {
+  final reportDirectory = Directory('build/timeline/failing-test');
+  final eventsFile = File('${reportDirectory.path}/events.json');
+  expect(eventsFile.existsSync(), isTrue);
+
+  final events = jsonDecode(eventsFile.readAsStringSync()) as List<dynamic>;
+  final lastEvent = events.last as Map<String, dynamic>;
+  expect(lastEvent['eventType'], 'Test Failed');
+  final screenshotUrl = lastEvent['screenshotUrl'] as String?;
+  expect(screenshotUrl, startsWith('./screenshots/frame-'));
+
+  final screenshotFile = File(
+    '${reportDirectory.path}/${screenshotUrl!.replaceFirst('./', '')}',
+  );
+  expect(screenshotFile.existsSync(), isTrue);
+  expect(screenshotFile.lengthSync(), greaterThan(0));
+  return screenshotFile;
+}
+
 void main() {
   test(
     'a failed expect becomes the last event of the timeline',
@@ -88,6 +114,7 @@ void main() {
       expect(failures, 1);
       expect(output.lastIndexOf('Event Type: Test Failed'), greaterThan(0));
       expect(events, greaterThan(failures));
+      _expectLastFailureHasScreenshot();
     },
     timeout: const Timeout(Duration(minutes: 2)),
   );
@@ -105,6 +132,7 @@ void main() {
       expect(output, contains('Bad state: the widget is gone'));
       final line = _lineOf(_failingTest(failure: failure), failure);
       expect(output, contains(RegExp('Caller: at .*temp_test\\.dart:$line:')));
+      _expectLastFailureHasScreenshot();
     },
     timeout: const Timeout(Duration(minutes: 2)),
   );
@@ -123,16 +151,20 @@ void main() {
   );
 
   test(
-    'no capture once a teardown has drawn over the failing frame',
+    'the failing frame stays captured when teardown draws another frame',
     () async {
-      // Teardowns run before spot's, so this replaces what was on screen when
-      // the test failed. A capture taken now would be this widget, not the
-      // failure, so the event goes without one.
+      // Teardowns run before spot's. The failure capture must already exist by
+      // the time this replaces what is on screen.
       final output = await _outputOfFailingTest(
         failure: 'expect(1, 2);',
         teardown: '''
       await tester.pumpWidget(
-        const MaterialApp(home: Scaffold(body: Text('torn down'))),
+        const MaterialApp(
+          home: Scaffold(
+            backgroundColor: Colors.red,
+            body: Text('torn down'),
+          ),
+        ),
       );
 ''',
       );
@@ -141,9 +173,21 @@ void main() {
       }
 
       final block = _failureEventBlock(output);
-      expect(block, isNot(contains('Screenshot: file://')));
-      // The failure itself is still reported, only its capture is missing.
+      expect(block, contains('Screenshot: file://'));
       expect(block, contains('Expected: <2>'));
+      final screenshotFile = _expectLastFailureHasScreenshot();
+      final screenshot = img.decodePng(screenshotFile.readAsBytesSync())!;
+      final pixel = screenshot.getPixel(
+        screenshot.width ~/ 2,
+        screenshot.height ~/ 2,
+      );
+      expect(
+        (pixel.r.toInt(), pixel.g.toInt(), pixel.b.toInt()),
+        (76, 175, 80),
+        reason:
+            'The failure screenshot must be from the green failing frame, '
+            'not the red frame pumped by teardown.',
+      );
     },
     timeout: const Timeout(Duration(minutes: 2)),
   );
