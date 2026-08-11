@@ -211,33 +211,34 @@ final Map<_AnnotationKey, ScreenshotAnnotation> _annotationCache = {};
 /// Everything an annotation's pixels depend on.
 typedef _AnnotationKey = ({
   Type annotatorType,
-  _Props annotatorProps,
+  _ValueList annotatorKey,
   int width,
   int height,
   double devicePixelRatio,
   Size viewSize,
 });
 
-/// [ScreenshotAnnotator.props] as something a map can key on.
+/// A list compared by its items, which is what carries a
+/// [ScreenshotAnnotator.cacheKey] into [_AnnotationKey].
 ///
-/// A record cannot do it: record equality compares fields with `==`, and two
-/// distinct lists are never `==`, so a record holding props would never match
-/// another annotator's.
-class _Props {
-  _Props(this.values) : _hash = _hashDeep(values);
+/// A record cannot: record equality compares fields with `==`, and two
+/// distinct lists are never `==`, so a record holding the key would never
+/// match another annotator's.
+class _ValueList {
+  _ValueList(this.values) : _hash = _hashDeep(values);
 
   final List<Object?> values;
   final int _hash;
 
   @override
   bool operator ==(Object other) =>
-      other is _Props && _equalDeep(values, other.values);
+      other is _ValueList && _equalDeep(values, other.values);
 
   @override
   int get hashCode => _hash;
 }
 
-/// Hashes lists by their items, so props holding one still hash by value.
+/// Hashes lists by their items, so a key holding one still hashes by value.
 ///
 /// Anything else falls through to its own [Object.hashCode], which for a type
 /// without value equality is its identity. That costs a cache miss and cannot
@@ -288,10 +289,9 @@ Future<void> renderAnnotationLayers(
   // ignore: deprecated_member_use
   final viewSize = binding.renderView.size;
   for (final annotator in annotators) {
-    final props = annotator.props;
-    if (props == null) {
-      // Draws something the props do not name, so nothing about it can be
-      // recognised again.
+    final cacheKey = annotator.cacheKey;
+    if (cacheKey == null) {
+      // No key, so nothing about this annotator can be recognised again.
       screenshot.addAnnotation(await renderAnnotation(screenshot, annotator));
       continue;
     }
@@ -299,7 +299,7 @@ Future<void> renderAnnotationLayers(
       // The type too, so two annotators that happen to key on the same value,
       // an Offset say, are not taken for each other.
       annotatorType: annotator.runtimeType,
-      annotatorProps: _Props(props),
+      annotatorKey: _ValueList(cacheKey),
       width: screenshot.width,
       height: screenshot.height,
       devicePixelRatio: devicePixelRatio,

@@ -14,7 +14,7 @@ class _BorderAnnotator implements ScreenshotAnnotator {
   /// The border is the same wherever it is drawn, so one of these is as good
   /// as another and spot may draw it once.
   @override
-  List<Object?> get props => [];
+  List<Object?> get cacheKey => [];
 
   @override
   Future<ui.Image> annotate(ui.Image image) {

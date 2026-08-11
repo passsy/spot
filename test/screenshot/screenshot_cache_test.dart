@@ -93,7 +93,7 @@ void main() {
   });
 
   group('annotation reuse within a test', () {
-    testWidgets('an annotator with the same props is rendered once', (
+    testWidgets('an annotator with the same cache key is rendered once', (
       tester,
     ) async {
       await _pumpColor(tester, Color(0xffff0000));
@@ -244,7 +244,7 @@ void main() {
       );
     });
 
-    testWidgets('props holding a list are compared by its items', (
+    testWidgets('a cache key holding a list is compared by its items', (
       tester,
     ) async {
       // Separately built lists, equal item by item. This is what a record key
@@ -299,48 +299,48 @@ void main() {
     });
   });
 
-  testWidgets('the built-in annotators report their inputs as props', (
+  testWidgets('the built-in annotators key on their inputs', (
     tester,
   ) async {
-    // Props are compared by their items, so the rects and labels of two
+    // Keys are compared by their items, so the rects and labels of two
     // separately built highlights match without either implementing equality.
     expect(
       HighlightAnnotator.rects([Rect.fromLTWH(0, 0, 1, 1)], labels: ['a'])
-          .props,
+          .cacheKey,
       HighlightAnnotator.rects([Rect.fromLTWH(0, 0, 1, 1)], labels: ['a'])
-          .props,
+          .cacheKey,
     );
     expect(
       HighlightAnnotator.rects([Rect.fromLTWH(0, 0, 1, 1)], labels: ['a'])
-          .props,
+          .cacheKey,
       isNot(
         HighlightAnnotator.rects([Rect.fromLTWH(0, 0, 2, 2)], labels: ['a'])
-            .props,
+            .cacheKey,
       ),
     );
     expect(
       HighlightAnnotator.rects([Rect.fromLTWH(0, 0, 1, 1)], labels: ['a'])
-          .props,
+          .cacheKey,
       isNot(
         HighlightAnnotator.rects([Rect.fromLTWH(0, 0, 1, 1)], labels: ['b'])
-            .props,
+            .cacheKey,
       ),
     );
     expect(
-      CrosshairAnnotator(centerPosition: Offset(1, 2)).props,
-      CrosshairAnnotator(centerPosition: Offset(1, 2)).props,
+      CrosshairAnnotator(centerPosition: Offset(1, 2)).cacheKey,
+      CrosshairAnnotator(centerPosition: Offset(1, 2)).cacheKey,
     );
     expect(
-      CrosshairAnnotator(centerPosition: Offset(1, 2)).props,
-      isNot(CrosshairAnnotator(centerPosition: Offset(3, 4)).props),
+      CrosshairAnnotator(centerPosition: Offset(1, 2)).cacheKey,
+      isNot(CrosshairAnnotator(centerPosition: Offset(3, 4)).cacheKey),
     );
     expect(
-      ArrowAnnotator(start: Offset.zero, end: Offset(1, 1)).props,
-      ArrowAnnotator(start: Offset.zero, end: Offset(1, 1)).props,
+      ArrowAnnotator(start: Offset.zero, end: Offset(1, 1)).cacheKey,
+      ArrowAnnotator(start: Offset.zero, end: Offset(1, 1)).cacheKey,
     );
     expect(
-      ArrowAnnotator(start: Offset.zero, end: Offset(1, 1)).props,
-      isNot(ArrowAnnotator(start: Offset.zero, end: Offset(2, 2)).props),
+      ArrowAnnotator(start: Offset.zero, end: Offset(1, 1)).cacheKey,
+      isNot(ArrowAnnotator(start: Offset.zero, end: Offset(2, 2)).cacheKey),
     );
   });
 }
@@ -377,7 +377,7 @@ class _CountingAnnotator implements ScreenshotAnnotator {
   }
 
   @override
-  List<Object?> get props => [id];
+  List<Object?> get cacheKey => [id];
 }
 
 /// Keys on a list, which is the prop a record could not have carried.
@@ -391,7 +391,7 @@ class _ListAnnotator implements ScreenshotAnnotator {
   String get name => 'List Annotator ${marks.join(',')}';
 
   @override
-  List<Object?> get props => [marks];
+  List<Object?> get cacheKey => [marks];
 
   @override
   Future<ui.Image> annotate(ui.Image image) {
@@ -405,10 +405,10 @@ class _ListAnnotator implements ScreenshotAnnotator {
   }
 }
 
-/// Draws a different number every time, so it has no props to be found by.
+/// Draws a different number every time, so no key can find it again.
 ///
 /// The kind of annotator the reuse must keep its hands off. Extends rather
-/// than implements, and states no props, so what keeps it out of the cache is
+/// than implements, and states no key, so what keeps it out of the cache is
 /// the default.
 class _SequenceAnnotator extends ScreenshotAnnotator {
   _SequenceAnnotator(this.renders);
