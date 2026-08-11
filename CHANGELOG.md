@@ -1,15 +1,23 @@
 # Changelog
 
-## Unreleased
+## 0.20.0
 
-- Improve: Screenshots are now cached per frame, reducing capture time by 3-4x #160
-- New: `ScreenshotAnnotator.cacheKey` (default => `null`) allows caching of annotations #160
-- Fix: `ScreenshotAnnotator` is exported. `takeScreenshot(annotators: ...)` has always accepted them, but the type could not be named from `package:spot/spot.dart`, so writing one meant importing `package:spot/src/`.
+### Performance
 
-- Fix: A `WidgetMatcher` reports the widget it matched, not whatever is in the tree when you read it. `getDiagnosticProp` used to re-read the live widget while `matcher.widget` returned the matched one, so a matcher held across a pump could answer with two different values. All of them now read the matched widget; take a new matcher to assert against the current tree. #159
+This release is mostly about speed. Two changes carry it:
 
-- Improvement: `hasDiagnosticProp`, `getDiagnosticProp` and `withDiagnosticProp` share one cache of a widget's diagnostic properties instead of running `debugFillProperties` again on every call. Every matcher in a chain used to rebuild the properties of the same widget, and so did every query that inspected a widget an earlier query had already inspected. Over a tree of 200 `Text`s, repeated property queries are around 1.5x faster. #159
-- New: `act.inspectTap()` reports whether a widget can be tapped and why not, as a value instead of a thrown error. It sends no pointer events and pumps no frame, so a test can assert that something is untappable *for a specific reason* rather than matching on message strings. #150
+- Improvement: Relative queries (`withParent`, `withChild`, chained selectors) are up to **200x** faster on big widget trees. Relationships are now resolved by walking up the tree instead of searching the subtree of every parent. #148
+- Improvement: A frame's screenshot is rasterized **once** and reused by every assertion in that frame, instead of photographing the same unchanged screen over and over. Annotations are reused the same way, per test. On one app's suite, capture time went from 9.7s to 1.9s over 261 screenshots. #160
+
+The rest:
+
+- Improvement: `hasDiagnosticProp`, `getDiagnosticProp` and `withDiagnosticProp` now cache `debugFillProperties`. ~1.5x faster #159
+- Improvement: The source location of a widget is resolved once per widget instead of on every lookup, which speeds up `act.tapAt()` timeline events and the diagnostics behind failing `act.tap()` calls. #154
+- Fix: Assertions like `spotKey(key).existsOnce()` were extremely slow (tens of seconds) when no match was found in a large widget tree. The error output is now limited and match-all selectors are no longer suggested as "less specific" matches. #119
+
+### Tap
+
+- New: `act.inspectTap()` reports whether a widget can be tapped and why not, as a value instead of a thrown error #150
   ```dart
   final inspection = act.inspectTap(spot<ElevatedButton>());
   expect(inspection.canTap, isFalse);
@@ -19,7 +27,7 @@
     isA<ColoredBox>(),
   );
   ```
-  Every failure branch of `act.tap()` has a reason: `TapNotFoundReason`, `TapMultipleWidgetsFoundReason`, `TapNoRenderObjectReason`, `TapNonRenderBoxReason`, `TapOutsideViewportReason`, `TapAbsorbedReason`, `TapIgnoredReason`, `TapOffstageReason`, `TapZeroSizeReason`, `TapCoveredReason` and `TapUnknownReason`. `inspection.tapFailure` is `null` when the widget can be tapped. Read the failure via `tapFailure.reason`, or via a typed getter such as `tapFailure.tapCoveredReason` that fails the test when the widget turned out to be untappable for a different reason. Printing `tapFailure` gives the reason type and the summary line, `inspection.message` the full diagnostics. Also adds `TapInspection`, `TapFailureReason`, `TapWidgetInfo`, `TapHitTestInfo`, `TapHitSample`, `TapSamples` and `TapBlocker`.
+  Available reasons: `TapNotFoundReason`, `TapMultipleWidgetsFoundReason`, `TapNoRenderObjectReason`, `TapNonRenderBoxReason`, `TapOutsideViewportReason`, `TapAbsorbedReason`, `TapIgnoredReason`, `TapOffstageReason`, `TapZeroSizeReason`, `TapCoveredReason` and `TapUnknownReason`. Also add `TapInspection`, `TapFailureReason`, `TapWidgetInfo`, `TapHitTestInfo`, `TapHitSample`, `TapSamples` and `TapBlocker`.
 
   `TapInspection.samples` reports how much of the widget reacts to pointer events and what is in the way, for tappable widgets too. A widget that is tappable but only partially reachable has no failure to assert on, so assert on the samples.
   ```dart
@@ -43,15 +51,17 @@
     ),
   );
   ```
-- Fix: `act.tap()` now finds an `AbsorbPointer` anywhere above the target. It previously only looked directly below the widget that received the hit test, so an `AbsorbPointer` created inside another widget's `build()` was missed and the failure reported an unknown reason. #150
-- Fix: `act.tap()` now reports the outermost `AbsorbPointer` or `IgnorePointer` above the target instead of the closest one. Hit testing walks from the root down and stops at the first one, so the outer widget is the one that has to change; removing the one that was reported before did not always make the widget tappable. #150
-- New: `act.tap()` explains offstage widgets instead of reporting an unknown reason. An `Offstage` ancestor takes a widget out of the layout and out of hit testing, which `TapOffstageReason` now names, together with the `Visibility` that built it where there is one. `spot()` skips offstage widgets, so this is what `spotOffstage()` selections report. #150
-- Improvement: The source location of a widget is resolved once per widget instead of on every lookup, which speeds up `act.tapAt()` timeline events and the diagnostics behind failing `act.tap()` calls. #154
-- New: `WidgetSelector<AnyText>.whereIsEditable()` and `whereIsNotEditable()` filter text matches by whether they come from an editable text input.
-  ```dart
-  spotText('username').whereIsEditable().existsOnce();
-  spotText('Username').whereIsNotEditable().existsOnce();
-  ```
+- Fix: `act.tap()` now finds an `AbsorbPointer` anywhere above the target. It previously only looked directly below the widget #150
+- Fix: `act.tap()` now reports the outermost `AbsorbPointer` or `IgnorePointer` above the target instead of the closest one #150
+- New: `act.tap()` explains offstage widgets instead of reporting an unknown reason #150
+
+### Scrolling
+
+- Improvement: `act.dragUntilVisible()` can now use any selector that resolves to a `Scrollable` as `dragStart`, so keyed or otherwise untyped scrollable selectors drag from that scrollable directly. #133 (thx @trejdych)
+
+### Selectors and queries
+
+- New: `spotAtPosition` and `WidgetSelector.atPosition` to query widgets on the hit-test path for a global screen position. #28
 - New: `WidgetSelector.isPresent()` and `isAbsent()` return `bool` without failing the test, and `countWidgets()` returns the number of matching widgets. Use them to branch test logic on the presence, absence or quantity of a widget. #30
   ```dart
   if (spot<Tooltip>().withMessage('Open navigation menu').isPresent()) {
@@ -68,6 +78,16 @@
   ```dart
   final message = spot<Tooltip>().getDiagnosticProp<String>('message');
   ```
+- New: `WidgetSelector<AnyText>.whereIsEditable()` and `whereIsNotEditable()` filter text matches by whether they come from an editable text input.
+  ```dart
+  spotText('username').whereIsEditable().existsOnce();
+  spotText('Username').whereIsNotEditable().existsOnce();
+  ```
+- New: `WidgetSnapshot.queryStats` reports how much work the query engine performed to evaluate a selector, useful to debug slow queries. #148
+- Fix: A `WidgetMatcher` now always reports the widget of the frame it matched, not the current widget in the tree #159
+- Improvement: Untyped selectors (`spot`, `spotKey`, `spotWidget`, `spotElement`, `spotTexts`) no longer add a no-op `WidgetTypeFilter<Widget>` at the root.
+
+### Text matching
 
 - New: Text matching ignores invisible and special whitespace, so tests can use regular characters. `spotText`, `spotTextWhere`, `whereText`, `withText` and `hasText` strip invisible characters (zero width space, soft hyphen, word joiner, BOM) and fold every Unicode space separator (`Zs`, e.g. non-breaking space) to a regular space. Meaningful characters (zero width joiner, bidi controls, the `U+FFFC` WidgetSpan placeholder) and line breaks are kept. #138 (thx @MichaelTamm)
   ```dart
@@ -76,13 +96,16 @@
   ```
   To match exact characters, pass `raw: true` to `spotText`/`spotTextWhere`, or use `whereRawText`/`withRawText`/`hasRawText` on `WidgetSelector<AnyText>`. Also exposes `AnyText.normalizeVisibleText`, `AnyText.extractText`, and `AnyTextContent` (`raw`/`normalized`).
 - Deprecated: `spotText(text, exact: true)` is now `spotText(text, whole: true)` — the flag controls whole-string vs. substring matching, not character handling. `exact` still works. #138
-- Improvement: Queries with `withParent`/`withChild` and chained selectors are drastically faster (up to 200x on big widget trees). Relationships are now resolved by walking up the tree instead of searching the subtree of every parent. #148
-- New: `WidgetSnapshot.queryStats` reports how much work the query engine performed to evaluate a selector, useful to debug slow queries. #148
+
+### Screenshots
+
+- New: `ScreenshotAnnotator.cacheKey` (default => `null`) allows caching of annotations #160
+- Fix: Export `ScreenshotAnnotator`, which has already been a parameter of `takeScreenshot(annotators: ...)`
+
+### Fonts
+
 - Fix: `loadAppFonts()` now also registers a package's own fonts under `packages/<self>/MyFont`, so fonts referenced via `package: '<self>'` render instead of falling back to Ahem. #141
-- Fix: Assertions like `spotKey(key).existsOnce()` were extremely slow (tens of seconds) when no match was found in a large widget tree. The error output is now limited and match-all selectors are no longer suggested as "less specific" matches. #119
-- Improvement: Untyped selectors (`spot`, `spotKey`, `spotWidget`, `spotElement`, `spotTexts`) no longer add a no-op `WidgetTypeFilter<Widget>` at the root.
-- Improvement: `act.dragUntilVisible()` can now use any selector that resolves to a `Scrollable` as `dragStart`, so keyed or otherwise untyped scrollable selectors drag from that scrollable directly. #133 (thx @trejdych)
-- New: `spotAtPosition` and `WidgetSelector.atPosition` to query widgets on the hit-test path for a global screen position. #28
+
 
 ## 0.19.0
 
