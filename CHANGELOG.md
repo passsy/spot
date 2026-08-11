@@ -2,15 +2,8 @@
 
 ## Unreleased
 
-- Improve: Assertions no longer rasterize the same screen once each. Every assertion records a screenshot for the timeline, rasterizing costs around 30ms, and a layer tree cannot repaint between frames, so a burst of assertions between two pumps was photographing an identical screen over and over. The raster is now reused for the rest of the frame. In one app's test suite this cut the capture time from 9.7s to 1.9s, 261 screenshots over 58 frames.
-- Improve: Identical annotations are rendered once per test instead of once per screenshot. The same test above rendered 214 highlight overlays of which 36 were distinct. `ScreenshotAnnotator` gains `cacheKey`, naming what the overlay is drawn from:
-  ```dart
-  class ArrowAnnotator implements ScreenshotAnnotator {
-    @override
-    List<Object?> get cacheKey => [start, end, color];
-  }
-  ```
-  It defaults to `null`, no key, which draws the annotator again for every screenshot. Annotators that `implement ScreenshotAnnotator` have to add it, because Dart asks an implementing class for every member, default or not.
+- Improve: Screenshots reuse the raster already taken of the same frame, and identical annotations are drawn once per test. In one app's suite this cut the capture time from 9.7s to 1.9s over 261 screenshots.
+- Improve: `ScreenshotAnnotator` gains `cacheKey`, naming what its overlay is drawn from so spot can reuse it. Annotators that `implement ScreenshotAnnotator` have to add it.
 - Fix: `ScreenshotAnnotator` is exported. `takeScreenshot(annotators: ...)` has always accepted them, but the type could not be named from `package:spot/spot.dart`, so writing one meant importing `package:spot/src/`.
 
 - Fix: A `WidgetMatcher` reports the widget it matched, not whatever is in the tree when you read it. `getDiagnosticProp` used to re-read the live widget while `matcher.widget` returned the matched one, so a matcher held across a pump could answer with two different values. All of them now read the matched widget; take a new matcher to assert against the current tree. #159
