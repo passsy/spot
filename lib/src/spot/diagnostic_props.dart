@@ -49,10 +49,9 @@ extension DiagnosticPropWidgetSelector<W extends Widget> on WidgetSelector<W> {
 
     return whereElement(
       (element) {
-        final diagnosticsNode = mapElementToWidget(element).toDiagnosticsNode();
-        final DiagnosticsNode? prop = diagnosticsNode
-            .getProperties()
-            .firstOrNullWhere((e) => e.name == propName);
+        final props = diagnosticPropsOf(mapElementToWidget(element));
+        final DiagnosticsNode? prop =
+            props.firstOrNullWhere((e) => e.name == propName);
 
         final actual = prop?.value as T? ?? prop?.getDefaultValue<T>();
 
@@ -101,11 +100,9 @@ extension DiagnosticPropWidgetMatcher<W extends Widget> on WidgetMatcher<W> {
   /// final checked = spot<Checkbox>().existsOnce().getDiagnosticProp<bool>('value');
   /// ```
   T getDiagnosticProp<T>(String propName) {
-    final diagnosticsNode =
-        selector.mapElementToWidget(element).toDiagnosticsNode();
-    final DiagnosticsNode? prop = diagnosticsNode
-        .getProperties()
-        .firstOrNullWhere((e) => e.name == propName);
+    final props = diagnosticPropsOf(widget);
+    final DiagnosticsNode? prop =
+        props.firstOrNullWhere((e) => e.name == propName);
     final actual = prop?.value as T? ?? prop?.getDefaultValue<T>();
     return actual as T;
   }
@@ -117,10 +114,9 @@ extension DiagnosticPropWidgetMatcher<W extends Widget> on WidgetMatcher<W> {
     String propName,
     MatchProp<T> match,
   ) {
-    final diagnosticsNode = widget.toDiagnosticsNode();
-    final DiagnosticsNode? prop = diagnosticsNode
-        .getProperties()
-        .firstOrNullWhere((e) => e.name == propName);
+    final props = diagnosticPropsOf(widget);
+    final DiagnosticsNode? prop =
+        props.firstOrNullWhere((e) => e.name == propName);
 
     final actual = prop?.value as T? ?? prop?.getDefaultValue<T>();
     void condition(Subject<T?> subject) {
@@ -151,6 +147,38 @@ extension DiagnosticPropWidgetMatcher<W extends Widget> on WidgetMatcher<W> {
     return this;
   }
 }
+
+/// The [DiagnosticsProperty]s of [widget], cached on it.
+///
+/// [Widget.toDiagnosticsNode] returns a fresh node on every call, and each node
+/// only caches [DiagnosticsNode.getProperties] for itself. Without this cache
+/// every matcher in a chain re-runs `debugFillProperties` for the same widget,
+/// and so does every query that inspects a widget an earlier query already
+/// inspected.
+///
+/// Keyed on the derived widget itself, which is the only thing the properties
+/// depend on. A [Widget] is immutable, so what it fills in cannot change while
+/// the instance lives; a rebuild creates a new instance and with it a new
+/// entry. Nothing here needs invalidating.
+///
+/// A [WidgetSelector] that synthesizes a widget per call gets a new entry per
+/// call and never a hit — correct, just uncached. The [AnyText] selectors
+/// behind [spotText] are the ones that would pay for that, which is why
+/// [AnyTextWidgetSelector] hands out the same instance for an element until
+/// something it was derived from changes.
+List<DiagnosticsNode> diagnosticPropsOf(Widget widget) {
+  return _propsCache[widget] ??=
+      List.unmodifiable(widget.toDiagnosticsNode().getProperties());
+}
+
+/// The [DiagnosticsProperty]s of a [Widget], for as long as that widget lives.
+///
+/// An [Expando] because the keys are widgets of a tree the test may tear down
+/// at any point, and holding them here must not keep them alive.
+///
+/// The lists are unmodifiable because every caller in the process now reads the
+/// same instance.
+final Expando<List<DiagnosticsNode>> _propsCache = Expando();
 
 extension on DiagnosticsNode {
   T? getDefaultValue<T>() {

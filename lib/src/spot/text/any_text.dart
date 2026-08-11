@@ -412,7 +412,46 @@ class AnyTextWidgetSelector extends WidgetSelector<AnyText> {
     required super.stages,
   }) : super(mapElementToWidget: _mapElementToAnyText);
 
+  /// The [AnyText] of [element], the same instance until something it was
+  /// derived from changes.
+  ///
+  /// [AnyText] is synthesized, so without this every caller would get a fresh
+  /// instance — [WidgetMatcher.widget], every `with*` filter and every property
+  /// read. Handing out one instance per element lets callers cache what they
+  /// derive from it, which is what makes the diagnostic property cache in
+  /// `diagnostic_props.dart` work for [spotText].
+  ///
+  /// An [AnyText] copies live state, so it is only good while that state is
+  /// unchanged. [_anyTextVersion] is what changed-or-not is decided on, which
+  /// keeps this exact rather than merely timely: a new instance appears the
+  /// moment the text does, not at the next frame.
   static AnyText _mapElementToAnyText(Element element) {
+    final version = _anyTextVersion(element);
+    final memoized = _anyTextOfElement[element];
+    if (memoized != null && memoized.version == version) {
+      return memoized.anyText;
+    }
+    final anyText = _deriveAnyText(element);
+    _anyTextOfElement[element] = _MemoizedAnyText(version, anyText);
+    return anyText;
+  }
+
+  /// Everything [_deriveAnyText] reads, as a value that compares equal when
+  /// none of it changed.
+  ///
+  /// A [RichText] carries its text, so the widget instance is the whole of it.
+  /// An [EditableText] does not: it keeps its instance while the controller's
+  /// value changes underneath, so that value is part of the version.
+  static Object _anyTextVersion(Element element) {
+    final widget = element.widget;
+    if (widget is EditableText) {
+      final state = (element as StatefulElement).state as EditableTextState;
+      return (widget, state.textEditingValue);
+    }
+    return widget;
+  }
+
+  static AnyText _deriveAnyText(Element element) {
     if (element.widget is RichText) {
       // RichText is used by Text and SelectableText under the hood
       return AnyText.fromRichText(element.widget as RichText);
@@ -426,6 +465,20 @@ class AnyTextWidgetSelector extends WidgetSelector<AnyText> {
       'Widget ${element.widget.toStringShort()} is not supported by AnyText',
     );
   }
+}
+
+/// The [AnyText] synthesized for an [Element], together with the inputs it was
+/// derived from.
+///
+/// An [Expando] because the keys are elements of a tree the test may tear down
+/// at any point, and holding them here must not keep them alive.
+final Expando<_MemoizedAnyText> _anyTextOfElement = Expando();
+
+class _MemoizedAnyText {
+  _MemoizedAnyText(this.version, this.anyText);
+
+  final Object version;
+  final AnyText anyText;
 }
 
 /// Matches text widgets ([EditableText] and [RichText]) on screen.

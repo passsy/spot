@@ -1,10 +1,10 @@
 import 'dart:developer' as developer;
 
 import 'package:clock/clock.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/src/flutter/frame_clock.dart';
+import 'package:spot/src/spot/diagnostic_props.dart';
 import 'package:spot/src/spot/element_extensions.dart';
 import 'package:spot/src/spot/query_stats.dart';
 import 'package:spot/src/spot/widget_location.dart';
@@ -210,10 +210,10 @@ class WidgetTreeSnapshot extends ScopedWidgetTreeSnapshot {
                 'width': bounds.width,
                 'height': bounds.height,
               },
-        'widgetProperties': _propertiesOf(widget),
+        'widgetProperties': _widgetPropertiesOf(widget),
         'renderProperties': renderObject == null
             ? const <Map<String, String>>[]
-            : _propertiesOf(renderObject),
+            : _renderPropertiesOf(renderObject),
         'children': node.children.map(serialize).toList(growable: false),
       };
     }
@@ -259,11 +259,27 @@ bool _isDescendantOf(RenderObject node, RenderObject possibleAncestor) {
   return false;
 }
 
-List<Map<String, String>> _propertiesOf(Diagnosticable diagnosticable) {
+/// The properties of [widget], read through the cache every other caller uses.
+///
+/// A snapshot walks the whole tree, so filling properties here again would
+/// undo the caching for every widget the test goes on to inspect.
+List<Map<String, String>> _widgetPropertiesOf(Widget widget) {
+  return _describe(() => diagnosticPropsOf(widget));
+}
+
+/// The properties of [renderObject], filled every time they are asked for.
+///
+/// A render object is mutable, so unlike a widget it cannot cache what it
+/// filled in for a snapshot taken earlier.
+List<Map<String, String>> _renderPropertiesOf(RenderObject renderObject) {
+  return _describe(() => renderObject.toDiagnosticsNode().getProperties());
+}
+
+List<Map<String, String>> _describe(
+  Iterable<DiagnosticsNode> Function() properties,
+) {
   try {
-    return diagnosticable
-        .toDiagnosticsNode()
-        .getProperties()
+    return properties()
         .where((property) => property.name != null)
         .map(
           (property) => {

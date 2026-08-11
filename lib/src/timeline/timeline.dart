@@ -433,6 +433,12 @@ final class _Timeline extends Timeline {
     // A pump usually follows an assertion, and by now the scheduler may have
     // gone idle and dropped the armed callback.
     _armFrameStart();
+    if (mode == TimelineMode.off) {
+      // Capturing the tree is what an event costs, and a switched off timeline
+      // drops the event anyway. The id belongs to no event either way, so an
+      // `updateEvent` for it throws here exactly as it did before.
+      return id;
+    }
     final treeSnapshot = currentWidgetTreeSnapshot();
     if (!identical(treeSnapshot, _lastEventTreeSnapshot)) {
       _lastEventTreeSnapshot = treeSnapshot;

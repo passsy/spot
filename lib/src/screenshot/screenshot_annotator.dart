@@ -13,6 +13,40 @@ abstract class ScreenshotAnnotator {
 
   /// The name of the annotator.
   String get name;
+
+  /// What identifies the overlay [annotate] draws, or `null` when nothing
+  /// does.
+  ///
+  /// Rendering an annotation and encoding it to PNG costs around 30ms, far
+  /// more than comparing a key, and a test asserting on the same widgets
+  /// repeatedly asks for the same overlay over and over. Two annotators of the
+  /// same type with equal keys are taken to draw the same overlay, so spot
+  /// draws one of them and hands that to both. List the fields the drawing
+  /// reads:
+  ///
+  /// ```dart
+  /// @override
+  /// List<Object?> get cacheKey => [start, end, color];
+  /// ```
+  ///
+  /// Lists go in as they are, compared by their items, so there is no reason
+  /// to implement [operator ==] or [hashCode] for this. A part of the key spot
+  /// cannot compare by value, a `Map` say, only ever costs the reuse and never
+  /// gives a wrong overlay: two annotators holding equal maps read as
+  /// different and are both drawn.
+  ///
+  /// `null`, the default, is no key at all: the annotator cannot be recognised
+  /// again and is drawn for every screenshot. That is the answer for a drawing
+  /// that depends on something no key can name, a counter or a timestamp say,
+  /// where one instance passed to two screenshots would otherwise put its
+  /// first overlay on both. An empty list is the opposite answer, a key every
+  /// instance shares, which is the strongest case for reuse.
+  ///
+  /// The default costs speed and never correctness, so an annotator that has
+  /// not thought about this is drawn every time, as it was before this getter
+  /// existed. Note that only subclasses inherit it: Dart asks a class that
+  /// `implements` this one for every member, default or not.
+  List<Object?>? get cacheKey => null;
 }
 
 /// Annotator that draws a crosshair at a given position.
@@ -25,6 +59,9 @@ class CrosshairAnnotator implements ScreenshotAnnotator {
 
   /// Creates a [CrosshairAnnotator] with a [centerPosition].
   const CrosshairAnnotator({required this.centerPosition});
+
+  @override
+  List<Object?> get cacheKey => [centerPosition];
 
   Offset _translateOffset(ui.Image image) {
     // ignore: deprecated_member_use
@@ -106,11 +143,16 @@ class CrosshairAnnotator implements ScreenshotAnnotator {
 /// Highlights elements on a screenshot.
 class HighlightAnnotator implements ScreenshotAnnotator {
   /// Highlight plain rectangles on the screenshot with optional labels.
+  ///
+  /// The lists are copied, because they are the [cacheKey] and the annotation
+  /// drawn from them is kept under it for the rest of the test.
   HighlightAnnotator.rects(
-    this.rects, {
+    List<Rect> rects, {
     this.color,
-    this.labels,
-  }) : assert(labels == null || rects.length == labels.length);
+    List<String>? labels,
+  })  : assert(labels == null || rects.length == labels.length),
+        rects = List.unmodifiable(rects),
+        labels = labels == null ? null : List.unmodifiable(labels);
 
   /// Highlight elements on the screenshot
   factory HighlightAnnotator.elements(List<Element> elements, {Color? color}) {
@@ -157,6 +199,9 @@ class HighlightAnnotator implements ScreenshotAnnotator {
 
   @override
   String get name => 'Highlight Elements Annotator';
+
+  @override
+  List<Object?> get cacheKey => [color, rects, labels];
 
   @override
   Future<ui.Image> annotate(ui.Image image) async {
@@ -234,6 +279,9 @@ class ArrowAnnotator extends ScreenshotAnnotator {
 
   @override
   String get name => 'Arrow Annotator';
+
+  @override
+  List<Object?> get cacheKey => [start, end, color];
 
   @override
   Future<ui.Image> annotate(ui.Image image) async {

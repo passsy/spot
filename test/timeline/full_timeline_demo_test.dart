@@ -19,7 +19,6 @@ void main() {
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
             seedColor: const Color(0xff0d6e8c),
-            brightness: Brightness.light,
           ),
           useMaterial3: true,
         ),
