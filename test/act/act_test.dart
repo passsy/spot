@@ -1648,10 +1648,20 @@ void actTests() {
     });
 
     testWidgets('enter text in text field', (tester) async {
+      // Record events so we can assert the unfocused field is tapped. This also
+      // acts as the control for the "already-focused field is not tapped" test:
+      // it proves the timeline captures taps, so the absence of the event there
+      // is meaningful.
+      timeline.mode = TimelineMode.reportOnError;
       await tester
           .pumpWidget(const MaterialApp(home: Material(child: TextField())));
       await act.enterText(spot<TextField>(), 'hello');
       spotText('hello').existsOnce();
+
+      expect(
+        timeline.events.where((e) => e.eventType.label == 'Tap Event'),
+        isNotEmpty,
+      );
     });
 
     testWidgets('spot a non existing widget throws an error', (tester) async {
@@ -1684,6 +1694,100 @@ void actTests() {
       );
     });
   });
+
+  group('enter text into an unreachable field', () {
+    // By default enterText taps the field first, which goes through hit testing
+    // and fails because the field is completely covered by the (fake) on-screen
+    // keyboard - exactly as it should in a real app.
+    testWidgets('enterText throws when the field is covered', (tester) async {
+      await tester.pumpWidget(const _KeyboardCoveredTextFieldApp());
+
+      await expectLater(
+        () => act.enterText(spot<TextField>(), 'hello'),
+        throwsSpotErrorContaining([
+          'can not be interacted with directly',
+          'ColoredBox', // the fake keyboard covering the field
+          'completely covering it',
+        ]),
+      );
+
+      // Nothing was entered because the tap never reached the field.
+      spotText('hello').doesNotExist();
+    });
+
+    // bypassHitTest: true reaches into the widget tree and force-focuses the
+    // field, filling it even though a real user could never reach it. This is
+    // the explicit escape hatch for seeding state.
+    testWidgets('enterText with bypassHitTest fills a covered field',
+        (tester) async {
+      await tester.pumpWidget(const _KeyboardCoveredTextFieldApp());
+
+      await act.enterText(spot<TextField>(), 'hello', bypassHitTest: true);
+      spotText('hello').existsOnce();
+    });
+
+    // A real user does not always tap to focus a field - it can be focused via
+    // the keyboard or autofocus. When the field is already focused, enterText
+    // types into it without tapping, so it succeeds even though the field is
+    // covered and could not be tapped.
+    testWidgets('enters text into an already-focused field without tapping',
+        (tester) async {
+      // Record events so we can assert that no tap happened.
+      timeline.mode = TimelineMode.reportOnError;
+
+      await tester.pumpWidget(
+        const _KeyboardCoveredTextFieldApp(autofocus: true),
+      );
+      // Let autofocus take effect.
+      await tester.pump();
+
+      await act.enterText(spot<TextField>(), 'hello');
+      spotText('hello').existsOnce();
+
+      // The field was already focused, so enterText skipped the tap entirely -
+      // no 'Tap Event' was added to the timeline.
+      expect(
+        timeline.events.where((e) => e.eventType.label == 'Tap Event'),
+        isEmpty,
+      );
+    });
+  });
+
+  group('enter text into a disabled field', () {
+    // A disabled TextField builds a read-only EditableText, which can never
+    // receive input. Both paths throw a dedicated error rather than silently
+    // doing nothing.
+    for (final bypassHitTest in [false, true]) {
+      testWidgets(
+        'throws a dedicated error on a disabled field '
+        '(bypassHitTest: $bypassHitTest)',
+        (tester) async {
+          final controller = TextEditingController(text: 'original');
+          addTearDown(controller.dispose);
+          await tester.pumpWidget(
+            MaterialApp(
+              home: Material(
+                child: TextField(controller: controller, enabled: false),
+              ),
+            ),
+          );
+
+          await expectLater(
+            () => act.enterText(
+              spot<TextField>(),
+              'new',
+              bypassHitTest: bypassHitTest,
+            ),
+            throwsSpotErrorContaining([
+              'is read-only and can not receive text input',
+              'TextEditingController',
+            ]),
+          );
+          expect(controller.text, 'original');
+        },
+      );
+    }
+  });
 }
 
 class ColorToggleApp extends StatefulWidget {
@@ -1708,6 +1812,44 @@ class _ColorToggleAppState extends State<ColorToggleApp> {
             });
           },
           child: null,
+        ),
+      ),
+    );
+  }
+}
+
+/// A text field that is completely hidden behind a fake on-screen keyboard.
+///
+/// The [ColoredBox] fills the whole screen and consumes all pointer events, so
+/// the [TextField] underneath can never be tapped by a real user - but its
+/// controller can still be filled directly via [Act.enterText].
+class _KeyboardCoveredTextFieldApp extends StatelessWidget {
+  const _KeyboardCoveredTextFieldApp({this.autofocus = false});
+
+  final bool autofocus;
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Material(
+        child: Stack(
+          children: [
+            Align(
+              alignment: Alignment.topCenter,
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: SizedBox(
+                  width: 200,
+                  child: TextField(autofocus: autofocus),
+                ),
+              ),
+            ),
+            // Fake on-screen keyboard covering the entire screen, including the
+            // text field above.
+            const Positioned.fill(
+              child: ColoredBox(color: Color(0xFF00FF00)),
+            ),
+          ],
         ),
       ),
     );
