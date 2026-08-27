@@ -2,8 +2,8 @@
 
 import 'dart:async';
 
+import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
-import 'package:spot/src/timeline/html/web/theme.dart';
 
 /// A snackbar to show messages to the user.
 class SnackBar extends StatefulComponent {
@@ -28,34 +28,18 @@ class SnackBarState extends State<SnackBar> {
   }
 
   @override
-  Iterable<Component> build(BuildContext context) sync* {
-    yield div(
-      id: "snackbar",
-      classes: "snackbar ${_message != null ? 'show' : ''}",
-      [
-        text(_message ?? ''),
-      ],
-    );
+  void dispose() {
+    // Without this the timer outlives the component and calls setState on it.
+    _timer?.cancel();
+    super.dispose();
   }
 
-  static List<StyleRule> get styles => [
-        css('.snackbar', [
-          css('&')
-              .box(
-                display: Display.none,
-                minWidth: 250.px,
-                margin: EdgeInsets.only(left: (-125).px),
-                radius: BorderRadius.circular(2.px),
-                padding: EdgeInsets.all(16.px),
-                position: Position.fixed(left: 50.percent, bottom: 30.px),
-              )
-              .background(color: snackbarBackgroundColor)
-              .text(color: snackbarColor, align: TextAlign.center)
-              .raw({'z-index': '1'}),
-          css('&.show').box(display: Display.block).raw({
-            'animation': 'fadein 0.5s, fadeout 0.5s 2.5s',
-            '-webkit-animation': 'fadein 0.5s, fadeout 0.5s 2.5s',
-          }),
-        ]),
-      ];
+  @override
+  Component build(BuildContext context) {
+    return div(
+      id: "snackbar",
+      classes: "snackbar ${_message != null ? 'show' : ''}",
+      [Component.text(_message ?? '')],
+    );
+  }
 }

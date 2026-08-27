@@ -60,6 +60,13 @@ The rest:
 - Fix: `act.tap()` now reports the outermost `AbsorbPointer` or `IgnorePointer` above the target instead of the closest one #150
 - New: `act.tap()` explains offstage widgets instead of reporting an unknown reason #150
 
+### Timeline
+
+- New: The timeline counts every frame the test rendered, not just the ones something was recorded in, and the report shows the total. Fewer frames is a faster test, so it is worth seeing which `pumpAndSettle` could have been a `pump`. Frames are labelled with their real number, and the stretches between recorded frames appear as a gap showing how many frames went by and how long they took on both clocks. Gaps hold nothing to select, so the arrow keys step straight over them. Also adds `Timeline.renderedFrameCount` and `TimelineEvent.renderedFrameNumber`.
+- New: Whatever failed the test is now the last event of the timeline, in a frame of its own, and the HTML report opens on it. Previously only spot's own assertions reported their failure, so a plain `expect` or an exception from the widget under test left the report ending at the last thing that worked. The event carries the real error message, a stack trace with the test framework folded out, a capture of the screen as the test left it, and the line that threw.
+- Fix: A run that reports nothing now deletes the report an earlier run of the same test wrote. The old report used to stay on disk, so the link printed by the earlier run kept opening it and showed the source, events and captures of a run that no longer existed, which reads as the timeline being stale rather than absent.
+- Fix: Restore screenshots and interactivity in the hot-restart timeline.
+
 ### Scrolling
 
 - Improvement: `act.dragUntilVisible()` can now use any selector that resolves to a `Scrollable` as `dragStart`, so keyed or otherwise untyped scrollable selectors drag from that scrollable directly. #133 (thx @trejdych)

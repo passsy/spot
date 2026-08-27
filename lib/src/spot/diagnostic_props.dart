@@ -49,7 +49,7 @@ extension DiagnosticPropWidgetSelector<W extends Widget> on WidgetSelector<W> {
 
     return whereElement(
       (element) {
-        final props = _diagnosticProps(mapElementToWidget(element));
+        final props = diagnosticPropsOf(mapElementToWidget(element));
         final DiagnosticsNode? prop =
             props.firstOrNullWhere((e) => e.name == propName);
 
@@ -100,7 +100,7 @@ extension DiagnosticPropWidgetMatcher<W extends Widget> on WidgetMatcher<W> {
   /// final checked = spot<Checkbox>().existsOnce().getDiagnosticProp<bool>('value');
   /// ```
   T getDiagnosticProp<T>(String propName) {
-    final props = _diagnosticProps(widget);
+    final props = diagnosticPropsOf(widget);
     final DiagnosticsNode? prop =
         props.firstOrNullWhere((e) => e.name == propName);
     final actual = prop?.value as T? ?? prop?.getDefaultValue<T>();
@@ -114,7 +114,7 @@ extension DiagnosticPropWidgetMatcher<W extends Widget> on WidgetMatcher<W> {
     String propName,
     MatchProp<T> match,
   ) {
-    final props = _diagnosticProps(widget);
+    final props = diagnosticPropsOf(widget);
     final DiagnosticsNode? prop =
         props.firstOrNullWhere((e) => e.name == propName);
 
@@ -166,7 +166,7 @@ extension DiagnosticPropWidgetMatcher<W extends Widget> on WidgetMatcher<W> {
 /// behind [spotText] are the ones that would pay for that, which is why
 /// [AnyTextWidgetSelector] hands out the same instance for an element until
 /// something it was derived from changes.
-List<DiagnosticsNode> _diagnosticProps(Widget widget) {
+List<DiagnosticsNode> diagnosticPropsOf(Widget widget) {
   return _propsCache[widget] ??=
       List.unmodifiable(widget.toDiagnosticsNode().getProperties());
 }

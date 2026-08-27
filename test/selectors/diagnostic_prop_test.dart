@@ -248,6 +248,12 @@ void main() {
     testWidgets('builds the props of a widget only once', (tester) async {
       // Why the cache exists. All three entry points read through it, so a
       // widget fills its properties once no matter how often it is inspected.
+      //
+      // Without the timeline, which dumps the whole tree once per frame it
+      // records an event in. That fills properties through Flutter's own
+      // diagnostics rather than through this cache, and is not what this
+      // measures.
+      timeline.mode = TimelineMode.off;
       var fills = 0;
       await tester.pumpWidget(
         MaterialApp(

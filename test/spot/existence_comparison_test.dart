@@ -484,13 +484,16 @@ void main() {
         () => spot<SegmentedButton<String>>()
             .spotText("i am a dynamic person")
             .existsOnce(),
-        throwsSpotErrorContaining([
-          // The warning would appear in between those two lines
-          // Negative tests are annoying... to make in a non-brittle way
-          "expected exactly 1.\nCheck the timeline",
-        ], not: [
-          "WARNING:"
-        ]),
+        throwsSpotErrorContaining(
+          [
+            // The warning would appear in between those two lines
+            // Negative tests are annoying... to make in a non-brittle way
+            "expected exactly 1.\nCheck the timeline",
+          ],
+          not: [
+            "WARNING:",
+          ],
+        ),
       );
     });
   });
