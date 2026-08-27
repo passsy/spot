@@ -3,11 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 
-// Regression test: act.tap must not reuse pointer id 0. A previous test can
-// leave gesture arena 0 unresolved (with a stale winner). A tap that reuses
-// pointer 0 joins that stale arena, its TapGestureRecognizer loses, and the
-// tap is silently swallowed. The two tests below are order-dependent by
-// design: the first poisons arena 0, the second must still tap successfully.
+// Regression for https://github.com/passsy/spot/issues/164
 void main() {
   testWidgets('poison gesture arena 0 with an unresolved eager winner', (
     tester,
