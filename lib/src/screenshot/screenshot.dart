@@ -813,12 +813,26 @@ Frame? _caller({StackTrace? stack}) {
         // ../dart-sdk/lib/_internal/js_dev_runtime/patch/async_patch.dart 647:23 in <fn>
         return false;
       }
+      // Since Flutter 3.47, DDC serves sdk and package frames without the
+      // leading ../, making their uris absolute like
+      // http://localhost:53285/dart-sdk/lib/_internal/js_dev_runtime/patch/async_patch.dart
+      final path = line.uri.path;
+      if (path.startsWith('/dart-sdk/') || path.startsWith('/packages/')) {
+        return false;
+      }
     }
     final url = line.uri.toString();
     if (url.contains('package:spot')) return false;
     if (url.startsWith('package:flutter_test')) return false;
     return true;
   }).toList();
-  final Frame? bestGuess = relevantLines.firstOrNull;
+  // Prefer frames outside package:stack_trace. Its zone instrumentation
+  // frames surface before the actual caller on web since Flutter 3.47, but
+  // on older Flutter versions they can be the only frame left (e.g. for
+  // drag events on Flutter 3.10), so they remain as fallback.
+  final Frame? bestGuess = relevantLines.firstOrNullWhere(
+        (frame) => !frame.uri.toString().startsWith('package:stack_trace'),
+      ) ??
+      relevantLines.firstOrNull;
   return bestGuess;
 }
