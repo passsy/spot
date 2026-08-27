@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.20.1
+
+- Fix: `act.tap()` and `act.tapAt()` now use a fresh pointer id per tap instead of always reusing pointer 0. Previously, when an earlier test left a gesture arena unresolved, the next tap joined that stale arena and was silently swallowed. #165 (thx @peter-trost)
+- Fix: Screenshots taken on Chrome with Flutter 3.47 are named after the test file again. The new DDC stack trace format slipped past the caller detection, naming them after `async_patch.dart` instead. #166
+
 ## 0.20.0
 
 ### Performance
