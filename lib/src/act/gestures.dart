@@ -14,7 +14,12 @@ class Gestures {
   /// [startGesture] method is called without an explicit pointer identifier.
   int get nextPointer => _nextPointer;
 
-  static int _nextPointer = 1;
+  // Seeded far above flutter_test's own pointer counter (WidgetController,
+  // starting at 1) and the small ids multi-touch tests hardcode, so a stale
+  // gesture arena leaked by either can never sit on an id spot is about to
+  // use. See https://github.com/passsy/spot/issues/164 for how a reused id
+  // silently swallows a tap.
+  static int _nextPointer = 1 << 20;
 
   static int _getNextPointer() {
     final int result = _nextPointer;

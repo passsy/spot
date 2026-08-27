@@ -134,12 +134,12 @@ class Act {
           );
         }
 
-        // Finally, tap the widget by sending a down and up event.
-        final downEvent = PointerDownEvent(position: positionToTap);
-        binding.handlePointerEvent(downEvent);
-
-        final upEvent = PointerUpEvent(position: positionToTap);
-        binding.handlePointerEvent(upEvent);
+        // Finally, tap the widget by sending a down and up event. Use a fresh
+        // pointer id, because reusing an id (like the default 0) joins the
+        // gesture arena of a previous gesture with the same id, where the tap
+        // can lose against a stale winner and get silently swallowed.
+        final gesture = await gestures.startGesture(positionToTap);
+        await gesture.up();
 
         await binding.pump();
       });
@@ -239,10 +239,10 @@ class Act {
             color: Colors.blue,
           );
         }
-        final downEvent = PointerDownEvent(position: position);
-        binding.handlePointerEvent(downEvent);
-        final upEvent = PointerUpEvent(position: position);
-        binding.handlePointerEvent(upEvent);
+        // Use a fresh pointer id, see Act.tap for why pointer 0 must not be
+        // reused.
+        final gesture = await gestures.startGesture(position);
+        await gesture.up();
         await binding.pump();
       });
     });
