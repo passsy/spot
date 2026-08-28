@@ -1,8 +1,22 @@
-/// Access to the Flutter SDK that is executing the tests.
-///
-/// The SDK lives on disk, which a browser cannot reach, so the web
-/// implementation throws. Callers are expected to check [kIsWeb] first.
-library;
+import 'dart:io';
 
-export 'package:spot/src/flutter/flutter_sdk_web.dart'
-    if (dart.library.io) 'package:spot/src/flutter/flutter_sdk_io.dart';
+import 'package:dartx/dartx_io.dart';
+
+/// Returns the Flutter SDK root directory based on the current flutter
+/// executable running the tests.
+Directory flutterSdkRoot() {
+  final flutterTesterExe = Platform.executable;
+  final String flutterRoot;
+  if (Platform.isWindows) {
+    flutterRoot = flutterTesterExe.split(r'\bin\cache\')[0];
+  } else {
+    flutterRoot = flutterTesterExe.split('/bin/cache/')[0];
+  }
+  return Directory(flutterRoot);
+}
+
+/// The Flutter executable in the Flutter SDK
+String get flutterExe {
+  final exe = Platform.isWindows ? '.bat' : '';
+  return flutterSdkRoot().file('bin/flutter$exe').absolute.path;
+}
