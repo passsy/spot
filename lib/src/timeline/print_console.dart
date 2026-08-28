@@ -44,7 +44,8 @@ extension ConsoleTimelinePrinter on Timeline {
       final fileName = screenshot.name;
       if (kIsWeb) {
         buffer.writeln(
-            'Screenshot links are not supported in the timeline on platform web.');
+          'Screenshot links are not supported in the timeline on platform web.',
+        );
       } else {
         final pngPath = createSpotTempFile(fileName, Uint8List(0));
         // fill it with data (async)

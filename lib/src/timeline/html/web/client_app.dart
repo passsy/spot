@@ -25,7 +25,7 @@ void _registerHotRestart() {
     return;
   }
   Timer.periodic(const Duration(milliseconds: 200), (timer) {
-    reloadOnChange('script.js');
+    reloadOnChange('/script.js');
     reloadOnChange(window.location.href);
   });
 }

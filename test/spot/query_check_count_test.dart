@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_unnecessary_containers, avoid_print
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
@@ -18,79 +19,83 @@ import 'package:spot/src/spot/tree_snapshot.dart';
 /// comparisons of the linear `Iterable.contains` calls. Each simulation
 /// asserts that it discovers exactly the same elements as the real finder.
 void main() {
-  testWidgets('measure wall clock time for simple type queries with timeline',
-      (tester) async {
-    const warmups = 3;
-    const runs = 20;
-    timeline.mode = TimelineMode.reportOnError;
-    await tester.pumpWidget(
-      const MaterialApp(
-        home: Column(
-          children: [
-            _BenchWidgetA(),
-            _BenchWidgetB(),
-            _BenchWidgetC(),
-            _BenchWidgetD(),
-            _BenchWidgetE(),
-          ],
+  testWidgets(
+    'measure wall clock time for simple type queries with timeline',
+    (tester) async {
+      const warmups = 3;
+      const runs = 20;
+      timeline.mode = TimelineMode.reportOnError;
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Column(
+            children: [
+              _BenchWidgetA(),
+              _BenchWidgetB(),
+              _BenchWidgetC(),
+              _BenchWidgetD(),
+              _BenchWidgetE(),
+            ],
+          ),
         ),
-      ),
-    );
+      );
 
-    print('timeline mode: ${timeline.mode}');
+      print('timeline mode: ${timeline.mode}');
 
-    final spotWithScreenshotsElapsed = await _measureWallClockAverage(
-      tester: tester,
-      warmups: warmups,
-      runs: runs,
-      measure: _runFiveSpotTypeQueries,
-    );
+      final spotWithScreenshotsElapsed = await _measureWallClockAverage(
+        tester: tester,
+        warmups: warmups,
+        runs: runs,
+        measure: _runFiveSpotTypeQueries,
+      );
 
-    final finderElapsed = await _measureWallClockAverage(
-      tester: tester,
-      warmups: warmups,
-      runs: runs,
-      measure: _runFiveFinderTypeQueries,
-    );
+      final finderElapsed = await _measureWallClockAverage(
+        tester: tester,
+        warmups: warmups,
+        runs: runs,
+        measure: _runFiveFinderTypeQueries,
+      );
 
-    _printWallClockSummary(
-      label: '5 simple type queries with timeline screenshots',
-      warmups: warmups,
-      runs: runs,
-      spot: spotWithScreenshotsElapsed,
-      finder: finderElapsed,
-    );
+      _printWallClockSummary(
+        label: '5 simple type queries with timeline screenshots',
+        warmups: warmups,
+        runs: runs,
+        spot: spotWithScreenshotsElapsed,
+        finder: finderElapsed,
+      );
 
-    timeline.mode = TimelineMode.off;
-    print('timeline mode: ${timeline.mode}');
+      timeline.mode = TimelineMode.off;
+      print('timeline mode: ${timeline.mode}');
 
-    final spotWithoutScreenshotsElapsed = await _measureWallClockAverage(
-      tester: tester,
-      warmups: warmups,
-      runs: runs,
-      measure: _runFiveSpotTypeQueries,
-    );
+      final spotWithoutScreenshotsElapsed = await _measureWallClockAverage(
+        tester: tester,
+        warmups: warmups,
+        runs: runs,
+        measure: _runFiveSpotTypeQueries,
+      );
 
-    final finderWithoutScreenshotsElapsed = await _measureWallClockAverage(
-      tester: tester,
-      warmups: warmups,
-      runs: runs,
-      measure: _runFiveFinderTypeQueries,
-    );
+      final finderWithoutScreenshotsElapsed = await _measureWallClockAverage(
+        tester: tester,
+        warmups: warmups,
+        runs: runs,
+        measure: _runFiveFinderTypeQueries,
+      );
 
-    _printWallClockSummary(
-      label: '5 simple type queries without timeline screenshots',
-      warmups: warmups,
-      runs: runs,
-      spot: spotWithoutScreenshotsElapsed,
-      finder: finderWithoutScreenshotsElapsed,
-    );
+      _printWallClockSummary(
+        label: '5 simple type queries without timeline screenshots',
+        warmups: warmups,
+        runs: runs,
+        spot: spotWithoutScreenshotsElapsed,
+        finder: finderWithoutScreenshotsElapsed,
+      );
 
-    _printWallClockScreenshotOverhead(
-      withScreenshots: spotWithScreenshotsElapsed,
-      withoutScreenshots: spotWithoutScreenshotsElapsed,
-    );
-  });
+      _printWallClockScreenshotOverhead(
+        withScreenshots: spotWithScreenshotsElapsed,
+        withoutScreenshots: spotWithoutScreenshotsElapsed,
+      );
+    },
+    // CanvasKit does not support the synchronous screenshot API.
+    skip: kIsWeb,
+  );
 
   _Measurement measureSpot(
     String label,

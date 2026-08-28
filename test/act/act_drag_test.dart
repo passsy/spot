@@ -134,7 +134,7 @@ void dragTests() {
             .spot<Scrollable>()
             .last()
           ..existsOnce();
-        final secondItem = spotText('Item at index: 27', exact: true)
+        final secondItem = spotText('Item at index: 27', whole: true)
           ..doesNotExist();
         await act.dragUntilVisible(
           dragStart: firstItem,
@@ -159,7 +159,7 @@ void dragTests() {
 
         final firstItem = spotKey(scrollableKey)..existsOnce();
         expect(firstItem.snapshotWidget(), isA<Scrollable>());
-        final secondItem = spotText('Item at index: 27', exact: true)
+        final secondItem = spotText('Item at index: 27', whole: true)
           ..doesNotExist();
         await act.dragUntilVisible(
           dragStart: firstItem,
@@ -572,7 +572,9 @@ void dragTests() {
         final targetLeft =
             secondItem.snapshotRenderBox().localToGlobal(Offset.zero).dx;
         expect(
-            targetLeft, greaterThanOrEqualTo(viewportLeft + paddingLeft - 1));
+          targetLeft,
+          greaterThanOrEqualTo(viewportLeft + paddingLeft - 1),
+        );
         expect(targetLeft, lessThan(viewportLeft + paddingLeft + 5));
       },
     );
@@ -884,8 +886,9 @@ void dragTests() {
             onPointerDown: (event) {
               pointerDowns.add(event.position);
               timeline.addEvent(
-                  details: 'Tap at ${event.position.dy}',
-                  eventType: 'tap down');
+                details: 'Tap at ${event.position.dy}',
+                eventType: 'tap down',
+              );
             },
             onTopBannerTap: () => bannerTaps++,
             topBannerHeight: topBannerHeight,

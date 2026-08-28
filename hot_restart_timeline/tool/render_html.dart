@@ -19,8 +19,6 @@ Future<void> main() async {
     return;
   }
 
-  final generatedScriptFile = globalTimelineDir.file('script.js');
-
   final htmlFiles = globalTimelineDir
       .listSync(recursive: true)
       .whereType<File>()
@@ -35,28 +33,16 @@ Future<void> main() async {
       continue;
     }
 
-    final scriptLinkFile = timelineDir.file('script.js');
-    final scriptLink = Link(scriptLinkFile.path);
-    if (scriptLink.existsSync()) {
-      if (scriptLink.targetSync() != generatedScriptFile.path) {
-        scriptLink.updateSync(generatedScriptFile.path);
-      }
-    } else {
-      if (scriptLinkFile.existsSync()) {
-        scriptLinkFile.deleteSync();
-      }
-      scriptLink.createSync(generatedScriptFile.path, recursive: true);
-    }
-
     final eventsText = await eventsFile.readAsString();
     final eventsJson = jsonDecode(eventsText) as List;
     final events = eventsJson.map((e) {
       final map = e as Map<String, dynamic>;
       final screenshotPath = map['screenshotUrl'] as String?;
       if (screenshotPath != null) {
-        final relative =
-            path.relative(screenshotPath, from: globalTimelineDir.path);
-        map['screenshotUrl'] = relative;
+        map['screenshotUrl'] = _relativeScreenshotPath(
+          timelineDirPath: timelineDir.path,
+          screenshotPath: screenshotPath,
+        );
       }
       return TimelineEvent.fromMap(map);
     }).toList();
@@ -68,4 +54,17 @@ Future<void> main() async {
     );
     file.writeAsStringSync(htmlText);
   }
+}
+
+String _relativeScreenshotPath({
+  required String timelineDirPath,
+  required String screenshotPath,
+}) {
+  final String absoluteScreenshotPath;
+  if (path.isAbsolute(screenshotPath)) {
+    absoluteScreenshotPath = screenshotPath;
+  } else {
+    absoluteScreenshotPath = path.join(timelineDirPath, screenshotPath);
+  }
+  return path.relative(absoluteScreenshotPath, from: timelineDirPath);
 }

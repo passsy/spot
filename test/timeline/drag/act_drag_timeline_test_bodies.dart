@@ -310,7 +310,8 @@ class ActDragTimelineTestBodies {
         expect(
           event[3],
           startsWith(
-              'Screenshot links are not supported in the timeline on platform web'),
+            'Screenshot links are not supported in the timeline on platform web',
+          ),
         );
       } else {
         expect(
