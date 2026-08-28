@@ -1,10 +1,9 @@
 // ignore_for_file: public_member_api_docs
 
-// ignore: avoid_web_libraries_in_flutter, deprecated_member_use
-import 'dart:html' if (dart.library.io) '../web/web_stubs.dart';
-
 import 'package:jaspr/jaspr.dart';
 import 'package:spot/src/timeline/html/web/theme.dart';
+import 'package:universal_web/js_interop.dart';
+import 'package:universal_web/web.dart' as web;
 
 /// A box that can be expanded to show more content.
 class ExpandableBox extends StatefulComponent {
@@ -46,9 +45,12 @@ class ExpandableBoxState extends State<ExpandableBox> {
             if (expandedTo != null) {
               setState(() => expandedTo = null);
             } else {
-              final contentHeight = (e.target as HtmlElement?)
-                  ?.previousElementSibling
-                  ?.scrollHeight;
+              // Casts between interop types are unchecked, so ask what the
+              // target really is instead of trusting the cast to fail.
+              final target = e.target;
+              final contentHeight = target != null && target.isA<web.Element>()
+                  ? (target as web.Element).previousElementSibling?.scrollHeight
+                  : null;
               setState(() => expandedTo = contentHeight);
             }
           },
