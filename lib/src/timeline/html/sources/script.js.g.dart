@@ -6290,7 +6290,7 @@ $S:32}
 A.j6.prototype={
 $1(a){var s
 t.aF.a(a)
-A.hl("script.js")
+A.hl("/script.js")
 s=t.e.a(window.location).href
 s.toString
 A.hl(s)},
