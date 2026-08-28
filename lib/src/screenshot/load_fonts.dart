@@ -1,13 +1,13 @@
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:dartx/dartx_io.dart';
+import 'package:dartx/dartx.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/src/flutter/flutter_sdk.dart';
 import 'package:spot/src/flutter/frame_clock.dart';
+import 'package:spot/src/screenshot/font_files.dart';
 
 Future<void>? _loadAppFontsFuture;
 
@@ -158,9 +158,8 @@ Future<void> loadFont(String family, List<String> fontPaths) async {
     for (final path in fontPaths) {
       final decodedPath = Uri.decodeComponent(path);
       try {
-        final file = File(decodedPath);
-        if (file.existsSync()) {
-          final Uint8List bytes = file.readAsBytesSync();
+        final Uint8List? bytes = readFileBytesSync(decodedPath);
+        if (bytes != null) {
           fontLoader.addFont(Future.value(bytes.buffer.asByteData()));
         } else {
           final data = rootBundle.load(decodedPath);
@@ -178,27 +177,16 @@ Future<void> loadFont(String family, List<String> fontPaths) async {
 
 /// Loads the Roboto/RobotoCondensed/MaterialIcons fonts from the executing Flutter SDK
 Future<void> _loadMaterialFontsFromSdk() async {
-  final root = flutterSdkRoot().absolute.path;
-
-  final materialFontsDir =
-      Directory('$root/bin/cache/artifacts/material_fonts/');
+  final root = flutterSdkRootPath();
 
   final fontFormats = ['.ttf', '.otf', '.ttc'];
-  final existingFonts = materialFontsDir
-      .listSync()
-      // dartfmt come on,...
-      .whereType<File>()
-      .where(
-        (font) => fontFormats.any((element) => font.path.endsWith(element)),
-      )
-      .toList();
+  final existingFonts = listFilesWithExtension(
+    '$root/bin/cache/artifacts/material_fonts/',
+    fontFormats,
+  );
 
   final robotoFonts = existingFonts
-      .where((font) {
-        final name = font.name.toLowerCase();
-        return name.startsWith('Roboto-'.toLowerCase());
-      })
-      .map((file) => file.path)
+      .where((path) => path._fileName.startsWith('Roboto-'.toLowerCase()))
       .toList();
   if (robotoFonts.isEmpty) {
     debugPrint("Warning: No Roboto font found in SDK");
@@ -206,20 +194,16 @@ Future<void> _loadMaterialFontsFromSdk() async {
   await loadFont('Roboto', robotoFonts);
 
   final robotoCondensedFonts = existingFonts
-      .where((font) {
-        final name = font.name.toLowerCase();
-        return name.startsWith('RobotoCondensed-'.toLowerCase());
-      })
-      .map((file) => file.path)
+      .where(
+        (path) => path._fileName.startsWith('RobotoCondensed-'.toLowerCase()),
+      )
       .toList();
   await loadFont('RobotoCondensed', robotoCondensedFonts);
 
   final materialIcons = existingFonts
-      .where((font) {
-        final name = font.name.toLowerCase();
-        return name.startsWith('MaterialIcons-'.toLowerCase());
-      })
-      .map((file) => file.path)
+      .where(
+        (path) => path._fileName.startsWith('MaterialIcons-'.toLowerCase()),
+      )
       .toList();
   await loadFont('MaterialIcons', materialIcons);
 }
@@ -245,7 +229,7 @@ Future<void> _loadFontsFromFontManifest() async {
   // The name of the package running the tests. Used to also expose the test
   // target's own fonts under "packages/<self>/MyFont", matching how Flutter
   // resolves a `package:` set on a TextStyle/IconData.
-  final thisPackageName = _readPackageNameFromPubspec();
+  final thisPackageName = readPackageNameFromPubspec();
 
   for (final item in fontManifest.fontFamilies) {
     final packageAsset =
@@ -282,22 +266,9 @@ Future<void> _loadFontsFromFontManifest() async {
   }
 }
 
-/// Reads the `name:` field from the test target's pubspec.yaml.
-///
-/// `flutter test` creates a generated main.dart next to the package root, so
-/// pubspec.yaml is expected next to [Platform.script]. Returns null when no
-/// pubspec.yaml is found or it does not declare a name.
-String? _readPackageNameFromPubspec() {
-  final pubspec = File.fromUri(Platform.script.resolve('pubspec.yaml'));
-  if (!pubspec.existsSync()) {
-    return null;
-  }
-  final content = pubspec.readAsStringSync();
-  final match = RegExp(
-    '''^\\s*name\\s*:\\s*['"]?([a-zA-Z0-9_]+)['"]?''',
-    multiLine: true,
-  ).firstMatch(content);
-  return match?.group(1);
+/// The lower-cased last path segment of a file path.
+extension on String {
+  String get _fileName => split(RegExp(r'[/\\]')).last.toLowerCase();
 }
 
 /// Parsed representation of the FontManifest.json file

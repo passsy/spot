@@ -14,8 +14,8 @@ import 'package:spot/spot.dart';
 import 'package:spot/src/flutter/frame_clock.dart';
 import 'package:spot/src/screenshot/screenshot.dart' as self
     show takeScreenshot;
-import 'package:spot/src/screenshot/screenshot_io.dart'
-    if (dart.library.html) 'package:spot/src/screenshot/screenshot_web.dart';
+import 'package:spot/src/screenshot/screenshot_web.dart'
+    if (dart.library.io) 'package:spot/src/screenshot/screenshot_io.dart';
 import 'package:spot/src/utils/once_per_test.dart';
 import 'package:stack_trace/stack_trace.dart';
 

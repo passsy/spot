@@ -1,12 +1,11 @@
 // ignore_for_file: unnecessary_string_escapes
 
-import 'dart:io';
-
 import 'package:dartx/dartx.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:spot/spot.dart';
+import 'package:spot/src/utils/file_writer.dart';
 
 Type _typeOf<T>() => T;
 
@@ -40,16 +39,7 @@ extension CreateMatchers<W extends Widget> on WidgetSelector<W> {
       imports: imports,
       filter: filter,
     );
-    final file = File(path);
-    if (content == null) {
-      if (file.existsSync()) {
-        file.deleteSync();
-      }
-    } else {
-      file
-        ..createSync(recursive: true)
-        ..writeAsStringSync(content);
-    }
+    writeStringToFile(path, content);
   }
 
   /// Generates matchers for the properties of [W].
