@@ -16,4 +16,17 @@ void main() {
     },
     skip: kIsWeb ? 'Jaspr server rendering requires the Dart VM' : false,
   );
+
+  test(
+    'screenshots stay relative to the report, not the server root',
+    () async {
+      final html = await renderTimelineWithJaspr([]);
+
+      // Jaspr inserts <base href="/"> when the document declares none, which
+      // sends every relative screenshot path to the root of the file system.
+      expect(html, contains('<base href="./"'));
+      expect(html, isNot(contains('<base href="/"')));
+    },
+    skip: kIsWeb ? 'Jaspr server rendering requires the Dart VM' : false,
+  );
 }

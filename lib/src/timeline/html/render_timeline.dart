@@ -26,6 +26,11 @@ Future<String> renderTimelineWithJaspr(
     Document(
       title: "Timeline Events",
       head: [
+        // Jaspr injects <base href="/"> when the document declares none, which
+        // sends every relative screenshot path to the root. The report is
+        // opened as a file, and the hot-restart server puts each report in its
+        // own subdirectory, so the base has to stay the document itself.
+        const DomComponent(tag: 'base', attributes: {'href': './'}),
         link(
           href:
               "https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap",
