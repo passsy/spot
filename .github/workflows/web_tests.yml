@@ -49,8 +49,11 @@ jobs:
         run: flutter pub get
 
       # dart2wasm has no dart:html, so this fails to compile if spot ever
-      # reaches for it again. Only the suites that pass under wasm run here;
-      # caller detection does not understand wasm stack traces yet, which
-      # fails the screenshot naming and act tests.
+      # reaches for it again. test/act is left out because dart2wasm does not
+      # support --track-widget-creation, so the widget creation locations those
+      # tests assert on do not exist there.
       - name: Run widget tests on Chrome compiled to Wasm
-        run: flutter test --platform chrome --wasm test/example_test.dart test/spot/ test/selectors/
+        run: >
+          flutter test --platform chrome --wasm
+          test/example_test.dart test/spot/ test/selectors/
+          test/screenshot/ test/widgets/ test/fonts/

@@ -1,6 +1,5 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
@@ -146,15 +145,19 @@ void main() {
           ),
         ),
       );
-      const webError =
+      // dart2js unifies int and double, so a whole double prints without the
+      // fraction. dart2wasm and the VM keep them apart, and kIsWeb is true for
+      // both web compilers, so ask about the numbers instead of the platform.
+      const jsNumbers = identical(1, 1.0);
+      const jsError =
           'has "textStyle" that: has fontSize that: equals <20>, actual: <14>';
       expect(
         () => spot<Text>()
             .existsOnce()
             .hasEffectiveTextStyleWhere((style) => style..fontSize.equals(20)),
         throwsSpotErrorContaining([
-          if (kIsWeb)
-            webError
+          if (jsNumbers)
+            jsError
           else
             'has "textStyle" that: has fontSize that: equals <20.0>, actual: <14.0>',
         ]),
