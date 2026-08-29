@@ -28,3 +28,29 @@ jobs:
 
       - name: Run widget tests on Chrome
         run: flutter test --platform chrome
+
+  wasm-tests:
+    name: Chrome Wasm Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      # dart2wasm has no dart:html, so this fails to compile if spot ever
+      # reaches for it again. Only the suites that pass under wasm run here;
+      # caller detection does not understand wasm stack traces yet, which
+      # fails the screenshot naming and act tests.
+      - name: Run widget tests on Chrome compiled to Wasm
+        run: flutter test --platform chrome --wasm test/example_test.dart test/spot/ test/selectors/
