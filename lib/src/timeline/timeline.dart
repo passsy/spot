@@ -15,6 +15,7 @@ import 'package:spot/src/timeline/html/print_html.dart';
 import 'package:spot/src/timeline/print_console.dart';
 import 'package:spot/src/utils/ci.dart';
 import 'package:spot/src/utils/invoker.dart';
+import 'package:spot/src/utils/stack_trace_frames.dart';
 import 'package:stack_trace/stack_trace.dart';
 
 TimelineMode _globalTimelineMode =
@@ -504,9 +505,12 @@ enum TimelineMode {
 
 /// Returns the most relevant caller that is part of the user code.
 Frame? mostRelevantCaller({Trace? trace, Frame? fallback}) {
-  final frames = (trace ?? Trace.current()).frames;
+  final frames = resolveFrames((trace ?? Trace.current()).frames);
 
-  final nonPackageFrames = frames.where((frame) => frame.package == null);
+  // SDK frames carry no package either, and the fallback below used to land on
+  // one of those whenever no test file matched.
+  final nonPackageFrames =
+      frames.where((frame) => frame.package == null && !isSdkFrame(frame));
   final testFileCaller = nonPackageFrames.where((frame) {
     final lib = frame.library;
     return lib.startsWith('test/') && lib.endsWith('_test.dart');

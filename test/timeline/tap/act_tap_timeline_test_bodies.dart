@@ -422,10 +422,15 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       reason:
           'Expected $tapCount taps + $assertionCount assertions but found only $headerCount headers.',
     );
+    // The caller has to point at the test sources. Matching on the uri scheme
+    // alone let an SDK frame satisfy this, which is how the caller landing in
+    // dart:async went unnoticed on both web compilers. The VM keeps the frame
+    // of the _test.dart file that called in; the web compilers only keep the
+    // frame of this file.
     final callerParts = output.split('\n').where((line) {
       return line.startsWith('Caller: at') &&
-          ((!kIsWeb && line.contains('file://')) ||
-              (kIsWeb && line.contains('http://')));
+          (line.contains('_test.dart:') ||
+              line.contains('act_tap_timeline_test_bodies.dart:'));
     }).toList();
     expect(
       callerParts.length,

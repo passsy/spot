@@ -3,7 +3,7 @@ import 'dart:core' as core;
 import 'dart:core';
 import 'dart:ui' as ui;
 
-import 'package:dartx/dartx_io.dart';
+import 'package:dartx/dartx.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
@@ -14,9 +14,10 @@ import 'package:spot/spot.dart';
 import 'package:spot/src/flutter/frame_clock.dart';
 import 'package:spot/src/screenshot/screenshot.dart' as self
     show takeScreenshot;
-import 'package:spot/src/screenshot/screenshot_io.dart'
-    if (dart.library.html) 'package:spot/src/screenshot/screenshot_web.dart';
+import 'package:spot/src/screenshot/screenshot_web.dart'
+    if (dart.library.io) 'package:spot/src/screenshot/screenshot_io.dart';
 import 'package:spot/src/utils/once_per_test.dart';
+import 'package:spot/src/utils/stack_trace_frames.dart';
 import 'package:stack_trace/stack_trace.dart';
 
 export 'package:stack_trace/stack_trace.dart' show Frame;
@@ -804,7 +805,7 @@ ui.Image _transparentImage(int width, int height) {
 /// humans
 Frame? _caller({StackTrace? stack}) {
   final trace = stack != null ? Trace.parse(stack.toString()) : Trace.current();
-  final relevantLines = trace.frames.where((line) {
+  final relevantLines = resolveFrames(trace.frames).where((line) {
     if (line.isCore) return false;
     if (kIsWeb) {
       if (line.toString().startsWith('../')) {

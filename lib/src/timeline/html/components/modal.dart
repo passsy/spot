@@ -1,12 +1,10 @@
 // ignore_for_file: public_member_api_docs, avoid_dynamic_calls
 
-// ignore: avoid_web_libraries_in_flutter, deprecated_member_use
-import 'dart:html' if (dart.library.io) '../web/web_stubs.dart';
-
 import 'package:dartx/dartx.dart';
 import 'package:jaspr/jaspr.dart';
 import 'package:spot/src/timeline/html/web/theme.dart';
 import 'package:spot/src/timeline/html/web/timeline_event.dart';
+import 'package:universal_web/web.dart' as web;
 
 /// A modal to show a single event in detail.
 class Modal extends StatefulComponent {
@@ -26,7 +24,11 @@ class ModalState extends State<Modal> {
     super.initState();
     if (kIsWeb) {
       /// Adds keyboard navigation to the modal.
-      window.onKeyDown.listen((event) {
+      // Window has no onKeyDown getter the way Element does, so go through
+      // the provider the Element getters are built on.
+      web.EventStreamProviders.keyDownEvent.forTarget(web.window).listen((
+        event,
+      ) {
         if (event.key == 'Escape') {
           close();
           event.preventDefault();
