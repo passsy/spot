@@ -8,7 +8,7 @@ import '../util/capture_console_output.dart';
 import '../widgets/poke_test_widget.dart';
 
 void main() {
-  testWidgets('Widget entirely covered, finds no tappable area.',
+  testWidgets('Widget entirely covered, finds no tappable area.', skip: kIsWasm,
       (tester) async {
     bool tapped = false;
     await tester.pumpWidget(
@@ -209,7 +209,8 @@ void main() {
       ),
     );
   });
-  testWidgets('Custom button with InkWell can be tapped', (tester) async {
+  testWidgets('Custom button with InkWell can be tapped', skip: kIsWasm,
+      (tester) async {
     int tapCount = 0;
     await tester.pumpWidget(
       MaterialApp(
@@ -253,7 +254,7 @@ void main() {
   });
 
   testWidgets('Size(0,0) Text in NavigationRailDestination can not be tapped',
-      (tester) async {
+      skip: kIsWasm, (tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(

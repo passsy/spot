@@ -15,7 +15,7 @@ import 'package:spot/src/timeline/html/print_html.dart';
 import 'package:spot/src/timeline/print_console.dart';
 import 'package:spot/src/utils/ci.dart';
 import 'package:spot/src/utils/invoker.dart';
-import 'package:spot/src/utils/wasm_frames.dart';
+import 'package:spot/src/utils/stack_trace_frames.dart';
 import 'package:stack_trace/stack_trace.dart';
 
 TimelineMode _globalTimelineMode =
@@ -505,7 +505,7 @@ enum TimelineMode {
 
 /// Returns the most relevant caller that is part of the user code.
 Frame? mostRelevantCaller({Trace? trace, Frame? fallback}) {
-  final frames = resolveWasmFrames((trace ?? Trace.current()).frames);
+  final frames = resolveFrames((trace ?? Trace.current()).frames);
 
   final nonPackageFrames = frames.where((frame) => frame.package == null);
   final testFileCaller = nonPackageFrames.where((frame) {

@@ -1,6 +1,7 @@
 @Timeout(Duration(minutes: 2))
 library;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/src/timeline/timeline.dart';
 import '../act_tap_timeline_test_bodies.dart';
@@ -8,7 +9,7 @@ import '../act_tap_timeline_test_bodies.dart';
 void main() {
   globalTimelineMode = TimelineMode.live;
   group("Global: live - ", () {
-    testWidgets('without error', (tester) async {
+    testWidgets('without error', skip: kIsWasm, (tester) async {
       await ActTapTimelineTestBodies.liveWithoutError(
         tester: tester,
         isGlobalMode: true,
@@ -24,7 +25,7 @@ void main() {
         isGlobalMode: true,
       );
     });
-    testWidgets('turn off during test', (tester) async {
+    testWidgets('turn off during test', skip: kIsWasm, (tester) async {
       await ActTapTimelineTestBodies.liveTurnOffDuringTest(
         isGlobalMode: true,
         tester: tester,

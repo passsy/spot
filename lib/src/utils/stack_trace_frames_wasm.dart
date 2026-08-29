@@ -1,30 +1,24 @@
+/// The dart2wasm implementation of [resolveFrames].
+library;
+
 import 'package:stack_trace/stack_trace.dart';
 
+/// Rebuilds frames so that uri, line and column say where the code is.
+///
 /// dart2wasm compiles the whole program into a single module, so every frame
-/// of a stack trace points at `main.dart.wasm` and the real location is
-/// appended to the member instead:
+/// points at `main.dart.wasm` and the real location is appended to the member
+/// instead:
 ///
 /// ```text
 /// M.main closure at org-dartlang-app:///screenshot/screenshot_test.dart:207:63 inner
 /// ```
 ///
-/// Rebuilds those frames so that uri, line and column say where the code is,
-/// in the shape the JavaScript compilers report, which is what the callers
-/// match on.
-///
-/// Frames the compiler emitted without a location cannot be attributed to a
-/// file and are dropped. Traces from other compilers are returned untouched.
-List<Frame> resolveWasmFrames(Iterable<Frame> frames) {
-  final list = frames.toList();
-  if (!list.any(_isWasmFrame)) {
-    return list;
-  }
+/// The result uses the shape the JavaScript compilers report, which is what
+/// the callers match on. Frames the compiler emitted without a location cannot
+/// be attributed to a file and are dropped.
+List<Frame> resolveFrames(Iterable<Frame> frames) {
   final resolved = <Frame>[];
-  for (final frame in list) {
-    if (!_isWasmFrame(frame)) {
-      resolved.add(frame);
-      continue;
-    }
+  for (final frame in frames) {
     final match = _memberLocation.firstMatch(frame.member ?? '');
     if (match == null) {
       continue;
@@ -40,8 +34,6 @@ List<Frame> resolveWasmFrames(Iterable<Frame> frames) {
   }
   return resolved;
 }
-
-bool _isWasmFrame(Frame frame) => frame.uri.path.endsWith('.wasm');
 
 /// `<member> at <uri>:<line>:<column>` with an optional `inner` or
 /// `trampoline` suffix the compiler adds.

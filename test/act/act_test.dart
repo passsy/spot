@@ -164,7 +164,7 @@ void actTests() {
     });
 
     testWidgets('tap throws if widget is obstructed by another widget',
-        (tester) async {
+        skip: kIsWasm, (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Padding(
@@ -256,7 +256,7 @@ void actTests() {
     });
 
     testWidgets('tap throws when widget is wrapped in IgnorePointer',
-        (tester) async {
+        skip: kIsWasm, (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Center(
@@ -309,7 +309,7 @@ void actTests() {
       });
 
       testWidgets('tap throws when Visibility is not interactive',
-          (tester) async {
+          skip: kIsWasm, (tester) async {
         await tester.pumpWidget(
           MaterialApp(
             home: Center(
@@ -370,7 +370,7 @@ void actTests() {
     });
 
     testWidgets('tap throws when widget is wrapped in SizedBox.shrink',
-        (tester) async {
+        skip: kIsWasm, (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Center(
@@ -866,7 +866,7 @@ void actTests() {
       expect(reason.hitTest.path, isNotEmpty);
     });
 
-    testWidgets('reports an ignored reason', (tester) async {
+    testWidgets('reports an ignored reason', skip: kIsWasm, (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Center(
@@ -911,7 +911,7 @@ void actTests() {
     });
 
     testWidgets('names the widget that introduced the IgnorePointer',
-        (tester) async {
+        skip: kIsWasm, (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Center(
@@ -990,7 +990,7 @@ void actTests() {
       );
     });
 
-    testWidgets('reports a covered reason', (tester) async {
+    testWidgets('reports a covered reason', skip: kIsWasm, (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Stack(
@@ -1159,7 +1159,7 @@ void actTests() {
       expect(reason.absorbPointer.element, same(outer));
     });
 
-    testWidgets('reports an offstage reason', (tester) async {
+    testWidgets('reports an offstage reason', skip: kIsWasm, (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Center(
@@ -1594,7 +1594,8 @@ void actTests() {
       }
       await future;
     });
-    testWidgets('tapAt shows items in the timeline', (tester) async {
+    testWidgets('tapAt shows items in the timeline', skip: kIsWasm,
+        (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Stack(

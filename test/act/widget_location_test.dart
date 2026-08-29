@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
@@ -5,7 +6,7 @@ import 'package:spot/src/spot/widget_location.dart';
 
 void main() {
   testWidgets('reports the location where the widget was created',
-      (tester) async {
+      skip: kIsWasm, (tester) async {
     await tester.pumpWidget(
       const MaterialApp(
         home: Text('hello'),
@@ -20,7 +21,7 @@ void main() {
   });
 
   testWidgets('follows the widget when a rebuild moves the constructor call',
-      (tester) async {
+      skip: kIsWasm, (tester) async {
     // Both branches build a Text into the same slot, so the Element is reused
     // while its widget comes from a different line. A location cached per
     // Element would keep reporting the first branch.

@@ -49,11 +49,6 @@ jobs:
         run: flutter pub get
 
       # dart2wasm has no dart:html, so this fails to compile if spot ever
-      # reaches for it again. test/act is left out because dart2wasm does not
-      # support --track-widget-creation, so the widget creation locations those
-      # tests assert on do not exist there.
+      # reaches for it again. Tests that cannot work there skip on kIsWasm.
       - name: Run widget tests on Chrome compiled to Wasm
-        run: >
-          flutter test --platform chrome --wasm
-          test/example_test.dart test/spot/ test/selectors/
-          test/screenshot/ test/widgets/ test/fonts/
+        run: flutter test --platform chrome --wasm
