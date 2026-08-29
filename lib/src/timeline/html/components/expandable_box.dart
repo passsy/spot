@@ -48,10 +48,11 @@ class ExpandableBoxState extends State<ExpandableBox> {
               // Casts between interop types are unchecked, so ask what the
               // target really is instead of trusting the cast to fail.
               final target = e.target;
-              final contentHeight = target != null && target.isA<web.Element>()
-                  ? (target as web.Element).previousElementSibling?.scrollHeight
-                  : null;
-              setState(() => expandedTo = contentHeight);
+              if (target == null || !target.isA<web.Element>()) {
+                return;
+              }
+              final content = (target as web.Element).previousElementSibling;
+              setState(() => expandedTo = content?.scrollHeight);
             }
           },
         },

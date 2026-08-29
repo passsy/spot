@@ -17,22 +17,18 @@ import 'package:stack_trace/stack_trace.dart';
 /// the callers match on. Frames the compiler emitted without a location cannot
 /// be attributed to a file and are dropped.
 List<Frame> resolveFrames(Iterable<Frame> frames) {
-  final resolved = <Frame>[];
-  for (final frame in frames) {
-    final match = _memberLocation.firstMatch(frame.member ?? '');
-    if (match == null) {
-      continue;
-    }
-    resolved.add(
-      Frame(
-        _readableUri(match.group(2)!),
-        int.tryParse(match.group(3)!),
-        int.tryParse(match.group(4)!),
-        _readableMember(match.group(1)!),
-      ),
-    );
-  }
-  return resolved;
+  return frames
+      .map((frame) => _memberLocation.firstMatch(frame.member ?? ''))
+      .nonNulls
+      .map(
+        (match) => Frame(
+          _readableUri(match.group(2)!),
+          int.tryParse(match.group(3)!),
+          int.tryParse(match.group(4)!),
+          _readableMember(match.group(1)!),
+        ),
+      )
+      .toList();
 }
 
 /// `<member> at <uri>:<line>:<column>` with an optional `inner` or
@@ -46,8 +42,19 @@ final RegExp _hostedPackage =
 /// A package shipped inside an SDK, `…/flutter/packages/flutter_test/lib/x.dart`.
 final RegExp _sdkPackage = RegExp(r'/packages/([a-zA-Z_0-9]+)/lib/(.+)$');
 
+/// A Dart SDK library, `org-dartlang-sdk:///dart-sdk/lib/async/zone.dart`.
+final RegExp _dartLibrary = RegExp('^/dart-sdk/lib/([a-zA-Z_0-9]+)/');
+
 Uri _readableUri(String raw) {
   final uri = Uri.parse(raw);
+  if (uri.scheme == 'org-dartlang-sdk') {
+    // Becomes a dart: uri so that Frame.isCore recognises it, the way the
+    // other compilers report SDK frames.
+    final library = _dartLibrary.firstMatch(uri.path);
+    if (library != null) {
+      return Uri.parse('dart:${library.group(1)}');
+    }
+  }
   if (uri.scheme == 'org-dartlang-app') {
     // `flutter test` compiles with the test directory as the application root.
     return Uri.parse('test${uri.path}');

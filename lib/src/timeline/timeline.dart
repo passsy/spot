@@ -507,7 +507,10 @@ enum TimelineMode {
 Frame? mostRelevantCaller({Trace? trace, Frame? fallback}) {
   final frames = resolveFrames((trace ?? Trace.current()).frames);
 
-  final nonPackageFrames = frames.where((frame) => frame.package == null);
+  // SDK frames carry no package either, and the fallback below used to land on
+  // one of those whenever no test file matched.
+  final nonPackageFrames =
+      frames.where((frame) => frame.package == null && !isSdkFrame(frame));
   final testFileCaller = nonPackageFrames.where((frame) {
     final lib = frame.library;
     return lib.startsWith('test/') && lib.endsWith('_test.dart');

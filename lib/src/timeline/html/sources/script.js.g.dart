@@ -5019,22 +5019,23 @@ return b.b=A.cN(A.c([A.hB(A.c([new A.z(s.a.c+":",null)],n)),new A.z(" "+s.a.d+" 
 case 7:case 3:return 0
 case 1:return b.c=o.at(-1),3}}}}}
 A.eq.prototype={
-$1(a){var s,r,q,p
+$1(a){var s,r,q
 A.f(a)
 s=this.a
 if(s.d!=null)s.R(new A.eo(s))
 else{r=A.B(a.target)
-if(r!=null)q=A.L(r,"Element")
-else q=!1
-if(q){q=A.B(r.previousElementSibling)
-p=q==null?null:A.U(q.scrollHeight)}else p=null
-s.R(new A.ep(s,p))}},
+if(r!=null){q=A.L(r,"Element")
+q=!q}else q=!0
+if(q)return
+s.R(new A.ep(s,A.B(r.previousElementSibling)))}},
 $S:2}
 A.eo.prototype={
 $0(){return this.a.d=null},
 $S:0}
 A.ep.prototype={
-$0(){return this.a.d=this.b},
+$0(){var s=this.b
+s=s==null?null:A.U(s.scrollHeight)
+return this.a.d=s},
 $S:0}
 A.be.prototype={
 ab(){return new A.bf()}}
