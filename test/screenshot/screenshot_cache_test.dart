@@ -224,7 +224,7 @@ void main() {
             ),
           ),
         );
-        return takeScreenshot(
+        return await takeScreenshot(
           print: false,
           element: tester.element(find.byKey(const Key('box'))),
           annotators: [CrosshairAnnotator(centerPosition: Offset(50, 50))],

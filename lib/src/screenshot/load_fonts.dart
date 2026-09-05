@@ -76,7 +76,14 @@ Future<void> loadAppFonts() async {
   FrameClock.startCounting();
   final existingFuture = _loadAppFontsFuture;
   if (existingFuture != null) {
-    return existingFuture;
+    // Each widget test has its own fake-async zone. This cached future may
+    // already be complete but belong to a previous test, whose microtask queue
+    // is no longer pumped. Awaiting it directly can therefore hang this test.
+    // Future.value copies the completed result into a future in the current
+    // zone, so the await continuation uses this test's microtask queue.
+    // Keep this wrapper: app_font_test.dart exercises repeated loadAppFonts
+    // calls across widget tests and hangs without it.
+    return await Future<void>.value(existingFuture);
   }
 
   if (kIsWeb) {
@@ -84,7 +91,7 @@ Future<void> loadAppFonts() async {
     print('⚠️ - loadAppFonts is not supported on the web!');
     final future = Future<void>.value();
     _loadAppFontsFuture = future;
-    return future;
+    return await future;
   }
 
   final future = _loadAppFontsOnce();
