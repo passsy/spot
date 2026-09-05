@@ -25,8 +25,7 @@ dependencies:
   test_api: ">=0.5.0 <0.8.0"
 
 dev_dependencies:
-  # Allow older lint releases for the minimum-SDK test jobs.
-  lint: ^2.5.0
+  lint: ^2.1.0
   test: ^1.24.0
   test_process: ^2.1.0
 
