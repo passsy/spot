@@ -255,7 +255,7 @@ class HighlightAnnotator implements ScreenshotAnnotator {
     }
 
     final picture = recorder.endRecording();
-    return picture.toImage(image.width, image.height);
+    return await picture.toImage(image.width, image.height);
   }
 }
 

@@ -17,6 +17,8 @@ jobs:
       with:
         channel: 'stable'
     - run: cd hot_restart_timeline && flutter pub get
+    - run: flutter pub upgrade lint
+    - run: cd hot_restart_timeline && flutter pub upgrade lint
     - run: flutter analyze --fatal-infos --fatal-warnings
     - run: |
         dart format lib/src/timeline/html/sources/script.js.g.dart

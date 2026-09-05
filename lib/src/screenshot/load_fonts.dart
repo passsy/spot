@@ -68,15 +68,17 @@ Future<void>? _loadAppFontsFuture;
 ///
 /// Because showing emojis in test requires changes to you app code (set fallback)
 /// [loadAppFonts] does not automatically load system emoji fonts for you.
-Future<void> loadAppFonts() async {
+Future<void> loadAppFonts() {
   TestWidgetsFlutterBinding.ensureInitialized();
   // Loading fonts is spot in use, usually from flutter_test_config.dart
   // before any test ran, which is what makes the first test's frames counted
   // from the very first one.
   FrameClock.startCounting();
+  // Wrap the cached future in the current zone so repeated calls work across
+  // the separate fake-async zones used by widget tests.
   final existingFuture = _loadAppFontsFuture;
   if (existingFuture != null) {
-    return existingFuture;
+    return Future<void>.value(existingFuture);
   }
 
   if (kIsWeb) {
@@ -90,12 +92,10 @@ Future<void> loadAppFonts() async {
   final future = _loadAppFontsOnce();
   _loadAppFontsFuture = future;
 
-  try {
-    await future;
-  } catch (e, stackTrace) {
+  return future.onError((Object error, StackTrace stackTrace) {
     _loadAppFontsFuture = null;
-    Error.throwWithStackTrace(e, stackTrace);
-  }
+    Error.throwWithStackTrace(error, stackTrace);
+  });
 }
 
 Future<void> _loadAppFontsOnce() async {
