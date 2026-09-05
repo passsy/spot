@@ -76,7 +76,13 @@ Future<void> loadAppFonts() async {
   FrameClock.startCounting();
   final existingFuture = _loadAppFontsFuture;
   if (existingFuture != null) {
-    // Wrap the cached future in this zone before awaiting it across widget tests.
+    // Each widget test has its own fake-async zone. This cached future may
+    // already be complete but belong to a previous test, whose microtask queue
+    // is no longer pumped. Awaiting it directly can therefore hang this test.
+    // Future.value copies the completed result into a future in the current
+    // zone, so the await continuation uses this test's microtask queue.
+    // Keep this wrapper: app_font_test.dart exercises repeated loadAppFonts
+    // calls across widget tests and hangs without it.
     return await Future<void>.value(existingFuture);
   }
 
