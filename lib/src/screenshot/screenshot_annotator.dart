@@ -205,7 +205,7 @@ class HighlightAnnotator implements ScreenshotAnnotator {
 
   @override
   Future<ui.Image> annotate(ui.Image image) async {
-    await _loadAnnotationFont();
+    await _loadRobotoFont();
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder);
 
@@ -392,16 +392,16 @@ bool get annotationFontLoaded => _annotationFontLoaded;
 bool _annotationFontLoaded = false;
 Future<void>? _annotationFontFuture;
 
-Future<void> _loadAnnotationFont() async {
+Future<void> _loadRobotoFont() async {
   if (_annotationFontLoaded ||
       TestWidgetsFlutterBinding.instance is LiveTestWidgetsFlutterBinding) {
     return;
   }
-  final future = _annotationFontFuture ??= _loadAnnotationFontOnce();
+  final future = _annotationFontFuture ??= _loadRobotoFontOnce();
   await Future<void>.value(future);
 }
 
-Future<void> _loadAnnotationFontOnce() async {
+Future<void> _loadRobotoFontOnce() async {
   try {
     final fontLoader = FontLoader('Test-Roboto')
       ..addFont(rootBundle.load('packages/spot/lib/assets/Roboto-Regular.ttf'));
