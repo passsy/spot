@@ -397,18 +397,18 @@ Future<void> _loadAnnotationFont() async {
       TestWidgetsFlutterBinding.instance is LiveTestWidgetsFlutterBinding) {
     return;
   }
-  final future = _annotationFontFuture ??= () async {
-    final fontLoader = FontLoader('Test-Roboto');
-    fontLoader.addFont(
-      rootBundle.load('packages/spot/lib/assets/Roboto-Regular.ttf'),
-    );
+  final future = _annotationFontFuture ??= _loadAnnotationFontOnce();
+  await Future<void>.value(future);
+}
+
+Future<void> _loadAnnotationFontOnce() async {
+  try {
+    final fontLoader = FontLoader('Test-Roboto')
+      ..addFont(rootBundle.load('packages/spot/lib/assets/Roboto-Regular.ttf'));
     await fontLoader.load();
     _annotationFontLoaded = true;
-  }();
-  try {
-    await Future<void>.value(future);
-  } catch (_) {
+  } catch (error, stackTrace) {
     _annotationFontFuture = null;
-    rethrow;
+    Error.throwWithStackTrace(error, stackTrace);
   }
 }
