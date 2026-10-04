@@ -1,3 +1,7 @@
+// Timeline report rendering is skipped on web.
+@TestOn('vm')
+library;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_test/flutter_test.dart';
