@@ -1,7 +1,4 @@
-// Timeline report rendering is skipped on web.
-@TestOn('vm')
-library;
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -9,8 +6,9 @@ import 'package:spot/spot.dart';
 import 'package:spot/src/screenshot/screenshot_annotator.dart';
 
 void main() {
+  // Timeline report rendering is skipped on web.
   testWidgets('report font update completes without settling a leaked ticker',
-      (tester) async {
+      skip: kIsWeb, (tester) async {
     var fontChanges = 0;
     void onFontsChanged() => fontChanges++;
     tester.binding.systemFonts.addListener(onFontsChanged);
@@ -40,7 +38,7 @@ void main() {
   });
 
   testWidgets('later reports reuse the font across widget test zones',
-      (tester) async {
+      skip: kIsWeb, (tester) async {
     var fontChanges = 0;
     void onFontsChanged() => fontChanges++;
     tester.binding.systemFonts.addListener(onFontsChanged);
