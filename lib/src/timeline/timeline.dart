@@ -10,6 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:nanoid2/nanoid2.dart';
 import 'package:spot/src/flutter/frame_clock.dart';
 import 'package:spot/src/screenshot/screenshot.dart';
+import 'package:spot/src/screenshot/screenshot_annotator.dart';
 import 'package:spot/src/spot/tree_snapshot.dart';
 import 'package:spot/src/timeline/html/print_html.dart';
 import 'package:spot/src/timeline/print_console.dart';
@@ -329,7 +330,19 @@ final class _Timeline extends Timeline {
   ///
   /// Prints the timeline to console, as link to a html file or plain text
   Future<void> _onPostTest() async {
+    final fontWasLoaded = annotationFontLoaded;
     await _renderTimeline();
+    if (!fontWasLoaded && annotationFontLoaded) {
+      final binding = TestWidgetsFlutterBinding.instance;
+      if (binding is AutomatedTestWidgetsFlutterBinding) {
+        // Report rendering can load the annotation font after Flutter's final
+        // test pump. The font-change notification schedules text relayout even
+        // for Flutter's own "Test finished" widget. Finish that frame before
+        // postTest checks for pending callbacks. One pump completes our font
+        // update; it does not settle animations or disable the leak checks.
+        await binding.pump();
+      }
+    }
     for (final tearDown in _tearDowns.toList()) {
       await tearDown();
       _tearDowns.remove(tearDown);

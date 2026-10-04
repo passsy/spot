@@ -205,14 +205,7 @@ class HighlightAnnotator implements ScreenshotAnnotator {
 
   @override
   Future<ui.Image> annotate(ui.Image image) async {
-    final binding = TestWidgetsFlutterBinding.instance;
-    if (binding is! LiveTestWidgetsFlutterBinding) {
-      final fontLoader = FontLoader('Test-Roboto');
-      final fontBytes =
-          await rootBundle.load('packages/spot/lib/assets/Roboto-Regular.ttf');
-      fontLoader.addFont(Future.sync(() => fontBytes));
-      await fontLoader.load();
-    }
+    await _loadAnnotationFont();
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder);
 
@@ -387,5 +380,35 @@ class ArrowAnnotator extends ScreenshotAnnotator {
 
     final picture = recorder.endRecording();
     return await picture.toImage(image.width, image.height);
+  }
+}
+
+/// Whether the font used by highlight labels has finished loading.
+///
+/// Timeline teardown uses this to finish the font-change frame when rendering
+/// a report loads the font for the first time, after Flutter's final test pump.
+bool get annotationFontLoaded => _annotationFontLoaded;
+
+bool _annotationFontLoaded = false;
+Future<void>? _annotationFontFuture;
+
+Future<void> _loadAnnotationFont() async {
+  if (_annotationFontLoaded ||
+      TestWidgetsFlutterBinding.instance is LiveTestWidgetsFlutterBinding) {
+    return;
+  }
+  final future = _annotationFontFuture ??= () async {
+    final fontLoader = FontLoader('Test-Roboto');
+    fontLoader.addFont(
+      rootBundle.load('packages/spot/lib/assets/Roboto-Regular.ttf'),
+    );
+    await fontLoader.load();
+    _annotationFontLoaded = true;
+  }();
+  try {
+    await Future<void>.value(future);
+  } catch (_) {
+    _annotationFontFuture = null;
+    rethrow;
   }
 }
