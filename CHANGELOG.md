@@ -4,7 +4,9 @@
 
 - Breaking: spot now requires Dart 3.4 / Flutter 3.22. Jaspr, which renders the timeline report, is updated to 0.17.1. #167
 - New: Bundle the `spot-testing` AI agent skill for consumers to install with `dart run skills@ get --package spot`. #172
+- New: The test suite runs compiled to WebAssembly (`flutter test --platform chrome --wasm`). spot's web code uses `package:universal_web` instead of the deprecated `dart:html`, and caller locations are reconstructed from dart2wasm stack traces, which report every frame at `main.dart.wasm`. #168
 - Fix: Timeline reports no longer leave font-change callbacks pending during widget test teardown on Flutter master. #174
+- Fix: Timeline events compiled for the web name the test file as their caller instead of a Dart SDK file. #168
 
 ## 0.20.1
 
