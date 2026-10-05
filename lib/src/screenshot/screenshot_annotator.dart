@@ -205,14 +205,7 @@ class HighlightAnnotator implements ScreenshotAnnotator {
 
   @override
   Future<ui.Image> annotate(ui.Image image) async {
-    final binding = TestWidgetsFlutterBinding.instance;
-    if (binding is! LiveTestWidgetsFlutterBinding) {
-      final fontLoader = FontLoader('Test-Roboto');
-      final fontBytes =
-          await rootBundle.load('packages/spot/lib/assets/Roboto-Regular.ttf');
-      fontLoader.addFont(Future.sync(() => fontBytes));
-      await fontLoader.load();
-    }
+    await _loadRobotoFont();
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder);
 
@@ -387,5 +380,33 @@ class ArrowAnnotator extends ScreenshotAnnotator {
 
     final picture = recorder.endRecording();
     return await picture.toImage(image.width, image.height);
+  }
+}
+
+/// The pending or completed load of the font used by highlight labels.
+///
+/// A font registered with the engine stays registered for the whole isolate,
+/// so it is loaded once and shared by all tests of a file. Loading it again
+/// would not change what is drawn, but every load makes the engine announce a
+/// font change, which schedules a relayout of all text on screen.
+Future<void>? _annotationFontFuture;
+
+Future<void> _loadRobotoFont() async {
+  if (TestWidgetsFlutterBinding.instance is LiveTestWidgetsFlutterBinding) {
+    return;
+  }
+  await (_annotationFontFuture ??= _loadRobotoFontOnce());
+}
+
+Future<void> _loadRobotoFontOnce() async {
+  try {
+    final fontLoader = FontLoader('Test-Roboto')
+      ..addFont(rootBundle.load('packages/spot/lib/assets/Roboto-Regular.ttf'));
+    await fontLoader.load();
+  } catch (error, stackTrace) {
+    // Forget the failed attempt, so the next annotation tries again instead of
+    // rethrowing this error forever.
+    _annotationFontFuture = null;
+    Error.throwWithStackTrace(error, stackTrace);
   }
 }
