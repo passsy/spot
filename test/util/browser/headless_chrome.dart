@@ -18,8 +18,8 @@ class HeadlessChrome {
   /// test — unless `SPOT_REQUIRE_BROWSER_TESTS` is set, which is how the CI
   /// job that exists to run these tests keeps itself from passing by skipping.
   ///
-  /// Starting the browser costs seconds on a cold CI machine, so a suite opens
-  /// one in `setUpAll` and gives each test a page of its own.
+  /// Starting the browser costs seconds on a cold CI machine, which is what
+  /// the suite's `@Timeout` is for.
   static Future<HeadlessChrome?> launch() async {
     final executable = _findChrome();
     if (executable == null) {

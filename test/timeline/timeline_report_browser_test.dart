@@ -21,28 +21,15 @@ import '../util/browser/headless_chrome.dart';
 /// document that is loaded over `file:` with no server to resolve anything.
 /// Every assertion below fails when the client app is kept from hydrating.
 void main() {
-  // Starting Chrome costs seconds on a cold CI machine, enough on its own to
-  // blow the default per-test timeout, so the browser is opened once for the
-  // suite and each test gets a tab of its own.
-  HeadlessChrome? chrome;
-
-  setUpAll(() async {
-    chrome = await HeadlessChrome.launch();
-  });
-
-  tearDownAll(() async {
-    await chrome?.close();
-  });
-
   test('the report hydrates without errors in the console', () async {
-    final page = await _openReport(chrome);
+    final page = await _openReport();
     if (page == null) return;
 
     expect(page.errors, isEmpty);
   });
 
   test('screenshots load when the report is opened as a file', () async {
-    final page = await _openReport(chrome);
+    final page = await _openReport();
     if (page == null) return;
 
     // The report has to declare its own base. Jaspr injects <base href="/">
@@ -71,7 +58,7 @@ void main() {
   });
 
   test('the copy button copies the test command', () async {
-    final page = await _openReport(chrome);
+    final page = await _openReport();
     if (page == null) return;
 
     // A real click, which a synthetic MouseEvent cannot be: without a user
@@ -106,12 +93,14 @@ const String _isHydrated = '''
 }
 ''';
 
-/// Opens a report in a tab of its own, or returns null when the test skips.
-Future<BrowserPage?> _openReport(HeadlessChrome? chrome) async {
+/// Opens a report in a browser of its own, or returns null when the test skips.
+Future<BrowserPage?> _openReport() async {
+  final chrome = await HeadlessChrome.launch();
   if (chrome == null) {
     markTestSkipped('No Chrome available to drive');
     return null;
   }
+  addTearDown(chrome.close);
 
   final page = await chrome.newPage();
   await page.open(await _writeReport());
