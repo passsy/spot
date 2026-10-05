@@ -357,14 +357,16 @@ final class _Timeline extends Timeline {
       binding.systemFonts.removeListener(onFontsChanged);
     }
 
-    // Only the automated binding needs help. The live binding draws frames on
-    // its own and the annotation font is never loaded there.
-    if (fontsChanged && binding is AutomatedTestWidgetsFlutterBinding) {
-      // One pump, not pumpAndSettle. The relayout callbacks are one-shot and
-      // gone after a single frame. A ticker the test leaked schedules itself
-      // again on every frame, so it is still pending afterwards and Flutter
-      // keeps reporting it.
-      await binding.pump();
+    if (fontsChanged) {
+      // Only the automated binding needs help. The live binding draws frames
+      // on its own and the annotation font is never loaded there.
+      if (binding is AutomatedTestWidgetsFlutterBinding) {
+        // One pump, not pumpAndSettle. The relayout callbacks are one-shot and
+        // gone after a single frame. A ticker the test leaked schedules itself
+        // again on every frame, so it is still pending afterwards and Flutter
+        // keeps reporting it.
+        await binding.pump();
+      }
     }
     for (final tearDown in _tearDowns.toList()) {
       await tearDown();
