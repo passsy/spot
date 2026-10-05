@@ -383,22 +383,19 @@ class ArrowAnnotator extends ScreenshotAnnotator {
   }
 }
 
-/// Whether the font used by highlight labels has finished loading.
+/// The pending or completed load of the font used by highlight labels.
 ///
-/// Timeline teardown uses this to finish the font-change frame when rendering
-/// a report loads the font for the first time, after Flutter's final test pump.
-bool get annotationFontLoaded => _annotationFontLoaded;
-
-bool _annotationFontLoaded = false;
+/// A font registered with the engine stays registered for the whole isolate,
+/// so it is loaded once and shared by all tests of a file. Loading it again
+/// would not change what is drawn, but every load makes the engine announce a
+/// font change, which schedules a relayout of all text on screen.
 Future<void>? _annotationFontFuture;
 
 Future<void> _loadRobotoFont() async {
-  if (_annotationFontLoaded ||
-      TestWidgetsFlutterBinding.instance is LiveTestWidgetsFlutterBinding) {
+  if (TestWidgetsFlutterBinding.instance is LiveTestWidgetsFlutterBinding) {
     return;
   }
-  final future = _annotationFontFuture ??= _loadRobotoFontOnce();
-  await Future<void>.value(future);
+  await (_annotationFontFuture ??= _loadRobotoFontOnce());
 }
 
 Future<void> _loadRobotoFontOnce() async {
@@ -406,8 +403,9 @@ Future<void> _loadRobotoFontOnce() async {
     final fontLoader = FontLoader('Test-Roboto')
       ..addFont(rootBundle.load('packages/spot/lib/assets/Roboto-Regular.ttf'));
     await fontLoader.load();
-    _annotationFontLoaded = true;
   } catch (error, stackTrace) {
+    // Forget the failed attempt, so the next annotation tries again instead of
+    // rethrowing this error forever.
     _annotationFontFuture = null;
     Error.throwWithStackTrace(error, stackTrace);
   }

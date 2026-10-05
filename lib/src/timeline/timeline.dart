@@ -10,7 +10,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:nanoid2/nanoid2.dart';
 import 'package:spot/src/flutter/frame_clock.dart';
 import 'package:spot/src/screenshot/screenshot.dart';
-import 'package:spot/src/screenshot/screenshot_annotator.dart';
 import 'package:spot/src/spot/tree_snapshot.dart';
 import 'package:spot/src/timeline/html/print_html.dart';
 import 'package:spot/src/timeline/print_console.dart';
@@ -330,18 +329,42 @@ final class _Timeline extends Timeline {
   ///
   /// Prints the timeline to console, as link to a html file or plain text
   Future<void> _onPostTest() async {
-    final fontWasLoaded = annotationFontLoaded;
-    await _renderTimeline();
-    if (!fontWasLoaded && annotationFontLoaded) {
-      final binding = TestWidgetsFlutterBinding.instance;
-      if (binding is AutomatedTestWidgetsFlutterBinding) {
-        // Report rendering can load the annotation font after Flutter's final
-        // test pump. The font-change notification schedules text relayout even
-        // for Flutter's own "Test finished" widget. Finish that frame before
-        // postTest checks for pending callbacks. One pump completes our font
-        // update; it does not settle animations or disable the leak checks.
-        await binding.pump();
-      }
+    final binding = TestWidgetsFlutterBinding.instance;
+
+    // Rendering the report may load a font, for example the one the screenshot
+    // annotations label their highlights with. The engine announces every
+    // loaded font on [PaintingBinding.systemFonts], and each text render
+    // object on screen, even Flutter's own "Test finished" widget, answers by
+    // scheduling a frame callback to lay itself out again.
+    //
+    // This runs as a tearDown, after the last pump of the test. Nothing would
+    // run that callback anymore, and Flutter fails an otherwise passing test
+    // in postTest because of the pending callback (since
+    // https://github.com/flutter/flutter/pull/193476).
+    //
+    // Listening for the font change itself, rather than asking the annotators
+    // whether they loaded a font, covers every font any part of the report
+    // loads, and keeps the timeline unaware of how annotations are drawn.
+    var fontsChanged = false;
+    void onFontsChanged() {
+      fontsChanged = true;
+    }
+
+    binding.systemFonts.addListener(onFontsChanged);
+    try {
+      await _renderTimeline();
+    } finally {
+      binding.systemFonts.removeListener(onFontsChanged);
+    }
+
+    // Only the automated binding needs help. The live binding draws frames on
+    // its own and the annotation font is never loaded there.
+    if (fontsChanged && binding is AutomatedTestWidgetsFlutterBinding) {
+      // One pump, not pumpAndSettle. The relayout callbacks are one-shot and
+      // gone after a single frame. A ticker the test leaked schedules itself
+      // again on every frame, so it is still pending afterwards and Flutter
+      // keeps reporting it.
+      await binding.pump();
     }
     for (final tearDown in _tearDowns.toList()) {
       await tearDown();
