@@ -5,6 +5,8 @@
 /// browser can reach, so the web implementation loads nothing and says so.
 library;
 
+import 'package:flutter_test/flutter_test.dart';
+import 'package:spot/src/flutter/frame_clock.dart';
 import 'package:spot/src/screenshot/load_fonts_web.dart'
     if (dart.library.io) 'package:spot/src/screenshot/load_fonts_io.dart'
     as impl;
@@ -68,7 +70,38 @@ import 'package:spot/src/screenshot/load_fonts_web.dart'
 /// Because showing emojis in test requires changes to you app code (set fallback)
 /// [loadAppFonts] does not automatically load system emoji fonts for you.
 /// {@endtemplate}
-Future<void> loadAppFonts() => impl.loadAppFonts();
+Future<void> loadAppFonts() async {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  // Loading fonts is spot in use, usually from flutter_test_config.dart
+  // before any test ran, which is what makes the first test's frames counted
+  // from the very first one.
+  FrameClock.startCounting();
+  final existingFuture = _loadAppFontsFuture;
+  if (existingFuture != null) {
+    // Each widget test has its own fake-async zone. This cached future may
+    // already be complete but belong to a previous test, whose microtask queue
+    // is no longer pumped. Awaiting it directly can therefore hang this test.
+    // Future.value copies the completed result into a future in the current
+    // zone, so the await continuation uses this test's microtask queue.
+    // Keep this wrapper: app_font_test.dart exercises repeated loadAppFonts
+    // calls across widget tests and hangs without it.
+    return await Future<void>.value(existingFuture);
+  }
+
+  final future = impl.loadAppFonts();
+  _loadAppFontsFuture = future;
+
+  try {
+    await future;
+  } catch (e, stackTrace) {
+    _loadAppFontsFuture = null;
+    Error.throwWithStackTrace(e, stackTrace);
+  }
+}
+
+/// Caches the one load per process, so repeated calls from every
+/// flutter_test_config.dart and test do the work once.
+Future<void>? _loadAppFontsFuture;
 
 /// {@template spot.loadFont}
 /// Loads a fontFamily consisting of multiple font files.

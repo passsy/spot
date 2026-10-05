@@ -475,7 +475,7 @@ class ImageDataRef {
   Future<void> materialize() async {
     if (_bytes != null) {
       // already materialized
-      return Future.value();
+      return;
     }
     final ByteData? byteData =
         // ignore: avoid_redundant_argument_values
@@ -506,7 +506,7 @@ class ImageDataRef {
       ui.PixelFormat.rgba8888,
       completer.complete,
     );
-    return completer.future;
+    return await completer.future;
   }
 
   /// The pixel data in raw RGBA format, 8bits per channel

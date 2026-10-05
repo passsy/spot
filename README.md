@@ -51,6 +51,19 @@ visualizes the steps of a widget test as HTML report with automatic screenshots,
 flutter pub add dev:spot
 ```
 
+### AI agent skill
+
+Spot ships a `spot-testing` skill with guidance for selectors, assertions, interactions, and timeline reports.
+After upgrading to a release that includes it, install the skill from your app's root:
+
+```bash
+dart run skills@ get --package spot
+```
+
+See [package skills](https://dart.dev/ai/package-skills) for CLI setup and supported agents.
+
+### Write a widget test
+
 1\. Replace widget assertions (`find`) with `spot`.<br/>
 2\. Replace interactions like `tester.tap()` with `act.tap()` to interact with widgets.
 

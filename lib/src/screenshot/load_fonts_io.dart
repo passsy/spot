@@ -12,34 +12,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/src/flutter/flutter_sdk.dart';
-import 'package:spot/src/flutter/frame_clock.dart';
-
-Future<void>? _loadAppFontsFuture;
 
 /// {@macro spot.loadAppFonts}
 Future<void> loadAppFonts() async {
-  TestWidgetsFlutterBinding.ensureInitialized();
-  // Loading fonts is spot in use, usually from flutter_test_config.dart
-  // before any test ran, which is what makes the first test's frames counted
-  // from the very first one.
-  FrameClock.startCounting();
-  final existingFuture = _loadAppFontsFuture;
-  if (existingFuture != null) {
-    return existingFuture;
-  }
-
-  final future = _loadAppFontsOnce();
-  _loadAppFontsFuture = future;
-
-  try {
-    await future;
-  } catch (e, stackTrace) {
-    _loadAppFontsFuture = null;
-    Error.throwWithStackTrace(e, stackTrace);
-  }
-}
-
-Future<void> _loadAppFontsOnce() async {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   await TestAsyncUtils.guard<void>(() async {

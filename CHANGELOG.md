@@ -1,8 +1,10 @@
 # Changelog
 
-## Unreleased
+## 0.21.0
 
-- Breaking: spot now requires Dart 3.4 / Flutter 3.22. Jaspr, which renders the timeline report, is updated to 0.17.1.
+- Breaking: spot now requires Dart 3.4 / Flutter 3.22. Jaspr, which renders the timeline report, is updated to 0.17.1. #167
+- New: Bundle the `spot-testing` AI agent skill for consumers to install with `dart run skills@ get --package spot`. #172
+- Fix: Timeline reports no longer leave font-change callbacks pending during widget test teardown on Flutter master. #174
 
 ## 0.20.1
 
