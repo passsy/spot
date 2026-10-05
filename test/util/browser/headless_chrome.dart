@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:puppeteer/puppeteer.dart' as pup;
+import 'package:spot/src/utils/ci.dart';
 
 /// Drives the generated timeline report in a real browser from the outside.
 ///
@@ -12,18 +13,25 @@ import 'package:puppeteer/puppeteer.dart' as pup;
 class HeadlessChrome {
   HeadlessChrome._(this._browser);
 
-  /// Puppeteer downloads its own Chromium when it is given no executable,
-  /// which would turn a missing browser into a 150MB download in the middle of
-  /// a test run. The browser is looked up instead, and a missing one skips the
-  /// test — unless `SPOT_REQUIRE_BROWSER_TESTS` is set, which is how the CI
-  /// job that exists to run these tests keeps itself from passing by skipping.
+  /// Only one CI job runs these, and it says so with
+  /// `SPOT_REQUIRE_BROWSER_TESTS`. Every hosted runner has a Chrome installed,
+  /// so without that gate each of the ten lanes would start a browser to learn
+  /// what the Linux job already knows, Windows and macOS included. A developer
+  /// machine is not a lane and runs them whenever a browser is there.
   ///
-  /// Starting the browser costs seconds on a cold CI machine, which is what
-  /// the suite's `@Timeout` is for.
+  /// Puppeteer downloads its own Chromium when it is given no executable, which
+  /// would turn a missing browser into a 150MB download in the middle of a test
+  /// run. The browser is looked up instead, and a missing one skips the test —
+  /// unless it was asked for, which keeps that job from passing by skipping.
   static Future<HeadlessChrome?> launch() async {
+    final wanted = Platform.environment['SPOT_REQUIRE_BROWSER_TESTS'] != null;
+    if (isCI && !wanted) {
+      return null;
+    }
+
     final executable = _findChrome();
     if (executable == null) {
-      if (Platform.environment['SPOT_REQUIRE_BROWSER_TESTS'] != null) {
+      if (wanted) {
         throw StateError(
           'No Chrome found, but SPOT_REQUIRE_BROWSER_TESTS is set. Point '
           'PUPPETEER_EXECUTABLE_PATH at a Chrome executable.',

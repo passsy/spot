@@ -75,9 +75,10 @@ jobs:
 
       # The timeline report is the one part of spot that only exists as HTML
       # and JavaScript. These tests open the generated file in Chrome and use
-      # it. They skip wherever no browser is installed, so this is the job that
-      # has to have one: SPOT_REQUIRE_BROWSER_TESTS turns a missing browser
-      # into a failure instead of a silent pass.
+      # it, and this is the only job that runs them: every other lane has a
+      # Chrome too, and starting one in each of them would cost minutes to
+      # learn the same thing. SPOT_REQUIRE_BROWSER_TESTS both asks for them
+      # here and turns a missing browser into a failure instead of a pass.
       - name: Run tests with a browser to drive
         env:
           PUPPETEER_EXECUTABLE_PATH: ${{ steps.setup-chrome.outputs.chrome-path }}

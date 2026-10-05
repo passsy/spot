@@ -97,7 +97,10 @@ const String _isHydrated = '''
 Future<BrowserPage?> _openReport() async {
   final chrome = await HeadlessChrome.launch();
   if (chrome == null) {
-    markTestSkipped('No Chrome available to drive');
+    markTestSkipped(
+      'Needs a browser to drive: none installed, or a CI lane that leaves '
+      'these to the Linux job',
+    );
     return null;
   }
   addTearDown(chrome.close);
