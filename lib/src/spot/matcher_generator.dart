@@ -1,12 +1,11 @@
 // ignore_for_file: unnecessary_string_escapes
 
-import 'dart:io';
-
 import 'package:dartx/dartx.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:spot/spot.dart';
+import 'package:spot/src/spot/matcher_file.dart' as impl;
 
 Type _typeOf<T>() => T;
 
@@ -29,27 +28,28 @@ extension CreateMatchers<W extends Widget> on WidgetSelector<W> {
   }
 
   /// Writes the generated matchers for the properties of [W] to a file.
+  ///
+  /// Deletes the file when [W] has no properties worth matching on.
+  ///
+  /// ```dart
+  /// spot<Container>().writeMatchersToFile(path: 'test/container.g.dart');
+  /// ```
+  ///
+  /// Generating matchers is a step you run once, from a test on the Dart VM.
+  /// A browser has no file system to write them to, so this throws there.
   void writeMatchersToFile({
     required String path,
     Map<String, String> propNameOverrides = const {},
     String? imports,
     bool Function(DiagnosticsNode node)? filter,
   }) {
-    final content = createMatcherString(
+    impl.writeMatchersToFile(
+      this,
+      path: path,
       propNameOverrides: propNameOverrides,
       imports: imports,
       filter: filter,
     );
-    final file = File(path);
-    if (content == null) {
-      if (file.existsSync()) {
-        file.deleteSync();
-      }
-    } else {
-      file
-        ..createSync(recursive: true)
-        ..writeAsStringSync(content);
-    }
   }
 
   /// Generates matchers for the properties of [W].

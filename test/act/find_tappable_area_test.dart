@@ -5,11 +5,12 @@ import 'package:spot/spot.dart';
 
 import '../util/assert_error.dart';
 import '../util/capture_console_output.dart';
+import '../util/wasm_skips.dart';
 import '../widgets/poke_test_widget.dart';
 
 void main() {
   testWidgets('Widget entirely covered, finds no tappable area.',
-      (tester) async {
+      skip: noWidgetLocationsOnWasm, (tester) async {
     bool tapped = false;
     await tester.pumpWidget(
       MaterialApp(
@@ -209,7 +210,8 @@ void main() {
       ),
     );
   });
-  testWidgets('Custom button with InkWell can be tapped', (tester) async {
+  testWidgets('Custom button with InkWell can be tapped',
+      skip: noWidgetLocationsOnWasm, (tester) async {
     int tapCount = 0;
     await tester.pumpWidget(
       MaterialApp(
@@ -253,7 +255,7 @@ void main() {
   });
 
   testWidgets('Size(0,0) Text in NavigationRailDestination can not be tapped',
-      (tester) async {
+      skip: noWidgetLocationsOnWasm, (tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(

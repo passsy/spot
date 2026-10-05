@@ -4,15 +4,14 @@
 /// Therefore, this and all imported libraries need to be platform agnostic or stubbed.
 library;
 
-// ignore: avoid_web_libraries_in_flutter, deprecated_member_use
-import 'dart:html' if (dart.library.io) '../web/web_stubs.dart' show window;
-
 import 'package:jaspr/jaspr.dart';
 import 'package:spot/src/timeline/html/components/events.dart';
 import 'package:spot/src/timeline/html/components/modal.dart';
 import 'package:spot/src/timeline/html/components/snackbar.dart';
 import 'package:spot/src/timeline/html/web/theme.dart';
 import 'package:spot/src/timeline/html/web/timeline_event.dart';
+import 'package:universal_web/js_interop.dart';
+import 'package:universal_web/web.dart' as web;
 
 /// The main entry point for the timeline web app.
 class TimelineApp extends StatefulComponent {
@@ -63,7 +62,7 @@ class TimelineAppState extends State<TimelineApp> {
       button(classes: "button-spot", onClick: () async {
         final command = 'flutter test --plain-name="${component.testName}"';
         try {
-          await window.navigator.clipboard?.writeText(command);
+          await web.window.navigator.clipboard.writeText(command).toDart;
           _snackBar.currentState!.show("Test command copied to clipboard");
         } catch (_) {
           _snackBar.currentState!.show("Failed to copy test command");

@@ -1,17 +1,17 @@
 // ignore_for_file: public_member_api_docs
 
 import 'dart:async';
-// ignore: avoid_web_libraries_in_flutter, deprecated_member_use
-import 'dart:html';
 
 import 'package:jaspr/browser.dart';
 import 'package:spot/src/timeline/html/components/timeline_app.dart';
 import 'package:spot/src/timeline/html/web/timeline_event.dart';
+import 'package:universal_web/js_interop.dart';
+import 'package:universal_web/web.dart' as web;
 
 void main() async {
-  await window.onLoad.first;
+  await web.EventStreamProviders.loadEvent.forTarget(web.window).first;
 
-  final selector = window.document.querySelector('meta[hot-restart="true"]');
+  final selector = web.document.querySelector('meta[hot-restart="true"]');
   if (selector != null) {
     _registerHotRestart();
   }
@@ -21,28 +21,30 @@ void main() async {
 }
 
 void _registerHotRestart() {
-  if (window.location.protocol == 'file:') {
+  if (web.window.location.protocol == 'file:') {
     return;
   }
   Timer.periodic(const Duration(milliseconds: 200), (timer) {
     reloadOnChange('/script.js');
-    reloadOnChange(window.location.href);
+    reloadOnChange(web.window.location.href);
   });
 }
 
 final Map<String, String?> previousContentMap = {};
 
 Future<void> reloadOnChange(String url) async {
-  final response = await HttpRequest.request(
-    url,
-    requestHeaders: {'cache': 'no-cache'},
-  );
-  final currentContent = response.responseText;
+  final response = await web.window
+      .fetch(
+        url.toJS,
+        web.RequestInit(cache: 'no-cache'),
+      )
+      .toDart;
+  final currentContent = await response.text().toDart;
   final previousContent = previousContentMap[url];
-  if (previousContent != null && previousContent != currentContent) {
-    window.location.reload();
+  if (previousContent != null && previousContent != currentContent.toDart) {
+    web.window.location.reload();
   }
-  previousContentMap[url] = currentContent; // Cache the current content
+  previousContentMap[url] = currentContent.toDart; // Cache the current content
 }
 
 /// The main entry point for the timeline web app.
