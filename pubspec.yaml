@@ -23,7 +23,7 @@ dependencies:
   nanoid2: ^2.0.0
   stack_trace: ^1.11.0
   test_api: ">=0.5.0 <0.8.0"
-  universal_web: ^1.1.1+1
+  universal_web: ^1.1.0
 
 dev_dependencies:
   jaspr_test: ^0.17.1
