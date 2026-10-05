@@ -8,6 +8,11 @@ import 'package:stack_trace/stack_trace.dart';
 Frame wasmFrame(String member) =>
     Frame(Uri.parse('http://localhost:1234/main.dart.wasm'), 1, 1, member);
 
+/// A frame the way DDC reports it without a source map: the url the browser
+/// loaded the compiled library from.
+Frame servedFrame(String path, {int line = 7, int column = 3}) =>
+    Frame(Uri.parse('http://localhost:1234$path'), line, column, 'f');
+
 void main() {
   group('dart2wasm frames', () {
     test('the application root becomes the test directory', () {
@@ -75,6 +80,66 @@ void main() {
       expect(frames.single.uri.toString(), 'test/a_test.dart');
     });
   }, skip: !kIsWasm);
+
+  group('dart2js and DDC frames', () {
+    test('a served dependency becomes a package uri', () {
+      final frames = resolveFrames([
+        servedFrame('/packages/stack_trace/src/stack_zone_specification.dart.js'),
+      ]);
+
+      expect(
+        frames.single.uri.toString(),
+        'package:stack_trace/src/stack_zone_specification.dart',
+      );
+      expect(frames.single.package, 'stack_trace');
+    });
+
+    test('a served suite file becomes a path in the test directory', () {
+      // `flutter test` serves the test directory as the server root.
+      final frames = resolveFrames([
+        servedFrame('/timeline/tap/act_tap_timeline_test_bodies.dart.js'),
+      ]);
+
+      expect(
+        frames.single.uri.toString(),
+        'test/timeline/tap/act_tap_timeline_test_bodies.dart',
+      );
+      expect(frames.single.package, isNull);
+    });
+
+    test('line, column and member survive the rewrite', () {
+      final frames = resolveFrames([
+        servedFrame('/a_test.dart.js', line: 235, column: 71),
+      ]);
+
+      expect(frames.single.line, 235);
+      expect(frames.single.column, 71);
+      expect(frames.single.member, 'f');
+    });
+
+    test('an SDK url is left alone', () {
+      // Naming the library from the path would get it wrong, and isSdkFrame
+      // already recognises these.
+      const path = '/dart-sdk/lib/_internal/js_dev_runtime/patch/async_patch.dart';
+      final frames = resolveFrames([servedFrame(path)]);
+
+      expect(frames.single.uri.toString(), 'http://localhost:1234$path');
+      expect(isSdkFrame(frames.single), isTrue);
+    });
+
+    test('javascript that was never a Dart library is left alone', () {
+      // The DDC runtime, for one, is not somebody's source file.
+      final frames = resolveFrames([servedFrame('/dart_sdk.js')]);
+
+      expect(frames.single.uri.toString(), 'http://localhost:1234/dart_sdk.js');
+    });
+
+    test('a uri a source map already resolved is left alone', () {
+      final resolved = Frame(Uri.parse('package:spot/src/act/act.dart'), 1, 2, 'f');
+
+      expect(resolveFrames([resolved]).single.uri, resolved.uri);
+    });
+  }, skip: !kIsWeb || kIsWasm);
 
   group('isSdkFrame', () {
     test('accepts the dart uri the VM and dart2wasm report', () {

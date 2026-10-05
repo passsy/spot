@@ -1,4 +1,7 @@
 @TestOn('vm')
+// Driving a real browser is slower than the default timeout allows for,
+// especially the first start on a cold CI machine.
+@Timeout(Duration(minutes: 2))
 library;
 
 import 'dart:io';
@@ -18,16 +21,29 @@ import '../util/browser/headless_chrome.dart';
 /// document that is loaded over `file:` with no server to resolve anything.
 /// Every assertion below fails when the client app is kept from hydrating.
 void main() {
-  test('the report hydrates without errors in the console', () async {
-    final chrome = await _openReport();
-    if (chrome == null) return;
+  // Starting Chrome costs seconds on a cold CI machine, enough on its own to
+  // blow the default per-test timeout, so the browser is opened once for the
+  // suite and each test gets a tab of its own.
+  HeadlessChrome? chrome;
 
-    expect(chrome.errors, isEmpty);
+  setUpAll(() async {
+    chrome = await HeadlessChrome.launch();
+  });
+
+  tearDownAll(() async {
+    await chrome?.close();
+  });
+
+  test('the report hydrates without errors in the console', () async {
+    final page = await _openReport(chrome);
+    if (page == null) return;
+
+    expect(page.errors, isEmpty);
   });
 
   test('screenshots load when the report is opened as a file', () async {
-    final chrome = await _openReport();
-    if (chrome == null) return;
+    final page = await _openReport(chrome);
+    if (page == null) return;
 
     // The report has to declare its own base. Jaspr injects <base href="/">
     // into a document that declares none, which sends every screenshot to the
@@ -35,11 +51,11 @@ void main() {
     // process, so asserting on the loaded image alone would only catch the
     // regression in whichever test happens to render first.
     expect(
-      await chrome.evaluate<int>("document.querySelectorAll('base').length"),
+      await page.evaluate<int>("document.querySelectorAll('base').length"),
       1,
     );
     expect(
-      await chrome.evaluate<String>(
+      await page.evaluate<String>(
         "document.querySelector('base').getAttribute('href')",
       ),
       './',
@@ -47,7 +63,7 @@ void main() {
     // A broken image still has a src and still renders an <img>, only its
     // intrinsic size gives it away.
     expect(
-      await chrome.evaluate<int>(
+      await page.evaluate<int>(
         "document.querySelector('img.thumbnail').naturalWidth",
       ),
       _screenshotWidth,
@@ -55,20 +71,20 @@ void main() {
   });
 
   test('the copy button copies the test command', () async {
-    final chrome = await _openReport();
-    if (chrome == null) return;
+    final page = await _openReport(chrome);
+    if (page == null) return;
 
     // A real click, which a synthetic MouseEvent cannot be: without a user
     // gesture the browser denies the clipboard and the button reports a
     // failure instead. This is also the one interaction here that proves the
     // handlers survived hydration of the server-rendered markup.
-    await chrome.click('.button-spot');
-    await chrome.waitUntil(
+    await page.click('.button-spot');
+    await page.waitUntil(
       "document.querySelector('#snackbar').classList.contains('show')",
       description: 'the snackbar showed',
     );
     expect(
-      await chrome.evaluate<String>(
+      await page.evaluate<String>(
         "document.querySelector('#snackbar').textContent",
       ),
       'Test command copied to clipboard',
@@ -90,14 +106,17 @@ const String _isHydrated = '''
 }
 ''';
 
-/// Opens a report in Chrome, or returns null when the test has to skip.
-Future<HeadlessChrome?> _openReport() async {
-  final chrome = await HeadlessChrome.launch();
-  if (chrome == null) return null;
+/// Opens a report in a tab of its own, or returns null when the test skips.
+Future<BrowserPage?> _openReport(HeadlessChrome? chrome) async {
+  if (chrome == null) {
+    markTestSkipped('No Chrome available to drive');
+    return null;
+  }
 
-  await chrome.open(await _writeReport());
-  await chrome.waitUntil(_isHydrated, description: 'the client app hydrated');
-  return chrome;
+  final page = await chrome.newPage();
+  await page.open(await _writeReport());
+  await page.waitUntil(_isHydrated, description: 'the client app hydrated');
+  return page;
 }
 
 const int _screenshotWidth = 40;

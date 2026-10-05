@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:puppeteer/puppeteer.dart' as pup;
-import 'package:test/test.dart';
 
 /// Drives the generated timeline report in a real browser from the outside.
 ///
@@ -11,22 +10,16 @@ import 'package:test/test.dart';
 /// bundle, inlined into a self-contained document opened over `file:` — and
 /// click it with a real user gesture.
 class HeadlessChrome {
-  HeadlessChrome._(this._browser, this._page) {
-    _page.onConsole.listen((message) {
-      if (message.type == pup.ConsoleMessageType.error) {
-        _errors.add('console.error: ${message.text}');
-      }
-    });
-    _page.onError.listen((error) => _errors.add('uncaught: ${error.message}'));
-  }
+  HeadlessChrome._(this._browser);
 
-  /// Starts a headless Chrome, or returns null when none is installed.
-  ///
   /// Puppeteer downloads its own Chromium when it is given no executable,
   /// which would turn a missing browser into a 150MB download in the middle of
   /// a test run. The browser is looked up instead, and a missing one skips the
   /// test — unless `SPOT_REQUIRE_BROWSER_TESTS` is set, which is how the CI
   /// job that exists to run these tests keeps itself from passing by skipping.
+  ///
+  /// Starting the browser costs seconds on a cold CI machine, so a suite opens
+  /// one in `setUpAll` and gives each test a page of its own.
   static Future<HeadlessChrome?> launch() async {
     final executable = _findChrome();
     if (executable == null) {
@@ -36,7 +29,6 @@ class HeadlessChrome {
           'PUPPETEER_EXECUTABLE_PATH at a Chrome executable.',
         );
       }
-      markTestSkipped('No Chrome available to drive');
       return null;
     }
 
@@ -47,11 +39,29 @@ class HeadlessChrome {
       noSandboxFlag: true,
       args: ['--allow-file-access-from-files'],
     );
-    addTearDown(browser.close);
-    return HeadlessChrome._(browser, await browser.newPage());
+    return HeadlessChrome._(browser);
   }
 
   final pup.Browser _browser;
+
+  /// Opens a new tab, with nothing left over from another test.
+  Future<BrowserPage> newPage() async =>
+      BrowserPage._(await _browser.newPage());
+
+  Future<void> close() => _browser.close();
+}
+
+/// One tab.
+class BrowserPage {
+  BrowserPage._(this._page) {
+    _page.onConsole.listen((message) {
+      if (message.type == pup.ConsoleMessageType.error) {
+        _errors.add('console.error: ${message.text}');
+      }
+    });
+    _page.onError.listen((error) => _errors.add('uncaught: ${error.message}'));
+  }
+
   final pup.Page _page;
   final List<String> _errors = [];
 
@@ -88,8 +98,6 @@ class HeadlessChrome {
     }
     throw StateError('Timed out waiting until $description.\n$condition');
   }
-
-  Future<void> close() => _browser.close();
 }
 
 /// The Chrome to drive, or null when there is none.
