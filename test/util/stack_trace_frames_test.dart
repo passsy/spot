@@ -84,7 +84,8 @@ void main() {
   group('dart2js and DDC frames', () {
     test('a served dependency becomes a package uri', () {
       final frames = resolveFrames([
-        servedFrame('/packages/stack_trace/src/stack_zone_specification.dart.js'),
+        servedFrame(
+            '/packages/stack_trace/src/stack_zone_specification.dart.js'),
       ]);
 
       expect(
@@ -120,7 +121,8 @@ void main() {
     test('an SDK url is left alone', () {
       // Naming the library from the path would get it wrong, and isSdkFrame
       // already recognises these.
-      const path = '/dart-sdk/lib/_internal/js_dev_runtime/patch/async_patch.dart';
+      const path =
+          '/dart-sdk/lib/_internal/js_dev_runtime/patch/async_patch.dart';
       final frames = resolveFrames([servedFrame(path)]);
 
       expect(frames.single.uri.toString(), 'http://localhost:1234$path');
@@ -135,7 +137,8 @@ void main() {
     });
 
     test('a uri a source map already resolved is left alone', () {
-      final resolved = Frame(Uri.parse('package:spot/src/act/act.dart'), 1, 2, 'f');
+      final resolved =
+          Frame(Uri.parse('package:spot/src/act/act.dart'), 1, 2, 'f');
 
       expect(resolveFrames([resolved]).single.uri, resolved.uri);
     });
