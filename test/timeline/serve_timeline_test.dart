@@ -1,9 +1,12 @@
+// Binds a real socket, which a browser cannot.
+@TestOn('vm')
+library;
+
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-
-import '../../tool/serve_timeline.dart';
+import 'package:spot/src/timeline/html/serve_timeline.dart';
 
 void main() {
   test('serves a static timeline and its assets over loopback HTTP', () async {
