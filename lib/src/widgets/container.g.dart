@@ -35,7 +35,9 @@ extension ContainerSelector on WidgetSelector<Container> {
   @useResult
   WidgetSelector<Container> withAlignment(AlignmentGeometry? value) {
     return withDiagnosticProp<AlignmentGeometry>(
-        'alignment', (it) => value == null ? it.isNull() : it.equals(value));
+      'alignment',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Container] where padding matches the condition.
@@ -58,7 +60,9 @@ extension ContainerSelector on WidgetSelector<Container> {
   @useResult
   WidgetSelector<Container> withPadding(EdgeInsetsGeometry? value) {
     return withDiagnosticProp<EdgeInsetsGeometry>(
-        'padding', (it) => value == null ? it.isNull() : it.equals(value));
+      'padding',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Container] where clipBehavior matches the condition.
@@ -81,7 +85,9 @@ extension ContainerSelector on WidgetSelector<Container> {
   @useResult
   WidgetSelector<Container> withClipBehavior(Clip? value) {
     return withDiagnosticProp<Clip>(
-        'clipBehavior', (it) => value == null ? it.isNull() : it.equals(value));
+      'clipBehavior',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Container] where background matches the condition.
@@ -104,7 +110,9 @@ extension ContainerSelector on WidgetSelector<Container> {
   @useResult
   WidgetSelector<Container> withBackground(Decoration? value) {
     return withDiagnosticProp<Decoration>(
-        'bg', (it) => value == null ? it.isNull() : it.equals(value));
+      'bg',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Container] where foreground matches the condition.
@@ -127,7 +135,9 @@ extension ContainerSelector on WidgetSelector<Container> {
   @useResult
   WidgetSelector<Container> withForeground(Decoration? value) {
     return withDiagnosticProp<Decoration>(
-        'fg', (it) => value == null ? it.isNull() : it.equals(value));
+      'fg',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Container] where constraints matches the condition.
@@ -150,7 +160,9 @@ extension ContainerSelector on WidgetSelector<Container> {
   @useResult
   WidgetSelector<Container> withConstraints(BoxConstraints? value) {
     return withDiagnosticProp<BoxConstraints>(
-        'constraints', (it) => value == null ? it.isNull() : it.equals(value));
+      'constraints',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Container] where margin matches the condition.
@@ -173,7 +185,9 @@ extension ContainerSelector on WidgetSelector<Container> {
   @useResult
   WidgetSelector<Container> withMargin(EdgeInsetsGeometry? value) {
     return withDiagnosticProp<EdgeInsetsGeometry>(
-        'margin', (it) => value == null ? it.isNull() : it.equals(value));
+      'margin',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Container] where transform matches the condition.
@@ -196,7 +210,9 @@ extension ContainerSelector on WidgetSelector<Container> {
   @useResult
   WidgetSelector<Container> withTransform(Matrix4? value) {
     return withDiagnosticProp<Matrix4>(
-        'transform', (it) => value == null ? it.isNull() : it.equals(value));
+      'transform',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 
@@ -209,7 +225,8 @@ extension ContainerMatcher on WidgetMatcher<Container> {
   /// spot<Container>().existsOnce().hasAlignmentWhere((it) => it.equals(Alignment.center));
   /// ```
   WidgetMatcher<Container> hasAlignmentWhere(
-      MatchProp<AlignmentGeometry> match) {
+    MatchProp<AlignmentGeometry> match,
+  ) {
     return hasDiagnosticProp<AlignmentGeometry>('alignment', match);
   }
 
@@ -221,7 +238,9 @@ extension ContainerMatcher on WidgetMatcher<Container> {
   /// ```
   WidgetMatcher<Container> hasAlignment(AlignmentGeometry? value) {
     return hasDiagnosticProp<AlignmentGeometry>(
-        'alignment', (it) => value == null ? it.isNull() : it.equals(value));
+      'alignment',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that padding of [Container] matches the condition in [match].
@@ -231,7 +250,8 @@ extension ContainerMatcher on WidgetMatcher<Container> {
   /// spot<Container>().existsOnce().hasPaddingWhere((it) => it.equals(EdgeInsets.all(8.0)));
   /// ```
   WidgetMatcher<Container> hasPaddingWhere(
-      MatchProp<EdgeInsetsGeometry> match) {
+    MatchProp<EdgeInsetsGeometry> match,
+  ) {
     return hasDiagnosticProp<EdgeInsetsGeometry>('padding', match);
   }
 
@@ -243,7 +263,9 @@ extension ContainerMatcher on WidgetMatcher<Container> {
   /// ```
   WidgetMatcher<Container> hasPadding(EdgeInsetsGeometry? value) {
     return hasDiagnosticProp<EdgeInsetsGeometry>(
-        'padding', (it) => value == null ? it.isNull() : it.equals(value));
+      'padding',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that clipBehavior of [Container] matches the condition in [match].
@@ -264,7 +286,9 @@ extension ContainerMatcher on WidgetMatcher<Container> {
   /// ```
   WidgetMatcher<Container> hasClipBehavior(Clip? value) {
     return hasDiagnosticProp<Clip>(
-        'clipBehavior', (it) => value == null ? it.isNull() : it.equals(value));
+      'clipBehavior',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that background of [Container] matches the condition in [match].
@@ -285,7 +309,9 @@ extension ContainerMatcher on WidgetMatcher<Container> {
   /// ```
   WidgetMatcher<Container> hasBackground(Decoration? value) {
     return hasDiagnosticProp<Decoration>(
-        'bg', (it) => value == null ? it.isNull() : it.equals(value));
+      'bg',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that foreground of [Container] matches the condition in [match].
@@ -306,7 +332,9 @@ extension ContainerMatcher on WidgetMatcher<Container> {
   /// ```
   WidgetMatcher<Container> hasForeground(Decoration? value) {
     return hasDiagnosticProp<Decoration>(
-        'fg', (it) => value == null ? it.isNull() : it.equals(value));
+      'fg',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that constraints of [Container] matches the condition in [match].
@@ -316,7 +344,8 @@ extension ContainerMatcher on WidgetMatcher<Container> {
   /// spot<Container>().existsOnce().hasConstraintsWhere((it) => it.equals(BoxConstraints.tight(Size(100, 100))));
   /// ```
   WidgetMatcher<Container> hasConstraintsWhere(
-      MatchProp<BoxConstraints> match) {
+    MatchProp<BoxConstraints> match,
+  ) {
     return hasDiagnosticProp<BoxConstraints>('constraints', match);
   }
 
@@ -328,7 +357,9 @@ extension ContainerMatcher on WidgetMatcher<Container> {
   /// ```
   WidgetMatcher<Container> hasConstraints(BoxConstraints? value) {
     return hasDiagnosticProp<BoxConstraints>(
-        'constraints', (it) => value == null ? it.isNull() : it.equals(value));
+      'constraints',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that margin of [Container] matches the condition in [match].
@@ -349,7 +380,9 @@ extension ContainerMatcher on WidgetMatcher<Container> {
   /// ```
   WidgetMatcher<Container> hasMargin(EdgeInsetsGeometry? value) {
     return hasDiagnosticProp<EdgeInsetsGeometry>(
-        'margin', (it) => value == null ? it.isNull() : it.equals(value));
+      'margin',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that transform of [Container] matches the condition in [match].
@@ -370,7 +403,9 @@ extension ContainerMatcher on WidgetMatcher<Container> {
   /// ```
   WidgetMatcher<Container> hasTransform(Matrix4? value) {
     return hasDiagnosticProp<Matrix4>(
-        'transform', (it) => value == null ? it.isNull() : it.equals(value));
+      'transform',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 

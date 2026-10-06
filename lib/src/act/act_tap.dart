@@ -23,9 +23,7 @@ TapInspection inspectTapSelector(WidgetSelector selector) {
     return _tapInspectionFailure(
       selectorDescription: selectorDescription,
       target: null,
-      reason: TapNotFoundReason(
-        selectorDescription: selectorDescription,
-      ),
+      reason: TapNotFoundReason(selectorDescription: selectorDescription),
       message: 'Could not find $selectorDescription in widget tree',
     );
   }
@@ -61,9 +59,7 @@ TapInspection inspectTapSelector(WidgetSelector selector) {
     return _tapInspectionFailure(
       selectorDescription: selectorDescription,
       target: target,
-      reason: TapNonRenderBoxReason(
-        renderObject: renderObject,
-      ),
+      reason: TapNonRenderBoxReason(renderObject: renderObject),
       message:
           "Widget '$selectorDescription' is associated to $renderObject which "
           "is not a RenderObject in the 2D Cartesian coordinate system "
@@ -87,8 +83,9 @@ TapInspection inspectTapSelector(WidgetSelector selector) {
   TapSamples collectSamples() => _collectSamples(renderObject);
 
   if (pokablePositions.hits.isEmpty) {
-    final centerPosition =
-        renderObject.localToGlobal(renderObject.size.center(Offset.zero));
+    final centerPosition = renderObject.localToGlobal(
+      renderObject.size.center(Offset.zero),
+    );
     return _inspectUntappableTarget(
       selectorDescription: selectorDescription,
       target: target,
@@ -440,10 +437,7 @@ TapInspection _inspectUntappableTarget({
     return coveredFailure;
   }
 
-  final reason = TapUnknownReason(
-    position: position,
-    hitTest: probe.hitTest,
-  );
+  final reason = TapUnknownReason(position: position, hitTest: probe.hitTest);
   return _tapInspectionFailure(
     selectorDescription: selectorDescription,
     target: target,
@@ -507,7 +501,8 @@ TapInspection? _inspectPointerBlocker({
   }
 
   final blocker = _tapWidgetInfo(blockerElement);
-  final location = blockerElement.debugWidgetLocation?.file.path ??
+  final location =
+      blockerElement.debugWidgetLocation?.file.path ??
       blockerElement.debugGetCreatorChain(100);
   final introducer = _findIntroducer(blockerElement);
   final introducedBy = introducer == null ? null : _tapWidgetInfo(introducer);
@@ -519,10 +514,7 @@ TapInspection? _inspectPointerBlocker({
       selectorDescription: selectorDescription,
       target: target,
       samples: samples,
-      reason: TapAbsorbedReason(
-        absorbPointer: blocker,
-        hitTest: hitTest,
-      ),
+      reason: TapAbsorbedReason(absorbPointer: blocker, hitTest: hitTest),
       message:
           "Widget '${target.widgetName}' is wrapped in AbsorbPointer and doesn't receive pointer events.\n"
           "AbsorbPointer is created at $location\n"
@@ -696,10 +688,7 @@ TapSamples _collectSamples(RenderBox renderBox) {
       hitTest: hitTest,
     );
   }).toList();
-  return TapSamples(
-    searchArea: pokablePositions.searchArea,
-    all: all,
-  );
+  return TapSamples(searchArea: pokablePositions.searchArea, all: all);
 }
 
 /// Works out how [coverElement] ends up in front of [targetElement].
@@ -730,13 +719,15 @@ CoverWidgetAnalysis? analyzeCoverWidget({
   }).toList();
   final firstUsefulParent =
       usefulParents.firstOrNull ?? commonAncestorChain.first;
-  final usefulToTarget =
-      targetChain.takeWhile((it) => it != firstUsefulParent).toList();
+  final usefulToTarget = targetChain
+      .takeWhile((it) => it != firstUsefulParent)
+      .toList();
   final receiverColumn =
       "(Cover - Received pointer event)\n${coverChain.joinToString(separator: '\n', transform: (it) => it.toStringShort())}";
   final targetColumn =
       "(Target for pointer event, below Cover)\n${usefulToTarget.joinToString(separator: '\n', transform: (it) => it.toStringShort())}";
-  final diagram = """
+  final diagram =
+      """
 ${_createColumns(receiverColumn, targetColumn)}
  │ ┌──────────────────────────────────────┘
 ${commonAncestor.toStringShort().trimRight()} (${commonAncestor.debugWidgetLocation?.file.path})
@@ -828,9 +819,11 @@ PokablePositions findPokablePositions(
         }
         continue;
       }
-      final probe =
-          collectHitTests ? probeHitTest(globalPosition, renderBox) : null;
-      final canPoke = probe?.hitsTarget ??
+      final probe = collectHitTests
+          ? probeHitTest(globalPosition, renderBox)
+          : null;
+      final canPoke =
+          probe?.hitsTarget ??
           canBePoked(position: globalPosition, target: renderBox);
       if (canPoke) {
         hits.add(globalPosition);
@@ -888,8 +881,9 @@ PokablePositions findPokablePositions(
   if (centerCanBePoked) {
     mostCenterPoint = centerOfPokablePoints;
   } else {
-    mostCenterPoint =
-        hits.minBy((it) => (it - centerOfPokablePoints).distanceSquared);
+    mostCenterPoint = hits.minBy(
+      (it) => (it - centerOfPokablePoints).distanceSquared,
+    );
   }
 
   return PokablePositions(
@@ -917,16 +911,12 @@ TapHitTestProbe probeHitTest(Offset position, RenderObject target) {
 /// Describes one hit test, dropping entries that belong to no [Element].
 ///
 /// The path keeps Flutter's order, innermost receiver first.
-TapHitTestInfo _tapHitTestInfo(
-  Offset position,
-  List<HitTestEntry> entries,
-) {
-  final path =
-      entries.mapNotNull((it) => it.element).map(_tapWidgetInfo).toList();
-  return TapHitTestInfo(
-    position: position,
-    path: path,
-  );
+TapHitTestInfo _tapHitTestInfo(Offset position, List<HitTestEntry> entries) {
+  final path = entries
+      .mapNotNull((it) => it.element)
+      .map(_tapWidgetInfo)
+      .toList();
+  return TapHitTestInfo(position: position, path: path);
 }
 
 /// Hit tests [position] and returns everything the event would travel through.
@@ -965,8 +955,9 @@ TapWidgetInfo _tapWidgetInfo(Element element) {
 String _createColumns(String receiver, String target) {
   final receiverLines = receiver.split('\n');
   final targetLines = target.split('\n');
-  final lines =
-      receiverLines.length > targetLines.length ? receiverLines : targetLines;
+  final lines = receiverLines.length > targetLines.length
+      ? receiverLines
+      : targetLines;
   const columnWidth = 40;
   const columnSeparator = ' ';
   final buffer = StringBuffer();
@@ -1004,9 +995,9 @@ class TapInspection {
     required this.tapPosition,
     required this.message,
     required Object? tapFailure,
-  })  : _samples = samples,
-        _tapFailure = tapFailure,
-        _tree = currentWidgetTreeSnapshot();
+  }) : _samples = samples,
+       _tapFailure = tapFailure,
+       _tree = currentWidgetTreeSnapshot();
 
   /// Human-readable selector description used in diagnostics.
   final String selectorDescription;
@@ -1275,10 +1266,8 @@ class TapWidgetInfo {
 /// Hit-test information for one inspected point.
 class TapHitTestInfo {
   /// Creates hit-test information.
-  TapHitTestInfo({
-    required this.position,
-    required List<TapWidgetInfo> path,
-  }) : path = List.unmodifiable(path);
+  TapHitTestInfo({required this.position, required List<TapWidgetInfo> path})
+    : path = List.unmodifiable(path);
 
   /// The global screen position that was hit-tested.
   final Offset position;
@@ -1331,10 +1320,8 @@ class TapHitSample {
 /// The points spot poked to find out whether a widget can be tapped.
 class TapSamples {
   /// Creates sampled hit-test information.
-  TapSamples({
-    required this.searchArea,
-    required List<TapHitSample> all,
-  }) : _all = List.unmodifiable(all);
+  TapSamples({required this.searchArea, required List<TapHitSample> all})
+    : _all = List.unmodifiable(all);
 
   /// The global rectangle covered by the sampled target.
   final Rect searchArea;
@@ -1387,8 +1374,7 @@ class TapSamples {
         sampleCount: entry.value,
         percent: _all.isEmpty ? 0 : entry.value / _all.length * 100,
       );
-    }).toList()
-      ..sort((a, b) => b.sampleCount.compareTo(a.sampleCount));
+    }).toList()..sort((a, b) => b.sampleCount.compareTo(a.sampleCount));
     return List.unmodifiable(blockers);
   }
 }
@@ -1420,9 +1406,7 @@ class TapBlocker {
 /// The target was not found.
 class TapNotFoundReason {
   /// Creates a not-found tap failure reason.
-  TapNotFoundReason({
-    required this.selectorDescription,
-  });
+  TapNotFoundReason({required this.selectorDescription});
 
   /// Human-readable selector description.
   final String selectorDescription;
@@ -1452,9 +1436,7 @@ class TapNoRenderObjectReason {
 /// The selected widget is not backed by a [RenderBox].
 class TapNonRenderBoxReason {
   /// Creates a non-render-box tap failure reason.
-  TapNonRenderBoxReason({
-    required this.renderObject,
-  });
+  TapNonRenderBoxReason({required this.renderObject});
 
   /// The render object that is not a [RenderBox].
   final RenderObject renderObject;
@@ -1501,10 +1483,7 @@ class TapZeroSizeReason {
 /// An [AbsorbPointer] prevents the target from receiving pointer events.
 class TapAbsorbedReason {
   /// Creates an absorbed tap failure reason.
-  TapAbsorbedReason({
-    required this.absorbPointer,
-    required this.hitTest,
-  });
+  TapAbsorbedReason({required this.absorbPointer, required this.hitTest});
 
   /// The [AbsorbPointer] that absorbs pointer events.
   final TapWidgetInfo absorbPointer;
@@ -1571,9 +1550,9 @@ class TapCoveredReason {
     required this.userRelevantAncestor,
     required List<TapWidgetInfo> targetChain,
     required List<TapWidgetInfo> coverChain,
-  })  : relevantCoveringWidgets = List.unmodifiable(relevantCoveringWidgets),
-        targetChain = List.unmodifiable(targetChain),
-        coverChain = List.unmodifiable(coverChain);
+  }) : relevantCoveringWidgets = List.unmodifiable(relevantCoveringWidgets),
+       targetChain = List.unmodifiable(targetChain),
+       coverChain = List.unmodifiable(coverChain);
 
   /// Hit-test path at the inspected position.
   final TapHitTestInfo hitTest;
@@ -1611,10 +1590,7 @@ class TapCoveredReason {
 /// the case at https://github.com/passsy/spot so it can get a real reason.
 class TapUnknownReason {
   /// Creates an unknown tap failure reason.
-  TapUnknownReason({
-    required this.position,
-    required this.hitTest,
-  });
+  TapUnknownReason({required this.position, required this.hitTest});
 
   /// Inspected global position.
   final Offset position;
@@ -1626,10 +1602,7 @@ class TapUnknownReason {
 /// The outcome of a single hit test, see [probeHitTest].
 class TapHitTestProbe {
   /// Creates a hit-test probe result.
-  TapHitTestProbe({
-    required this.hitsTarget,
-    required this.hitTest,
-  });
+  TapHitTestProbe({required this.hitsTarget, required this.hitTest});
 
   /// Whether the probed target was on the hit-test path.
   final bool hitsTarget;
@@ -1756,11 +1729,6 @@ extension RenderBoxGlobalRect on RenderBox {
   /// The rectangle occupied by this render box in global coordinates.
   Rect get globalRect {
     final position = localToGlobal(Offset.zero);
-    return Rect.fromLTWH(
-      position.dx,
-      position.dy,
-      size.width,
-      size.height,
-    );
+    return Rect.fromLTWH(position.dx, position.dy, size.width, size.height);
   }
 }

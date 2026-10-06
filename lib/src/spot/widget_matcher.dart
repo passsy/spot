@@ -38,10 +38,8 @@ abstract class WidgetMatcher<W extends Widget> {
 }
 
 class _WidgetMatcherImpl<W extends Widget> implements WidgetMatcher<W> {
-  _WidgetMatcherImpl({
-    required this.element,
-    required this.selector,
-  }) : widget = selector.mapElementToWidget(element);
+  _WidgetMatcherImpl({required this.element, required this.selector})
+    : widget = selector.mapElementToWidget(element);
 
   @override
   final Element element;
@@ -335,7 +333,7 @@ class MultiWidgetMatcher<W extends Widget> {
   /// This constructor takes a snapshot of matched widgets and creates a matcher
   /// for handling multiple widgets.
   const MultiWidgetMatcher.fromSnapshot(WidgetSnapshot<W> snapshot)
-      : _snapshot = snapshot;
+    : _snapshot = snapshot;
 
   /// The snapshot of widgets that this matcher is based on.
   ///
@@ -394,8 +392,9 @@ extension MultiWidgetMatcherExtensions<W extends Widget>
         matcher(wm);
         return true;
       } catch (e) {
-        matcherDescription =
-            e is PropertyCheckFailure ? e.matcherDescription : e.toString();
+        matcherDescription = e is PropertyCheckFailure
+            ? e.matcherDescription
+            : e.toString();
         return false;
       }
     });
@@ -434,8 +433,9 @@ extension MultiWidgetMatcherExtensions<W extends Widget>
         matcher(wm);
         return true;
       } catch (e) {
-        matcherDescription =
-            e is PropertyCheckFailure ? e.matcherDescription : e.toString();
+        matcherDescription = e is PropertyCheckFailure
+            ? e.matcherDescription
+            : e.toString();
         return false;
       }
     }).toList();
@@ -503,10 +503,7 @@ void _addAssertionToTimeline(
 /// Extension which throws a [PropertyCheckFailure] when a [CheckFailure] is detected.
 extension ThrowCheckFailure on CheckFailure? {
   /// Throws a [PropertyCheckFailure] if the [CheckFailure] is not `null`.
-  void throwPropertyCheckFailure<T>(
-    Condition<T> condition,
-    Object? actual,
-  ) {
+  void throwPropertyCheckFailure<T>(Condition<T> condition, Object? actual) {
     if (this == null) {
       return;
     }
@@ -526,10 +523,7 @@ extension ThrowCheckFailure on CheckFailure? {
 class PropertyCheckFailure extends TestFailure {
   /// Constructs a [PropertyCheckFailure] with a custom message and
   /// a description of the matcher that caused the failure.
-  PropertyCheckFailure(
-    super.message, {
-    required this.matcherDescription,
-  });
+  PropertyCheckFailure(super.message, {required this.matcherDescription});
 
   /// Description of the matcher that led to this failure.
   final String matcherDescription;

@@ -35,7 +35,9 @@ extension ImageSelector on WidgetSelector<Image> {
   @useResult
   WidgetSelector<Image> withImage(ImageProvider<Object>? value) {
     return withDiagnosticProp<ImageProvider<Object>>(
-        'image', (it) => value == null ? it.isNull() : it.equals(value));
+      'image',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where frameBuilder matches the condition.
@@ -58,7 +60,9 @@ extension ImageSelector on WidgetSelector<Image> {
   @useResult
   WidgetSelector<Image> withFrameBuilder(Function? value) {
     return withDiagnosticProp<Function>(
-        'frameBuilder', (it) => value == null ? it.isNull() : it.equals(value));
+      'frameBuilder',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where loadingBuilder matches the condition.
@@ -80,8 +84,10 @@ extension ImageSelector on WidgetSelector<Image> {
   /// ```
   @useResult
   WidgetSelector<Image> withLoadingBuilder(Function? value) {
-    return withDiagnosticProp<Function>('loadingBuilder',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<Function>(
+      'loadingBuilder',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where width matches the condition.
@@ -104,7 +110,9 @@ extension ImageSelector on WidgetSelector<Image> {
   @useResult
   WidgetSelector<Image> withWidth(double? value) {
     return withDiagnosticProp<double>(
-        'width', (it) => value == null ? it.isNull() : it.equals(value));
+      'width',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where height matches the condition.
@@ -127,7 +135,9 @@ extension ImageSelector on WidgetSelector<Image> {
   @useResult
   WidgetSelector<Image> withHeight(double? value) {
     return withDiagnosticProp<double>(
-        'height', (it) => value == null ? it.isNull() : it.equals(value));
+      'height',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where color matches the condition.
@@ -150,7 +160,9 @@ extension ImageSelector on WidgetSelector<Image> {
   @useResult
   WidgetSelector<Image> withColor(Color? value) {
     return withDiagnosticProp<Color>(
-        'color', (it) => value == null ? it.isNull() : it.equals(value));
+      'color',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where opacity matches the condition.
@@ -173,7 +185,9 @@ extension ImageSelector on WidgetSelector<Image> {
   @useResult
   WidgetSelector<Image> withOpacity(Animation<double>? value) {
     return withDiagnosticProp<Animation<double>?>(
-        'opacity', (it) => value == null ? it.isNull() : it.equals(value));
+      'opacity',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where colorBlendMode matches the condition.
@@ -195,8 +209,10 @@ extension ImageSelector on WidgetSelector<Image> {
   /// ```
   @useResult
   WidgetSelector<Image> withColorBlendMode(BlendMode? value) {
-    return withDiagnosticProp<BlendMode>('colorBlendMode',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<BlendMode>(
+      'colorBlendMode',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where fit matches the condition.
@@ -219,7 +235,9 @@ extension ImageSelector on WidgetSelector<Image> {
   @useResult
   WidgetSelector<Image> withFit(BoxFit? value) {
     return withDiagnosticProp<BoxFit>(
-        'fit', (it) => value == null ? it.isNull() : it.equals(value));
+      'fit',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where alignment matches the condition.
@@ -242,7 +260,9 @@ extension ImageSelector on WidgetSelector<Image> {
   @useResult
   WidgetSelector<Image> withAlignment(AlignmentGeometry? value) {
     return withDiagnosticProp<AlignmentGeometry>(
-        'alignment', (it) => value == null ? it.isNull() : it.equals(value));
+      'alignment',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where repeat matches the condition.
@@ -265,7 +285,9 @@ extension ImageSelector on WidgetSelector<Image> {
   @useResult
   WidgetSelector<Image> withRepeat(ImageRepeat? value) {
     return withDiagnosticProp<ImageRepeat>(
-        'repeat', (it) => value == null ? it.isNull() : it.equals(value));
+      'repeat',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where centerSlice matches the condition.
@@ -288,7 +310,9 @@ extension ImageSelector on WidgetSelector<Image> {
   @useResult
   WidgetSelector<Image> withCenterSlice(Rect? value) {
     return withDiagnosticProp<Rect>(
-        'centerSlice', (it) => value == null ? it.isNull() : it.equals(value));
+      'centerSlice',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where matchTextDirection matches the condition.
@@ -310,8 +334,10 @@ extension ImageSelector on WidgetSelector<Image> {
   /// ```
   @useResult
   WidgetSelector<Image> withMatchTextDirection(bool? value) {
-    return withDiagnosticProp<bool>('matchTextDirection',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<bool>(
+      'matchTextDirection',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where semanticLabel matches the condition.
@@ -333,8 +359,10 @@ extension ImageSelector on WidgetSelector<Image> {
   /// ```
   @useResult
   WidgetSelector<Image> withSemanticLabel(String? value) {
-    return withDiagnosticProp<String>('semanticLabel',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<String>(
+      'semanticLabel',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where excludeFromSemantics matches the condition.
@@ -356,8 +384,10 @@ extension ImageSelector on WidgetSelector<Image> {
   /// ```
   @useResult
   WidgetSelector<Image> withExcludeFromSemantics(bool? value) {
-    return withDiagnosticProp<bool>('this.excludeFromSemantics',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<bool>(
+      'this.excludeFromSemantics',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Image] where filterQuality matches the condition.
@@ -379,8 +409,10 @@ extension ImageSelector on WidgetSelector<Image> {
   /// ```
   @useResult
   WidgetSelector<Image> withFilterQuality(FilterQuality? value) {
-    return withDiagnosticProp<FilterQuality>('filterQuality',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<FilterQuality>(
+      'filterQuality',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 
@@ -404,7 +436,9 @@ extension ImageMatcher on WidgetMatcher<Image> {
   /// ```
   WidgetMatcher<Image> hasImage(ImageProvider<Object>? value) {
     return hasDiagnosticProp<ImageProvider<Object>>(
-        'image', (it) => value == null ? it.isNull() : it.equals(value));
+      'image',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that frameBuilder of [Image] matches the condition in [match].
@@ -425,7 +459,9 @@ extension ImageMatcher on WidgetMatcher<Image> {
   /// ```
   WidgetMatcher<Image> hasFrameBuilder(Function? value) {
     return hasDiagnosticProp<Function>(
-        'frameBuilder', (it) => value == null ? it.isNull() : it.equals(value));
+      'frameBuilder',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that loadingBuilder of [Image] matches the condition in [match].
@@ -445,8 +481,10 @@ extension ImageMatcher on WidgetMatcher<Image> {
   /// spot<Image>().existsOnce().hasLoadingBuilder(() {});
   /// ```
   WidgetMatcher<Image> hasLoadingBuilder(Function? value) {
-    return hasDiagnosticProp<Function>('loadingBuilder',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<Function>(
+      'loadingBuilder',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that width of [Image] matches the condition in [match].
@@ -467,7 +505,9 @@ extension ImageMatcher on WidgetMatcher<Image> {
   /// ```
   WidgetMatcher<Image> hasWidth(double? value) {
     return hasDiagnosticProp<double>(
-        'width', (it) => value == null ? it.isNull() : it.equals(value));
+      'width',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that height of [Image] matches the condition in [match].
@@ -488,7 +528,9 @@ extension ImageMatcher on WidgetMatcher<Image> {
   /// ```
   WidgetMatcher<Image> hasHeight(double? value) {
     return hasDiagnosticProp<double>(
-        'height', (it) => value == null ? it.isNull() : it.equals(value));
+      'height',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that color of [Image] matches the condition in [match].
@@ -509,7 +551,9 @@ extension ImageMatcher on WidgetMatcher<Image> {
   /// ```
   WidgetMatcher<Image> hasColor(Color? value) {
     return hasDiagnosticProp<Color>(
-        'color', (it) => value == null ? it.isNull() : it.equals(value));
+      'color',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that opacity of [Image] matches the condition in [match].
@@ -530,7 +574,9 @@ extension ImageMatcher on WidgetMatcher<Image> {
   /// ```
   WidgetMatcher<Image> hasOpacity(Animation<double>? value) {
     return hasDiagnosticProp<Animation<double>?>(
-        'opacity', (it) => value == null ? it.isNull() : it.equals(value));
+      'opacity',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that colorBlendMode of [Image] matches the condition in [match].
@@ -550,8 +596,10 @@ extension ImageMatcher on WidgetMatcher<Image> {
   /// spot<Image>().existsOnce().hasColorBlendMode(BlendMode.values.first);
   /// ```
   WidgetMatcher<Image> hasColorBlendMode(BlendMode? value) {
-    return hasDiagnosticProp<BlendMode>('colorBlendMode',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<BlendMode>(
+      'colorBlendMode',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that fit of [Image] matches the condition in [match].
@@ -572,7 +620,9 @@ extension ImageMatcher on WidgetMatcher<Image> {
   /// ```
   WidgetMatcher<Image> hasFit(BoxFit? value) {
     return hasDiagnosticProp<BoxFit>(
-        'fit', (it) => value == null ? it.isNull() : it.equals(value));
+      'fit',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that alignment of [Image] matches the condition in [match].
@@ -593,7 +643,9 @@ extension ImageMatcher on WidgetMatcher<Image> {
   /// ```
   WidgetMatcher<Image> hasAlignment(AlignmentGeometry? value) {
     return hasDiagnosticProp<AlignmentGeometry>(
-        'alignment', (it) => value == null ? it.isNull() : it.equals(value));
+      'alignment',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that repeat of [Image] matches the condition in [match].
@@ -614,7 +666,9 @@ extension ImageMatcher on WidgetMatcher<Image> {
   /// ```
   WidgetMatcher<Image> hasRepeat(ImageRepeat? value) {
     return hasDiagnosticProp<ImageRepeat>(
-        'repeat', (it) => value == null ? it.isNull() : it.equals(value));
+      'repeat',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that centerSlice of [Image] matches the condition in [match].
@@ -635,7 +689,9 @@ extension ImageMatcher on WidgetMatcher<Image> {
   /// ```
   WidgetMatcher<Image> hasCenterSlice(Rect? value) {
     return hasDiagnosticProp<Rect>(
-        'centerSlice', (it) => value == null ? it.isNull() : it.equals(value));
+      'centerSlice',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that matchTextDirection of [Image] matches the condition in [match].
@@ -655,8 +711,10 @@ extension ImageMatcher on WidgetMatcher<Image> {
   /// spot<Image>().existsOnce().hasMatchTextDirection(true);
   /// ```
   WidgetMatcher<Image> hasMatchTextDirection(bool? value) {
-    return hasDiagnosticProp<bool>('matchTextDirection',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<bool>(
+      'matchTextDirection',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that semanticLabel of [Image] matches the condition in [match].
@@ -676,8 +734,10 @@ extension ImageMatcher on WidgetMatcher<Image> {
   /// spot<Image>().existsOnce().hasSemanticLabel('foo');
   /// ```
   WidgetMatcher<Image> hasSemanticLabel(String? value) {
-    return hasDiagnosticProp<String>('semanticLabel',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<String>(
+      'semanticLabel',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that excludeFromSemantics of [Image] matches the condition in [match].
@@ -697,8 +757,10 @@ extension ImageMatcher on WidgetMatcher<Image> {
   /// spot<Image>().existsOnce().hasExcludeFromSemantics(true);
   /// ```
   WidgetMatcher<Image> hasExcludeFromSemantics(bool? value) {
-    return hasDiagnosticProp<bool>('this.excludeFromSemantics',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<bool>(
+      'this.excludeFromSemantics',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that filterQuality of [Image] matches the condition in [match].
@@ -718,8 +780,10 @@ extension ImageMatcher on WidgetMatcher<Image> {
   /// spot<Image>().existsOnce().hasFilterQuality(FilterQuality.values.first);
   /// ```
   WidgetMatcher<Image> hasFilterQuality(FilterQuality? value) {
-    return hasDiagnosticProp<FilterQuality>('filterQuality',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<FilterQuality>(
+      'filterQuality',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 

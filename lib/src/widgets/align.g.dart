@@ -36,7 +36,9 @@ extension AlignSelector on WidgetSelector<Align> {
   @useResult
   WidgetSelector<Align> withAlignment(AlignmentGeometry? value) {
     return withDiagnosticProp<AlignmentGeometry>(
-        'alignment', (it) => value == null ? it.isNull() : it.equals(value));
+      'alignment',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Align] where widthFactor matches the condition.
@@ -59,7 +61,9 @@ extension AlignSelector on WidgetSelector<Align> {
   @useResult
   WidgetSelector<Align> withWidthFactor(double? value) {
     return withDiagnosticProp<double>(
-        'widthFactor', (it) => value == null ? it.isNull() : it.equals(value));
+      'widthFactor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Align] where heightFactor matches the condition.
@@ -82,7 +86,9 @@ extension AlignSelector on WidgetSelector<Align> {
   @useResult
   WidgetSelector<Align> withHeightFactor(double? value) {
     return withDiagnosticProp<double>(
-        'heightFactor', (it) => value == null ? it.isNull() : it.equals(value));
+      'heightFactor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Align] where renderObject matches the condition.
@@ -93,7 +99,8 @@ extension AlignSelector on WidgetSelector<Align> {
   /// ```
   @useResult
   WidgetSelector<Align> whereRenderObject(
-      MatchProp<RenderPositionedBox> match) {
+    MatchProp<RenderPositionedBox> match,
+  ) {
     return withDiagnosticProp<RenderPositionedBox>('renderObject', match);
   }
 
@@ -106,7 +113,9 @@ extension AlignSelector on WidgetSelector<Align> {
   @useResult
   WidgetSelector<Align> withRenderObject(RenderPositionedBox? value) {
     return withDiagnosticProp<RenderPositionedBox>(
-        'renderObject', (it) => value == null ? it.isNull() : it.equals(value));
+      'renderObject',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 
@@ -130,7 +139,9 @@ extension AlignMatcher on WidgetMatcher<Align> {
   /// ```
   WidgetMatcher<Align> hasAlignment(AlignmentGeometry? value) {
     return hasDiagnosticProp<AlignmentGeometry>(
-        'alignment', (it) => value == null ? it.isNull() : it.equals(value));
+      'alignment',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that widthFactor of [Align] matches the condition in [match].
@@ -151,7 +162,9 @@ extension AlignMatcher on WidgetMatcher<Align> {
   /// ```
   WidgetMatcher<Align> hasWidthFactor(double? value) {
     return hasDiagnosticProp<double>(
-        'widthFactor', (it) => value == null ? it.isNull() : it.equals(value));
+      'widthFactor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that heightFactor of [Align] matches the condition in [match].
@@ -172,7 +185,9 @@ extension AlignMatcher on WidgetMatcher<Align> {
   /// ```
   WidgetMatcher<Align> hasHeightFactor(double? value) {
     return hasDiagnosticProp<double>(
-        'heightFactor', (it) => value == null ? it.isNull() : it.equals(value));
+      'heightFactor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that renderObject of [Align] matches the condition in [match].
@@ -182,7 +197,8 @@ extension AlignMatcher on WidgetMatcher<Align> {
   /// spot<Align>().existsOnce().hasRenderObjectWhere((it) => it.equals(RenderBox()));
   /// ```
   WidgetMatcher<Align> hasRenderObjectWhere(
-      MatchProp<RenderPositionedBox> match) {
+    MatchProp<RenderPositionedBox> match,
+  ) {
     return hasDiagnosticProp<RenderPositionedBox>('renderObject', match);
   }
 
@@ -194,7 +210,9 @@ extension AlignMatcher on WidgetMatcher<Align> {
   /// ```
   WidgetMatcher<Align> hasRenderObject(RenderPositionedBox? value) {
     return hasDiagnosticProp<RenderPositionedBox>(
-        'renderObject', (it) => value == null ? it.isNull() : it.equals(value));
+      'renderObject',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 

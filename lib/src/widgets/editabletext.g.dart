@@ -23,7 +23,8 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// ```
   @useResult
   WidgetSelector<EditableText> whereController(
-      MatchProp<TextEditingController> match) {
+    MatchProp<TextEditingController> match,
+  ) {
     return withDiagnosticProp<TextEditingController>('controller', match);
   }
 
@@ -36,7 +37,9 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   @useResult
   WidgetSelector<EditableText> withController(TextEditingController? value) {
     return withDiagnosticProp<TextEditingController>(
-        'controller', (it) => value == null ? it.isNull() : it.equals(value));
+      'controller',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where focusNode matches the condition.
@@ -59,7 +62,9 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   @useResult
   WidgetSelector<EditableText> withFocusNode(FocusNode? value) {
     return withDiagnosticProp<FocusNode>(
-        'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
+      'focusNode',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where obscureText matches the condition.
@@ -82,7 +87,9 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   @useResult
   WidgetSelector<EditableText> withObscureText(bool? value) {
     return withDiagnosticProp<bool>(
-        'obscureText', (it) => value == null ? it.isNull() : it.equals(value));
+      'obscureText',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where readOnly matches the condition.
@@ -105,7 +112,9 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   @useResult
   WidgetSelector<EditableText> withReadOnly(bool? value) {
     return withDiagnosticProp<bool>(
-        'readOnly', (it) => value == null ? it.isNull() : it.equals(value));
+      'readOnly',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where autocorrect matches the condition.
@@ -128,7 +137,9 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   @useResult
   WidgetSelector<EditableText> withAutocorrect(bool? value) {
     return withDiagnosticProp<bool>(
-        'autocorrect', (it) => value == null ? it.isNull() : it.equals(value));
+      'autocorrect',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where smartDashesType matches the condition.
@@ -139,7 +150,8 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// ```
   @useResult
   WidgetSelector<EditableText> whereSmartDashesType(
-      MatchProp<SmartDashesType> match) {
+    MatchProp<SmartDashesType> match,
+  ) {
     return withDiagnosticProp<SmartDashesType>('smartDashesType', match);
   }
 
@@ -151,8 +163,10 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// ```
   @useResult
   WidgetSelector<EditableText> withSmartDashesType(SmartDashesType? value) {
-    return withDiagnosticProp<SmartDashesType>('smartDashesType',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<SmartDashesType>(
+      'smartDashesType',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where smartQuotesType matches the condition.
@@ -163,7 +177,8 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// ```
   @useResult
   WidgetSelector<EditableText> whereSmartQuotesType(
-      MatchProp<SmartQuotesType> match) {
+    MatchProp<SmartQuotesType> match,
+  ) {
     return withDiagnosticProp<SmartQuotesType>('smartQuotesType', match);
   }
 
@@ -175,8 +190,10 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// ```
   @useResult
   WidgetSelector<EditableText> withSmartQuotesType(SmartQuotesType? value) {
-    return withDiagnosticProp<SmartQuotesType>('smartQuotesType',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<SmartQuotesType>(
+      'smartQuotesType',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where enableSuggestions matches the condition.
@@ -198,8 +215,10 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// ```
   @useResult
   WidgetSelector<EditableText> withEnableSuggestions(bool? value) {
-    return withDiagnosticProp<bool>('enableSuggestions',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<bool>(
+      'enableSuggestions',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where inherit matches the condition.
@@ -222,7 +241,9 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   @useResult
   WidgetSelector<EditableText> withInherit(bool? value) {
     return withDiagnosticProp<bool>(
-        'inherit', (it) => value == null ? it.isNull() : it.equals(value));
+      'inherit',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where color matches the condition.
@@ -245,7 +266,9 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   @useResult
   WidgetSelector<EditableText> withColor(Color? value) {
     return withDiagnosticProp<Color>(
-        'color', (it) => value == null ? it.isNull() : it.equals(value));
+      'color',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where backgroundColor matches the condition.
@@ -267,8 +290,10 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// ```
   @useResult
   WidgetSelector<EditableText> withBackgroundColor(Color? value) {
-    return withDiagnosticProp<Color>('backgroundColor',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<Color>(
+      'backgroundColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where family matches the condition.
@@ -291,7 +316,9 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   @useResult
   WidgetSelector<EditableText> withFamily(String? value) {
     return withDiagnosticProp<String>(
-        'family', (it) => value == null ? it.isNull() : it.equals(value));
+      'family',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where familyFallback matches the condition.
@@ -313,8 +340,10 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// ```
   @useResult
   WidgetSelector<EditableText> withFamilyFallback(String? value) {
-    return withDiagnosticProp<String>('familyFallback',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<String>(
+      'familyFallback',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where size matches the condition.
@@ -337,7 +366,9 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   @useResult
   WidgetSelector<EditableText> withSize(double? value) {
     return withDiagnosticProp<double>(
-        'size', (it) => value == null ? it.isNull() : it.equals(value));
+      'size',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where weight matches the condition.
@@ -360,7 +391,9 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   @useResult
   WidgetSelector<EditableText> withWeight(FontWeight? value) {
     return withDiagnosticProp<FontWeight>(
-        'weight', (it) => value == null ? it.isNull() : it.equals(value));
+      'weight',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where style matches the condition.
@@ -383,7 +416,9 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   @useResult
   WidgetSelector<EditableText> withStyle(FontStyle? value) {
     return withDiagnosticProp<FontStyle>(
-        'style', (it) => value == null ? it.isNull() : it.equals(value));
+      'style',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where letterSpacing matches the condition.
@@ -405,8 +440,10 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// ```
   @useResult
   WidgetSelector<EditableText> withLetterSpacing(double? value) {
-    return withDiagnosticProp<double>('letterSpacing',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<double>(
+      'letterSpacing',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where wordSpacing matches the condition.
@@ -429,7 +466,9 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   @useResult
   WidgetSelector<EditableText> withWordSpacing(double? value) {
     return withDiagnosticProp<double>(
-        'wordSpacing', (it) => value == null ? it.isNull() : it.equals(value));
+      'wordSpacing',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where baseline matches the condition.
@@ -452,7 +491,9 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   @useResult
   WidgetSelector<EditableText> withBaseline(TextBaseline? value) {
     return withDiagnosticProp<TextBaseline>(
-        'baseline', (it) => value == null ? it.isNull() : it.equals(value));
+      'baseline',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where height matches the condition.
@@ -475,7 +516,9 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   @useResult
   WidgetSelector<EditableText> withHeight(double? value) {
     return withDiagnosticProp<double>(
-        'height', (it) => value == null ? it.isNull() : it.equals(value));
+      'height',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where leadingDistribution matches the condition.
@@ -486,9 +529,12 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// ```
   @useResult
   WidgetSelector<EditableText> whereLeadingDistribution(
-      MatchProp<TextLeadingDistribution> match) {
+    MatchProp<TextLeadingDistribution> match,
+  ) {
     return withDiagnosticProp<TextLeadingDistribution>(
-        'leadingDistribution', match);
+      'leadingDistribution',
+      match,
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where leadingDistribution equals (==) [value].
@@ -499,9 +545,12 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// ```
   @useResult
   WidgetSelector<EditableText> withLeadingDistribution(
-      TextLeadingDistribution? value) {
-    return withDiagnosticProp<TextLeadingDistribution>('leadingDistribution',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    TextLeadingDistribution? value,
+  ) {
+    return withDiagnosticProp<TextLeadingDistribution>(
+      'leadingDistribution',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where locale matches the condition.
@@ -524,7 +573,9 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   @useResult
   WidgetSelector<EditableText> withLocale(Locale? value) {
     return withDiagnosticProp<Locale>(
-        'locale', (it) => value == null ? it.isNull() : it.equals(value));
+      'locale',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where foreground matches the condition.
@@ -547,7 +598,9 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   @useResult
   WidgetSelector<EditableText> withForeground(Paint? value) {
     return withDiagnosticProp<Paint>(
-        'foreground', (it) => value == null ? it.isNull() : it.equals(value));
+      'foreground',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where background matches the condition.
@@ -570,7 +623,9 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   @useResult
   WidgetSelector<EditableText> withBackground(Paint? value) {
     return withDiagnosticProp<Paint>(
-        'background', (it) => value == null ? it.isNull() : it.equals(value));
+      'background',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where textAlign matches the condition.
@@ -593,7 +648,9 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   @useResult
   WidgetSelector<EditableText> withTextAlign(TextAlign? value) {
     return withDiagnosticProp<TextAlign>(
-        'textAlign', (it) => value == null ? it.isNull() : it.equals(value));
+      'textAlign',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where textDirection matches the condition.
@@ -604,7 +661,8 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// ```
   @useResult
   WidgetSelector<EditableText> whereTextDirection(
-      MatchProp<TextDirection> match) {
+    MatchProp<TextDirection> match,
+  ) {
     return withDiagnosticProp<TextDirection>('textDirection', match);
   }
 
@@ -616,8 +674,10 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// ```
   @useResult
   WidgetSelector<EditableText> withTextDirection(TextDirection? value) {
-    return withDiagnosticProp<TextDirection>('textDirection',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<TextDirection>(
+      'textDirection',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where textScaleFactor matches the condition.
@@ -639,8 +699,10 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// ```
   @useResult
   WidgetSelector<EditableText> withTextScaleFactor(double? value) {
-    return withDiagnosticProp<double>('textScaleFactor',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<double>(
+      'textScaleFactor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where maxLines matches the condition.
@@ -663,7 +725,9 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   @useResult
   WidgetSelector<EditableText> withMaxLines(int? value) {
     return withDiagnosticProp<int>(
-        'maxLines', (it) => value == null ? it.isNull() : it.equals(value));
+      'maxLines',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where minLines matches the condition.
@@ -686,7 +750,9 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   @useResult
   WidgetSelector<EditableText> withMinLines(int? value) {
     return withDiagnosticProp<int>(
-        'minLines', (it) => value == null ? it.isNull() : it.equals(value));
+      'minLines',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where expands matches the condition.
@@ -709,7 +775,9 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   @useResult
   WidgetSelector<EditableText> withExpands(bool? value) {
     return withDiagnosticProp<bool>(
-        'expands', (it) => value == null ? it.isNull() : it.equals(value));
+      'expands',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where autofocus matches the condition.
@@ -732,7 +800,9 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   @useResult
   WidgetSelector<EditableText> withAutofocus(bool? value) {
     return withDiagnosticProp<bool>(
-        'autofocus', (it) => value == null ? it.isNull() : it.equals(value));
+      'autofocus',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where keyboardType matches the condition.
@@ -743,7 +813,8 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// ```
   @useResult
   WidgetSelector<EditableText> whereKeyboardType(
-      MatchProp<TextInputType> match) {
+    MatchProp<TextInputType> match,
+  ) {
     return withDiagnosticProp<TextInputType>('keyboardType', match);
   }
 
@@ -756,7 +827,9 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   @useResult
   WidgetSelector<EditableText> withKeyboardType(TextInputType? value) {
     return withDiagnosticProp<TextInputType>(
-        'keyboardType', (it) => value == null ? it.isNull() : it.equals(value));
+      'keyboardType',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where scrollController matches the condition.
@@ -767,7 +840,8 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// ```
   @useResult
   WidgetSelector<EditableText> whereScrollController(
-      MatchProp<ScrollController> match) {
+    MatchProp<ScrollController> match,
+  ) {
     return withDiagnosticProp<ScrollController>('scrollController', match);
   }
 
@@ -779,8 +853,10 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// ```
   @useResult
   WidgetSelector<EditableText> withScrollController(ScrollController? value) {
-    return withDiagnosticProp<ScrollController>('scrollController',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<ScrollController>(
+      'scrollController',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where scrollPhysics matches the condition.
@@ -791,7 +867,8 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// ```
   @useResult
   WidgetSelector<EditableText> whereScrollPhysics(
-      MatchProp<ScrollPhysics> match) {
+    MatchProp<ScrollPhysics> match,
+  ) {
     return withDiagnosticProp<ScrollPhysics>('scrollPhysics', match);
   }
 
@@ -803,8 +880,10 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// ```
   @useResult
   WidgetSelector<EditableText> withScrollPhysics(ScrollPhysics? value) {
-    return withDiagnosticProp<ScrollPhysics>('scrollPhysics',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<ScrollPhysics>(
+      'scrollPhysics',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where autofillHints matches the condition.
@@ -815,7 +894,8 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// ```
   @useResult
   WidgetSelector<EditableText> whereAutofillHints(
-      MatchProp<Iterable<String>> match) {
+    MatchProp<Iterable<String>> match,
+  ) {
     return withDiagnosticProp<Iterable<String>>('autofillHints', match);
   }
 
@@ -827,8 +907,10 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// ```
   @useResult
   WidgetSelector<EditableText> withAutofillHints(Iterable<String>? value) {
-    return withDiagnosticProp<Iterable<String>>('autofillHints',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<Iterable<String>>(
+      'autofillHints',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where textHeightBehavior matches the condition.
@@ -839,7 +921,8 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// ```
   @useResult
   WidgetSelector<EditableText> whereTextHeightBehavior(
-      MatchProp<TextHeightBehavior> match) {
+    MatchProp<TextHeightBehavior> match,
+  ) {
     return withDiagnosticProp<TextHeightBehavior>('textHeightBehavior', match);
   }
 
@@ -851,9 +934,12 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// ```
   @useResult
   WidgetSelector<EditableText> withTextHeightBehavior(
-      TextHeightBehavior? value) {
-    return withDiagnosticProp<TextHeightBehavior>('textHeightBehavior',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    TextHeightBehavior? value,
+  ) {
+    return withDiagnosticProp<TextHeightBehavior>(
+      'textHeightBehavior',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where scribbleEnabled matches the condition.
@@ -875,8 +961,10 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// ```
   @useResult
   WidgetSelector<EditableText> withScribbleEnabled(bool? value) {
-    return withDiagnosticProp<bool>('scribbleEnabled',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<bool>(
+      'scribbleEnabled',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where enableIMEPersonalizedLearning matches the condition.
@@ -887,7 +975,8 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// ```
   @useResult
   WidgetSelector<EditableText> whereEnableIMEPersonalizedLearning(
-      MatchProp<bool> match) {
+    MatchProp<bool> match,
+  ) {
     return withDiagnosticProp<bool>('enableIMEPersonalizedLearning', match);
   }
 
@@ -899,8 +988,10 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// ```
   @useResult
   WidgetSelector<EditableText> withEnableIMEPersonalizedLearning(bool? value) {
-    return withDiagnosticProp<bool>('enableIMEPersonalizedLearning',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<bool>(
+      'enableIMEPersonalizedLearning',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where enableInteractiveSelection matches the condition.
@@ -911,7 +1002,8 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// ```
   @useResult
   WidgetSelector<EditableText> whereEnableInteractiveSelection(
-      MatchProp<bool> match) {
+    MatchProp<bool> match,
+  ) {
     return withDiagnosticProp<bool>('enableInteractiveSelection', match);
   }
 
@@ -923,8 +1015,10 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// ```
   @useResult
   WidgetSelector<EditableText> withEnableInteractiveSelection(bool? value) {
-    return withDiagnosticProp<bool>('enableInteractiveSelection',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<bool>(
+      'enableInteractiveSelection',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where undoController matches the condition.
@@ -935,7 +1029,8 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// ```
   @useResult
   WidgetSelector<EditableText> whereUndoController(
-      MatchProp<UndoHistoryController> match) {
+    MatchProp<UndoHistoryController> match,
+  ) {
     return withDiagnosticProp<UndoHistoryController>('undoController', match);
   }
 
@@ -947,9 +1042,12 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// ```
   @useResult
   WidgetSelector<EditableText> withUndoController(
-      UndoHistoryController? value) {
-    return withDiagnosticProp<UndoHistoryController>('undoController',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    UndoHistoryController? value,
+  ) {
+    return withDiagnosticProp<UndoHistoryController>(
+      'undoController',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where spellCheckConfiguration matches the condition.
@@ -960,9 +1058,12 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// ```
   @useResult
   WidgetSelector<EditableText> whereSpellCheckConfiguration(
-      MatchProp<SpellCheckConfiguration> match) {
+    MatchProp<SpellCheckConfiguration> match,
+  ) {
     return withDiagnosticProp<SpellCheckConfiguration>(
-        'spellCheckConfiguration', match);
+      'spellCheckConfiguration',
+      match,
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where spellCheckConfiguration equals (==) [value].
@@ -973,10 +1074,12 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// ```
   @useResult
   WidgetSelector<EditableText> withSpellCheckConfiguration(
-      SpellCheckConfiguration? value) {
+    SpellCheckConfiguration? value,
+  ) {
     return withDiagnosticProp<SpellCheckConfiguration>(
-        'spellCheckConfiguration',
-        (it) => value == null ? it.isNull() : it.equals(value));
+      'spellCheckConfiguration',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [EditableText] where contentCommitMimeTypes matches the condition.
@@ -987,7 +1090,8 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// ```
   @useResult
   WidgetSelector<EditableText> whereContentCommitMimeTypes(
-      MatchProp<List<String>> match) {
+    MatchProp<List<String>> match,
+  ) {
     return withDiagnosticProp<List<String>>('contentCommitMimeTypes', match);
   }
 
@@ -999,8 +1103,10 @@ extension EditableTextSelector on WidgetSelector<EditableText> {
   /// ```
   @useResult
   WidgetSelector<EditableText> withContentCommitMimeTypes(List<String>? value) {
-    return withDiagnosticProp<List<String>>('contentCommitMimeTypes',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<List<String>>(
+      'contentCommitMimeTypes',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 
@@ -1013,7 +1119,8 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// spot<EditableText>().existsOnce().hasControllerWhere((it) => it.equals(TextEditingController()));
   /// ```
   WidgetMatcher<EditableText> hasControllerWhere(
-      MatchProp<TextEditingController> match) {
+    MatchProp<TextEditingController> match,
+  ) {
     return hasDiagnosticProp<TextEditingController>('controller', match);
   }
 
@@ -1025,7 +1132,9 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// ```
   WidgetMatcher<EditableText> hasController(TextEditingController? value) {
     return hasDiagnosticProp<TextEditingController>(
-        'controller', (it) => value == null ? it.isNull() : it.equals(value));
+      'controller',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that focusNode of [EditableText] matches the condition in [match].
@@ -1046,7 +1155,9 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// ```
   WidgetMatcher<EditableText> hasFocusNode(FocusNode? value) {
     return hasDiagnosticProp<FocusNode>(
-        'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
+      'focusNode',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that obscureText of [EditableText] matches the condition in [match].
@@ -1067,7 +1178,9 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// ```
   WidgetMatcher<EditableText> hasObscureText(bool? value) {
     return hasDiagnosticProp<bool>(
-        'obscureText', (it) => value == null ? it.isNull() : it.equals(value));
+      'obscureText',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that readOnly of [EditableText] matches the condition in [match].
@@ -1088,7 +1201,9 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// ```
   WidgetMatcher<EditableText> hasReadOnly(bool? value) {
     return hasDiagnosticProp<bool>(
-        'readOnly', (it) => value == null ? it.isNull() : it.equals(value));
+      'readOnly',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that autocorrect of [EditableText] matches the condition in [match].
@@ -1109,7 +1224,9 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// ```
   WidgetMatcher<EditableText> hasAutocorrect(bool? value) {
     return hasDiagnosticProp<bool>(
-        'autocorrect', (it) => value == null ? it.isNull() : it.equals(value));
+      'autocorrect',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that smartDashesType of [EditableText] matches the condition in [match].
@@ -1119,7 +1236,8 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// spot<EditableText>().existsOnce().hasSmartDashesTypeWhere((it) => it.equals(SmartDashesType.values.first));
   /// ```
   WidgetMatcher<EditableText> hasSmartDashesTypeWhere(
-      MatchProp<SmartDashesType> match) {
+    MatchProp<SmartDashesType> match,
+  ) {
     return hasDiagnosticProp<SmartDashesType>('smartDashesType', match);
   }
 
@@ -1130,8 +1248,10 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// spot<EditableText>().existsOnce().hasSmartDashesType(SmartDashesType.values.first);
   /// ```
   WidgetMatcher<EditableText> hasSmartDashesType(SmartDashesType? value) {
-    return hasDiagnosticProp<SmartDashesType>('smartDashesType',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<SmartDashesType>(
+      'smartDashesType',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that smartQuotesType of [EditableText] matches the condition in [match].
@@ -1141,7 +1261,8 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// spot<EditableText>().existsOnce().hasSmartQuotesTypeWhere((it) => it.equals(SmartQuotesType.values.first));
   /// ```
   WidgetMatcher<EditableText> hasSmartQuotesTypeWhere(
-      MatchProp<SmartQuotesType> match) {
+    MatchProp<SmartQuotesType> match,
+  ) {
     return hasDiagnosticProp<SmartQuotesType>('smartQuotesType', match);
   }
 
@@ -1152,8 +1273,10 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// spot<EditableText>().existsOnce().hasSmartQuotesType(SmartQuotesType.values.first);
   /// ```
   WidgetMatcher<EditableText> hasSmartQuotesType(SmartQuotesType? value) {
-    return hasDiagnosticProp<SmartQuotesType>('smartQuotesType',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<SmartQuotesType>(
+      'smartQuotesType',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that enableSuggestions of [EditableText] matches the condition in [match].
@@ -1173,8 +1296,10 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// spot<EditableText>().existsOnce().hasEnableSuggestions(true);
   /// ```
   WidgetMatcher<EditableText> hasEnableSuggestions(bool? value) {
-    return hasDiagnosticProp<bool>('enableSuggestions',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<bool>(
+      'enableSuggestions',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that inherit of [EditableText] matches the condition in [match].
@@ -1195,7 +1320,9 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// ```
   WidgetMatcher<EditableText> hasInherit(bool? value) {
     return hasDiagnosticProp<bool>(
-        'inherit', (it) => value == null ? it.isNull() : it.equals(value));
+      'inherit',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that color of [EditableText] matches the condition in [match].
@@ -1216,7 +1343,9 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// ```
   WidgetMatcher<EditableText> hasColor(Color? value) {
     return hasDiagnosticProp<Color>(
-        'color', (it) => value == null ? it.isNull() : it.equals(value));
+      'color',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that backgroundColor of [EditableText] matches the condition in [match].
@@ -1236,8 +1365,10 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// spot<EditableText>().existsOnce().hasBackgroundColor(Colors.red);
   /// ```
   WidgetMatcher<EditableText> hasBackgroundColor(Color? value) {
-    return hasDiagnosticProp<Color>('backgroundColor',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<Color>(
+      'backgroundColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that family of [EditableText] matches the condition in [match].
@@ -1258,7 +1389,9 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// ```
   WidgetMatcher<EditableText> hasFamily(String? value) {
     return hasDiagnosticProp<String>(
-        'family', (it) => value == null ? it.isNull() : it.equals(value));
+      'family',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that familyFallback of [EditableText] matches the condition in [match].
@@ -1278,8 +1411,10 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// spot<EditableText>().existsOnce().hasFamilyFallback('foo');
   /// ```
   WidgetMatcher<EditableText> hasFamilyFallback(String? value) {
-    return hasDiagnosticProp<String>('familyFallback',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<String>(
+      'familyFallback',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that size of [EditableText] matches the condition in [match].
@@ -1300,7 +1435,9 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// ```
   WidgetMatcher<EditableText> hasSize(double? value) {
     return hasDiagnosticProp<double>(
-        'size', (it) => value == null ? it.isNull() : it.equals(value));
+      'size',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that weight of [EditableText] matches the condition in [match].
@@ -1321,7 +1458,9 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// ```
   WidgetMatcher<EditableText> hasWeight(FontWeight? value) {
     return hasDiagnosticProp<FontWeight>(
-        'weight', (it) => value == null ? it.isNull() : it.equals(value));
+      'weight',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that style of [EditableText] matches the condition in [match].
@@ -1342,7 +1481,9 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// ```
   WidgetMatcher<EditableText> hasStyle(FontStyle? value) {
     return hasDiagnosticProp<FontStyle>(
-        'style', (it) => value == null ? it.isNull() : it.equals(value));
+      'style',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that letterSpacing of [EditableText] matches the condition in [match].
@@ -1362,8 +1503,10 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// spot<EditableText>().existsOnce().hasLetterSpacing(10.5);
   /// ```
   WidgetMatcher<EditableText> hasLetterSpacing(double? value) {
-    return hasDiagnosticProp<double>('letterSpacing',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<double>(
+      'letterSpacing',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that wordSpacing of [EditableText] matches the condition in [match].
@@ -1384,7 +1527,9 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// ```
   WidgetMatcher<EditableText> hasWordSpacing(double? value) {
     return hasDiagnosticProp<double>(
-        'wordSpacing', (it) => value == null ? it.isNull() : it.equals(value));
+      'wordSpacing',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that baseline of [EditableText] matches the condition in [match].
@@ -1405,7 +1550,9 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// ```
   WidgetMatcher<EditableText> hasBaseline(TextBaseline? value) {
     return hasDiagnosticProp<TextBaseline>(
-        'baseline', (it) => value == null ? it.isNull() : it.equals(value));
+      'baseline',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that height of [EditableText] matches the condition in [match].
@@ -1426,7 +1573,9 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// ```
   WidgetMatcher<EditableText> hasHeight(double? value) {
     return hasDiagnosticProp<double>(
-        'height', (it) => value == null ? it.isNull() : it.equals(value));
+      'height',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that leadingDistribution of [EditableText] matches the condition in [match].
@@ -1436,9 +1585,12 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// spot<EditableText>().existsOnce().hasLeadingDistributionWhere((it) => it.equals(TextLeadingDistribution.values.first));
   /// ```
   WidgetMatcher<EditableText> hasLeadingDistributionWhere(
-      MatchProp<TextLeadingDistribution> match) {
+    MatchProp<TextLeadingDistribution> match,
+  ) {
     return hasDiagnosticProp<TextLeadingDistribution>(
-        'leadingDistribution', match);
+      'leadingDistribution',
+      match,
+    );
   }
 
   /// Expects that leadingDistribution of [EditableText] equals (==) [value].
@@ -1448,9 +1600,12 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// spot<EditableText>().existsOnce().hasLeadingDistribution(TextLeadingDistribution.values.first);
   /// ```
   WidgetMatcher<EditableText> hasLeadingDistribution(
-      TextLeadingDistribution? value) {
-    return hasDiagnosticProp<TextLeadingDistribution>('leadingDistribution',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    TextLeadingDistribution? value,
+  ) {
+    return hasDiagnosticProp<TextLeadingDistribution>(
+      'leadingDistribution',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that locale of [EditableText] matches the condition in [match].
@@ -1471,7 +1626,9 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// ```
   WidgetMatcher<EditableText> hasLocale(Locale? value) {
     return hasDiagnosticProp<Locale>(
-        'locale', (it) => value == null ? it.isNull() : it.equals(value));
+      'locale',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that foreground of [EditableText] matches the condition in [match].
@@ -1492,7 +1649,9 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// ```
   WidgetMatcher<EditableText> hasForeground(Paint? value) {
     return hasDiagnosticProp<Paint>(
-        'foreground', (it) => value == null ? it.isNull() : it.equals(value));
+      'foreground',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that background of [EditableText] matches the condition in [match].
@@ -1513,7 +1672,9 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// ```
   WidgetMatcher<EditableText> hasBackground(Paint? value) {
     return hasDiagnosticProp<Paint>(
-        'background', (it) => value == null ? it.isNull() : it.equals(value));
+      'background',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that textAlign of [EditableText] matches the condition in [match].
@@ -1534,7 +1695,9 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// ```
   WidgetMatcher<EditableText> hasTextAlign(TextAlign? value) {
     return hasDiagnosticProp<TextAlign>(
-        'textAlign', (it) => value == null ? it.isNull() : it.equals(value));
+      'textAlign',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that textDirection of [EditableText] matches the condition in [match].
@@ -1544,7 +1707,8 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// spot<EditableText>().existsOnce().hasTextDirectionWhere((it) => it.equals(TextDirection.values.first));
   /// ```
   WidgetMatcher<EditableText> hasTextDirectionWhere(
-      MatchProp<TextDirection> match) {
+    MatchProp<TextDirection> match,
+  ) {
     return hasDiagnosticProp<TextDirection>('textDirection', match);
   }
 
@@ -1555,8 +1719,10 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// spot<EditableText>().existsOnce().hasTextDirection(TextDirection.values.first);
   /// ```
   WidgetMatcher<EditableText> hasTextDirection(TextDirection? value) {
-    return hasDiagnosticProp<TextDirection>('textDirection',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<TextDirection>(
+      'textDirection',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that textScaleFactor of [EditableText] matches the condition in [match].
@@ -1576,8 +1742,10 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// spot<EditableText>().existsOnce().hasTextScaleFactor(10.5);
   /// ```
   WidgetMatcher<EditableText> hasTextScaleFactor(double? value) {
-    return hasDiagnosticProp<double>('textScaleFactor',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<double>(
+      'textScaleFactor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that maxLines of [EditableText] matches the condition in [match].
@@ -1598,7 +1766,9 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// ```
   WidgetMatcher<EditableText> hasMaxLines(int? value) {
     return hasDiagnosticProp<int>(
-        'maxLines', (it) => value == null ? it.isNull() : it.equals(value));
+      'maxLines',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that minLines of [EditableText] matches the condition in [match].
@@ -1619,7 +1789,9 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// ```
   WidgetMatcher<EditableText> hasMinLines(int? value) {
     return hasDiagnosticProp<int>(
-        'minLines', (it) => value == null ? it.isNull() : it.equals(value));
+      'minLines',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that expands of [EditableText] matches the condition in [match].
@@ -1640,7 +1812,9 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// ```
   WidgetMatcher<EditableText> hasExpands(bool? value) {
     return hasDiagnosticProp<bool>(
-        'expands', (it) => value == null ? it.isNull() : it.equals(value));
+      'expands',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that autofocus of [EditableText] matches the condition in [match].
@@ -1661,7 +1835,9 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// ```
   WidgetMatcher<EditableText> hasAutofocus(bool? value) {
     return hasDiagnosticProp<bool>(
-        'autofocus', (it) => value == null ? it.isNull() : it.equals(value));
+      'autofocus',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that keyboardType of [EditableText] matches the condition in [match].
@@ -1671,7 +1847,8 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// spot<EditableText>().existsOnce().hasKeyboardTypeWhere((it) => it.equals(TextInputType.text));
   /// ```
   WidgetMatcher<EditableText> hasKeyboardTypeWhere(
-      MatchProp<TextInputType> match) {
+    MatchProp<TextInputType> match,
+  ) {
     return hasDiagnosticProp<TextInputType>('keyboardType', match);
   }
 
@@ -1683,7 +1860,9 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// ```
   WidgetMatcher<EditableText> hasKeyboardType(TextInputType? value) {
     return hasDiagnosticProp<TextInputType>(
-        'keyboardType', (it) => value == null ? it.isNull() : it.equals(value));
+      'keyboardType',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that scrollController of [EditableText] matches the condition in [match].
@@ -1693,7 +1872,8 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// spot<EditableText>().existsOnce().hasScrollControllerWhere((it) => it.equals(ScrollController()));
   /// ```
   WidgetMatcher<EditableText> hasScrollControllerWhere(
-      MatchProp<ScrollController> match) {
+    MatchProp<ScrollController> match,
+  ) {
     return hasDiagnosticProp<ScrollController>('scrollController', match);
   }
 
@@ -1704,8 +1884,10 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// spot<EditableText>().existsOnce().hasScrollController(ScrollController());
   /// ```
   WidgetMatcher<EditableText> hasScrollController(ScrollController? value) {
-    return hasDiagnosticProp<ScrollController>('scrollController',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<ScrollController>(
+      'scrollController',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that scrollPhysics of [EditableText] matches the condition in [match].
@@ -1715,7 +1897,8 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// spot<EditableText>().existsOnce().hasScrollPhysicsWhere((it) => it.equals(BouncingScrollPhysics()));
   /// ```
   WidgetMatcher<EditableText> hasScrollPhysicsWhere(
-      MatchProp<ScrollPhysics> match) {
+    MatchProp<ScrollPhysics> match,
+  ) {
     return hasDiagnosticProp<ScrollPhysics>('scrollPhysics', match);
   }
 
@@ -1726,8 +1909,10 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// spot<EditableText>().existsOnce().hasScrollPhysics(BouncingScrollPhysics());
   /// ```
   WidgetMatcher<EditableText> hasScrollPhysics(ScrollPhysics? value) {
-    return hasDiagnosticProp<ScrollPhysics>('scrollPhysics',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<ScrollPhysics>(
+      'scrollPhysics',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that autofillHints of [EditableText] matches the condition in [match].
@@ -1737,7 +1922,8 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// spot<EditableText>().existsOnce().hasAutofillHintsWhere((it) => it.equals(['foo', 'bar']));
   /// ```
   WidgetMatcher<EditableText> hasAutofillHintsWhere(
-      MatchProp<Iterable<String>> match) {
+    MatchProp<Iterable<String>> match,
+  ) {
     return hasDiagnosticProp<Iterable<String>>('autofillHints', match);
   }
 
@@ -1748,8 +1934,10 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// spot<EditableText>().existsOnce().hasAutofillHints(['foo', 'bar']);
   /// ```
   WidgetMatcher<EditableText> hasAutofillHints(Iterable<String>? value) {
-    return hasDiagnosticProp<Iterable<String>>('autofillHints',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<Iterable<String>>(
+      'autofillHints',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that textHeightBehavior of [EditableText] matches the condition in [match].
@@ -1759,7 +1947,8 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// spot<EditableText>().existsOnce().hasTextHeightBehaviorWhere((it) => it.equals(TextHeightBehavior(applyHeightToFirstAscent: true, applyHeightToLastDescent: false)));
   /// ```
   WidgetMatcher<EditableText> hasTextHeightBehaviorWhere(
-      MatchProp<TextHeightBehavior> match) {
+    MatchProp<TextHeightBehavior> match,
+  ) {
     return hasDiagnosticProp<TextHeightBehavior>('textHeightBehavior', match);
   }
 
@@ -1770,8 +1959,10 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// spot<EditableText>().existsOnce().hasTextHeightBehavior(TextHeightBehavior(applyHeightToFirstAscent: true, applyHeightToLastDescent: false));
   /// ```
   WidgetMatcher<EditableText> hasTextHeightBehavior(TextHeightBehavior? value) {
-    return hasDiagnosticProp<TextHeightBehavior>('textHeightBehavior',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<TextHeightBehavior>(
+      'textHeightBehavior',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that scribbleEnabled of [EditableText] matches the condition in [match].
@@ -1791,8 +1982,10 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// spot<EditableText>().existsOnce().hasScribbleEnabled(true);
   /// ```
   WidgetMatcher<EditableText> hasScribbleEnabled(bool? value) {
-    return hasDiagnosticProp<bool>('scribbleEnabled',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<bool>(
+      'scribbleEnabled',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that enableIMEPersonalizedLearning of [EditableText] matches the condition in [match].
@@ -1802,7 +1995,8 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// spot<EditableText>().existsOnce().hasEnableIMEPersonalizedLearningWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<EditableText> hasEnableIMEPersonalizedLearningWhere(
-      MatchProp<bool> match) {
+    MatchProp<bool> match,
+  ) {
     return hasDiagnosticProp<bool>('enableIMEPersonalizedLearning', match);
   }
 
@@ -1813,8 +2007,10 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// spot<EditableText>().existsOnce().hasEnableIMEPersonalizedLearning(true);
   /// ```
   WidgetMatcher<EditableText> hasEnableIMEPersonalizedLearning(bool? value) {
-    return hasDiagnosticProp<bool>('enableIMEPersonalizedLearning',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<bool>(
+      'enableIMEPersonalizedLearning',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that enableInteractiveSelection of [EditableText] matches the condition in [match].
@@ -1824,7 +2020,8 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// spot<EditableText>().existsOnce().hasEnableInteractiveSelectionWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<EditableText> hasEnableInteractiveSelectionWhere(
-      MatchProp<bool> match) {
+    MatchProp<bool> match,
+  ) {
     return hasDiagnosticProp<bool>('enableInteractiveSelection', match);
   }
 
@@ -1835,8 +2032,10 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// spot<EditableText>().existsOnce().hasEnableInteractiveSelection(true);
   /// ```
   WidgetMatcher<EditableText> hasEnableInteractiveSelection(bool? value) {
-    return hasDiagnosticProp<bool>('enableInteractiveSelection',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<bool>(
+      'enableInteractiveSelection',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that undoController of [EditableText] matches the condition in [match].
@@ -1846,7 +2045,8 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// spot<EditableText>().existsOnce().hasUndoControllerWhere((it) => it.equals(UndoHistoryController()));
   /// ```
   WidgetMatcher<EditableText> hasUndoControllerWhere(
-      MatchProp<UndoHistoryController> match) {
+    MatchProp<UndoHistoryController> match,
+  ) {
     return hasDiagnosticProp<UndoHistoryController>('undoController', match);
   }
 
@@ -1857,8 +2057,10 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// spot<EditableText>().existsOnce().hasUndoController(UndoHistoryController());
   /// ```
   WidgetMatcher<EditableText> hasUndoController(UndoHistoryController? value) {
-    return hasDiagnosticProp<UndoHistoryController>('undoController',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<UndoHistoryController>(
+      'undoController',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that spellCheckConfiguration of [EditableText] matches the condition in [match].
@@ -1868,9 +2070,12 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// spot<EditableText>().existsOnce().hasSpellCheckConfigurationWhere((it) => it.equals(SpellCheckConfiguration()));
   /// ```
   WidgetMatcher<EditableText> hasSpellCheckConfigurationWhere(
-      MatchProp<SpellCheckConfiguration> match) {
+    MatchProp<SpellCheckConfiguration> match,
+  ) {
     return hasDiagnosticProp<SpellCheckConfiguration>(
-        'spellCheckConfiguration', match);
+      'spellCheckConfiguration',
+      match,
+    );
   }
 
   /// Expects that spellCheckConfiguration of [EditableText] equals (==) [value].
@@ -1880,9 +2085,12 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// spot<EditableText>().existsOnce().hasSpellCheckConfiguration(SpellCheckConfiguration());
   /// ```
   WidgetMatcher<EditableText> hasSpellCheckConfiguration(
-      SpellCheckConfiguration? value) {
-    return hasDiagnosticProp<SpellCheckConfiguration>('spellCheckConfiguration',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    SpellCheckConfiguration? value,
+  ) {
+    return hasDiagnosticProp<SpellCheckConfiguration>(
+      'spellCheckConfiguration',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that contentCommitMimeTypes of [EditableText] matches the condition in [match].
@@ -1892,7 +2100,8 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// spot<EditableText>().existsOnce().hasContentCommitMimeTypesWhere((it) => it.equals(['foo', 'bar']));
   /// ```
   WidgetMatcher<EditableText> hasContentCommitMimeTypesWhere(
-      MatchProp<List<String>> match) {
+    MatchProp<List<String>> match,
+  ) {
     return hasDiagnosticProp<List<String>>('contentCommitMimeTypes', match);
   }
 
@@ -1903,8 +2112,10 @@ extension EditableTextMatcher on WidgetMatcher<EditableText> {
   /// spot<EditableText>().existsOnce().hasContentCommitMimeTypes(['foo', 'bar']);
   /// ```
   WidgetMatcher<EditableText> hasContentCommitMimeTypes(List<String>? value) {
-    return hasDiagnosticProp<List<String>>('contentCommitMimeTypes',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<List<String>>(
+      'contentCommitMimeTypes',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 
@@ -2113,7 +2324,8 @@ extension EditableTextGetter on WidgetMatcher<EditableText> {
   /// Returns the spellCheckConfiguration of the matched [EditableText] via [Widget.toDiagnosticsNode]
   SpellCheckConfiguration getSpellCheckConfiguration() {
     return getDiagnosticProp<SpellCheckConfiguration>(
-        'spellCheckConfiguration');
+      'spellCheckConfiguration',
+    );
   }
 
   /// Returns the contentCommitMimeTypes of the matched [EditableText] via [Widget.toDiagnosticsNode]

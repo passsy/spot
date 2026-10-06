@@ -24,7 +24,8 @@ Future<void> main() async {
 
   final outputJsContent = outputJsFile.readAsStringSync();
 
-  final scriptDartContent = "// AUTO GENERATED FILE. DO NOT MODIFY.\n\n"
+  final scriptDartContent =
+      "// AUTO GENERATED FILE. DO NOT MODIFY.\n\n"
       "/// The script used in the HTML file that is generated for the timeline.\n"
       "/// Generate it with `dart run tool/compile_js.dart`\n"
       "/// Using $dartVersion\n"
@@ -32,8 +33,9 @@ Future<void> main() async {
       "// language=javascript\n"
       "const String timelineJS = r'''\n$outputJsContent\n''';\n";
 
-  File('lib/src/timeline/html/sources/script.js.g.dart')
-      .writeAsStringSync(scriptDartContent);
+  File(
+    'lib/src/timeline/html/sources/script.js.g.dart',
+  ).writeAsStringSync(scriptDartContent);
   File('${outputJsFile.path}.deps').deleteSync();
   print('Generated ${outputJsFile.path}');
 }

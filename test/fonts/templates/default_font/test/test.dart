@@ -9,8 +9,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 
 void main() {
-  testWidgets('Roboto is from SDK when nothing else is defined (default)',
-      (WidgetTester tester) async {
+  testWidgets('Roboto is from SDK when nothing else is defined (default)', (
+    WidgetTester tester,
+  ) async {
     final previousGoldenFileComparator = goldenFileComparator;
     goldenFileComparator = _TolerantGoldenFileComparator(
       Uri.parse('test/test_test.dart'),
@@ -60,40 +61,21 @@ class FontTestWidget extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                'Default Font',
-              ),
+              Text('Default Font'),
               SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'thin',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w100,
-                    ),
-                  ),
+                  Text('thin', style: TextStyle(fontWeight: FontWeight.w100)),
                   SizedBox(width: 8),
                   Text(
                     'extra-light',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w200,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.w200),
                   ),
                   SizedBox(width: 8),
-                  Text(
-                    'light',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w300,
-                    ),
-                  ),
+                  Text('light', style: TextStyle(fontWeight: FontWeight.w300)),
                   SizedBox(width: 8),
-                  Text(
-                    'normal',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
+                  Text('normal', style: TextStyle(fontWeight: FontWeight.w400)),
                   SizedBox(width: 8),
                 ],
               ),
@@ -101,82 +83,35 @@ class FontTestWidget extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'medium',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+                  Text('medium', style: TextStyle(fontWeight: FontWeight.w500)),
                   SizedBox(width: 8),
-                  Text(
-                    'semi',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  Text('semi', style: TextStyle(fontWeight: FontWeight.w600)),
                   SizedBox(width: 8),
-                  Text(
-                    'bold',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
+                  Text('bold', style: TextStyle(fontWeight: FontWeight.w700)),
                   SizedBox(width: 8),
-                  Text(
-                    'extra',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
+                  Text('extra', style: TextStyle(fontWeight: FontWeight.w800)),
                   SizedBox(width: 8),
-                  Text(
-                    'thick',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
+                  Text('thick', style: TextStyle(fontWeight: FontWeight.w900)),
                 ],
               ),
               SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'Colored ',
-                    style: TextStyle(
-                      color: Colors.blue,
-                    ),
-                  ),
-                  Text(
-                    'Text ',
-                    style: TextStyle(
-                      color: Colors.indigo,
-                    ),
-                  ),
-                  Text(
-                    'Rocks',
-                    style: TextStyle(
-                      color: Colors.purple,
-                    ),
-                  ),
+                  Text('Colored ', style: TextStyle(color: Colors.blue)),
+                  Text('Text ', style: TextStyle(color: Colors.indigo)),
+                  Text('Rocks', style: TextStyle(color: Colors.purple)),
                 ],
               ),
               SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'Italic',
-                    style: TextStyle(
-                      fontStyle: FontStyle.italic,
-                    ),
-                  ),
+                  Text('Italic', style: TextStyle(fontStyle: FontStyle.italic)),
                   SizedBox(width: 8),
                   Text(
                     'Underlined',
-                    style: TextStyle(
-                      decoration: TextDecoration.underline,
-                    ),
+                    style: TextStyle(decoration: TextDecoration.underline),
                   ),
                   SizedBox(width: 8),
                   Text(
@@ -192,134 +127,32 @@ class FontTestWidget extends StatelessWidget {
               SizedBox(height: 10),
               Text.rich(
                 TextSpan(
-                  style: TextStyle(
-                    fontFeatures: [
-                      FontFeature.liningFigures(),
-                    ],
-                  ),
+                  style: TextStyle(fontFeatures: [FontFeature.liningFigures()]),
                   children: [
-                    TextSpan(
-                      text: '6 ',
-                      style: TextStyle(
-                        fontSize: 6,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '8 ',
-                      style: TextStyle(
-                        fontSize: 8,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '10 ',
-                      style: TextStyle(
-                        fontSize: 10,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '11 ',
-                      style: TextStyle(
-                        fontSize: 10,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '12 ',
-                      style: TextStyle(
-                        fontSize: 12,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '13 ',
-                      style: TextStyle(
-                        fontSize: 13,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '14 ',
-                      style: TextStyle(
-                        fontSize: 14,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '16 ',
-                      style: TextStyle(
-                        fontSize: 16,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '18 ',
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '20 ',
-                      style: TextStyle(
-                        fontSize: 20,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '22 ',
-                      style: TextStyle(
-                        fontSize: 22,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '24 ',
-                      style: TextStyle(
-                        fontSize: 24,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '26 ',
-                      style: TextStyle(
-                        fontSize: 26,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '32 ',
-                      style: TextStyle(
-                        fontSize: 32,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '36 ',
-                      style: TextStyle(
-                        fontSize: 36,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '42 ',
-                      style: TextStyle(
-                        fontSize: 42,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '48 ',
-                      style: TextStyle(
-                        fontSize: 48,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '52 ',
-                      style: TextStyle(
-                        fontSize: 52,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '64',
-                      style: TextStyle(
-                        fontSize: 64,
-                      ),
-                    ),
+                    TextSpan(text: '6 ', style: TextStyle(fontSize: 6)),
+                    TextSpan(text: '8 ', style: TextStyle(fontSize: 8)),
+                    TextSpan(text: '10 ', style: TextStyle(fontSize: 10)),
+                    TextSpan(text: '11 ', style: TextStyle(fontSize: 10)),
+                    TextSpan(text: '12 ', style: TextStyle(fontSize: 12)),
+                    TextSpan(text: '13 ', style: TextStyle(fontSize: 13)),
+                    TextSpan(text: '14 ', style: TextStyle(fontSize: 14)),
+                    TextSpan(text: '16 ', style: TextStyle(fontSize: 16)),
+                    TextSpan(text: '18 ', style: TextStyle(fontSize: 18)),
+                    TextSpan(text: '20 ', style: TextStyle(fontSize: 20)),
+                    TextSpan(text: '22 ', style: TextStyle(fontSize: 22)),
+                    TextSpan(text: '24 ', style: TextStyle(fontSize: 24)),
+                    TextSpan(text: '26 ', style: TextStyle(fontSize: 26)),
+                    TextSpan(text: '32 ', style: TextStyle(fontSize: 32)),
+                    TextSpan(text: '36 ', style: TextStyle(fontSize: 36)),
+                    TextSpan(text: '42 ', style: TextStyle(fontSize: 42)),
+                    TextSpan(text: '48 ', style: TextStyle(fontSize: 48)),
+                    TextSpan(text: '52 ', style: TextStyle(fontSize: 52)),
+                    TextSpan(text: '64', style: TextStyle(fontSize: 64)),
                   ],
                 ),
               ),
               SizedBox(height: 10),
-              Text(
-                'Emojis 👍 ❤️ 🎉 💩 ✌️',
-                style: TextStyle(fontSize: 48),
-              ),
+              Text('Emojis 👍 ❤️ 🎉 💩 ✌️', style: TextStyle(fontSize: 48)),
             ],
           ),
         ),

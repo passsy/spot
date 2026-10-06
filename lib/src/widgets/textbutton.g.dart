@@ -35,7 +35,9 @@ extension TextButtonSelector on WidgetSelector<TextButton> {
   @useResult
   WidgetSelector<TextButton> withEnabled(bool? value) {
     return withDiagnosticProp<bool>(
-        'enabled', (it) => value == null ? it.isNull() : it.equals(value));
+      'enabled',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextButton] where style matches the condition.
@@ -58,7 +60,9 @@ extension TextButtonSelector on WidgetSelector<TextButton> {
   @useResult
   WidgetSelector<TextButton> withStyle(ButtonStyle? value) {
     return withDiagnosticProp<ButtonStyle>(
-        'style', (it) => value == null ? it.isNull() : it.equals(value));
+      'style',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextButton] where focusNode matches the condition.
@@ -81,7 +85,9 @@ extension TextButtonSelector on WidgetSelector<TextButton> {
   @useResult
   WidgetSelector<TextButton> withFocusNode(FocusNode? value) {
     return withDiagnosticProp<FocusNode>(
-        'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
+      'focusNode',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 
@@ -105,7 +111,9 @@ extension TextButtonMatcher on WidgetMatcher<TextButton> {
   /// ```
   WidgetMatcher<TextButton> isEnabled(bool? value) {
     return hasDiagnosticProp<bool>(
-        'enabled', (it) => value == null ? it.isNull() : it.equals(value));
+      'enabled',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that style of [TextButton] matches the condition in [match].
@@ -126,7 +134,9 @@ extension TextButtonMatcher on WidgetMatcher<TextButton> {
   /// ```
   WidgetMatcher<TextButton> hasStyle(ButtonStyle? value) {
     return hasDiagnosticProp<ButtonStyle>(
-        'style', (it) => value == null ? it.isNull() : it.equals(value));
+      'style',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that focusNode of [TextButton] matches the condition in [match].
@@ -147,7 +157,9 @@ extension TextButtonMatcher on WidgetMatcher<TextButton> {
   /// ```
   WidgetMatcher<TextButton> hasFocusNode(FocusNode? value) {
     return hasDiagnosticProp<FocusNode>(
-        'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
+      'focusNode',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 

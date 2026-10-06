@@ -18,13 +18,15 @@ void main() {
       ),
     );
     final text = log.join('\n');
-    final containsWarning =
-        text.contains('⚠️ - loadAppFonts is not supported on the web!');
+    final containsWarning = text.contains(
+      '⚠️ - loadAppFonts is not supported on the web!',
+    );
     expect(containsWarning, kIsWeb ? isTrue : isFalse);
   });
 
-  testWidgets('loadFont prints warning when on web', skip: !kIsWeb,
-      (tester) async {
+  testWidgets('loadFont prints warning when on web', skip: !kIsWeb, (
+    tester,
+  ) async {
     final log = <String>[];
     await runZoned(
       () async {
@@ -37,8 +39,9 @@ void main() {
       ),
     );
     final text = log.join('\n');
-    final containsWarning =
-        text.contains('⚠️ - loadFont is not supported on the web!');
+    final containsWarning = text.contains(
+      '⚠️ - loadFont is not supported on the web!',
+    );
     expect(containsWarning, kIsWeb ? isTrue : isFalse);
   });
 }

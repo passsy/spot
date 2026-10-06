@@ -33,61 +33,56 @@ extension DiagnosticPropWidgetSelector<W extends Widget> on WidgetSelector<W> {
   /// spot<Container>().writeMatchersToFile(path: 'test/container.g.dart');
   /// ```
   @useResult
-  WidgetSelector<W> withDiagnosticProp<T>(
-    String propName,
-    MatchProp<T> match,
-  ) {
+  WidgetSelector<W> withDiagnosticProp<T>(String propName, MatchProp<T> match) {
     void condition(Subject<T?> subject) {
       subject.hideNullability().context.nest<T>(
-            () => ['with prop "$propName"'],
-            (value) => Extracted.value(value),
-          );
+        () => ['with prop "$propName"'],
+        (value) => Extracted.value(value),
+      );
       match(subject.hideNullability());
     }
 
     final name = describe(condition).map((it) => it.trim()).toList().join(' ');
 
-    return whereElement(
-      (element) {
-        final props = diagnosticPropsOf(mapElementToWidget(element));
-        final DiagnosticsNode? prop =
-            props.firstOrNullWhere((e) => e.name == propName);
+    return whereElement((element) {
+      final props = diagnosticPropsOf(mapElementToWidget(element));
+      final DiagnosticsNode? prop = props.firstOrNullWhere(
+        (e) => e.name == propName,
+      );
 
-        final actual = prop?.value as T? ?? prop?.getDefaultValue<T>();
+      final actual = prop?.value as T? ?? prop?.getDefaultValue<T>();
 
-        void condition(Subject<T?> subject) {
-          subject.context.nest<T>(
-            () => [
-              removeQuantityConstraints().toStringBreadcrumb(),
-              'with prop "$propName"',
-            ],
-            (value) {
-              if (prop == null) {
-                return Extracted.rejection(which: ['Has no prop "$propName"']);
-              }
-              if (value is! T) {
-                return Extracted.rejection(
-                  which: [
-                    'Has no prop "$propName" of type "$T", the type is "${prop.value.runtimeType}"',
-                  ],
-                );
-              }
+      void condition(Subject<T?> subject) {
+        subject.context.nest<T>(
+          () => [
+            removeQuantityConstraints().toStringBreadcrumb(),
+            'with prop "$propName"',
+          ],
+          (value) {
+            if (prop == null) {
+              return Extracted.rejection(which: ['Has no prop "$propName"']);
+            }
+            if (value is! T) {
+              return Extracted.rejection(
+                which: [
+                  'Has no prop "$propName" of type "$T", the type is "${prop.value.runtimeType}"',
+                ],
+              );
+            }
 
-              return Extracted.value(actual as T);
-            },
-          );
-          match(subject.hideNullability());
-        }
+            return Extracted.value(actual as T);
+          },
+        );
+        match(subject.hideNullability());
+      }
 
-        final failure = softCheckHideNull(actual, condition);
-        if (failure != null) {
-          return false;
-        }
+      final failure = softCheckHideNull(actual, condition);
+      if (failure != null) {
+        return false;
+      }
 
-        return true;
-      },
-      description: name,
-    );
+      return true;
+    }, description: name);
   }
 }
 
@@ -101,8 +96,9 @@ extension DiagnosticPropWidgetMatcher<W extends Widget> on WidgetMatcher<W> {
   /// ```
   T getDiagnosticProp<T>(String propName) {
     final props = diagnosticPropsOf(widget);
-    final DiagnosticsNode? prop =
-        props.firstOrNullWhere((e) => e.name == propName);
+    final DiagnosticsNode? prop = props.firstOrNullWhere(
+      (e) => e.name == propName,
+    );
     final actual = prop?.value as T? ?? prop?.getDefaultValue<T>();
     return actual as T;
   }
@@ -110,13 +106,11 @@ extension DiagnosticPropWidgetMatcher<W extends Widget> on WidgetMatcher<W> {
   /// Asserts that a widget has a specific diagnostic property.
   ///
   /// Useful for testing properties that are part of a widget's diagnostics.
-  WidgetMatcher<W> hasDiagnosticProp<T>(
-    String propName,
-    MatchProp<T> match,
-  ) {
+  WidgetMatcher<W> hasDiagnosticProp<T>(String propName, MatchProp<T> match) {
     final props = diagnosticPropsOf(widget);
-    final DiagnosticsNode? prop =
-        props.firstOrNullWhere((e) => e.name == propName);
+    final DiagnosticsNode? prop = props.firstOrNullWhere(
+      (e) => e.name == propName,
+    );
 
     final actual = prop?.value as T? ?? prop?.getDefaultValue<T>();
     void condition(Subject<T?> subject) {
@@ -167,8 +161,9 @@ extension DiagnosticPropWidgetMatcher<W extends Widget> on WidgetMatcher<W> {
 /// [AnyTextWidgetSelector] hands out the same instance for an element until
 /// something it was derived from changes.
 List<DiagnosticsNode> diagnosticPropsOf(Widget widget) {
-  return _propsCache[widget] ??=
-      List.unmodifiable(widget.toDiagnosticsNode().getProperties());
+  return _propsCache[widget] ??= List.unmodifiable(
+    widget.toDiagnosticsNode().getProperties(),
+  );
 }
 
 /// The [DiagnosticsProperty]s of a [Widget], for as long as that widget lives.

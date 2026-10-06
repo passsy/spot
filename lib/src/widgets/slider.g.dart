@@ -35,7 +35,9 @@ extension SliderSelector on WidgetSelector<Slider> {
   @useResult
   WidgetSelector<Slider> withValue(double? value) {
     return withDiagnosticProp<double>(
-        'value', (it) => value == null ? it.isNull() : it.equals(value));
+      'value',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Slider] where secondaryTrackValue matches the condition.
@@ -57,8 +59,10 @@ extension SliderSelector on WidgetSelector<Slider> {
   /// ```
   @useResult
   WidgetSelector<Slider> withSecondaryTrackValue(double? value) {
-    return withDiagnosticProp<double>('secondaryTrackValue',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<double>(
+      'secondaryTrackValue',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Slider] where min matches the condition.
@@ -81,7 +85,9 @@ extension SliderSelector on WidgetSelector<Slider> {
   @useResult
   WidgetSelector<Slider> withMin(double? value) {
     return withDiagnosticProp<double>(
-        'min', (it) => value == null ? it.isNull() : it.equals(value));
+      'min',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Slider] where max matches the condition.
@@ -104,7 +110,9 @@ extension SliderSelector on WidgetSelector<Slider> {
   @useResult
   WidgetSelector<Slider> withMax(double? value) {
     return withDiagnosticProp<double>(
-        'max', (it) => value == null ? it.isNull() : it.equals(value));
+      'max',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Slider] where divisions matches the condition.
@@ -127,7 +135,9 @@ extension SliderSelector on WidgetSelector<Slider> {
   @useResult
   WidgetSelector<Slider> withDivisions(int? value) {
     return withDiagnosticProp<int>(
-        'divisions', (it) => value == null ? it.isNull() : it.equals(value));
+      'divisions',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Slider] where label matches the condition.
@@ -150,7 +160,9 @@ extension SliderSelector on WidgetSelector<Slider> {
   @useResult
   WidgetSelector<Slider> withLabel(String? value) {
     return withDiagnosticProp<String>(
-        'label', (it) => value == null ? it.isNull() : it.equals(value));
+      'label',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Slider] where activeColor matches the condition.
@@ -173,7 +185,9 @@ extension SliderSelector on WidgetSelector<Slider> {
   @useResult
   WidgetSelector<Slider> withActiveColor(Color? value) {
     return withDiagnosticProp<Color>(
-        'activeColor', (it) => value == null ? it.isNull() : it.equals(value));
+      'activeColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Slider] where inactiveColor matches the condition.
@@ -195,8 +209,10 @@ extension SliderSelector on WidgetSelector<Slider> {
   /// ```
   @useResult
   WidgetSelector<Slider> withInactiveColor(Color? value) {
-    return withDiagnosticProp<Color>('inactiveColor',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<Color>(
+      'inactiveColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Slider] where secondaryActiveColor matches the condition.
@@ -218,8 +234,10 @@ extension SliderSelector on WidgetSelector<Slider> {
   /// ```
   @useResult
   WidgetSelector<Slider> withSecondaryActiveColor(Color? value) {
-    return withDiagnosticProp<Color>('secondaryActiveColor',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<Color>(
+      'secondaryActiveColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Slider] where focusNode matches the condition.
@@ -242,7 +260,9 @@ extension SliderSelector on WidgetSelector<Slider> {
   @useResult
   WidgetSelector<Slider> withFocusNode(FocusNode? value) {
     return withDiagnosticProp<FocusNode>(
-        'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
+      'focusNode',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Slider] where autofocus matches the condition.
@@ -265,7 +285,9 @@ extension SliderSelector on WidgetSelector<Slider> {
   @useResult
   WidgetSelector<Slider> withAutofocus(bool? value) {
     return withDiagnosticProp<bool>(
-        'autofocus', (it) => value == null ? it.isNull() : it.equals(value));
+      'autofocus',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 
@@ -289,7 +311,9 @@ extension SliderMatcher on WidgetMatcher<Slider> {
   /// ```
   WidgetMatcher<Slider> hasValue(double? value) {
     return hasDiagnosticProp<double>(
-        'value', (it) => value == null ? it.isNull() : it.equals(value));
+      'value',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that secondaryTrackValue of [Slider] matches the condition in [match].
@@ -309,8 +333,10 @@ extension SliderMatcher on WidgetMatcher<Slider> {
   /// spot<Slider>().existsOnce().hasSecondaryTrackValue(10.5);
   /// ```
   WidgetMatcher<Slider> hasSecondaryTrackValue(double? value) {
-    return hasDiagnosticProp<double>('secondaryTrackValue',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<double>(
+      'secondaryTrackValue',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that min of [Slider] matches the condition in [match].
@@ -331,7 +357,9 @@ extension SliderMatcher on WidgetMatcher<Slider> {
   /// ```
   WidgetMatcher<Slider> hasMin(double? value) {
     return hasDiagnosticProp<double>(
-        'min', (it) => value == null ? it.isNull() : it.equals(value));
+      'min',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that max of [Slider] matches the condition in [match].
@@ -352,7 +380,9 @@ extension SliderMatcher on WidgetMatcher<Slider> {
   /// ```
   WidgetMatcher<Slider> hasMax(double? value) {
     return hasDiagnosticProp<double>(
-        'max', (it) => value == null ? it.isNull() : it.equals(value));
+      'max',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that divisions of [Slider] matches the condition in [match].
@@ -373,7 +403,9 @@ extension SliderMatcher on WidgetMatcher<Slider> {
   /// ```
   WidgetMatcher<Slider> hasDivisions(int? value) {
     return hasDiagnosticProp<int>(
-        'divisions', (it) => value == null ? it.isNull() : it.equals(value));
+      'divisions',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that label of [Slider] matches the condition in [match].
@@ -394,7 +426,9 @@ extension SliderMatcher on WidgetMatcher<Slider> {
   /// ```
   WidgetMatcher<Slider> hasLabel(String? value) {
     return hasDiagnosticProp<String>(
-        'label', (it) => value == null ? it.isNull() : it.equals(value));
+      'label',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that activeColor of [Slider] matches the condition in [match].
@@ -415,7 +449,9 @@ extension SliderMatcher on WidgetMatcher<Slider> {
   /// ```
   WidgetMatcher<Slider> hasActiveColor(Color? value) {
     return hasDiagnosticProp<Color>(
-        'activeColor', (it) => value == null ? it.isNull() : it.equals(value));
+      'activeColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that inactiveColor of [Slider] matches the condition in [match].
@@ -435,8 +471,10 @@ extension SliderMatcher on WidgetMatcher<Slider> {
   /// spot<Slider>().existsOnce().hasInactiveColor(Colors.red);
   /// ```
   WidgetMatcher<Slider> hasInactiveColor(Color? value) {
-    return hasDiagnosticProp<Color>('inactiveColor',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<Color>(
+      'inactiveColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that secondaryActiveColor of [Slider] matches the condition in [match].
@@ -456,8 +494,10 @@ extension SliderMatcher on WidgetMatcher<Slider> {
   /// spot<Slider>().existsOnce().hasSecondaryActiveColor(Colors.red);
   /// ```
   WidgetMatcher<Slider> hasSecondaryActiveColor(Color? value) {
-    return hasDiagnosticProp<Color>('secondaryActiveColor',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<Color>(
+      'secondaryActiveColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that focusNode of [Slider] matches the condition in [match].
@@ -478,7 +518,9 @@ extension SliderMatcher on WidgetMatcher<Slider> {
   /// ```
   WidgetMatcher<Slider> hasFocusNode(FocusNode? value) {
     return hasDiagnosticProp<FocusNode>(
-        'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
+      'focusNode',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that autofocus of [Slider] matches the condition in [match].
@@ -499,7 +541,9 @@ extension SliderMatcher on WidgetMatcher<Slider> {
   /// ```
   WidgetMatcher<Slider> hasAutofocus(bool? value) {
     return hasDiagnosticProp<bool>(
-        'autofocus', (it) => value == null ? it.isNull() : it.equals(value));
+      'autofocus',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 

@@ -13,17 +13,14 @@ void main() {
     final testProject = FontTestProject('test/fonts/templates/default_font');
     await testProject.create();
     debugPrint('Run pub get');
-    await Process.run(
-      flutterExe,
-      ['pub', 'get'],
-      workingDirectory: testProject.workingDir.path,
-    );
+    await Process.run(flutterExe, [
+      'pub',
+      'get',
+    ], workingDirectory: testProject.workingDir.path);
     debugPrint('Run tests');
-    final test = await Process.start(
-      flutterExe,
-      ['test'],
-      workingDirectory: testProject.workingDir.path,
-    );
+    final test = await Process.start(flutterExe, [
+      'test',
+    ], workingDirectory: testProject.workingDir.path);
     test.stdout.transform(utf8.decoder).listen((event) {
       debugPrint(event);
     });
@@ -33,11 +30,13 @@ void main() {
     final exitCode = await test.exitCode;
 
     if (exitCode != 0) {
-      final failuresDir =
-          Directory('${testProject.workingDir.path}/test/failures');
+      final failuresDir = Directory(
+        '${testProject.workingDir.path}/test/failures',
+      );
       if (failuresDir.existsSync()) {
-        final testFailureDirectory =
-            Directory('test/fonts/default_font_test_failures/');
+        final testFailureDirectory = Directory(
+          'test/fonts/default_font_test_failures/',
+        );
         if (testFailureDirectory.existsSync()) {
           testFailureDirectory.deleteSync(recursive: true);
         } else {

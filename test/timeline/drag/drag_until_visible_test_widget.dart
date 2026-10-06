@@ -17,20 +17,17 @@ class DragUntilVisibleSingleDirectionTestWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final items = List.generate(
-      30,
-      (index) {
-        return IgnorePointer(
-          ignoring: ignorePointerAtIndices.contains(index),
-          child: Container(
-            key: ValueKey('item-$index'),
-            height: 100,
-            color: index.isEven ? Colors.red : Colors.blue,
-            child: Center(child: Text('Item at index: $index')),
-          ),
-        );
-      },
-    );
+    final items = List.generate(30, (index) {
+      return IgnorePointer(
+        ignoring: ignorePointerAtIndices.contains(index),
+        child: Container(
+          key: ValueKey('item-$index'),
+          height: 100,
+          color: index.isEven ? Colors.red : Colors.blue,
+          child: Center(child: Text('Item at index: $index')),
+        ),
+      );
+    });
 
     final child = () {
       if (scrollableKey != null) {
@@ -70,14 +67,12 @@ class DragUntilVisibleSingleDirectionTestWidget extends StatelessWidget {
     final direction = axis == Axis.vertical ? 'Vertical' : 'Horizontal';
     final childType = useColumnOrRow
         ? axis == Axis.vertical
-            ? 'Column'
-            : 'Row'
+              ? 'Column'
+              : 'Row'
         : 'ListView';
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: Text('$direction Scrollable ($childType)'),
-        ),
+        appBar: AppBar(title: Text('$direction Scrollable ($childType)')),
         body: Center(
           child: SizedBox(
             height: 800,
@@ -115,49 +110,43 @@ class NestedScrollDragUntilVisibleTestWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Widget> createChildren(int parentIndex) {
-      return List.generate(
-        5,
-        (index) {
-          return Container(
-            width: 200,
-            height: 150,
-            decoration: BoxDecoration(
-              border: Border.all(),
-              color: index.isEven ? Colors.blueGrey : Colors.white38,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: Text('ParentIndex: $parentIndex, Item at index: $index'),
-            ),
-          );
-        },
-      );
-    }
-
-    final parents = List.generate(
-      3,
-      (index) {
-        return ColoredBox(
-          color: index.isEven ? Colors.blueAccent : Colors.greenAccent,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('Parent Index: $index'),
-              SingleChildScrollView(
-                scrollDirection: axis,
-                child: Flex(
-                  direction: axis,
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: createChildren(index),
-                ),
-              ),
-            ],
+      return List.generate(5, (index) {
+        return Container(
+          width: 200,
+          height: 150,
+          decoration: BoxDecoration(
+            border: Border.all(),
+            color: index.isEven ? Colors.blueGrey : Colors.white38,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: Text('ParentIndex: $parentIndex, Item at index: $index'),
           ),
         );
-      },
-    );
+      });
+    }
+
+    final parents = List.generate(3, (index) {
+      return ColoredBox(
+        color: index.isEven ? Colors.blueAccent : Colors.greenAccent,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Parent Index: $index'),
+            SingleChildScrollView(
+              scrollDirection: axis,
+              child: Flex(
+                direction: axis,
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: createChildren(index),
+              ),
+            ),
+          ],
+        ),
+      );
+    });
 
     return MaterialApp(
       home: Scaffold(
@@ -203,21 +192,18 @@ class DragUntilVisibleTappableTestWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final items = List.generate(
-      itemCount,
-      (index) {
-        return GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () => onItemTap(index),
-          child: Container(
-            width: axis == Axis.horizontal ? mainAxisItemSize : null,
-            height: axis == Axis.vertical ? mainAxisItemSize : null,
-            color: index.isEven ? Colors.red : Colors.blue,
-            child: Center(child: Text('Item at index: $index')),
-          ),
-        );
-      },
-    );
+    final items = List.generate(itemCount, (index) {
+      return GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => onItemTap(index),
+        child: Container(
+          width: axis == Axis.horizontal ? mainAxisItemSize : null,
+          height: axis == Axis.vertical ? mainAxisItemSize : null,
+          color: index.isEven ? Colors.red : Colors.blue,
+          child: Center(child: Text('Item at index: $index')),
+        ),
+      );
+    });
 
     final direction = axis == Axis.vertical ? 'Vertical' : 'Horizontal';
     return MaterialApp(
@@ -321,10 +307,7 @@ class DragInObscuredAreaTestWidget extends StatelessWidget {
                       left: 0,
                       right: 0,
                       height: topBannerHeight,
-                      child: banner(
-                        onTap: onTopBannerTap,
-                        label: 'TOP BANNER',
-                      ),
+                      child: banner(onTap: onTopBannerTap, label: 'TOP BANNER'),
                     ),
                   if (bottomBannerHeight > 0)
                     Positioned(
@@ -372,8 +355,9 @@ class CrossAxisNestedScrollableTestWidgetState
   /// going against the available scroll direction would never move the
   /// outer and the test would silently miss the bug.
   static const double _outerInitialOffset = 400;
-  final ScrollController outerController =
-      ScrollController(initialScrollOffset: _outerInitialOffset);
+  final ScrollController outerController = ScrollController(
+    initialScrollOffset: _outerInitialOffset,
+  );
 
   /// Whether the outer scrollable's offset has changed from its initial
   /// position. Tests assert this stays false.
@@ -388,8 +372,9 @@ class CrossAxisNestedScrollableTestWidgetState
 
   @override
   Widget build(BuildContext context) {
-    final outerAxis =
-        widget.innerAxis == Axis.vertical ? Axis.horizontal : Axis.vertical;
+    final outerAxis = widget.innerAxis == Axis.vertical
+        ? Axis.horizontal
+        : Axis.vertical;
 
     // Each item is a "list tile" with an avatar at one end. dragStart
     // typically points at the avatar (small, off-center), target points at

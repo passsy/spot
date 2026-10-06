@@ -10,10 +10,7 @@ void main() {
           child: SizedBox(
             width: 100,
             height: 100,
-            child: ColoredBox(
-              key: ValueKey('target'),
-              color: Colors.green,
-            ),
+            child: ColoredBox(key: ValueKey('target'), color: Colors.green),
           ),
         ),
       ),
@@ -26,18 +23,16 @@ void main() {
     spot<SizedBox>().atPosition(const Offset(400, 300)).existsOnce();
   });
 
-  testWidgets('spotAtPosition finds all widgets on hit-test path',
-      (tester) async {
+  testWidgets('spotAtPosition finds all widgets on hit-test path', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       const MaterialApp(
         home: Center(
           child: SizedBox(
             width: 100,
             height: 100,
-            child: ColoredBox(
-              key: ValueKey('target'),
-              color: Colors.green,
-            ),
+            child: ColoredBox(key: ValueKey('target'), color: Colors.green),
           ),
         ),
       ),
@@ -61,18 +56,12 @@ void main() {
             SizedBox(
               width: 100,
               height: 100,
-              child: ColoredBox(
-                key: ValueKey('blue'),
-                color: Colors.blue,
-              ),
+              child: ColoredBox(key: ValueKey('blue'), color: Colors.blue),
             ),
             SizedBox(
               width: 100,
               height: 100,
-              child: ColoredBox(
-                key: ValueKey('green'),
-                color: Colors.green,
-              ),
+              child: ColoredBox(key: ValueKey('green'), color: Colors.green),
             ),
           ],
         ),
@@ -147,9 +136,7 @@ void main() {
 
   testWidgets('atPosition returns no widgets outside the view', (tester) async {
     await tester.pumpWidget(
-      const MaterialApp(
-        home: ColoredBox(color: Colors.green),
-      ),
+      const MaterialApp(home: ColoredBox(color: Colors.green)),
     );
 
     spot<ColoredBox>().atPosition(const Offset(-1, -1)).doesNotExist();

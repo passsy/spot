@@ -17,9 +17,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color(0xff0d6e8c),
-          ),
+          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xff0d6e8c)),
           useMaterial3: true,
         ),
         home: const _TravelPlanner(),

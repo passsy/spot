@@ -35,7 +35,9 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
   @useResult
   WidgetSelector<IconButton> withIcon(Widget? value) {
     return withDiagnosticProp<Widget>(
-        'icon', (it) => value == null ? it.isNull() : it.equals(value));
+      'icon',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [IconButton] where tooltip matches the condition.
@@ -58,7 +60,9 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
   @useResult
   WidgetSelector<IconButton> withTooltip(String? value) {
     return withDiagnosticProp<String>(
-        'tooltip', (it) => value == null ? it.isNull() : it.equals(value));
+      'tooltip',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [IconButton] where color matches the condition.
@@ -81,7 +85,9 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
   @useResult
   WidgetSelector<IconButton> withColor(Color? value) {
     return withDiagnosticProp<Color>(
-        'color', (it) => value == null ? it.isNull() : it.equals(value));
+      'color',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [IconButton] where disabledColor matches the condition.
@@ -103,8 +109,10 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
   /// ```
   @useResult
   WidgetSelector<IconButton> withDisabledColor(Color? value) {
-    return withDiagnosticProp<Color>('disabledColor',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<Color>(
+      'disabledColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [IconButton] where focusColor matches the condition.
@@ -127,7 +135,9 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
   @useResult
   WidgetSelector<IconButton> withFocusColor(Color? value) {
     return withDiagnosticProp<Color>(
-        'focusColor', (it) => value == null ? it.isNull() : it.equals(value));
+      'focusColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [IconButton] where hoverColor matches the condition.
@@ -150,7 +160,9 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
   @useResult
   WidgetSelector<IconButton> withHoverColor(Color? value) {
     return withDiagnosticProp<Color>(
-        'hoverColor', (it) => value == null ? it.isNull() : it.equals(value));
+      'hoverColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [IconButton] where highlightColor matches the condition.
@@ -172,8 +184,10 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
   /// ```
   @useResult
   WidgetSelector<IconButton> withHighlightColor(Color? value) {
-    return withDiagnosticProp<Color>('highlightColor',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<Color>(
+      'highlightColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [IconButton] where splashColor matches the condition.
@@ -196,7 +210,9 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
   @useResult
   WidgetSelector<IconButton> withSplashColor(Color? value) {
     return withDiagnosticProp<Color>(
-        'splashColor', (it) => value == null ? it.isNull() : it.equals(value));
+      'splashColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [IconButton] where padding matches the condition.
@@ -219,7 +235,9 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
   @useResult
   WidgetSelector<IconButton> withPadding(EdgeInsetsGeometry? value) {
     return withDiagnosticProp<EdgeInsetsGeometry>(
-        'padding', (it) => value == null ? it.isNull() : it.equals(value));
+      'padding',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [IconButton] where focusNode matches the condition.
@@ -242,7 +260,9 @@ extension IconButtonSelector on WidgetSelector<IconButton> {
   @useResult
   WidgetSelector<IconButton> withFocusNode(FocusNode? value) {
     return withDiagnosticProp<FocusNode>(
-        'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
+      'focusNode',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 
@@ -266,7 +286,9 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
   /// ```
   WidgetMatcher<IconButton> hasIcon(Widget? value) {
     return hasDiagnosticProp<Widget>(
-        'icon', (it) => value == null ? it.isNull() : it.equals(value));
+      'icon',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that tooltip of [IconButton] matches the condition in [match].
@@ -287,7 +309,9 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
   /// ```
   WidgetMatcher<IconButton> hasTooltip(String? value) {
     return hasDiagnosticProp<String>(
-        'tooltip', (it) => value == null ? it.isNull() : it.equals(value));
+      'tooltip',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that color of [IconButton] matches the condition in [match].
@@ -308,7 +332,9 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
   /// ```
   WidgetMatcher<IconButton> hasColor(Color? value) {
     return hasDiagnosticProp<Color>(
-        'color', (it) => value == null ? it.isNull() : it.equals(value));
+      'color',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that disabledColor of [IconButton] matches the condition in [match].
@@ -328,8 +354,10 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
   /// spot<IconButton>().existsOnce().hasDisabledColor(Colors.red);
   /// ```
   WidgetMatcher<IconButton> hasDisabledColor(Color? value) {
-    return hasDiagnosticProp<Color>('disabledColor',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<Color>(
+      'disabledColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that focusColor of [IconButton] matches the condition in [match].
@@ -350,7 +378,9 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
   /// ```
   WidgetMatcher<IconButton> hasFocusColor(Color? value) {
     return hasDiagnosticProp<Color>(
-        'focusColor', (it) => value == null ? it.isNull() : it.equals(value));
+      'focusColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that hoverColor of [IconButton] matches the condition in [match].
@@ -371,7 +401,9 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
   /// ```
   WidgetMatcher<IconButton> hasHoverColor(Color? value) {
     return hasDiagnosticProp<Color>(
-        'hoverColor', (it) => value == null ? it.isNull() : it.equals(value));
+      'hoverColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that highlightColor of [IconButton] matches the condition in [match].
@@ -391,8 +423,10 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
   /// spot<IconButton>().existsOnce().hasHighlightColor(Colors.red);
   /// ```
   WidgetMatcher<IconButton> hasHighlightColor(Color? value) {
-    return hasDiagnosticProp<Color>('highlightColor',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<Color>(
+      'highlightColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that splashColor of [IconButton] matches the condition in [match].
@@ -413,7 +447,9 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
   /// ```
   WidgetMatcher<IconButton> hasSplashColor(Color? value) {
     return hasDiagnosticProp<Color>(
-        'splashColor', (it) => value == null ? it.isNull() : it.equals(value));
+      'splashColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that padding of [IconButton] matches the condition in [match].
@@ -423,7 +459,8 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
   /// spot<IconButton>().existsOnce().hasPaddingWhere((it) => it.equals(EdgeInsets.all(8.0)));
   /// ```
   WidgetMatcher<IconButton> hasPaddingWhere(
-      MatchProp<EdgeInsetsGeometry> match) {
+    MatchProp<EdgeInsetsGeometry> match,
+  ) {
     return hasDiagnosticProp<EdgeInsetsGeometry>('padding', match);
   }
 
@@ -435,7 +472,9 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
   /// ```
   WidgetMatcher<IconButton> hasPadding(EdgeInsetsGeometry? value) {
     return hasDiagnosticProp<EdgeInsetsGeometry>(
-        'padding', (it) => value == null ? it.isNull() : it.equals(value));
+      'padding',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that focusNode of [IconButton] matches the condition in [match].
@@ -456,7 +495,9 @@ extension IconButtonMatcher on WidgetMatcher<IconButton> {
   /// ```
   WidgetMatcher<IconButton> hasFocusNode(FocusNode? value) {
     return hasDiagnosticProp<FocusNode>(
-        'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
+      'focusNode',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 

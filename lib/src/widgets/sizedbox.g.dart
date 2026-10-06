@@ -36,7 +36,9 @@ extension SizedBoxSelector on WidgetSelector<SizedBox> {
   @useResult
   WidgetSelector<SizedBox> withWidth(double? value) {
     return withDiagnosticProp<double>(
-        'width', (it) => value == null ? it.isNull() : it.equals(value));
+      'width',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [SizedBox] where height matches the condition.
@@ -59,7 +61,9 @@ extension SizedBoxSelector on WidgetSelector<SizedBox> {
   @useResult
   WidgetSelector<SizedBox> withHeight(double? value) {
     return withDiagnosticProp<double>(
-        'height', (it) => value == null ? it.isNull() : it.equals(value));
+      'height',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [SizedBox] where renderObject matches the condition.
@@ -70,7 +74,8 @@ extension SizedBoxSelector on WidgetSelector<SizedBox> {
   /// ```
   @useResult
   WidgetSelector<SizedBox> whereRenderObject(
-      MatchProp<RenderConstrainedBox> match) {
+    MatchProp<RenderConstrainedBox> match,
+  ) {
     return withDiagnosticProp<RenderConstrainedBox>('renderObject', match);
   }
 
@@ -83,7 +88,9 @@ extension SizedBoxSelector on WidgetSelector<SizedBox> {
   @useResult
   WidgetSelector<SizedBox> withRenderObject(RenderConstrainedBox? value) {
     return withDiagnosticProp<RenderConstrainedBox>(
-        'renderObject', (it) => value == null ? it.isNull() : it.equals(value));
+      'renderObject',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 
@@ -107,7 +114,9 @@ extension SizedBoxMatcher on WidgetMatcher<SizedBox> {
   /// ```
   WidgetMatcher<SizedBox> hasWidth(double? value) {
     return hasDiagnosticProp<double>(
-        'width', (it) => value == null ? it.isNull() : it.equals(value));
+      'width',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that height of [SizedBox] matches the condition in [match].
@@ -128,7 +137,9 @@ extension SizedBoxMatcher on WidgetMatcher<SizedBox> {
   /// ```
   WidgetMatcher<SizedBox> hasHeight(double? value) {
     return hasDiagnosticProp<double>(
-        'height', (it) => value == null ? it.isNull() : it.equals(value));
+      'height',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that renderObject of [SizedBox] matches the condition in [match].
@@ -138,7 +149,8 @@ extension SizedBoxMatcher on WidgetMatcher<SizedBox> {
   /// spot<SizedBox>().existsOnce().hasRenderObjectWhere((it) => it.equals(RenderBox()));
   /// ```
   WidgetMatcher<SizedBox> hasRenderObjectWhere(
-      MatchProp<RenderConstrainedBox> match) {
+    MatchProp<RenderConstrainedBox> match,
+  ) {
     return hasDiagnosticProp<RenderConstrainedBox>('renderObject', match);
   }
 
@@ -150,7 +162,9 @@ extension SizedBoxMatcher on WidgetMatcher<SizedBox> {
   /// ```
   WidgetMatcher<SizedBox> hasRenderObject(RenderConstrainedBox? value) {
     return hasDiagnosticProp<RenderConstrainedBox>(
-        'renderObject', (it) => value == null ? it.isNull() : it.equals(value));
+      'renderObject',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 

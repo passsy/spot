@@ -57,11 +57,9 @@ Future<void> rebuildJs() async {
   final timestamp = DateTime.now().toIso8601String().substring(11, 19);
   print('$timestamp Recompiling...');
   try {
-    final result = await Process.run(
-      dartExecutable,
-      ['tool/compile_js.dart'],
-      workingDirectory: spotPackageRoot.path,
-    );
+    final result = await Process.run(dartExecutable, [
+      'tool/compile_js.dart',
+    ], workingDirectory: spotPackageRoot.path);
     if (result.exitCode != 0) {
       print('Compilation failed');
       print(result.stdout);
@@ -92,11 +90,9 @@ Future<void> rebuildHtml() async {
   // start a new process so that it picks up the changes in the jaspr code
   final stopwatch = Stopwatch()..start();
   try {
-    final result = await Process.run(
-      dartExecutable,
-      ['tool/render_html.dart'],
-      workingDirectory: packageRoot.path,
-    );
+    final result = await Process.run(dartExecutable, [
+      'tool/render_html.dart',
+    ], workingDirectory: packageRoot.path);
     if (result.exitCode != 0) {
       print('Render failed');
       print(result.stdout);

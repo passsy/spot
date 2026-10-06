@@ -38,10 +38,7 @@ Future<String?> runTestInProcessAndCaptureOutPut({
   final testProcess = await TestProcess.start(
     flutterExe,
     arguments,
-    environment: {
-      'CI': 'true',
-      ..._ownBuildDirectory(),
-    },
+    environment: {'CI': 'true', ..._ownBuildDirectory()},
   );
   final stdoutBuffer = StringBuffer();
   bool write = captureStart.isEmpty;
@@ -156,8 +153,9 @@ String _buildDirectoryOfTestFile() {
     return 'build/nested_test/unknown';
   }
   final current = Directory.current.path;
-  final relative =
-      path.startsWith(current) ? path.substring(current.length) : path;
+  final relative = path.startsWith(current)
+      ? path.substring(current.length)
+      : path;
   final name = relative
       .replaceAll(RegExp('[^A-Za-z0-9]+'), '_')
       .replaceFirst(RegExp('^_'), '');

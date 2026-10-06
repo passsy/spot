@@ -10,9 +10,7 @@ extension FinderToSpot on Finder {
   /// Like a [Finder], [WidgetSelector] can return 0, 1, or N widgets
   @useResult
   WidgetSelector<W> spot<W extends Widget>() {
-    return WidgetSelector<W>(
-      stages: [FinderFilter(this)],
-    );
+    return WidgetSelector<W>(stages: [FinderFilter(this)]);
   }
 }
 

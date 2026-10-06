@@ -36,7 +36,9 @@ extension RowSelector on WidgetSelector<Row> {
   @useResult
   WidgetSelector<Row> withDirection(Axis? value) {
     return withDiagnosticProp<Axis>(
-        'direction', (it) => value == null ? it.isNull() : it.equals(value));
+      'direction',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Row] where mainAxisAlignment matches the condition.
@@ -47,7 +49,8 @@ extension RowSelector on WidgetSelector<Row> {
   /// ```
   @useResult
   WidgetSelector<Row> whereMainAxisAlignment(
-      MatchProp<MainAxisAlignment> match) {
+    MatchProp<MainAxisAlignment> match,
+  ) {
     return withDiagnosticProp<MainAxisAlignment>('mainAxisAlignment', match);
   }
 
@@ -59,8 +62,10 @@ extension RowSelector on WidgetSelector<Row> {
   /// ```
   @useResult
   WidgetSelector<Row> withMainAxisAlignment(MainAxisAlignment? value) {
-    return withDiagnosticProp<MainAxisAlignment>('mainAxisAlignment',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<MainAxisAlignment>(
+      'mainAxisAlignment',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Row] where mainAxisSize matches the condition.
@@ -83,7 +88,9 @@ extension RowSelector on WidgetSelector<Row> {
   @useResult
   WidgetSelector<Row> withMainAxisSize(MainAxisSize? value) {
     return withDiagnosticProp<MainAxisSize>(
-        'mainAxisSize', (it) => value == null ? it.isNull() : it.equals(value));
+      'mainAxisSize',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Row] where crossAxisAlignment matches the condition.
@@ -94,7 +101,8 @@ extension RowSelector on WidgetSelector<Row> {
   /// ```
   @useResult
   WidgetSelector<Row> whereCrossAxisAlignment(
-      MatchProp<CrossAxisAlignment> match) {
+    MatchProp<CrossAxisAlignment> match,
+  ) {
     return withDiagnosticProp<CrossAxisAlignment>('crossAxisAlignment', match);
   }
 
@@ -106,8 +114,10 @@ extension RowSelector on WidgetSelector<Row> {
   /// ```
   @useResult
   WidgetSelector<Row> withCrossAxisAlignment(CrossAxisAlignment? value) {
-    return withDiagnosticProp<CrossAxisAlignment>('crossAxisAlignment',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<CrossAxisAlignment>(
+      'crossAxisAlignment',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Row] where textDirection matches the condition.
@@ -129,8 +139,10 @@ extension RowSelector on WidgetSelector<Row> {
   /// ```
   @useResult
   WidgetSelector<Row> withTextDirection(TextDirection? value) {
-    return withDiagnosticProp<TextDirection>('textDirection',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<TextDirection>(
+      'textDirection',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Row] where verticalDirection matches the condition.
@@ -141,7 +153,8 @@ extension RowSelector on WidgetSelector<Row> {
   /// ```
   @useResult
   WidgetSelector<Row> whereVerticalDirection(
-      MatchProp<VerticalDirection> match) {
+    MatchProp<VerticalDirection> match,
+  ) {
     return withDiagnosticProp<VerticalDirection>('verticalDirection', match);
   }
 
@@ -153,8 +166,10 @@ extension RowSelector on WidgetSelector<Row> {
   /// ```
   @useResult
   WidgetSelector<Row> withVerticalDirection(VerticalDirection? value) {
-    return withDiagnosticProp<VerticalDirection>('verticalDirection',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<VerticalDirection>(
+      'verticalDirection',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Row] where textBaseline matches the condition.
@@ -177,7 +192,9 @@ extension RowSelector on WidgetSelector<Row> {
   @useResult
   WidgetSelector<Row> withTextBaseline(TextBaseline? value) {
     return withDiagnosticProp<TextBaseline>(
-        'textBaseline', (it) => value == null ? it.isNull() : it.equals(value));
+      'textBaseline',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Row] where renderObject matches the condition.
@@ -200,7 +217,9 @@ extension RowSelector on WidgetSelector<Row> {
   @useResult
   WidgetSelector<Row> withRenderObject(RenderFlex? value) {
     return withDiagnosticProp<RenderFlex>(
-        'renderObject', (it) => value == null ? it.isNull() : it.equals(value));
+      'renderObject',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 
@@ -224,7 +243,9 @@ extension RowMatcher on WidgetMatcher<Row> {
   /// ```
   WidgetMatcher<Row> hasDirection(Axis? value) {
     return hasDiagnosticProp<Axis>(
-        'direction', (it) => value == null ? it.isNull() : it.equals(value));
+      'direction',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that mainAxisAlignment of [Row] matches the condition in [match].
@@ -234,7 +255,8 @@ extension RowMatcher on WidgetMatcher<Row> {
   /// spot<Row>().existsOnce().hasMainAxisAlignmentWhere((it) => it.equals(MainAxisAlignment.values.first));
   /// ```
   WidgetMatcher<Row> hasMainAxisAlignmentWhere(
-      MatchProp<MainAxisAlignment> match) {
+    MatchProp<MainAxisAlignment> match,
+  ) {
     return hasDiagnosticProp<MainAxisAlignment>('mainAxisAlignment', match);
   }
 
@@ -245,8 +267,10 @@ extension RowMatcher on WidgetMatcher<Row> {
   /// spot<Row>().existsOnce().hasMainAxisAlignment(MainAxisAlignment.values.first);
   /// ```
   WidgetMatcher<Row> hasMainAxisAlignment(MainAxisAlignment? value) {
-    return hasDiagnosticProp<MainAxisAlignment>('mainAxisAlignment',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<MainAxisAlignment>(
+      'mainAxisAlignment',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that mainAxisSize of [Row] matches the condition in [match].
@@ -267,7 +291,9 @@ extension RowMatcher on WidgetMatcher<Row> {
   /// ```
   WidgetMatcher<Row> hasMainAxisSize(MainAxisSize? value) {
     return hasDiagnosticProp<MainAxisSize>(
-        'mainAxisSize', (it) => value == null ? it.isNull() : it.equals(value));
+      'mainAxisSize',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that crossAxisAlignment of [Row] matches the condition in [match].
@@ -277,7 +303,8 @@ extension RowMatcher on WidgetMatcher<Row> {
   /// spot<Row>().existsOnce().hasCrossAxisAlignmentWhere((it) => it.equals(CrossAxisAlignment.values.first));
   /// ```
   WidgetMatcher<Row> hasCrossAxisAlignmentWhere(
-      MatchProp<CrossAxisAlignment> match) {
+    MatchProp<CrossAxisAlignment> match,
+  ) {
     return hasDiagnosticProp<CrossAxisAlignment>('crossAxisAlignment', match);
   }
 
@@ -288,8 +315,10 @@ extension RowMatcher on WidgetMatcher<Row> {
   /// spot<Row>().existsOnce().hasCrossAxisAlignment(CrossAxisAlignment.values.first);
   /// ```
   WidgetMatcher<Row> hasCrossAxisAlignment(CrossAxisAlignment? value) {
-    return hasDiagnosticProp<CrossAxisAlignment>('crossAxisAlignment',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<CrossAxisAlignment>(
+      'crossAxisAlignment',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that textDirection of [Row] matches the condition in [match].
@@ -309,8 +338,10 @@ extension RowMatcher on WidgetMatcher<Row> {
   /// spot<Row>().existsOnce().hasTextDirection(TextDirection.values.first);
   /// ```
   WidgetMatcher<Row> hasTextDirection(TextDirection? value) {
-    return hasDiagnosticProp<TextDirection>('textDirection',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<TextDirection>(
+      'textDirection',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that verticalDirection of [Row] matches the condition in [match].
@@ -320,7 +351,8 @@ extension RowMatcher on WidgetMatcher<Row> {
   /// spot<Row>().existsOnce().hasVerticalDirectionWhere((it) => it.equals(VerticalDirection.values.first));
   /// ```
   WidgetMatcher<Row> hasVerticalDirectionWhere(
-      MatchProp<VerticalDirection> match) {
+    MatchProp<VerticalDirection> match,
+  ) {
     return hasDiagnosticProp<VerticalDirection>('verticalDirection', match);
   }
 
@@ -331,8 +363,10 @@ extension RowMatcher on WidgetMatcher<Row> {
   /// spot<Row>().existsOnce().hasVerticalDirection(VerticalDirection.values.first);
   /// ```
   WidgetMatcher<Row> hasVerticalDirection(VerticalDirection? value) {
-    return hasDiagnosticProp<VerticalDirection>('verticalDirection',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<VerticalDirection>(
+      'verticalDirection',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that textBaseline of [Row] matches the condition in [match].
@@ -353,7 +387,9 @@ extension RowMatcher on WidgetMatcher<Row> {
   /// ```
   WidgetMatcher<Row> hasTextBaseline(TextBaseline? value) {
     return hasDiagnosticProp<TextBaseline>(
-        'textBaseline', (it) => value == null ? it.isNull() : it.equals(value));
+      'textBaseline',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that renderObject of [Row] matches the condition in [match].
@@ -374,7 +410,9 @@ extension RowMatcher on WidgetMatcher<Row> {
   /// ```
   WidgetMatcher<Row> hasRenderObject(RenderFlex? value) {
     return hasDiagnosticProp<RenderFlex>(
-        'renderObject', (it) => value == null ? it.isNull() : it.equals(value));
+      'renderObject',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 
