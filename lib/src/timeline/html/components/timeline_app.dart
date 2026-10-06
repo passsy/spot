@@ -1579,22 +1579,25 @@ class TimelineAppState extends State<TimelineApp> {
                   [
                     div(classes: 'time-ruler', [
                       for (final column in columns)
-                        column.gap != null
-                            ? const div(classes: 'ruler-cell is-gap', [])
-                            : _rulerCell(column.frame!, events),
+                        if (column.gap != null)
+                          const div(classes: 'ruler-cell is-gap', [])
+                        else
+                          _rulerCell(column.frame!, events),
                     ]),
                     div(classes: 'filmstrip', [
                       for (final column in columns)
-                        column.gap != null
-                            ? _frameGap(column.gap!)
-                            : _frameCapture(column.frame!),
+                        if (column.gap != null)
+                          _frameGap(column.gap!)
+                        else
+                          _frameCapture(column.frame!),
                     ]),
                     div(classes: 'event-lane', [
                       div(classes: 'lane-events', [
                         for (final column in columns)
-                          column.gap != null
-                              ? const div(classes: 'frame-events is-gap', [])
-                              : _frameEventMarkers(column.frame!, events),
+                          if (column.gap != null)
+                            const div(classes: 'frame-events is-gap', [])
+                          else
+                            _frameEventMarkers(column.frame!, events),
                       ]),
                     ]),
                   ],
