@@ -1,6 +1,5 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
@@ -58,11 +57,7 @@ void main() {
     });
 
     testWidgets('error shows actual maxLines count', (widgetTester) async {
-      await widgetTester.pumpWidget(
-        MaterialApp(
-          home: Text(''),
-        ),
-      );
+      await widgetTester.pumpWidget(MaterialApp(home: Text('')));
       expect(
         () => spot<Text>().existsOnce().hasEffectiveMaxLines(5),
         throwsSpotErrorContaining([
@@ -71,8 +66,9 @@ void main() {
       );
     });
 
-    testWidgets('error shows null when no maxLines is set',
-        (widgetTester) async {
+    testWidgets('error shows null when no maxLines is set', (
+      widgetTester,
+    ) async {
       await widgetTester.pumpWidget(
         MaterialApp(
           home: DefaultTextStyle(
@@ -98,9 +94,7 @@ void main() {
         MaterialApp(
           themeMode: ThemeMode.dark,
           theme: ThemeData.dark(),
-          home: Material(
-            child: Text(''),
-          ),
+          home: Material(child: Text('')),
         ),
       );
       spot<Text>()
@@ -129,32 +123,33 @@ void main() {
         ),
       );
       spot<Text>().existsOnce().hasEffectiveTextStyleWhere(
-            (style) => style
-              ..fontSize.equals(20)
-              ..letterSpacing.equals(2)
-              ..fontStyle.equals(FontStyle.italic)
-              ..fontWeight.equals(FontWeight.bold),
-          );
+        (style) => style
+          ..fontSize.equals(20)
+          ..letterSpacing.equals(2)
+          ..fontStyle.equals(FontStyle.italic)
+          ..fontWeight.equals(FontWeight.bold),
+      );
     });
 
     testWidgets('Errors show current values', (widgetTester) async {
       await widgetTester.pumpWidget(
         MaterialApp(
-          home: DefaultTextStyle(
-            style: TextStyle(),
-            child: Text('A'),
-          ),
+          home: DefaultTextStyle(style: TextStyle(), child: Text('A')),
         ),
       );
-      const webError =
+      // dart2js unifies int and double, so a whole double prints without the
+      // fraction. dart2wasm and the VM keep them apart, and kIsWeb is true for
+      // both web compilers, so ask about the numbers instead of the platform.
+      const jsNumbers = identical(1, 1.0);
+      const jsError =
           'has "textStyle" that: has fontSize that: equals <20>, actual: <14>';
       expect(
-        () => spot<Text>()
-            .existsOnce()
-            .hasEffectiveTextStyleWhere((style) => style..fontSize.equals(20)),
+        () => spot<Text>().existsOnce().hasEffectiveTextStyleWhere(
+          (style) => style..fontSize.equals(20),
+        ),
         throwsSpotErrorContaining([
-          if (kIsWeb)
-            webError
+          if (jsNumbers)
+            jsError
           else
             'has "textStyle" that: has fontSize that: equals <20.0>, actual: <14.0>',
         ]),
@@ -162,16 +157,16 @@ void main() {
 
       expect(
         () => spot<Text>().existsOnce().hasEffectiveTextStyleWhere(
-              (style) => style..fontStyle.equals(FontStyle.italic),
-            ),
+          (style) => style..fontStyle.equals(FontStyle.italic),
+        ),
         throwsSpotErrorContaining([
           'has "textStyle" that: has fontStyle that: equals <FontStyle.italic>, actual: <FontStyle.normal>',
         ]),
       );
       expect(
         () => spot<Text>().existsOnce().hasEffectiveTextStyleWhere(
-              (style) => style..fontWeight.equals(FontWeight.bold),
-            ),
+          (style) => style..fontWeight.equals(FontWeight.bold),
+        ),
         throwsSpotErrorContaining([
           'has "textStyle" that: has fontWeight that: equals <FontWeight.w700>, actual: <FontWeight.w400>',
         ]),
@@ -187,50 +182,14 @@ void main() {
       );
       await widgetTester.pumpWidget(
         MaterialApp(
-          home: DefaultTextStyle(
-            style: style,
-            child: Text(''),
-          ),
+          home: DefaultTextStyle(style: style, child: Text('')),
         ),
       );
       spot<Text>().existsOnce().hasEffectiveTextStyle(style);
     });
 
     testWidgets(
-        'Failed matching against complete TextStyle shows current values',
-        (widgetTester) async {
-      final style = TextStyle(
-        fontSize: 20,
-        fontStyle: FontStyle.italic,
-        fontWeight: FontWeight.bold,
-        letterSpacing: 2,
-      );
-      await widgetTester.pumpWidget(
-        MaterialApp(
-          home: DefaultTextStyle(
-            style: style,
-            child: Text(''),
-          ),
-        ),
-      );
-
-      expect(
-        () => spot<Text>().existsOnce().hasEffectiveTextStyle(
-              style.copyWith(
-                fontSize: 16,
-                fontStyle: FontStyle.normal,
-                fontWeight: FontWeight.normal,
-                letterSpacing: 1,
-              ),
-            ),
-        throwsSpotErrorContaining([
-          'has "textStyle" that: equals <TextStyle(inherit: true, size: 16.0, weight: 400, style: normal, letterSpacing: 1.0)>, actual: <TextStyle(inherit: true, size: 20.0, weight: 700, style: italic, letterSpacing: 2.0)>',
-        ]),
-      );
-    });
-
-    testWidgets(
-      'Select with TextStyle',
+      'Failed matching against complete TextStyle shows current values',
       (widgetTester) async {
         final style = TextStyle(
           fontSize: 20,
@@ -238,44 +197,29 @@ void main() {
           fontWeight: FontWeight.bold,
           letterSpacing: 2,
         );
-
         await widgetTester.pumpWidget(
           MaterialApp(
-            home: Column(
-              children: [
-                Text(
-                  'Great Text',
-                  style: TextStyle(fontSize: 20),
-                ),
-                DefaultTextStyle(
-                  style: style,
-                  child: Text('Great Text'),
-                ),
-              ],
-            ),
+            home: DefaultTextStyle(style: style, child: Text('')),
           ),
         );
 
-        // Select with single props
-        spot<Text>().withText('Great Text').withEffectiveTextStyleMatching(
-          (style) {
-            style.fontSize.equals(20);
-            style.fontStyle.equals(FontStyle.italic);
-            style.fontWeight.equals(FontWeight.bold);
-            style.letterSpacing.equals(2);
-          },
-        ).existsOnce();
-
-        // Select with complete TextStyle
-        spot<Text>()
-            .withText('Great Text')
-            .withEffectiveTextStyle(style)
-            .existsOnce();
+        expect(
+          () => spot<Text>().existsOnce().hasEffectiveTextStyle(
+            style.copyWith(
+              fontSize: 16,
+              fontStyle: FontStyle.normal,
+              fontWeight: FontWeight.normal,
+              letterSpacing: 1,
+            ),
+          ),
+          throwsSpotErrorContaining([
+            'has "textStyle" that: equals <TextStyle(inherit: true, size: 16.0, weight: 400, style: normal, letterSpacing: 1.0)>, actual: <TextStyle(inherit: true, size: 20.0, weight: 700, style: italic, letterSpacing: 2.0)>',
+          ]),
+        );
       },
     );
 
-    testWidgets('Failed selection with TextStyle shows missing values',
-        (widgetTester) async {
+    testWidgets('Select with TextStyle', (widgetTester) async {
       final style = TextStyle(
         fontSize: 20,
         fontStyle: FontStyle.italic,
@@ -285,23 +229,58 @@ void main() {
 
       await widgetTester.pumpWidget(
         MaterialApp(
-          home: DefaultTextStyle(
-            style: style,
-            child: Text('Great Text'),
+          home: Column(
+            children: [
+              Text('Great Text', style: TextStyle(fontSize: 20)),
+              DefaultTextStyle(style: style, child: Text('Great Text')),
+            ],
           ),
         ),
       );
 
+      // Select with single props
+      spot<Text>().withText('Great Text').withEffectiveTextStyleMatching((
+        style,
+      ) {
+        style.fontSize.equals(20);
+        style.fontStyle.equals(FontStyle.italic);
+        style.fontWeight.equals(FontWeight.bold);
+        style.letterSpacing.equals(2);
+      }).existsOnce();
+
+      // Select with complete TextStyle
+      spot<Text>()
+          .withText('Great Text')
+          .withEffectiveTextStyle(style)
+          .existsOnce();
+    });
+
+    testWidgets('Failed selection with TextStyle shows missing values', (
+      widgetTester,
+    ) async {
+      final style = TextStyle(
+        fontSize: 20,
+        fontStyle: FontStyle.italic,
+        fontWeight: FontWeight.bold,
+        letterSpacing: 2,
+      );
+
+      await widgetTester.pumpWidget(
+        MaterialApp(
+          home: DefaultTextStyle(style: style, child: Text('Great Text')),
+        ),
+      );
+
       expect(
-        () =>
-            spot<Text>().withText('Great Text').withEffectiveTextStyleMatching(
-          (style) {
-            style.fontSize.equals(20);
-            style.fontStyle.equals(FontStyle.normal);
-            style.fontWeight.equals(FontWeight.bold);
-            style.letterSpacing.equals(2);
-          },
-        ).existsOnce(),
+        () => spot<Text>()
+            .withText('Great Text')
+            .withEffectiveTextStyleMatching((style) {
+              style.fontSize.equals(20);
+              style.fontStyle.equals(FontStyle.normal);
+              style.fontWeight.equals(FontWeight.bold);
+              style.letterSpacing.equals(2);
+            })
+            .existsOnce(),
         throwsSpotErrorContaining([
           RegExp(r'has fontSize that: equals <20(\.0)?>'),
           'has fontStyle that: equals <FontStyle.normal>',

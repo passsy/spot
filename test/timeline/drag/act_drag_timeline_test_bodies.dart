@@ -26,8 +26,9 @@ class ActDragTimelineTestBodies {
       }
       await _testBody(tester);
     });
-    final hasMessage =
-        output.contains('🔴 - Live! Shows all timeline events as they happen');
+    final hasMessage = output.contains(
+      '🔴 - Live! Shows all timeline events as they happen',
+    );
 
     expect(hasMessage, isGlobal ? isFalse : isTrue);
 
@@ -302,10 +303,7 @@ class ActDragTimelineTestBodies {
 
     // Basics, shared by all Drag Events
     for (final event in dragEvents) {
-      expect(
-        event[2],
-        startsWith('Caller: at'),
-      );
+      expect(event[2], startsWith('Caller: at'));
       if (kIsWeb) {
         expect(
           event[3],
@@ -314,15 +312,9 @@ class ActDragTimelineTestBodies {
           ),
         );
       } else {
-        expect(
-          event[3],
-          startsWith('Screenshot: file://'),
-        );
+        expect(event[3], startsWith('Screenshot: file://'));
       }
-      expect(
-        event[4],
-        startsWith('Timestamp: 20'),
-      );
+      expect(event[4], startsWith('Timestamp: 20'));
     }
     final details = dragEvents.map((e) => e[1]).toList();
     // First drag event is always the same, no matter if it's a success or a failure
@@ -390,14 +382,15 @@ class ActDragTimelineTestBodies {
   }) {
     final testTitle = '${isGlobalMode ? 'Global: ' : 'Local: '}$title';
 
-    final globalInitiator =
-        isGlobalMode ? shared.globalTimelineInitiator(timelineMode) : '';
+    final globalInitiator = isGlobalMode
+        ? shared.globalTimelineInitiator(timelineMode)
+        : '';
 
     final localInitiator = shared.localTimelineInitiator(timelineMode);
 
-    final widgetPart =
-        File('test/timeline/drag/drag_until_visible_test_widget.dart')
-            .readAsStringSync();
+    final widgetPart = File(
+      'test/timeline/drag/drag_until_visible_test_widget.dart',
+    ).readAsStringSync();
     return '''
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';

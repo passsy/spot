@@ -13,39 +13,25 @@ final spotPackageRoot = packageRoot.parent;
 
 /// Renders the timeline HTML files to be served by the server
 Future<void> main() async {
-  final globalTimelineDir =
-      spotPackageRoot.directory('build').directory('timeline');
+  final globalTimelineDir = spotPackageRoot
+      .directory('build')
+      .directory('timeline');
   if (!globalTimelineDir.existsSync()) {
     return;
   }
-
-  final generatedScriptFile = globalTimelineDir.file('script.js');
 
   final htmlFiles = globalTimelineDir
       .listSync(recursive: true)
       .whereType<File>()
       .where((file) {
-    return file.path.endsWith('.html');
-  });
+        return file.path.endsWith('.html');
+      });
 
   for (final file in htmlFiles) {
     final timelineDir = file.parent;
     final eventsFile = timelineDir.file('events.json');
     if (!eventsFile.existsSync()) {
       continue;
-    }
-
-    final scriptLinkFile = timelineDir.file('script.js');
-    final scriptLink = Link(scriptLinkFile.path);
-    if (scriptLink.existsSync()) {
-      if (scriptLink.targetSync() != generatedScriptFile.path) {
-        scriptLink.updateSync(generatedScriptFile.path);
-      }
-    } else {
-      if (scriptLinkFile.existsSync()) {
-        scriptLinkFile.deleteSync();
-      }
-      scriptLink.createSync(generatedScriptFile.path, recursive: true);
     }
 
     final eventsText = await eventsFile.readAsString();
@@ -75,8 +61,11 @@ String relativeScreenshotPath({
   required String timelineDirPath,
   required String screenshotPath,
 }) {
-  final absoluteScreenshotPath = path.isAbsolute(screenshotPath)
-      ? screenshotPath
-      : path.join(timelineDirPath, screenshotPath);
+  final String absoluteScreenshotPath;
+  if (path.isAbsolute(screenshotPath)) {
+    absoluteScreenshotPath = screenshotPath;
+  } else {
+    absoluteScreenshotPath = path.join(timelineDirPath, screenshotPath);
+  }
   return path.relative(absoluteScreenshotPath, from: timelineDirPath);
 }

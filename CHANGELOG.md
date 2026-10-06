@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.22.0
+
+- New: Tests using spot can be compiled to WebAssembly with `flutter test --platform chrome --wasm`, which until now failed to compile for any test importing spot. #168
+- Fix: On the web, timeline events name your test file as their caller again instead of a Dart SDK file or a dependency. #168
+
+## 0.21.0
+
+- Breaking: spot now requires Dart 3.4 / Flutter 3.22. Jaspr, which renders the timeline report, is updated to 0.17.1. #167
+- New: Bundle the `spot-testing` AI agent skill for consumers to install with `dart run skills@ get --package spot`. #172
+- Fix: Timeline reports no longer leave font-change callbacks pending during widget test teardown on Flutter master. #174
+
+## 0.20.1
+
+- Fix: `act.tap()` and `act.tapAt()` now use a fresh pointer id per tap instead of always reusing pointer 0. Previously, when an earlier test left a gesture arena unresolved, the next tap joined that stale arena and was silently swallowed. #165 (thx @peter-trost)
+- Fix: Screenshots taken on Chrome with Flutter 3.47 are named after the test file again. The new DDC stack trace format slipped past the caller detection, naming them after `async_patch.dart` instead. #166
+
 ## 0.20.0
 
 ### Performance

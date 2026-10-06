@@ -61,7 +61,8 @@ class ActTapTimelineTestBodies {
     if (stdout == null) {
       return;
     }
-    final expectedErrorMessage = '''
+    final expectedErrorMessage =
+        '''
 Cannot change global timeline mode within a test.
 Use "timeline.mode" instead.
 Example: timeline.mode = $globalTimelineModeToSwitch;
@@ -69,9 +70,7 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
     expect(stdout, contains(expectedErrorMessage));
   }
 
-  static Future<void> recordWithError({
-    bool isGlobalMode = false,
-  }) async {
+  static Future<void> recordWithError({bool isGlobalMode = false}) async {
     final stdout = await _outputFromTapTestProcess(
       title: 'OnError timeline - with error, prints timeline',
       timelineMode: TimelineMode.reportOnError,
@@ -86,45 +85,28 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
     final timeline = stdout.split('\n');
 
     expect(timeline[0], startsWith('Timeline of test:'));
-    expect(
-      timeline[1],
-      shared.timelineHeader,
-    );
+    expect(timeline[1], shared.timelineHeader);
     final start = timeline.indexOf('Event Type: Tap Event');
-    expect(
-      timeline[start],
-      'Event Type: Tap Event',
-    );
+    expect(timeline[start], 'Event Type: Tap Event');
     expect(
       timeline[start + 1],
       'Details: Tap Icon Widget with icon: "IconData(U+0E047)"',
     );
-    expect(
-      timeline[start + 2],
-      startsWith('Caller: at'),
-    );
+    expect(timeline[start + 2], startsWith('Caller: at'));
     if (kIsWeb) {
       expect(
         timeline[start + 3],
         'Screenshot links are not supported in the timeline on platform web',
       );
     } else {
-      expect(
-        timeline[start + 3],
-        startsWith('Screenshot: file://'),
-      );
+      expect(timeline[start + 3], startsWith('Screenshot: file://'));
     }
-    expect(
-      timeline[start + 4],
-      startsWith('Timestamp:'),
-    );
-    expect(
-      timeline[start + 5],
-      shared.timelineSeparator,
-    );
+    expect(timeline[start + 4], startsWith('Timestamp:'));
+    expect(timeline[start + 5], shared.timelineSeparator);
     final prefix = isGlobalMode ? 'global' : 'local';
-    final htmlLine = timeline
-        .firstOrNullWhere((line) => line.startsWith('View timeline here:'));
+    final htmlLine = timeline.firstOrNullWhere(
+      (line) => line.startsWith('View timeline here:'),
+    );
     expect(
       htmlLine,
       endsWith(
@@ -151,24 +133,18 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
     // Does not start with 'Timeline', this only happens on error
     expect(timeline.first, shared.timelineHeader);
     final start = timeline.indexOf('Event Type: Tap Event');
-    expect(
-      timeline[start],
-      'Event Type: Tap Event',
-    );
+    expect(timeline[start], 'Event Type: Tap Event');
     expect(
       timeline[start + 1],
       'Details: Tap Icon Widget with icon: "IconData(U+0E047)"',
     );
-    expect(
-      timeline[start + 2],
-      startsWith('Caller: at'),
-    );
-    expect(
-      timeline[start + 3],
-      startsWith('Screenshot: file://'),
-    );
-    final screenshotPath =
-        timeline[start + 3].split('Screenshot: ').last.split('file://').last;
+    expect(timeline[start + 2], startsWith('Caller: at'));
+    expect(timeline[start + 3], startsWith('Screenshot: file://'));
+    final screenshotPath = timeline[start + 3]
+        .split('Screenshot: ')
+        .last
+        .split('file://')
+        .last;
     final screenshotFile = File(screenshotPath);
     expect(
       screenshotFile.existsSync(),
@@ -181,16 +157,11 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       reason: 'file is empty, no data written at $screenshotPath',
     );
 
-    expect(
-      timeline[start + 4],
-      startsWith('Timestamp:'),
+    expect(timeline[start + 4], startsWith('Timestamp:'));
+    expect(timeline[start + 5], shared.timelineSeparator);
+    final htmlLine = timeline.firstWhere(
+      (line) => line.startsWith('View timeline here:'),
     );
-    expect(
-      timeline[start + 5],
-      shared.timelineSeparator,
-    );
-    final htmlLine =
-        timeline.firstWhere((line) => line.startsWith('View timeline here:'));
     final prefix = isGlobalMode ? 'global' : 'local';
     expect(
       htmlLine.endsWith(
@@ -250,33 +221,19 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
     final first = timeline.indexOf('Event Type: Tap Event');
     final start = timeline.indexOf('Event Type: Tap Event', first + 1);
     expect(start, isNot(-1));
-    expect(
-      timeline[start],
-      'Event Type: Tap Event',
-    );
+    expect(timeline[start], 'Event Type: Tap Event');
     expect(
       timeline[start + 1],
       'Details: Tap Icon Widget with icon: "IconData(U+0E516)"',
     );
-    expect(
-      timeline[start + 2],
-      startsWith('Caller: at'),
-    );
-    expect(
-      timeline[start + 3],
-      startsWith('Screenshot: file://'),
-    );
-    expect(
-      timeline[start + 4],
-      startsWith('Timestamp:'),
-    );
-    expect(
-      timeline[start + 5],
-      shared.timelineSeparator,
-    );
+    expect(timeline[start + 2], startsWith('Caller: at'));
+    expect(timeline[start + 3], startsWith('Screenshot: file://'));
+    expect(timeline[start + 4], startsWith('Timestamp:'));
+    expect(timeline[start + 5], shared.timelineSeparator);
     final prefix = isGlobalMode ? 'global' : 'local';
-    final htmlLine =
-        timeline.firstWhere((line) => line.startsWith('View timeline here:'));
+    final htmlLine = timeline.firstWhere(
+      (line) => line.startsWith('View timeline here:'),
+    );
     expect(
       htmlLine.endsWith(
         '$prefix-live-timeline-with-error-no-duplicates-prints-html${Platform.pathSeparator}index.html',
@@ -322,9 +279,7 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       if (!isGlobalMode) {
         timeline.mode = TimelineMode.live;
       }
-      await tester.pumpWidget(
-        const TimelineTestWidget(),
-      );
+      await tester.pumpWidget(const TimelineTestWidget());
       spotText('Counter: 3').existsOnce();
       _addButtonSelector.existsOnce();
       await act.tap(_addButtonSelector);
@@ -336,16 +291,14 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       await act.tap(_clearButtonSelector);
       spotText('Counter: 0').existsOnce();
     });
-    final containsMessage =
-        output.contains('🔴 - Live! Shows all timeline events as they happen');
+    final containsMessage = output.contains(
+      '🔴 - Live! Shows all timeline events as they happen',
+    );
     // Changes in local test since it's `record` by default. Globally it does not
     // change since the global mode is already `live`.
     expect(containsMessage, isGlobalMode ? isFalse : isTrue);
     expect(output, contains('⏸︎ - Timeline recording is off'));
-    expect(
-      output,
-      contains('Tap ${_addButtonSelector.toStringBreadcrumb()}'),
-    );
+    expect(output, contains('Tap ${_addButtonSelector.toStringBreadcrumb()}'));
     expect(
       output,
       contains('Tap ${_subtractButtonSelector.toStringBreadcrumb()}'),
@@ -375,8 +328,9 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       await act.tap(_subtractButtonSelector);
       spotText('Counter: 3').existsOnce();
     });
-    final containsMessage =
-        output.contains('🔴 - Live! Shows all timeline events as they happen');
+    final containsMessage = output.contains(
+      '🔴 - Live! Shows all timeline events as they happen',
+    );
     // Changes in local test since it's `record` by default. Globally it does not
     // change since the global mode is already `live`.
     expect(containsMessage, isGlobalMode ? isFalse : isTrue);
@@ -432,15 +386,17 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
     required int assertionCount,
   }) {
     printOnFailure('Timeline output:\n$output');
-    final actualTapCount =
-        RegExp('Event Type: Tap Event').allMatches(output).length;
+    final actualTapCount = RegExp(
+      'Event Type: Tap Event',
+    ).allMatches(output).length;
     expect(
       actualTapCount,
       tapCount,
       reason: 'Expected $tapCount taps but found only $actualTapCount.',
     );
-    final actualAssertCount =
-        RegExp('Event Type: Assertion').allMatches(output).length;
+    final actualAssertCount = RegExp(
+      'Event Type: Assertion',
+    ).allMatches(output).length;
     expect(
       actualAssertCount,
       assertionCount,
@@ -454,10 +410,15 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       reason:
           'Expected $tapCount taps + $assertionCount assertions but found only $headerCount headers.',
     );
+    // The caller has to point at the test sources. Matching on the uri scheme
+    // alone let an SDK frame satisfy this, which is how the caller landing in
+    // dart:async went unnoticed on both web compilers. The VM keeps the frame
+    // of the _test.dart file that called in; the web compilers only keep the
+    // frame of this file.
     final callerParts = output.split('\n').where((line) {
       return line.startsWith('Caller: at') &&
-          ((!kIsWeb && line.contains('file://')) ||
-              (kIsWeb && line.contains('http://')));
+          (line.contains('_test.dart:') ||
+              line.contains('act_tap_timeline_test_bodies.dart:'));
     }).toList();
     expect(
       callerParts.length,
@@ -520,14 +481,17 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
         : '';
     final testTitle = '${isGlobalMode ? 'Global: ' : 'Local: '}$title';
 
-    final globalInitiator =
-        isGlobalMode ? shared.globalTimelineInitiator(timelineMode) : '';
+    final globalInitiator = isGlobalMode
+        ? shared.globalTimelineInitiator(timelineMode)
+        : '';
 
-    final localInitiator =
-        isGlobalMode ? '' : shared.localTimelineInitiator(timelineMode);
+    final localInitiator = isGlobalMode
+        ? ''
+        : shared.localTimelineInitiator(timelineMode);
 
-    final widgetPart = File('test/timeline/tap/timeline_tap_test_widget.dart')
-        .readAsStringSync();
+    final widgetPart = File(
+      'test/timeline/tap/timeline_tap_test_widget.dart',
+    ).readAsStringSync();
     return '''
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';

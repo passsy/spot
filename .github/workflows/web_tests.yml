@@ -28,3 +28,59 @@ jobs:
 
       - name: Run widget tests on Chrome
         run: flutter test --platform chrome
+
+  wasm-tests:
+    name: Chrome Wasm Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      # dart2wasm has no dart:html, so this fails to compile if spot ever
+      # reaches for it again. Tests that cannot work there skip on kIsWasm.
+      - name: Run widget tests on Chrome compiled to Wasm
+        run: flutter test --platform chrome --wasm
+
+  timeline-browser-tests:
+    name: Timeline Browser Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Setup Chrome
+        id: setup-chrome
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      # The timeline report is the one part of spot that only exists as HTML
+      # and JavaScript. These tests open the generated file in Chrome and use
+      # it, and this is the only job that runs them: every other lane has a
+      # Chrome too, and starting one in each of them would cost minutes to
+      # learn the same thing. SPOT_REQUIRE_BROWSER_TESTS both asks for them
+      # here and turns a missing browser into a failure instead of a pass.
+      - name: Run tests with a browser to drive
+        env:
+          PUPPETEER_EXECUTABLE_PATH: ${{ steps.setup-chrome.outputs.chrome-path }}
+          SPOT_REQUIRE_BROWSER_TESTS: "1"
+        run: flutter test

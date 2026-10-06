@@ -13,62 +13,54 @@ void main() {
 
 void dragTests() {
   group('Vertical Drag', () {
-    testWidgets(
-      'Finds widget in vertical ListView after dragging',
-      (tester) async {
-        await tester.pumpWidget(
-          const DragUntilVisibleSingleDirectionTestWidget(
-            axis: Axis.vertical,
-            ignorePointerAtIndices: [0, 1, 2, 3, 4, 5, 6, 7, 8],
-          ),
-        );
+    testWidgets('Finds widget in vertical ListView after dragging', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        const DragUntilVisibleSingleDirectionTestWidget(
+          axis: Axis.vertical,
+          ignorePointerAtIndices: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+        ),
+      );
 
-        final firstItem = spotText('Item at index: 3', whole: true)
-          ..existsOnce();
-        final secondItem = spotText('Item at index: 27', whole: true)
-          ..doesNotExist();
-        await act.dragUntilVisible(
-          dragStart: firstItem,
-          dragTarget: secondItem,
-          maxIteration: 30,
-        );
-        secondItem.existsOnce();
-      },
-    );
+      final firstItem = spotText('Item at index: 3', whole: true)..existsOnce();
+      final secondItem = spotText('Item at index: 27', whole: true)
+        ..doesNotExist();
+      await act.dragUntilVisible(
+        dragStart: firstItem,
+        dragTarget: secondItem,
+        maxIteration: 30,
+      );
+      secondItem.existsOnce();
+    });
 
-    testWidgets(
-      'Finds widget in Column after dragging',
-      (tester) async {
-        await tester.pumpWidget(
-          const DragUntilVisibleSingleDirectionTestWidget(
-            useColumnOrRow: true,
-            axis: Axis.vertical,
-            ignorePointerAtIndices: [0, 1, 2, 3, 4, 5, 6, 7, 8],
-          ),
-        );
+    testWidgets('Finds widget in Column after dragging', (tester) async {
+      await tester.pumpWidget(
+        const DragUntilVisibleSingleDirectionTestWidget(
+          useColumnOrRow: true,
+          axis: Axis.vertical,
+          ignorePointerAtIndices: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+        ),
+      );
 
-        final firstItem = spotText('Item at index: 3', whole: true)
-          ..existsOnce();
-        final secondItem = spotText('Item at index: 27', whole: true)
-          ..existsOnce();
-        await act.dragUntilVisible(
-          dragStart: firstItem,
-          dragTarget: secondItem,
-          maxIteration: 30,
-        );
-        secondItem.existsOnce();
-        final position =
-            secondItem.snapshotRenderBox().localToGlobal(Offset.zero);
-        // Target lands at the top of the viewport (cross-axis x preserved).
-        expect(
-          position,
-          within<Offset>(
-            distance: 10,
-            from: const Offset(278.9, 287.0),
-          ),
-        );
-      },
-    );
+      final firstItem = spotText('Item at index: 3', whole: true)..existsOnce();
+      final secondItem = spotText('Item at index: 27', whole: true)
+        ..existsOnce();
+      await act.dragUntilVisible(
+        dragStart: firstItem,
+        dragTarget: secondItem,
+        maxIteration: 30,
+      );
+      secondItem.existsOnce();
+      final position = secondItem.snapshotRenderBox().localToGlobal(
+        Offset.zero,
+      );
+      // Target lands at the top of the viewport (cross-axis x preserved).
+      expect(
+        position,
+        within<Offset>(distance: 10, from: const Offset(278.9, 287.0)),
+      );
+    });
 
     testWidgets(
       'Finds widget in vertical ListView after dragging down and up',
@@ -100,25 +92,25 @@ void dragTests() {
       },
     );
 
-    testWidgets(
-      'Finds, drags to and taps target in nested Column',
-      (tester) async {
-        await tester.pumpWidget(const NestedScrollDragUntilVisibleTestWidget());
+    testWidgets('Finds, drags to and taps target in nested Column', (
+      tester,
+    ) async {
+      await tester.pumpWidget(const NestedScrollDragUntilVisibleTestWidget());
 
-        final firstItem =
-            spotText('ParentIndex: 0, Item at index: 3', whole: true);
-        final secondItem =
-            spotText('ParentIndex: 2, Item at index: 4', whole: true);
-        await act.dragUntilVisible(
-          dragStart: firstItem,
-          dragTarget: secondItem,
-        );
-        await tester.pump(const Duration(milliseconds: 500));
-        await tester.pump(const Duration(milliseconds: 500));
-        await tester.pumpAndSettle();
-        await act.tap(secondItem);
-      },
-    );
+      final firstItem = spotText(
+        'ParentIndex: 0, Item at index: 3',
+        whole: true,
+      );
+      final secondItem = spotText(
+        'ParentIndex: 2, Item at index: 4',
+        whole: true,
+      );
+      await act.dragUntilVisible(dragStart: firstItem, dragTarget: secondItem);
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pumpAndSettle();
+      await act.tap(secondItem);
+    });
 
     testWidgets(
       'Finds widget in vertical ListView after dragging when dragStart is a Scrollable',
@@ -130,10 +122,11 @@ void dragTests() {
           ),
         );
 
-        final firstItem = spot<DragUntilVisibleSingleDirectionTestWidget>()
-            .spot<Scrollable>()
-            .last()
-          ..existsOnce();
+        final firstItem =
+            spot<DragUntilVisibleSingleDirectionTestWidget>()
+                .spot<Scrollable>()
+                .last()
+              ..existsOnce();
         final secondItem = spotText('Item at index: 27', whole: true)
           ..doesNotExist();
         await act.dragUntilVisible(
@@ -172,60 +165,50 @@ void dragTests() {
   });
 
   group('Horizontal Drag', () {
-    testWidgets(
-      'Finds widget in horizontal ListView after dragging',
-      (tester) async {
-        await tester.pumpWidget(
-          const DragUntilVisibleSingleDirectionTestWidget(
-            axis: Axis.horizontal,
-          ),
-        );
+    testWidgets('Finds widget in horizontal ListView after dragging', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        const DragUntilVisibleSingleDirectionTestWidget(axis: Axis.horizontal),
+      );
 
-        final firstItem = spotText('Item at index: 2', whole: true)
-          ..existsOnce();
-        final secondItem = spotText('Item at index: 10', whole: true)
-          ..doesNotExist();
-        await act.dragUntilVisible(
-          dragStart: firstItem,
-          dragTarget: secondItem,
-          maxIteration: 30,
-        );
-        secondItem.existsOnce();
-      },
-    );
+      final firstItem = spotText('Item at index: 2', whole: true)..existsOnce();
+      final secondItem = spotText('Item at index: 10', whole: true)
+        ..doesNotExist();
+      await act.dragUntilVisible(
+        dragStart: firstItem,
+        dragTarget: secondItem,
+        maxIteration: 30,
+      );
+      secondItem.existsOnce();
+    });
 
-    testWidgets(
-      'Finds widget in Row after dragging',
-      (tester) async {
-        await tester.pumpWidget(
-          const DragUntilVisibleSingleDirectionTestWidget(
-            useColumnOrRow: true,
-            axis: Axis.horizontal,
-          ),
-        );
+    testWidgets('Finds widget in Row after dragging', (tester) async {
+      await tester.pumpWidget(
+        const DragUntilVisibleSingleDirectionTestWidget(
+          useColumnOrRow: true,
+          axis: Axis.horizontal,
+        ),
+      );
 
-        final firstItem = spotText('Item at index: 2', whole: true)
-          ..existsOnce();
-        final secondItem = spotText('Item at index: 10', whole: true)
-          ..existsOnce();
-        await act.dragUntilVisible(
-          dragStart: firstItem,
-          dragTarget: secondItem,
-          maxIteration: 30,
-        );
-        secondItem.existsOnce();
-        final position =
-            secondItem.snapshotRenderBox().localToGlobal(Offset.zero);
-        // Target lands at the left of the viewport (cross-axis y preserved).
-        expect(
-          position,
-          within<Offset>(
-            distance: 10,
-            from: const Offset(150.0, 318.0),
-          ),
-        );
-      },
-    );
+      final firstItem = spotText('Item at index: 2', whole: true)..existsOnce();
+      final secondItem = spotText('Item at index: 10', whole: true)
+        ..existsOnce();
+      await act.dragUntilVisible(
+        dragStart: firstItem,
+        dragTarget: secondItem,
+        maxIteration: 30,
+      );
+      secondItem.existsOnce();
+      final position = secondItem.snapshotRenderBox().localToGlobal(
+        Offset.zero,
+      );
+      // Target lands at the left of the viewport (cross-axis y preserved).
+      expect(
+        position,
+        within<Offset>(distance: 10, from: const Offset(150.0, 318.0)),
+      );
+    });
 
     testWidgets(
       'Finds widget in horizontal ListView after dragging to the right and back',
@@ -259,97 +242,89 @@ void dragTests() {
       },
     );
 
-    testWidgets(
-      'Finds, drags to and taps target in nested Row',
-      (tester) async {
-        await tester.pumpWidget(
-          const NestedScrollDragUntilVisibleTestWidget(
-            axis: Axis.horizontal,
-          ),
-        );
+    testWidgets('Finds, drags to and taps target in nested Row', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        const NestedScrollDragUntilVisibleTestWidget(axis: Axis.horizontal),
+      );
 
-        final firstItem = spot<Container>()
-            .spotText('ParentIndex: 0, Item at index: 3', whole: true);
-        final secondItem =
-            spotText('ParentIndex: 2, Item at index: 4', whole: true);
-        await act.dragUntilVisible(
-          dragStart: firstItem,
-          dragTarget: secondItem,
-        );
-        await tester.pump(const Duration(milliseconds: 500));
-        await tester.pump(const Duration(milliseconds: 500));
-        await tester.pumpAndSettle();
-        await act.tap(secondItem);
-      },
-    );
+      final firstItem = spot<Container>().spotText(
+        'ParentIndex: 0, Item at index: 3',
+        whole: true,
+      );
+      final secondItem = spotText(
+        'ParentIndex: 2, Item at index: 4',
+        whole: true,
+      );
+      await act.dragUntilVisible(dragStart: firstItem, dragTarget: secondItem);
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pumpAndSettle();
+      await act.tap(secondItem);
+    });
   });
 
   group('Errors', () {
-    testWidgets(
-      'Throws TestFailure if not found in vertical ListView',
-      (tester) async {
-        await tester.pumpWidget(
-          const DragUntilVisibleSingleDirectionTestWidget(axis: Axis.vertical),
-        );
+    testWidgets('Throws TestFailure if not found in vertical ListView', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        const DragUntilVisibleSingleDirectionTestWidget(axis: Axis.vertical),
+      );
 
-        final firstItem = spotText('Item at index: 3', whole: true)
-          ..existsOnce();
-        final secondItem = spotText('Item at index: 27', whole: true)
-          ..doesNotExist();
+      final firstItem = spotText('Item at index: 3', whole: true)..existsOnce();
+      final secondItem = spotText('Item at index: 27', whole: true)
+        ..doesNotExist();
 
-        const expectedErrorMessage =
-            'Widget with text with text "Item at index: 27" is not visible after dragging 10 times and a total dragged offset of Offset(0.0, -2250.0).';
+      const expectedErrorMessage =
+          'Widget with text with text "Item at index: 27" is not visible after dragging 10 times and a total dragged offset of Offset(0.0, -2250.0).';
 
-        await expectLater(
-          () => act.dragUntilVisible(
-            dragStart: firstItem,
-            dragTarget: secondItem,
-            maxIteration: 10,
+      await expectLater(
+        () => act.dragUntilVisible(
+          dragStart: firstItem,
+          dragTarget: secondItem,
+          maxIteration: 10,
+        ),
+        throwsA(
+          isA<TestFailure>().having(
+            (error) => error.message,
+            'message',
+            expectedErrorMessage,
           ),
-          throwsA(
-            isA<TestFailure>().having(
-              (error) => error.message,
-              'message',
-              expectedErrorMessage,
-            ),
-          ),
-        );
-      },
-    );
+        ),
+      );
+    });
 
-    testWidgets(
-      'Throws TestFailure if not found in horizontal ListView',
-      (tester) async {
-        await tester.pumpWidget(
-          const DragUntilVisibleSingleDirectionTestWidget(
-            axis: Axis.horizontal,
-          ),
-        );
+    testWidgets('Throws TestFailure if not found in horizontal ListView', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        const DragUntilVisibleSingleDirectionTestWidget(axis: Axis.horizontal),
+      );
 
-        final firstItem = spotText('Item at index: 2', whole: true)
-          ..existsOnce();
-        final secondItem = spotText('Item at index: 29', whole: true)
-          ..doesNotExist();
+      final firstItem = spotText('Item at index: 2', whole: true)..existsOnce();
+      final secondItem = spotText('Item at index: 29', whole: true)
+        ..doesNotExist();
 
-        const expectedErrorMessage =
-            'Widget with text with text "Item at index: 29" is not visible after dragging 10 times and a total dragged offset of Offset(-2500.0, 0.0).';
+      const expectedErrorMessage =
+          'Widget with text with text "Item at index: 29" is not visible after dragging 10 times and a total dragged offset of Offset(-2500.0, 0.0).';
 
-        await expectLater(
-          () => act.dragUntilVisible(
-            dragStart: firstItem,
-            dragTarget: secondItem,
-            maxIteration: 10,
+      await expectLater(
+        () => act.dragUntilVisible(
+          dragStart: firstItem,
+          dragTarget: secondItem,
+          maxIteration: 10,
+        ),
+        throwsA(
+          isA<TestFailure>().having(
+            (error) => error.message,
+            'message',
+            expectedErrorMessage,
           ),
-          throwsA(
-            isA<TestFailure>().having(
-              (error) => error.message,
-              'message',
-              expectedErrorMessage,
-            ),
-          ),
-        );
-      },
-    );
+        ),
+      );
+    });
 
     testWidgets(
       'Providing both `moveStep` and `toStart = true` should throw AssertionError',
@@ -386,40 +361,36 @@ void dragTests() {
       },
     );
 
-    testWidgets(
-      'Providing a zero Offset(0, 0) should throw AssertionError',
-      (tester) async {
-        await tester.pumpWidget(
-          const DragUntilVisibleSingleDirectionTestWidget(
-            axis: Axis.horizontal,
-          ),
-        );
+    testWidgets('Providing a zero Offset(0, 0) should throw AssertionError', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        const DragUntilVisibleSingleDirectionTestWidget(axis: Axis.horizontal),
+      );
 
-        final firstItem = spotText('Item at index: 2', whole: true)
-          ..existsOnce();
-        final secondItem = spotText('Item at index: 29', whole: true)
-          ..doesNotExist();
+      final firstItem = spotText('Item at index: 2', whole: true)..existsOnce();
+      final secondItem = spotText('Item at index: 29', whole: true)
+        ..doesNotExist();
 
-        await expectLater(
-          () => act.dragUntilVisible(
-            dragStart: firstItem,
-            dragTarget: secondItem,
-            moveStep: Offset.zero,
-          ),
-          throwsA(
-            isA<AssertionError>().having(
-              (error) => error.toString(),
-              'description',
-              contains(
-                'If `moveStep` is provided, one of dx or dy must be non-zero. '
-                'Both dx and dy being 0 results in no dragging. '
-                'Both being non-zero implicates diagonal dragging, which is not supported.',
-              ),
+      await expectLater(
+        () => act.dragUntilVisible(
+          dragStart: firstItem,
+          dragTarget: secondItem,
+          moveStep: Offset.zero,
+        ),
+        throwsA(
+          isA<AssertionError>().having(
+            (error) => error.toString(),
+            'description',
+            contains(
+              'If `moveStep` is provided, one of dx or dy must be non-zero. '
+              'Both dx and dy being 0 results in no dragging. '
+              'Both being non-zero implicates diagonal dragging, which is not supported.',
             ),
           ),
-        );
-      },
-    );
+        ),
+      );
+    });
 
     testWidgets(
       'Providing a diagonal offset (e.g., Offset(1, 1)) should throw AssertionError',
@@ -466,15 +437,10 @@ void dragTests() {
                 ListView(
                   children: [
                     for (int i = 0; i < 30; i++)
-                      SizedBox(
-                        height: 100,
-                        child: Text('Item at index: $i'),
-                      ),
+                      SizedBox(height: 100, child: Text('Item at index: $i')),
                   ],
                 ),
-                const Positioned.fill(
-                  child: ColoredBox(color: Colors.green),
-                ),
+                const Positioned.fill(child: ColoredBox(color: Colors.green)),
               ],
             ),
           ),
@@ -532,11 +498,15 @@ void dragTests() {
         );
         secondItem.existsOnce();
 
-        final scrollable =
-            spot<Scrollable>().withChild(secondItem).last().snapshotRenderBox();
+        final scrollable = spot<Scrollable>()
+            .withChild(secondItem)
+            .last()
+            .snapshotRenderBox();
         final viewportTop = scrollable.localToGlobal(Offset.zero).dy;
-        final targetTop =
-            secondItem.snapshotRenderBox().localToGlobal(Offset.zero).dy;
+        final targetTop = secondItem
+            .snapshotRenderBox()
+            .localToGlobal(Offset.zero)
+            .dy;
         // Target's top is at or below the padded edge (within 1px tolerance).
         expect(targetTop, greaterThanOrEqualTo(viewportTop + paddingTop - 1));
         // ...but not far below it - the drag aligns with the padded edge.
@@ -566,11 +536,15 @@ void dragTests() {
         );
         secondItem.existsOnce();
 
-        final scrollable =
-            spot<Scrollable>().withChild(secondItem).last().snapshotRenderBox();
+        final scrollable = spot<Scrollable>()
+            .withChild(secondItem)
+            .last()
+            .snapshotRenderBox();
         final viewportLeft = scrollable.localToGlobal(Offset.zero).dx;
-        final targetLeft =
-            secondItem.snapshotRenderBox().localToGlobal(Offset.zero).dx;
+        final targetLeft = secondItem
+            .snapshotRenderBox()
+            .localToGlobal(Offset.zero)
+            .dx;
         expect(
           targetLeft,
           greaterThanOrEqualTo(viewportLeft + paddingLeft - 1),
@@ -600,11 +574,15 @@ void dragTests() {
           padding: const EdgeInsets.only(top: paddingTop),
         );
 
-        final scrollable =
-            spot<Scrollable>().withChild(secondItem).last().snapshotRenderBox();
+        final scrollable = spot<Scrollable>()
+            .withChild(secondItem)
+            .last()
+            .snapshotRenderBox();
         final viewportTop = scrollable.localToGlobal(Offset.zero).dy;
-        final targetTop =
-            secondItem.snapshotRenderBox().localToGlobal(Offset.zero).dy;
+        final targetTop = secondItem
+            .snapshotRenderBox()
+            .localToGlobal(Offset.zero)
+            .dy;
         expect(targetTop, greaterThanOrEqualTo(viewportTop + paddingTop - 1));
       },
     );
@@ -624,20 +602,17 @@ void dragTests() {
           const CrossAxisNestedScrollableTestWidget(innerAxis: Axis.vertical),
         );
 
-        final outerState =
-            tester.state<CrossAxisNestedScrollableTestWidgetState>(
-          find.byType(CrossAxisNestedScrollableTestWidget),
-        );
+        final outerState = tester
+            .state<CrossAxisNestedScrollableTestWidgetState>(
+              find.byType(CrossAxisNestedScrollableTestWidget),
+            );
 
         final dragStart = spotKey<Container>(const ValueKey('avatar-3'))
           ..existsOnce();
         final target = spotKey<Container>(const ValueKey('tile-24'))
           ..doesNotExist();
 
-        await act.dragUntilVisible(
-          dragStart: dragStart,
-          dragTarget: target,
-        );
+        await act.dragUntilVisible(dragStart: dragStart, dragTarget: target);
         target.existsOnce();
 
         expect(outerState.outerHasMoved, isFalse);
@@ -649,25 +624,20 @@ void dragTests() {
       'move (horizontal inner)',
       (tester) async {
         await tester.pumpWidget(
-          const CrossAxisNestedScrollableTestWidget(
-            innerAxis: Axis.horizontal,
-          ),
+          const CrossAxisNestedScrollableTestWidget(innerAxis: Axis.horizontal),
         );
 
-        final outerState =
-            tester.state<CrossAxisNestedScrollableTestWidgetState>(
-          find.byType(CrossAxisNestedScrollableTestWidget),
-        );
+        final outerState = tester
+            .state<CrossAxisNestedScrollableTestWidgetState>(
+              find.byType(CrossAxisNestedScrollableTestWidget),
+            );
 
         final dragStart = spotKey<Container>(const ValueKey('avatar-2'))
           ..existsOnce();
         final target = spotKey<Container>(const ValueKey('tile-21'))
           ..doesNotExist();
 
-        await act.dragUntilVisible(
-          dragStart: dragStart,
-          dragTarget: target,
-        );
+        await act.dragUntilVisible(dragStart: dragStart, dragTarget: target);
         target.existsOnce();
 
         // Outer (vertical) scrollable must not have moved.
@@ -733,43 +703,40 @@ void dragTests() {
       },
     );
 
-    testWidgets(
-      'engineered small final adjustment does not register as tap',
-      (tester) async {
+    testWidgets('engineered small final adjustment does not register as tap', (
+      tester,
+    ) async {
+      timeline.mode = TimelineMode.always;
+      // Engineer a final adjustment smaller than kDragSlopDefault (20):
+      // moveStep is tuned so step 1 stops with the target's top just a few
+      // pixels above the viewport top, leaving < 20 px of final alignment.
+      // Without the overshoot/return fix this would register as a tap on
+      // whichever item happens to lie under dragBeginPosition.
+      final taps = <int, int>{};
+      await tester.pumpWidget(
+        DragUntilVisibleTappableTestWidget(
+          axis: Axis.vertical,
+          onItemTap: (index) {
+            taps[index] = (taps[index] ?? 0) + 1;
+          },
+        ),
+      );
 
-        timeline.mode = TimelineMode.always;
-        // Engineer a final adjustment smaller than kDragSlopDefault (20):
-        // moveStep is tuned so step 1 stops with the target's top just a few
-        // pixels above the viewport top, leaving < 20 px of final alignment.
-        // Without the overshoot/return fix this would register as a tap on
-        // whichever item happens to lie under dragBeginPosition.
-        final taps = <int, int>{};
-        await tester.pumpWidget(
-          DragUntilVisibleTappableTestWidget(
-            axis: Axis.vertical,
-            onItemTap: (index) {
-              taps[index] = (taps[index] ?? 0) + 1;
-            },
-          ),
-        );
+      // Items are 100 tall. Default cacheExtent is 250. Target item 8 sits
+      // at content y=800 (outside initial cache [-250, 700]). A single drag
+      // of -810 puts scroll past the target by 10 px — small final drag.
+      final firstItem = spotText('Item at index: 3', whole: true)..existsOnce();
+      final secondItem = spotText('Item at index: 8', whole: true);
 
-        // Items are 100 tall. Default cacheExtent is 250. Target item 8 sits
-        // at content y=800 (outside initial cache [-250, 700]). A single drag
-        // of -810 puts scroll past the target by 10 px — small final drag.
-        final firstItem = spotText('Item at index: 3', whole: true)
-          ..existsOnce();
-        final secondItem = spotText('Item at index: 8', whole: true);
+      await act.dragUntilVisible(
+        dragStart: firstItem,
+        dragTarget: secondItem,
+        moveStep: const Offset(0, -810),
+      );
+      secondItem.existsOnce();
 
-        await act.dragUntilVisible(
-          dragStart: firstItem,
-          dragTarget: secondItem,
-          moveStep: const Offset(0, -810),
-        );
-        secondItem.existsOnce();
-
-        expect(taps, isEmpty);
-      },
-    );
+      expect(taps, isEmpty);
+    });
   });
 
   group('No pointer-down inside padded/obscured area', () {
@@ -1016,8 +983,10 @@ void dragTests() {
           padding: const EdgeInsets.only(bottom: bottomBannerHeight),
         );
 
-        final scrollableBox =
-            spot<Scrollable>().withChild(firstItem).last().snapshotRenderBox();
+        final scrollableBox = spot<Scrollable>()
+            .withChild(firstItem)
+            .last()
+            .snapshotRenderBox();
         final topLeft = scrollableBox.localToGlobal(Offset.zero);
         final obscuredRect = Rect.fromLTWH(
           topLeft.dx,
@@ -1029,7 +998,8 @@ void dragTests() {
           expect(
             obscuredRect.contains(pos),
             isFalse,
-            reason: 'Pointer down at $pos lands inside bottom banner '
+            reason:
+                'Pointer down at $pos lands inside bottom banner '
                 '$obscuredRect.',
           );
         }
@@ -1083,8 +1053,10 @@ void dragTests() {
           padding: const EdgeInsets.symmetric(vertical: topBannerHeight),
         );
 
-        final scrollableBox =
-            spot<Scrollable>().withChild(secondItem).last().snapshotRenderBox();
+        final scrollableBox = spot<Scrollable>()
+            .withChild(secondItem)
+            .last()
+            .snapshotRenderBox();
         final topLeft = scrollableBox.localToGlobal(Offset.zero);
         final topBanner = Rect.fromLTWH(
           topLeft.dx,
@@ -1119,8 +1091,10 @@ void dragTests() {
 }
 
 Rect _topBannerRect(WidgetSelector<Widget> child, double bannerHeight) {
-  final scrollableBox =
-      spot<Scrollable>().withChild(child).last().snapshotRenderBox();
+  final scrollableBox = spot<Scrollable>()
+      .withChild(child)
+      .last()
+      .snapshotRenderBox();
   final topLeft = scrollableBox.localToGlobal(Offset.zero);
   return Rect.fromLTWH(
     topLeft.dx,

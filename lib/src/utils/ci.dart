@@ -1,10 +1,8 @@
-import 'package:ci/ci.dart' as ci;
-import 'package:flutter/foundation.dart';
-
-/// Returns true if the code is running in a CI environment.
+/// Detection of CI environments.
 ///
-/// Always return false on web, as CI detection is not applicable.
-bool get isCI {
-  if (kIsWeb) return false;
-  return ci.isCI;
-}
+/// CI is detected from environment variables, which a browser cannot read, so
+/// the web implementation always reports false.
+library;
+
+export 'package:spot/src/utils/ci_web.dart'
+    if (dart.library.io) 'package:spot/src/utils/ci_io.dart';

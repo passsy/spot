@@ -16,6 +16,7 @@ import 'package:spot/src/timeline/html/print_html.dart';
 import 'package:spot/src/timeline/print_console.dart';
 import 'package:spot/src/utils/ci.dart';
 import 'package:spot/src/utils/invoker.dart';
+import 'package:spot/src/utils/stack_trace_frames.dart';
 import 'package:stack_trace/stack_trace.dart';
 
 TimelineMode _globalTimelineMode =
@@ -723,8 +724,46 @@ final class _Timeline extends Timeline {
   Future<void> _onPostTest() async {
     _stopMeasuringFrames();
     _stopCapturingFlutterErrors();
-    await _addTestFailureEvent();
-    await _renderTimeline();
+    final binding = TestWidgetsFlutterBinding.instance;
+
+    // Rendering the report may load a font, for example the one the screenshot
+    // annotations label their highlights with. The engine announces every
+    // loaded font on [PaintingBinding.systemFonts], and each text render
+    // object on screen, even Flutter's own "Test finished" widget, answers by
+    // scheduling a frame callback to lay itself out again.
+    //
+    // This runs as a tearDown, after the last pump of the test. Nothing would
+    // run that callback anymore, and Flutter fails an otherwise passing test
+    // in postTest because of the pending callback (since
+    // https://github.com/flutter/flutter/pull/193476).
+    //
+    // Listening for the font change itself, rather than asking the annotators
+    // whether they loaded a font, covers every font any part of the report
+    // loads, and keeps the timeline unaware of how annotations are drawn.
+    var fontsChanged = false;
+    void onFontsChanged() {
+      fontsChanged = true;
+    }
+
+    binding.systemFonts.addListener(onFontsChanged);
+    try {
+      await _addTestFailureEvent();
+      await _renderTimeline();
+    } finally {
+      binding.systemFonts.removeListener(onFontsChanged);
+    }
+
+    if (fontsChanged) {
+      // Only the automated binding needs help. The live binding draws frames
+      // on its own and the annotation font is never loaded there.
+      if (binding is AutomatedTestWidgetsFlutterBinding) {
+        // One pump, not pumpAndSettle. The relayout callbacks are one-shot and
+        // gone after a single frame. A ticker the test leaked schedules itself
+        // again on every frame, so it is still pending afterwards and Flutter
+        // keeps reporting it.
+        await binding.pump();
+      }
+    }
     for (final tearDown in _tearDowns.toList()) {
       await tearDown();
       _tearDowns.remove(tearDown);
@@ -1027,9 +1066,13 @@ Trace _relevantTrace(StackTrace stackTrace) {
 
 /// Returns the most relevant caller that is part of the user code.
 Frame? mostRelevantCaller({Trace? trace, Frame? fallback}) {
-  final frames = (trace ?? Trace.current()).frames;
+  final frames = resolveFrames((trace ?? Trace.current()).frames);
 
-  final nonPackageFrames = frames.where((frame) => frame.package == null);
+  // SDK frames carry no package either, and the fallback below used to land on
+  // one of those whenever no test file matched.
+  final nonPackageFrames = frames.where(
+    (frame) => frame.package == null && !isSdkFrame(frame),
+  );
   final testFileCaller = nonPackageFrames.where((frame) {
     final lib = frame.library;
     return lib.startsWith('test/') && lib.endsWith('_test.dart');

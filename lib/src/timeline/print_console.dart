@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart' show TestWidgetsFlutterBinding;
-import 'package:spot/src/screenshot/screenshot_io.dart'
-    if (dart.library.html) 'package:spot/src/screenshot/screenshot_web.dart';
+import 'package:spot/src/screenshot/screenshot_web.dart'
+    if (dart.library.io) 'package:spot/src/screenshot/screenshot_io.dart';
 import 'package:spot/src/timeline/timeline.dart';
 import 'package:spot/src/utils/ci.dart';
 
@@ -30,8 +30,9 @@ extension ConsoleTimelinePrinter on Timeline {
     final caller = frame != null
         ? 'at ${frame.member} ${frame.uri}:${frame.line}:${frame.column}'
         : 'N/A';
-    final details =
-        kIsWeb || !isCI ? event.details.split('\n').firstOrNull : event.details;
+    final details = kIsWeb || !isCI
+        ? event.details.split('\n').firstOrNull
+        : event.details;
     buffer.writeln('==================== Timeline Event ====================');
     buffer.writeln('Event Type: ${event.eventType}');
     if (details != null) {

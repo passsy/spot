@@ -3,7 +3,7 @@ import 'dart:core' as core;
 import 'dart:core';
 import 'dart:ui' as ui;
 
-import 'package:dartx/dartx_io.dart';
+import 'package:dartx/dartx.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
@@ -12,11 +12,13 @@ import 'package:image/image.dart' as img;
 import 'package:nanoid2/nanoid2.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/flutter/frame_clock.dart';
-import 'package:spot/src/screenshot/screenshot.dart' as self
+import 'package:spot/src/screenshot/screenshot.dart'
+    as self
     show takeScreenshot;
-import 'package:spot/src/screenshot/screenshot_io.dart'
-    if (dart.library.html) 'package:spot/src/screenshot/screenshot_web.dart';
+import 'package:spot/src/screenshot/screenshot_web.dart'
+    if (dart.library.io) 'package:spot/src/screenshot/screenshot_io.dart';
 import 'package:spot/src/utils/once_per_test.dart';
+import 'package:spot/src/utils/stack_trace_frames.dart';
 import 'package:stack_trace/stack_trace.dart';
 
 export 'package:stack_trace/stack_trace.dart' show Frame;
@@ -45,7 +47,8 @@ Future<Screenshot> takeScreenshot({
   // which the frame number is what dates.
   FrameClock.startCounting();
   final binding = TestWidgetsFlutterBinding.instance;
-  final pixelRatio = devicePixelRatio ??
+  final pixelRatio =
+      devicePixelRatio ??
       binding.platformDispatcher.implicitView?.devicePixelRatio ??
       1.0;
 
@@ -136,7 +139,8 @@ extension TimelineSyncScreenshot on Timeline {
   }) {
     assert(devicePixelRatio == null || devicePixelRatio > 0.0);
     final binding = TestWidgetsFlutterBinding.instance;
-    final pixelRatio = devicePixelRatio ??
+    final pixelRatio =
+        devicePixelRatio ??
         binding.platformDispatcher.implicitView?.devicePixelRatio ??
         1.0;
 
@@ -311,8 +315,10 @@ Future<void> renderAnnotationLayers(
       devicePixelRatio: devicePixelRatio,
       viewSize: viewSize,
     );
-    final annotation =
-        _annotationCache[key] ??= await renderAnnotation(screenshot, annotator);
+    final annotation = _annotationCache[key] ??= await renderAnnotation(
+      screenshot,
+      annotator,
+    );
     screenshot.addAnnotation(annotation);
   }
 }
@@ -325,8 +331,10 @@ Future<ScreenshotAnnotation> renderAnnotation(
   final binding = TestWidgetsFlutterBinding.instance;
   final annotation = await binding.runAsync(() async {
     // Create transparent image the same size as plainImage to start with
-    final ui.Image transparentBackground =
-        _transparentImage(screenshot.width, screenshot.height);
+    final ui.Image transparentBackground = _transparentImage(
+      screenshot.width,
+      screenshot.height,
+    );
 
     final image = await annotator.annotate(transparentBackground);
 
@@ -459,18 +467,18 @@ class ImageDataRef {
     required this.height,
     required this.pixelRatio,
     required this.name,
-  })  : _bytes = bytes,
-        _image = null;
+  }) : _bytes = bytes,
+       _image = null;
 
   /// Creates a [ImageDataRef] that holds a reference to a [ui.Image] and later loads the actual bytes
   ImageDataRef.fromImage({
     required ui.Image image,
     required this.pixelRatio,
     required this.name,
-  })  : _image = image.clone(),
-        _bytes = null,
-        width = image.width,
-        height = image.height {
+  }) : _image = image.clone(),
+       _bytes = null,
+       width = image.width,
+       height = image.height {
     assert(_image != null || _bytes != null);
     timeline.addTearDown(() {
       _image?.dispose();
@@ -493,7 +501,7 @@ class ImageDataRef {
   Future<void> materialize() async {
     if (_bytes != null) {
       // already materialized
-      return Future.value();
+      return;
     }
     final ByteData? byteData =
         // ignore: avoid_redundant_argument_values
@@ -524,7 +532,7 @@ class ImageDataRef {
       ui.PixelFormat.rgba8888,
       completer.complete,
     );
-    return completer.future;
+    return await completer.future;
   }
 
   /// The pixel data in raw RGBA format, 8bits per channel
@@ -823,7 +831,7 @@ ui.Image _transparentImage(int width, int height) {
 /// humans
 Frame? _caller({StackTrace? stack}) {
   final trace = stack != null ? Trace.parse(stack.toString()) : Trace.current();
-  final relevantLines = trace.frames.where((line) {
+  final relevantLines = resolveFrames(trace.frames).where((line) {
     if (line.isCore) return false;
     if (kIsWeb) {
       if (line.toString().startsWith('../')) {
@@ -832,12 +840,27 @@ Frame? _caller({StackTrace? stack}) {
         // ../dart-sdk/lib/_internal/js_dev_runtime/patch/async_patch.dart 647:23 in <fn>
         return false;
       }
+      // Since Flutter 3.47, DDC serves sdk and package frames without the
+      // leading ../, making their uris absolute like
+      // http://localhost:53285/dart-sdk/lib/_internal/js_dev_runtime/patch/async_patch.dart
+      final path = line.uri.path;
+      if (path.startsWith('/dart-sdk/') || path.startsWith('/packages/')) {
+        return false;
+      }
     }
     final url = line.uri.toString();
     if (url.contains('package:spot')) return false;
     if (url.startsWith('package:flutter_test')) return false;
     return true;
   }).toList();
-  final Frame? bestGuess = relevantLines.firstOrNull;
+  // Prefer frames outside package:stack_trace. Its zone instrumentation
+  // frames surface before the actual caller on web since Flutter 3.47, but
+  // on older Flutter versions they can be the only frame left (e.g. for
+  // drag events on Flutter 3.10), so they remain as fallback.
+  final Frame? bestGuess =
+      relevantLines.firstOrNullWhere(
+        (frame) => !frame.uri.toString().startsWith('package:stack_trace'),
+      ) ??
+      relevantLines.firstOrNull;
   return bestGuess;
 }

@@ -69,13 +69,10 @@ void main() {
         testWidgets('$widgetType whereWidget', (tester) async {
           await tester.pumpWidget(tree.value);
           final checked = [];
-          spotText('foo').whereWidget(
-            (AnyText widget) {
-              checked.add(widget);
-              return widget.maxLines == 3;
-            },
-            description: 'maxlines 3',
-          ).doesNotExist();
+          spotText('foo').whereWidget((AnyText widget) {
+            checked.add(widget);
+            return widget.maxLines == 3;
+          }, description: 'maxlines 3').doesNotExist();
           // found one item, but nothing matched maxlines 3
           expect(checked, hasLength(1));
         });
@@ -185,13 +182,8 @@ void main() {
       await tester.pumpWidget(
         _stage(
           children: [
-            _MyWidget(
-              child: Text('a'),
-            ),
-            RotatedBox(
-              quarterTurns: 2,
-              child: Text('b'),
-            ),
+            _MyWidget(child: Text('a')),
+            RotatedBox(quarterTurns: 2, child: Text('b')),
             Text('a'),
             Text('b'),
           ],
@@ -208,13 +200,7 @@ void main() {
 
   testWidgets('spotText finds multiple text', (tester) async {
     await tester.pumpWidget(
-      _stage(
-        children: [
-          Text('a'),
-          Text('b'),
-          Text('a'),
-        ],
-      ),
+      _stage(children: [Text('a'), Text('b'), Text('a')]),
     );
 
     spotText('a').existsExactlyNTimes(2);
@@ -343,8 +329,9 @@ void main() {
       expect(identical(selector.mapElementToWidget(element), first), isTrue);
     });
 
-    testWidgets('are replaced when the text changes without a rebuild',
-        (tester) async {
+    testWidgets('are replaced when the text changes without a rebuild', (
+      tester,
+    ) async {
       // An EditableText keeps its widget instance while its controller's text
       // changes, and does not need a frame to do it.
       final controller = TextEditingController(text: 'before');
@@ -365,9 +352,9 @@ void main() {
         ),
       );
 
-      String readText() => spotTextWhere((it) => it.isNotEmpty())
-          .existsOnce()
-          .getDiagnosticProp<String>('text');
+      String readText() => spotTextWhere(
+        (it) => it.isNotEmpty(),
+      ).existsOnce().getDiagnosticProp<String>('text');
       expect(readText(), 'before');
 
       controller.text = 'after';
@@ -375,8 +362,9 @@ void main() {
       expect(readText(), 'after');
     });
 
-    testWidgets('do not outlive the widget they were derived from',
-        (tester) async {
+    testWidgets('do not outlive the widget they were derived from', (
+      tester,
+    ) async {
       await tester.pumpWidget(_stage(children: [Text('foo')]));
       expect(
         spotText('foo').existsOnce().getDiagnosticProp<String>('text'),
@@ -424,10 +412,7 @@ void main() {
         spotTexts<SelectableText>('foo').existsOnce();
 
         // Does not work because SelectableText wraps Text and it always finds 2 Widgets
-        expect(
-          () => spotTexts('foo').existsOnce(),
-          throwsTestFailure,
-        );
+        expect(() => spotTexts('foo').existsOnce(), throwsTestFailure);
       });
 
       testWidgets('spotSingleText finds SelectableText', (tester) async {
@@ -436,10 +421,7 @@ void main() {
         spotSingleText<SelectableText>('foo').existsOnce();
 
         // Does not work because SelectableText wraps Text and it always finds 2 Widgets
-        expect(
-          () => spotSingleText('foo').existsOnce(),
-          throwsTestFailure,
-        );
+        expect(() => spotSingleText('foo').existsOnce(), throwsTestFailure);
       });
 
       testWidgets('spotText finds SelectableText', (tester) async {
@@ -589,20 +571,23 @@ void main() {
       expect(content.normalized, 'foo bar');
     });
 
-    testWidgets('extractTextContent reads raw and normalized from a widget',
-        (tester) async {
+    testWidgets('extractTextContent reads raw and normalized from a widget', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         _stage(children: [Text('foo${nonBreakingSpace}bar')]),
       );
-      final content =
-          AnyText.extractText(tester.element(find.byType(RichText).first));
+      final content = AnyText.extractText(
+        tester.element(find.byType(RichText).first),
+      );
       expect(content, isNotNull);
       expect(content!.raw, 'foo${nonBreakingSpace}bar');
       expect(content.normalized, 'foo bar');
     });
 
-    testWidgets('extractTextContent returns null for non-text widgets',
-        (tester) async {
+    testWidgets('extractTextContent returns null for non-text widgets', (
+      tester,
+    ) async {
       await tester.pumpWidget(_stage(children: [Icon(Icons.add)]));
       expect(
         AnyText.extractText(tester.element(find.byIcon(Icons.add))),
@@ -658,15 +643,14 @@ void main() {
 
     testWidgets('spotText normalizes ZWSP inside Text.rich', (tester) async {
       await tester.pumpWidget(
-        _stage(
-          children: [Text.rich(TextSpan(text: 'He${zeroWidthSpace}llo'))],
-        ),
+        _stage(children: [Text.rich(TextSpan(text: 'He${zeroWidthSpace}llo'))]),
       );
       spotText('Hello').existsOnce();
     });
 
-    testWidgets('whereText/withText/hasText match the normalized text',
-        (tester) async {
+    testWidgets('whereText/withText/hasText match the normalized text', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         _stage(children: [Text('foo${nonBreakingSpace}bar')]),
       );
@@ -675,8 +659,9 @@ void main() {
       spotText('foo').existsOnce().hasText('foo bar');
     });
 
-    testWidgets('whereRawText/withRawText/hasRawText match exact characters',
-        (tester) async {
+    testWidgets('whereRawText/withRawText/hasRawText match exact characters', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         _stage(children: [Text('foo${nonBreakingSpace}bar')]),
       );
@@ -689,8 +674,9 @@ void main() {
       spotText('foo').existsOnce().hasRawText('foo${nonBreakingSpace}bar');
     });
 
-    testWidgets('spotTextWhere operates on the normalized text',
-        (tester) async {
+    testWidgets('spotTextWhere operates on the normalized text', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         _stage(children: [Text('foo${nonBreakingSpace}bar')]),
       );
@@ -698,8 +684,9 @@ void main() {
       spotTextWhere((it) => it.startsWith('foo b')).existsOnce();
     });
 
-    testWidgets('spotText with raw matches the exact characters',
-        (tester) async {
+    testWidgets('spotText with raw matches the exact characters', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         _stage(children: [Text('foo${nonBreakingSpace}bar')]),
       );
@@ -709,20 +696,28 @@ void main() {
       // contains by default, whole requires the entire text
       spotText('foo$nonBreakingSpace', raw: true).existsOnce();
       spotText('foo$nonBreakingSpace', raw: true, whole: true).doesNotExist();
-      spotText('foo${nonBreakingSpace}bar', raw: true, whole: true)
-          .existsOnce();
+      spotText(
+        'foo${nonBreakingSpace}bar',
+        raw: true,
+        whole: true,
+      ).existsOnce();
     });
 
-    testWidgets('spotTextWhere with raw operates on the raw text',
-        (tester) async {
+    testWidgets('spotTextWhere with raw operates on the raw text', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         _stage(children: [Text('foo${nonBreakingSpace}bar')]),
       );
-      spotTextWhere((it) => it.equals('foo${nonBreakingSpace}bar'), raw: true)
-          .existsOnce();
+      spotTextWhere(
+        (it) => it.equals('foo${nonBreakingSpace}bar'),
+        raw: true,
+      ).existsOnce();
       spotTextWhere((it) => it.equals('foo bar'), raw: true).doesNotExist();
-      spotTextWhere((it) => it.startsWith('foo$nonBreakingSpace'), raw: true)
-          .existsOnce();
+      spotTextWhere(
+        (it) => it.startsWith('foo$nonBreakingSpace'),
+        raw: true,
+      ).existsOnce();
     });
   });
 }
@@ -732,9 +727,7 @@ Widget _stage({required List<Widget> children}) {
     home: Scaffold(
       body: DefaultTextStyle(
         style: testTextStyle,
-        child: Column(
-          children: children,
-        ),
+        child: Column(children: children),
       ),
     ),
   );
