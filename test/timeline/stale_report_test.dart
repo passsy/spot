@@ -1,3 +1,7 @@
+// Runs tests in a process of their own, which a browser cannot start.
+@TestOn('vm')
+library;
+
 import 'dart:io';
 
 import 'package:dartx/dartx_io.dart';

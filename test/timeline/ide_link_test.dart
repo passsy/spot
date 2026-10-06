@@ -1,3 +1,7 @@
+// Resolves paths against the file system, which a browser does not have.
+@TestOn('vm')
+library;
+
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -52,8 +56,12 @@ void main() {
         workingDirectory: setupProjectDir(withIdeaFolder: false),
       );
 
+      // The native absolute path, which on Windows gains a drive letter.
+      final path = File.fromUri(
+        Uri.file('/my_project/test/example_test.dart'),
+      ).absolute.path;
       expect(link!.name, 'VS Code');
-      expect(link.url, 'vscode://file//my_project/test/example_test.dart:12:3');
+      expect(link.url, 'vscode://file/$path:12:3');
     });
 
     test(
