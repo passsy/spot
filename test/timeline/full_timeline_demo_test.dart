@@ -52,11 +52,13 @@ void main() {
     spotText('Booked: Sunset cruise').existsOnce();
     spotText('1 experience reserved').existsOnce();
 
-    await act.tap(spot<FilledButton>().withChild(spotText('Save itinerary')));
+    // By text, not by button type: on Flutter 3.32 the `.icon` constructors
+    // build a private subclass, which `spot<FilledButton>()` does not match.
+    await act.tap(spotText('Save itinerary'));
     await tester.pumpAndSettle();
     spotText('Itinerary saved for your weekend').existsOnce();
 
-    await act.tap(spot<OutlinedButton>().withChild(spotText('View itinerary')));
+    await act.tap(spotText('View itinerary'));
     await tester.pumpAndSettle();
     spotText('Your Lisbon itinerary').existsOnce();
     spotText('Sunset cruise · confirmed').existsOnce();
