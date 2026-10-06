@@ -175,7 +175,7 @@ void main() {
   testWidgets('snapshotElement() one widget', (tester) async {
     await tester.pumpWidget(
       WidgetsApp(
-        builder: (_, __) => const Center(child: Text('home')),
+        builder: (_, _) => const Center(child: Text('home')),
         color: Colors.red,
       ),
     );
@@ -215,7 +215,7 @@ void main() {
   testWidgets('snapshotRenderObject() one widget', (tester) async {
     await tester.pumpWidget(
       WidgetsApp(
-        builder: (_, __) => const Center(child: Text('home')),
+        builder: (_, _) => const Center(child: Text('home')),
         color: Colors.red,
       ),
     );
@@ -255,7 +255,7 @@ void main() {
   testWidgets('snapshotRenderBox() one widget', (tester) async {
     await tester.pumpWidget(
       WidgetsApp(
-        builder: (_, __) => const Center(child: Text('home')),
+        builder: (_, _) => const Center(child: Text('home')),
         color: Colors.red,
       ),
     );
@@ -287,7 +287,7 @@ void main() {
     testWidgets('discoveredRenderObject with one widget', (tester) async {
       await tester.pumpWidget(
         WidgetsApp(
-          builder: (_, __) => const Center(child: Text('home')),
+          builder: (_, _) => const Center(child: Text('home')),
           color: Colors.red,
         ),
       );
@@ -364,7 +364,7 @@ void main() {
     testWidgets('discoveredRenderBox with one widget', (tester) async {
       await tester.pumpWidget(
         WidgetsApp(
-          builder: (_, __) => const Center(child: Text('home')),
+          builder: (_, _) => const Center(child: Text('home')),
           color: Colors.red,
         ),
       );

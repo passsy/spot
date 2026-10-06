@@ -125,7 +125,7 @@ Map<String, String> _ownBuildDirectory() {
     'HOME': configDir.path,
     'XDG_CONFIG_HOME': configDir.path,
     'APPDATA': configDir.path,
-    if (pubCache != null) 'PUB_CACHE': pubCache,
+    'PUB_CACHE': ?pubCache,
   };
 }
 
