@@ -79,82 +79,74 @@ void main() {
     );
   }
 
-  test(
-    'timelines preserve relative screenshot URLs',
-    () async {
-      final html = await renderTimelineWithJaspr(
-        [event(index: 1, screenshotUrl: './screenshots/example.png')],
-        sourceFiles: const {
-          'test/example_test.dart': TimelineSourceFile(
-            path: 'test/example_test.dart',
-            lines: ['testWidgets(', '  expect(value, isTrue);', ');'],
-            truncated: false,
-          ),
-        },
-      );
+  test('timelines preserve relative screenshot URLs', () async {
+    final html = await renderTimelineWithJaspr(
+      [event(index: 1, screenshotUrl: './screenshots/example.png')],
+      sourceFiles: const {
+        'test/example_test.dart': TimelineSourceFile(
+          path: 'test/example_test.dart',
+          lines: ['testWidgets(', '  expect(value, isTrue);', ');'],
+          truncated: false,
+        ),
+      },
+    );
 
-      expect(html, isNot(contains('<base href="/"/>')));
-      expect(html, contains('<script>'));
-      expect(html, isNot(contains('src="/script.js"')));
-      expect(html, contains('src="./screenshots/example.png"'));
-      expect(html, contains('./screenshots/example-overlay.png'));
-      expect(html, contains('Widget tree'));
-      expect(html, contains('Event details'));
-      expect(
-        html,
-        contains('"sourcePath":"test/example_test.dart","callerLine":2'),
-      );
-      expect(html, contains('expect(value, isTrue);'));
-      expect(html, contains('.source-line.is-caller'));
-      expect(html, contains('Tree text'));
-      expect(html, contains('Raw data'));
-      expect(html, contains('.interactive-inspector'));
-      expect(html, contains('.inspector-sidebar'));
-      expect(html, contains('.widget-outline'));
-      // The capture's own ratio, so the canvas is exactly the image box and the
-      // outline percentages land on the right pixels whatever the shape is.
-      expect(html, contains('--capture-aspect: 800 / 600'));
-      expect(html, contains('Resize timeline and inspector'));
-      expect(html, contains('.resize-handle'));
-      expect(html, isNot(contains('class="lane-label"')));
-      expect(html, contains(r'"widgetTree":"RenderView\n'));
-      expect(html, contains('"structuredWidgetTree":{'));
-      expect(html, contains('"bounds":{"x":10'));
+    expect(html, isNot(contains('<base href="/"/>')));
+    expect(html, contains('<script>'));
+    expect(html, isNot(contains('src="/script.js"')));
+    expect(html, contains('src="./screenshots/example.png"'));
+    expect(html, contains('./screenshots/example-overlay.png'));
+    expect(html, contains('Widget tree'));
+    expect(html, contains('Event details'));
+    expect(
+      html,
+      contains('"sourcePath":"test/example_test.dart","callerLine":2'),
+    );
+    expect(html, contains('expect(value, isTrue);'));
+    expect(html, contains('.source-line.is-caller'));
+    expect(html, contains('Tree text'));
+    expect(html, contains('Raw data'));
+    expect(html, contains('.interactive-inspector'));
+    expect(html, contains('.inspector-sidebar'));
+    expect(html, contains('.widget-outline'));
+    // The capture's own ratio, so the canvas is exactly the image box and the
+    // outline percentages land on the right pixels whatever the shape is.
+    expect(html, contains('--capture-aspect: 800 / 600'));
+    expect(html, contains('Resize timeline and inspector'));
+    expect(html, contains('.resize-handle'));
+    expect(html, isNot(contains('class="lane-label"')));
+    expect(html, contains(r'"widgetTree":"RenderView\n'));
+    expect(html, contains('"structuredWidgetTree":{'));
+    expect(html, contains('"bounds":{"x":10'));
 
-      // One stylesheet, holding every component's rules. Jaspr can register
-      // StyleRules through `Document(styles:)` as well, which would emit a
-      // second <style>, and having both is how rules end up in whichever of
-      // the two the last person to touch them happened to open.
-      expect(RegExp('<style>').allMatches(html), hasLength(1));
-      expect(html, contains('.snackbar'));
-      expect(html, contains('.tree-filter-button.is-active'));
-      expect(html, contains('@keyframes fadein'));
-    },
-    skip: kIsWeb ? 'Jaspr server rendering requires the Dart VM' : false,
-  );
+    // One stylesheet, holding every component's rules. Jaspr can register
+    // StyleRules through `Document(styles:)` as well, which would emit a
+    // second <style>, and having both is how rules end up in whichever of
+    // the two the last person to touch them happened to open.
+    expect(RegExp('<style>').allMatches(html), hasLength(1));
+    expect(html, contains('.snackbar'));
+    expect(html, contains('.tree-filter-button.is-active'));
+    expect(html, contains('@keyframes fadein'));
+  }, skip: kIsWeb ? 'Jaspr server rendering requires the Dart VM' : false);
 
-  test(
-    'timelines render 200 selectable events',
-    () async {
-      final html = await renderTimelineWithJaspr([
-        for (var index = 1; index <= 200; index++)
-          event(
-            index: index,
-            screenshotUrl: index.isEven
-                ? './screenshots/example-$index.png'
-                : null,
-          ),
-      ]);
+  test('timelines render 200 selectable events', () async {
+    final html = await renderTimelineWithJaspr([
+      for (var index = 1; index <= 200; index++)
+        event(
+          index: index,
+          screenshotUrl: index.isEven
+              ? './screenshots/example-$index.png'
+              : null,
+        ),
+    ]);
 
-      expect(html, contains('200 events'));
-      expect(html, contains('200 frames'));
-      expect(html, contains('100 captured'));
-      expect(html, contains('Frame 1'));
-      expect(html, contains('Frame 100'));
-      expect(html, contains('--frame-count: 200'));
-    },
-    skip: kIsWeb ? 'Jaspr server rendering requires the Dart VM' : false,
-  );
+    expect(html, contains('200 events'));
+    expect(html, contains('200 frames'));
+    expect(html, contains('100 captured'));
+    expect(html, contains('Frame 1'));
+    expect(html, contains('Frame 100'));
+    expect(html, contains('--frame-count: 200'));
+  }, skip: kIsWeb ? 'Jaspr server rendering requires the Dart VM' : false);
 
   test(
     'multiple assertions on one frame share one filmstrip capture',
@@ -225,15 +217,11 @@ void main() {
     skip: kIsWeb ? 'Jaspr server rendering requires the Dart VM' : false,
   );
 
-  test(
-    'external standalone timelines use a relative client script',
-    () async {
-      final html = await renderTimelineWithJaspr([], inlineScripts: false);
+  test('external standalone timelines use a relative client script', () async {
+    final html = await renderTimelineWithJaspr([], inlineScripts: false);
 
-      expect(html, contains('<script src="script.js" defer></script>'));
-    },
-    skip: kIsWeb ? 'Jaspr server rendering requires the Dart VM' : false,
-  );
+    expect(html, contains('<script src="script.js" defer></script>'));
+  }, skip: kIsWeb ? 'Jaspr server rendering requires the Dart VM' : false);
 
   test(
     'screenshots stay relative to the report, not the server root',

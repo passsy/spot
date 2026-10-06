@@ -89,53 +89,45 @@ File _expectLastFailureHasScreenshot() {
 }
 
 void main() {
-  test(
-    'a failed expect becomes the last event of the timeline',
-    () async {
-      const failure = "expect(1, 2, reason: 'the counter never moved');";
-      final output = await _outputOfFailingTest(failure: failure);
-      if (output == null) {
-        return;
-      }
+  test('a failed expect becomes the last event of the timeline', () async {
+    const failure = "expect(1, 2, reason: 'the counter never moved');";
+    final output = await _outputOfFailingTest(failure: failure);
+    if (output == null) {
+      return;
+    }
 
-      expect(output, contains('Event Type: Test Failed'));
-      // The real failure, not the 'Test failed. See exception logs above.'
-      // placeholder that the test framework reports in its place.
-      expect(output, contains('the counter never moved'));
-      expect(output, contains('Expected: <2>'));
-      expect(output, contains('Actual: <1>'));
-      // The line that failed, so the report can point at it.
-      final line = _lineOf(_failingTest(failure: failure), failure);
-      expect(output, contains(RegExp('Caller: at .*temp_test\\.dart:$line:')));
+    expect(output, contains('Event Type: Test Failed'));
+    // The real failure, not the 'Test failed. See exception logs above.'
+    // placeholder that the test framework reports in its place.
+    expect(output, contains('the counter never moved'));
+    expect(output, contains('Expected: <2>'));
+    expect(output, contains('Actual: <1>'));
+    // The line that failed, so the report can point at it.
+    final line = _lineOf(_failingTest(failure: failure), failure);
+    expect(output, contains(RegExp('Caller: at .*temp_test\\.dart:$line:')));
 
-      // Last, and only once.
-      final events = 'Event Type: '.allMatches(output).length;
-      final failures = 'Event Type: Test Failed'.allMatches(output).length;
-      expect(failures, 1);
-      expect(output.lastIndexOf('Event Type: Test Failed'), greaterThan(0));
-      expect(events, greaterThan(failures));
-      _expectLastFailureHasScreenshot();
-    },
-    timeout: const Timeout(Duration(minutes: 2)),
-  );
+    // Last, and only once.
+    final events = 'Event Type: '.allMatches(output).length;
+    final failures = 'Event Type: Test Failed'.allMatches(output).length;
+    expect(failures, 1);
+    expect(output.lastIndexOf('Event Type: Test Failed'), greaterThan(0));
+    expect(events, greaterThan(failures));
+    _expectLastFailureHasScreenshot();
+  }, timeout: const Timeout(Duration(minutes: 2)));
 
-  test(
-    'a thrown exception becomes the last event of the timeline',
-    () async {
-      const failure = "throw StateError('the widget is gone');";
-      final output = await _outputOfFailingTest(failure: failure);
-      if (output == null) {
-        return;
-      }
+  test('a thrown exception becomes the last event of the timeline', () async {
+    const failure = "throw StateError('the widget is gone');";
+    final output = await _outputOfFailingTest(failure: failure);
+    if (output == null) {
+      return;
+    }
 
-      expect(output, contains('Event Type: Test Failed'));
-      expect(output, contains('Bad state: the widget is gone'));
-      final line = _lineOf(_failingTest(failure: failure), failure);
-      expect(output, contains(RegExp('Caller: at .*temp_test\\.dart:$line:')));
-      _expectLastFailureHasScreenshot();
-    },
-    timeout: const Timeout(Duration(minutes: 2)),
-  );
+    expect(output, contains('Event Type: Test Failed'));
+    expect(output, contains('Bad state: the widget is gone'));
+    final line = _lineOf(_failingTest(failure: failure), failure);
+    expect(output, contains(RegExp('Caller: at .*temp_test\\.dart:$line:')));
+    _expectLastFailureHasScreenshot();
+  }, timeout: const Timeout(Duration(minutes: 2)));
 
   test(
     'the failure is captured while the failing frame is still on screen',
