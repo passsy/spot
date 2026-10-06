@@ -170,8 +170,9 @@ Example: timeline.mode = $globalTimelineModeToSwitch;
       isTrue,
     );
 
-    final htmlUri = Uri.parse(htmlLine.split('View timeline here: ').last);
-    final reportDirectory = File.fromUri(htmlUri).parent;
+    // Not Uri.parse: the link is 'file://' in front of a native path, which on
+    // Windows is not a valid file URI and parses the drive letter as a host.
+    final reportDirectory = File(htmlLine.split('file://').last).parent;
     final events =
         (jsonDecode(
                   File(
