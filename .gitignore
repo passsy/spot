@@ -13,3 +13,6 @@ coverage
 .DS_Store
 .flutter-plugins
 .flutter-plugins-dependencies
+
+# Local code review notes, not part of the package
+review/

@@ -35,7 +35,9 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   @useResult
   WidgetSelector<AnyText> withText(String? value) {
     return withDiagnosticProp<String>(
-        'text', (it) => value == null ? it.isNull() : it.equals(value));
+      'text',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where rawText matches the condition.
@@ -58,7 +60,9 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   @useResult
   WidgetSelector<AnyText> withRawText(String? value) {
     return withDiagnosticProp<String>(
-        'rawText', (it) => value == null ? it.isNull() : it.equals(value));
+      'rawText',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where textDirection matches the condition.
@@ -80,8 +84,10 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// ```
   @useResult
   WidgetSelector<AnyText> withTextDirection(TextDirection? value) {
-    return withDiagnosticProp<TextDirection>('textDirection',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<TextDirection>(
+      'textDirection',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where textAlign matches the condition.
@@ -104,7 +110,9 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   @useResult
   WidgetSelector<AnyText> withTextAlign(TextAlign? value) {
     return withDiagnosticProp<TextAlign>(
-        'textAlign', (it) => value == null ? it.isNull() : it.equals(value));
+      'textAlign',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where selectionColor matches the condition.
@@ -126,8 +134,10 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// ```
   @useResult
   WidgetSelector<AnyText> withSelectionColor(Color? value) {
-    return withDiagnosticProp<Color>('selectionColor',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<Color>(
+      'selectionColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where softWrap matches the condition.
@@ -150,7 +160,9 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   @useResult
   WidgetSelector<AnyText> withSoftWrap(bool? value) {
     return withDiagnosticProp<bool>(
-        'softWrap', (it) => value == null ? it.isNull() : it.equals(value));
+      'softWrap',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where overflow matches the condition.
@@ -173,7 +185,9 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   @useResult
   WidgetSelector<AnyText> withOverflow(TextOverflow? value) {
     return withDiagnosticProp<TextOverflow>(
-        'overflow', (it) => value == null ? it.isNull() : it.equals(value));
+      'overflow',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where maxLines matches the condition.
@@ -196,7 +210,9 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   @useResult
   WidgetSelector<AnyText> withMaxLines(int? value) {
     return withDiagnosticProp<int>(
-        'maxLines', (it) => value == null ? it.isNull() : it.equals(value));
+      'maxLines',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where locale matches the condition.
@@ -219,7 +235,9 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   @useResult
   WidgetSelector<AnyText> withLocale(Locale? value) {
     return withDiagnosticProp<Locale>(
-        'locale', (it) => value == null ? it.isNull() : it.equals(value));
+      'locale',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where minLines matches the condition.
@@ -242,7 +260,9 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   @useResult
   WidgetSelector<AnyText> withMinLines(int? value) {
     return withDiagnosticProp<int>(
-        'minLines', (it) => value == null ? it.isNull() : it.equals(value));
+      'minLines',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontInherit matches the condition.
@@ -265,7 +285,9 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   @useResult
   WidgetSelector<AnyText> withFontInherit(bool? value) {
     return withDiagnosticProp<bool>(
-        'font_inherit', (it) => value == null ? it.isNull() : it.equals(value));
+      'font_inherit',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontColor matches the condition.
@@ -288,7 +310,9 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   @useResult
   WidgetSelector<AnyText> withFontColor(Color? value) {
     return withDiagnosticProp<Color>(
-        'font_color', (it) => value == null ? it.isNull() : it.equals(value));
+      'font_color',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontBackgroundColor matches the condition.
@@ -310,8 +334,10 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// ```
   @useResult
   WidgetSelector<AnyText> withFontBackgroundColor(Color? value) {
-    return withDiagnosticProp<Color>('font_backgroundColor',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<Color>(
+      'font_backgroundColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontFamily matches the condition.
@@ -334,7 +360,9 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   @useResult
   WidgetSelector<AnyText> withFontFamily(String? value) {
     return withDiagnosticProp<String>(
-        'font_family', (it) => value == null ? it.isNull() : it.equals(value));
+      'font_family',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontFamilyFallback matches the condition.
@@ -356,8 +384,10 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// ```
   @useResult
   WidgetSelector<AnyText> withFontFamilyFallback(String? value) {
-    return withDiagnosticProp<String>('font_familyFallback',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<String>(
+      'font_familyFallback',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontWeight matches the condition.
@@ -380,7 +410,9 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   @useResult
   WidgetSelector<AnyText> withFontWeight(FontWeight? value) {
     return withDiagnosticProp<FontWeight>(
-        'font_weight', (it) => value == null ? it.isNull() : it.equals(value));
+      'font_weight',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontStyle matches the condition.
@@ -403,7 +435,9 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   @useResult
   WidgetSelector<AnyText> withFontStyle(FontStyle? value) {
     return withDiagnosticProp<FontStyle>(
-        'font_style', (it) => value == null ? it.isNull() : it.equals(value));
+      'font_style',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontLetterSpacing matches the condition.
@@ -425,8 +459,10 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// ```
   @useResult
   WidgetSelector<AnyText> withFontLetterSpacing(double? value) {
-    return withDiagnosticProp<double>('font_letterSpacing',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<double>(
+      'font_letterSpacing',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontWordSpacing matches the condition.
@@ -448,8 +484,10 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// ```
   @useResult
   WidgetSelector<AnyText> withFontWordSpacing(double? value) {
-    return withDiagnosticProp<double>('font_wordSpacing',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<double>(
+      'font_wordSpacing',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontBaseline matches the condition.
@@ -471,8 +509,10 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// ```
   @useResult
   WidgetSelector<AnyText> withFontBaseline(TextBaseline? value) {
-    return withDiagnosticProp<TextBaseline>('font_baseline',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<TextBaseline>(
+      'font_baseline',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontHeight matches the condition.
@@ -495,7 +535,9 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   @useResult
   WidgetSelector<AnyText> withFontHeight(double? value) {
     return withDiagnosticProp<double>(
-        'font_height', (it) => value == null ? it.isNull() : it.equals(value));
+      'font_height',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontLeadingDistribution matches the condition.
@@ -506,9 +548,12 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// ```
   @useResult
   WidgetSelector<AnyText> whereFontLeadingDistribution(
-      MatchProp<TextLeadingDistribution> match) {
+    MatchProp<TextLeadingDistribution> match,
+  ) {
     return withDiagnosticProp<TextLeadingDistribution>(
-        'font_leadingDistribution', match);
+      'font_leadingDistribution',
+      match,
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontLeadingDistribution equals (==) [value].
@@ -519,10 +564,12 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// ```
   @useResult
   WidgetSelector<AnyText> withFontLeadingDistribution(
-      TextLeadingDistribution? value) {
+    TextLeadingDistribution? value,
+  ) {
     return withDiagnosticProp<TextLeadingDistribution>(
-        'font_leadingDistribution',
-        (it) => value == null ? it.isNull() : it.equals(value));
+      'font_leadingDistribution',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontLocale matches the condition.
@@ -545,7 +592,9 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   @useResult
   WidgetSelector<AnyText> withFontLocale(Locale? value) {
     return withDiagnosticProp<Locale>(
-        'font_locale', (it) => value == null ? it.isNull() : it.equals(value));
+      'font_locale',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontForeground matches the condition.
@@ -567,8 +616,10 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// ```
   @useResult
   WidgetSelector<AnyText> withFontForeground(Paint? value) {
-    return withDiagnosticProp<Paint>('font_foreground',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<Paint>(
+      'font_foreground',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontBackground matches the condition.
@@ -590,8 +641,10 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   /// ```
   @useResult
   WidgetSelector<AnyText> withFontBackground(Paint? value) {
-    return withDiagnosticProp<Paint>('font_background',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<Paint>(
+      'font_background',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where inherit matches the condition.
@@ -614,7 +667,9 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   @useResult
   WidgetSelector<AnyText> withInherit(bool? value) {
     return withDiagnosticProp<bool>(
-        'inherit', (it) => value == null ? it.isNull() : it.equals(value));
+      'inherit',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [AnyText] where fontSize matches the condition.
@@ -637,7 +692,9 @@ extension AnyTextSelector on WidgetSelector<AnyText> {
   @useResult
   WidgetSelector<AnyText> withFontSize(double? value) {
     return withDiagnosticProp<double>(
-        'font_size', (it) => value == null ? it.isNull() : it.equals(value));
+      'font_size',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 
@@ -661,7 +718,9 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// ```
   WidgetMatcher<AnyText> hasText(String? value) {
     return hasDiagnosticProp<String>(
-        'text', (it) => value == null ? it.isNull() : it.equals(value));
+      'text',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that rawText of [AnyText] matches the condition in [match].
@@ -682,7 +741,9 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// ```
   WidgetMatcher<AnyText> hasRawText(String? value) {
     return hasDiagnosticProp<String>(
-        'rawText', (it) => value == null ? it.isNull() : it.equals(value));
+      'rawText',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that textDirection of [AnyText] matches the condition in [match].
@@ -702,8 +763,10 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// spot<AnyText>().existsOnce().hasTextDirection(TextDirection.values.first);
   /// ```
   WidgetMatcher<AnyText> hasTextDirection(TextDirection? value) {
-    return hasDiagnosticProp<TextDirection>('textDirection',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<TextDirection>(
+      'textDirection',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that textAlign of [AnyText] matches the condition in [match].
@@ -724,7 +787,9 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// ```
   WidgetMatcher<AnyText> hasTextAlign(TextAlign? value) {
     return hasDiagnosticProp<TextAlign>(
-        'textAlign', (it) => value == null ? it.isNull() : it.equals(value));
+      'textAlign',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that selectionColor of [AnyText] matches the condition in [match].
@@ -744,8 +809,10 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// spot<AnyText>().existsOnce().hasSelectionColor(Colors.red);
   /// ```
   WidgetMatcher<AnyText> hasSelectionColor(Color? value) {
-    return hasDiagnosticProp<Color>('selectionColor',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<Color>(
+      'selectionColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that softWrap of [AnyText] matches the condition in [match].
@@ -766,7 +833,9 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// ```
   WidgetMatcher<AnyText> hasSoftWrap(bool? value) {
     return hasDiagnosticProp<bool>(
-        'softWrap', (it) => value == null ? it.isNull() : it.equals(value));
+      'softWrap',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that overflow of [AnyText] matches the condition in [match].
@@ -787,7 +856,9 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// ```
   WidgetMatcher<AnyText> hasOverflow(TextOverflow? value) {
     return hasDiagnosticProp<TextOverflow>(
-        'overflow', (it) => value == null ? it.isNull() : it.equals(value));
+      'overflow',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that maxLines of [AnyText] matches the condition in [match].
@@ -808,7 +879,9 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// ```
   WidgetMatcher<AnyText> hasMaxLines(int? value) {
     return hasDiagnosticProp<int>(
-        'maxLines', (it) => value == null ? it.isNull() : it.equals(value));
+      'maxLines',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that locale of [AnyText] matches the condition in [match].
@@ -829,7 +902,9 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// ```
   WidgetMatcher<AnyText> hasLocale(Locale? value) {
     return hasDiagnosticProp<Locale>(
-        'locale', (it) => value == null ? it.isNull() : it.equals(value));
+      'locale',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that minLines of [AnyText] matches the condition in [match].
@@ -850,7 +925,9 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// ```
   WidgetMatcher<AnyText> hasMinLines(int? value) {
     return hasDiagnosticProp<int>(
-        'minLines', (it) => value == null ? it.isNull() : it.equals(value));
+      'minLines',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that fontInherit of [AnyText] matches the condition in [match].
@@ -871,7 +948,9 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// ```
   WidgetMatcher<AnyText> hasFontInherit(bool? value) {
     return hasDiagnosticProp<bool>(
-        'font_inherit', (it) => value == null ? it.isNull() : it.equals(value));
+      'font_inherit',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that fontColor of [AnyText] matches the condition in [match].
@@ -892,7 +971,9 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// ```
   WidgetMatcher<AnyText> hasFontColor(Color? value) {
     return hasDiagnosticProp<Color>(
-        'font_color', (it) => value == null ? it.isNull() : it.equals(value));
+      'font_color',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that fontBackgroundColor of [AnyText] matches the condition in [match].
@@ -912,8 +993,10 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// spot<AnyText>().existsOnce().hasFontBackgroundColor(Colors.red);
   /// ```
   WidgetMatcher<AnyText> hasFontBackgroundColor(Color? value) {
-    return hasDiagnosticProp<Color>('font_backgroundColor',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<Color>(
+      'font_backgroundColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that fontFamily of [AnyText] matches the condition in [match].
@@ -934,7 +1017,9 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// ```
   WidgetMatcher<AnyText> hasFontFamily(String? value) {
     return hasDiagnosticProp<String>(
-        'font_family', (it) => value == null ? it.isNull() : it.equals(value));
+      'font_family',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that fontFamilyFallback of [AnyText] matches the condition in [match].
@@ -954,8 +1039,10 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// spot<AnyText>().existsOnce().hasFontFamilyFallback('foo');
   /// ```
   WidgetMatcher<AnyText> hasFontFamilyFallback(String? value) {
-    return hasDiagnosticProp<String>('font_familyFallback',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<String>(
+      'font_familyFallback',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that fontWeight of [AnyText] matches the condition in [match].
@@ -976,7 +1063,9 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// ```
   WidgetMatcher<AnyText> hasFontWeight(FontWeight? value) {
     return hasDiagnosticProp<FontWeight>(
-        'font_weight', (it) => value == null ? it.isNull() : it.equals(value));
+      'font_weight',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that fontStyle of [AnyText] matches the condition in [match].
@@ -997,7 +1086,9 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// ```
   WidgetMatcher<AnyText> hasFontStyle(FontStyle? value) {
     return hasDiagnosticProp<FontStyle>(
-        'font_style', (it) => value == null ? it.isNull() : it.equals(value));
+      'font_style',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that fontLetterSpacing of [AnyText] matches the condition in [match].
@@ -1017,8 +1108,10 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// spot<AnyText>().existsOnce().hasFontLetterSpacing(10.5);
   /// ```
   WidgetMatcher<AnyText> hasFontLetterSpacing(double? value) {
-    return hasDiagnosticProp<double>('font_letterSpacing',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<double>(
+      'font_letterSpacing',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that fontWordSpacing of [AnyText] matches the condition in [match].
@@ -1038,8 +1131,10 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// spot<AnyText>().existsOnce().hasFontWordSpacing(10.5);
   /// ```
   WidgetMatcher<AnyText> hasFontWordSpacing(double? value) {
-    return hasDiagnosticProp<double>('font_wordSpacing',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<double>(
+      'font_wordSpacing',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that fontBaseline of [AnyText] matches the condition in [match].
@@ -1059,8 +1154,10 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// spot<AnyText>().existsOnce().hasFontBaseline(TextBaseline.values.first);
   /// ```
   WidgetMatcher<AnyText> hasFontBaseline(TextBaseline? value) {
-    return hasDiagnosticProp<TextBaseline>('font_baseline',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<TextBaseline>(
+      'font_baseline',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that fontHeight of [AnyText] matches the condition in [match].
@@ -1081,7 +1178,9 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// ```
   WidgetMatcher<AnyText> hasFontHeight(double? value) {
     return hasDiagnosticProp<double>(
-        'font_height', (it) => value == null ? it.isNull() : it.equals(value));
+      'font_height',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that fontLeadingDistribution of [AnyText] matches the condition in [match].
@@ -1091,9 +1190,12 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// spot<AnyText>().existsOnce().hasFontLeadingDistributionWhere((it) => it.equals(TextLeadingDistribution.values.first));
   /// ```
   WidgetMatcher<AnyText> hasFontLeadingDistributionWhere(
-      MatchProp<TextLeadingDistribution> match) {
+    MatchProp<TextLeadingDistribution> match,
+  ) {
     return hasDiagnosticProp<TextLeadingDistribution>(
-        'font_leadingDistribution', match);
+      'font_leadingDistribution',
+      match,
+    );
   }
 
   /// Expects that fontLeadingDistribution of [AnyText] equals (==) [value].
@@ -1103,10 +1205,12 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// spot<AnyText>().existsOnce().hasFontLeadingDistribution(TextLeadingDistribution.values.first);
   /// ```
   WidgetMatcher<AnyText> hasFontLeadingDistribution(
-      TextLeadingDistribution? value) {
+    TextLeadingDistribution? value,
+  ) {
     return hasDiagnosticProp<TextLeadingDistribution>(
-        'font_leadingDistribution',
-        (it) => value == null ? it.isNull() : it.equals(value));
+      'font_leadingDistribution',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that fontLocale of [AnyText] matches the condition in [match].
@@ -1127,7 +1231,9 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// ```
   WidgetMatcher<AnyText> hasFontLocale(Locale? value) {
     return hasDiagnosticProp<Locale>(
-        'font_locale', (it) => value == null ? it.isNull() : it.equals(value));
+      'font_locale',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that fontForeground of [AnyText] matches the condition in [match].
@@ -1147,8 +1253,10 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// spot<AnyText>().existsOnce().hasFontForeground(Paint());
   /// ```
   WidgetMatcher<AnyText> hasFontForeground(Paint? value) {
-    return hasDiagnosticProp<Paint>('font_foreground',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<Paint>(
+      'font_foreground',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that fontBackground of [AnyText] matches the condition in [match].
@@ -1168,8 +1276,10 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// spot<AnyText>().existsOnce().hasFontBackground(Paint());
   /// ```
   WidgetMatcher<AnyText> hasFontBackground(Paint? value) {
-    return hasDiagnosticProp<Paint>('font_background',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<Paint>(
+      'font_background',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that inherit of [AnyText] matches the condition in [match].
@@ -1190,7 +1300,9 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// ```
   WidgetMatcher<AnyText> hasInherit(bool? value) {
     return hasDiagnosticProp<bool>(
-        'inherit', (it) => value == null ? it.isNull() : it.equals(value));
+      'inherit',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that fontSize of [AnyText] matches the condition in [match].
@@ -1211,7 +1323,9 @@ extension AnyTextMatcher on WidgetMatcher<AnyText> {
   /// ```
   WidgetMatcher<AnyText> hasFontSize(double? value) {
     return hasDiagnosticProp<double>(
-        'font_size', (it) => value == null ? it.isNull() : it.equals(value));
+      'font_size',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 
@@ -1325,7 +1439,8 @@ extension AnyTextGetter on WidgetMatcher<AnyText> {
   /// Returns the fontLeadingDistribution of the matched [AnyText] via [Widget.toDiagnosticsNode]
   TextLeadingDistribution getFontLeadingDistribution() {
     return getDiagnosticProp<TextLeadingDistribution>(
-        'font_leadingDistribution');
+      'font_leadingDistribution',
+    );
   }
 
   /// Returns the fontLocale of the matched [AnyText] via [Widget.toDiagnosticsNode]

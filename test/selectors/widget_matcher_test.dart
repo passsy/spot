@@ -22,8 +22,9 @@ void main() {
     );
     expect(hasWidgetProp, isA<WidgetMatcher<MaterialApp>>());
 
-    final Widget? getWidgetProp =
-        matcher.getWidgetProp(widgetProp('null', _getNullWidgetProp));
+    final Widget? getWidgetProp = matcher.getWidgetProp(
+      widgetProp('null', _getNullWidgetProp),
+    );
     expect(getWidgetProp, isNull);
 
     final WidgetMatcher<MaterialApp> hasElementProp = matcher.hasElementProp(
@@ -34,21 +35,23 @@ void main() {
     );
     expect(hasElementProp, isA<WidgetMatcher<MaterialApp>>());
 
-    final Widget? getElementProp =
-        matcher.getElementProp(elementProp('null', _getNullWidgetProp));
+    final Widget? getElementProp = matcher.getElementProp(
+      elementProp('null', _getNullWidgetProp),
+    );
     expect(getElementProp, isNull);
 
-    final WidgetMatcher<MaterialApp> hasRenderObjectProp =
-        matcher.hasRenderObjectProp(
-      prop: renderObjectProp('null', _getNullWidgetProp),
-      match: (it) => it
-          .has((Widget widget) => widget.toStringDeep(), 'toStringDeep')
-          .isNull(),
-    );
+    final WidgetMatcher<MaterialApp> hasRenderObjectProp = matcher
+        .hasRenderObjectProp(
+          prop: renderObjectProp('null', _getNullWidgetProp),
+          match: (it) => it
+              .has((Widget widget) => widget.toStringDeep(), 'toStringDeep')
+              .isNull(),
+        );
     expect(hasRenderObjectProp, isA<WidgetMatcher<MaterialApp>>());
 
-    final Widget? getRenderObjectProp = matcher
-        .getRenderObjectProp(renderObjectProp('null', _getNullWidgetProp));
+    final Widget? getRenderObjectProp = matcher.getRenderObjectProp(
+      renderObjectProp('null', _getNullWidgetProp),
+    );
     expect(getRenderObjectProp, isNull);
   });
 
@@ -70,8 +73,9 @@ void main() {
     expect(discovered, isA<List<WidgetMatcher<MaterialApp>>>());
     expect(discovered, hasLength(1));
 
-    final MultiWidgetMatcher<MaterialApp> all =
-        matcher.all((WidgetMatcher<MaterialApp> widget) {
+    final MultiWidgetMatcher<MaterialApp> all = matcher.all((
+      WidgetMatcher<MaterialApp> widget,
+    ) {
       widget.hasWidgetProp(
         prop: widgetProp('null', _getNullWidgetProp),
         match: (it) => it
@@ -81,8 +85,9 @@ void main() {
     });
     expect(all, isA<MultiWidgetMatcher<MaterialApp>>());
 
-    final MultiWidgetMatcher<MaterialApp> any =
-        matcher.any((WidgetMatcher<MaterialApp> widget) {
+    final MultiWidgetMatcher<MaterialApp> any = matcher.any((
+      WidgetMatcher<MaterialApp> widget,
+    ) {
       widget.hasWidgetProp(
         prop: widgetProp('null', _getNullWidgetProp),
         match: (it) => it

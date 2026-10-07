@@ -9,9 +9,7 @@ import 'package:spot/spot.dart';
 void main() {
   _generateWidget<Text>(
     builder: () => Text(''),
-    propNameOverrides: {
-      'data': 'text',
-    },
+    propNameOverrides: {'data': 'text'},
   );
   _generateWidget<EditableText>(
     builder: () => EditableText(
@@ -24,47 +22,51 @@ void main() {
   );
   _generateWidget<Container>(
     builder: () => Container(),
-    propNameOverrides: {
-      'fg': 'foreground',
-      'bg': 'background',
-    },
+    propNameOverrides: {'fg': 'foreground', 'bg': 'background'},
   );
   _generateWidget<Row>(builder: () => Row());
   _generateWidget<Wrap>(
     builder: () => Wrap(),
-    imports: "import 'package:flutter/rendering.dart';\n"
+    imports:
+        "import 'package:flutter/rendering.dart';\n"
         "import 'package:flutter/widgets.dart';",
   );
   _generateWidget<SizedBox>(
     builder: () => _child,
-    imports: "import 'package:flutter/rendering.dart';\n"
+    imports:
+        "import 'package:flutter/rendering.dart';\n"
         "import 'package:flutter/widgets.dart';",
   );
   _generateWidget<Align>(
     builder: () => Align(),
-    imports: "import 'package:flutter/rendering.dart';\n"
+    imports:
+        "import 'package:flutter/rendering.dart';\n"
         "import 'package:flutter/widgets.dart';",
   );
   _generateWidget<SafeArea>(builder: () => SafeArea(child: _child));
   _generateWidget<Opacity>(
     builder: () => Opacity(opacity: 0),
-    imports: "import 'package:flutter/rendering.dart';\n"
+    imports:
+        "import 'package:flutter/rendering.dart';\n"
         "import 'package:flutter/widgets.dart';",
   );
   _generateWidget<Column>(
     builder: () => Column(),
-    imports: "import 'package:flutter/rendering.dart';\n"
+    imports:
+        "import 'package:flutter/rendering.dart';\n"
         "import 'package:flutter/widgets.dart';",
   );
   _generateWidget<Row>(
     builder: () => Row(),
-    imports: "import 'package:flutter/rendering.dart';\n"
+    imports:
+        "import 'package:flutter/rendering.dart';\n"
         "import 'package:flutter/widgets.dart';",
   );
   _generateWidget<Icon>(builder: () => Icon(Icons.add));
   _generateWidget<ConstrainedBox>(
     builder: () => ConstrainedBox(constraints: BoxConstraints.tightFor()),
-    imports: "import 'package:flutter/rendering.dart';\n"
+    imports:
+        "import 'package:flutter/rendering.dart';\n"
         "import 'package:flutter/widgets.dart';",
   );
   _generateWidget<WidgetsApp>(builder: () => _partOfMaterialApp);
@@ -82,7 +84,8 @@ void main() {
   );
   _generateWidget<Semantics>(
     builder: () => Semantics(),
-    imports: "import 'package:flutter/widgets.dart';\n"
+    imports:
+        "import 'package:flutter/widgets.dart';\n"
         "import 'package:flutter/rendering.dart';\n",
   );
 
@@ -90,9 +93,7 @@ void main() {
   _generateWidget<SelectableText>(
     builder: () => SelectableText(''),
     imports: "import 'package:flutter/material.dart';",
-    propNameOverrides: {
-      'data': 'text',
-    },
+    propNameOverrides: {'data': 'text'},
   );
   _generateWidget<MaterialApp>(
     builder: () => _partOfMaterialApp,
@@ -143,7 +144,8 @@ void main() {
   );
   _generateWidget<TextField>(
     builder: () => TextField(),
-    imports: "import 'package:flutter/material.dart';\n"
+    imports:
+        "import 'package:flutter/material.dart';\n"
         "import 'package:flutter/services.dart';",
   );
   _generateWidget<FloatingActionButton>(
@@ -202,9 +204,7 @@ void main() {
   );
   _generateWidget<DataTable>(
     builder: () => DataTable(
-      columns: [
-        DataColumn(label: _child),
-      ],
+      columns: [DataColumn(label: _child)],
       rows: [],
     ),
     imports: "import 'package:flutter/material.dart';",
@@ -237,10 +237,7 @@ void main() {
 
   test('format at the end', () {
     final generatedFiles = Directory('lib/src/widgets').listSync();
-    Process.runSync('dart', [
-      'format',
-      ...generatedFiles.map((e) => e.path),
-    ]);
+    Process.runSync('dart', ['format', ...generatedFiles.map((e) => e.path)]);
   });
 }
 
@@ -257,11 +254,7 @@ void _generateWidget<W extends Widget>({
   return testWidgets(name, (tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        home: Material(
-          child: Center(
-            child: builder(),
-          ),
-        ),
+        home: Material(child: Center(child: builder())),
       ),
     );
     spot<W>().writeMatchersToFile(

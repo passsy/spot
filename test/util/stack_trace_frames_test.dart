@@ -63,7 +63,8 @@ void main() {
       final frames = resolveFrames([
         wasmFrame('M.a closure at org-dartlang-app:///a_test.dart:1:2 inner'),
         wasmFrame(
-            'M.b wrapper at org-dartlang-app:///a_test.dart:3:4 trampoline'),
+          'M.b wrapper at org-dartlang-app:///a_test.dart:3:4 trampoline',
+        ),
       ]);
 
       expect(frames.map((f) => f.line), [1, 3]);
@@ -85,7 +86,8 @@ void main() {
     test('a served dependency becomes a package uri', () {
       final frames = resolveFrames([
         servedFrame(
-            '/packages/stack_trace/src/stack_zone_specification.dart.js'),
+          '/packages/stack_trace/src/stack_zone_specification.dart.js',
+        ),
       ]);
 
       expect(
@@ -137,8 +139,12 @@ void main() {
     });
 
     test('a uri a source map already resolved is left alone', () {
-      final resolved =
-          Frame(Uri.parse('package:spot/src/act/act.dart'), 1, 2, 'f');
+      final resolved = Frame(
+        Uri.parse('package:spot/src/act/act.dart'),
+        1,
+        2,
+        'f',
+      );
 
       expect(resolveFrames([resolved]).single.uri, resolved.uri);
     });

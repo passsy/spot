@@ -13,10 +13,7 @@ void main() {
         home: Container(
           child: Scaffold(
             appBar: AppBar(
-              title: DefaultTextStyle.merge(
-                maxLines: 2,
-                child: Text('Pepe'),
-              ),
+              title: DefaultTextStyle.merge(maxLines: 2, child: Text('Pepe')),
               actions: [
                 Wrap(
                   children: [
@@ -31,10 +28,7 @@ void main() {
                     ),
                   ],
                 ),
-                IconButton(
-                  icon: const Icon(Icons.home),
-                  onPressed: () {},
-                ),
+                IconButton(icon: const Icon(Icons.home), onPressed: () {}),
               ],
             ),
           ),
@@ -44,32 +38,29 @@ void main() {
 
     spot<Text>().first().existsOnce().hasText('Pepe');
 
-    final WidgetSelector<Scaffold> scaffold =
-        spot<MaterialApp>().spot<Scaffold>();
+    final WidgetSelector<Scaffold> scaffold = spot<MaterialApp>()
+        .spot<Scaffold>();
     final appBar = scaffold.spot<AppBar>();
 
     final container = scaffold.spot<Container>()..existsOnce();
 
-    appBar.spotIcon(
-      Icons.home,
-      parents: [spot<IconButton>(), container],
-    ).existsOnce();
+    appBar
+        .spotIcon(Icons.home, parents: [spot<IconButton>(), container])
+        .existsOnce();
 
-    appBar.spot<IconButton>(
-      children: [spotIcon(Icons.settings)],
-    ).doesNotExist();
+    appBar
+        .spot<IconButton>(children: [spotIcon(Icons.settings)])
+        .doesNotExist();
 
     timeline.addEvent(details: 'myEvent', eventType: 'myEvent');
 
-    appBar.spotIcon(
-      Icons.settings,
-      parents: [spot<IconButton>()],
-    ).doesNotExist();
+    appBar
+        .spotIcon(Icons.settings, parents: [spot<IconButton>()])
+        .doesNotExist();
 
-    appBar.spotIcon(
-      Icons.home,
-      parents: [spot<IconButton>()],
-    ).existsExactlyNTimes(2);
+    appBar
+        .spotIcon(Icons.home, parents: [spot<IconButton>()])
+        .existsExactlyNTimes(2);
 
     // finder alternative
     // expect(find.byIcon(Icons.settings), findsOneWidget);

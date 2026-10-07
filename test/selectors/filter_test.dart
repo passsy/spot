@@ -8,15 +8,7 @@ void main() {
   group('first', () {
     testWidgets('first sibling', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Row(
-            children: [
-              Text('a'),
-              Text('b'),
-              Text('c'),
-            ],
-          ),
-        ),
+        MaterialApp(home: Row(children: [Text('a'), Text('b'), Text('c')])),
       );
       spot<Text>().first().existsOnce().hasText('a');
     });
@@ -42,15 +34,7 @@ void main() {
 
     testWidgets('first().copyWith() returns a single item', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Row(
-            children: [
-              Text('a'),
-              Text('b'),
-              Text('c'),
-            ],
-          ),
-        ),
+        MaterialApp(home: Row(children: [Text('a'), Text('b'), Text('c')])),
       );
       final first = spot<Text>().first();
       first.existsOnce().hasText('a');
@@ -62,15 +46,7 @@ void main() {
   group('last', () {
     testWidgets('last sibling', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Row(
-            children: [
-              Text('a'),
-              Text('b'),
-              Text('c'),
-            ],
-          ),
-        ),
+        MaterialApp(home: Row(children: [Text('a'), Text('b'), Text('c')])),
       );
       spot<Text>().last().existsOnce().hasText('c');
     });
@@ -96,15 +72,7 @@ void main() {
 
   testWidgets('atIndex', (tester) async {
     await tester.pumpWidget(
-      MaterialApp(
-        home: Row(
-          children: [
-            Text('a'),
-            Text('b'),
-            Text('c'),
-          ],
-        ),
-      ),
+      MaterialApp(home: Row(children: [Text('a'), Text('b'), Text('c')])),
     );
 
     spot<Text>().atIndex(1).withText('b').existsOnce();
@@ -113,15 +81,7 @@ void main() {
 
   testWidgets('atIndex does not throw any RangeError', (tester) async {
     await tester.pumpWidget(
-      MaterialApp(
-        home: Row(
-          children: [
-            Text('a'),
-            Text('b'),
-            Text('c'),
-          ],
-        ),
-      ),
+      MaterialApp(home: Row(children: [Text('a'), Text('b'), Text('c')])),
     );
 
     // just report nothing found
@@ -146,8 +106,9 @@ void main() {
       spotText('c').doesNotExist();
     });
 
-    testWidgets('do not select onstage widgets when spot offstage',
-        (tester) async {
+    testWidgets('do not select onstage widgets when spot offstage', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Row(
@@ -170,140 +131,142 @@ void main() {
     });
 
     testWidgets(
-        'select offstage widgets when use .overrideWidgetPresence(VisibilityMode.offstage)',
-        (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Row(
-            children: [
-              Text('a'),
-              Text('b'),
-              Offstage(child: Text('c')),
-            ],
+      'select offstage widgets when use .overrideWidgetPresence(VisibilityMode.offstage)',
+      (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Row(
+              children: [
+                Text('a'),
+                Text('b'),
+                Offstage(child: Text('c')),
+              ],
+            ),
           ),
-        ),
-      );
+        );
 
-      spotOffstage().spot<Text>().existsAtMostNTimes(3);
-      spotOffstage().spotText('a').doesNotExist();
-      spotOffstage().spotText('c').existsOnce();
-      spotOffstage()
-          .overrideWidgetPresence(WidgetPresence.onstage)
-          .spotText('a')
-          .existsOnce();
-      spotOffstage()
-          .overrideWidgetPresence(WidgetPresence.onstage)
-          .spotText('c')
-          .doesNotExist();
+        spotOffstage().spot<Text>().existsAtMostNTimes(3);
+        spotOffstage().spotText('a').doesNotExist();
+        spotOffstage().spotText('c').existsOnce();
+        spotOffstage()
+            .overrideWidgetPresence(WidgetPresence.onstage)
+            .spotText('a')
+            .existsOnce();
+        spotOffstage()
+            .overrideWidgetPresence(WidgetPresence.onstage)
+            .spotText('c')
+            .doesNotExist();
 
-      spotText('a').existsOnce();
-      spotText('c').doesNotExist();
-      spotText('a')
-          .overrideWidgetPresence(WidgetPresence.offstage)
-          .doesNotExist();
-      spotText('c')
-          .overrideWidgetPresence(WidgetPresence.offstage)
-          .existsOnce();
+        spotText('a').existsOnce();
+        spotText('c').doesNotExist();
+        spotText(
+          'a',
+        ).overrideWidgetPresence(WidgetPresence.offstage).doesNotExist();
+        spotText(
+          'c',
+        ).overrideWidgetPresence(WidgetPresence.offstage).existsOnce();
 
-      spotOffstage().spotText('a').doesNotExist();
-      spotOffstage().spotText('c').existsOnce();
-      spotText('a')
-          .overrideWidgetPresence(WidgetPresence.offstage)
-          .overrideWidgetPresence(WidgetPresence.onstage)
-          .existsOnce();
-      spotText('c')
-          .overrideWidgetPresence(WidgetPresence.offstage)
-          .overrideWidgetPresence(WidgetPresence.onstage)
-          .doesNotExist();
-      spotText('a')
-          .overrideWidgetPresence(WidgetPresence.offstage)
-          .overrideWidgetPresence(WidgetPresence.onstage)
-          .overrideWidgetPresence(WidgetPresence.offstage)
-          .doesNotExist();
-      spotText('c')
-          .overrideWidgetPresence(WidgetPresence.offstage)
-          .overrideWidgetPresence(WidgetPresence.onstage)
-          .overrideWidgetPresence(WidgetPresence.offstage)
-          .existsOnce();
+        spotOffstage().spotText('a').doesNotExist();
+        spotOffstage().spotText('c').existsOnce();
+        spotText('a')
+            .overrideWidgetPresence(WidgetPresence.offstage)
+            .overrideWidgetPresence(WidgetPresence.onstage)
+            .existsOnce();
+        spotText('c')
+            .overrideWidgetPresence(WidgetPresence.offstage)
+            .overrideWidgetPresence(WidgetPresence.onstage)
+            .doesNotExist();
+        spotText('a')
+            .overrideWidgetPresence(WidgetPresence.offstage)
+            .overrideWidgetPresence(WidgetPresence.onstage)
+            .overrideWidgetPresence(WidgetPresence.offstage)
+            .doesNotExist();
+        spotText('c')
+            .overrideWidgetPresence(WidgetPresence.offstage)
+            .overrideWidgetPresence(WidgetPresence.onstage)
+            .overrideWidgetPresence(WidgetPresence.offstage)
+            .existsOnce();
 
-      spot<Text>().withText('a').existsOnce();
-      spot<Text>().withText('c').doesNotExist();
-      spot<Text>()
-          .withText('a')
-          .overrideWidgetPresence(WidgetPresence.offstage)
-          .doesNotExist();
-      spot<Text>()
-          .withText('c')
-          .overrideWidgetPresence(WidgetPresence.offstage)
-          .existsOnce();
-    });
+        spot<Text>().withText('a').existsOnce();
+        spot<Text>().withText('c').doesNotExist();
+        spot<Text>()
+            .withText('a')
+            .overrideWidgetPresence(WidgetPresence.offstage)
+            .doesNotExist();
+        spot<Text>()
+            .withText('c')
+            .overrideWidgetPresence(WidgetPresence.offstage)
+            .existsOnce();
+      },
+    );
 
     testWidgets(
-        'select offstage widgets when use .overrideWidgetPresence(VisibilityMode.combined)',
-        (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Row(
-            children: [
-              Text('a'),
-              Text('b'),
-              Offstage(child: Text('c')),
-            ],
+      'select offstage widgets when use .overrideWidgetPresence(VisibilityMode.combined)',
+      (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Row(
+              children: [
+                Text('a'),
+                Text('b'),
+                Offstage(child: Text('c')),
+              ],
+            ),
           ),
-        ),
-      );
+        );
 
-      spotAllWidgets().spot<Text>().existsAtMostNTimes(3);
-      spotAllWidgets().spotText('a').existsOnce();
-      spotAllWidgets().spotText('c').existsOnce();
-      spotAllWidgets()
-          .overrideWidgetPresence(WidgetPresence.onstage)
-          .spotText('a')
-          .existsOnce();
-      spotAllWidgets()
-          .overrideWidgetPresence(WidgetPresence.onstage)
-          .spotText('c')
-          .doesNotExist();
+        spotAllWidgets().spot<Text>().existsAtMostNTimes(3);
+        spotAllWidgets().spotText('a').existsOnce();
+        spotAllWidgets().spotText('c').existsOnce();
+        spotAllWidgets()
+            .overrideWidgetPresence(WidgetPresence.onstage)
+            .spotText('a')
+            .existsOnce();
+        spotAllWidgets()
+            .overrideWidgetPresence(WidgetPresence.onstage)
+            .spotText('c')
+            .doesNotExist();
 
-      spotText('a').existsOnce();
-      spotText('c').doesNotExist();
-      spotText('a')
-          .overrideWidgetPresence(WidgetPresence.combined)
-          .existsOnce();
-      spotText('c')
-          .overrideWidgetPresence(WidgetPresence.combined)
-          .existsOnce();
+        spotText('a').existsOnce();
+        spotText('c').doesNotExist();
+        spotText(
+          'a',
+        ).overrideWidgetPresence(WidgetPresence.combined).existsOnce();
+        spotText(
+          'c',
+        ).overrideWidgetPresence(WidgetPresence.combined).existsOnce();
 
-      spotAllWidgets().spotText('a').existsOnce();
-      spotAllWidgets().spotText('c').existsOnce();
-      spotText('a')
-          .overrideWidgetPresence(WidgetPresence.offstage)
-          .overrideWidgetPresence(WidgetPresence.combined)
-          .existsOnce();
-      spotText('c')
-          .overrideWidgetPresence(WidgetPresence.offstage)
-          .overrideWidgetPresence(WidgetPresence.combined)
-          .existsOnce();
-      spotText('a')
-          .overrideWidgetPresence(WidgetPresence.onstage)
-          .overrideWidgetPresence(WidgetPresence.combined)
-          .existsOnce();
-      spotText('c')
-          .overrideWidgetPresence(WidgetPresence.onstage)
-          .overrideWidgetPresence(WidgetPresence.combined)
-          .existsOnce();
+        spotAllWidgets().spotText('a').existsOnce();
+        spotAllWidgets().spotText('c').existsOnce();
+        spotText('a')
+            .overrideWidgetPresence(WidgetPresence.offstage)
+            .overrideWidgetPresence(WidgetPresence.combined)
+            .existsOnce();
+        spotText('c')
+            .overrideWidgetPresence(WidgetPresence.offstage)
+            .overrideWidgetPresence(WidgetPresence.combined)
+            .existsOnce();
+        spotText('a')
+            .overrideWidgetPresence(WidgetPresence.onstage)
+            .overrideWidgetPresence(WidgetPresence.combined)
+            .existsOnce();
+        spotText('c')
+            .overrideWidgetPresence(WidgetPresence.onstage)
+            .overrideWidgetPresence(WidgetPresence.combined)
+            .existsOnce();
 
-      spot<Text>().withText('a').existsOnce();
-      spot<Text>().withText('c').doesNotExist();
-      spot<Text>()
-          .withText('a')
-          .overrideWidgetPresence(WidgetPresence.combined)
-          .existsOnce();
-      spot<Text>()
-          .withText('c')
-          .overrideWidgetPresence(WidgetPresence.combined)
-          .existsOnce();
-    });
+        spot<Text>().withText('a').existsOnce();
+        spot<Text>().withText('c').doesNotExist();
+        spot<Text>()
+            .withText('a')
+            .overrideWidgetPresence(WidgetPresence.combined)
+            .existsOnce();
+        spot<Text>()
+            .withText('c')
+            .overrideWidgetPresence(WidgetPresence.combined)
+            .existsOnce();
+      },
+    );
 
     testWidgets('filter offstage in subtree of parent', (tester) async {
       await tester.pumpWidget(
@@ -313,12 +276,7 @@ void main() {
               Expanded(
                 child: Offstage(
                   child: Scaffold(
-                    body: Column(
-                      children: [
-                        Text('a'),
-                        Text('b'),
-                      ],
-                    ),
+                    body: Column(children: [Text('a'), Text('b')]),
                   ),
                 ),
               ),
@@ -367,14 +325,7 @@ void main() {
           home: Row(
             children: [
               Expanded(
-                child: Scaffold(
-                  body: Column(
-                    children: [
-                      Text('a'),
-                      Text('b'),
-                    ],
-                  ),
-                ),
+                child: Scaffold(body: Column(children: [Text('a'), Text('b')])),
               ),
               Expanded(
                 child: Scaffold(
@@ -407,15 +358,14 @@ void main() {
           home: Center(
             child: ElevatedButton(
               onPressed: () {
-                final navigator =
-                    Navigator.of(tester.element(find.byType(ElevatedButton)));
+                final navigator = Navigator.of(
+                  tester.element(find.byType(ElevatedButton)),
+                );
                 navigator.push(
                   MaterialPageRoute(
                     // fullscreenDialog: true,
                     builder: (context) {
-                      return AlertDialog(
-                        content: Text('dialog content'),
-                      );
+                      return AlertDialog(content: Text('dialog content'));
                     },
                   ),
                 );

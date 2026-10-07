@@ -15,17 +15,27 @@ import 'package:test_process/test_process.dart';
 /// the output of the process, and returns the captured output as a string.
 /// The temporary test file is deleted after the test process completes.
 /// If `captureStart` is provided, the output will be captured starting from the line that matches `captureStart`.
+///
+/// [testFile] is where the test code is written instead of a throwaway
+/// location, for tests that need two runs to be the same test file.
 Future<String?> runTestInProcessAndCaptureOutPut({
   required String Function() testFileText,
   List<String> captureStart = const [],
   bool shouldFail = false,
   Iterable<String>? args,
+  File? testFile,
 }) async {
   if (kIsWeb) {
     markTestSkipped('Running a Test process is unsupported on platform web');
     return null;
   }
-  final tempTestFile = await _createTempTestFile(testFileText());
+  final File tempTestFile;
+  if (testFile != null) {
+    testFile.writeAsStringSync(testFileText());
+    tempTestFile = testFile;
+  } else {
+    tempTestFile = await _createTempTestFile(testFileText());
+  }
 
   final arguments = [
     'test',
@@ -38,10 +48,7 @@ Future<String?> runTestInProcessAndCaptureOutPut({
   final testProcess = await TestProcess.start(
     flutterExe,
     arguments,
-    environment: {
-      'CI': 'true',
-      ..._ownBuildDirectory(),
-    },
+    environment: {'CI': 'true', ..._ownBuildDirectory()},
   );
   final stdoutBuffer = StringBuffer();
   bool write = captureStart.isEmpty;
@@ -125,7 +132,7 @@ Map<String, String> _ownBuildDirectory() {
     'HOME': configDir.path,
     'XDG_CONFIG_HOME': configDir.path,
     'APPDATA': configDir.path,
-    if (pubCache != null) 'PUB_CACHE': pubCache,
+    'PUB_CACHE': ?pubCache,
   };
 }
 
@@ -156,8 +163,9 @@ String _buildDirectoryOfTestFile() {
     return 'build/nested_test/unknown';
   }
   final current = Directory.current.path;
-  final relative =
-      path.startsWith(current) ? path.substring(current.length) : path;
+  final relative = path.startsWith(current)
+      ? path.substring(current.length)
+      : path;
   final name = relative
       .replaceAll(RegExp('[^A-Za-z0-9]+'), '_')
       .replaceFirst(RegExp('^_'), '');

@@ -24,7 +24,8 @@ extension ConstrainedBoxSelector on WidgetSelector<ConstrainedBox> {
   /// ```
   @useResult
   WidgetSelector<ConstrainedBox> whereConstraints(
-      MatchProp<BoxConstraints> match) {
+    MatchProp<BoxConstraints> match,
+  ) {
     return withDiagnosticProp<BoxConstraints>('constraints', match);
   }
 
@@ -37,7 +38,9 @@ extension ConstrainedBoxSelector on WidgetSelector<ConstrainedBox> {
   @useResult
   WidgetSelector<ConstrainedBox> withConstraints(BoxConstraints? value) {
     return withDiagnosticProp<BoxConstraints>(
-        'constraints', (it) => value == null ? it.isNull() : it.equals(value));
+      'constraints',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [ConstrainedBox] where renderObject matches the condition.
@@ -48,7 +51,8 @@ extension ConstrainedBoxSelector on WidgetSelector<ConstrainedBox> {
   /// ```
   @useResult
   WidgetSelector<ConstrainedBox> whereRenderObject(
-      MatchProp<RenderConstrainedBox> match) {
+    MatchProp<RenderConstrainedBox> match,
+  ) {
     return withDiagnosticProp<RenderConstrainedBox>('renderObject', match);
   }
 
@@ -61,7 +65,9 @@ extension ConstrainedBoxSelector on WidgetSelector<ConstrainedBox> {
   @useResult
   WidgetSelector<ConstrainedBox> withRenderObject(RenderConstrainedBox? value) {
     return withDiagnosticProp<RenderConstrainedBox>(
-        'renderObject', (it) => value == null ? it.isNull() : it.equals(value));
+      'renderObject',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 
@@ -74,7 +80,8 @@ extension ConstrainedBoxMatcher on WidgetMatcher<ConstrainedBox> {
   /// spot<ConstrainedBox>().existsOnce().hasConstraintsWhere((it) => it.equals(BoxConstraints.tight(Size(100, 100))));
   /// ```
   WidgetMatcher<ConstrainedBox> hasConstraintsWhere(
-      MatchProp<BoxConstraints> match) {
+    MatchProp<BoxConstraints> match,
+  ) {
     return hasDiagnosticProp<BoxConstraints>('constraints', match);
   }
 
@@ -86,7 +93,9 @@ extension ConstrainedBoxMatcher on WidgetMatcher<ConstrainedBox> {
   /// ```
   WidgetMatcher<ConstrainedBox> hasConstraints(BoxConstraints? value) {
     return hasDiagnosticProp<BoxConstraints>(
-        'constraints', (it) => value == null ? it.isNull() : it.equals(value));
+      'constraints',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that renderObject of [ConstrainedBox] matches the condition in [match].
@@ -96,7 +105,8 @@ extension ConstrainedBoxMatcher on WidgetMatcher<ConstrainedBox> {
   /// spot<ConstrainedBox>().existsOnce().hasRenderObjectWhere((it) => it.equals(RenderBox()));
   /// ```
   WidgetMatcher<ConstrainedBox> hasRenderObjectWhere(
-      MatchProp<RenderConstrainedBox> match) {
+    MatchProp<RenderConstrainedBox> match,
+  ) {
     return hasDiagnosticProp<RenderConstrainedBox>('renderObject', match);
   }
 
@@ -108,7 +118,9 @@ extension ConstrainedBoxMatcher on WidgetMatcher<ConstrainedBox> {
   /// ```
   WidgetMatcher<ConstrainedBox> hasRenderObject(RenderConstrainedBox? value) {
     return hasDiagnosticProp<RenderConstrainedBox>(
-        'renderObject', (it) => value == null ? it.isNull() : it.equals(value));
+      'renderObject',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 

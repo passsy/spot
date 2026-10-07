@@ -21,12 +21,14 @@ void main() {
     testWidgets('filter with subject', (widgetTester) async {
       await widgetTester.pumpWidget(MaterialApp(home: Wrap()));
 
-      final verticalWrapSpot =
-          spot<Wrap>().whereDirection((it) => it.equals(Axis.vertical));
+      final verticalWrapSpot = spot<Wrap>().whereDirection(
+        (it) => it.equals(Axis.vertical),
+      );
       verticalWrapSpot.doesNotExist();
 
-      final horizontalWrapSpot =
-          spot<Wrap>().whereDirection((it) => it.equals(Axis.horizontal));
+      final horizontalWrapSpot = spot<Wrap>().whereDirection(
+        (it) => it.equals(Axis.horizontal),
+      );
       horizontalWrapSpot.existsOnce();
     });
 

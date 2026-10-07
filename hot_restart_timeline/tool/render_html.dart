@@ -13,8 +13,9 @@ final spotPackageRoot = packageRoot.parent;
 
 /// Renders the timeline HTML files to be served by the server
 Future<void> main() async {
-  final globalTimelineDir =
-      spotPackageRoot.directory('build').directory('timeline');
+  final globalTimelineDir = spotPackageRoot
+      .directory('build')
+      .directory('timeline');
   if (!globalTimelineDir.existsSync()) {
     return;
   }
@@ -23,8 +24,8 @@ Future<void> main() async {
       .listSync(recursive: true)
       .whereType<File>()
       .where((file) {
-    return file.path.endsWith('.html');
-  });
+        return file.path.endsWith('.html');
+      });
 
   for (final file in htmlFiles) {
     final timelineDir = file.parent;
@@ -39,7 +40,7 @@ Future<void> main() async {
       final map = e as Map<String, dynamic>;
       final screenshotPath = map['screenshotUrl'] as String?;
       if (screenshotPath != null) {
-        map['screenshotUrl'] = _relativeScreenshotPath(
+        map['screenshotUrl'] = relativeScreenshotPath(
           timelineDirPath: timelineDir.path,
           screenshotPath: screenshotPath,
         );
@@ -56,7 +57,7 @@ Future<void> main() async {
   }
 }
 
-String _relativeScreenshotPath({
+String relativeScreenshotPath({
   required String timelineDirPath,
   required String screenshotPath,
 }) {

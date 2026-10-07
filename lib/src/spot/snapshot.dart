@@ -30,11 +30,12 @@ class WidgetSnapshot<W extends Widget> {
     required this.debugCandidates,
     required this.scope,
     QueryStats? queryStats,
-  })  : queryStats = queryStats ?? QueryStats.zero,
-        _widgets = Map.fromEntries(
-          discovered
-              .map((e) => MapEntry(e, selector.mapElementToWidget(e.element))),
-        );
+  }) : queryStats = queryStats ?? QueryStats.zero,
+       _widgets = Map.fromEntries(
+         discovered.map(
+           (e) => MapEntry(e, selector.mapElementToWidget(e.element)),
+         ),
+       );
 
   /// The widgets at the point when the snapshot was taken
   ///
@@ -246,8 +247,8 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
   for (int i = 0; i < stages.length; i++) {
     final stage = stages[i];
     // using unmodifiable copies to prevent accidental modification during filtering
-    final remainingCandidatesFromPreviousStage =
-        stageResults.last.candidates.toUnmodifiable();
+    final remainingCandidatesFromPreviousStage = stageResults.last.candidates
+        .toUnmodifiable();
     final stageCacheKey = _stageCacheKey(prefixCacheKey, stage.cacheKey);
     final cachedStageResult = stageCacheKey == null
         ? null
@@ -278,8 +279,10 @@ WidgetSnapshot<W> snapshot<W extends Widget>(
       }
     }
     prefixCacheKey = stageCacheKey;
-    _snapshotDebugPrint("- Stage $i: $stage, "
-        "output-candidates: ${after.length}");
+    _snapshotDebugPrint(
+      "- Stage $i: $stage, "
+      "output-candidates: ${after.length}",
+    );
     stageResults.add(_StageResult(index: i, filter: stage, candidates: after));
   }
 
@@ -308,10 +311,7 @@ Object? _stageCacheKey(Object? prefixCacheKey, Object? filterCacheKey) {
   if (prefixCacheKey == null || filterCacheKey == null) {
     return null;
   }
-  return SpotCacheKey(
-    _StageCacheKey,
-    [prefixCacheKey, filterCacheKey],
-  );
+  return SpotCacheKey(_StageCacheKey, [prefixCacheKey, filterCacheKey]);
 }
 
 class _StageCacheKey {}
@@ -511,9 +511,7 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
         details: '${selector.removeQuantityConstraints()} does not exist.',
         color: Colors.grey,
         screenshot: timeline.takeScreenshotSync(
-          annotators: [
-            HighlightAnnotator.elements(discoveredElements),
-          ],
+          annotators: [HighlightAnnotator.elements(discoveredElements)],
         ),
       );
     }
@@ -528,9 +526,7 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
         details: '${selector.removeQuantityConstraints()} exists once.',
         color: Colors.grey,
         screenshot: timeline.takeScreenshotSync(
-          annotators: [
-            HighlightAnnotator.elements(discoveredElements),
-          ],
+          annotators: [HighlightAnnotator.elements(discoveredElements)],
         ),
       );
     }
@@ -547,9 +543,7 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
             '${selector.removeQuantityConstraints()} exists at least once, found ${discovered.length}.',
         color: Colors.grey,
         screenshot: timeline.takeScreenshotSync(
-          annotators: [
-            HighlightAnnotator.elements(discoveredElements),
-          ],
+          annotators: [HighlightAnnotator.elements(discoveredElements)],
         ),
       );
     }
@@ -566,9 +560,7 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
             '${selector.removeQuantityConstraints()} exists at most once, found ${discovered.length}.',
         color: Colors.grey,
         screenshot: timeline.takeScreenshotSync(
-          annotators: [
-            HighlightAnnotator.elements(discoveredElements),
-          ],
+          annotators: [HighlightAnnotator.elements(discoveredElements)],
         ),
       );
     }
@@ -585,9 +577,7 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
             '${selector.removeQuantityConstraints()} exists exactly $n times, found ${discovered.length}.',
         color: Colors.grey,
         screenshot: timeline.takeScreenshotSync(
-          annotators: [
-            HighlightAnnotator.elements(discoveredElements),
-          ],
+          annotators: [HighlightAnnotator.elements(discoveredElements)],
         ),
       );
     }
@@ -604,9 +594,7 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
             '${selector.removeQuantityConstraints()} exists at least $n times, found ${discovered.length}.',
         color: Colors.grey,
         screenshot: timeline.takeScreenshotSync(
-          annotators: [
-            HighlightAnnotator.elements(discoveredElements),
-          ],
+          annotators: [HighlightAnnotator.elements(discoveredElements)],
         ),
       );
     }
@@ -623,9 +611,7 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
             '${selector.removeQuantityConstraints()} exists at most $n times, found ${discovered.length}.',
         color: Colors.grey,
         screenshot: timeline.takeScreenshotSync(
-          annotators: [
-            HighlightAnnotator.elements(discoveredElements),
-          ],
+          annotators: [HighlightAnnotator.elements(discoveredElements)],
         ),
       );
     }
@@ -692,9 +678,7 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
             details: errorBuilder.toString(),
             color: Colors.red,
             screenshot: timeline.takeScreenshotSync(
-              annotators: [
-                HighlightAnnotator.elements(discoveredElements),
-              ],
+              annotators: [HighlightAnnotator.elements(discoveredElements)],
             ),
           );
         }
@@ -721,13 +705,12 @@ extension MultiWidgetSelectorMatcher<W extends Widget> on WidgetSnapshot<W> {
         if (timeline.mode != TimelineMode.off) {
           timeline.addEvent(
             eventType: 'Assertion Failed',
-            details: '$errorBuilder\n'
+            details:
+                '$errorBuilder\n'
                 '$tree',
             color: Colors.red,
             screenshot: timeline.takeScreenshotSync(
-              annotators: [
-                HighlightAnnotator.elements(discoveredElements),
-              ],
+              annotators: [HighlightAnnotator.elements(discoveredElements)],
             ),
           );
         }
@@ -775,22 +758,25 @@ void _tryMatchingLessSpecificCriteria(
       if (minimumConstraint != null && maximumConstraint == null) {
         if (count == 0) {
           errorBuilder.writeln(
-              'Could not find ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
-              'expected at least $minimumConstraint');
+            'Could not find ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
+            'expected at least $minimumConstraint',
+          );
         }
 
         if (minimumConstraint > count) {
           errorBuilder.writeln(
-              'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
-              'expected at least $minimumConstraint');
+            'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
+            'expected at least $minimumConstraint',
+          );
         }
       }
 
       if (maximumConstraint != null && minimumConstraint == null) {
         if (maximumConstraint < count) {
           errorBuilder.writeln(
-              'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
-              'expected at most $maximumConstraint');
+            'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
+            'expected at most $maximumConstraint',
+          );
         }
       }
 
@@ -799,18 +785,21 @@ void _tryMatchingLessSpecificCriteria(
           final exactCount = minimumConstraint;
           if (count == 0) {
             errorBuilder.writeln(
-                'Could not find ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
-                'expected exactly $exactCount');
+              'Could not find ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
+              'expected exactly $exactCount',
+            );
           } else {
             errorBuilder.writeln(
-                'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
-                'expected exactly $exactCount');
+              'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
+              'expected exactly $exactCount',
+            );
           }
         } else {
           // out of range
           errorBuilder.writeln(
-              'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
-              'expected between $minimumConstraint and $maximumConstraint');
+            'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
+            'expected between $minimumConstraint and $maximumConstraint',
+          );
         }
       }
 
@@ -859,9 +848,9 @@ void _tryMatchingLessSpecificCriteria(
           break;
         }
       }
-      final significantTree =
-          findCommonAncestor(lessSpecificSnapshot.discoveredElements.toSet())
-              .toStringDeep();
+      final significantTree = findCommonAncestor(
+        lessSpecificSnapshot.discoveredElements.toSet(),
+      ).toStringDeep();
       final timelineErrorText =
           '$errorBuilder\nFound in widget Tree:\n$significantTree';
 
@@ -995,11 +984,13 @@ Element findCommonAncestor(Iterable<Element> elements) {
   }
 
   // get element with smallest depth to reach common ancestor faster
-  final highestElement =
-      IterableSortedBy(elements).sortedBy((element) => element.depth).first;
+  final highestElement = IterableSortedBy(
+    elements,
+  ).sortedBy((element) => element.depth).first;
   // save all other parents
-  final allOtherParents =
-      elements.exceptElement(highestElement).map((e) => e.parents);
+  final allOtherParents = elements
+      .exceptElement(highestElement)
+      .map((e) => e.parents);
 
   final commonAncestor = highestElement.parents.firstOrNullWhere(
     (parent) => allOtherParents.every((parents) => parents.contains(parent)),

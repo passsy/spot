@@ -10,11 +10,7 @@ void main() {
   group('top-level', () {
     testWidgets('spotKey', (tester) async {
       await tester.pumpWidget(
-        Center(
-          child: SizedBox(
-            key: const ValueKey('key'),
-          ),
-        ),
+        Center(child: SizedBox(key: const ValueKey('key'))),
       );
       spotKey(const ValueKey('key')).existsOnce();
     });
@@ -33,11 +29,7 @@ void main() {
   group('extension', () {
     testWidgets('spotKey', (tester) async {
       await tester.pumpWidget(
-        Center(
-          child: SizedBox(
-            key: const ValueKey('key'),
-          ),
-        ),
+        Center(child: SizedBox(key: const ValueKey('key'))),
       );
       spot<Center>().spotKey(const ValueKey('key')).existsOnce();
     });
@@ -111,41 +103,38 @@ void main() {
       spotKey(key2).existsExactlyNTimes(2);
     });
 
-    testWidgets(
-      'error prints both elements with the same key',
-      (tester) async {
-        const key1 = ValueKey(1);
-        const key2 = ValueKey(2);
+    testWidgets('error prints both elements with the same key', (tester) async {
+      const key1 = ValueKey(1);
+      const key2 = ValueKey(2);
 
-        await tester.pumpWidget(
-          MaterialApp(
-            home: Column(
-              children: [
-                Row(
-                  children: [
-                    Text('a', key: key1),
-                    Text('b', key: key2),
-                  ],
-                ),
-                Wrap(
-                  children: [
-                    Text('x', key: key1),
-                    Text('y', key: key2),
-                  ],
-                ),
-              ],
-            ),
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Column(
+            children: [
+              Row(
+                children: [
+                  Text('a', key: key1),
+                  Text('b', key: key2),
+                ],
+              ),
+              Wrap(
+                children: [
+                  Text('x', key: key1),
+                  Text('y', key: key2),
+                ],
+              ),
+            ],
           ),
-        );
-        expect(
-          () => spotKey(key1).existsOnce(),
-          throwsSpotErrorContaining([
-            'Found 2 elements matching Widget with key: "[<1>]"',
-            'Text-[<1>]("a"',
-            'Text-[<1>]("x"',
-          ]),
-        );
-      },
-    );
+        ),
+      );
+      expect(
+        () => spotKey(key1).existsOnce(),
+        throwsSpotErrorContaining([
+          'Found 2 elements matching Widget with key: "[<1>]"',
+          'Text-[<1>]("a"',
+          'Text-[<1>]("x"',
+        ]),
+      );
+    });
   });
 }

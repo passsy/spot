@@ -8,8 +8,9 @@ import 'package:spot/src/spot/snapshot.dart';
 import '../util/assert_error.dart';
 
 void main() {
-  testWidgets('existsOnce() finds widgets that only exist once in tree',
-      (tester) async {
+  testWidgets('existsOnce() finds widgets that only exist once in tree', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Center(
@@ -18,9 +19,7 @@ void main() {
             child: Wrap(
               children: [
                 SizedBox(
-                  child: GestureDetector(
-                    child: Text('Hello', maxLines: 2),
-                  ),
+                  child: GestureDetector(child: Text('Hello', maxLines: 2)),
                 ),
                 Text('World', maxLines: 1),
               ],
@@ -66,9 +65,7 @@ void main() {
             child: Wrap(
               children: [
                 SizedBox(
-                  child: GestureDetector(
-                    child: Text('Hello', maxLines: 2),
-                  ),
+                  child: GestureDetector(child: Text('Hello', maxLines: 2)),
                 ),
                 Text('World', maxLines: 1),
               ],
@@ -79,10 +76,7 @@ void main() {
     );
     expect(
       () => spot<Text>().existsOnce(),
-      throwsSpotErrorContaining([
-        'Found 2 elements',
-        'expected exactly 1',
-      ]),
+      throwsSpotErrorContaining(['Found 2 elements', 'expected exactly 1']),
     );
     expect(
       timeline.events.last.details,
@@ -97,10 +91,7 @@ void main() {
     expect(timeline.events.last.details, isNot(contains('root')));
     expect(
       () => spot<Text>().amount(1).existsOnce(),
-      throwsSpotErrorContaining([
-        'Found 2 elements',
-        'expected exactly 1',
-      ]),
+      throwsSpotErrorContaining(['Found 2 elements', 'expected exactly 1']),
     );
     expect(
       timeline.events.last.details,
@@ -115,9 +106,11 @@ void main() {
     expect(timeline.events.last.details, isNot(contains('root')));
     expect(
       () => spot<Text>(parents: [spot<Wrap>()]).amount(1).existsOnce(),
-      throwsSpotErrorContaining(
-        ['Found 2 elements', "Wrap ᗕ Text", 'expected exactly 1'],
-      ),
+      throwsSpotErrorContaining([
+        'Found 2 elements',
+        "Wrap ᗕ Text",
+        'expected exactly 1',
+      ]),
     );
     expect(
       timeline.events.last.details,
@@ -132,72 +125,71 @@ void main() {
     );
     expect(timeline.events.last.details, isNot(contains('root')));
   });
-  testWidgets('existsOnce() finds the correct widget differentiating by props',
-      (tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          appBar: AppBar(
-            title: Text('App Title', maxLines: 2),
-          ),
-          body: Center(
-            child: Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Wrap(
-                children: [
-                  SizedBox(
-                    child: GestureDetector(
-                      child: Text('Hello', maxLines: 2),
+  testWidgets(
+    'existsOnce() finds the correct widget differentiating by props',
+    (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            appBar: AppBar(title: Text('App Title', maxLines: 2)),
+            body: Center(
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Wrap(
+                  children: [
+                    SizedBox(
+                      child: GestureDetector(child: Text('Hello', maxLines: 2)),
                     ),
-                  ),
-                  Text('World', maxLines: 1),
-                ],
+                    Text('World', maxLines: 1),
+                  ],
+                ),
               ),
             ),
           ),
         ),
-      ),
-    );
-    final appBar = spot<AppBar>();
-    appBar.spot<Text>().existsOnce().hasText('App Title').hasMaxLines(2);
+      );
+      final appBar = spot<AppBar>();
+      appBar.spot<Text>().existsOnce().hasText('App Title').hasMaxLines(2);
 
-    // Error message only show that it could not be found
-    spot<Wrap>().withDirection(Axis.horizontal).withDiagnosticProp<Axis>(
-      'direction',
-      (Subject<Axis> it) {
-        it.equals(Axis.horizontal);
-      },
-    ).existsAtLeastOnce();
+      // Error message only show that it could not be found
+      spot<Wrap>().withDirection(Axis.horizontal).withDiagnosticProp<Axis>(
+        'direction',
+        (Subject<Axis> it) {
+          it.equals(Axis.horizontal);
+        },
+      ).existsAtLeastOnce();
 
-    spot<Wrap>().withDirection(Axis.horizontal).existsAtLeastOnce();
+      spot<Wrap>().withDirection(Axis.horizontal).existsAtLeastOnce();
 
-    // Error message can show the actual value of the direction
-    spot<Wrap>()
-        .existsAtLeastOnce()
-        .any((wrap) => wrap.hasDirection(Axis.horizontal));
-    spot<Wrap>().existsOnce().hasDirection(Axis.horizontal);
+      // Error message can show the actual value of the direction
+      spot<Wrap>().existsAtLeastOnce().any(
+        (wrap) => wrap.hasDirection(Axis.horizontal),
+      );
+      spot<Wrap>().existsOnce().hasDirection(Axis.horizontal);
 
-    final WidgetSelector<Text> selector =
-        spot<Wrap>().spot<Text>().withMaxLines(2);
-    selector.existsOnce().hasText('Hello');
+      final WidgetSelector<Text> selector = spot<Wrap>()
+          .spot<Text>()
+          .withMaxLines(2);
+      selector.existsOnce().hasText('Hello');
 
-    spot<Wrap>()
-        .spot<Text>(parents: [spot<GestureDetector>()])
-        .existsOnce()
-        .hasText('Hello');
+      spot<Wrap>()
+          .spot<Text>(parents: [spot<GestureDetector>()])
+          .existsOnce()
+          .hasText('Hello');
 
-    final textSpot =
-        spot<Wrap>().spot<Text>(parents: [spot<GestureDetector>()]);
-    textSpot.existsOnce().hasText('Hello');
+      final textSpot = spot<Wrap>().spot<Text>(
+        parents: [spot<GestureDetector>()],
+      );
+      textSpot.existsOnce().hasText('Hello');
 
-    spot<Text>(parents: [spot<Wrap>()])
-        .withMaxLines(2)
-        .existsOnce()
-        .hasText('Hello');
-    selector.existsOnce().hasText('Hello');
+      spot<Text>(
+        parents: [spot<Wrap>()],
+      ).withMaxLines(2).existsOnce().hasText('Hello');
+      selector.existsOnce().hasText('Hello');
 
-    spot<Wrap>().spot<Text>().withMaxLines(1).existsOnce().hasText('World');
-  });
+      spot<Wrap>().spot<Text>().withMaxLines(1).existsOnce().hasText('World');
+    },
+  );
 
   testWidgets('narrow down scope', (tester) async {
     await tester.pumpWidget(
@@ -209,9 +201,7 @@ void main() {
               child: Wrap(
                 children: [
                   SizedBox(
-                    child: GestureDetector(
-                      child: Text('Hello', maxLines: 2),
-                    ),
+                    child: GestureDetector(child: Text('Hello', maxLines: 2)),
                   ),
                   Text('World', maxLines: 1),
                 ],

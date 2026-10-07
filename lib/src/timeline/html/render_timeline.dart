@@ -1,5 +1,8 @@
 // ignore_for_file: avoid_print
-import 'package:jaspr/server.dart' hide ServerApp;
+import 'dart:convert';
+
+import 'package:jaspr/dom.dart';
+import 'package:jaspr/server.dart';
 import 'package:spot/src/timeline/html/sources/script.js.g.dart';
 import 'package:spot/src/timeline/html/web/server_app.dart';
 import 'package:spot/src/timeline/html/web/theme.dart';
@@ -16,50 +19,60 @@ import 'package:test_api/src/backend/invoker.dart';
 /// [hotRestart] causes the site to constantly poll itself for changes, auto-reloading
 Future<String> renderTimelineWithJaspr(
   List<x.TimelineEvent> events, {
+  Map<String, x.TimelineSourceFile> sourceFiles = const {},
+  int renderedFrameCount = 0,
   bool inlineScripts = true,
   bool hotRestart = false,
 }) async {
-  // Turn off isolate rendering.
-  Jaspr.initializeApp(useIsolates: false);
+  // The clientId is what makes Jaspr emit a `<script src="/script.js" defer>`
+  // into the head, which the inlining below then replaces with the script
+  // itself. Without it Jaspr renders no script tag at all and the report stays
+  // static. Isolate rendering is off by default and stays off.
+  Jaspr.initializeApp(options: const ServerOptions(clientId: 'script.js'));
   final nameWithHierarchy = testNameWithHierarchy();
   final html = await renderComponent(
     Document(
+      base: null,
       title: "Timeline Events",
       head: [
-        // Jaspr injects <base href="/"> when the document declares none, which
-        // sends every relative screenshot path to the root. The report is
-        // opened as a file, and the hot-restart server puts each report in its
-        // own subdirectory, so the base has to stay the document itself.
-        const DomComponent(tag: 'base', attributes: {'href': './'}),
-        link(
-          href:
-              "https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap",
-          rel: "stylesheet",
-        ),
-        if (!inlineScripts)
-          DomComponent(
+        const Component.element(tag: 'style', children: [RawText(timelineCSS)]),
+        if (hotRestart)
+          const Component.element(
+            tag: 'meta',
+            attributes: {'hot-restart': 'true'},
+          ),
+        if (hotRestart)
+          const Component.element(
             tag: 'script',
-            attributes: {'src': hotRestart ? '/script.js' : 'script.js'},
-          )
-        else
-          DomComponent(tag: 'script', child: raw(timelineJS)),
-        DomComponent(tag: 'style', child: raw(animationsCSS)),
-        if (hotRestart)
-          const DomComponent(tag: 'meta', attributes: {'hot-restart': 'true'}),
-        if (hotRestart)
-          DomComponent(tag: 'script', child: raw(_upgradeToLocalhostJS)),
+            children: [RawText(_upgradeToLocalhostJS)],
+          ),
       ],
-      styles: ServerAppState.styles,
-      body: ServerApp(
+      body: TimelineServerApp(
         testName: Invoker.current?.liveTest.test.name ?? 'Missing filename',
         testNameWithHierarchy: nameWithHierarchy,
         timelineEvents: events,
+        sourceFiles: sourceFiles,
+        renderedFrameCount: renderedFrameCount,
       ),
     ),
     standalone: true,
   );
 
-  return '<!DOCTYPE html>\n$html';
+  var renderedHtml = utf8.decode(html.body);
+  const clientScriptTag = '<script src="/script.js" defer></script>';
+  if (inlineScripts) {
+    renderedHtml = renderedHtml.replaceFirst(
+      clientScriptTag,
+      '<script>$timelineJS</script>',
+    );
+  } else if (!hotRestart) {
+    renderedHtml = renderedHtml.replaceFirst(
+      'src="/script.js"',
+      'src="script.js"',
+    );
+  }
+
+  return '<!DOCTYPE html>\n$renderedHtml';
 }
 
 /// Returns the test name including the group hierarchy.
@@ -70,7 +83,8 @@ String testNameWithHierarchy() {
   }
 
   // Group names are concatenated with the name of the previous group
-  final rawGroupNames = Invoker.current?.liveTest.groups
+  final rawGroupNames =
+      Invoker.current?.liveTest.groups
           .map((group) {
             if (group.name.isEmpty) {
               return null;

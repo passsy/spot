@@ -30,8 +30,9 @@ extension ConsoleTimelinePrinter on Timeline {
     final caller = frame != null
         ? 'at ${frame.member} ${frame.uri}:${frame.line}:${frame.column}'
         : 'N/A';
-    final details =
-        kIsWeb || !isCI ? event.details.split('\n').firstOrNull : event.details;
+    final details = kIsWeb || !isCI
+        ? event.details.split('\n').firstOrNull
+        : event.details;
     buffer.writeln('==================== Timeline Event ====================');
     buffer.writeln('Event Type: ${event.eventType}');
     if (details != null) {

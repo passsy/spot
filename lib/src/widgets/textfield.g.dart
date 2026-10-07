@@ -24,7 +24,8 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> whereController(
-      MatchProp<TextEditingController> match) {
+    MatchProp<TextEditingController> match,
+  ) {
     return withDiagnosticProp<TextEditingController>('controller', match);
   }
 
@@ -37,7 +38,9 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   @useResult
   WidgetSelector<TextField> withController(TextEditingController? value) {
     return withDiagnosticProp<TextEditingController>(
-        'controller', (it) => value == null ? it.isNull() : it.equals(value));
+      'controller',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where focusNode matches the condition.
@@ -60,7 +63,9 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   @useResult
   WidgetSelector<TextField> withFocusNode(FocusNode? value) {
     return withDiagnosticProp<FocusNode>(
-        'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
+      'focusNode',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where undoController matches the condition.
@@ -71,7 +76,8 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> whereUndoController(
-      MatchProp<UndoHistoryController> match) {
+    MatchProp<UndoHistoryController> match,
+  ) {
     return withDiagnosticProp<UndoHistoryController>('undoController', match);
   }
 
@@ -83,8 +89,10 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> withUndoController(UndoHistoryController? value) {
-    return withDiagnosticProp<UndoHistoryController>('undoController',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<UndoHistoryController>(
+      'undoController',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where enabled matches the condition.
@@ -107,7 +115,9 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   @useResult
   WidgetSelector<TextField> withEnabled(bool? value) {
     return withDiagnosticProp<bool>(
-        'enabled', (it) => value == null ? it.isNull() : it.equals(value));
+      'enabled',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where decoration matches the condition.
@@ -130,7 +140,9 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   @useResult
   WidgetSelector<TextField> withDecoration(InputDecoration? value) {
     return withDiagnosticProp<InputDecoration>(
-        'decoration', (it) => value == null ? it.isNull() : it.equals(value));
+      'decoration',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where keyboardType matches the condition.
@@ -153,7 +165,9 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   @useResult
   WidgetSelector<TextField> withKeyboardType(TextInputType? value) {
     return withDiagnosticProp<TextInputType>(
-        'keyboardType', (it) => value == null ? it.isNull() : it.equals(value));
+      'keyboardType',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where style matches the condition.
@@ -176,7 +190,9 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   @useResult
   WidgetSelector<TextField> withStyle(TextStyle? value) {
     return withDiagnosticProp<TextStyle>(
-        'style', (it) => value == null ? it.isNull() : it.equals(value));
+      'style',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where autofocus matches the condition.
@@ -199,7 +215,9 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   @useResult
   WidgetSelector<TextField> withAutofocus(bool? value) {
     return withDiagnosticProp<bool>(
-        'autofocus', (it) => value == null ? it.isNull() : it.equals(value));
+      'autofocus',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where obscuringCharacter matches the condition.
@@ -221,8 +239,10 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> withObscuringCharacter(String? value) {
-    return withDiagnosticProp<String>('obscuringCharacter',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<String>(
+      'obscuringCharacter',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where obscureText matches the condition.
@@ -245,7 +265,9 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   @useResult
   WidgetSelector<TextField> withObscureText(bool? value) {
     return withDiagnosticProp<bool>(
-        'obscureText', (it) => value == null ? it.isNull() : it.equals(value));
+      'obscureText',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where autocorrect matches the condition.
@@ -268,7 +290,9 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   @useResult
   WidgetSelector<TextField> withAutocorrect(bool? value) {
     return withDiagnosticProp<bool>(
-        'autocorrect', (it) => value == null ? it.isNull() : it.equals(value));
+      'autocorrect',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where smartDashesType matches the condition.
@@ -279,7 +303,8 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> whereSmartDashesType(
-      MatchProp<SmartDashesType> match) {
+    MatchProp<SmartDashesType> match,
+  ) {
     return withDiagnosticProp<SmartDashesType>('smartDashesType', match);
   }
 
@@ -291,8 +316,10 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> withSmartDashesType(SmartDashesType? value) {
-    return withDiagnosticProp<SmartDashesType>('smartDashesType',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<SmartDashesType>(
+      'smartDashesType',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where smartQuotesType matches the condition.
@@ -303,7 +330,8 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> whereSmartQuotesType(
-      MatchProp<SmartQuotesType> match) {
+    MatchProp<SmartQuotesType> match,
+  ) {
     return withDiagnosticProp<SmartQuotesType>('smartQuotesType', match);
   }
 
@@ -315,8 +343,10 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> withSmartQuotesType(SmartQuotesType? value) {
-    return withDiagnosticProp<SmartQuotesType>('smartQuotesType',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<SmartQuotesType>(
+      'smartQuotesType',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where enableSuggestions matches the condition.
@@ -338,8 +368,10 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> withEnableSuggestions(bool? value) {
-    return withDiagnosticProp<bool>('enableSuggestions',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<bool>(
+      'enableSuggestions',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where maxLines matches the condition.
@@ -362,7 +394,9 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   @useResult
   WidgetSelector<TextField> withMaxLines(int? value) {
     return withDiagnosticProp<int>(
-        'maxLines', (it) => value == null ? it.isNull() : it.equals(value));
+      'maxLines',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where minLines matches the condition.
@@ -385,7 +419,9 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   @useResult
   WidgetSelector<TextField> withMinLines(int? value) {
     return withDiagnosticProp<int>(
-        'minLines', (it) => value == null ? it.isNull() : it.equals(value));
+      'minLines',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where expands matches the condition.
@@ -408,7 +444,9 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   @useResult
   WidgetSelector<TextField> withExpands(bool? value) {
     return withDiagnosticProp<bool>(
-        'expands', (it) => value == null ? it.isNull() : it.equals(value));
+      'expands',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where maxLength matches the condition.
@@ -431,7 +469,9 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   @useResult
   WidgetSelector<TextField> withMaxLength(int? value) {
     return withDiagnosticProp<int>(
-        'maxLength', (it) => value == null ? it.isNull() : it.equals(value));
+      'maxLength',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where maxLengthEnforcement matches the condition.
@@ -442,9 +482,12 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> whereMaxLengthEnforcement(
-      MatchProp<MaxLengthEnforcement> match) {
+    MatchProp<MaxLengthEnforcement> match,
+  ) {
     return withDiagnosticProp<MaxLengthEnforcement>(
-        'maxLengthEnforcement', match);
+      'maxLengthEnforcement',
+      match,
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where maxLengthEnforcement equals (==) [value].
@@ -455,9 +498,12 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> withMaxLengthEnforcement(
-      MaxLengthEnforcement? value) {
-    return withDiagnosticProp<MaxLengthEnforcement>('maxLengthEnforcement',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    MaxLengthEnforcement? value,
+  ) {
+    return withDiagnosticProp<MaxLengthEnforcement>(
+      'maxLengthEnforcement',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where textInputAction matches the condition.
@@ -468,7 +514,8 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> whereTextInputAction(
-      MatchProp<TextInputAction> match) {
+    MatchProp<TextInputAction> match,
+  ) {
     return withDiagnosticProp<TextInputAction>('textInputAction', match);
   }
 
@@ -480,8 +527,10 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> withTextInputAction(TextInputAction? value) {
-    return withDiagnosticProp<TextInputAction>('textInputAction',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<TextInputAction>(
+      'textInputAction',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where textCapitalization matches the condition.
@@ -492,7 +541,8 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> whereTextCapitalization(
-      MatchProp<TextCapitalization> match) {
+    MatchProp<TextCapitalization> match,
+  ) {
     return withDiagnosticProp<TextCapitalization>('textCapitalization', match);
   }
 
@@ -504,8 +554,10 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> withTextCapitalization(TextCapitalization? value) {
-    return withDiagnosticProp<TextCapitalization>('textCapitalization',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<TextCapitalization>(
+      'textCapitalization',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where textAlign matches the condition.
@@ -528,7 +580,9 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   @useResult
   WidgetSelector<TextField> withTextAlign(TextAlign? value) {
     return withDiagnosticProp<TextAlign>(
-        'textAlign', (it) => value == null ? it.isNull() : it.equals(value));
+      'textAlign',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where textAlignVertical matches the condition.
@@ -539,7 +593,8 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> whereTextAlignVertical(
-      MatchProp<TextAlignVertical> match) {
+    MatchProp<TextAlignVertical> match,
+  ) {
     return withDiagnosticProp<TextAlignVertical>('textAlignVertical', match);
   }
 
@@ -551,8 +606,10 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> withTextAlignVertical(TextAlignVertical? value) {
-    return withDiagnosticProp<TextAlignVertical>('textAlignVertical',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<TextAlignVertical>(
+      'textAlignVertical',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where textDirection matches the condition.
@@ -574,8 +631,10 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> withTextDirection(TextDirection? value) {
-    return withDiagnosticProp<TextDirection>('textDirection',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<TextDirection>(
+      'textDirection',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where cursorWidth matches the condition.
@@ -598,7 +657,9 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   @useResult
   WidgetSelector<TextField> withCursorWidth(double? value) {
     return withDiagnosticProp<double>(
-        'cursorWidth', (it) => value == null ? it.isNull() : it.equals(value));
+      'cursorWidth',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where cursorHeight matches the condition.
@@ -621,7 +682,9 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   @useResult
   WidgetSelector<TextField> withCursorHeight(double? value) {
     return withDiagnosticProp<double>(
-        'cursorHeight', (it) => value == null ? it.isNull() : it.equals(value));
+      'cursorHeight',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where cursorRadius matches the condition.
@@ -644,7 +707,9 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   @useResult
   WidgetSelector<TextField> withCursorRadius(Radius? value) {
     return withDiagnosticProp<Radius>(
-        'cursorRadius', (it) => value == null ? it.isNull() : it.equals(value));
+      'cursorRadius',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where cursorOpacityAnimates matches the condition.
@@ -666,8 +731,10 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> withCursorOpacityAnimates(bool? value) {
-    return withDiagnosticProp<bool>('cursorOpacityAnimates',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<bool>(
+      'cursorOpacityAnimates',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where cursorColor matches the condition.
@@ -690,7 +757,9 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   @useResult
   WidgetSelector<TextField> withCursorColor(Color? value) {
     return withDiagnosticProp<Color>(
-        'cursorColor', (it) => value == null ? it.isNull() : it.equals(value));
+      'cursorColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where keyboardAppearance matches the condition.
@@ -701,7 +770,8 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> whereKeyboardAppearance(
-      MatchProp<Brightness> match) {
+    MatchProp<Brightness> match,
+  ) {
     return withDiagnosticProp<Brightness>('keyboardAppearance', match);
   }
 
@@ -713,8 +783,10 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> withKeyboardAppearance(Brightness? value) {
-    return withDiagnosticProp<Brightness>('keyboardAppearance',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<Brightness>(
+      'keyboardAppearance',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where scrollPadding matches the condition.
@@ -725,7 +797,8 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> whereScrollPadding(
-      MatchProp<EdgeInsetsGeometry> match) {
+    MatchProp<EdgeInsetsGeometry> match,
+  ) {
     return withDiagnosticProp<EdgeInsetsGeometry>('scrollPadding', match);
   }
 
@@ -737,8 +810,10 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> withScrollPadding(EdgeInsetsGeometry? value) {
-    return withDiagnosticProp<EdgeInsetsGeometry>('scrollPadding',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<EdgeInsetsGeometry>(
+      'scrollPadding',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where selectionEnabled matches the condition.
@@ -760,8 +835,10 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> withSelectionEnabled(bool? value) {
-    return withDiagnosticProp<bool>('selectionEnabled',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<bool>(
+      'selectionEnabled',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where selectionControls matches the condition.
@@ -772,9 +849,12 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> whereSelectionControls(
-      MatchProp<TextSelectionControls> match) {
+    MatchProp<TextSelectionControls> match,
+  ) {
     return withDiagnosticProp<TextSelectionControls>(
-        'selectionControls', match);
+      'selectionControls',
+      match,
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where selectionControls equals (==) [value].
@@ -785,9 +865,12 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> withSelectionControls(
-      TextSelectionControls? value) {
-    return withDiagnosticProp<TextSelectionControls>('selectionControls',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    TextSelectionControls? value,
+  ) {
+    return withDiagnosticProp<TextSelectionControls>(
+      'selectionControls',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where scrollController matches the condition.
@@ -798,7 +881,8 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> whereScrollController(
-      MatchProp<ScrollController> match) {
+    MatchProp<ScrollController> match,
+  ) {
     return withDiagnosticProp<ScrollController>('scrollController', match);
   }
 
@@ -810,8 +894,10 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> withScrollController(ScrollController? value) {
-    return withDiagnosticProp<ScrollController>('scrollController',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<ScrollController>(
+      'scrollController',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where scrollPhysics matches the condition.
@@ -833,8 +919,10 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> withScrollPhysics(ScrollPhysics? value) {
-    return withDiagnosticProp<ScrollPhysics>('scrollPhysics',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<ScrollPhysics>(
+      'scrollPhysics',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where clipBehavior matches the condition.
@@ -857,7 +945,9 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   @useResult
   WidgetSelector<TextField> withClipBehavior(Clip? value) {
     return withDiagnosticProp<Clip>(
-        'clipBehavior', (it) => value == null ? it.isNull() : it.equals(value));
+      'clipBehavior',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where scribbleEnabled matches the condition.
@@ -879,8 +969,10 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> withScribbleEnabled(bool? value) {
-    return withDiagnosticProp<bool>('scribbleEnabled',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<bool>(
+      'scribbleEnabled',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where enableIMEPersonalizedLearning matches the condition.
@@ -891,7 +983,8 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> whereEnableIMEPersonalizedLearning(
-      MatchProp<bool> match) {
+    MatchProp<bool> match,
+  ) {
     return withDiagnosticProp<bool>('enableIMEPersonalizedLearning', match);
   }
 
@@ -903,8 +996,10 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> withEnableIMEPersonalizedLearning(bool? value) {
-    return withDiagnosticProp<bool>('enableIMEPersonalizedLearning',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<bool>(
+      'enableIMEPersonalizedLearning',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where spellCheckConfiguration matches the condition.
@@ -915,9 +1010,12 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> whereSpellCheckConfiguration(
-      MatchProp<SpellCheckConfiguration> match) {
+    MatchProp<SpellCheckConfiguration> match,
+  ) {
     return withDiagnosticProp<SpellCheckConfiguration>(
-        'spellCheckConfiguration', match);
+      'spellCheckConfiguration',
+      match,
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where spellCheckConfiguration equals (==) [value].
@@ -928,10 +1026,12 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> withSpellCheckConfiguration(
-      SpellCheckConfiguration? value) {
+    SpellCheckConfiguration? value,
+  ) {
     return withDiagnosticProp<SpellCheckConfiguration>(
-        'spellCheckConfiguration',
-        (it) => value == null ? it.isNull() : it.equals(value));
+      'spellCheckConfiguration',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [TextField] where contentCommitMimeTypes matches the condition.
@@ -942,7 +1042,8 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> whereContentCommitMimeTypes(
-      MatchProp<List<String>> match) {
+    MatchProp<List<String>> match,
+  ) {
     return withDiagnosticProp<List<String>>('contentCommitMimeTypes', match);
   }
 
@@ -954,8 +1055,10 @@ extension TextFieldSelector on WidgetSelector<TextField> {
   /// ```
   @useResult
   WidgetSelector<TextField> withContentCommitMimeTypes(List<String>? value) {
-    return withDiagnosticProp<List<String>>('contentCommitMimeTypes',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<List<String>>(
+      'contentCommitMimeTypes',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 
@@ -968,7 +1071,8 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasControllerWhere((it) => it.equals(TextEditingController()));
   /// ```
   WidgetMatcher<TextField> hasControllerWhere(
-      MatchProp<TextEditingController> match) {
+    MatchProp<TextEditingController> match,
+  ) {
     return hasDiagnosticProp<TextEditingController>('controller', match);
   }
 
@@ -980,7 +1084,9 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// ```
   WidgetMatcher<TextField> hasController(TextEditingController? value) {
     return hasDiagnosticProp<TextEditingController>(
-        'controller', (it) => value == null ? it.isNull() : it.equals(value));
+      'controller',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that focusNode of [TextField] matches the condition in [match].
@@ -1001,7 +1107,9 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// ```
   WidgetMatcher<TextField> hasFocusNode(FocusNode? value) {
     return hasDiagnosticProp<FocusNode>(
-        'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
+      'focusNode',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that undoController of [TextField] matches the condition in [match].
@@ -1011,7 +1119,8 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasUndoControllerWhere((it) => it.equals(UndoHistoryController()));
   /// ```
   WidgetMatcher<TextField> hasUndoControllerWhere(
-      MatchProp<UndoHistoryController> match) {
+    MatchProp<UndoHistoryController> match,
+  ) {
     return hasDiagnosticProp<UndoHistoryController>('undoController', match);
   }
 
@@ -1022,8 +1131,10 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasUndoController(UndoHistoryController());
   /// ```
   WidgetMatcher<TextField> hasUndoController(UndoHistoryController? value) {
-    return hasDiagnosticProp<UndoHistoryController>('undoController',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<UndoHistoryController>(
+      'undoController',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that enabled of [TextField] matches the condition in [match].
@@ -1044,7 +1155,9 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// ```
   WidgetMatcher<TextField> isEnabled(bool? value) {
     return hasDiagnosticProp<bool>(
-        'enabled', (it) => value == null ? it.isNull() : it.equals(value));
+      'enabled',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that decoration of [TextField] matches the condition in [match].
@@ -1054,7 +1167,8 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasDecorationWhere((it) => it.equals(InputDecoration()));
   /// ```
   WidgetMatcher<TextField> hasDecorationWhere(
-      MatchProp<InputDecoration> match) {
+    MatchProp<InputDecoration> match,
+  ) {
     return hasDiagnosticProp<InputDecoration>('decoration', match);
   }
 
@@ -1066,7 +1180,9 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// ```
   WidgetMatcher<TextField> hasDecoration(InputDecoration? value) {
     return hasDiagnosticProp<InputDecoration>(
-        'decoration', (it) => value == null ? it.isNull() : it.equals(value));
+      'decoration',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that keyboardType of [TextField] matches the condition in [match].
@@ -1076,7 +1192,8 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasKeyboardTypeWhere((it) => it.equals(TextInputType.text));
   /// ```
   WidgetMatcher<TextField> hasKeyboardTypeWhere(
-      MatchProp<TextInputType> match) {
+    MatchProp<TextInputType> match,
+  ) {
     return hasDiagnosticProp<TextInputType>('keyboardType', match);
   }
 
@@ -1088,7 +1205,9 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// ```
   WidgetMatcher<TextField> hasKeyboardType(TextInputType? value) {
     return hasDiagnosticProp<TextInputType>(
-        'keyboardType', (it) => value == null ? it.isNull() : it.equals(value));
+      'keyboardType',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that style of [TextField] matches the condition in [match].
@@ -1109,7 +1228,9 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// ```
   WidgetMatcher<TextField> hasStyle(TextStyle? value) {
     return hasDiagnosticProp<TextStyle>(
-        'style', (it) => value == null ? it.isNull() : it.equals(value));
+      'style',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that autofocus of [TextField] matches the condition in [match].
@@ -1130,7 +1251,9 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// ```
   WidgetMatcher<TextField> hasAutofocus(bool? value) {
     return hasDiagnosticProp<bool>(
-        'autofocus', (it) => value == null ? it.isNull() : it.equals(value));
+      'autofocus',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that obscuringCharacter of [TextField] matches the condition in [match].
@@ -1150,8 +1273,10 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasObscuringCharacter('foo');
   /// ```
   WidgetMatcher<TextField> hasObscuringCharacter(String? value) {
-    return hasDiagnosticProp<String>('obscuringCharacter',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<String>(
+      'obscuringCharacter',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that obscureText of [TextField] matches the condition in [match].
@@ -1172,7 +1297,9 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// ```
   WidgetMatcher<TextField> hasObscureText(bool? value) {
     return hasDiagnosticProp<bool>(
-        'obscureText', (it) => value == null ? it.isNull() : it.equals(value));
+      'obscureText',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that autocorrect of [TextField] matches the condition in [match].
@@ -1193,7 +1320,9 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// ```
   WidgetMatcher<TextField> hasAutocorrect(bool? value) {
     return hasDiagnosticProp<bool>(
-        'autocorrect', (it) => value == null ? it.isNull() : it.equals(value));
+      'autocorrect',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that smartDashesType of [TextField] matches the condition in [match].
@@ -1203,7 +1332,8 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasSmartDashesTypeWhere((it) => it.equals(SmartDashesType.values.first));
   /// ```
   WidgetMatcher<TextField> hasSmartDashesTypeWhere(
-      MatchProp<SmartDashesType> match) {
+    MatchProp<SmartDashesType> match,
+  ) {
     return hasDiagnosticProp<SmartDashesType>('smartDashesType', match);
   }
 
@@ -1214,8 +1344,10 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasSmartDashesType(SmartDashesType.values.first);
   /// ```
   WidgetMatcher<TextField> hasSmartDashesType(SmartDashesType? value) {
-    return hasDiagnosticProp<SmartDashesType>('smartDashesType',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<SmartDashesType>(
+      'smartDashesType',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that smartQuotesType of [TextField] matches the condition in [match].
@@ -1225,7 +1357,8 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasSmartQuotesTypeWhere((it) => it.equals(SmartQuotesType.values.first));
   /// ```
   WidgetMatcher<TextField> hasSmartQuotesTypeWhere(
-      MatchProp<SmartQuotesType> match) {
+    MatchProp<SmartQuotesType> match,
+  ) {
     return hasDiagnosticProp<SmartQuotesType>('smartQuotesType', match);
   }
 
@@ -1236,8 +1369,10 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasSmartQuotesType(SmartQuotesType.values.first);
   /// ```
   WidgetMatcher<TextField> hasSmartQuotesType(SmartQuotesType? value) {
-    return hasDiagnosticProp<SmartQuotesType>('smartQuotesType',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<SmartQuotesType>(
+      'smartQuotesType',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that enableSuggestions of [TextField] matches the condition in [match].
@@ -1257,8 +1392,10 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasEnableSuggestions(true);
   /// ```
   WidgetMatcher<TextField> hasEnableSuggestions(bool? value) {
-    return hasDiagnosticProp<bool>('enableSuggestions',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<bool>(
+      'enableSuggestions',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that maxLines of [TextField] matches the condition in [match].
@@ -1279,7 +1416,9 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// ```
   WidgetMatcher<TextField> hasMaxLines(int? value) {
     return hasDiagnosticProp<int>(
-        'maxLines', (it) => value == null ? it.isNull() : it.equals(value));
+      'maxLines',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that minLines of [TextField] matches the condition in [match].
@@ -1300,7 +1439,9 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// ```
   WidgetMatcher<TextField> hasMinLines(int? value) {
     return hasDiagnosticProp<int>(
-        'minLines', (it) => value == null ? it.isNull() : it.equals(value));
+      'minLines',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that expands of [TextField] matches the condition in [match].
@@ -1321,7 +1462,9 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// ```
   WidgetMatcher<TextField> hasExpands(bool? value) {
     return hasDiagnosticProp<bool>(
-        'expands', (it) => value == null ? it.isNull() : it.equals(value));
+      'expands',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that maxLength of [TextField] matches the condition in [match].
@@ -1342,7 +1485,9 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// ```
   WidgetMatcher<TextField> hasMaxLength(int? value) {
     return hasDiagnosticProp<int>(
-        'maxLength', (it) => value == null ? it.isNull() : it.equals(value));
+      'maxLength',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that maxLengthEnforcement of [TextField] matches the condition in [match].
@@ -1352,9 +1497,12 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasMaxLengthEnforcementWhere((it) => it.equals(MaxLengthEnforcement.values.first));
   /// ```
   WidgetMatcher<TextField> hasMaxLengthEnforcementWhere(
-      MatchProp<MaxLengthEnforcement> match) {
+    MatchProp<MaxLengthEnforcement> match,
+  ) {
     return hasDiagnosticProp<MaxLengthEnforcement>(
-        'maxLengthEnforcement', match);
+      'maxLengthEnforcement',
+      match,
+    );
   }
 
   /// Expects that maxLengthEnforcement of [TextField] equals (==) [value].
@@ -1364,9 +1512,12 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasMaxLengthEnforcement(MaxLengthEnforcement.values.first);
   /// ```
   WidgetMatcher<TextField> hasMaxLengthEnforcement(
-      MaxLengthEnforcement? value) {
-    return hasDiagnosticProp<MaxLengthEnforcement>('maxLengthEnforcement',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    MaxLengthEnforcement? value,
+  ) {
+    return hasDiagnosticProp<MaxLengthEnforcement>(
+      'maxLengthEnforcement',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that textInputAction of [TextField] matches the condition in [match].
@@ -1376,7 +1527,8 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasTextInputActionWhere((it) => it.equals(TextInputAction.values.first));
   /// ```
   WidgetMatcher<TextField> hasTextInputActionWhere(
-      MatchProp<TextInputAction> match) {
+    MatchProp<TextInputAction> match,
+  ) {
     return hasDiagnosticProp<TextInputAction>('textInputAction', match);
   }
 
@@ -1387,8 +1539,10 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasTextInputAction(TextInputAction.values.first);
   /// ```
   WidgetMatcher<TextField> hasTextInputAction(TextInputAction? value) {
-    return hasDiagnosticProp<TextInputAction>('textInputAction',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<TextInputAction>(
+      'textInputAction',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that textCapitalization of [TextField] matches the condition in [match].
@@ -1398,7 +1552,8 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasTextCapitalizationWhere((it) => it.equals(TextCapitalization.values.first));
   /// ```
   WidgetMatcher<TextField> hasTextCapitalizationWhere(
-      MatchProp<TextCapitalization> match) {
+    MatchProp<TextCapitalization> match,
+  ) {
     return hasDiagnosticProp<TextCapitalization>('textCapitalization', match);
   }
 
@@ -1409,8 +1564,10 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasTextCapitalization(TextCapitalization.values.first);
   /// ```
   WidgetMatcher<TextField> hasTextCapitalization(TextCapitalization? value) {
-    return hasDiagnosticProp<TextCapitalization>('textCapitalization',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<TextCapitalization>(
+      'textCapitalization',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that textAlign of [TextField] matches the condition in [match].
@@ -1431,7 +1588,9 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// ```
   WidgetMatcher<TextField> hasTextAlign(TextAlign? value) {
     return hasDiagnosticProp<TextAlign>(
-        'textAlign', (it) => value == null ? it.isNull() : it.equals(value));
+      'textAlign',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that textAlignVertical of [TextField] matches the condition in [match].
@@ -1441,7 +1600,8 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasTextAlignVerticalWhere((it) => it.equals(TextAlignVertical.center));
   /// ```
   WidgetMatcher<TextField> hasTextAlignVerticalWhere(
-      MatchProp<TextAlignVertical> match) {
+    MatchProp<TextAlignVertical> match,
+  ) {
     return hasDiagnosticProp<TextAlignVertical>('textAlignVertical', match);
   }
 
@@ -1452,8 +1612,10 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasTextAlignVertical(TextAlignVertical.center);
   /// ```
   WidgetMatcher<TextField> hasTextAlignVertical(TextAlignVertical? value) {
-    return hasDiagnosticProp<TextAlignVertical>('textAlignVertical',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<TextAlignVertical>(
+      'textAlignVertical',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that textDirection of [TextField] matches the condition in [match].
@@ -1463,7 +1625,8 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasTextDirectionWhere((it) => it.equals(TextDirection.values.first));
   /// ```
   WidgetMatcher<TextField> hasTextDirectionWhere(
-      MatchProp<TextDirection> match) {
+    MatchProp<TextDirection> match,
+  ) {
     return hasDiagnosticProp<TextDirection>('textDirection', match);
   }
 
@@ -1474,8 +1637,10 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasTextDirection(TextDirection.values.first);
   /// ```
   WidgetMatcher<TextField> hasTextDirection(TextDirection? value) {
-    return hasDiagnosticProp<TextDirection>('textDirection',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<TextDirection>(
+      'textDirection',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that cursorWidth of [TextField] matches the condition in [match].
@@ -1496,7 +1661,9 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// ```
   WidgetMatcher<TextField> hasCursorWidth(double? value) {
     return hasDiagnosticProp<double>(
-        'cursorWidth', (it) => value == null ? it.isNull() : it.equals(value));
+      'cursorWidth',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that cursorHeight of [TextField] matches the condition in [match].
@@ -1517,7 +1684,9 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// ```
   WidgetMatcher<TextField> hasCursorHeight(double? value) {
     return hasDiagnosticProp<double>(
-        'cursorHeight', (it) => value == null ? it.isNull() : it.equals(value));
+      'cursorHeight',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that cursorRadius of [TextField] matches the condition in [match].
@@ -1538,7 +1707,9 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// ```
   WidgetMatcher<TextField> hasCursorRadius(Radius? value) {
     return hasDiagnosticProp<Radius>(
-        'cursorRadius', (it) => value == null ? it.isNull() : it.equals(value));
+      'cursorRadius',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that cursorOpacityAnimates of [TextField] matches the condition in [match].
@@ -1548,7 +1719,8 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasCursorOpacityAnimatesWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<TextField> hasCursorOpacityAnimatesWhere(
-      MatchProp<bool> match) {
+    MatchProp<bool> match,
+  ) {
     return hasDiagnosticProp<bool>('cursorOpacityAnimates', match);
   }
 
@@ -1559,8 +1731,10 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasCursorOpacityAnimates(true);
   /// ```
   WidgetMatcher<TextField> hasCursorOpacityAnimates(bool? value) {
-    return hasDiagnosticProp<bool>('cursorOpacityAnimates',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<bool>(
+      'cursorOpacityAnimates',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that cursorColor of [TextField] matches the condition in [match].
@@ -1581,7 +1755,9 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// ```
   WidgetMatcher<TextField> hasCursorColor(Color? value) {
     return hasDiagnosticProp<Color>(
-        'cursorColor', (it) => value == null ? it.isNull() : it.equals(value));
+      'cursorColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that keyboardAppearance of [TextField] matches the condition in [match].
@@ -1591,7 +1767,8 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasKeyboardAppearanceWhere((it) => it.equals(Brightness.values.first));
   /// ```
   WidgetMatcher<TextField> hasKeyboardAppearanceWhere(
-      MatchProp<Brightness> match) {
+    MatchProp<Brightness> match,
+  ) {
     return hasDiagnosticProp<Brightness>('keyboardAppearance', match);
   }
 
@@ -1602,8 +1779,10 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasKeyboardAppearance(Brightness.values.first);
   /// ```
   WidgetMatcher<TextField> hasKeyboardAppearance(Brightness? value) {
-    return hasDiagnosticProp<Brightness>('keyboardAppearance',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<Brightness>(
+      'keyboardAppearance',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that scrollPadding of [TextField] matches the condition in [match].
@@ -1613,7 +1792,8 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasScrollPaddingWhere((it) => it.equals(EdgeInsets.all(8.0)));
   /// ```
   WidgetMatcher<TextField> hasScrollPaddingWhere(
-      MatchProp<EdgeInsetsGeometry> match) {
+    MatchProp<EdgeInsetsGeometry> match,
+  ) {
     return hasDiagnosticProp<EdgeInsetsGeometry>('scrollPadding', match);
   }
 
@@ -1624,8 +1804,10 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasScrollPadding(EdgeInsets.all(8.0));
   /// ```
   WidgetMatcher<TextField> hasScrollPadding(EdgeInsetsGeometry? value) {
-    return hasDiagnosticProp<EdgeInsetsGeometry>('scrollPadding',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<EdgeInsetsGeometry>(
+      'scrollPadding',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that selectionEnabled of [TextField] matches the condition in [match].
@@ -1645,8 +1827,10 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasSelectionEnabled(true);
   /// ```
   WidgetMatcher<TextField> hasSelectionEnabled(bool? value) {
-    return hasDiagnosticProp<bool>('selectionEnabled',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<bool>(
+      'selectionEnabled',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that selectionControls of [TextField] matches the condition in [match].
@@ -1656,7 +1840,8 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasSelectionControlsWhere((it) => it.equals(MaterialTextSelectionControls()));
   /// ```
   WidgetMatcher<TextField> hasSelectionControlsWhere(
-      MatchProp<TextSelectionControls> match) {
+    MatchProp<TextSelectionControls> match,
+  ) {
     return hasDiagnosticProp<TextSelectionControls>('selectionControls', match);
   }
 
@@ -1667,8 +1852,10 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasSelectionControls(MaterialTextSelectionControls());
   /// ```
   WidgetMatcher<TextField> hasSelectionControls(TextSelectionControls? value) {
-    return hasDiagnosticProp<TextSelectionControls>('selectionControls',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<TextSelectionControls>(
+      'selectionControls',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that scrollController of [TextField] matches the condition in [match].
@@ -1678,7 +1865,8 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasScrollControllerWhere((it) => it.equals(ScrollController()));
   /// ```
   WidgetMatcher<TextField> hasScrollControllerWhere(
-      MatchProp<ScrollController> match) {
+    MatchProp<ScrollController> match,
+  ) {
     return hasDiagnosticProp<ScrollController>('scrollController', match);
   }
 
@@ -1689,8 +1877,10 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasScrollController(ScrollController());
   /// ```
   WidgetMatcher<TextField> hasScrollController(ScrollController? value) {
-    return hasDiagnosticProp<ScrollController>('scrollController',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<ScrollController>(
+      'scrollController',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that scrollPhysics of [TextField] matches the condition in [match].
@@ -1700,7 +1890,8 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasScrollPhysicsWhere((it) => it.equals(BouncingScrollPhysics()));
   /// ```
   WidgetMatcher<TextField> hasScrollPhysicsWhere(
-      MatchProp<ScrollPhysics> match) {
+    MatchProp<ScrollPhysics> match,
+  ) {
     return hasDiagnosticProp<ScrollPhysics>('scrollPhysics', match);
   }
 
@@ -1711,8 +1902,10 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasScrollPhysics(BouncingScrollPhysics());
   /// ```
   WidgetMatcher<TextField> hasScrollPhysics(ScrollPhysics? value) {
-    return hasDiagnosticProp<ScrollPhysics>('scrollPhysics',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<ScrollPhysics>(
+      'scrollPhysics',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that clipBehavior of [TextField] matches the condition in [match].
@@ -1733,7 +1926,9 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// ```
   WidgetMatcher<TextField> hasClipBehavior(Clip? value) {
     return hasDiagnosticProp<Clip>(
-        'clipBehavior', (it) => value == null ? it.isNull() : it.equals(value));
+      'clipBehavior',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that scribbleEnabled of [TextField] matches the condition in [match].
@@ -1753,8 +1948,10 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasScribbleEnabled(true);
   /// ```
   WidgetMatcher<TextField> hasScribbleEnabled(bool? value) {
-    return hasDiagnosticProp<bool>('scribbleEnabled',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<bool>(
+      'scribbleEnabled',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that enableIMEPersonalizedLearning of [TextField] matches the condition in [match].
@@ -1764,7 +1961,8 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasEnableIMEPersonalizedLearningWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<TextField> hasEnableIMEPersonalizedLearningWhere(
-      MatchProp<bool> match) {
+    MatchProp<bool> match,
+  ) {
     return hasDiagnosticProp<bool>('enableIMEPersonalizedLearning', match);
   }
 
@@ -1775,8 +1973,10 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasEnableIMEPersonalizedLearning(true);
   /// ```
   WidgetMatcher<TextField> hasEnableIMEPersonalizedLearning(bool? value) {
-    return hasDiagnosticProp<bool>('enableIMEPersonalizedLearning',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<bool>(
+      'enableIMEPersonalizedLearning',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that spellCheckConfiguration of [TextField] matches the condition in [match].
@@ -1786,9 +1986,12 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasSpellCheckConfigurationWhere((it) => it.equals(SpellCheckConfiguration()));
   /// ```
   WidgetMatcher<TextField> hasSpellCheckConfigurationWhere(
-      MatchProp<SpellCheckConfiguration> match) {
+    MatchProp<SpellCheckConfiguration> match,
+  ) {
     return hasDiagnosticProp<SpellCheckConfiguration>(
-        'spellCheckConfiguration', match);
+      'spellCheckConfiguration',
+      match,
+    );
   }
 
   /// Expects that spellCheckConfiguration of [TextField] equals (==) [value].
@@ -1798,9 +2001,12 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasSpellCheckConfiguration(SpellCheckConfiguration());
   /// ```
   WidgetMatcher<TextField> hasSpellCheckConfiguration(
-      SpellCheckConfiguration? value) {
-    return hasDiagnosticProp<SpellCheckConfiguration>('spellCheckConfiguration',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    SpellCheckConfiguration? value,
+  ) {
+    return hasDiagnosticProp<SpellCheckConfiguration>(
+      'spellCheckConfiguration',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that contentCommitMimeTypes of [TextField] matches the condition in [match].
@@ -1810,7 +2016,8 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasContentCommitMimeTypesWhere((it) => it.equals(['foo', 'bar']));
   /// ```
   WidgetMatcher<TextField> hasContentCommitMimeTypesWhere(
-      MatchProp<List<String>> match) {
+    MatchProp<List<String>> match,
+  ) {
     return hasDiagnosticProp<List<String>>('contentCommitMimeTypes', match);
   }
 
@@ -1821,8 +2028,10 @@ extension TextFieldMatcher on WidgetMatcher<TextField> {
   /// spot<TextField>().existsOnce().hasContentCommitMimeTypes(['foo', 'bar']);
   /// ```
   WidgetMatcher<TextField> hasContentCommitMimeTypes(List<String>? value) {
-    return hasDiagnosticProp<List<String>>('contentCommitMimeTypes',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<List<String>>(
+      'contentCommitMimeTypes',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 
@@ -2021,7 +2230,8 @@ extension TextFieldGetter on WidgetMatcher<TextField> {
   /// Returns the spellCheckConfiguration of the matched [TextField] via [Widget.toDiagnosticsNode]
   SpellCheckConfiguration getSpellCheckConfiguration() {
     return getDiagnosticProp<SpellCheckConfiguration>(
-        'spellCheckConfiguration');
+      'spellCheckConfiguration',
+    );
   }
 
   /// Returns the contentCommitMimeTypes of the matched [TextField] via [Widget.toDiagnosticsNode]

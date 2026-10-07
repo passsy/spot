@@ -13,12 +13,8 @@ Type _typeOf<T>() => T;
 /// the properties of a widget.
 extension CreateMatchers<W extends Widget> on WidgetSelector<W> {
   /// Prints the generated matchers for the properties of [W] to the console.
-  void printMatchers({
-    Map<String, String> propNameOverrides = const {},
-  }) {
-    final value = createMatcherString(
-      propNameOverrides: propNameOverrides,
-    );
+  void printMatchers({Map<String, String> propNameOverrides = const {}}) {
+    final value = createMatcherString(propNameOverrides: propNameOverrides);
     if (value == null) {
       return;
     }
@@ -62,8 +58,9 @@ extension CreateMatchers<W extends Widget> on WidgetSelector<W> {
     final anyElement = s.discoveredElements.first;
 
     final elementProps = anyElement.toDiagnosticsNode().getProperties();
-    final widgetProps =
-        mapElementToWidget(anyElement).toDiagnosticsNode().getProperties();
+    final widgetProps = mapElementToWidget(
+      anyElement,
+    ).toDiagnosticsNode().getProperties();
 
     String widgetType = _typeOf<W>().toString().capitalize();
     if (widgetType.contains('<')) {
@@ -78,23 +75,21 @@ extension ${widgetType}Matcher on WidgetMatcher<$widgetType> {
 ''');
 
     final selectorSb = StringBuffer();
-    selectorSb.writeln(
-      '''
+    selectorSb.writeln('''
 /// Allows filtering [$widgetType] by the properties provided via [Diagnosticable.debugFillProperties]
 extension ${widgetType}Selector on WidgetSelector<$widgetType> {
-''',
-    );
+''');
 
     final getterSb = StringBuffer();
-    getterSb.writeln(
-      '''
+    getterSb.writeln('''
 /// Retrieves the [DiagnosticsProperty] of the matched widget with [propName] of type [T]
 extension ${widgetType}Getter on WidgetMatcher<$widgetType> {
-''',
-    );
+''');
 
-    final distinctProps =
-        [...widgetProps, ...elementProps].distinctBy((it) => it.name).toList();
+    final distinctProps = [
+      ...widgetProps,
+      ...elementProps,
+    ].distinctBy((it) => it.name).toList();
     for (final DiagnosticsNode prop in distinctProps) {
       if (filter != null && !filter(prop)) {
         continue;
@@ -337,10 +332,7 @@ extension on DiagnosticsNode {
   }
 }
 
-String _getExampleValue({
-  required DiagnosticsNode node,
-  bool matcher = false,
-}) {
+String _getExampleValue({required DiagnosticsNode node, bool matcher = false}) {
   if (node is StringProperty || node is DiagnosticsProperty<String>) {
     if (matcher) {
       return "(it) => it.equals('foo')";
@@ -427,7 +419,8 @@ String _getExampleValue({
     }();
 
     if (genericType != null) {
-      final value = _examplesFromGenericType(genericType) ??
+      final value =
+          _examplesFromGenericType(genericType) ??
           'your $genericType value to match';
       if (matcher) {
         return '(it) => it.equals($value)';

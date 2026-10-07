@@ -16,9 +16,7 @@ void main() {
             child: Row(
               children: [
                 Container(),
-                Container(
-                  child: Text('Hello'),
-                ),
+                Container(child: Text('Hello')),
               ],
             ),
           ),
@@ -47,17 +45,8 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            appBar: AppBar(
-              title: Text('Test'),
-              actions: [
-                Text('Option'),
-              ],
-            ),
-            body: Column(
-              children: [
-                AppBar(title: Text('Test')),
-              ],
-            ),
+            appBar: AppBar(title: Text('Test'), actions: [Text('Option')]),
+            body: Column(children: [AppBar(title: Text('Test'))]),
           ),
         ),
       );

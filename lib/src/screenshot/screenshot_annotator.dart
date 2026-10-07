@@ -146,13 +146,10 @@ class HighlightAnnotator implements ScreenshotAnnotator {
   ///
   /// The lists are copied, because they are the [cacheKey] and the annotation
   /// drawn from them is kept under it for the rest of the test.
-  HighlightAnnotator.rects(
-    List<Rect> rects, {
-    this.color,
-    List<String>? labels,
-  })  : assert(labels == null || rects.length == labels.length),
-        rects = List.unmodifiable(rects),
-        labels = labels == null ? null : List.unmodifiable(labels);
+  HighlightAnnotator.rects(List<Rect> rects, {this.color, List<String>? labels})
+    : assert(labels == null || rects.length == labels.length),
+      rects = List.unmodifiable(rects),
+      labels = labels == null ? null : List.unmodifiable(labels);
 
   /// Highlight elements on the screenshot
   factory HighlightAnnotator.elements(List<Element> elements, {Color? color}) {
@@ -169,8 +166,9 @@ class HighlightAnnotator implements ScreenshotAnnotator {
       if (renderObject == null) continue;
       final box = renderObject.size;
       final topLeft = renderObject.localToGlobal(Offset.zero);
-      final bottomRight =
-          renderObject.localToGlobal(box.bottomRight(Offset.zero));
+      final bottomRight = renderObject.localToGlobal(
+        box.bottomRight(Offset.zero),
+      );
       rects.add(
         Rect.fromPoints(
           topLeft * devicePixelRatio,
@@ -240,10 +238,7 @@ class HighlightAnnotator implements ScreenshotAnnotator {
           rect.topLeft - Offset(0, textPainter.height + 8),
         );
         // below
-        textPainter.paint(
-          canvas,
-          rect.bottomLeft + const Offset(0, 8),
-        );
+        textPainter.paint(canvas, rect.bottomLeft + const Offset(0, 8));
       }
     }
 
@@ -299,10 +294,14 @@ class ArrowAnnotator extends ScreenshotAnnotator {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 4.0;
 
-    final adjustedStart =
-        Offset(start.dx * devicePixelRatio, start.dy * devicePixelRatio);
-    final adjustedEnd =
-        Offset(end.dx * devicePixelRatio, end.dy * devicePixelRatio);
+    final adjustedStart = Offset(
+      start.dx * devicePixelRatio,
+      start.dy * devicePixelRatio,
+    );
+    final adjustedEnd = Offset(
+      end.dx * devicePixelRatio,
+      end.dy * devicePixelRatio,
+    );
 
     // Draw shadow arrow path
     final shadowPath = Path();

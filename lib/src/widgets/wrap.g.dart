@@ -36,7 +36,9 @@ extension WrapSelector on WidgetSelector<Wrap> {
   @useResult
   WidgetSelector<Wrap> withDirection(Axis? value) {
     return withDiagnosticProp<Axis>(
-        'direction', (it) => value == null ? it.isNull() : it.equals(value));
+      'direction',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Wrap] where alignment matches the condition.
@@ -59,7 +61,9 @@ extension WrapSelector on WidgetSelector<Wrap> {
   @useResult
   WidgetSelector<Wrap> withAlignment(WrapAlignment? value) {
     return withDiagnosticProp<WrapAlignment>(
-        'alignment', (it) => value == null ? it.isNull() : it.equals(value));
+      'alignment',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Wrap] where spacing matches the condition.
@@ -82,7 +86,9 @@ extension WrapSelector on WidgetSelector<Wrap> {
   @useResult
   WidgetSelector<Wrap> withSpacing(double? value) {
     return withDiagnosticProp<double>(
-        'spacing', (it) => value == null ? it.isNull() : it.equals(value));
+      'spacing',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Wrap] where runAlignment matches the condition.
@@ -105,7 +111,9 @@ extension WrapSelector on WidgetSelector<Wrap> {
   @useResult
   WidgetSelector<Wrap> withRunAlignment(WrapAlignment? value) {
     return withDiagnosticProp<WrapAlignment>(
-        'runAlignment', (it) => value == null ? it.isNull() : it.equals(value));
+      'runAlignment',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Wrap] where runSpacing matches the condition.
@@ -128,7 +136,9 @@ extension WrapSelector on WidgetSelector<Wrap> {
   @useResult
   WidgetSelector<Wrap> withRunSpacing(double? value) {
     return withDiagnosticProp<double>(
-        'runSpacing', (it) => value == null ? it.isNull() : it.equals(value));
+      'runSpacing',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Wrap] where crossAxisAlignment matches the condition.
@@ -139,7 +149,8 @@ extension WrapSelector on WidgetSelector<Wrap> {
   /// ```
   @useResult
   WidgetSelector<Wrap> whereCrossAxisAlignment(
-      MatchProp<WrapCrossAlignment> match) {
+    MatchProp<WrapCrossAlignment> match,
+  ) {
     return withDiagnosticProp<WrapCrossAlignment>('crossAxisAlignment', match);
   }
 
@@ -151,8 +162,10 @@ extension WrapSelector on WidgetSelector<Wrap> {
   /// ```
   @useResult
   WidgetSelector<Wrap> withCrossAxisAlignment(WrapCrossAlignment? value) {
-    return withDiagnosticProp<WrapCrossAlignment>('crossAxisAlignment',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<WrapCrossAlignment>(
+      'crossAxisAlignment',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Wrap] where textDirection matches the condition.
@@ -174,8 +187,10 @@ extension WrapSelector on WidgetSelector<Wrap> {
   /// ```
   @useResult
   WidgetSelector<Wrap> withTextDirection(TextDirection? value) {
-    return withDiagnosticProp<TextDirection>('textDirection',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<TextDirection>(
+      'textDirection',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Wrap] where verticalDirection matches the condition.
@@ -186,7 +201,8 @@ extension WrapSelector on WidgetSelector<Wrap> {
   /// ```
   @useResult
   WidgetSelector<Wrap> whereVerticalDirection(
-      MatchProp<VerticalDirection> match) {
+    MatchProp<VerticalDirection> match,
+  ) {
     return withDiagnosticProp<VerticalDirection>('verticalDirection', match);
   }
 
@@ -198,8 +214,10 @@ extension WrapSelector on WidgetSelector<Wrap> {
   /// ```
   @useResult
   WidgetSelector<Wrap> withVerticalDirection(VerticalDirection? value) {
-    return withDiagnosticProp<VerticalDirection>('verticalDirection',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<VerticalDirection>(
+      'verticalDirection',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Wrap] where renderObject matches the condition.
@@ -222,7 +240,9 @@ extension WrapSelector on WidgetSelector<Wrap> {
   @useResult
   WidgetSelector<Wrap> withRenderObject(RenderWrap? value) {
     return withDiagnosticProp<RenderWrap>(
-        'renderObject', (it) => value == null ? it.isNull() : it.equals(value));
+      'renderObject',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 
@@ -246,7 +266,9 @@ extension WrapMatcher on WidgetMatcher<Wrap> {
   /// ```
   WidgetMatcher<Wrap> hasDirection(Axis? value) {
     return hasDiagnosticProp<Axis>(
-        'direction', (it) => value == null ? it.isNull() : it.equals(value));
+      'direction',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that alignment of [Wrap] matches the condition in [match].
@@ -267,7 +289,9 @@ extension WrapMatcher on WidgetMatcher<Wrap> {
   /// ```
   WidgetMatcher<Wrap> hasAlignment(WrapAlignment? value) {
     return hasDiagnosticProp<WrapAlignment>(
-        'alignment', (it) => value == null ? it.isNull() : it.equals(value));
+      'alignment',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that spacing of [Wrap] matches the condition in [match].
@@ -288,7 +312,9 @@ extension WrapMatcher on WidgetMatcher<Wrap> {
   /// ```
   WidgetMatcher<Wrap> hasSpacing(double? value) {
     return hasDiagnosticProp<double>(
-        'spacing', (it) => value == null ? it.isNull() : it.equals(value));
+      'spacing',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that runAlignment of [Wrap] matches the condition in [match].
@@ -309,7 +335,9 @@ extension WrapMatcher on WidgetMatcher<Wrap> {
   /// ```
   WidgetMatcher<Wrap> hasRunAlignment(WrapAlignment? value) {
     return hasDiagnosticProp<WrapAlignment>(
-        'runAlignment', (it) => value == null ? it.isNull() : it.equals(value));
+      'runAlignment',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that runSpacing of [Wrap] matches the condition in [match].
@@ -330,7 +358,9 @@ extension WrapMatcher on WidgetMatcher<Wrap> {
   /// ```
   WidgetMatcher<Wrap> hasRunSpacing(double? value) {
     return hasDiagnosticProp<double>(
-        'runSpacing', (it) => value == null ? it.isNull() : it.equals(value));
+      'runSpacing',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that crossAxisAlignment of [Wrap] matches the condition in [match].
@@ -340,7 +370,8 @@ extension WrapMatcher on WidgetMatcher<Wrap> {
   /// spot<Wrap>().existsOnce().hasCrossAxisAlignmentWhere((it) => it.equals(WrapCrossAlignment.values.first));
   /// ```
   WidgetMatcher<Wrap> hasCrossAxisAlignmentWhere(
-      MatchProp<WrapCrossAlignment> match) {
+    MatchProp<WrapCrossAlignment> match,
+  ) {
     return hasDiagnosticProp<WrapCrossAlignment>('crossAxisAlignment', match);
   }
 
@@ -351,8 +382,10 @@ extension WrapMatcher on WidgetMatcher<Wrap> {
   /// spot<Wrap>().existsOnce().hasCrossAxisAlignment(WrapCrossAlignment.values.first);
   /// ```
   WidgetMatcher<Wrap> hasCrossAxisAlignment(WrapCrossAlignment? value) {
-    return hasDiagnosticProp<WrapCrossAlignment>('crossAxisAlignment',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<WrapCrossAlignment>(
+      'crossAxisAlignment',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that textDirection of [Wrap] matches the condition in [match].
@@ -372,8 +405,10 @@ extension WrapMatcher on WidgetMatcher<Wrap> {
   /// spot<Wrap>().existsOnce().hasTextDirection(TextDirection.values.first);
   /// ```
   WidgetMatcher<Wrap> hasTextDirection(TextDirection? value) {
-    return hasDiagnosticProp<TextDirection>('textDirection',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<TextDirection>(
+      'textDirection',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that verticalDirection of [Wrap] matches the condition in [match].
@@ -383,7 +418,8 @@ extension WrapMatcher on WidgetMatcher<Wrap> {
   /// spot<Wrap>().existsOnce().hasVerticalDirectionWhere((it) => it.equals(VerticalDirection.values.first));
   /// ```
   WidgetMatcher<Wrap> hasVerticalDirectionWhere(
-      MatchProp<VerticalDirection> match) {
+    MatchProp<VerticalDirection> match,
+  ) {
     return hasDiagnosticProp<VerticalDirection>('verticalDirection', match);
   }
 
@@ -394,8 +430,10 @@ extension WrapMatcher on WidgetMatcher<Wrap> {
   /// spot<Wrap>().existsOnce().hasVerticalDirection(VerticalDirection.values.first);
   /// ```
   WidgetMatcher<Wrap> hasVerticalDirection(VerticalDirection? value) {
-    return hasDiagnosticProp<VerticalDirection>('verticalDirection',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<VerticalDirection>(
+      'verticalDirection',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that renderObject of [Wrap] matches the condition in [match].
@@ -416,7 +454,9 @@ extension WrapMatcher on WidgetMatcher<Wrap> {
   /// ```
   WidgetMatcher<Wrap> hasRenderObject(RenderWrap? value) {
     return hasDiagnosticProp<RenderWrap>(
-        'renderObject', (it) => value == null ? it.isNull() : it.equals(value));
+      'renderObject',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 

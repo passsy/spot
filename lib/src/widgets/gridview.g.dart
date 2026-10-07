@@ -34,8 +34,10 @@ extension GridViewSelector on WidgetSelector<GridView> {
   /// ```
   @useResult
   WidgetSelector<GridView> withScrollDirection(Axis? value) {
-    return withDiagnosticProp<Axis>('scrollDirection',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<Axis>(
+      'scrollDirection',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [GridView] where reverse matches the condition.
@@ -58,7 +60,9 @@ extension GridViewSelector on WidgetSelector<GridView> {
   @useResult
   WidgetSelector<GridView> withReverse(bool? value) {
     return withDiagnosticProp<bool>(
-        'reverse', (it) => value == null ? it.isNull() : it.equals(value));
+      'reverse',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [GridView] where controller matches the condition.
@@ -81,7 +85,9 @@ extension GridViewSelector on WidgetSelector<GridView> {
   @useResult
   WidgetSelector<GridView> withController(ScrollController? value) {
     return withDiagnosticProp<ScrollController>(
-        'controller', (it) => value == null ? it.isNull() : it.equals(value));
+      'controller',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [GridView] where primary matches the condition.
@@ -104,7 +110,9 @@ extension GridViewSelector on WidgetSelector<GridView> {
   @useResult
   WidgetSelector<GridView> withPrimary(bool? value) {
     return withDiagnosticProp<bool>(
-        'primary', (it) => value == null ? it.isNull() : it.equals(value));
+      'primary',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [GridView] where physics matches the condition.
@@ -127,7 +135,9 @@ extension GridViewSelector on WidgetSelector<GridView> {
   @useResult
   WidgetSelector<GridView> withPhysics(ScrollPhysics? value) {
     return withDiagnosticProp<ScrollPhysics>(
-        'physics', (it) => value == null ? it.isNull() : it.equals(value));
+      'physics',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [GridView] where shrinkWrap matches the condition.
@@ -150,7 +160,9 @@ extension GridViewSelector on WidgetSelector<GridView> {
   @useResult
   WidgetSelector<GridView> withShrinkWrap(bool? value) {
     return withDiagnosticProp<bool>(
-        'shrinkWrap', (it) => value == null ? it.isNull() : it.equals(value));
+      'shrinkWrap',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [GridView] where padding matches the condition.
@@ -173,7 +185,9 @@ extension GridViewSelector on WidgetSelector<GridView> {
   @useResult
   WidgetSelector<GridView> withPadding(EdgeInsetsGeometry? value) {
     return withDiagnosticProp<EdgeInsetsGeometry>(
-        'padding', (it) => value == null ? it.isNull() : it.equals(value));
+      'padding',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 
@@ -196,8 +210,10 @@ extension GridViewMatcher on WidgetMatcher<GridView> {
   /// spot<GridView>().existsOnce().hasScrollDirection(Axis.values.first);
   /// ```
   WidgetMatcher<GridView> hasScrollDirection(Axis? value) {
-    return hasDiagnosticProp<Axis>('scrollDirection',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<Axis>(
+      'scrollDirection',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that reverse of [GridView] matches the condition in [match].
@@ -218,7 +234,9 @@ extension GridViewMatcher on WidgetMatcher<GridView> {
   /// ```
   WidgetMatcher<GridView> hasReverse(bool? value) {
     return hasDiagnosticProp<bool>(
-        'reverse', (it) => value == null ? it.isNull() : it.equals(value));
+      'reverse',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that controller of [GridView] matches the condition in [match].
@@ -228,7 +246,8 @@ extension GridViewMatcher on WidgetMatcher<GridView> {
   /// spot<GridView>().existsOnce().hasControllerWhere((it) => it.equals(ScrollController()));
   /// ```
   WidgetMatcher<GridView> hasControllerWhere(
-      MatchProp<ScrollController> match) {
+    MatchProp<ScrollController> match,
+  ) {
     return hasDiagnosticProp<ScrollController>('controller', match);
   }
 
@@ -240,7 +259,9 @@ extension GridViewMatcher on WidgetMatcher<GridView> {
   /// ```
   WidgetMatcher<GridView> hasController(ScrollController? value) {
     return hasDiagnosticProp<ScrollController>(
-        'controller', (it) => value == null ? it.isNull() : it.equals(value));
+      'controller',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that primary of [GridView] matches the condition in [match].
@@ -261,7 +282,9 @@ extension GridViewMatcher on WidgetMatcher<GridView> {
   /// ```
   WidgetMatcher<GridView> hasPrimary(bool? value) {
     return hasDiagnosticProp<bool>(
-        'primary', (it) => value == null ? it.isNull() : it.equals(value));
+      'primary',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that physics of [GridView] matches the condition in [match].
@@ -282,7 +305,9 @@ extension GridViewMatcher on WidgetMatcher<GridView> {
   /// ```
   WidgetMatcher<GridView> hasPhysics(ScrollPhysics? value) {
     return hasDiagnosticProp<ScrollPhysics>(
-        'physics', (it) => value == null ? it.isNull() : it.equals(value));
+      'physics',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that shrinkWrap of [GridView] matches the condition in [match].
@@ -303,7 +328,9 @@ extension GridViewMatcher on WidgetMatcher<GridView> {
   /// ```
   WidgetMatcher<GridView> hasShrinkWrap(bool? value) {
     return hasDiagnosticProp<bool>(
-        'shrinkWrap', (it) => value == null ? it.isNull() : it.equals(value));
+      'shrinkWrap',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that padding of [GridView] matches the condition in [match].
@@ -324,7 +351,9 @@ extension GridViewMatcher on WidgetMatcher<GridView> {
   /// ```
   WidgetMatcher<GridView> hasPadding(EdgeInsetsGeometry? value) {
     return hasDiagnosticProp<EdgeInsetsGeometry>(
-        'padding', (it) => value == null ? it.isNull() : it.equals(value));
+      'padding',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 

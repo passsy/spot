@@ -10,21 +10,16 @@ void main() {
 
     expect(
       verticalWrapSpot.toString(),
-      allOf([
-        contains('prop "direction"'),
-        contains('<Axis.vertical>'),
-      ]),
+      allOf([contains('prop "direction"'), contains('<Axis.vertical>')]),
     );
 
-    final horizontalWrapSpot =
-        spot<Wrap>().whereDirection((it) => it.equals(Axis.horizontal));
+    final horizontalWrapSpot = spot<Wrap>().whereDirection(
+      (it) => it.equals(Axis.horizontal),
+    );
 
     expect(
       horizontalWrapSpot.toString(),
-      allOf([
-        contains('prop "direction"'),
-        contains('<Axis.horizontal>'),
-      ]),
+      allOf([contains('prop "direction"'), contains('<Axis.horizontal>')]),
     );
   });
 }

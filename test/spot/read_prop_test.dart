@@ -6,16 +6,19 @@ void main() {
   group('WidgetSelector', () {
     testWidgets('getWidgetProp', (tester) async {
       await tester.pumpWidget(const _MyContainer(color: Colors.white54));
-      final color = spot<_MyContainer>()
-          .getWidgetProp(widgetProp('color', (widget) => widget.color));
+      final color = spot<_MyContainer>().getWidgetProp(
+        widgetProp('color', (widget) => widget.color),
+      );
       expect(color, Colors.white54);
     });
 
     testWidgets('getWidgetProp AnyText', (tester) async {
-      await tester
-          .pumpWidget(const MaterialApp(home: Scaffold(body: Text('hello'))));
-      final text = spotText('hello')
-          .getWidgetProp(widgetProp('data', (widget) => widget.text));
+      await tester.pumpWidget(
+        const MaterialApp(home: Scaffold(body: Text('hello'))),
+      );
+      final text = spotText(
+        'hello',
+      ).getWidgetProp(widgetProp('data', (widget) => widget.text));
       expect(text, 'hello');
     });
 
@@ -54,10 +57,7 @@ void main() {
     testWidgets('getDiagnosticProp', (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Tooltip(
-            message: 'Open navigation menu',
-            child: SizedBox(),
-          ),
+          home: Tooltip(message: 'Open navigation menu', child: SizedBox()),
         ),
       );
       final message = spot<Tooltip>().getDiagnosticProp<String>('message');
@@ -68,54 +68,52 @@ void main() {
   group('WidgetMatcher', () {
     testWidgets('getWidgetProp', (tester) async {
       await tester.pumpWidget(const _MyContainer(color: Colors.white54));
-      final color = spot<_MyContainer>()
-          .existsOnce()
-          .getWidgetProp(widgetProp('color', (widget) => widget.color));
+      final color = spot<_MyContainer>().existsOnce().getWidgetProp(
+        widgetProp('color', (widget) => widget.color),
+      );
       expect(color, Colors.white54);
     });
 
     testWidgets('getWidgetProp AnyText', (tester) async {
-      await tester
-          .pumpWidget(const MaterialApp(home: Scaffold(body: Text('hello'))));
-      final text = spotText('hello')
-          .existsOnce()
-          .getWidgetProp(widgetProp('data', (widget) => widget.text));
+      await tester.pumpWidget(
+        const MaterialApp(home: Scaffold(body: Text('hello'))),
+      );
+      final text = spotText(
+        'hello',
+      ).existsOnce().getWidgetProp(widgetProp('data', (widget) => widget.text));
       expect(text, 'hello');
     });
 
     testWidgets('getElementProp', (tester) async {
       await tester.pumpWidget(const _MyContainer(color: Colors.white54));
       final innerValue = spot<_MyContainer>().existsOnce().getElementProp(
-            elementProp('innerValue', (el) {
-              return ((el as StatefulElement).state as _MyContainerState)
-                  .innerValue;
-            }),
-          );
+        elementProp('innerValue', (el) {
+          return ((el as StatefulElement).state as _MyContainerState)
+              .innerValue;
+        }),
+      );
       expect(innerValue, 'stateValue');
     });
 
     testWidgets('getStateProp', (tester) async {
       await tester.pumpWidget(const _MyContainer(color: Colors.white54));
       final innerValue = spot<_MyContainer>().existsOnce().getStateProp(
-            stateProp<String, _MyContainerState>(
-              'innerValue',
-              (s) => s.innerValue,
-            ),
-          );
+        stateProp<String, _MyContainerState>('innerValue', (s) => s.innerValue),
+      );
 
       expect(innerValue, 'stateValue');
 
       // alternate syntax
       spot<_MyContainer>().existsOnce().getStateProp(
-            stateProp('innerValue', (_MyContainerState s) => s.innerValue),
-          );
+        stateProp('innerValue', (_MyContainerState s) => s.innerValue),
+      );
     });
 
     testWidgets('getRenderObjectProp', (tester) async {
       await tester.pumpWidget(const _MyContainer(color: Colors.white54));
       final size = spot<_MyContainer>().existsOnce().getRenderObjectProp(
-            renderObjectProp<Size, RenderBox>('size', (r) => r.size),
-          );
+        renderObjectProp<Size, RenderBox>('size', (r) => r.size),
+      );
       expect(size, const Size(800.0, 600.0));
     });
   });

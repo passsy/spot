@@ -24,14 +24,17 @@ void main() {
     final tree = currentWidgetTreeSnapshot();
     final widgets = tree.allElements;
     expect(widgets, isNotEmpty);
-    final center =
-        widgets.firstWhere((element) => element.widget.runtimeType == Center);
+    final center = widgets.firstWhere(
+      (element) => element.widget.runtimeType == Center,
+    );
     final indexOfCenter = widgets.indexOf(center);
-    final align =
-        widgets.firstWhere((element) => element.widget.runtimeType == Align);
+    final align = widgets.firstWhere(
+      (element) => element.widget.runtimeType == Align,
+    );
     final indexOfAlign = widgets.indexOf(align);
-    final sizedBox =
-        widgets.firstWhere((element) => element.widget.runtimeType == SizedBox);
+    final sizedBox = widgets.firstWhere(
+      (element) => element.widget.runtimeType == SizedBox,
+    );
     final indexOfSizedBox = widgets.indexOf(sizedBox);
 
     expect(center.depth, align.depth);
@@ -49,9 +52,7 @@ void main() {
         textDirection: TextDirection.ltr,
         child: Row(
           children: [
-            Center(
-              child: SizedBox(),
-            ),
+            Center(child: SizedBox()),
             Align(),
           ],
         ),
@@ -59,9 +60,10 @@ void main() {
     );
     final tree = currentWidgetTreeSnapshot();
     final widgets = tree.allElements;
-    final flutterOrderWidgets =
-        collectAllElementsFrom(tree.origin.element, skipOffstage: true)
-            .toList();
+    final flutterOrderWidgets = collectAllElementsFrom(
+      tree.origin.element,
+      skipOffstage: true,
+    ).toList();
 
     expect(widgets, flutterOrderWidgets);
   });
@@ -72,9 +74,7 @@ void main() {
         textDirection: TextDirection.ltr,
         child: Row(
           children: [
-            Center(
-              child: SizedBox(),
-            ),
+            Center(child: SizedBox()),
             Align(),
           ],
         ),
@@ -82,11 +82,13 @@ void main() {
     );
     final tree = currentWidgetTreeSnapshot();
     final items = tree.allNodes;
-    final row =
-        items.firstWhere((node) => node.element.widget.runtimeType == Row);
+    final row = items.firstWhere(
+      (node) => node.element.widget.runtimeType == Row,
+    );
 
-    final center =
-        items.firstWhere((node) => node.element.widget.runtimeType == Center);
+    final center = items.firstWhere(
+      (node) => node.element.widget.runtimeType == Center,
+    );
 
     final one = tree.scope(row);
     final two = one.scope(center);

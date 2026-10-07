@@ -39,8 +39,10 @@ class ParentFilter implements ElementFilter {
     // was discovered by that selector.
     final List<Set<Element>> parentSets = [];
     for (final selector in parents) {
-      final WidgetSnapshot<Widget> widgetSnapshot =
-          snapshot(selector, validateQuantity: false);
+      final WidgetSnapshot<Widget> widgetSnapshot = snapshot(
+        selector,
+        validateQuantity: false,
+      );
 
       // handle negates
       if (selector.quantityConstraint.max == 0) {

@@ -36,7 +36,9 @@ extension OpacitySelector on WidgetSelector<Opacity> {
   @useResult
   WidgetSelector<Opacity> withOpacity(double? value) {
     return withDiagnosticProp<double>(
-        'opacity', (it) => value == null ? it.isNull() : it.equals(value));
+      'opacity',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Opacity] where alwaysIncludeSemantics matches the condition.
@@ -58,8 +60,10 @@ extension OpacitySelector on WidgetSelector<Opacity> {
   /// ```
   @useResult
   WidgetSelector<Opacity> withAlwaysIncludeSemantics(bool? value) {
-    return withDiagnosticProp<bool>('alwaysIncludeSemantics',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<bool>(
+      'alwaysIncludeSemantics',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Opacity] where renderObject matches the condition.
@@ -82,7 +86,9 @@ extension OpacitySelector on WidgetSelector<Opacity> {
   @useResult
   WidgetSelector<Opacity> withRenderObject(RenderOpacity? value) {
     return withDiagnosticProp<RenderOpacity>(
-        'renderObject', (it) => value == null ? it.isNull() : it.equals(value));
+      'renderObject',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 
@@ -106,7 +112,9 @@ extension OpacityMatcher on WidgetMatcher<Opacity> {
   /// ```
   WidgetMatcher<Opacity> hasOpacity(double? value) {
     return hasDiagnosticProp<double>(
-        'opacity', (it) => value == null ? it.isNull() : it.equals(value));
+      'opacity',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that alwaysIncludeSemantics of [Opacity] matches the condition in [match].
@@ -126,8 +134,10 @@ extension OpacityMatcher on WidgetMatcher<Opacity> {
   /// spot<Opacity>().existsOnce().hasAlwaysIncludeSemantics(true);
   /// ```
   WidgetMatcher<Opacity> hasAlwaysIncludeSemantics(bool? value) {
-    return hasDiagnosticProp<bool>('alwaysIncludeSemantics',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<bool>(
+      'alwaysIncludeSemantics',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that renderObject of [Opacity] matches the condition in [match].
@@ -148,7 +158,9 @@ extension OpacityMatcher on WidgetMatcher<Opacity> {
   /// ```
   WidgetMatcher<Opacity> hasRenderObject(RenderOpacity? value) {
     return hasDiagnosticProp<RenderOpacity>(
-        'renderObject', (it) => value == null ? it.isNull() : it.equals(value));
+      'renderObject',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 

@@ -114,8 +114,9 @@ class Gestures {
             await gesture.moveBy(Offset(signedSlopX, diffY));
             if (offsetY.abs() <= touchSlopY) {
               // The drag ends on or before getting to the horizontal extension of the horizontal edge.
-              await gesture
-                  .moveBy(Offset(offsetX - signedSlopX, offsetY - diffY));
+              await gesture.moveBy(
+                Offset(offsetX - signedSlopX, offsetY - diffY),
+              );
             } else {
               final double diffY2 = signedSlopY - diffY;
               final double diffX2 = inverseOffsetSlope * diffY2;
@@ -123,10 +124,7 @@ class Gestures {
               // The vector from the edge of the box to the horizontal extension of the horizontal edge.
               await gesture.moveBy(Offset(diffX2, diffY2));
               await gesture.moveBy(
-                Offset(
-                  offsetX - diffX2 - signedSlopX,
-                  offsetY - signedSlopY,
-                ),
+                Offset(offsetX - diffX2 - signedSlopX, offsetY - signedSlopY),
               );
             }
           } else {
@@ -139,8 +137,9 @@ class Gestures {
             await gesture.moveBy(Offset(diffX, signedSlopY));
             if (offsetX.abs() <= touchSlopX) {
               // The drag ends on or before getting to the vertical extension of the vertical edge.
-              await gesture
-                  .moveBy(Offset(offsetX - diffX, offsetY - signedSlopY));
+              await gesture.moveBy(
+                Offset(offsetX - diffX, offsetY - signedSlopY),
+              );
             } else {
               final double diffX2 = signedSlopX - diffX;
               final double diffY2 = offsetSlope * diffX2;
@@ -148,18 +147,16 @@ class Gestures {
               // The vector from the edge of the box to the vertical extension of the vertical edge.
               await gesture.moveBy(Offset(diffX2, diffY2));
               await gesture.moveBy(
-                Offset(
-                  offsetX - signedSlopX,
-                  offsetY - diffY2 - signedSlopY,
-                ),
+                Offset(offsetX - signedSlopX, offsetY - diffY2 - signedSlopY),
               );
             }
           }
         } else {
           // The drag goes through the corner of the box.
           await gesture.moveBy(Offset(signedSlopX, signedSlopY));
-          await gesture
-              .moveBy(Offset(offsetX - signedSlopX, offsetY - signedSlopY));
+          await gesture.moveBy(
+            Offset(offsetX - signedSlopX, offsetY - signedSlopY),
+          );
         }
       } else {
         // The drag ends inside the box.
@@ -190,8 +187,11 @@ class Gestures {
     PointerDeviceKind kind = PointerDeviceKind.touch,
     int buttons = kPrimaryButton,
   }) async {
-    final TestGesture result =
-        _createGesture(pointer: pointer, kind: kind, buttons: buttons);
+    final TestGesture result = _createGesture(
+      pointer: pointer,
+      kind: kind,
+      buttons: buttons,
+    );
     if (kind == PointerDeviceKind.trackpad) {
       await result.panZoomStart(downLocation);
     } else {

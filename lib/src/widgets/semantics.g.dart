@@ -37,7 +37,9 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   @useResult
   WidgetSelector<Semantics> withContainer(bool? value) {
     return withDiagnosticProp<bool>(
-        'container', (it) => value == null ? it.isNull() : it.equals(value));
+      'container',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where properties matches the condition.
@@ -48,7 +50,8 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// ```
   @useResult
   WidgetSelector<Semantics> whereProperties(
-      MatchProp<SemanticsProperties> match) {
+    MatchProp<SemanticsProperties> match,
+  ) {
     return withDiagnosticProp<SemanticsProperties>('properties', match);
   }
 
@@ -61,7 +64,9 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   @useResult
   WidgetSelector<Semantics> withProperties(SemanticsProperties? value) {
     return withDiagnosticProp<SemanticsProperties>(
-        'properties', (it) => value == null ? it.isNull() : it.equals(value));
+      'properties',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where checked matches the condition.
@@ -84,7 +89,9 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   @useResult
   WidgetSelector<Semantics> withChecked(bool? value) {
     return withDiagnosticProp<bool>(
-        'checked', (it) => value == null ? it.isNull() : it.equals(value));
+      'checked',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where mixed matches the condition.
@@ -107,7 +114,9 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   @useResult
   WidgetSelector<Semantics> withMixed(bool? value) {
     return withDiagnosticProp<bool>(
-        'mixed', (it) => value == null ? it.isNull() : it.equals(value));
+      'mixed',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where selected matches the condition.
@@ -130,7 +139,9 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   @useResult
   WidgetSelector<Semantics> withSelected(bool? value) {
     return withDiagnosticProp<bool>(
-        'selected', (it) => value == null ? it.isNull() : it.equals(value));
+      'selected',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where label matches the condition.
@@ -153,7 +164,9 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   @useResult
   WidgetSelector<Semantics> withLabel(String? value) {
     return withDiagnosticProp<String>(
-        'label', (it) => value == null ? it.isNull() : it.equals(value));
+      'label',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where attributedLabel matches the condition.
@@ -175,8 +188,10 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// ```
   @useResult
   WidgetSelector<Semantics> withAttributedLabel(String? value) {
-    return withDiagnosticProp<String>('attributedLabel',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<String>(
+      'attributedLabel',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where value matches the condition.
@@ -199,7 +214,9 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   @useResult
   WidgetSelector<Semantics> withValue(String? value) {
     return withDiagnosticProp<String>(
-        'value', (it) => value == null ? it.isNull() : it.equals(value));
+      'value',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where attributedValue matches the condition.
@@ -221,8 +238,10 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// ```
   @useResult
   WidgetSelector<Semantics> withAttributedValue(String? value) {
-    return withDiagnosticProp<String>('attributedValue',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<String>(
+      'attributedValue',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where increasedValue matches the condition.
@@ -244,8 +263,10 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// ```
   @useResult
   WidgetSelector<Semantics> withIncreasedValue(String? value) {
-    return withDiagnosticProp<String>('increasedValue',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<String>(
+      'increasedValue',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where attributedIncreasedValue matches the condition.
@@ -256,7 +277,8 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// ```
   @useResult
   WidgetSelector<Semantics> whereAttributedIncreasedValue(
-      MatchProp<String> match) {
+    MatchProp<String> match,
+  ) {
     return withDiagnosticProp<String>('attributedIncreasedValue', match);
   }
 
@@ -268,8 +290,10 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// ```
   @useResult
   WidgetSelector<Semantics> withAttributedIncreasedValue(String? value) {
-    return withDiagnosticProp<String>('attributedIncreasedValue',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<String>(
+      'attributedIncreasedValue',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where decreasedValue matches the condition.
@@ -291,8 +315,10 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// ```
   @useResult
   WidgetSelector<Semantics> withDecreasedValue(String? value) {
-    return withDiagnosticProp<String>('decreasedValue',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<String>(
+      'decreasedValue',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where attributedDecreasedValue matches the condition.
@@ -303,7 +329,8 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// ```
   @useResult
   WidgetSelector<Semantics> whereAttributedDecreasedValue(
-      MatchProp<String> match) {
+    MatchProp<String> match,
+  ) {
     return withDiagnosticProp<String>('attributedDecreasedValue', match);
   }
 
@@ -315,8 +342,10 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// ```
   @useResult
   WidgetSelector<Semantics> withAttributedDecreasedValue(String? value) {
-    return withDiagnosticProp<String>('attributedDecreasedValue',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<String>(
+      'attributedDecreasedValue',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where hint matches the condition.
@@ -339,7 +368,9 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   @useResult
   WidgetSelector<Semantics> withHint(String? value) {
     return withDiagnosticProp<String>(
-        'hint', (it) => value == null ? it.isNull() : it.equals(value));
+      'hint',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where attributedHint matches the condition.
@@ -361,8 +392,10 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// ```
   @useResult
   WidgetSelector<Semantics> withAttributedHint(String? value) {
-    return withDiagnosticProp<String>('attributedHint',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<String>(
+      'attributedHint',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where tooltip matches the condition.
@@ -385,7 +418,9 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   @useResult
   WidgetSelector<Semantics> withTooltip(String? value) {
     return withDiagnosticProp<String>(
-        'tooltip', (it) => value == null ? it.isNull() : it.equals(value));
+      'tooltip',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where textDirection matches the condition.
@@ -407,8 +442,10 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// ```
   @useResult
   WidgetSelector<Semantics> withTextDirection(TextDirection? value) {
-    return withDiagnosticProp<TextDirection>('textDirection',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<TextDirection>(
+      'textDirection',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where sortKey matches the condition.
@@ -431,7 +468,9 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   @useResult
   WidgetSelector<Semantics> withSortKey(SemanticsSortKey? value) {
     return withDiagnosticProp<SemanticsSortKey>(
-        'sortKey', (it) => value == null ? it.isNull() : it.equals(value));
+      'sortKey',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where hintOverrides matches the condition.
@@ -442,7 +481,8 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// ```
   @useResult
   WidgetSelector<Semantics> whereHintOverrides(
-      MatchProp<SemanticsHintOverrides> match) {
+    MatchProp<SemanticsHintOverrides> match,
+  ) {
     return withDiagnosticProp<SemanticsHintOverrides>('hintOverrides', match);
   }
 
@@ -454,8 +494,10 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// ```
   @useResult
   WidgetSelector<Semantics> withHintOverrides(SemanticsHintOverrides? value) {
-    return withDiagnosticProp<SemanticsHintOverrides>('hintOverrides',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<SemanticsHintOverrides>(
+      'hintOverrides',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where renderObject matches the condition.
@@ -466,9 +508,12 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// ```
   @useResult
   WidgetSelector<Semantics> whereRenderObject(
-      MatchProp<RenderSemanticsAnnotations> match) {
+    MatchProp<RenderSemanticsAnnotations> match,
+  ) {
     return withDiagnosticProp<RenderSemanticsAnnotations>(
-        'renderObject', match);
+      'renderObject',
+      match,
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Semantics] where renderObject equals (==) [value].
@@ -479,9 +524,12 @@ extension SemanticsSelector on WidgetSelector<Semantics> {
   /// ```
   @useResult
   WidgetSelector<Semantics> withRenderObject(
-      RenderSemanticsAnnotations? value) {
+    RenderSemanticsAnnotations? value,
+  ) {
     return withDiagnosticProp<RenderSemanticsAnnotations>(
-        'renderObject', (it) => value == null ? it.isNull() : it.equals(value));
+      'renderObject',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 
@@ -505,7 +553,9 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// ```
   WidgetMatcher<Semantics> hasContainer(bool? value) {
     return hasDiagnosticProp<bool>(
-        'container', (it) => value == null ? it.isNull() : it.equals(value));
+      'container',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that properties of [Semantics] matches the condition in [match].
@@ -515,7 +565,8 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// spot<Semantics>().existsOnce().hasPropertiesWhere((it) => it.equals(SemanticsProperties()));
   /// ```
   WidgetMatcher<Semantics> hasPropertiesWhere(
-      MatchProp<SemanticsProperties> match) {
+    MatchProp<SemanticsProperties> match,
+  ) {
     return hasDiagnosticProp<SemanticsProperties>('properties', match);
   }
 
@@ -527,7 +578,9 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// ```
   WidgetMatcher<Semantics> hasProperties(SemanticsProperties? value) {
     return hasDiagnosticProp<SemanticsProperties>(
-        'properties', (it) => value == null ? it.isNull() : it.equals(value));
+      'properties',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that checked of [Semantics] matches the condition in [match].
@@ -548,7 +601,9 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// ```
   WidgetMatcher<Semantics> hasChecked(bool? value) {
     return hasDiagnosticProp<bool>(
-        'checked', (it) => value == null ? it.isNull() : it.equals(value));
+      'checked',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that mixed of [Semantics] matches the condition in [match].
@@ -569,7 +624,9 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// ```
   WidgetMatcher<Semantics> hasMixed(bool? value) {
     return hasDiagnosticProp<bool>(
-        'mixed', (it) => value == null ? it.isNull() : it.equals(value));
+      'mixed',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that selected of [Semantics] matches the condition in [match].
@@ -590,7 +647,9 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// ```
   WidgetMatcher<Semantics> hasSelected(bool? value) {
     return hasDiagnosticProp<bool>(
-        'selected', (it) => value == null ? it.isNull() : it.equals(value));
+      'selected',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that label of [Semantics] matches the condition in [match].
@@ -611,7 +670,9 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// ```
   WidgetMatcher<Semantics> hasLabel(String? value) {
     return hasDiagnosticProp<String>(
-        'label', (it) => value == null ? it.isNull() : it.equals(value));
+      'label',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that attributedLabel of [Semantics] matches the condition in [match].
@@ -631,8 +692,10 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// spot<Semantics>().existsOnce().hasAttributedLabel('foo');
   /// ```
   WidgetMatcher<Semantics> hasAttributedLabel(String? value) {
-    return hasDiagnosticProp<String>('attributedLabel',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<String>(
+      'attributedLabel',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that value of [Semantics] matches the condition in [match].
@@ -653,7 +716,9 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// ```
   WidgetMatcher<Semantics> hasValue(String? value) {
     return hasDiagnosticProp<String>(
-        'value', (it) => value == null ? it.isNull() : it.equals(value));
+      'value',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that attributedValue of [Semantics] matches the condition in [match].
@@ -673,8 +738,10 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// spot<Semantics>().existsOnce().hasAttributedValue('foo');
   /// ```
   WidgetMatcher<Semantics> hasAttributedValue(String? value) {
-    return hasDiagnosticProp<String>('attributedValue',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<String>(
+      'attributedValue',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that increasedValue of [Semantics] matches the condition in [match].
@@ -694,8 +761,10 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// spot<Semantics>().existsOnce().hasIncreasedValue('foo');
   /// ```
   WidgetMatcher<Semantics> hasIncreasedValue(String? value) {
-    return hasDiagnosticProp<String>('increasedValue',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<String>(
+      'increasedValue',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that attributedIncreasedValue of [Semantics] matches the condition in [match].
@@ -705,7 +774,8 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// spot<Semantics>().existsOnce().hasAttributedIncreasedValueWhere((it) => it.equals('foo'));
   /// ```
   WidgetMatcher<Semantics> hasAttributedIncreasedValueWhere(
-      MatchProp<String> match) {
+    MatchProp<String> match,
+  ) {
     return hasDiagnosticProp<String>('attributedIncreasedValue', match);
   }
 
@@ -716,8 +786,10 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// spot<Semantics>().existsOnce().hasAttributedIncreasedValue('foo');
   /// ```
   WidgetMatcher<Semantics> hasAttributedIncreasedValue(String? value) {
-    return hasDiagnosticProp<String>('attributedIncreasedValue',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<String>(
+      'attributedIncreasedValue',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that decreasedValue of [Semantics] matches the condition in [match].
@@ -737,8 +809,10 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// spot<Semantics>().existsOnce().hasDecreasedValue('foo');
   /// ```
   WidgetMatcher<Semantics> hasDecreasedValue(String? value) {
-    return hasDiagnosticProp<String>('decreasedValue',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<String>(
+      'decreasedValue',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that attributedDecreasedValue of [Semantics] matches the condition in [match].
@@ -748,7 +822,8 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// spot<Semantics>().existsOnce().hasAttributedDecreasedValueWhere((it) => it.equals('foo'));
   /// ```
   WidgetMatcher<Semantics> hasAttributedDecreasedValueWhere(
-      MatchProp<String> match) {
+    MatchProp<String> match,
+  ) {
     return hasDiagnosticProp<String>('attributedDecreasedValue', match);
   }
 
@@ -759,8 +834,10 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// spot<Semantics>().existsOnce().hasAttributedDecreasedValue('foo');
   /// ```
   WidgetMatcher<Semantics> hasAttributedDecreasedValue(String? value) {
-    return hasDiagnosticProp<String>('attributedDecreasedValue',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<String>(
+      'attributedDecreasedValue',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that hint of [Semantics] matches the condition in [match].
@@ -781,7 +858,9 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// ```
   WidgetMatcher<Semantics> hasHint(String? value) {
     return hasDiagnosticProp<String>(
-        'hint', (it) => value == null ? it.isNull() : it.equals(value));
+      'hint',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that attributedHint of [Semantics] matches the condition in [match].
@@ -801,8 +880,10 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// spot<Semantics>().existsOnce().hasAttributedHint('foo');
   /// ```
   WidgetMatcher<Semantics> hasAttributedHint(String? value) {
-    return hasDiagnosticProp<String>('attributedHint',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<String>(
+      'attributedHint',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that tooltip of [Semantics] matches the condition in [match].
@@ -823,7 +904,9 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// ```
   WidgetMatcher<Semantics> hasTooltip(String? value) {
     return hasDiagnosticProp<String>(
-        'tooltip', (it) => value == null ? it.isNull() : it.equals(value));
+      'tooltip',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that textDirection of [Semantics] matches the condition in [match].
@@ -833,7 +916,8 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// spot<Semantics>().existsOnce().hasTextDirectionWhere((it) => it.equals(TextDirection.values.first));
   /// ```
   WidgetMatcher<Semantics> hasTextDirectionWhere(
-      MatchProp<TextDirection> match) {
+    MatchProp<TextDirection> match,
+  ) {
     return hasDiagnosticProp<TextDirection>('textDirection', match);
   }
 
@@ -844,8 +928,10 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// spot<Semantics>().existsOnce().hasTextDirection(TextDirection.values.first);
   /// ```
   WidgetMatcher<Semantics> hasTextDirection(TextDirection? value) {
-    return hasDiagnosticProp<TextDirection>('textDirection',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<TextDirection>(
+      'textDirection',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that sortKey of [Semantics] matches the condition in [match].
@@ -866,7 +952,9 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// ```
   WidgetMatcher<Semantics> hasSortKey(SemanticsSortKey? value) {
     return hasDiagnosticProp<SemanticsSortKey>(
-        'sortKey', (it) => value == null ? it.isNull() : it.equals(value));
+      'sortKey',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that hintOverrides of [Semantics] matches the condition in [match].
@@ -876,7 +964,8 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// spot<Semantics>().existsOnce().hasHintOverridesWhere((it) => it.equals(SemanticsHintOverrides()));
   /// ```
   WidgetMatcher<Semantics> hasHintOverridesWhere(
-      MatchProp<SemanticsHintOverrides> match) {
+    MatchProp<SemanticsHintOverrides> match,
+  ) {
     return hasDiagnosticProp<SemanticsHintOverrides>('hintOverrides', match);
   }
 
@@ -887,8 +976,10 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// spot<Semantics>().existsOnce().hasHintOverrides(SemanticsHintOverrides());
   /// ```
   WidgetMatcher<Semantics> hasHintOverrides(SemanticsHintOverrides? value) {
-    return hasDiagnosticProp<SemanticsHintOverrides>('hintOverrides',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<SemanticsHintOverrides>(
+      'hintOverrides',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that renderObject of [Semantics] matches the condition in [match].
@@ -898,7 +989,8 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// spot<Semantics>().existsOnce().hasRenderObjectWhere((it) => it.equals(RenderBox()));
   /// ```
   WidgetMatcher<Semantics> hasRenderObjectWhere(
-      MatchProp<RenderSemanticsAnnotations> match) {
+    MatchProp<RenderSemanticsAnnotations> match,
+  ) {
     return hasDiagnosticProp<RenderSemanticsAnnotations>('renderObject', match);
   }
 
@@ -910,7 +1002,9 @@ extension SemanticsMatcher on WidgetMatcher<Semantics> {
   /// ```
   WidgetMatcher<Semantics> hasRenderObject(RenderSemanticsAnnotations? value) {
     return hasDiagnosticProp<RenderSemanticsAnnotations>(
-        'renderObject', (it) => value == null ? it.isNull() : it.equals(value));
+      'renderObject',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 

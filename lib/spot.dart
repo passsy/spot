@@ -229,10 +229,7 @@ WidgetSelector<W> spotSingle<W extends Widget>({
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {
-  return _global.spotSingle<W>(
-    parents: parents,
-    children: children,
-  );
+  return _global.spotSingle<W>(parents: parents, children: children);
 }
 
 /// Creates a chainable [WidgetSelector] that matches a all Widgets of
@@ -252,10 +249,7 @@ WidgetSelector<W> spot<W extends Widget>({
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {
-  return _global.spot<W>(
-    parents: parents,
-    children: children,
-  );
+  return _global.spot<W>(parents: parents, children: children);
 }
 
 /// Creates a [WidgetSelector] that includes only offstage widgets in the selection.
@@ -296,11 +290,7 @@ WidgetSelector<W> spotWidget<W extends Widget>(
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {
-  return _global.spotWidget<W>(
-    widget,
-    parents: parents,
-    children: children,
-  );
+  return _global.spotWidget<W>(widget, parents: parents, children: children);
 }
 
 /// Creates a chainable [WidgetSelector] that matches a single [Widget] by
@@ -327,11 +317,7 @@ WidgetSelector<W> spotWidgets<W extends Widget>(
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {
-  return _global.spotWidgets<W>(
-    widget,
-    parents: parents,
-    children: children,
-  );
+  return _global.spotWidgets<W>(widget, parents: parents, children: children);
 }
 
 /// Creates a chainable [WidgetSelector] that finds the widget that is currently
@@ -481,11 +467,7 @@ WidgetSelector<Icon> spotSingleIcon(
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {
-  return _global.spotSingleIcon(
-    icon,
-    parents: parents,
-    children: children,
-  );
+  return _global.spotSingleIcon(icon, parents: parents, children: children);
 }
 
 /// Creates a chainable [WidgetSelector] that finds a [Icon] based on [IconData]
@@ -496,11 +478,7 @@ WidgetSelector<Icon> spotIcon(
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {
-  return _global.spotIcon(
-    icon,
-    parents: parents,
-    children: children,
-  );
+  return _global.spotIcon(icon, parents: parents, children: children);
 }
 
 /// Creates a chainable [WidgetSelector] that finds all widgets of type [Icon]
@@ -512,11 +490,7 @@ WidgetSelector<Icon> spotIcons(
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {
-  return _global.spotIcons(
-    icon,
-    parents: parents,
-    children: children,
-  );
+  return _global.spotIcons(icon, parents: parents, children: children);
 }
 
 /// Creates a chainable [WidgetSelector] that finds a widget with the given [key].
@@ -527,11 +501,7 @@ WidgetSelector<W> spotSingleKey<W extends Widget>(
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {
-  return _global.spotSingleKey<W>(
-    key,
-    parents: parents,
-    children: children,
-  );
+  return _global.spotSingleKey<W>(key, parents: parents, children: children);
 }
 
 /// Creates a chainable [WidgetSelector] that finds a widget with the given [key].
@@ -541,11 +511,7 @@ WidgetSelector<W> spotKey<W extends Widget>(
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {
-  return _global.spotKey<W>(
-    key,
-    parents: parents,
-    children: children,
-  );
+  return _global.spotKey<W>(key, parents: parents, children: children);
 }
 
 /// Creates a chainable [WidgetSelector] that finds all widgets with the given
@@ -557,9 +523,5 @@ WidgetSelector<W> spotKeys<W extends Widget>(
   List<WidgetSelector> parents = const [],
   List<WidgetSelector> children = const [],
 }) {
-  return _global.spotKeys<W>(
-    key,
-    parents: parents,
-    children: children,
-  );
+  return _global.spotKeys<W>(key, parents: parents, children: children);
 }

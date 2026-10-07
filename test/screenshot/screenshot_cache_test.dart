@@ -43,9 +43,7 @@ void main() {
       expect(await _pixelAt(green, 50, 50), Color(0xff00ff00));
     });
 
-    testWidgets('each repaint boundary is rastered on its own', (
-      tester,
-    ) async {
+    testWidgets('each repaint boundary is rastered on its own', (tester) async {
       // Rasters are cached per repaint boundary, not per frame. Two
       // widget-scoped screenshots of one frame must not hand each other the
       // raster of the wrong layer.
@@ -183,7 +181,7 @@ void main() {
       final thin = await takeScreenshot(
         print: false,
         annotators: [
-          ArrowAnnotator(start: Offset(10, 10), end: Offset(40, 40))
+          ArrowAnnotator(start: Offset(10, 10), end: Offset(40, 40)),
         ],
       );
 
@@ -192,12 +190,14 @@ void main() {
       final wide = await takeScreenshot(
         print: false,
         annotators: [
-          ArrowAnnotator(start: Offset(10, 10), end: Offset(40, 40))
+          ArrowAnnotator(start: Offset(10, 10), end: Offset(40, 40)),
         ],
       );
 
-      expect(await _pngOf(thin.annotations.single),
-          isNot(await _pngOf(wide.annotations.single)));
+      expect(
+        await _pngOf(thin.annotations.single),
+        isNot(await _pngOf(wide.annotations.single)),
+      );
     });
 
     testWidgets('an annotation is not reused across view sizes', (
@@ -255,13 +255,13 @@ void main() {
 
       final renders = <String>[];
       await renderAnnotationLayers(screenshot, [
-        _ListAnnotator([1, 2], renders)
+        _ListAnnotator([1, 2], renders),
       ]);
       await renderAnnotationLayers(screenshot, [
-        _ListAnnotator([1, 2], renders)
+        _ListAnnotator([1, 2], renders),
       ]);
       await renderAnnotationLayers(screenshot, [
-        _ListAnnotator([1, 3], renders)
+        _ListAnnotator([1, 3], renders),
       ]);
 
       expect(renders, ['1,2', '1,3']);
@@ -299,31 +299,41 @@ void main() {
     });
   });
 
-  testWidgets('the built-in annotators key on their inputs', (
-    tester,
-  ) async {
+  testWidgets('the built-in annotators key on their inputs', (tester) async {
     // Keys are compared by their items, so the rects and labels of two
     // separately built highlights match without either implementing equality.
     expect(
-      HighlightAnnotator.rects([Rect.fromLTWH(0, 0, 1, 1)], labels: ['a'])
-          .cacheKey,
-      HighlightAnnotator.rects([Rect.fromLTWH(0, 0, 1, 1)], labels: ['a'])
-          .cacheKey,
+      HighlightAnnotator.rects(
+        [Rect.fromLTWH(0, 0, 1, 1)],
+        labels: ['a'],
+      ).cacheKey,
+      HighlightAnnotator.rects(
+        [Rect.fromLTWH(0, 0, 1, 1)],
+        labels: ['a'],
+      ).cacheKey,
     );
     expect(
-      HighlightAnnotator.rects([Rect.fromLTWH(0, 0, 1, 1)], labels: ['a'])
-          .cacheKey,
+      HighlightAnnotator.rects(
+        [Rect.fromLTWH(0, 0, 1, 1)],
+        labels: ['a'],
+      ).cacheKey,
       isNot(
-        HighlightAnnotator.rects([Rect.fromLTWH(0, 0, 2, 2)], labels: ['a'])
-            .cacheKey,
+        HighlightAnnotator.rects(
+          [Rect.fromLTWH(0, 0, 2, 2)],
+          labels: ['a'],
+        ).cacheKey,
       ),
     );
     expect(
-      HighlightAnnotator.rects([Rect.fromLTWH(0, 0, 1, 1)], labels: ['a'])
-          .cacheKey,
+      HighlightAnnotator.rects(
+        [Rect.fromLTWH(0, 0, 1, 1)],
+        labels: ['a'],
+      ).cacheKey,
       isNot(
-        HighlightAnnotator.rects([Rect.fromLTWH(0, 0, 1, 1)], labels: ['b'])
-            .cacheKey,
+        HighlightAnnotator.rects(
+          [Rect.fromLTWH(0, 0, 1, 1)],
+          labels: ['b'],
+        ).cacheKey,
       ),
     );
     expect(
