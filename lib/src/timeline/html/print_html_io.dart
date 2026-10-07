@@ -96,12 +96,20 @@ extension HtmlTimelinePrinter on Timeline {
   /// the link printed back then kept opening it. What it showed - the source,
   /// the events, the captures - was from a run that no longer exists, which
   /// reads as the timeline being stale rather than absent.
+  ///
+  /// Only a report this test file wrote is removed. The directory is named
+  /// after the test alone, so a test of the same name in another file shares
+  /// it, and that one passing must not take this one's failure report away.
   void deleteHtmlReport() {
     final directory = reportDirectory();
     if (directory == null || !directory.existsSync()) {
       return;
     }
     try {
+      final owner = directory.file(_suiteMarkerFileName);
+      if (owner.existsSync() && owner.readAsStringSync() != _suitePath()) {
+        return;
+      }
       directory.deleteSync(recursive: true);
     } on FileSystemException catch (e, stackTrace) {
       developer.log(
@@ -112,6 +120,9 @@ extension HtmlTimelinePrinter on Timeline {
       );
     }
   }
+
+  /// The test file this timeline belongs to, empty when it is not known.
+  String _suitePath() => test.suite.path ?? '';
 
   /// Prints the timeline as an HTML file.
   Future<void> printHTML() async {
@@ -127,6 +138,8 @@ extension HtmlTimelinePrinter on Timeline {
       spotTempDir.deleteSync(recursive: true);
     }
     spotTempDir.createSync(recursive: true);
+
+    spotTempDir.file(_suiteMarkerFileName).writeAsStringSync(_suitePath());
 
     const screenshotsDirName = 'screenshots';
     final screenshotsDir = spotTempDir.directory(screenshotsDirName);
@@ -261,6 +274,10 @@ extension HtmlTimelinePrinter on Timeline {
     }
   }
 }
+
+/// Holds the path of the test file a report was written by, see
+/// [HtmlTimelinePrinter.deleteHtmlReport].
+const String _suiteMarkerFileName = '.suite';
 
 bool? _isTimelineHotRestartServerRunningCached;
 
