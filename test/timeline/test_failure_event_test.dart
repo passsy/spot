@@ -129,6 +129,49 @@ void main() {
     _expectLastFailureHasScreenshot();
   }, timeout: const Timeout(Duration(minutes: 2)));
 
+  test('an exception the test took is not what failed it', () async {
+    const realFailure = "expect(1, 2, reason: 'the counter never moved');";
+    const failure = '''
+    FlutterError.reportError(
+      FlutterErrorDetails(exception: 'expected and taken'),
+    );
+    expect(tester.takeException(), 'expected and taken');
+    $realFailure''';
+    final output = await _outputOfFailingTest(failure: failure);
+    if (output == null) {
+      return;
+    }
+
+    final event = _failureEventBlock(output);
+    expect(event, contains('the counter never moved'));
+    expect(event, isNot(contains('expected and taken')));
+    final line = _lineOf(_failingTest(failure: failure), realFailure);
+    expect(event, contains(RegExp('Caller: at .*temp_test\\.dart:$line:')));
+  }, timeout: const Timeout(Duration(minutes: 2)));
+
+  test('the first exception stays the failure when more follow', () async {
+    const failure = '''
+    FlutterError.reportError(
+      FlutterErrorDetails(exception: 'the real cause'),
+    );
+    expect(1, 2, reason: 'only fallout');''';
+    // All of the output, not just the timeline, for what flutter_test printed.
+    final output = await process.runTestInProcessAndCaptureOutPut(
+      shouldFail: true,
+      testFileText: () => _failingTest(failure: failure),
+    );
+    if (output == null) {
+      return;
+    }
+
+    final event = _failureEventBlock(output);
+    expect(event, contains('the real cause'));
+    expect(event, isNot(contains('only fallout')));
+    // flutter_test still holds both, which it only does when the first one
+    // was never taken away from it.
+    expect(output, contains('Multiple exceptions (2)'));
+  }, timeout: const Timeout(Duration(minutes: 2)));
+
   test(
     'the failure is captured while the failing frame is still on screen',
     () async {

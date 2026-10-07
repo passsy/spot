@@ -330,8 +330,9 @@ final class _Timeline extends Timeline {
   @override
   final LiveTest test;
 
-  /// The first error [FlutterError.onError] saw, which is the only place the
-  /// exception that failed the test survives.
+  /// The first error [FlutterError.onError] saw that the test did not take
+  /// with `takeException()`, which is the only place the exception that failed
+  /// the test survives.
   ///
   /// By the time the timeline is rendered, `test.errors` holds nothing but
   /// 'Test failed. See exception logs above.' with an empty stack trace.
@@ -358,8 +359,9 @@ final class _Timeline extends Timeline {
   void _startCapturingFlutterErrors() {
     _previousOnError = FlutterError.onError;
     _installedOnError = (details) {
-      // The first error ends the test. Whatever follows is its fallout.
-      if (_firstFlutterError == null) {
+      // The first error ends the test and whatever follows is its fallout,
+      // unless the test took it with `takeException()` and carried on.
+      if (_firstFlutterError == null || _testTookFirstFlutterError()) {
         _firstFlutterError = details;
         _treeWhenTestFailed = _currentTreeSnapshotOrNull();
         _screenshotWhenTestFailed = _failureScreenshotSync();
@@ -367,6 +369,29 @@ final class _Timeline extends Timeline {
       _previousOnError?.call(details);
     };
     FlutterError.onError = _installedOnError;
+  }
+
+  /// Whether the test consumed [_firstFlutterError] with `takeException()`,
+  /// which makes it an expected error and not the reason the test failed.
+  ///
+  /// Called when another error arrives. flutter_test has no way to ask whether
+  /// an exception is still pending, only `takeException()` which also removes
+  /// it. So it is taken and, when there was one, handed straight back to the
+  /// handler it came from, which stores it again.
+  ///
+  /// Only under the automated binding. The live binding dumps an exception to
+  /// the console every time it is handed one, and a plain test has no binding
+  /// holding exceptions at all. Both keep the first error.
+  bool _testTookFirstFlutterError() {
+    final binding = SchedulerBinding.instance;
+    if (binding is! AutomatedTestWidgetsFlutterBinding) {
+      return false;
+    }
+    if (binding.takeException() == null) {
+      return true;
+    }
+    _previousOnError?.call(_firstFlutterError!);
+    return false;
   }
 
   void _stopCapturingFlutterErrors() {
