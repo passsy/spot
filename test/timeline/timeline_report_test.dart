@@ -12,6 +12,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../util/run_test_in_process.dart';
 import 'printed_timeline.dart';
+import 'timeline_test_widget.dart';
 
 /// What the timeline prints after a test ended, which depends on whether the
 /// test failed, and the global mode set in `main()`.
@@ -31,7 +32,7 @@ void main() {
   test('the global mode from main() applies to every test', () {
     final output = printed['global live, passes']!;
     expect(output, isNot(contains('🔴')));
-    expect(printedEvents(output).map((e) => e.summary), _tapCounterEvents);
+    expect(printedEvents(output).map((e) => e.summary), tapCounterEvents);
     _expectHtmlReport(output);
   });
 
@@ -39,7 +40,7 @@ void main() {
     final output = printed['live, fails']!;
     expect(
       printedEvents(output).map((e) => e.summary),
-      [..._tapCounterEvents, _failedAssertion],
+      [...tapCounterEvents, _failedAssertion],
     );
     expect(output, isNot(contains('Timeline of test:')));
     expect(output, isNot(contains('Test failed, generating timeline report')));
@@ -59,7 +60,7 @@ void main() {
     expect(output, contains('Timeline of test: $_group reportOnError, fails'));
     expect(
       printedEvents(output).map((e) => e.summary),
-      [..._tapCounterEvents, _failedAssertion],
+      [...tapCounterEvents, _failedAssertion],
     );
     _expectHtmlReport(output);
   });
@@ -68,7 +69,7 @@ void main() {
     final output = printed['always, passes']!;
     expect(output, contains('Generating timeline report'));
     expect(output, contains('Timeline of test: $_group always, passes'));
-    expect(printedEvents(output).map((e) => e.summary), _tapCounterEvents);
+    expect(printedEvents(output).map((e) => e.summary), tapCounterEvents);
     _expectHtmlReport(output);
   });
 
@@ -85,7 +86,7 @@ void main() {
 final String _group = 'nested-${Random().nextInt(1 << 32).toRadixString(36)}';
 
 /// The tests of the nested run. All tap the counter, which records
-/// [_tapCounterEvents], and the failing ones add [_failedAssertion].
+/// [tapCounterEvents], and the failing ones add [_failedAssertion].
 ///
 /// The nested run has `CI` set, so a report prints the full timeline next to
 /// the link to the HTML report.
@@ -135,16 +136,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 
 ${widget.replaceAll(RegExp('^import .*\$', multiLine: true), '')}
-
-Future<void> tapCounter(WidgetTester tester) async {
-  await tester.pumpWidget(const TimelineTestWidget());
-  spotIcon(Icons.add).existsOnce();
-  spotText('Counter: 3').existsOnce();
-  await act.tap(spotIcon(Icons.add));
-  spotText('Counter: 4').existsOnce();
-  await act.tap(spotIcon(Icons.remove));
-  spotText('Counter: 3').existsOnce();
-}
 
 void main() {
   globalTimelineMode = TimelineMode.live;
@@ -198,17 +189,6 @@ void _expectHtmlReport(String output) {
   final screenshots = Directory('${html.parent.path}/screenshots').listSync();
   expect(screenshots, isNotEmpty);
 }
-
-final _tapCounterEvents = [
-  'Assertion: Icon Widget with icon: "IconData(U+0E047)" exists once.',
-  'Assertion: Widget with text contains text "Counter: 3" exists once.',
-  'Assertion: Icon Widget with icon: "IconData(U+0E047)" exists once.',
-  'Tap Event: Tap Icon Widget with icon: "IconData(U+0E047)"',
-  'Assertion: Widget with text contains text "Counter: 4" exists once.',
-  'Assertion: Icon Widget with icon: "IconData(U+0E516)" exists once.',
-  'Tap Event: Tap Icon Widget with icon: "IconData(U+0E516)"',
-  'Assertion: Widget with text contains text "Counter: 3" exists once.',
-];
 
 const _failedAssertion = 'Assertion Failed: Could not find Widget with text '
     'contains text "Counter: 99" in widget tree, expected exactly 1.';

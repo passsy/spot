@@ -82,13 +82,21 @@ void main() {
       });
 
       final output = await _capture(TimelineMode.live, () async {
-        await _tapCounter(tester);
+        await tapCounter(tester);
       });
 
       final events = printedEvents(output);
-      expect(events.map((e) => e.summary), _tapCounterEvents);
+      expect(events.map((e) => e.summary), tapCounterEvents);
       for (final event in events) {
-        expect(event.caller, contains('timeline_mode_test.dart:'));
+        // The VM keeps the frame of this file that called in, dart2wasm only
+        // the frame of the library with tapCounter.
+        expect(
+          event.caller,
+          anyOf(
+            contains('timeline_mode_test.dart:'),
+            contains('timeline_test_widget.dart:'),
+          ),
+        );
         expect(event.timestamp, isNotNull);
         if (kIsWeb) {
           expect(
@@ -135,15 +143,15 @@ void main() {
 
     testWidgets('stops recording when turned off', (tester) async {
       final output = await _capture(TimelineMode.live, () async {
-        await _tapCounter(tester);
+        await tapCounter(tester);
         timeline.mode = TimelineMode.off;
         await act.tap(spotIcon(Icons.clear));
         spotText('Counter: 0').existsOnce();
       });
 
-      expect(printedEvents(output).map((e) => e.summary), _tapCounterEvents);
+      expect(printedEvents(output).map((e) => e.summary), tapCounterEvents);
       expect(output, contains('⏸︎ - Timeline recording is off'));
-      expect(timeline.events, hasLength(_tapCounterEvents.length));
+      expect(timeline.events, hasLength(tapCounterEvents.length));
     });
   });
 
@@ -151,13 +159,13 @@ void main() {
     group(mode.name, () {
       testWidgets('records every event without printing it', (tester) async {
         final output = await _capture(mode, () async {
-          await _tapCounter(tester);
+          await tapCounter(tester);
         });
 
         expect(output, isEmpty);
         expect(
           timeline.events.map((e) => '${e.eventType.label}: ${e.details}'),
-          _tapCounterEvents,
+          tapCounterEvents,
         );
       });
     });
@@ -166,7 +174,7 @@ void main() {
   group('off', () {
     testWidgets('records nothing', (tester) async {
       final output = await _capture(TimelineMode.off, () async {
-        await _tapCounter(tester);
+        await tapCounter(tester);
         await _dragList(tester, maxIteration: 23);
       });
 
@@ -186,31 +194,6 @@ Future<String> _capture(
   });
   return await captureConsoleOutput(body);
 }
-
-Future<void> _tapCounter(WidgetTester tester) async {
-  await tester.pumpWidget(const TimelineTestWidget());
-  spotIcon(Icons.add).existsOnce();
-  spotText('Counter: 3').existsOnce();
-  await act.tap(spotIcon(Icons.add));
-  spotText('Counter: 4').existsOnce();
-  await act.tap(spotIcon(Icons.remove));
-  spotText('Counter: 3').existsOnce();
-}
-
-final _add = spotIcon(Icons.add).toStringBreadcrumb();
-final _remove = spotIcon(Icons.remove).toStringBreadcrumb();
-
-/// The events [_tapCounter] records, `act.tap` asserts its target first.
-final _tapCounterEvents = [
-  'Assertion: $_add exists once.',
-  'Assertion: ${spotText('Counter: 3')} exists once.',
-  'Assertion: $_add exists once.',
-  'Tap Event: Tap $_add',
-  'Assertion: ${spotText('Counter: 4')} exists once.',
-  'Assertion: $_remove exists once.',
-  'Tap Event: Tap $_remove',
-  'Assertion: ${spotText('Counter: 3')} exists once.',
-];
 
 final _dragTarget = spotText('Item at index: 27', whole: true);
 
