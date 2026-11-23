@@ -12,12 +12,6 @@ void main() {
   test('roboto is loaded per default', skip: kIsWeb, () async {
     final testProject = FontTestProject('test/fonts/templates/default_font');
     await testProject.create();
-    debugPrint('Run pub get');
-    await Process.run(
-      flutterExe,
-      ['pub', 'get'],
-      workingDirectory: testProject.workingDir.path,
-    );
     debugPrint('Run tests');
     final test = await Process.start(
       flutterExe,
