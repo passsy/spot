@@ -51,6 +51,10 @@ void dragTests() {
           ..existsOnce();
         final secondItem = spotText('Item at index: 27', whole: true)
           ..existsOnce();
+        // The width of the text, and so its x, depends on the fonts an
+        // earlier test may have loaded into the engine.
+        final startX =
+            secondItem.snapshotRenderBox().localToGlobal(Offset.zero).dx;
         await act.dragUntilVisible(
           dragStart: firstItem,
           dragTarget: secondItem,
@@ -64,7 +68,7 @@ void dragTests() {
           position,
           within<Offset>(
             distance: 10,
-            from: const Offset(278.9, 287.0),
+            from: Offset(startX, 287.0),
           ),
         );
       },
