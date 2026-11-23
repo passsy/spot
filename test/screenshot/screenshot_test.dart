@@ -348,8 +348,13 @@ void main() {
       ),
     );
 
-    // FontLoader.load triggers PaintBinding.instance.systemFonts listeners
-    await loadAppFonts();
+    // FontLoader.load triggers PaintBinding.instance.systemFonts listeners.
+    // loadAppFonts() loads only once per isolate, which an earlier test may
+    // have done already, so a family of this test's own is loaded instead.
+    await loadFont('DirtyTreeTest', ['lib/assets/Roboto-Regular.ttf']);
+    // The engine announces the font after the load completed, outside the
+    // fake async zone of the test.
+    await tester.runAsync(() async {});
     final renderObject =
         spot<Banner>().spot<CustomPaint>().snapshotRenderObject();
     expect(renderObject.debugNeedsPaint, kIsWeb ? isFalse : isTrue);
