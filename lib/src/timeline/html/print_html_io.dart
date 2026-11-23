@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dartx/dartx_io.dart';
+// material_ui requires Flutter 3.47, spot still supports Flutter 3.22
+// ignore: deprecated_member_use
 import 'package:flutter/material.dart' as flt;
 import 'package:spot/src/timeline/html/render_timeline.dart';
 import 'package:spot/src/timeline/html/web/timeline_event.dart' as x;
