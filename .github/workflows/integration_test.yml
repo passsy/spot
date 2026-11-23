@@ -24,6 +24,13 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
+      # Gradle 8.12 can't run on the runner's default JDK 25
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
