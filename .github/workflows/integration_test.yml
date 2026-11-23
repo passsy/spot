@@ -24,6 +24,13 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
+      # The runner's default JDK moves on its own, Flutter's Android tooling targets 17
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
