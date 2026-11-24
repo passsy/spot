@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/src/flutter/frame_clock.dart';
-import 'package:spot/src/spot/element_extensions.dart';
 import 'package:spot/src/spot/query_stats.dart';
 
 /// caching the tree for the current frame
@@ -37,27 +36,30 @@ WidgetTreeSnapshot createWidgetTreeSnapshot() {
     );
 
     // children contains onstage and offstage children
-    final children = element.children.toList();
-
-    for (final child in children) {
-      // Once a part of the widget tree is offstage, all children are offstage, too.
-      // There is now way a child might become onstage again
-      final isOffstage = isParentOffstage ||
-          () {
-            final onstageOnly = element.onstageChildren.toList();
-            final offstageOnly = element.children
-                .where((it) => !onstageOnly.contains(it))
-                .toList();
-            return offstageOnly.contains(child);
-          }();
-
-      final childNode = buildTreeNode(
-        child,
-        parent: node,
-        isParentOffstage: isOffstage,
-      );
-      node.addChild(childNode);
+    final children = <Element>[];
+    element.visitChildren(children.add);
+    if (children.isEmpty) {
+      return node;
     }
+
+    // Once a part of the widget tree is offstage, all children are offstage, too.
+    // There is now way a child might become onstage again
+    Set<Element>? onstage;
+    if (!isParentOffstage) {
+      onstage = {};
+      element.debugVisitOnstageChildren(onstage.add);
+    }
+
+    // Built in one go, because adding children one by one copies the list
+    // each time, and the tree is snapshotted for every assertion.
+    node._children = List.unmodifiable([
+      for (final child in children)
+        buildTreeNode(
+          child,
+          parent: node,
+          isParentOffstage: onstage == null || !onstage.contains(child),
+        ),
+    ]);
     return node;
   }
 
