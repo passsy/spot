@@ -22,12 +22,6 @@ void main() {
       ),
     );
 
-    debugPrint('Run pub get');
-    await Process.run(
-      flutterExe,
-      ['pub', 'get'],
-      workingDirectory: dependencyFontProject.workingDir.path,
-    );
     debugPrint('Run tests');
     final test = await Process.start(
       flutterExe,
