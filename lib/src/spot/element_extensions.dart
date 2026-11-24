@@ -39,14 +39,4 @@ extension ElementExtensions on Element {
     visit(this);
     yield* found;
   }
-
-  /// Returns only onstage children of [Element], only direct children
-  ///
-  /// Children of [Offstage] or [Overlay] are eventually not returned,
-  /// thus marking them as offstage
-  Iterable<Element> get onstageChildren sync* {
-    final List<Element> found = [];
-    debugVisitOnstageChildren(found.add);
-    yield* found;
-  }
 }
