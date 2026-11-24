@@ -44,9 +44,8 @@ WidgetTreeSnapshot createWidgetTreeSnapshot() {
 
     // Once a part of the widget tree is offstage, all children are offstage, too.
     // There is now way a child might become onstage again
-    Set<Element>? onstage;
-    if (!isParentOffstage) {
-      onstage = {};
+    final onstage = isParentOffstage ? null : <Element>{};
+    if (onstage != null) {
       element.debugVisitOnstageChildren(onstage.add);
     }
 
