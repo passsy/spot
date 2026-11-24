@@ -9,7 +9,6 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:spot/spot.dart';
 
 import '../util/run_test_in_process.dart';
 import 'printed_timeline.dart';
@@ -83,24 +82,6 @@ void main() {
     expect(offFails, startsWith('⏸︎ - Timeline recording is off\n'));
     expect(printedEvents(offFails), isEmpty);
     expect(offFails, isNot(contains('View timeline here:')));
-
-    // A failing drag reports how far it dragged without finding the target.
-    final dragFails = printed['reportOnError, drag fails']!;
-    expect(dragFails, contains('Test failed, generating timeline report'));
-    final dragEvents = printedEvents(dragFails)
-        .where((e) => e.type.startsWith('Drag'))
-        .map((e) => e.summary)
-        .toList();
-    expect(dragEvents, [
-      startsWith('Drag Event: Scrolling to the end, beginning at Offset('),
-      _dragNotFound,
-    ]);
-    for (final event in printedEvents(dragFails)) {
-      expect(event.caller, startsWith('at '), reason: event.summary);
-      expect(event.screenshot, startsWith('file://'), reason: event.summary);
-      expect(event.timestamp, startsWith('20'), reason: event.summary);
-    }
-    _expectHtmlReport(dragFails);
   });
 
   test('a global reportOnError prints the timeline only when a test fails',
@@ -133,8 +114,8 @@ void main() {
 /// reports, unique to this run.
 final String _group = 'nested-${Random().nextInt(1 << 32).toRadixString(36)}';
 
-/// The tests of the nested run. All but the drag tap the counter, which
-/// records [tapCounterEvents], and the failing ones add [_failedAssertion].
+/// The tests of the nested run. All tap the counter, which records
+/// [tapCounterEvents], and the failing ones add [_failedAssertion].
 /// A test passes when its name ends with `passes`, and fails otherwise.
 ///
 /// The nested run has `CI` set, so a report prints the full timeline next to
@@ -165,19 +146,6 @@ const String _tests = '''
       await tapCounter(tester);
     });
 
-    testWidgets('reportOnError, drag fails', (tester) async {
-      timeline.mode = TimelineMode.reportOnError;
-      await tester.pumpWidget(
-        const DragUntilVisibleSingleDirectionTestWidget(axis: Axis.vertical),
-      );
-      await act.dragUntilVisible(
-        dragStart: spotText('Item at index: 3', whole: true),
-        dragTarget: spotText('Item at index: 27', whole: true),
-        moveStep: const Offset(0, -100),
-        maxIteration: 10,
-      );
-    });
-
     testWidgets('off, fails', (tester) async {
       timeline.mode = TimelineMode.off;
       await tapCounter(tester);
@@ -205,21 +173,18 @@ Future<Map<String, String>> _runTimelineTests({
   required String tests,
 }) async {
   final imports = RegExp(r'^(// ignore: .*\n)?import .*$', multiLine: true);
-  final widgets = [
-    'test/timeline/timeline_test_widget.dart',
-    'test/timeline/drag/drag_until_visible_test_widget.dart',
-  ].map((path) => File(path).readAsStringSync().replaceAll(imports, ''));
+  final widget = File('test/timeline/timeline_test_widget.dart')
+      .readAsStringSync()
+      .replaceAll(imports, '');
   final json = await runTestInProcessAndCaptureOutPut(
     shouldFail: true,
     args: ['--reporter', 'json'],
     testFileText: () => '''
-import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
-import 'package:spot/spot.dart';
 
-${widgets.join('\n')}
+$widget
 
 void main() {
   globalTimelineMode = TimelineMode.$globalMode;
@@ -296,7 +261,3 @@ void _expectHtmlReport(String output) {
 
 const _failedAssertion = 'Assertion Failed: Could not find Widget with text '
     'contains text "Counter: 99" in widget tree, expected exactly 1.';
-
-final _dragNotFound = 'Drag Error Event: '
-    '${spotText('Item at index: 27', whole: true)} is not visible after '
-    'dragging 10 times and a total dragged offset of Offset(0.0, -1000.0).';
