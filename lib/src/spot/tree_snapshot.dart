@@ -29,7 +29,7 @@ WidgetTreeSnapshot createWidgetTreeSnapshot() {
     WidgetTreeNode? parent,
     bool isParentOffstage = false,
   }) {
-    final node = WidgetTreeNode(
+    final node = WidgetTreeNode._captured(
       element: element,
       parent: parent,
       isOffstage: isParentOffstage,
@@ -77,6 +77,8 @@ class WidgetTreeNode {
   /// The actual element in the element tree holding the widget of type `W`.
   final Element element;
 
+  final bool _isCaptured;
+
   List<WidgetTreeNode> _children = const [];
 
   /// Gets the list of child nodes of this widget tree node.
@@ -89,7 +91,11 @@ class WidgetTreeNode {
   ///
   /// This method updates the list of children by adding [child]. The list of
   /// children remains unmodifiable to external modifications.
+  /// Throws a [StateError] when called on a captured snapshot node.
   void addChild(WidgetTreeNode child) {
+    if (_isCaptured) {
+      throw StateError('Cannot add a child to a captured snapshot node.');
+    }
     _children = List.unmodifiable([..._children, child]);
   }
 
@@ -102,14 +108,18 @@ class WidgetTreeNode {
   /// Whether the widget is offstage or onstage
   final bool isOffstage;
 
-  /// Creates an [Element] in the element tree.
-  ///
-  /// Do not forget to call [addChild] manually after creation!
+  /// Creates a node for manual assembly with [addChild].
   WidgetTreeNode({
     required this.element,
     required this.parent,
     required this.isOffstage,
-  });
+  }) : _isCaptured = false;
+
+  WidgetTreeNode._captured({
+    required this.element,
+    required this.parent,
+    required this.isOffstage,
+  }) : _isCaptured = true;
 
   @override
   String toString() {

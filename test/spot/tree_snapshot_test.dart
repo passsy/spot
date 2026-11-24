@@ -2,6 +2,7 @@
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:spot/spot.dart' show SelectorToSnapshot, spot;
 import 'package:spot/src/spot/tree_snapshot.dart';
 
 void main() {
@@ -85,6 +86,48 @@ void main() {
 
     expect(node.children.map((child) => child.element.widget.key), keys);
     expect(row.onstageVisits, 1);
+  });
+
+  testWidgets('captured nodes reject children after traversal is cached',
+      (tester) async {
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: Row(children: [SizedBox()]),
+      ),
+    );
+    final result = spot<Row>().snapshot();
+    final row = result.discovered.single;
+    final leaf = row.children.single;
+    final traversal = result.scope.allNodes;
+    expect(traversal, containsAll([row, leaf]));
+
+    for (final node in [row, leaf]) {
+      final children = node.children;
+      final added = WidgetTreeNode(
+        element: leaf.element,
+        parent: node,
+        isOffstage: false,
+      );
+
+      expect(() => node.addChild(added), throwsStateError);
+      expect(node.children, same(children));
+      expect(result.scope.allNodes, same(traversal));
+    }
+
+    final manual = WidgetTreeNode(
+      element: row.element,
+      parent: null,
+      isOffstage: false,
+    );
+    final child = WidgetTreeNode(
+      element: leaf.element,
+      parent: manual,
+      isOffstage: false,
+    );
+    manual.addChild(child);
+    expect(manual.children, [child]);
+    expect(() => manual.children.clear(), throwsUnsupportedError);
   });
 
   testWidgets('scopes', (tester) async {
