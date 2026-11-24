@@ -108,16 +108,22 @@ Future<String?> runTestInProcessAndCaptureOutPut({
 /// ```
 ///
 /// The build directory is only settable through Flutter's config file, so the
-/// nested process gets a config file of its own. Every test file gets one build
-/// directory, not every run: runs of one file are sequential and cannot collide,
-/// and sharing keeps their compilation cache warm.
+/// nested process gets a config file of its own. Every run gets a build
+/// directory of its own. A test runner may split the tests of one file across
+/// processes that run at the same time, so even the runs of one file can
+/// collide.
 Map<String, String> _ownBuildDirectory() {
   final configDir = Directory.systemTemp.createTempSync('spot_flutter_config');
   addTearDown(() {
     _deleteTempDir(configDir);
   });
 
-  final settings = jsonEncode({'build-dir': _buildDirectoryOfTestFile()});
+  final buildDir = _buildDirectoryOfThisRun();
+  addTearDown(() {
+    _deleteTempDir(Directory(buildDir));
+  });
+
+  final settings = jsonEncode({'build-dir': buildDir});
   // Flutter looks for `$HOME/.flutter_settings` first and falls back to
   // `$XDG_CONFIG_HOME/settings`, on Windows it reads `$APPDATA/.flutter_settings`.
   // Both files exist here and all three variables point at them, so the config
@@ -153,15 +159,13 @@ String? _pubCache() {
   return '$home/.pub-cache';
 }
 
-/// A directory under `build/`, named after the test file that is running.
+/// A directory under `build/`, named after the test file that is running,
+/// this process, and the runs it started before, as they may run at the same
+/// time.
 ///
 /// The path has to be relative, Flutter rejects an absolute one.
-String _buildDirectoryOfTestFile() {
-  final path = getLiveTest()?.suite.path;
-  if (path == null) {
-    // Only null outside a running test, which is not where nested runs start.
-    return 'build/nested_test/unknown';
-  }
+String _buildDirectoryOfThisRun() {
+  final path = getLiveTest()?.suite.path ?? 'unknown';
   final current = Directory.current.path;
   final relative = path.startsWith(current)
       ? path.substring(current.length)
@@ -169,8 +173,10 @@ String _buildDirectoryOfTestFile() {
   final name = relative
       .replaceAll(RegExp('[^A-Za-z0-9]+'), '_')
       .replaceFirst(RegExp('^_'), '');
-  return 'build/nested_test/$name';
+  return 'build/nested_test/${name}_${pid}_${_runs++}';
 }
+
+var _runs = 0;
 
 Future<File> _createTempTestFile(String content) async {
   final tempDir = Directory.systemTemp.createTempSync();

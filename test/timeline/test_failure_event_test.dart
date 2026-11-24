@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:image/image.dart' as img;
 
 import '../util/run_test_in_process.dart' as process;
-import 'timeline_test_shared.dart' as shared;
+import 'printed_timeline.dart';
 
 /// A widget test that fails with a plain `expect`, which spot knows nothing
 /// about. Run in its own process, because the point is that it fails.
@@ -46,7 +46,6 @@ Future<String?> _outputOfFailingTest({
   return process.runTestInProcessAndCaptureOutPut(
     shouldFail: true,
     testFileText: () => _failingTest(failure: failure, teardown: teardown),
-    captureStart: const [shared.timelineHeader],
   );
 }
 
@@ -63,10 +62,11 @@ int _lineOf(String source, String needle) {
 
 /// The console block the timeline printed for the failure event.
 String _failureEventBlock(String output) {
-  final start = output.lastIndexOf('Event Type: Test Failed');
-  expect(start, greaterThan(-1), reason: 'no Test Failed event in:\n$output');
-  final end = output.indexOf(shared.timelineSeparator, start);
-  return output.substring(start, end == -1 ? output.length : end);
+  final failures = printedEvents(
+    output,
+  ).where((event) => event.type == 'Test Failed');
+  expect(failures, isNotEmpty, reason: 'no Test Failed event in:\n$output');
+  return failures.last.lines.join('\n');
 }
 
 File _expectLastFailureHasScreenshot() {
