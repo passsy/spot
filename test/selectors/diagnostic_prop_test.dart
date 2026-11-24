@@ -12,21 +12,18 @@ void main() {
   group('diagnostic prop', () {
     testWidgets('getDiagnosticProp', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Icon(Icons.add, semanticLabel: 'add'),
-        ),
+        MaterialApp(home: Icon(Icons.add, semanticLabel: 'add')),
       );
 
-      final label =
-          spot<Icon>().existsOnce().getDiagnosticProp<String>('semanticLabel');
+      final label = spot<Icon>().existsOnce().getDiagnosticProp<String>(
+        'semanticLabel',
+      );
       expect(label, 'add');
     });
 
     testWidgets('generated getDiagnosticProp', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Icon(Icons.add, semanticLabel: 'add'),
-        ),
+        MaterialApp(home: Icon(Icons.add, semanticLabel: 'add')),
       );
 
       final label = spot<Icon>().existsOnce().getSemanticLabel();
@@ -35,20 +32,19 @@ void main() {
 
     testWidgets('hasDiagnosticProp', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Icon(Icons.add, semanticLabel: 'add'),
-        ),
+        MaterialApp(home: Icon(Icons.add, semanticLabel: 'add')),
       );
 
-      spot<Icon>()
-          .existsOnce()
-          .hasDiagnosticProp<String>('semanticLabel', (it) => it.equals('add'));
+      spot<Icon>().existsOnce().hasDiagnosticProp<String>(
+        'semanticLabel',
+        (it) => it.equals('add'),
+      );
 
       expect(
         () => spot<Icon>().existsOnce().hasDiagnosticProp<String>(
-              'semanticLabel',
-              (it) => it.equals('remove'),
-            ),
+          'semanticLabel',
+          (it) => it.equals('remove'),
+        ),
         throwsSpotErrorContaining([
           'Icon with property semanticLabel',
           "equals 'remove', actual: 'add'",
@@ -58,9 +54,7 @@ void main() {
 
     testWidgets('generated hasDiagnosticProp', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Icon(Icons.add, semanticLabel: 'add'),
-        ),
+        MaterialApp(home: Icon(Icons.add, semanticLabel: 'add')),
       );
 
       spot<Icon>()
@@ -79,9 +73,7 @@ void main() {
 
     testWidgets('withDiagnosticProp', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Icon(Icons.add, semanticLabel: 'add'),
-        ),
+        MaterialApp(home: Icon(Icons.add, semanticLabel: 'add')),
       );
 
       spot<Icon>()
@@ -106,27 +98,20 @@ void main() {
     testWidgets('reads fresh props after a rebuild', (tester) async {
       // Props are cached per widget instance. A rebuild creates a new instance,
       // which must not read the previous instance's props.
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Icon(Icons.add, size: 4),
-        ),
-      );
+      await tester.pumpWidget(MaterialApp(home: Icon(Icons.add, size: 4)));
       spot<Icon>().existsOnce().hasSize(4);
       spot<Icon>().withSize(4).existsOnce();
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Icon(Icons.add, size: 7),
-        ),
-      );
+      await tester.pumpWidget(MaterialApp(home: Icon(Icons.add, size: 7)));
       spot<Icon>().existsOnce().hasSize(7);
       spot<Icon>().withSize(7).existsOnce();
       spot<Icon>().withSize(4).doesNotExist();
       expect(spot<Icon>().existsOnce().getDiagnosticProp<double>('size'), 7);
     });
 
-    testWidgets('a matcher keeps reporting the widget it matched',
-        (tester) async {
+    testWidgets('a matcher keeps reporting the widget it matched', (
+      tester,
+    ) async {
       // A matcher describes the moment it was created, like the snapshot it
       // came from. Reading a prop off it later must not answer for a widget
       // it never matched.
@@ -152,10 +137,9 @@ void main() {
       final matcher = spotTextWhere((it) => it.isNotEmpty()).existsOnce();
       // The other matcher implementation, built from an element instead of
       // holding a snapshot.
-      final discovered = spotTextWhere((it) => it.isNotEmpty())
-          .existsExactlyNTimes(1)
-          .discovered
-          .single;
+      final discovered = spotTextWhere(
+        (it) => it.isNotEmpty(),
+      ).existsExactlyNTimes(1).discovered.single;
 
       controller.text = 'after';
       await tester.pump();
@@ -169,9 +153,9 @@ void main() {
 
       // Only the matcher is frozen. A new query sees the current tree.
       expect(
-        spotTextWhere((it) => it.isNotEmpty())
-            .existsOnce()
-            .getDiagnosticProp<String>('text'),
+        spotTextWhere(
+          (it) => it.isNotEmpty(),
+        ).existsOnce().getDiagnosticProp<String>('text'),
         'after',
       );
     });
@@ -200,9 +184,9 @@ void main() {
       );
       // Read the prop, not the text filter, so this goes through the cache.
       expect(
-        spotTextWhere((it) => it.isNotEmpty())
-            .existsOnce()
-            .getDiagnosticProp<String>('text'),
+        spotTextWhere(
+          (it) => it.isNotEmpty(),
+        ).existsOnce().getDiagnosticProp<String>('text'),
         'before',
       );
 
@@ -214,15 +198,16 @@ void main() {
       expect(identical(widgetBefore, widgetAfter), isTrue);
 
       expect(
-        spotTextWhere((it) => it.isNotEmpty())
-            .existsOnce()
-            .getDiagnosticProp<String>('text'),
+        spotTextWhere(
+          (it) => it.isNotEmpty(),
+        ).existsOnce().getDiagnosticProp<String>('text'),
         'after',
       );
     });
 
-    testWidgets('selectors deriving different widgets do not collide',
-        (tester) async {
+    testWidgets('selectors deriving different widgets do not collide', (
+      tester,
+    ) async {
       // spot<RichText>() and spotText() resolve to the same element but derive
       // different widgets from it, so they must not read each other's props.
       await tester.pumpWidget(
@@ -235,9 +220,9 @@ void main() {
       // font_*, RichText reports a textWidthBasis. Reading the other one's
       // props finds neither.
       expect(
-        spot<RichText>()
-            .existsOnce()
-            .getDiagnosticProp<TextWidthBasis>('textWidthBasis'),
+        spot<RichText>().existsOnce().getDiagnosticProp<TextWidthBasis>(
+          'textWidthBasis',
+        ),
         TextWidthBasis.parent,
       );
       expect(
@@ -249,6 +234,12 @@ void main() {
     testWidgets('builds the props of a widget only once', (tester) async {
       // Why the cache exists. All three entry points read through it, so a
       // widget fills its properties once no matter how often it is inspected.
+      //
+      // Without the timeline, which dumps the whole tree once per frame it
+      // records an event in. That fills properties through Flutter's own
+      // diagnostics rather than through this cache, and is not what this
+      // measures.
+      timeline.mode = TimelineMode.off;
       var fills = 0;
       await tester.pumpWidget(
         MaterialApp(
@@ -256,9 +247,10 @@ void main() {
         ),
       );
 
-      spot<_CountingProps>()
-          .existsOnce()
-          .hasDiagnosticProp<int>('value', (it) => it.equals(4));
+      spot<_CountingProps>().existsOnce().hasDiagnosticProp<int>(
+        'value',
+        (it) => it.equals(4),
+      );
       expect(fills, 1);
 
       spot<_CountingProps>().existsOnce().getDiagnosticProp<int>('value');
@@ -280,8 +272,9 @@ void main() {
       expect(fills, 2);
     });
 
-    testWidgets('does not share props between elements of one widget',
-        (tester) async {
+    testWidgets('does not share props between elements of one widget', (
+      tester,
+    ) async {
       // One widget instance can be mounted in several elements, and a selector
       // deriving its widget from the element reports different props for each.
       const shared = _Marker();
@@ -289,14 +282,8 @@ void main() {
         MaterialApp(
           home: Column(
             children: [
-              DefaultTextStyle(
-                style: TextStyle(fontSize: 10),
-                child: shared,
-              ),
-              DefaultTextStyle(
-                style: TextStyle(fontSize: 20),
-                child: shared,
-              ),
+              DefaultTextStyle(style: TextStyle(fontSize: 10), child: shared),
+              DefaultTextStyle(style: TextStyle(fontSize: 20), child: shared),
             ],
           ),
         ),
@@ -328,9 +315,7 @@ void main() {
 
     testWidgets('generated withDiagnosticProp', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Icon(Icons.add, semanticLabel: 'add'),
-        ),
+        MaterialApp(home: Icon(Icons.add, semanticLabel: 'add')),
       );
 
       spot<Icon>().withSemanticLabel('add').existsOnce();

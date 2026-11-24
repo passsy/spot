@@ -20,10 +20,7 @@ void main() {
   });
 
   testWidgets('Remove event', (_) async {
-    final id = timeline.addEvent(
-      details: 'details',
-      eventType: 'type 1',
-    );
+    final id = timeline.addEvent(details: 'details', eventType: 'type 1');
     expect(timeline.events, hasLength(1));
 
     timeline.removeEvent(id);
@@ -81,6 +78,20 @@ void main() {
         ),
       ),
     );
+  });
+
+  testWidgets('events share a frame number until another frame is pumped', (
+    tester,
+  ) async {
+    timeline.addEvent(details: 'first', eventType: 'Assertion');
+    timeline.addEvent(details: 'second', eventType: 'Assertion');
+
+    expect(timeline.events.map((event) => event.frameNumber), [1, 1]);
+
+    await tester.pumpWidget(const SizedBox());
+    timeline.addEvent(details: 'third', eventType: 'Assertion');
+
+    expect(timeline.events.map((event) => event.frameNumber), [1, 1, 2]);
   });
 
   test('TimelineEventId.toString()', () {

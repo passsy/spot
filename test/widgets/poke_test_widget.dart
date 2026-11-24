@@ -75,8 +75,8 @@ class _PokeTestWidgetState extends State<PokeTestWidget> {
                             color: isPokable
                                 ? Colors.transparent
                                 : ((row + col).isEven
-                                    ? Colors.white
-                                    : Colors.black),
+                                      ? Colors.white
+                                      : Colors.black),
                           ),
                         );
                       }),

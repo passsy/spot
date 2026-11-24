@@ -37,8 +37,9 @@ class ChildFilter implements ElementFilter {
     }
 
     // First check all negate selectors (where maxQuantity == 0)
-    final negates =
-        childSelectors.where((e) => e.quantityConstraint.max == 0).toList();
+    final negates = childSelectors
+        .where((e) => e.quantityConstraint.max == 0)
+        .toList();
     for (final negate in negates) {
       final s = snapshot(negate, validateQuantity: false);
       if (s.discovered.isNotEmpty) {
@@ -55,8 +56,10 @@ class ChildFilter implements ElementFilter {
     // subtree of every candidate over and over again.
     final List<Map<WidgetTreeNode, int>> matchCountsPerSelector = [];
     for (final WidgetSelector childSelector in matchSelectors) {
-      final WidgetSnapshot childSnapshot =
-          snapshot(childSelector, validateQuantity: false);
+      final WidgetSnapshot childSnapshot = snapshot(
+        childSelector,
+        validateQuantity: false,
+      );
 
       final Map<WidgetTreeNode, int> matchesBelowNode = Map.identity();
       for (final WidgetTreeNode match in childSnapshot.discovered) {
@@ -108,10 +111,7 @@ class ChildFilter implements ElementFilter {
 ///
 /// At least one child has to match, even when the constraint allows zero
 /// matches (e.g. `atMost(2)`).
-bool _matchesQuantityConstraint(
-  WidgetSelector childSelector,
-  int matchCount,
-) {
+bool _matchesQuantityConstraint(WidgetSelector childSelector, int matchCount) {
   if (matchCount == 0) {
     return false;
   }

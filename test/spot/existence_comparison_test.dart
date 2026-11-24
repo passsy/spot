@@ -80,10 +80,7 @@ void main() {
     testWidgets('checks presence of widgets filtered by props', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Tooltip(
-            message: 'Open navigation menu',
-            child: SizedBox(),
-          ),
+          home: Tooltip(message: 'Open navigation menu', child: SizedBox()),
         ),
       );
 
@@ -126,8 +123,9 @@ void main() {
       expect(sizedBox.countWidgets() <= 2, isTrue);
     });
 
-    testWidgets('uses at least one match without quantity constraints',
-        (tester) async {
+    testWidgets('uses at least one match without quantity constraints', (
+      tester,
+    ) async {
       await tester.pumpWidget(Placeholder());
 
       expect(spot<SizedBox>().countWidgets(), 0);
@@ -222,9 +220,9 @@ void main() {
 
       final material = spot<Material>(parents: [spot<SizedBox>()]);
 
-      final throwsFailureWithMessage = throwsSpotErrorContaining(
-        ["Could not find SizedBox ᗕ Material in widget tree"],
-      );
+      final throwsFailureWithMessage = throwsSpotErrorContaining([
+        "Could not find SizedBox ᗕ Material in widget tree",
+      ]);
 
       expect(material.snapshot().discovered, isEmpty);
 
@@ -279,8 +277,9 @@ void main() {
     });
   });
 
-  testWidgets('error shows alternative widgets when found less',
-      (tester) async {
+  testWidgets('error shows alternative widgets when found less', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       Column(
         children: [
@@ -380,9 +379,7 @@ void main() {
             children: [
               Text('a'),
               SizedBox(child: Text('b')),
-              Row(
-                children: [Text('c')],
-              ),
+              Row(children: [Text('c')]),
             ],
           ),
         ),
@@ -412,9 +409,7 @@ void main() {
               Text('aa'),
               Text('ab'),
               SizedBox(child: Text('ac')),
-              Row(
-                children: [Text('ad')],
-              ),
+              Row(children: [Text('ad')]),
             ],
           ),
         ),
@@ -439,8 +434,9 @@ void main() {
       );
     });
 
-    testWidgets('warns when no match and <dynamic> generic used',
-        (tester) async {
+    testWidgets('warns when no match and <dynamic> generic used', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
@@ -456,46 +452,43 @@ void main() {
 
       expect(
         () => spot<SegmentedButton<dynamic>>().spotText("zzz1").existsOnce(),
-        throwsSpotErrorContaining(
-          [
-            'WARNING: You are using a "dynamic" in your selector',
-            "spot<SegmentedButton<dynamic>>() doesn't match a SegmentedButton<String>",
-          ],
-        ),
+        throwsSpotErrorContaining([
+          'WARNING: You are using a "dynamic" in your selector',
+          "spot<SegmentedButton<dynamic>>() doesn't match a SegmentedButton<String>",
+        ]),
       );
     });
 
     testWidgets(
-        "doesn't warn about dynamic generic when no match and a spotText contains 'dynamic'",
-        (tester) async {
-      await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: SegmentedButton<String>(
-            segments: [
-              ButtonSegment(value: "ttt1", label: Text("zzz1")),
-              ButtonSegment(value: "ttt2", label: Text("zzz2")),
-            ],
-            selected: {"ttt2"},
+      "doesn't warn about dynamic generic when no match and a spotText contains 'dynamic'",
+      (tester) async {
+        await tester.pumpWidget(
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: SegmentedButton<String>(
+              segments: [
+                ButtonSegment(value: "ttt1", label: Text("zzz1")),
+                ButtonSegment(value: "ttt2", label: Text("zzz2")),
+              ],
+              selected: {"ttt2"},
+            ),
           ),
-        ),
-      );
+        );
 
-      expect(
-        () => spot<SegmentedButton<String>>()
-            .spotText("i am a dynamic person")
-            .existsOnce(),
-        throwsSpotErrorContaining(
-          [
-            // The warning would appear in between those two lines
-            // Negative tests are annoying... to make in a non-brittle way
-            "expected exactly 1.\nCheck the timeline",
-          ],
-          not: [
-            "WARNING:",
-          ],
-        ),
-      );
-    });
+        expect(
+          () => spot<SegmentedButton<String>>()
+              .spotText("i am a dynamic person")
+              .existsOnce(),
+          throwsSpotErrorContaining(
+            [
+              // The warning would appear in between those two lines
+              // Negative tests are annoying... to make in a non-brittle way
+              "expected exactly 1.\nCheck the timeline",
+            ],
+            not: ["WARNING:"],
+          ),
+        );
+      },
+    );
   });
 }

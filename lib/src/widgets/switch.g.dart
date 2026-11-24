@@ -35,7 +35,9 @@ extension SwitchSelector on WidgetSelector<Switch> {
   @useResult
   WidgetSelector<Switch> withValue(bool? value) {
     return withDiagnosticProp<bool>(
-        'value', (it) => value == null ? it.isNull() : it.equals(value));
+      'value',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 
@@ -59,7 +61,9 @@ extension SwitchMatcher on WidgetMatcher<Switch> {
   /// ```
   WidgetMatcher<Switch> hasValue(bool? value) {
     return hasDiagnosticProp<bool>(
-        'value', (it) => value == null ? it.isNull() : it.equals(value));
+      'value',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 

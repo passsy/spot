@@ -36,8 +36,9 @@ List<Frame> resolveFrames(Iterable<Frame> frames) {
 final RegExp _memberLocation = RegExp(r'^(.*?) at (\S+):(\d+):(\d+)(?: \S+)?$');
 
 /// A package in the pub cache, `…/hosted/pub.dev/spot-1.2.3/lib/src/x.dart`.
-final RegExp _hostedPackage =
-    RegExp(r'/hosted/[^/]+/([a-zA-Z_0-9]+)-[^/]+/lib/(.+)$');
+final RegExp _hostedPackage = RegExp(
+  r'/hosted/[^/]+/([a-zA-Z_0-9]+)-[^/]+/lib/(.+)$',
+);
 
 /// A package shipped inside an SDK, `…/flutter/packages/flutter_test/lib/x.dart`.
 final RegExp _sdkPackage = RegExp(r'/packages/([a-zA-Z_0-9]+)/lib/(.+)$');

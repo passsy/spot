@@ -39,13 +39,12 @@ extension WidgetSelectorProp<W extends Widget> on WidgetSelector<W> {
       );
     }
     void widgetSelectorCondition(Subject<Element> subject) {
-      final Subject<W> widgetSubject = subject.context.nest<W>(
-        () => [],
-        (element) {
-          final widget = mapElementToWidget(element);
-          return Extracted.value(widget);
-        },
-      );
+      final Subject<W> widgetSubject = subject.context.nest<W>(() => [], (
+        element,
+      ) {
+        final widget = mapElementToWidget(element);
+        return Extracted.value(widget);
+      });
       final value = widgetSelector!(widgetSubject);
       match(value);
     }
@@ -61,16 +60,13 @@ extension WidgetSelectorProp<W extends Widget> on WidgetSelector<W> {
 
     final name = describe(condition).map((it) => it.trim()).toList().join(' ');
 
-    return whereElement(
-      (element) {
-        final failure = softCheckHideNull(element, condition);
-        if (failure != null) {
-          return false;
-        }
-        return true;
-      },
-      description: name,
-    );
+    return whereElement((element) {
+      final failure = softCheckHideNull(element, condition);
+      if (failure != null) {
+        return false;
+      }
+      return true;
+    }, description: name);
   }
 }
 
@@ -279,10 +275,7 @@ class NamedWidgetProp<W extends Widget, T> {
   /// The function that extracts the property from a widget.
   final T Function(W widget) get;
 
-  NamedWidgetProp._({
-    required this.name,
-    required this.get,
-  });
+  NamedWidgetProp._({required this.name, required this.get});
 }
 
 /// A property of a [State] with a [name] that can be extracted with [get].
@@ -305,10 +298,7 @@ class NamedStateProp<T, S extends State> {
   /// The function that extracts the property from a [State].
   final T Function(S state) get;
 
-  NamedStateProp._({
-    required this.name,
-    required this.get,
-  });
+  NamedStateProp._({required this.name, required this.get});
 }
 
 /// A property of an Element with a [name] that can be extracted with [get].
@@ -331,10 +321,7 @@ class NamedElementProp<T> {
   /// The function that extracts the property from an element.
   final T Function(Element element) get;
 
-  NamedElementProp._({
-    required this.name,
-    required this.get,
-  });
+  NamedElementProp._({required this.name, required this.get});
 }
 
 /// A property of a RenderObject with a [name] that can be extracted with [get].
@@ -357,8 +344,5 @@ class NamedRenderObjectProp<R extends RenderObject, T> {
   /// The function that extracts the property from a render object.
   final T Function(R renderObject) get;
 
-  NamedRenderObjectProp._({
-    required this.name,
-    required this.get,
-  });
+  NamedRenderObjectProp._({required this.name, required this.get});
 }

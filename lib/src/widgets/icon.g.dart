@@ -35,7 +35,9 @@ extension IconSelector on WidgetSelector<Icon> {
   @useResult
   WidgetSelector<Icon> withIcon(IconData? value) {
     return withDiagnosticProp<IconData>(
-        'icon', (it) => value == null ? it.isNull() : it.equals(value));
+      'icon',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Icon] where size matches the condition.
@@ -58,7 +60,9 @@ extension IconSelector on WidgetSelector<Icon> {
   @useResult
   WidgetSelector<Icon> withSize(double? value) {
     return withDiagnosticProp<double>(
-        'size', (it) => value == null ? it.isNull() : it.equals(value));
+      'size',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Icon] where fill matches the condition.
@@ -81,7 +85,9 @@ extension IconSelector on WidgetSelector<Icon> {
   @useResult
   WidgetSelector<Icon> withFill(double? value) {
     return withDiagnosticProp<double>(
-        'fill', (it) => value == null ? it.isNull() : it.equals(value));
+      'fill',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Icon] where weight matches the condition.
@@ -104,7 +110,9 @@ extension IconSelector on WidgetSelector<Icon> {
   @useResult
   WidgetSelector<Icon> withWeight(double? value) {
     return withDiagnosticProp<double>(
-        'weight', (it) => value == null ? it.isNull() : it.equals(value));
+      'weight',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Icon] where grade matches the condition.
@@ -127,7 +135,9 @@ extension IconSelector on WidgetSelector<Icon> {
   @useResult
   WidgetSelector<Icon> withGrade(double? value) {
     return withDiagnosticProp<double>(
-        'grade', (it) => value == null ? it.isNull() : it.equals(value));
+      'grade',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Icon] where opticalSize matches the condition.
@@ -150,7 +160,9 @@ extension IconSelector on WidgetSelector<Icon> {
   @useResult
   WidgetSelector<Icon> withOpticalSize(double? value) {
     return withDiagnosticProp<double>(
-        'opticalSize', (it) => value == null ? it.isNull() : it.equals(value));
+      'opticalSize',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Icon] where color matches the condition.
@@ -173,7 +185,9 @@ extension IconSelector on WidgetSelector<Icon> {
   @useResult
   WidgetSelector<Icon> withColor(Color? value) {
     return withDiagnosticProp<Color>(
-        'color', (it) => value == null ? it.isNull() : it.equals(value));
+      'color',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Icon] where shadows matches the condition.
@@ -196,7 +210,9 @@ extension IconSelector on WidgetSelector<Icon> {
   @useResult
   WidgetSelector<Icon> withShadows(Shadow? value) {
     return withDiagnosticProp<Shadow>(
-        'shadows', (it) => value == null ? it.isNull() : it.equals(value));
+      'shadows',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Icon] where semanticLabel matches the condition.
@@ -218,8 +234,10 @@ extension IconSelector on WidgetSelector<Icon> {
   /// ```
   @useResult
   WidgetSelector<Icon> withSemanticLabel(String? value) {
-    return withDiagnosticProp<String>('semanticLabel',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<String>(
+      'semanticLabel',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Icon] where textDirection matches the condition.
@@ -241,8 +259,10 @@ extension IconSelector on WidgetSelector<Icon> {
   /// ```
   @useResult
   WidgetSelector<Icon> withTextDirection(TextDirection? value) {
-    return withDiagnosticProp<TextDirection>('textDirection',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<TextDirection>(
+      'textDirection',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 
@@ -266,7 +286,9 @@ extension IconMatcher on WidgetMatcher<Icon> {
   /// ```
   WidgetMatcher<Icon> hasIcon(IconData? value) {
     return hasDiagnosticProp<IconData>(
-        'icon', (it) => value == null ? it.isNull() : it.equals(value));
+      'icon',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that size of [Icon] matches the condition in [match].
@@ -287,7 +309,9 @@ extension IconMatcher on WidgetMatcher<Icon> {
   /// ```
   WidgetMatcher<Icon> hasSize(double? value) {
     return hasDiagnosticProp<double>(
-        'size', (it) => value == null ? it.isNull() : it.equals(value));
+      'size',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that fill of [Icon] matches the condition in [match].
@@ -308,7 +332,9 @@ extension IconMatcher on WidgetMatcher<Icon> {
   /// ```
   WidgetMatcher<Icon> hasFill(double? value) {
     return hasDiagnosticProp<double>(
-        'fill', (it) => value == null ? it.isNull() : it.equals(value));
+      'fill',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that weight of [Icon] matches the condition in [match].
@@ -329,7 +355,9 @@ extension IconMatcher on WidgetMatcher<Icon> {
   /// ```
   WidgetMatcher<Icon> hasWeight(double? value) {
     return hasDiagnosticProp<double>(
-        'weight', (it) => value == null ? it.isNull() : it.equals(value));
+      'weight',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that grade of [Icon] matches the condition in [match].
@@ -350,7 +378,9 @@ extension IconMatcher on WidgetMatcher<Icon> {
   /// ```
   WidgetMatcher<Icon> hasGrade(double? value) {
     return hasDiagnosticProp<double>(
-        'grade', (it) => value == null ? it.isNull() : it.equals(value));
+      'grade',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that opticalSize of [Icon] matches the condition in [match].
@@ -371,7 +401,9 @@ extension IconMatcher on WidgetMatcher<Icon> {
   /// ```
   WidgetMatcher<Icon> hasOpticalSize(double? value) {
     return hasDiagnosticProp<double>(
-        'opticalSize', (it) => value == null ? it.isNull() : it.equals(value));
+      'opticalSize',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that color of [Icon] matches the condition in [match].
@@ -392,7 +424,9 @@ extension IconMatcher on WidgetMatcher<Icon> {
   /// ```
   WidgetMatcher<Icon> hasColor(Color? value) {
     return hasDiagnosticProp<Color>(
-        'color', (it) => value == null ? it.isNull() : it.equals(value));
+      'color',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that shadows of [Icon] matches the condition in [match].
@@ -413,7 +447,9 @@ extension IconMatcher on WidgetMatcher<Icon> {
   /// ```
   WidgetMatcher<Icon> hasShadows(Shadow? value) {
     return hasDiagnosticProp<Shadow>(
-        'shadows', (it) => value == null ? it.isNull() : it.equals(value));
+      'shadows',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that semanticLabel of [Icon] matches the condition in [match].
@@ -433,8 +469,10 @@ extension IconMatcher on WidgetMatcher<Icon> {
   /// spot<Icon>().existsOnce().hasSemanticLabel('foo');
   /// ```
   WidgetMatcher<Icon> hasSemanticLabel(String? value) {
-    return hasDiagnosticProp<String>('semanticLabel',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<String>(
+      'semanticLabel',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that textDirection of [Icon] matches the condition in [match].
@@ -454,8 +492,10 @@ extension IconMatcher on WidgetMatcher<Icon> {
   /// spot<Icon>().existsOnce().hasTextDirection(TextDirection.values.first);
   /// ```
   WidgetMatcher<Icon> hasTextDirection(TextDirection? value) {
-    return hasDiagnosticProp<TextDirection>('textDirection',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<TextDirection>(
+      'textDirection',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 

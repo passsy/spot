@@ -36,7 +36,9 @@ extension LinearProgressIndicatorSelector
   @useResult
   WidgetSelector<LinearProgressIndicator> withValue(double? value) {
     return withDiagnosticProp<double>(
-        'value', (it) => value == null ? it.isNull() : it.equals(value));
+      'value',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 
@@ -50,7 +52,8 @@ extension LinearProgressIndicatorMatcher
   /// spot<LinearProgressIndicator>().existsOnce().hasValueWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<LinearProgressIndicator> hasValueWhere(
-      MatchProp<double> match) {
+    MatchProp<double> match,
+  ) {
     return hasDiagnosticProp<double>('value', match);
   }
 
@@ -62,7 +65,9 @@ extension LinearProgressIndicatorMatcher
   /// ```
   WidgetMatcher<LinearProgressIndicator> hasValue(double? value) {
     return hasDiagnosticProp<double>(
-        'value', (it) => value == null ? it.isNull() : it.equals(value));
+      'value',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 

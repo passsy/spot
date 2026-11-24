@@ -35,7 +35,9 @@ extension SafeAreaSelector on WidgetSelector<SafeArea> {
   @useResult
   WidgetSelector<SafeArea> withLeft(bool? value) {
     return withDiagnosticProp<bool>(
-        'left', (it) => value == null ? it.isNull() : it.equals(value));
+      'left',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [SafeArea] where top matches the condition.
@@ -58,7 +60,9 @@ extension SafeAreaSelector on WidgetSelector<SafeArea> {
   @useResult
   WidgetSelector<SafeArea> withTop(bool? value) {
     return withDiagnosticProp<bool>(
-        'top', (it) => value == null ? it.isNull() : it.equals(value));
+      'top',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [SafeArea] where right matches the condition.
@@ -81,7 +85,9 @@ extension SafeAreaSelector on WidgetSelector<SafeArea> {
   @useResult
   WidgetSelector<SafeArea> withRight(bool? value) {
     return withDiagnosticProp<bool>(
-        'right', (it) => value == null ? it.isNull() : it.equals(value));
+      'right',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [SafeArea] where bottom matches the condition.
@@ -104,7 +110,9 @@ extension SafeAreaSelector on WidgetSelector<SafeArea> {
   @useResult
   WidgetSelector<SafeArea> withBottom(bool? value) {
     return withDiagnosticProp<bool>(
-        'bottom', (it) => value == null ? it.isNull() : it.equals(value));
+      'bottom',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 
@@ -128,7 +136,9 @@ extension SafeAreaMatcher on WidgetMatcher<SafeArea> {
   /// ```
   WidgetMatcher<SafeArea> hasLeft(bool? value) {
     return hasDiagnosticProp<bool>(
-        'left', (it) => value == null ? it.isNull() : it.equals(value));
+      'left',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that top of [SafeArea] matches the condition in [match].
@@ -149,7 +159,9 @@ extension SafeAreaMatcher on WidgetMatcher<SafeArea> {
   /// ```
   WidgetMatcher<SafeArea> hasTop(bool? value) {
     return hasDiagnosticProp<bool>(
-        'top', (it) => value == null ? it.isNull() : it.equals(value));
+      'top',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that right of [SafeArea] matches the condition in [match].
@@ -170,7 +182,9 @@ extension SafeAreaMatcher on WidgetMatcher<SafeArea> {
   /// ```
   WidgetMatcher<SafeArea> hasRight(bool? value) {
     return hasDiagnosticProp<bool>(
-        'right', (it) => value == null ? it.isNull() : it.equals(value));
+      'right',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that bottom of [SafeArea] matches the condition in [match].
@@ -191,7 +205,9 @@ extension SafeAreaMatcher on WidgetMatcher<SafeArea> {
   /// ```
   WidgetMatcher<SafeArea> hasBottom(bool? value) {
     return hasDiagnosticProp<bool>(
-        'bottom', (it) => value == null ? it.isNull() : it.equals(value));
+      'bottom',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 

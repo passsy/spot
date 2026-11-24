@@ -21,10 +21,7 @@ void main() {
       final recognizer = _EagerRecognizer();
 
       recognizer.addPointer(
-        PointerDownEvent(
-          pointer: pointer,
-          position: const Offset(10, 10),
-        ),
+        PointerDownEvent(pointer: pointer, position: const Offset(10, 10)),
       );
 
       // Intentionally omit PointerUpEvent/PointerCancelEvent.
@@ -42,7 +39,8 @@ void main() {
     expect(
       _arenasPoisoned,
       isTrue,
-      reason: 'The poison test must run first, '
+      reason:
+          'The poison test must run first, '
           'otherwise this test passes without testing anything',
     );
 
@@ -50,10 +48,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        home: ElevatedButton(
-          onPressed: () => taps++,
-          child: const Text('tap'),
-        ),
+        home: ElevatedButton(onPressed: () => taps++, child: const Text('tap')),
       ),
     );
 

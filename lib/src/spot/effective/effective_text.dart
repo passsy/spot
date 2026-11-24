@@ -247,8 +247,9 @@ extension EffectiveTextSelector on WidgetSelector<Text> {
 int? _extractMaxLines(Element element) {
   element.requireWidgetType<Text>();
   // every Text widget has a RichText child where the effective maxLines are set
-  final richTextElement =
-      element.children.firstWhere((e) => e.widget is RichText);
+  final richTextElement = element.children.firstWhere(
+    (e) => e.widget is RichText,
+  );
   final richText = richTextElement.widget as RichText;
   return richText.maxLines;
 }
@@ -256,8 +257,9 @@ int? _extractMaxLines(Element element) {
 TextStyle _extractTextStyle(Element element) {
   element.requireWidgetType<Text>();
   // every Text widget has a RichText child where
-  final richTextElement =
-      element.children.firstWhere((e) => e.widget is RichText);
+  final richTextElement = element.children.firstWhere(
+    (e) => e.widget is RichText,
+  );
   final richText = richTextElement.widget as RichText;
   return richText.text.style!;
 }

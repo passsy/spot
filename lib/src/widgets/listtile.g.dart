@@ -35,7 +35,9 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   @useResult
   WidgetSelector<ListTile> withLeading(Widget? value) {
     return withDiagnosticProp<Widget>(
-        'leading', (it) => value == null ? it.isNull() : it.equals(value));
+      'leading',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where title matches the condition.
@@ -58,7 +60,9 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   @useResult
   WidgetSelector<ListTile> withTitle(Widget? value) {
     return withDiagnosticProp<Widget>(
-        'title', (it) => value == null ? it.isNull() : it.equals(value));
+      'title',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where subtitle matches the condition.
@@ -81,7 +85,9 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   @useResult
   WidgetSelector<ListTile> withSubtitle(Widget? value) {
     return withDiagnosticProp<Widget>(
-        'subtitle', (it) => value == null ? it.isNull() : it.equals(value));
+      'subtitle',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where trailing matches the condition.
@@ -104,7 +110,9 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   @useResult
   WidgetSelector<ListTile> withTrailing(Widget? value) {
     return withDiagnosticProp<Widget>(
-        'trailing', (it) => value == null ? it.isNull() : it.equals(value));
+      'trailing',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where isThreeLine matches the condition.
@@ -127,7 +135,9 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   @useResult
   WidgetSelector<ListTile> withIsThreeLine(bool? value) {
     return withDiagnosticProp<bool>(
-        'isThreeLine', (it) => value == null ? it.isNull() : it.equals(value));
+      'isThreeLine',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where dense matches the condition.
@@ -150,7 +160,9 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   @useResult
   WidgetSelector<ListTile> withDense(bool? value) {
     return withDiagnosticProp<bool>(
-        'dense', (it) => value == null ? it.isNull() : it.equals(value));
+      'dense',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where visualDensity matches the condition.
@@ -172,8 +184,10 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// ```
   @useResult
   WidgetSelector<ListTile> withVisualDensity(VisualDensity? value) {
-    return withDiagnosticProp<VisualDensity>('visualDensity',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<VisualDensity>(
+      'visualDensity',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where shape matches the condition.
@@ -196,7 +210,9 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   @useResult
   WidgetSelector<ListTile> withShape(ShapeBorder? value) {
     return withDiagnosticProp<ShapeBorder>(
-        'shape', (it) => value == null ? it.isNull() : it.equals(value));
+      'shape',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where style matches the condition.
@@ -219,7 +235,9 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   @useResult
   WidgetSelector<ListTile> withStyle(ListTileStyle? value) {
     return withDiagnosticProp<ListTileStyle>(
-        'style', (it) => value == null ? it.isNull() : it.equals(value));
+      'style',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where selectedColor matches the condition.
@@ -241,8 +259,10 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// ```
   @useResult
   WidgetSelector<ListTile> withSelectedColor(Color? value) {
-    return withDiagnosticProp<Color>('selectedColor',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<Color>(
+      'selectedColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where iconColor matches the condition.
@@ -265,7 +285,9 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   @useResult
   WidgetSelector<ListTile> withIconColor(Color? value) {
     return withDiagnosticProp<Color>(
-        'iconColor', (it) => value == null ? it.isNull() : it.equals(value));
+      'iconColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where textColor matches the condition.
@@ -288,7 +310,9 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   @useResult
   WidgetSelector<ListTile> withTextColor(Color? value) {
     return withDiagnosticProp<Color>(
-        'textColor', (it) => value == null ? it.isNull() : it.equals(value));
+      'textColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where titleTextStyle matches the condition.
@@ -310,8 +334,10 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// ```
   @useResult
   WidgetSelector<ListTile> withTitleTextStyle(TextStyle? value) {
-    return withDiagnosticProp<TextStyle>('titleTextStyle',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<TextStyle>(
+      'titleTextStyle',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where subtitleTextStyle matches the condition.
@@ -333,8 +359,10 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// ```
   @useResult
   WidgetSelector<ListTile> withSubtitleTextStyle(TextStyle? value) {
-    return withDiagnosticProp<TextStyle>('subtitleTextStyle',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<TextStyle>(
+      'subtitleTextStyle',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where leadingAndTrailingTextStyle matches the condition.
@@ -345,7 +373,8 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// ```
   @useResult
   WidgetSelector<ListTile> whereLeadingAndTrailingTextStyle(
-      MatchProp<TextStyle> match) {
+    MatchProp<TextStyle> match,
+  ) {
     return withDiagnosticProp<TextStyle>('leadingAndTrailingTextStyle', match);
   }
 
@@ -357,8 +386,10 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// ```
   @useResult
   WidgetSelector<ListTile> withLeadingAndTrailingTextStyle(TextStyle? value) {
-    return withDiagnosticProp<TextStyle>('leadingAndTrailingTextStyle',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<TextStyle>(
+      'leadingAndTrailingTextStyle',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where contentPadding matches the condition.
@@ -369,7 +400,8 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// ```
   @useResult
   WidgetSelector<ListTile> whereContentPadding(
-      MatchProp<EdgeInsetsGeometry> match) {
+    MatchProp<EdgeInsetsGeometry> match,
+  ) {
     return withDiagnosticProp<EdgeInsetsGeometry>('contentPadding', match);
   }
 
@@ -381,8 +413,10 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// ```
   @useResult
   WidgetSelector<ListTile> withContentPadding(EdgeInsetsGeometry? value) {
-    return withDiagnosticProp<EdgeInsetsGeometry>('contentPadding',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<EdgeInsetsGeometry>(
+      'contentPadding',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where enabled matches the condition.
@@ -405,7 +439,9 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   @useResult
   WidgetSelector<ListTile> withEnabled(bool? value) {
     return withDiagnosticProp<bool>(
-        'enabled', (it) => value == null ? it.isNull() : it.equals(value));
+      'enabled',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where onTap matches the condition.
@@ -428,7 +464,9 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   @useResult
   WidgetSelector<ListTile> withOnTap(Function? value) {
     return withDiagnosticProp<Function>(
-        'onTap', (it) => value == null ? it.isNull() : it.equals(value));
+      'onTap',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where onLongPress matches the condition.
@@ -451,7 +489,9 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   @useResult
   WidgetSelector<ListTile> withOnLongPress(Function? value) {
     return withDiagnosticProp<Function>(
-        'onLongPress', (it) => value == null ? it.isNull() : it.equals(value));
+      'onLongPress',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where mouseCursor matches the condition.
@@ -474,7 +514,9 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   @useResult
   WidgetSelector<ListTile> withMouseCursor(MouseCursor? value) {
     return withDiagnosticProp<MouseCursor>(
-        'mouseCursor', (it) => value == null ? it.isNull() : it.equals(value));
+      'mouseCursor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where selected matches the condition.
@@ -497,7 +539,9 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   @useResult
   WidgetSelector<ListTile> withSelected(bool? value) {
     return withDiagnosticProp<bool>(
-        'selected', (it) => value == null ? it.isNull() : it.equals(value));
+      'selected',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where focusColor matches the condition.
@@ -520,7 +564,9 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   @useResult
   WidgetSelector<ListTile> withFocusColor(Color? value) {
     return withDiagnosticProp<Color>(
-        'focusColor', (it) => value == null ? it.isNull() : it.equals(value));
+      'focusColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where hoverColor matches the condition.
@@ -543,7 +589,9 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   @useResult
   WidgetSelector<ListTile> withHoverColor(Color? value) {
     return withDiagnosticProp<Color>(
-        'hoverColor', (it) => value == null ? it.isNull() : it.equals(value));
+      'hoverColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where focusNode matches the condition.
@@ -566,7 +614,9 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   @useResult
   WidgetSelector<ListTile> withFocusNode(FocusNode? value) {
     return withDiagnosticProp<FocusNode>(
-        'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
+      'focusNode',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where autofocus matches the condition.
@@ -589,7 +639,9 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   @useResult
   WidgetSelector<ListTile> withAutofocus(bool? value) {
     return withDiagnosticProp<bool>(
-        'autofocus', (it) => value == null ? it.isNull() : it.equals(value));
+      'autofocus',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where tileColor matches the condition.
@@ -612,7 +664,9 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   @useResult
   WidgetSelector<ListTile> withTileColor(Color? value) {
     return withDiagnosticProp<Color>(
-        'tileColor', (it) => value == null ? it.isNull() : it.equals(value));
+      'tileColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where selectedTileColor matches the condition.
@@ -634,8 +688,10 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// ```
   @useResult
   WidgetSelector<ListTile> withSelectedTileColor(Color? value) {
-    return withDiagnosticProp<Color>('selectedTileColor',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<Color>(
+      'selectedTileColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where enableFeedback matches the condition.
@@ -657,8 +713,10 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// ```
   @useResult
   WidgetSelector<ListTile> withEnableFeedback(bool? value) {
-    return withDiagnosticProp<bool>('enableFeedback',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<bool>(
+      'enableFeedback',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where horizontalTitleGap matches the condition.
@@ -680,8 +738,10 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// ```
   @useResult
   WidgetSelector<ListTile> withHorizontalTitleGap(double? value) {
-    return withDiagnosticProp<double>('horizontalTitleGap',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<double>(
+      'horizontalTitleGap',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where minVerticalPadding matches the condition.
@@ -703,8 +763,10 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// ```
   @useResult
   WidgetSelector<ListTile> withMinVerticalPadding(double? value) {
-    return withDiagnosticProp<double>('minVerticalPadding',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<double>(
+      'minVerticalPadding',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where minLeadingWidth matches the condition.
@@ -726,8 +788,10 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// ```
   @useResult
   WidgetSelector<ListTile> withMinLeadingWidth(double? value) {
-    return withDiagnosticProp<double>('minLeadingWidth',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<double>(
+      'minLeadingWidth',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [ListTile] where titleAlignment matches the condition.
@@ -738,7 +802,8 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// ```
   @useResult
   WidgetSelector<ListTile> whereTitleAlignment(
-      MatchProp<ListTileTitleAlignment> match) {
+    MatchProp<ListTileTitleAlignment> match,
+  ) {
     return withDiagnosticProp<ListTileTitleAlignment>('titleAlignment', match);
   }
 
@@ -750,8 +815,10 @@ extension ListTileSelector on WidgetSelector<ListTile> {
   /// ```
   @useResult
   WidgetSelector<ListTile> withTitleAlignment(ListTileTitleAlignment? value) {
-    return withDiagnosticProp<ListTileTitleAlignment>('titleAlignment',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<ListTileTitleAlignment>(
+      'titleAlignment',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 
@@ -775,7 +842,9 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// ```
   WidgetMatcher<ListTile> hasLeading(Widget? value) {
     return hasDiagnosticProp<Widget>(
-        'leading', (it) => value == null ? it.isNull() : it.equals(value));
+      'leading',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that title of [ListTile] matches the condition in [match].
@@ -796,7 +865,9 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// ```
   WidgetMatcher<ListTile> hasTitle(Widget? value) {
     return hasDiagnosticProp<Widget>(
-        'title', (it) => value == null ? it.isNull() : it.equals(value));
+      'title',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that subtitle of [ListTile] matches the condition in [match].
@@ -817,7 +888,9 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// ```
   WidgetMatcher<ListTile> hasSubtitle(Widget? value) {
     return hasDiagnosticProp<Widget>(
-        'subtitle', (it) => value == null ? it.isNull() : it.equals(value));
+      'subtitle',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that trailing of [ListTile] matches the condition in [match].
@@ -838,7 +911,9 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// ```
   WidgetMatcher<ListTile> hasTrailing(Widget? value) {
     return hasDiagnosticProp<Widget>(
-        'trailing', (it) => value == null ? it.isNull() : it.equals(value));
+      'trailing',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that isThreeLine of [ListTile] matches the condition in [match].
@@ -859,7 +934,9 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// ```
   WidgetMatcher<ListTile> hasIsThreeLine(bool? value) {
     return hasDiagnosticProp<bool>(
-        'isThreeLine', (it) => value == null ? it.isNull() : it.equals(value));
+      'isThreeLine',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that dense of [ListTile] matches the condition in [match].
@@ -880,7 +957,9 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// ```
   WidgetMatcher<ListTile> hasDense(bool? value) {
     return hasDiagnosticProp<bool>(
-        'dense', (it) => value == null ? it.isNull() : it.equals(value));
+      'dense',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that visualDensity of [ListTile] matches the condition in [match].
@@ -890,7 +969,8 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// spot<ListTile>().existsOnce().hasVisualDensityWhere((it) => it.equals(VisualDensity(horizontal: 1.0,vertical: 1.0)));
   /// ```
   WidgetMatcher<ListTile> hasVisualDensityWhere(
-      MatchProp<VisualDensity> match) {
+    MatchProp<VisualDensity> match,
+  ) {
     return hasDiagnosticProp<VisualDensity>('visualDensity', match);
   }
 
@@ -901,8 +981,10 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// spot<ListTile>().existsOnce().hasVisualDensity(VisualDensity(horizontal: 1.0,vertical: 1.0));
   /// ```
   WidgetMatcher<ListTile> hasVisualDensity(VisualDensity? value) {
-    return hasDiagnosticProp<VisualDensity>('visualDensity',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<VisualDensity>(
+      'visualDensity',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that shape of [ListTile] matches the condition in [match].
@@ -923,7 +1005,9 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// ```
   WidgetMatcher<ListTile> hasShape(ShapeBorder? value) {
     return hasDiagnosticProp<ShapeBorder>(
-        'shape', (it) => value == null ? it.isNull() : it.equals(value));
+      'shape',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that style of [ListTile] matches the condition in [match].
@@ -944,7 +1028,9 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// ```
   WidgetMatcher<ListTile> hasStyle(ListTileStyle? value) {
     return hasDiagnosticProp<ListTileStyle>(
-        'style', (it) => value == null ? it.isNull() : it.equals(value));
+      'style',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that selectedColor of [ListTile] matches the condition in [match].
@@ -964,8 +1050,10 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// spot<ListTile>().existsOnce().hasSelectedColor(Colors.red);
   /// ```
   WidgetMatcher<ListTile> hasSelectedColor(Color? value) {
-    return hasDiagnosticProp<Color>('selectedColor',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<Color>(
+      'selectedColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that iconColor of [ListTile] matches the condition in [match].
@@ -986,7 +1074,9 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// ```
   WidgetMatcher<ListTile> hasIconColor(Color? value) {
     return hasDiagnosticProp<Color>(
-        'iconColor', (it) => value == null ? it.isNull() : it.equals(value));
+      'iconColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that textColor of [ListTile] matches the condition in [match].
@@ -1007,7 +1097,9 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// ```
   WidgetMatcher<ListTile> hasTextColor(Color? value) {
     return hasDiagnosticProp<Color>(
-        'textColor', (it) => value == null ? it.isNull() : it.equals(value));
+      'textColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that titleTextStyle of [ListTile] matches the condition in [match].
@@ -1027,8 +1119,10 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// spot<ListTile>().existsOnce().hasTitleTextStyle(TextStyle());
   /// ```
   WidgetMatcher<ListTile> hasTitleTextStyle(TextStyle? value) {
-    return hasDiagnosticProp<TextStyle>('titleTextStyle',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<TextStyle>(
+      'titleTextStyle',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that subtitleTextStyle of [ListTile] matches the condition in [match].
@@ -1038,7 +1132,8 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// spot<ListTile>().existsOnce().hasSubtitleTextStyleWhere((it) => it.equals(TextStyle()));
   /// ```
   WidgetMatcher<ListTile> hasSubtitleTextStyleWhere(
-      MatchProp<TextStyle> match) {
+    MatchProp<TextStyle> match,
+  ) {
     return hasDiagnosticProp<TextStyle>('subtitleTextStyle', match);
   }
 
@@ -1049,8 +1144,10 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// spot<ListTile>().existsOnce().hasSubtitleTextStyle(TextStyle());
   /// ```
   WidgetMatcher<ListTile> hasSubtitleTextStyle(TextStyle? value) {
-    return hasDiagnosticProp<TextStyle>('subtitleTextStyle',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<TextStyle>(
+      'subtitleTextStyle',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that leadingAndTrailingTextStyle of [ListTile] matches the condition in [match].
@@ -1060,7 +1157,8 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// spot<ListTile>().existsOnce().hasLeadingAndTrailingTextStyleWhere((it) => it.equals(TextStyle()));
   /// ```
   WidgetMatcher<ListTile> hasLeadingAndTrailingTextStyleWhere(
-      MatchProp<TextStyle> match) {
+    MatchProp<TextStyle> match,
+  ) {
     return hasDiagnosticProp<TextStyle>('leadingAndTrailingTextStyle', match);
   }
 
@@ -1071,8 +1169,10 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// spot<ListTile>().existsOnce().hasLeadingAndTrailingTextStyle(TextStyle());
   /// ```
   WidgetMatcher<ListTile> hasLeadingAndTrailingTextStyle(TextStyle? value) {
-    return hasDiagnosticProp<TextStyle>('leadingAndTrailingTextStyle',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<TextStyle>(
+      'leadingAndTrailingTextStyle',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that contentPadding of [ListTile] matches the condition in [match].
@@ -1082,7 +1182,8 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// spot<ListTile>().existsOnce().hasContentPaddingWhere((it) => it.equals(EdgeInsets.all(8.0)));
   /// ```
   WidgetMatcher<ListTile> hasContentPaddingWhere(
-      MatchProp<EdgeInsetsGeometry> match) {
+    MatchProp<EdgeInsetsGeometry> match,
+  ) {
     return hasDiagnosticProp<EdgeInsetsGeometry>('contentPadding', match);
   }
 
@@ -1093,8 +1194,10 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// spot<ListTile>().existsOnce().hasContentPadding(EdgeInsets.all(8.0));
   /// ```
   WidgetMatcher<ListTile> hasContentPadding(EdgeInsetsGeometry? value) {
-    return hasDiagnosticProp<EdgeInsetsGeometry>('contentPadding',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<EdgeInsetsGeometry>(
+      'contentPadding',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that enabled of [ListTile] matches the condition in [match].
@@ -1115,7 +1218,9 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// ```
   WidgetMatcher<ListTile> isEnabled(bool? value) {
     return hasDiagnosticProp<bool>(
-        'enabled', (it) => value == null ? it.isNull() : it.equals(value));
+      'enabled',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that onTap of [ListTile] matches the condition in [match].
@@ -1136,7 +1241,9 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// ```
   WidgetMatcher<ListTile> hasOnTap(Function? value) {
     return hasDiagnosticProp<Function>(
-        'onTap', (it) => value == null ? it.isNull() : it.equals(value));
+      'onTap',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that onLongPress of [ListTile] matches the condition in [match].
@@ -1157,7 +1264,9 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// ```
   WidgetMatcher<ListTile> hasOnLongPress(Function? value) {
     return hasDiagnosticProp<Function>(
-        'onLongPress', (it) => value == null ? it.isNull() : it.equals(value));
+      'onLongPress',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that mouseCursor of [ListTile] matches the condition in [match].
@@ -1178,7 +1287,9 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// ```
   WidgetMatcher<ListTile> hasMouseCursor(MouseCursor? value) {
     return hasDiagnosticProp<MouseCursor>(
-        'mouseCursor', (it) => value == null ? it.isNull() : it.equals(value));
+      'mouseCursor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that selected of [ListTile] matches the condition in [match].
@@ -1199,7 +1310,9 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// ```
   WidgetMatcher<ListTile> hasSelected(bool? value) {
     return hasDiagnosticProp<bool>(
-        'selected', (it) => value == null ? it.isNull() : it.equals(value));
+      'selected',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that focusColor of [ListTile] matches the condition in [match].
@@ -1220,7 +1333,9 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// ```
   WidgetMatcher<ListTile> hasFocusColor(Color? value) {
     return hasDiagnosticProp<Color>(
-        'focusColor', (it) => value == null ? it.isNull() : it.equals(value));
+      'focusColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that hoverColor of [ListTile] matches the condition in [match].
@@ -1241,7 +1356,9 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// ```
   WidgetMatcher<ListTile> hasHoverColor(Color? value) {
     return hasDiagnosticProp<Color>(
-        'hoverColor', (it) => value == null ? it.isNull() : it.equals(value));
+      'hoverColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that focusNode of [ListTile] matches the condition in [match].
@@ -1262,7 +1379,9 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// ```
   WidgetMatcher<ListTile> hasFocusNode(FocusNode? value) {
     return hasDiagnosticProp<FocusNode>(
-        'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
+      'focusNode',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that autofocus of [ListTile] matches the condition in [match].
@@ -1283,7 +1402,9 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// ```
   WidgetMatcher<ListTile> hasAutofocus(bool? value) {
     return hasDiagnosticProp<bool>(
-        'autofocus', (it) => value == null ? it.isNull() : it.equals(value));
+      'autofocus',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that tileColor of [ListTile] matches the condition in [match].
@@ -1304,7 +1425,9 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// ```
   WidgetMatcher<ListTile> hasTileColor(Color? value) {
     return hasDiagnosticProp<Color>(
-        'tileColor', (it) => value == null ? it.isNull() : it.equals(value));
+      'tileColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that selectedTileColor of [ListTile] matches the condition in [match].
@@ -1324,8 +1447,10 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// spot<ListTile>().existsOnce().hasSelectedTileColor(Colors.red);
   /// ```
   WidgetMatcher<ListTile> hasSelectedTileColor(Color? value) {
-    return hasDiagnosticProp<Color>('selectedTileColor',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<Color>(
+      'selectedTileColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that enableFeedback of [ListTile] matches the condition in [match].
@@ -1345,8 +1470,10 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// spot<ListTile>().existsOnce().hasEnableFeedback(true);
   /// ```
   WidgetMatcher<ListTile> hasEnableFeedback(bool? value) {
-    return hasDiagnosticProp<bool>('enableFeedback',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<bool>(
+      'enableFeedback',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that horizontalTitleGap of [ListTile] matches the condition in [match].
@@ -1366,8 +1493,10 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// spot<ListTile>().existsOnce().hasHorizontalTitleGap(10.5);
   /// ```
   WidgetMatcher<ListTile> hasHorizontalTitleGap(double? value) {
-    return hasDiagnosticProp<double>('horizontalTitleGap',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<double>(
+      'horizontalTitleGap',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that minVerticalPadding of [ListTile] matches the condition in [match].
@@ -1387,8 +1516,10 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// spot<ListTile>().existsOnce().hasMinVerticalPadding(10.5);
   /// ```
   WidgetMatcher<ListTile> hasMinVerticalPadding(double? value) {
-    return hasDiagnosticProp<double>('minVerticalPadding',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<double>(
+      'minVerticalPadding',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that minLeadingWidth of [ListTile] matches the condition in [match].
@@ -1408,8 +1539,10 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// spot<ListTile>().existsOnce().hasMinLeadingWidth(10.5);
   /// ```
   WidgetMatcher<ListTile> hasMinLeadingWidth(double? value) {
-    return hasDiagnosticProp<double>('minLeadingWidth',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<double>(
+      'minLeadingWidth',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that titleAlignment of [ListTile] matches the condition in [match].
@@ -1419,7 +1552,8 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// spot<ListTile>().existsOnce().hasTitleAlignmentWhere((it) => it.equals(ListTileTitleAlignment.values.first));
   /// ```
   WidgetMatcher<ListTile> hasTitleAlignmentWhere(
-      MatchProp<ListTileTitleAlignment> match) {
+    MatchProp<ListTileTitleAlignment> match,
+  ) {
     return hasDiagnosticProp<ListTileTitleAlignment>('titleAlignment', match);
   }
 
@@ -1430,8 +1564,10 @@ extension ListTileMatcher on WidgetMatcher<ListTile> {
   /// spot<ListTile>().existsOnce().hasTitleAlignment(ListTileTitleAlignment.values.first);
   /// ```
   WidgetMatcher<ListTile> hasTitleAlignment(ListTileTitleAlignment? value) {
-    return hasDiagnosticProp<ListTileTitleAlignment>('titleAlignment',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<ListTileTitleAlignment>(
+      'titleAlignment',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 

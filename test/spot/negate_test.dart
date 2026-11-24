@@ -14,13 +14,7 @@ void main() {
   });
 
   testWidgets('negate child', (tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: ListView(),
-        ),
-      ),
-    );
+    await tester.pumpWidget(MaterialApp(home: Scaffold(body: ListView())));
     spot<Scaffold>().existsOnce();
     spot<Scaffold>().withChild(spot<ListView>()).existsOnce();
 
@@ -32,21 +26,13 @@ void main() {
   });
 
   testWidgets('fail due to negate', (tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: ListView(),
-        ),
-      ),
-    );
+    await tester.pumpWidget(MaterialApp(home: Scaffold(body: ListView())));
 
     expect(
       () => spot<Scaffold>().withChild(spot<ListView>().atMost(0)).existsOnce(),
-      throwsSpotErrorContaining(
-        [
-          'Could not find Scaffold with child ListView (amount: 0) in widget tree, expected exactly 1',
-        ],
-      ),
+      throwsSpotErrorContaining([
+        'Could not find Scaffold with child ListView (amount: 0) in widget tree, expected exactly 1',
+      ]),
     );
     expect(
       () =>
@@ -56,13 +42,7 @@ void main() {
   });
 
   testWidgets('negate parent - throws UnimplementedError', (tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: ListView(),
-        ),
-      ),
-    );
+    await tester.pumpWidget(MaterialApp(home: Scaffold(body: ListView())));
     spot<Scaffold>().existsOnce();
     spot<ListView>().withParent(spot<Scaffold>()).existsOnce();
 

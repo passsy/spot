@@ -15,8 +15,10 @@ void main() {
       called = true;
     }
 
-    final failure =
-        softCheckHideNull<String?>(null, condition.hideNullability());
+    final failure = softCheckHideNull<String?>(
+      null,
+      condition.hideNullability(),
+    );
     expect(failure, isNull);
     expect(called, isTrue);
   });
@@ -31,8 +33,10 @@ void main() {
     }
 
     // null value is rejected
-    final failure =
-        softCheckHideNull<String?>('a', condition.hideNullability());
+    final failure = softCheckHideNull<String?>(
+      'a',
+      condition.hideNullability(),
+    );
     expect(failure, isNotNull);
     expect(called, isTrue);
   });

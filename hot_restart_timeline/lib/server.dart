@@ -12,9 +12,10 @@ void startServer(Directory timelineHotReloadDir) {
         .listSync(recursive: true)
         .where((file) => file.path.endsWith('.html'))
         .map((file) {
-      final relative = file.path.split('build/timeline/').last;
-      return '<li><a href="/$relative">$relative</a></li>\n';
-    }).join('\n');
+          final relative = file.path.split('build/timeline/').last;
+          return '<li><a href="/$relative">$relative</a></li>\n';
+        })
+        .join('\n');
     resp.sendHtmlText(
       '<h1>Spot timelines</h1>\n\n'
       '<ul>\n$timelines</ul>',

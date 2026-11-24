@@ -216,8 +216,9 @@ class AnyText extends LeafRenderObjectWidget {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     final rawText = text;
-    final normalizedText =
-        rawText == null ? null : normalizeVisibleText(rawText);
+    final normalizedText = rawText == null
+        ? null
+        : normalizeVisibleText(rawText);
     // 'text' is normalized so matching ignores invisible/special whitespace
     // (see [normalizeVisibleText]), while 'rawText' keeps the exact characters.
     // Both are always added so the generator emits the `text` and `rawText`
@@ -239,11 +240,7 @@ class AnyText extends LeafRenderObjectWidget {
       ),
     );
     properties.add(
-      ColorProperty(
-        'selectionColor',
-        selectionColor,
-        defaultValue: null,
-      ),
+      ColorProperty('selectionColor', selectionColor, defaultValue: null),
     );
     properties.add(
       FlagProperty(
@@ -262,19 +259,23 @@ class AnyText extends LeafRenderObjectWidget {
       ),
     );
     properties.add(IntProperty('maxLines', maxLines, ifNull: 'unlimited'));
-    properties
-        .add(DiagnosticsProperty<Locale>('locale', locale, defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<Locale>('locale', locale, defaultValue: null),
+    );
     properties.add(IntProperty('minLines', minLines, defaultValue: null));
     textStyle?.debugFillProperties(properties, prefix: 'font_');
 
     // set default value for font_size
-    final textSize = properties.properties.firstOrNullWhere((it) {
-      return it.name == 'font_size';
-    }) as DoubleProperty?;
+    final textSize =
+        properties.properties.firstOrNullWhere((it) {
+              return it.name == 'font_size';
+            })
+            as DoubleProperty?;
     if (textSize != null) {
       properties.properties.remove(textSize);
-      properties
-          .add(DoubleProperty('font_size', textSize.value, defaultValue: 14.0));
+      properties.add(
+        DoubleProperty('font_size', textSize.value, defaultValue: 14.0),
+      );
     }
   }
 
@@ -326,12 +327,9 @@ extension AnyTextEditabilitySelector on WidgetSelector<AnyText> {
   /// This includes regular text widgets and disabled or read-only text inputs.
   @useResult
   WidgetSelector<AnyText> whereIsNotEditable() {
-    return whereElement(
-      (element) {
-        return !_isEditableTextElement(element);
-      },
-      description: 'is not editable text',
-    );
+    return whereElement((element) {
+      return !_isEditableTextElement(element);
+    }, description: 'is not editable text');
   }
 }
 
@@ -408,9 +406,8 @@ class AnyTextWidgetSelector extends WidgetSelector<AnyText> {
   /// - `props`: Properties to match widgets.
   /// - `children`: Child selectors to include in the match.
   /// - `parents`: Parent selectors to include in the match.
-  AnyTextWidgetSelector({
-    required super.stages,
-  }) : super(mapElementToWidget: _mapElementToAnyText);
+  AnyTextWidgetSelector({required super.stages})
+    : super(mapElementToWidget: _mapElementToAnyText);
 
   /// The [AnyText] of [element], the same instance until something it was
   /// derived from changes.

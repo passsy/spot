@@ -63,11 +63,13 @@ void main() {
     expect(self, isNotNull);
     final WidgetSelector<Center> copyWith = selector.copyWith();
     expect(copyWith, isNotNull);
-    final WidgetSelector<Center> withProp =
-        selector.withProp(match: (it) => it, widgetSelector: (it) => it);
+    final WidgetSelector<Center> withProp = selector.withProp(
+      match: (it) => it,
+      widgetSelector: (it) => it,
+    );
     expect(withProp, isNotNull);
-    final WidgetSelector<Center> withDiagnosticProp =
-        selector.withDiagnosticProp('a', (it) => it);
+    final WidgetSelector<Center> withDiagnosticProp = selector
+        .withDiagnosticProp('a', (it) => it);
     expect(withDiagnosticProp, isNotNull);
   });
 
@@ -100,14 +102,7 @@ void main() {
 
   testWidgets('snapshotWidget() multiple widgets', (tester) async {
     await tester.pumpWidget(
-      const MaterialApp(
-        home: Column(
-          children: [
-            Text('home'),
-            Text('home'),
-          ],
-        ),
-      ),
+      const MaterialApp(home: Column(children: [Text('home'), Text('home')])),
     );
     expect(
       () => spotText('home').snapshotWidget(),
@@ -176,7 +171,7 @@ void main() {
   testWidgets('snapshotElement() one widget', (tester) async {
     await tester.pumpWidget(
       WidgetsApp(
-        builder: (_, __) => const Center(child: Text('home')),
+        builder: (_, _) => const Center(child: Text('home')),
         color: Colors.red,
       ),
     );
@@ -187,14 +182,7 @@ void main() {
 
   testWidgets('snapshotElement() multiple widgets', (tester) async {
     await tester.pumpWidget(
-      const MaterialApp(
-        home: Row(
-          children: [
-            Text('home'),
-            Text('home'),
-          ],
-        ),
-      ),
+      const MaterialApp(home: Row(children: [Text('home'), Text('home')])),
     );
     expect(
       () => spotText('home').snapshotElement(),
@@ -216,7 +204,7 @@ void main() {
   testWidgets('snapshotRenderObject() one widget', (tester) async {
     await tester.pumpWidget(
       WidgetsApp(
-        builder: (_, __) => const Center(child: Text('home')),
+        builder: (_, _) => const Center(child: Text('home')),
         color: Colors.red,
       ),
     );
@@ -227,14 +215,7 @@ void main() {
 
   testWidgets('snapshotRenderObject() multiple widgets', (tester) async {
     await tester.pumpWidget(
-      const MaterialApp(
-        home: Row(
-          children: [
-            Text('home'),
-            Text('home'),
-          ],
-        ),
-      ),
+      const MaterialApp(home: Row(children: [Text('home'), Text('home')])),
     );
     expect(
       () => spotText('home').snapshotRenderObject(),
@@ -256,7 +237,7 @@ void main() {
   testWidgets('snapshotRenderBox() one widget', (tester) async {
     await tester.pumpWidget(
       WidgetsApp(
-        builder: (_, __) => const Center(child: Text('home')),
+        builder: (_, _) => const Center(child: Text('home')),
         color: Colors.red,
       ),
     );
@@ -267,14 +248,7 @@ void main() {
 
   testWidgets('snapshotRenderBox() multiple widgets', (tester) async {
     await tester.pumpWidget(
-      const MaterialApp(
-        home: Row(
-          children: [
-            Text('home'),
-            Text('home'),
-          ],
-        ),
-      ),
+      const MaterialApp(home: Row(children: [Text('home'), Text('home')])),
     );
     expect(
       () => spotText('home').snapshotRenderBox(),
@@ -288,7 +262,7 @@ void main() {
     testWidgets('discoveredRenderObject with one widget', (tester) async {
       await tester.pumpWidget(
         WidgetsApp(
-          builder: (_, __) => const Center(child: Text('home')),
+          builder: (_, _) => const Center(child: Text('home')),
           color: Colors.red,
         ),
       );
@@ -300,8 +274,9 @@ void main() {
       expect(renderObject.isRepaintBoundary, isFalse);
     });
 
-    testWidgets('discoveredRenderObject with zero widgets throws',
-        (tester) async {
+    testWidgets('discoveredRenderObject with zero widgets throws', (
+      tester,
+    ) async {
       expect(
         () => spotText('unknown').snapshot().discoveredRenderObject,
         throwsSpotErrorContaining([
@@ -310,17 +285,11 @@ void main() {
       );
     });
 
-    testWidgets('discoveredRenderObject with multiple widgets throws',
-        (tester) async {
+    testWidgets('discoveredRenderObject with multiple widgets throws', (
+      tester,
+    ) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Row(
-            children: [
-              Text('home'),
-              Text('home'),
-            ],
-          ),
-        ),
+        const MaterialApp(home: Row(children: [Text('home'), Text('home')])),
       );
 
       final snapshot = spotText('home').snapshot();
@@ -333,17 +302,11 @@ void main() {
       );
     });
 
-    testWidgets('discoveredRenderObjects with multiple widgets',
-        (tester) async {
+    testWidgets('discoveredRenderObjects with multiple widgets', (
+      tester,
+    ) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Row(
-            children: [
-              Text('home'),
-              Text('home'),
-            ],
-          ),
-        ),
+        const MaterialApp(home: Row(children: [Text('home'), Text('home')])),
       );
 
       final snapshot = spotText('home').snapshot();
@@ -354,18 +317,20 @@ void main() {
       expect(renderObjects.last, isA<RenderObject>());
     });
 
-    testWidgets('discoveredRenderObjects with zero widgets returns empty list',
-        (tester) async {
-      final snapshot = spotText('unknown').snapshot();
-      final renderObjects = snapshot.discoveredRenderObjects;
+    testWidgets(
+      'discoveredRenderObjects with zero widgets returns empty list',
+      (tester) async {
+        final snapshot = spotText('unknown').snapshot();
+        final renderObjects = snapshot.discoveredRenderObjects;
 
-      expect(renderObjects, isEmpty);
-    });
+        expect(renderObjects, isEmpty);
+      },
+    );
 
     testWidgets('discoveredRenderBox with one widget', (tester) async {
       await tester.pumpWidget(
         WidgetsApp(
-          builder: (_, __) => const Center(child: Text('home')),
+          builder: (_, _) => const Center(child: Text('home')),
           color: Colors.red,
         ),
       );
@@ -386,17 +351,11 @@ void main() {
       );
     });
 
-    testWidgets('discoveredRenderBox with multiple widgets throws',
-        (tester) async {
+    testWidgets('discoveredRenderBox with multiple widgets throws', (
+      tester,
+    ) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Row(
-            children: [
-              Text('home'),
-              Text('home'),
-            ],
-          ),
-        ),
+        const MaterialApp(home: Row(children: [Text('home'), Text('home')])),
       );
 
       final snapshot = spotText('home').snapshot();
@@ -411,14 +370,7 @@ void main() {
 
     testWidgets('discoveredRenderBoxes with multiple widgets', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Row(
-            children: [
-              Text('home'),
-              Text('home'),
-            ],
-          ),
-        ),
+        const MaterialApp(home: Row(children: [Text('home'), Text('home')])),
       );
 
       final snapshot = spotText('home').snapshot();
@@ -429,8 +381,9 @@ void main() {
       expect(renderBoxes.last, isA<RenderBox>());
     });
 
-    testWidgets('discoveredRenderBoxes with zero widgets returns empty list',
-        (tester) async {
+    testWidgets('discoveredRenderBoxes with zero widgets returns empty list', (
+      tester,
+    ) async {
       final snapshot = spotText('unknown').snapshot();
       final renderBoxes = snapshot.discoveredRenderBoxes;
 
@@ -438,32 +391,30 @@ void main() {
     });
 
     testWidgets(
-        'discoveredRenderBox throws when render object is not a RenderBox',
-        (tester) async {
-      await tester.pumpWidget(_NonCartesianWidget());
-      final snapshot = spot<_NonCartesianWidget>().snapshot();
-      expect(
-        () => snapshot.discoveredRenderBox,
-        throwsSpotErrorContaining(
-          [
+      'discoveredRenderBox throws when render object is not a RenderBox',
+      (tester) async {
+        await tester.pumpWidget(_NonCartesianWidget());
+        final snapshot = spot<_NonCartesianWidget>().snapshot();
+        expect(
+          () => snapshot.discoveredRenderBox,
+          throwsSpotErrorContaining([
             "Widget '_NonCartesianWidget' is associated to _CustomRenderObject",
             "is not a RenderObject in the 2D Cartesian coordinate system (implements RenderBox).",
-          ],
-        ),
-      );
-    });
+          ]),
+        );
+      },
+    );
 
-    testWidgets('discoveredRenderObject throws when render object is null',
-        (tester) async {
+    testWidgets('discoveredRenderObject throws when render object is null', (
+      tester,
+    ) async {
       await tester.pumpWidget(_NoRenderObjectWidget());
       final snapshot = spot<_NoRenderObjectWidget>().snapshot();
       expect(
         () => snapshot.discoveredRenderObject,
-        throwsSpotErrorContaining(
-          [
-            "Widget '_NoRenderObjectWidget' has no associated RenderObject",
-          ],
-        ),
+        throwsSpotErrorContaining([
+          "Widget '_NoRenderObjectWidget' has no associated RenderObject",
+        ]),
       );
     });
   });

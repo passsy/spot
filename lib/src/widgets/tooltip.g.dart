@@ -35,7 +35,9 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   @useResult
   WidgetSelector<Tooltip> withMessage(String? value) {
     return withDiagnosticProp<String>(
-        'message', (it) => value == null ? it.isNull() : it.equals(value));
+      'message',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where richMessage matches the condition.
@@ -58,7 +60,9 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   @useResult
   WidgetSelector<Tooltip> withRichMessage(String? value) {
     return withDiagnosticProp<String>(
-        'richMessage', (it) => value == null ? it.isNull() : it.equals(value));
+      'richMessage',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where height matches the condition.
@@ -81,7 +85,9 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   @useResult
   WidgetSelector<Tooltip> withHeight(double? value) {
     return withDiagnosticProp<double>(
-        'height', (it) => value == null ? it.isNull() : it.equals(value));
+      'height',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where padding matches the condition.
@@ -104,7 +110,9 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   @useResult
   WidgetSelector<Tooltip> withPadding(EdgeInsetsGeometry? value) {
     return withDiagnosticProp<EdgeInsetsGeometry>(
-        'padding', (it) => value == null ? it.isNull() : it.equals(value));
+      'padding',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where margin matches the condition.
@@ -127,7 +135,9 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   @useResult
   WidgetSelector<Tooltip> withMargin(EdgeInsetsGeometry? value) {
     return withDiagnosticProp<EdgeInsetsGeometry>(
-        'margin', (it) => value == null ? it.isNull() : it.equals(value));
+      'margin',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where verticalOffset matches the condition.
@@ -149,8 +159,10 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   /// ```
   @useResult
   WidgetSelector<Tooltip> withVerticalOffset(double? value) {
-    return withDiagnosticProp<double>('vertical offset',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<double>(
+      'vertical offset',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where position matches the condition.
@@ -173,7 +185,9 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   @useResult
   WidgetSelector<Tooltip> withPosition(bool? value) {
     return withDiagnosticProp<bool>(
-        'position', (it) => value == null ? it.isNull() : it.equals(value));
+      'position',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where semantics matches the condition.
@@ -196,7 +210,9 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   @useResult
   WidgetSelector<Tooltip> withSemantics(bool? value) {
     return withDiagnosticProp<bool>(
-        'semantics', (it) => value == null ? it.isNull() : it.equals(value));
+      'semantics',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where waitDuration matches the condition.
@@ -218,8 +234,10 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   /// ```
   @useResult
   WidgetSelector<Tooltip> withWaitDuration(Duration? value) {
-    return withDiagnosticProp<Duration>('wait duration',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<Duration>(
+      'wait duration',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where showDuration matches the condition.
@@ -241,8 +259,10 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   /// ```
   @useResult
   WidgetSelector<Tooltip> withShowDuration(Duration? value) {
-    return withDiagnosticProp<Duration>('show duration',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<Duration>(
+      'show duration',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where triggerMode matches the condition.
@@ -253,7 +273,8 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   /// ```
   @useResult
   WidgetSelector<Tooltip> whereTriggerMode(
-      MatchProp<TooltipTriggerMode> match) {
+    MatchProp<TooltipTriggerMode> match,
+  ) {
     return withDiagnosticProp<TooltipTriggerMode>('triggerMode', match);
   }
 
@@ -266,7 +287,9 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   @useResult
   WidgetSelector<Tooltip> withTriggerMode(TooltipTriggerMode? value) {
     return withDiagnosticProp<TooltipTriggerMode>(
-        'triggerMode', (it) => value == null ? it.isNull() : it.equals(value));
+      'triggerMode',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where enableFeedback matches the condition.
@@ -288,8 +311,10 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   /// ```
   @useResult
   WidgetSelector<Tooltip> withEnableFeedback(bool? value) {
-    return withDiagnosticProp<bool>('enableFeedback',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<bool>(
+      'enableFeedback',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Tooltip] where textAlign matches the condition.
@@ -312,7 +337,9 @@ extension TooltipSelector on WidgetSelector<Tooltip> {
   @useResult
   WidgetSelector<Tooltip> withTextAlign(TextAlign? value) {
     return withDiagnosticProp<TextAlign>(
-        'textAlign', (it) => value == null ? it.isNull() : it.equals(value));
+      'textAlign',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 
@@ -336,7 +363,9 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// ```
   WidgetMatcher<Tooltip> hasMessage(String? value) {
     return hasDiagnosticProp<String>(
-        'message', (it) => value == null ? it.isNull() : it.equals(value));
+      'message',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that richMessage of [Tooltip] matches the condition in [match].
@@ -357,7 +386,9 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// ```
   WidgetMatcher<Tooltip> hasRichMessage(String? value) {
     return hasDiagnosticProp<String>(
-        'richMessage', (it) => value == null ? it.isNull() : it.equals(value));
+      'richMessage',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that height of [Tooltip] matches the condition in [match].
@@ -378,7 +409,9 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// ```
   WidgetMatcher<Tooltip> hasHeight(double? value) {
     return hasDiagnosticProp<double>(
-        'height', (it) => value == null ? it.isNull() : it.equals(value));
+      'height',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that padding of [Tooltip] matches the condition in [match].
@@ -399,7 +432,9 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// ```
   WidgetMatcher<Tooltip> hasPadding(EdgeInsetsGeometry? value) {
     return hasDiagnosticProp<EdgeInsetsGeometry>(
-        'padding', (it) => value == null ? it.isNull() : it.equals(value));
+      'padding',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that margin of [Tooltip] matches the condition in [match].
@@ -420,7 +455,9 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// ```
   WidgetMatcher<Tooltip> hasMargin(EdgeInsetsGeometry? value) {
     return hasDiagnosticProp<EdgeInsetsGeometry>(
-        'margin', (it) => value == null ? it.isNull() : it.equals(value));
+      'margin',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that verticalOffset of [Tooltip] matches the condition in [match].
@@ -440,8 +477,10 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// spot<Tooltip>().existsOnce().hasVerticalOffset(10.5);
   /// ```
   WidgetMatcher<Tooltip> hasVerticalOffset(double? value) {
-    return hasDiagnosticProp<double>('vertical offset',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<double>(
+      'vertical offset',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that position of [Tooltip] matches the condition in [match].
@@ -462,7 +501,9 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// ```
   WidgetMatcher<Tooltip> hasPosition(bool? value) {
     return hasDiagnosticProp<bool>(
-        'position', (it) => value == null ? it.isNull() : it.equals(value));
+      'position',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that semantics of [Tooltip] matches the condition in [match].
@@ -483,7 +524,9 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// ```
   WidgetMatcher<Tooltip> hasSemantics(bool? value) {
     return hasDiagnosticProp<bool>(
-        'semantics', (it) => value == null ? it.isNull() : it.equals(value));
+      'semantics',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that waitDuration of [Tooltip] matches the condition in [match].
@@ -503,8 +546,10 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// spot<Tooltip>().existsOnce().hasWaitDuration(Duration(seconds: 30));
   /// ```
   WidgetMatcher<Tooltip> hasWaitDuration(Duration? value) {
-    return hasDiagnosticProp<Duration>('wait duration',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<Duration>(
+      'wait duration',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that showDuration of [Tooltip] matches the condition in [match].
@@ -524,8 +569,10 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// spot<Tooltip>().existsOnce().hasShowDuration(Duration(seconds: 30));
   /// ```
   WidgetMatcher<Tooltip> hasShowDuration(Duration? value) {
-    return hasDiagnosticProp<Duration>('show duration',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<Duration>(
+      'show duration',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that triggerMode of [Tooltip] matches the condition in [match].
@@ -535,7 +582,8 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// spot<Tooltip>().existsOnce().hasTriggerModeWhere((it) => it.equals(TooltipTriggerMode.values.first));
   /// ```
   WidgetMatcher<Tooltip> hasTriggerModeWhere(
-      MatchProp<TooltipTriggerMode> match) {
+    MatchProp<TooltipTriggerMode> match,
+  ) {
     return hasDiagnosticProp<TooltipTriggerMode>('triggerMode', match);
   }
 
@@ -547,7 +595,9 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// ```
   WidgetMatcher<Tooltip> hasTriggerMode(TooltipTriggerMode? value) {
     return hasDiagnosticProp<TooltipTriggerMode>(
-        'triggerMode', (it) => value == null ? it.isNull() : it.equals(value));
+      'triggerMode',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that enableFeedback of [Tooltip] matches the condition in [match].
@@ -567,8 +617,10 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// spot<Tooltip>().existsOnce().hasEnableFeedback(true);
   /// ```
   WidgetMatcher<Tooltip> hasEnableFeedback(bool? value) {
-    return hasDiagnosticProp<bool>('enableFeedback',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<bool>(
+      'enableFeedback',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that textAlign of [Tooltip] matches the condition in [match].
@@ -589,7 +641,9 @@ extension TooltipMatcher on WidgetMatcher<Tooltip> {
   /// ```
   WidgetMatcher<Tooltip> hasTextAlign(TextAlign? value) {
     return hasDiagnosticProp<TextAlign>(
-        'textAlign', (it) => value == null ? it.isNull() : it.equals(value));
+      'textAlign',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 

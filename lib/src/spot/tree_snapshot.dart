@@ -1,8 +1,13 @@
+import 'dart:developer' as developer;
+
+import 'package:clock/clock.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/src/flutter/frame_clock.dart';
+import 'package:spot/src/spot/diagnostic_props.dart';
 import 'package:spot/src/spot/element_extensions.dart';
 import 'package:spot/src/spot/query_stats.dart';
+import 'package:spot/src/spot/widget_location.dart';
 
 /// caching the tree for the current frame
 WidgetTreeSnapshot? _cachedTree;
@@ -42,7 +47,8 @@ WidgetTreeSnapshot createWidgetTreeSnapshot() {
     for (final child in children) {
       // Once a part of the widget tree is offstage, all children are offstage, too.
       // There is now way a child might become onstage again
-      final isOffstage = isParentOffstage ||
+      final isOffstage =
+          isParentOffstage ||
           () {
             final onstageOnly = element.onstageChildren.toList();
             final offstageOnly = element.children
@@ -64,10 +70,7 @@ WidgetTreeSnapshot createWidgetTreeSnapshot() {
   // TODO replace recursion with iteration to prevent stack overflow for giant widget trees
   final origin = buildTreeNode(rootElement);
 
-  return WidgetTreeSnapshot(
-    origin: origin,
-    timestamp: DateTime.now(),
-  );
+  return WidgetTreeSnapshot(origin: origin, timestamp: clock.now());
 }
 
 /// A node in [WidgetTreeSnapshot] holding a single [element] and knows about
@@ -75,6 +78,16 @@ WidgetTreeSnapshot createWidgetTreeSnapshot() {
 class WidgetTreeNode {
   /// The actual element in the element tree holding the widget of type `W`.
   final Element element;
+
+  /// The widget captured while [element] was still mounted.
+  ///
+  /// Reading `element.widget` after a test tears down its widget tree throws.
+  /// Offline timeline serialization can happen during that teardown, so keep
+  /// the value that belonged to this snapshot.
+  final Widget widget;
+
+  /// The render object captured with this node.
+  final RenderObject? renderObject;
 
   List<WidgetTreeNode> _children = const [];
 
@@ -108,11 +121,12 @@ class WidgetTreeNode {
     required this.element,
     required this.parent,
     required this.isOffstage,
-  });
+  }) : widget = element.widget,
+       renderObject = element.renderObject;
 
   @override
   String toString() {
-    return 'snapshot: ${element.widget.toStringShallow()}';
+    return 'snapshot: ${widget.toStringShallow()}';
   }
 }
 
@@ -141,11 +155,9 @@ class WidgetTreeSnapshot extends ScopedWidgetTreeSnapshot {
   ///
   /// - [origin]: The origin widget of this snapshot.
   /// - [timestamp]: The time at which the snapshot was taken.
-  WidgetTreeSnapshot({
-    required super.origin,
-    required this.timestamp,
-  })  : _frameNumber = FrameClock.frameNumberInProcess,
-        super(parentScope: null);
+  WidgetTreeSnapshot({required super.origin, required this.timestamp})
+    : _frameNumber = FrameClock.frameNumberInProcess,
+      super(parentScope: null);
 
   /// The frame this snapshot was taken in.
   ///
@@ -160,6 +172,130 @@ class WidgetTreeSnapshot extends ScopedWidgetTreeSnapshot {
   @override
   String toString() {
     return 'WidgetTreeSnapshot{timestamp: $timestamp, origin: $origin}';
+  }
+
+  /// Creates a JSON-compatible tree for offline inspection.
+  ///
+  /// When screenshot geometry is supplied, render-box bounds are translated
+  /// into the captured repaint boundary's coordinate space. Nodes outside the
+  /// captured repaint boundary remain inspectable but have no bounds.
+  Map<String, dynamic> toStructuredData({
+    RenderObject? captureRenderObject,
+    Rect? capturePaintBounds,
+  }) {
+    var nextId = 0;
+
+    Map<String, dynamic> serialize(WidgetTreeNode node) {
+      final renderObject = node.renderObject;
+      final bounds = _boundsInCapture(
+        renderObject,
+        captureRenderObject: captureRenderObject,
+        capturePaintBounds: capturePaintBounds,
+      );
+      final widget = node.widget;
+
+      return {
+        'id': (nextId++).toString(),
+        'name': widget.runtimeType.toString(),
+        'description': widget.toStringShort(),
+        'elementType': node.element.runtimeType.toString(),
+        'renderObjectType': renderObject?.runtimeType.toString(),
+        'isUserCode': node.element.debugWidgetLocation?.isUserCode,
+        'offstage': node.isOffstage,
+        'bounds': bounds == null
+            ? null
+            : {
+                'x': bounds.left,
+                'y': bounds.top,
+                'width': bounds.width,
+                'height': bounds.height,
+              },
+        'widgetProperties': _widgetPropertiesOf(widget),
+        'renderProperties': renderObject == null
+            ? const <Map<String, String>>[]
+            : _renderPropertiesOf(renderObject),
+        'children': node.children.map(serialize).toList(growable: false),
+      };
+    }
+
+    return {
+      'captureWidth': capturePaintBounds?.width,
+      'captureHeight': capturePaintBounds?.height,
+      'root': serialize(origin),
+    };
+  }
+}
+
+Rect? _boundsInCapture(
+  RenderObject? renderObject, {
+  required RenderObject? captureRenderObject,
+  required Rect? capturePaintBounds,
+}) {
+  if (renderObject is! RenderBox ||
+      captureRenderObject == null ||
+      capturePaintBounds == null ||
+      !renderObject.attached ||
+      !renderObject.hasSize ||
+      !_isDescendantOf(renderObject, captureRenderObject)) {
+    return null;
+  }
+
+  final transform = renderObject.getTransformTo(captureRenderObject);
+  final rect = MatrixUtils.transformRect(
+    transform,
+    Offset.zero & renderObject.size,
+  );
+  return rect.shift(-capturePaintBounds.topLeft);
+}
+
+bool _isDescendantOf(RenderObject node, RenderObject possibleAncestor) {
+  RenderObject? current = node;
+  while (current != null) {
+    if (identical(current, possibleAncestor)) {
+      return true;
+    }
+    current = current.parent;
+  }
+  return false;
+}
+
+/// The properties of [widget], read through the cache every other caller uses.
+///
+/// A snapshot walks the whole tree, so filling properties here again would
+/// undo the caching for every widget the test goes on to inspect.
+List<Map<String, String>> _widgetPropertiesOf(Widget widget) {
+  return _describe(() => diagnosticPropsOf(widget));
+}
+
+/// The properties of [renderObject], filled every time they are asked for.
+///
+/// A render object is mutable, so unlike a widget it cannot cache what it
+/// filled in for a snapshot taken earlier.
+List<Map<String, String>> _renderPropertiesOf(RenderObject renderObject) {
+  return _describe(() => renderObject.toDiagnosticsNode().getProperties());
+}
+
+List<Map<String, String>> _describe(
+  Iterable<DiagnosticsNode> Function() properties,
+) {
+  try {
+    return properties()
+        .where((property) => property.name != null)
+        .map(
+          (property) => {
+            'name': property.name!,
+            'value': property.toDescription(),
+          },
+        )
+        .toList(growable: false);
+  } catch (error, stackTrace) {
+    developer.log(
+      'Could not serialize diagnostic properties',
+      name: 'spot.widget_tree',
+      error: error,
+      stackTrace: stackTrace,
+    );
+    return const [];
   }
 }
 
@@ -200,10 +336,7 @@ class ScopedWidgetTreeSnapshot {
   /// This constructor initializes a snapshot of a subtree, starting at the
   /// provided [origin]. It captures the state of the subtree for further
   /// analysis or operations.
-  ScopedWidgetTreeSnapshot({
-    required this.origin,
-    required this.parentScope,
-  });
+  ScopedWidgetTreeSnapshot({required this.origin, required this.parentScope});
 
   /// The root node of the subtree to be captured in this snapshot.
   final WidgetTreeNode origin;
@@ -217,9 +350,13 @@ class ScopedWidgetTreeSnapshot {
   bool get isFromThisFrame => root.isFromThisFrame;
 
   void _ensureSnapshotIsFromThisFrame() {
-    if (isFromThisFrame) return;
-    throw StateError('WidgetTreeSnapshot is not valid anymore. '
-        'It is only valid until the next frame is pumped.');
+    if (isFromThisFrame) {
+      return;
+    }
+    throw StateError(
+      'WidgetTreeSnapshot is not valid anymore. '
+      'It is only valid until the next frame is pumped.',
+    );
   }
 
   List<WidgetTreeNode>? _allNodesCache;
@@ -282,10 +419,7 @@ class ScopedWidgetTreeSnapshot {
   /// Creates a scoped snapshot of the subtree starting at [origin]
   ScopedWidgetTreeSnapshot scope(WidgetTreeNode origin) {
     _ensureSnapshotIsFromThisFrame();
-    return ScopedWidgetTreeSnapshot(
-      origin: origin,
-      parentScope: this,
-    );
+    return ScopedWidgetTreeSnapshot(origin: origin, parentScope: this);
   }
 
   /// Returns the scopes from closest to root
@@ -320,6 +454,25 @@ class ScopedWidgetTreeSnapshot {
   /// final String deepString = scopedSnapshot.toStringDeep();
   /// ```
   String toStringDeep() {
-    return origin.element.toStringDeep();
+    try {
+      return origin.element.toStringDeep();
+      // Element.widget deliberately throws a TypeError after unmounting.
+      // ignore: avoid_catching_errors
+    } on TypeError {
+      // Timeline events may be added while Flutter is unmounting the tree.
+      // The captured widgets remain valid after their Elements become defunct.
+      final buffer = StringBuffer();
+      final stack = <(WidgetTreeNode, int)>[(origin, 0)];
+      while (stack.isNotEmpty) {
+        final (node, depth) = stack.removeLast();
+        buffer
+          ..write('  ' * depth)
+          ..writeln(node.widget.toStringShort());
+        for (final child in node.children.reversed) {
+          stack.add((child, depth + 1));
+        }
+      }
+      return buffer.toString();
+    }
   }
 }

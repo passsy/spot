@@ -14,14 +14,8 @@ void main() {
         home: Scaffold(
           appBar: AppBar(
             actions: const [
-              IconButton(
-                onPressed: null,
-                icon: Icon(Icons.home),
-              ),
-              IconButton(
-                onPressed: null,
-                icon: Icon(Icons.settings),
-              ),
+              IconButton(onPressed: null, icon: Icon(Icons.home)),
+              IconButton(onPressed: null, icon: Icon(Icons.settings)),
             ],
           ),
           body: Placeholder(),
@@ -46,15 +40,9 @@ void main() {
             actions: const [
               IconButton(
                 onPressed: null,
-                icon: Icon(
-                  Icons.home,
-                  color: Colors.red,
-                ),
+                icon: Icon(Icons.home, color: Colors.red),
               ),
-              IconButton(
-                onPressed: null,
-                icon: Icon(Icons.settings),
-              ),
+              IconButton(onPressed: null, icon: Icon(Icons.settings)),
             ],
           ),
           body: Placeholder(),
@@ -66,9 +54,9 @@ void main() {
     final appBar = scaffold.spot<AppBar>();
     spot<AppBar>().spotIcon(Icons.settings).existsOnce();
 
-    spot<Icon>(parents: [appBar, spot<IconButton>()])
-        .existsExactlyNTimes(2)
-        .any((icon) => icon.hasColor(Colors.red));
+    spot<Icon>(
+      parents: [appBar, spot<IconButton>()],
+    ).existsExactlyNTimes(2).any((icon) => icon.hasColor(Colors.red));
   });
 
   testWidgets('.all throws readable error message', (widgetTester) async {
@@ -77,14 +65,8 @@ void main() {
         home: Scaffold(
           appBar: AppBar(
             actions: const [
-              IconButton(
-                onPressed: null,
-                icon: Icon(Icons.home),
-              ),
-              IconButton(
-                onPressed: null,
-                icon: Icon(Icons.settings),
-              ),
+              IconButton(onPressed: null, icon: Icon(Icons.home)),
+              IconButton(onPressed: null, icon: Icon(Icons.settings)),
             ],
           ),
           body: Placeholder(),
@@ -100,8 +82,8 @@ void main() {
       () => spot<Icon>(parents: [appBar, spot<IconButton>()])
           .existsExactlyNTimes(2)
           .all((icon) {
-        icon.hasColorWhere((color) => color.equals(Colors.black));
-      }),
+            icon.hasColorWhere((color) => color.equals(Colors.black));
+          }),
       throwsSpotErrorContaining([
         "Expected that all candidates fulfill matcher 'property color",
         "equals <${Color(0xff000000)}>', but only 0 of 2 did.",
@@ -115,14 +97,8 @@ void main() {
         home: Scaffold(
           appBar: AppBar(
             actions: const [
-              IconButton(
-                onPressed: null,
-                icon: Icon(Icons.home),
-              ),
-              IconButton(
-                onPressed: null,
-                icon: Icon(Icons.settings),
-              ),
+              IconButton(onPressed: null, icon: Icon(Icons.home)),
+              IconButton(onPressed: null, icon: Icon(Icons.settings)),
             ],
           ),
           body: Placeholder(),
@@ -138,8 +114,8 @@ void main() {
       () => spot<Icon>(parents: [appBar, spot<IconButton>()])
           .existsExactlyNTimes(2)
           .any((icon) {
-        icon.hasColorWhere((color) => color.equals(Colors.black));
-      }),
+            icon.hasColorWhere((color) => color.equals(Colors.black));
+          }),
       throwsSpotErrorContaining([
         "Expected that at least one candidate fulfills matcher 'property color",
         "equals <${const Color(0xff000000)}>', but none did.",

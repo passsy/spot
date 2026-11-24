@@ -35,7 +35,9 @@ extension OutlinedButtonSelector on WidgetSelector<OutlinedButton> {
   @useResult
   WidgetSelector<OutlinedButton> withEnabled(bool? value) {
     return withDiagnosticProp<bool>(
-        'enabled', (it) => value == null ? it.isNull() : it.equals(value));
+      'enabled',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [OutlinedButton] where style matches the condition.
@@ -58,7 +60,9 @@ extension OutlinedButtonSelector on WidgetSelector<OutlinedButton> {
   @useResult
   WidgetSelector<OutlinedButton> withStyle(ButtonStyle? value) {
     return withDiagnosticProp<ButtonStyle>(
-        'style', (it) => value == null ? it.isNull() : it.equals(value));
+      'style',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [OutlinedButton] where focusNode matches the condition.
@@ -81,7 +85,9 @@ extension OutlinedButtonSelector on WidgetSelector<OutlinedButton> {
   @useResult
   WidgetSelector<OutlinedButton> withFocusNode(FocusNode? value) {
     return withDiagnosticProp<FocusNode>(
-        'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
+      'focusNode',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 
@@ -105,7 +111,9 @@ extension OutlinedButtonMatcher on WidgetMatcher<OutlinedButton> {
   /// ```
   WidgetMatcher<OutlinedButton> isEnabled(bool? value) {
     return hasDiagnosticProp<bool>(
-        'enabled', (it) => value == null ? it.isNull() : it.equals(value));
+      'enabled',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that style of [OutlinedButton] matches the condition in [match].
@@ -126,7 +134,9 @@ extension OutlinedButtonMatcher on WidgetMatcher<OutlinedButton> {
   /// ```
   WidgetMatcher<OutlinedButton> hasStyle(ButtonStyle? value) {
     return hasDiagnosticProp<ButtonStyle>(
-        'style', (it) => value == null ? it.isNull() : it.equals(value));
+      'style',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that focusNode of [OutlinedButton] matches the condition in [match].
@@ -147,7 +157,9 @@ extension OutlinedButtonMatcher on WidgetMatcher<OutlinedButton> {
   /// ```
   WidgetMatcher<OutlinedButton> hasFocusNode(FocusNode? value) {
     return hasDiagnosticProp<FocusNode>(
-        'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
+      'focusNode',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 

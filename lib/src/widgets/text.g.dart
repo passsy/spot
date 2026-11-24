@@ -35,7 +35,9 @@ extension TextSelector on WidgetSelector<Text> {
   @useResult
   WidgetSelector<Text> withText(String? value) {
     return withDiagnosticProp<String>(
-        'data', (it) => value == null ? it.isNull() : it.equals(value));
+      'data',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Text] where textAlign matches the condition.
@@ -58,7 +60,9 @@ extension TextSelector on WidgetSelector<Text> {
   @useResult
   WidgetSelector<Text> withTextAlign(TextAlign? value) {
     return withDiagnosticProp<TextAlign>(
-        'textAlign', (it) => value == null ? it.isNull() : it.equals(value));
+      'textAlign',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Text] where textDirection matches the condition.
@@ -80,8 +84,10 @@ extension TextSelector on WidgetSelector<Text> {
   /// ```
   @useResult
   WidgetSelector<Text> withTextDirection(TextDirection? value) {
-    return withDiagnosticProp<TextDirection>('textDirection',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<TextDirection>(
+      'textDirection',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Text] where locale matches the condition.
@@ -104,7 +110,9 @@ extension TextSelector on WidgetSelector<Text> {
   @useResult
   WidgetSelector<Text> withLocale(Locale? value) {
     return withDiagnosticProp<Locale>(
-        'locale', (it) => value == null ? it.isNull() : it.equals(value));
+      'locale',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Text] where softWrap matches the condition.
@@ -127,7 +135,9 @@ extension TextSelector on WidgetSelector<Text> {
   @useResult
   WidgetSelector<Text> withSoftWrap(bool? value) {
     return withDiagnosticProp<bool>(
-        'softWrap', (it) => value == null ? it.isNull() : it.equals(value));
+      'softWrap',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Text] where overflow matches the condition.
@@ -150,7 +160,9 @@ extension TextSelector on WidgetSelector<Text> {
   @useResult
   WidgetSelector<Text> withOverflow(TextOverflow? value) {
     return withDiagnosticProp<TextOverflow>(
-        'overflow', (it) => value == null ? it.isNull() : it.equals(value));
+      'overflow',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Text] where textScaleFactor matches the condition.
@@ -172,8 +184,10 @@ extension TextSelector on WidgetSelector<Text> {
   /// ```
   @useResult
   WidgetSelector<Text> withTextScaleFactor(double? value) {
-    return withDiagnosticProp<double>('textScaleFactor',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<double>(
+      'textScaleFactor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Text] where maxLines matches the condition.
@@ -196,7 +210,9 @@ extension TextSelector on WidgetSelector<Text> {
   @useResult
   WidgetSelector<Text> withMaxLines(int? value) {
     return withDiagnosticProp<int>(
-        'maxLines', (it) => value == null ? it.isNull() : it.equals(value));
+      'maxLines',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Text] where textWidthBasis matches the condition.
@@ -218,8 +234,10 @@ extension TextSelector on WidgetSelector<Text> {
   /// ```
   @useResult
   WidgetSelector<Text> withTextWidthBasis(TextWidthBasis? value) {
-    return withDiagnosticProp<TextWidthBasis>('textWidthBasis',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<TextWidthBasis>(
+      'textWidthBasis',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [Text] where textHeightBehavior matches the condition.
@@ -230,7 +248,8 @@ extension TextSelector on WidgetSelector<Text> {
   /// ```
   @useResult
   WidgetSelector<Text> whereTextHeightBehavior(
-      MatchProp<TextHeightBehavior> match) {
+    MatchProp<TextHeightBehavior> match,
+  ) {
     return withDiagnosticProp<TextHeightBehavior>('textHeightBehavior', match);
   }
 
@@ -242,8 +261,10 @@ extension TextSelector on WidgetSelector<Text> {
   /// ```
   @useResult
   WidgetSelector<Text> withTextHeightBehavior(TextHeightBehavior? value) {
-    return withDiagnosticProp<TextHeightBehavior>('textHeightBehavior',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<TextHeightBehavior>(
+      'textHeightBehavior',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 
@@ -267,7 +288,9 @@ extension TextMatcher on WidgetMatcher<Text> {
   /// ```
   WidgetMatcher<Text> hasText(String? value) {
     return hasDiagnosticProp<String>(
-        'data', (it) => value == null ? it.isNull() : it.equals(value));
+      'data',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that textAlign of [Text] matches the condition in [match].
@@ -288,7 +311,9 @@ extension TextMatcher on WidgetMatcher<Text> {
   /// ```
   WidgetMatcher<Text> hasTextAlign(TextAlign? value) {
     return hasDiagnosticProp<TextAlign>(
-        'textAlign', (it) => value == null ? it.isNull() : it.equals(value));
+      'textAlign',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that textDirection of [Text] matches the condition in [match].
@@ -308,8 +333,10 @@ extension TextMatcher on WidgetMatcher<Text> {
   /// spot<Text>().existsOnce().hasTextDirection(TextDirection.values.first);
   /// ```
   WidgetMatcher<Text> hasTextDirection(TextDirection? value) {
-    return hasDiagnosticProp<TextDirection>('textDirection',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<TextDirection>(
+      'textDirection',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that locale of [Text] matches the condition in [match].
@@ -330,7 +357,9 @@ extension TextMatcher on WidgetMatcher<Text> {
   /// ```
   WidgetMatcher<Text> hasLocale(Locale? value) {
     return hasDiagnosticProp<Locale>(
-        'locale', (it) => value == null ? it.isNull() : it.equals(value));
+      'locale',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that softWrap of [Text] matches the condition in [match].
@@ -351,7 +380,9 @@ extension TextMatcher on WidgetMatcher<Text> {
   /// ```
   WidgetMatcher<Text> hasSoftWrap(bool? value) {
     return hasDiagnosticProp<bool>(
-        'softWrap', (it) => value == null ? it.isNull() : it.equals(value));
+      'softWrap',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that overflow of [Text] matches the condition in [match].
@@ -372,7 +403,9 @@ extension TextMatcher on WidgetMatcher<Text> {
   /// ```
   WidgetMatcher<Text> hasOverflow(TextOverflow? value) {
     return hasDiagnosticProp<TextOverflow>(
-        'overflow', (it) => value == null ? it.isNull() : it.equals(value));
+      'overflow',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that textScaleFactor of [Text] matches the condition in [match].
@@ -392,8 +425,10 @@ extension TextMatcher on WidgetMatcher<Text> {
   /// spot<Text>().existsOnce().hasTextScaleFactor(10.5);
   /// ```
   WidgetMatcher<Text> hasTextScaleFactor(double? value) {
-    return hasDiagnosticProp<double>('textScaleFactor',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<double>(
+      'textScaleFactor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that maxLines of [Text] matches the condition in [match].
@@ -414,7 +449,9 @@ extension TextMatcher on WidgetMatcher<Text> {
   /// ```
   WidgetMatcher<Text> hasMaxLines(int? value) {
     return hasDiagnosticProp<int>(
-        'maxLines', (it) => value == null ? it.isNull() : it.equals(value));
+      'maxLines',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that textWidthBasis of [Text] matches the condition in [match].
@@ -434,8 +471,10 @@ extension TextMatcher on WidgetMatcher<Text> {
   /// spot<Text>().existsOnce().hasTextWidthBasis(TextWidthBasis.values.first);
   /// ```
   WidgetMatcher<Text> hasTextWidthBasis(TextWidthBasis? value) {
-    return hasDiagnosticProp<TextWidthBasis>('textWidthBasis',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<TextWidthBasis>(
+      'textWidthBasis',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that textHeightBehavior of [Text] matches the condition in [match].
@@ -445,7 +484,8 @@ extension TextMatcher on WidgetMatcher<Text> {
   /// spot<Text>().existsOnce().hasTextHeightBehaviorWhere((it) => it.equals(TextHeightBehavior(applyHeightToFirstAscent: true, applyHeightToLastDescent: false)));
   /// ```
   WidgetMatcher<Text> hasTextHeightBehaviorWhere(
-      MatchProp<TextHeightBehavior> match) {
+    MatchProp<TextHeightBehavior> match,
+  ) {
     return hasDiagnosticProp<TextHeightBehavior>('textHeightBehavior', match);
   }
 
@@ -456,8 +496,10 @@ extension TextMatcher on WidgetMatcher<Text> {
   /// spot<Text>().existsOnce().hasTextHeightBehavior(TextHeightBehavior(applyHeightToFirstAscent: true, applyHeightToLastDescent: false));
   /// ```
   WidgetMatcher<Text> hasTextHeightBehavior(TextHeightBehavior? value) {
-    return hasDiagnosticProp<TextHeightBehavior>('textHeightBehavior',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<TextHeightBehavior>(
+      'textHeightBehavior',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 

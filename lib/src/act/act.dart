@@ -102,8 +102,9 @@ class Act {
         final pokablePositions = findPokablePositions(renderBox);
 
         if (pokablePositions.hits.isEmpty) {
-          final centerPosition =
-              renderBox.localToGlobal(renderBox.size.center(Offset.zero));
+          final centerPosition = renderBox.localToGlobal(
+            renderBox.size.center(Offset.zero),
+          );
           throwTapFailureReport(
             position: centerPosition,
             target: renderBox,
@@ -111,8 +112,10 @@ class Act {
           );
           return;
         }
-        final partialWarning =
-            createPartialCoverageMessage(pokablePositions, snapshot);
+        final partialWarning = createPartialCoverageMessage(
+          pokablePositions,
+          snapshot,
+        );
         if (partialWarning != null) {
           // ignore: avoid_print
           print(partialWarning);
@@ -123,9 +126,7 @@ class Act {
 
         if (timeline.mode != TimelineMode.off) {
           final screenshot = timeline.takeScreenshotSync(
-            annotators: [
-              CrosshairAnnotator(centerPosition: positionToTap),
-            ],
+            annotators: [CrosshairAnnotator(centerPosition: positionToTap)],
           );
           final partial = partialWarning == null ? '' : '\n$partialWarning';
           timeline.addEvent(
@@ -211,29 +212,32 @@ class Act {
         _validatePositionInViewBounds(position);
         if (timeline.mode != TimelineMode.off) {
           final screenshot = timeline.takeScreenshotSync(
-            annotators: [
-              CrosshairAnnotator(centerPosition: position),
-            ],
+            annotators: [CrosshairAnnotator(centerPosition: position)],
           );
           final hitTest = hitTestWidgetsAt(position);
 
-          final widgetInProject = hitTest.path.mapNotNull((it) {
-            final debugWidgetLocation = it.element.debugWidgetLocation;
-            if (debugWidgetLocation == null ||
-                debugWidgetLocation.isUserCode == false) {
-              return null;
-            }
-            return "${it.widgetName} at ${debugWidgetLocation.file.path}";
-          }).joinToString(prefix: '\n- ');
+          final widgetInProject = hitTest.path
+              .mapNotNull((it) {
+                final debugWidgetLocation = it.element.debugWidgetLocation;
+                if (debugWidgetLocation == null ||
+                    debugWidgetLocation.isUserCode == false) {
+                  return null;
+                }
+                return "${it.widgetName} at ${debugWidgetLocation.file.path}";
+              })
+              .joinToString(prefix: '\n- ');
 
-          final allWidgets = hitTest.path.map((it) {
-            final location = it.element.debugWidgetLocation;
-            return "${it.widgetName} at ${location?.file.path}";
-          }).joinToString(prefix: '\n- ');
+          final allWidgets = hitTest.path
+              .map((it) {
+                final location = it.element.debugWidgetLocation;
+                return "${it.widgetName} at ${location?.file.path}";
+              })
+              .joinToString(prefix: '\n- ');
 
           timeline.addEvent(
             eventType: 'TapAt Event',
-            details: 'TapAt $position.\n'
+            details:
+                'TapAt $position.\n'
                 'Relevant widgets at position: $widgetInProject'
                 '\n\n'
                 'Widgets at position: $allWidgets',
@@ -333,8 +337,10 @@ class Act {
 
     // Every scrollable contains a Listener handling the touch events.
     // We only care about the size and location of the RenderObject.
-    final scrollableSizedRenderBox =
-        scrollable.spot<Listener>().first().snapshotRenderBox();
+    final scrollableSizedRenderBox = scrollable
+        .spot<Listener>()
+        .first()
+        .snapshotRenderBox();
 
     return TestAsyncUtils.guard<void>(() async {
       return await alwaysPropagateDevicePointerEvents(() async {
@@ -355,10 +361,12 @@ class Act {
           },
         );
         if (pokablePositionsAtDragStart.hits.isEmpty) {
-          final Offset dragStartCenter = dragStartRenderBox
-              .localToGlobal(dragStartRenderBox.size.center(Offset.zero));
-          final closestToCenterFlop =
-              pokablePositionsAtDragStart.flops.minBy((offset) {
+          final Offset dragStartCenter = dragStartRenderBox.localToGlobal(
+            dragStartRenderBox.size.center(Offset.zero),
+          );
+          final closestToCenterFlop = pokablePositionsAtDragStart.flops.minBy((
+            offset,
+          ) {
             return (offset - dragStartCenter).distance;
           });
 
@@ -384,11 +392,7 @@ class Act {
         final dragBeginPosition =
             pokablePositionsAtDragStart.mostCenterHittablePosition!;
 
-        void addDragEvent(
-          String details, {
-          Offset? direction,
-          Offset? origin,
-        }) {
+        void addDragEvent(String details, {Offset? direction, Offset? origin}) {
           if (timeline.mode != TimelineMode.off) {
             final crosshair = origin ?? dragBeginPosition;
             final screenshot = timeline.takeScreenshotSync(
@@ -512,8 +516,9 @@ class Act {
             );
             return;
           } else {
-            final fallbackWidget =
-                fallbackScrollableSelector.snapshot().discoveredWidget;
+            final fallbackWidget = fallbackScrollableSelector
+                .snapshot()
+                .discoveredWidget;
             if (fallbackWidget == null) {
               // ignore: avoid_print
               print(
@@ -531,10 +536,10 @@ class Act {
         // within the scrollable's viewport entirely
         final spotScrollableBoundsAfterDrag = spotWidget(scrollableWidget);
 
-        final scrollableSizedRenderBoxAfterDrag =
-            spotScrollableBoundsAfterDrag.snapshotRenderBox();
-        final viewportGlobalPosition =
-            scrollableSizedRenderBoxAfterDrag.localToGlobal(Offset.zero);
+        final scrollableSizedRenderBoxAfterDrag = spotScrollableBoundsAfterDrag
+            .snapshotRenderBox();
+        final viewportGlobalPosition = scrollableSizedRenderBoxAfterDrag
+            .localToGlobal(Offset.zero);
         final fullViewportRect = Rect.fromLTWH(
           viewportGlobalPosition.dx,
           viewportGlobalPosition.dy,
@@ -551,8 +556,8 @@ class Act {
         );
 
         final targetRenderBox = dragTarget.snapshotRenderBox();
-        final Offset globalTargetPositionTopLeft =
-            targetRenderBox.localToGlobal(Offset.zero);
+        final Offset globalTargetPositionTopLeft = targetRenderBox
+            .localToGlobal(Offset.zero);
         final targetRect = Rect.fromLTWH(
           globalTargetPositionTopLeft.dx,
           globalTargetPositionTopLeft.dy,
@@ -562,7 +567,7 @@ class Act {
 
         final targetFullyInViewport =
             viewportRect.contains(globalTargetPositionTopLeft) &&
-                viewportRect.contains(targetRect.bottomRight);
+            viewportRect.contains(targetRect.bottomRight);
 
         Offset finalDragOffset = Offset.zero;
         if (!targetFullyInViewport) {
@@ -670,7 +675,8 @@ class Act {
 
         final totalDragged =
             moveOffset * dragCount.toDouble() + finalDragOffset;
-        final message = "Target $targetName found after $dragCount drags. "
+        final message =
+            "Target $targetName found after $dragCount drags. "
             "Total dragged offset: $totalDragged";
         addDragEvent(message);
       });
@@ -718,9 +724,7 @@ List<Offset> _lineSamples(Offset from, Offset to, {int gridSize = 8}) {
   final delta = to - from;
   final steps = (delta.distance / gridSize).ceil();
   if (steps == 0) return [from];
-  return [
-    for (int i = steps; i >= 0; i--) from + delta * (i / steps),
-  ];
+  return [for (int i = steps; i >= 0; i--) from + delta * (i / steps)];
 }
 
 /// Makes sure that the device pointer events are always propagated to the

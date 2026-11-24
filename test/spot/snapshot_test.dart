@@ -6,8 +6,9 @@ import 'package:spot/spot.dart';
 import 'package:spot/src/spot/snapshot.dart';
 
 void main() {
-  testWidgets('MultiWidgetSnapshot keeps reference to old Widget',
-      (tester) async {
+  testWidgets('MultiWidgetSnapshot keeps reference to old Widget', (
+    tester,
+  ) async {
     await tester.pumpWidget(Center(child: SizedBox(height: 200)));
     final WidgetSnapshot<SizedBox> oldTree = snapshot(spot<SizedBox>());
     await tester.pumpWidget(Center(child: SizedBox(height: 100)));
@@ -25,8 +26,9 @@ void main() {
     expect(newTree.discoveredWidget!.height, 100);
   });
 
-  testWidgets('cacheable selector stages are reused across equivalent chains',
-      (tester) async {
+  testWidgets('cacheable selector stages are reused across equivalent chains', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       Directionality(
         textDirection: TextDirection.ltr,
@@ -56,32 +58,23 @@ void main() {
     expect(second.discoveredWidgets.map((it) => it.data), ['a', 'b']);
   });
 
-  testWidgets('uncacheable whereElement suffix reruns in the same frame',
-      (tester) async {
+  testWidgets('uncacheable whereElement suffix reruns in the same frame', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       Directionality(
         textDirection: TextDirection.ltr,
-        child: Center(
-          child: Column(
-            children: const [
-              Text('a'),
-              Text('b'),
-            ],
-          ),
-        ),
+        child: Center(child: Column(children: const [Text('a'), Text('b')])),
       ),
     );
 
     var selectedText = 'a';
     var predicateCalls = 0;
-    final selector = spot<Text>().whereElement(
-      (element) {
-        predicateCalls++;
-        final widget = element.widget;
-        return widget is Text && widget.data == selectedText;
-      },
-      description: 'matches selected text',
-    );
+    final selector = spot<Text>().whereElement((element) {
+      predicateCalls++;
+      final widget = element.widget;
+      return widget is Text && widget.data == selectedText;
+    }, description: 'matches selected text');
 
     final first = selector.snapshot();
     final firstPredicateCalls = predicateCalls;
@@ -116,12 +109,7 @@ void main() {
       Directionality(
         textDirection: TextDirection.ltr,
         child: Center(
-          child: Column(
-            children: const [
-              Text('hello'),
-              Text('world'),
-            ],
-          ),
+          child: Column(children: const [Text('hello'), Text('world')]),
         ),
       ),
     );
@@ -140,24 +128,14 @@ void main() {
     await tester.pumpWidget(
       Directionality(
         textDirection: TextDirection.ltr,
-        child: Center(
-          child: Column(
-            children: const [
-              Text('a'),
-              Text('b'),
-            ],
-          ),
-        ),
+        child: Center(child: Column(children: const [Text('a'), Text('b')])),
       ),
     );
 
     var selectedText = 'a';
-    final selector = spot().spotTextWhere(
-      (it) {
-        it.equals(selectedText);
-      },
-      description: 'matches selected text',
-    );
+    final selector = spot().spotTextWhere((it) {
+      it.equals(selectedText);
+    }, description: 'matches selected text');
 
     final first = selector.snapshot();
     selectedText = 'b';
@@ -173,14 +151,7 @@ void main() {
     await tester.pumpWidget(
       Directionality(
         textDirection: TextDirection.ltr,
-        child: Center(
-          child: Column(
-            children: const [
-              Text('a'),
-              Text('b'),
-            ],
-          ),
-        ),
+        child: Center(child: Column(children: const [Text('a'), Text('b')])),
       ),
     );
 
@@ -193,10 +164,7 @@ void main() {
               return widget is Text && widget.data == 'a';
             },
             description: 'Text data is a',
-            cacheKey: SpotCacheKey(
-              PredicateFilter,
-              ['Text data is a'],
-            ),
+            cacheKey: SpotCacheKey(PredicateFilter, ['Text data is a']),
           ),
         ],
       );
@@ -216,14 +184,7 @@ void main() {
     await tester.pumpWidget(
       Directionality(
         textDirection: TextDirection.ltr,
-        child: Center(
-          child: Column(
-            children: const [
-              Text('a'),
-              Text('b'),
-            ],
-          ),
-        ),
+        child: Center(child: Column(children: const [Text('a'), Text('b')])),
       ),
     );
 
@@ -257,10 +218,7 @@ void main() {
         stages: [_CollectionCacheKeyFilter(key)],
       );
 
-      expect(
-        () => snapshot(selector),
-        throwsA(isA<StateError>()),
-      );
+      expect(() => snapshot(selector), throwsA(isA<StateError>()));
     }
 
     expectInvalidCacheKey(<Object>[]);

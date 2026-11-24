@@ -3,10 +3,7 @@ import 'package:flutter/widgets.dart';
 /// The location where a Widget constructor was called.
 class WidgetLocation {
   /// Creates a new [WidgetLocation].
-  WidgetLocation({
-    required this.file,
-    required this.createdByLocalProject,
-  });
+  WidgetLocation({required this.file, required this.createdByLocalProject});
 
   /// The pointer to the file.
   final WidgetLocationFile file;

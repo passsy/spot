@@ -35,7 +35,9 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   @useResult
   WidgetSelector<SelectableText> withText(String? value) {
     return withDiagnosticProp<String>(
-        'data', (it) => value == null ? it.isNull() : it.equals(value));
+      'data',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where semanticsLabel matches the condition.
@@ -57,8 +59,10 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// ```
   @useResult
   WidgetSelector<SelectableText> withSemanticsLabel(String? value) {
-    return withDiagnosticProp<String>('semanticsLabel',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<String>(
+      'semanticsLabel',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where focusNode matches the condition.
@@ -81,7 +85,9 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   @useResult
   WidgetSelector<SelectableText> withFocusNode(FocusNode? value) {
     return withDiagnosticProp<FocusNode>(
-        'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
+      'focusNode',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where style matches the condition.
@@ -104,7 +110,9 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   @useResult
   WidgetSelector<SelectableText> withStyle(TextStyle? value) {
     return withDiagnosticProp<TextStyle>(
-        'style', (it) => value == null ? it.isNull() : it.equals(value));
+      'style',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where autofocus matches the condition.
@@ -127,7 +135,9 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   @useResult
   WidgetSelector<SelectableText> withAutofocus(bool? value) {
     return withDiagnosticProp<bool>(
-        'autofocus', (it) => value == null ? it.isNull() : it.equals(value));
+      'autofocus',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where showCursor matches the condition.
@@ -150,7 +160,9 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   @useResult
   WidgetSelector<SelectableText> withShowCursor(bool? value) {
     return withDiagnosticProp<bool>(
-        'showCursor', (it) => value == null ? it.isNull() : it.equals(value));
+      'showCursor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where minLines matches the condition.
@@ -173,7 +185,9 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   @useResult
   WidgetSelector<SelectableText> withMinLines(int? value) {
     return withDiagnosticProp<int>(
-        'minLines', (it) => value == null ? it.isNull() : it.equals(value));
+      'minLines',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where maxLines matches the condition.
@@ -196,7 +210,9 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   @useResult
   WidgetSelector<SelectableText> withMaxLines(int? value) {
     return withDiagnosticProp<int>(
-        'maxLines', (it) => value == null ? it.isNull() : it.equals(value));
+      'maxLines',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where textAlign matches the condition.
@@ -219,7 +235,9 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   @useResult
   WidgetSelector<SelectableText> withTextAlign(TextAlign? value) {
     return withDiagnosticProp<TextAlign>(
-        'textAlign', (it) => value == null ? it.isNull() : it.equals(value));
+      'textAlign',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where textDirection matches the condition.
@@ -230,7 +248,8 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// ```
   @useResult
   WidgetSelector<SelectableText> whereTextDirection(
-      MatchProp<TextDirection> match) {
+    MatchProp<TextDirection> match,
+  ) {
     return withDiagnosticProp<TextDirection>('textDirection', match);
   }
 
@@ -242,8 +261,10 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// ```
   @useResult
   WidgetSelector<SelectableText> withTextDirection(TextDirection? value) {
-    return withDiagnosticProp<TextDirection>('textDirection',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<TextDirection>(
+      'textDirection',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where textScaleFactor matches the condition.
@@ -265,8 +286,10 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// ```
   @useResult
   WidgetSelector<SelectableText> withTextScaleFactor(double? value) {
-    return withDiagnosticProp<double>('textScaleFactor',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<double>(
+      'textScaleFactor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where cursorWidth matches the condition.
@@ -289,7 +312,9 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   @useResult
   WidgetSelector<SelectableText> withCursorWidth(double? value) {
     return withDiagnosticProp<double>(
-        'cursorWidth', (it) => value == null ? it.isNull() : it.equals(value));
+      'cursorWidth',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where cursorHeight matches the condition.
@@ -312,7 +337,9 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   @useResult
   WidgetSelector<SelectableText> withCursorHeight(double? value) {
     return withDiagnosticProp<double>(
-        'cursorHeight', (it) => value == null ? it.isNull() : it.equals(value));
+      'cursorHeight',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where cursorRadius matches the condition.
@@ -335,7 +362,9 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   @useResult
   WidgetSelector<SelectableText> withCursorRadius(Radius? value) {
     return withDiagnosticProp<Radius>(
-        'cursorRadius', (it) => value == null ? it.isNull() : it.equals(value));
+      'cursorRadius',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where cursorColor matches the condition.
@@ -358,7 +387,9 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   @useResult
   WidgetSelector<SelectableText> withCursorColor(Color? value) {
     return withDiagnosticProp<Color>(
-        'cursorColor', (it) => value == null ? it.isNull() : it.equals(value));
+      'cursorColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where selectionEnabled matches the condition.
@@ -380,8 +411,10 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// ```
   @useResult
   WidgetSelector<SelectableText> withSelectionEnabled(bool? value) {
-    return withDiagnosticProp<bool>('selectionEnabled',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<bool>(
+      'selectionEnabled',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where selectionControls matches the condition.
@@ -392,9 +425,12 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// ```
   @useResult
   WidgetSelector<SelectableText> whereSelectionControls(
-      MatchProp<TextSelectionControls> match) {
+    MatchProp<TextSelectionControls> match,
+  ) {
     return withDiagnosticProp<TextSelectionControls>(
-        'selectionControls', match);
+      'selectionControls',
+      match,
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where selectionControls equals (==) [value].
@@ -405,9 +441,12 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// ```
   @useResult
   WidgetSelector<SelectableText> withSelectionControls(
-      TextSelectionControls? value) {
-    return withDiagnosticProp<TextSelectionControls>('selectionControls',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    TextSelectionControls? value,
+  ) {
+    return withDiagnosticProp<TextSelectionControls>(
+      'selectionControls',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where scrollPhysics matches the condition.
@@ -418,7 +457,8 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// ```
   @useResult
   WidgetSelector<SelectableText> whereScrollPhysics(
-      MatchProp<ScrollPhysics> match) {
+    MatchProp<ScrollPhysics> match,
+  ) {
     return withDiagnosticProp<ScrollPhysics>('scrollPhysics', match);
   }
 
@@ -430,8 +470,10 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// ```
   @useResult
   WidgetSelector<SelectableText> withScrollPhysics(ScrollPhysics? value) {
-    return withDiagnosticProp<ScrollPhysics>('scrollPhysics',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<ScrollPhysics>(
+      'scrollPhysics',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [SelectableText] where textHeightBehavior matches the condition.
@@ -442,7 +484,8 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// ```
   @useResult
   WidgetSelector<SelectableText> whereTextHeightBehavior(
-      MatchProp<TextHeightBehavior> match) {
+    MatchProp<TextHeightBehavior> match,
+  ) {
     return withDiagnosticProp<TextHeightBehavior>('textHeightBehavior', match);
   }
 
@@ -454,9 +497,12 @@ extension SelectableTextSelector on WidgetSelector<SelectableText> {
   /// ```
   @useResult
   WidgetSelector<SelectableText> withTextHeightBehavior(
-      TextHeightBehavior? value) {
-    return withDiagnosticProp<TextHeightBehavior>('textHeightBehavior',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    TextHeightBehavior? value,
+  ) {
+    return withDiagnosticProp<TextHeightBehavior>(
+      'textHeightBehavior',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 
@@ -480,7 +526,9 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// ```
   WidgetMatcher<SelectableText> hasText(String? value) {
     return hasDiagnosticProp<String>(
-        'data', (it) => value == null ? it.isNull() : it.equals(value));
+      'data',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that semanticsLabel of [SelectableText] matches the condition in [match].
@@ -490,7 +538,8 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// spot<SelectableText>().existsOnce().hasSemanticsLabelWhere((it) => it.equals('foo'));
   /// ```
   WidgetMatcher<SelectableText> hasSemanticsLabelWhere(
-      MatchProp<String> match) {
+    MatchProp<String> match,
+  ) {
     return hasDiagnosticProp<String>('semanticsLabel', match);
   }
 
@@ -501,8 +550,10 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// spot<SelectableText>().existsOnce().hasSemanticsLabel('foo');
   /// ```
   WidgetMatcher<SelectableText> hasSemanticsLabel(String? value) {
-    return hasDiagnosticProp<String>('semanticsLabel',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<String>(
+      'semanticsLabel',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that focusNode of [SelectableText] matches the condition in [match].
@@ -523,7 +574,9 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// ```
   WidgetMatcher<SelectableText> hasFocusNode(FocusNode? value) {
     return hasDiagnosticProp<FocusNode>(
-        'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
+      'focusNode',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that style of [SelectableText] matches the condition in [match].
@@ -544,7 +597,9 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// ```
   WidgetMatcher<SelectableText> hasStyle(TextStyle? value) {
     return hasDiagnosticProp<TextStyle>(
-        'style', (it) => value == null ? it.isNull() : it.equals(value));
+      'style',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that autofocus of [SelectableText] matches the condition in [match].
@@ -565,7 +620,9 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// ```
   WidgetMatcher<SelectableText> hasAutofocus(bool? value) {
     return hasDiagnosticProp<bool>(
-        'autofocus', (it) => value == null ? it.isNull() : it.equals(value));
+      'autofocus',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that showCursor of [SelectableText] matches the condition in [match].
@@ -586,7 +643,9 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// ```
   WidgetMatcher<SelectableText> hasShowCursor(bool? value) {
     return hasDiagnosticProp<bool>(
-        'showCursor', (it) => value == null ? it.isNull() : it.equals(value));
+      'showCursor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that minLines of [SelectableText] matches the condition in [match].
@@ -607,7 +666,9 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// ```
   WidgetMatcher<SelectableText> hasMinLines(int? value) {
     return hasDiagnosticProp<int>(
-        'minLines', (it) => value == null ? it.isNull() : it.equals(value));
+      'minLines',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that maxLines of [SelectableText] matches the condition in [match].
@@ -628,7 +689,9 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// ```
   WidgetMatcher<SelectableText> hasMaxLines(int? value) {
     return hasDiagnosticProp<int>(
-        'maxLines', (it) => value == null ? it.isNull() : it.equals(value));
+      'maxLines',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that textAlign of [SelectableText] matches the condition in [match].
@@ -649,7 +712,9 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// ```
   WidgetMatcher<SelectableText> hasTextAlign(TextAlign? value) {
     return hasDiagnosticProp<TextAlign>(
-        'textAlign', (it) => value == null ? it.isNull() : it.equals(value));
+      'textAlign',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that textDirection of [SelectableText] matches the condition in [match].
@@ -659,7 +724,8 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// spot<SelectableText>().existsOnce().hasTextDirectionWhere((it) => it.equals(TextDirection.values.first));
   /// ```
   WidgetMatcher<SelectableText> hasTextDirectionWhere(
-      MatchProp<TextDirection> match) {
+    MatchProp<TextDirection> match,
+  ) {
     return hasDiagnosticProp<TextDirection>('textDirection', match);
   }
 
@@ -670,8 +736,10 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// spot<SelectableText>().existsOnce().hasTextDirection(TextDirection.values.first);
   /// ```
   WidgetMatcher<SelectableText> hasTextDirection(TextDirection? value) {
-    return hasDiagnosticProp<TextDirection>('textDirection',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<TextDirection>(
+      'textDirection',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that textScaleFactor of [SelectableText] matches the condition in [match].
@@ -681,7 +749,8 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// spot<SelectableText>().existsOnce().hasTextScaleFactorWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<SelectableText> hasTextScaleFactorWhere(
-      MatchProp<double> match) {
+    MatchProp<double> match,
+  ) {
     return hasDiagnosticProp<double>('textScaleFactor', match);
   }
 
@@ -692,8 +761,10 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// spot<SelectableText>().existsOnce().hasTextScaleFactor(10.5);
   /// ```
   WidgetMatcher<SelectableText> hasTextScaleFactor(double? value) {
-    return hasDiagnosticProp<double>('textScaleFactor',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<double>(
+      'textScaleFactor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that cursorWidth of [SelectableText] matches the condition in [match].
@@ -714,7 +785,9 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// ```
   WidgetMatcher<SelectableText> hasCursorWidth(double? value) {
     return hasDiagnosticProp<double>(
-        'cursorWidth', (it) => value == null ? it.isNull() : it.equals(value));
+      'cursorWidth',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that cursorHeight of [SelectableText] matches the condition in [match].
@@ -735,7 +808,9 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// ```
   WidgetMatcher<SelectableText> hasCursorHeight(double? value) {
     return hasDiagnosticProp<double>(
-        'cursorHeight', (it) => value == null ? it.isNull() : it.equals(value));
+      'cursorHeight',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that cursorRadius of [SelectableText] matches the condition in [match].
@@ -756,7 +831,9 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// ```
   WidgetMatcher<SelectableText> hasCursorRadius(Radius? value) {
     return hasDiagnosticProp<Radius>(
-        'cursorRadius', (it) => value == null ? it.isNull() : it.equals(value));
+      'cursorRadius',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that cursorColor of [SelectableText] matches the condition in [match].
@@ -777,7 +854,9 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// ```
   WidgetMatcher<SelectableText> hasCursorColor(Color? value) {
     return hasDiagnosticProp<Color>(
-        'cursorColor', (it) => value == null ? it.isNull() : it.equals(value));
+      'cursorColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that selectionEnabled of [SelectableText] matches the condition in [match].
@@ -787,7 +866,8 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// spot<SelectableText>().existsOnce().hasSelectionEnabledWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<SelectableText> hasSelectionEnabledWhere(
-      MatchProp<bool> match) {
+    MatchProp<bool> match,
+  ) {
     return hasDiagnosticProp<bool>('selectionEnabled', match);
   }
 
@@ -798,8 +878,10 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// spot<SelectableText>().existsOnce().hasSelectionEnabled(true);
   /// ```
   WidgetMatcher<SelectableText> hasSelectionEnabled(bool? value) {
-    return hasDiagnosticProp<bool>('selectionEnabled',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<bool>(
+      'selectionEnabled',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that selectionControls of [SelectableText] matches the condition in [match].
@@ -809,7 +891,8 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// spot<SelectableText>().existsOnce().hasSelectionControlsWhere((it) => it.equals(MaterialTextSelectionControls()));
   /// ```
   WidgetMatcher<SelectableText> hasSelectionControlsWhere(
-      MatchProp<TextSelectionControls> match) {
+    MatchProp<TextSelectionControls> match,
+  ) {
     return hasDiagnosticProp<TextSelectionControls>('selectionControls', match);
   }
 
@@ -820,9 +903,12 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// spot<SelectableText>().existsOnce().hasSelectionControls(MaterialTextSelectionControls());
   /// ```
   WidgetMatcher<SelectableText> hasSelectionControls(
-      TextSelectionControls? value) {
-    return hasDiagnosticProp<TextSelectionControls>('selectionControls',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    TextSelectionControls? value,
+  ) {
+    return hasDiagnosticProp<TextSelectionControls>(
+      'selectionControls',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that scrollPhysics of [SelectableText] matches the condition in [match].
@@ -832,7 +918,8 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// spot<SelectableText>().existsOnce().hasScrollPhysicsWhere((it) => it.equals(BouncingScrollPhysics()));
   /// ```
   WidgetMatcher<SelectableText> hasScrollPhysicsWhere(
-      MatchProp<ScrollPhysics> match) {
+    MatchProp<ScrollPhysics> match,
+  ) {
     return hasDiagnosticProp<ScrollPhysics>('scrollPhysics', match);
   }
 
@@ -843,8 +930,10 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// spot<SelectableText>().existsOnce().hasScrollPhysics(BouncingScrollPhysics());
   /// ```
   WidgetMatcher<SelectableText> hasScrollPhysics(ScrollPhysics? value) {
-    return hasDiagnosticProp<ScrollPhysics>('scrollPhysics',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<ScrollPhysics>(
+      'scrollPhysics',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that textHeightBehavior of [SelectableText] matches the condition in [match].
@@ -854,7 +943,8 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// spot<SelectableText>().existsOnce().hasTextHeightBehaviorWhere((it) => it.equals(TextHeightBehavior(applyHeightToFirstAscent: true, applyHeightToLastDescent: false)));
   /// ```
   WidgetMatcher<SelectableText> hasTextHeightBehaviorWhere(
-      MatchProp<TextHeightBehavior> match) {
+    MatchProp<TextHeightBehavior> match,
+  ) {
     return hasDiagnosticProp<TextHeightBehavior>('textHeightBehavior', match);
   }
 
@@ -865,9 +955,12 @@ extension SelectableTextMatcher on WidgetMatcher<SelectableText> {
   /// spot<SelectableText>().existsOnce().hasTextHeightBehavior(TextHeightBehavior(applyHeightToFirstAscent: true, applyHeightToLastDescent: false));
   /// ```
   WidgetMatcher<SelectableText> hasTextHeightBehavior(
-      TextHeightBehavior? value) {
-    return hasDiagnosticProp<TextHeightBehavior>('textHeightBehavior',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    TextHeightBehavior? value,
+  ) {
+    return hasDiagnosticProp<TextHeightBehavior>(
+      'textHeightBehavior',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 

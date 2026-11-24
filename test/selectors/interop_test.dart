@@ -8,21 +8,13 @@ import 'package:spot/spot.dart';
 void main() {
   group('finder to spot', () {
     testWidgets('spot with concrete type', (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Text('a'),
-        ),
-      );
+      await tester.pumpWidget(MaterialApp(home: Text('a')));
 
       find.byType(Text).spot<Text>().existsOnce().hasText('a');
     });
 
     testWidgets('spot with any type', (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Text('a'),
-        ),
-      );
+      await tester.pumpWidget(MaterialApp(home: Text('a')));
 
       find
           .byType(Text)
@@ -31,13 +23,11 @@ void main() {
           .hasDiagnosticProp<String>('data', (it) => it.equals('a'));
     });
 
-    testWidgets('readable error messages when ancestor could not be found',
-        (tester) async {
+    testWidgets('readable error messages when ancestor could not be found', (
+      tester,
+    ) async {
       await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: Text('foo'),
-        ),
+        Directionality(textDirection: TextDirection.ltr, child: Text('foo')),
       );
 
       expect(
@@ -70,11 +60,7 @@ void main() {
 
   group('spot to finder', () {
     testWidgets('multi layer spot', (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Text('a'),
-        ),
-      );
+      await tester.pumpWidget(MaterialApp(home: Text('a')));
 
       final text = spot<MaterialApp>().spot<Text>()..existsOnce().hasText('a');
       expect(text.finder, findsOneWidget);
@@ -83,21 +69,13 @@ void main() {
 
   group('.spotFinder()', () {
     testWidgets('with any type', (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Text('a'),
-        ),
-      );
+      await tester.pumpWidget(MaterialApp(home: Text('a')));
 
       spot<MaterialApp>().spotFinder(find.text('a')).existsOnce();
     });
 
     testWidgets('with generic type', (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Text('a'),
-        ),
-      );
+      await tester.pumpWidget(MaterialApp(home: Text('a')));
 
       spot<MaterialApp>()
           .spotFinder<Text>(find.text('a'))
@@ -107,10 +85,7 @@ void main() {
 
     testWidgets('spotFinder has readable error messages', (tester) async {
       await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: Text('foo'),
-        ),
+        Directionality(textDirection: TextDirection.ltr, child: Text('foo')),
       );
 
       expect(

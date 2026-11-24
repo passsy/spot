@@ -24,7 +24,8 @@ extension CircularProgressIndicatorSelector
   /// ```
   @useResult
   WidgetSelector<CircularProgressIndicator> whereValue(
-      MatchProp<double> match) {
+    MatchProp<double> match,
+  ) {
     return withDiagnosticProp<double>('value', match);
   }
 
@@ -37,7 +38,9 @@ extension CircularProgressIndicatorSelector
   @useResult
   WidgetSelector<CircularProgressIndicator> withValue(double? value) {
     return withDiagnosticProp<double>(
-        'value', (it) => value == null ? it.isNull() : it.equals(value));
+      'value',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 
@@ -51,7 +54,8 @@ extension CircularProgressIndicatorMatcher
   /// spot<CircularProgressIndicator>().existsOnce().hasValueWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<CircularProgressIndicator> hasValueWhere(
-      MatchProp<double> match) {
+    MatchProp<double> match,
+  ) {
     return hasDiagnosticProp<double>('value', match);
   }
 
@@ -63,7 +67,9 @@ extension CircularProgressIndicatorMatcher
   /// ```
   WidgetMatcher<CircularProgressIndicator> hasValue(double? value) {
     return hasDiagnosticProp<double>(
-        'value', (it) => value == null ? it.isNull() : it.equals(value));
+      'value',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 

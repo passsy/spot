@@ -124,8 +124,9 @@ void main() {
       ]);
     });
 
-    testWidgets('prints the drags that did not find the target',
-        (tester) async {
+    testWidgets('prints the drags that did not find the target', (
+      tester,
+    ) async {
       final output = await _capture(TimelineMode.live, () async {
         TestFailure? failure;
         try {
@@ -186,10 +187,7 @@ void main() {
 }
 
 /// Switches the timeline to [mode] and returns what [body] printed after that.
-Future<String> _capture(
-  TimelineMode mode,
-  Future<void> Function() body,
-) async {
+Future<String> _capture(TimelineMode mode, Future<void> Function() body) async {
   await captureConsoleOutput(() async {
     timeline.mode = mode;
   });
@@ -198,13 +196,16 @@ Future<String> _capture(
 
 final _dragTarget = spotText('Item at index: 27', whole: true);
 
-final _scrollingToTheEnd = 'Drag Event: Scrolling to the end, beginning at '
+final _scrollingToTheEnd =
+    'Drag Event: Scrolling to the end, beginning at '
     'Offset(dx,dy) in order to find $_dragTarget.';
 
-final _foundAfter23Drags = 'Drag Event: Target $_dragTarget found after 23 '
+final _foundAfter23Drags =
+    'Drag Event: Target $_dragTarget found after 23 '
     'drags. Total dragged offset: Offset(dx,dy)';
 
-final _notVisibleAfter10Drags = 'Drag Error Event: $_dragTarget is not '
+final _notVisibleAfter10Drags =
+    'Drag Error Event: $_dragTarget is not '
     'visible after dragging 10 times and a total dragged offset of '
     'Offset(dx,dy).';
 

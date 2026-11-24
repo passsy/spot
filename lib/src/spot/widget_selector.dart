@@ -18,10 +18,7 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
   static final WidgetSelector all = WidgetSelector(
     widgetPresence: WidgetPresence.combined,
     stages: [
-      PredicateFilter(
-        predicate: (e) => true,
-        description: 'any Widget',
-      ),
+      PredicateFilter(predicate: (e) => true, description: 'any Widget'),
     ],
   );
 
@@ -53,14 +50,15 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
     QuantityConstraint? quantityConstraint,
     WidgetPresence? widgetPresence,
     W Function(Element element)? mapElementToWidget,
-  })  : stages = List.unmodifiable(stages),
-        widgetPresence = widgetPresence ?? WidgetPresence.onstage,
-        quantityConstraint = quantityConstraint ??
-            // ignore: deprecated_member_use_from_same_package
-            (expectedQuantity == ExpectedQuantity.single
-                ? QuantityConstraint.single
-                : QuantityConstraint.unconstrained),
-        mapElementToWidget = mapElementToWidget ?? defaultMapElementToWidget<W>;
+  }) : stages = List.unmodifiable(stages),
+       widgetPresence = widgetPresence ?? WidgetPresence.onstage,
+       quantityConstraint =
+           quantityConstraint ??
+           // ignore: deprecated_member_use_from_same_package
+           (expectedQuantity == ExpectedQuantity.single
+               ? QuantityConstraint.single
+               : QuantityConstraint.unconstrained),
+       mapElementToWidget = mapElementToWidget ?? defaultMapElementToWidget<W>;
 
   /// The list of filters which are used to narrow down the selection of widgets in the tree
   ///
@@ -118,15 +116,12 @@ class WidgetSelector<W extends Widget> with ChainableSelectors<W> {
       }
       stageKeys.add(key);
     }
-    return SpotCacheKey(
-      WidgetSelector,
-      [
-        type,
-        quantityConstraint,
-        widgetPresence,
-        SpotCacheKey(_SelectorStagesCacheKey, stageKeys),
-      ],
-    );
+    return SpotCacheKey(WidgetSelector, [
+      type,
+      quantityConstraint,
+      widgetPresence,
+      SpotCacheKey(_SelectorStagesCacheKey, stageKeys),
+    ]);
   }
 
   /// All parent selectors of all stages this widget selector depends on
@@ -439,7 +434,7 @@ abstract class ElementFilter {
 class SpotCacheKey {
   /// Creates a structural cache key.
   SpotCacheKey(this.type, List<Object> values)
-      : values = List.unmodifiable(values) {
+    : values = List.unmodifiable(values) {
     _throwIfCacheKeyPartIsCollection(type);
     for (final value in values) {
       _throwIfCacheKeyPartIsCollection(value);
@@ -500,22 +495,16 @@ class QuantityConstraint {
   /// the [max] value specifies the maximum number of widgets to match.
   /// If both are provided, [min] must be less than or equal to [max].
   const QuantityConstraint({this.min, this.max})
-      : assert(min == null || max == null || min <= max);
+    : assert(min == null || max == null || min <= max);
 
   /// Constructs a [QuantityConstraint] where exactly [n] widgets should match.
-  const QuantityConstraint.exactly(int n)
-      : min = n,
-        max = n;
+  const QuantityConstraint.exactly(int n) : min = n, max = n;
 
   /// Constructs a [QuantityConstraint] where at least [n] widgets should match.
-  const QuantityConstraint.atLeast(int n)
-      : min = n,
-        max = null;
+  const QuantityConstraint.atLeast(int n) : min = n, max = null;
 
   /// Constructs a [QuantityConstraint] where at most [n] widgets should match.
-  const QuantityConstraint.atMost(int n)
-      : min = null,
-        max = n;
+  const QuantityConstraint.atMost(int n) : min = null, max = n;
 
   /// Represents an unconstrained quantity, allowing any number of widgets
   /// to match.

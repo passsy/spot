@@ -35,7 +35,9 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   @useResult
   WidgetSelector<FloatingActionButton> withTooltip(String? value) {
     return withDiagnosticProp<String>(
-        'tooltip', (it) => value == null ? it.isNull() : it.equals(value));
+      'tooltip',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where foregroundColor matches the condition.
@@ -46,7 +48,8 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> whereForegroundColor(
-      MatchProp<Color> match) {
+    MatchProp<Color> match,
+  ) {
     return withDiagnosticProp<Color>('foregroundColor', match);
   }
 
@@ -58,8 +61,10 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> withForegroundColor(Color? value) {
-    return withDiagnosticProp<Color>('foregroundColor',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<Color>(
+      'foregroundColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where backgroundColor matches the condition.
@@ -70,7 +75,8 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> whereBackgroundColor(
-      MatchProp<Color> match) {
+    MatchProp<Color> match,
+  ) {
     return withDiagnosticProp<Color>('backgroundColor', match);
   }
 
@@ -82,8 +88,10 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> withBackgroundColor(Color? value) {
-    return withDiagnosticProp<Color>('backgroundColor',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<Color>(
+      'backgroundColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where focusColor matches the condition.
@@ -106,7 +114,9 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   @useResult
   WidgetSelector<FloatingActionButton> withFocusColor(Color? value) {
     return withDiagnosticProp<Color>(
-        'focusColor', (it) => value == null ? it.isNull() : it.equals(value));
+      'focusColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where hoverColor matches the condition.
@@ -129,7 +139,9 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   @useResult
   WidgetSelector<FloatingActionButton> withHoverColor(Color? value) {
     return withDiagnosticProp<Color>(
-        'hoverColor', (it) => value == null ? it.isNull() : it.equals(value));
+      'hoverColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where splashColor matches the condition.
@@ -140,7 +152,8 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> whereSplashColor(
-      MatchProp<Color> match) {
+    MatchProp<Color> match,
+  ) {
     return withDiagnosticProp<Color>('splashColor', match);
   }
 
@@ -153,7 +166,9 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   @useResult
   WidgetSelector<FloatingActionButton> withSplashColor(Color? value) {
     return withDiagnosticProp<Color>(
-        'splashColor', (it) => value == null ? it.isNull() : it.equals(value));
+      'splashColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where heroTag matches the condition.
@@ -176,7 +191,9 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   @useResult
   WidgetSelector<FloatingActionButton> withHeroTag(Object? value) {
     return withDiagnosticProp<Object>(
-        'heroTag', (it) => value == null ? it.isNull() : it.equals(value));
+      'heroTag',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where elevation matches the condition.
@@ -199,7 +216,9 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   @useResult
   WidgetSelector<FloatingActionButton> withElevation(double? value) {
     return withDiagnosticProp<double>(
-        'elevation', (it) => value == null ? it.isNull() : it.equals(value));
+      'elevation',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where focusElevation matches the condition.
@@ -210,7 +229,8 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> whereFocusElevation(
-      MatchProp<double> match) {
+    MatchProp<double> match,
+  ) {
     return withDiagnosticProp<double>('focusElevation', match);
   }
 
@@ -222,8 +242,10 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> withFocusElevation(double? value) {
-    return withDiagnosticProp<double>('focusElevation',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<double>(
+      'focusElevation',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where hoverElevation matches the condition.
@@ -234,7 +256,8 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> whereHoverElevation(
-      MatchProp<double> match) {
+    MatchProp<double> match,
+  ) {
     return withDiagnosticProp<double>('hoverElevation', match);
   }
 
@@ -246,8 +269,10 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> withHoverElevation(double? value) {
-    return withDiagnosticProp<double>('hoverElevation',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<double>(
+      'hoverElevation',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where highlightElevation matches the condition.
@@ -258,7 +283,8 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> whereHighlightElevation(
-      MatchProp<double> match) {
+    MatchProp<double> match,
+  ) {
     return withDiagnosticProp<double>('highlightElevation', match);
   }
 
@@ -270,8 +296,10 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> withHighlightElevation(double? value) {
-    return withDiagnosticProp<double>('highlightElevation',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<double>(
+      'highlightElevation',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where disabledElevation matches the condition.
@@ -282,7 +310,8 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> whereDisabledElevation(
-      MatchProp<double> match) {
+    MatchProp<double> match,
+  ) {
     return withDiagnosticProp<double>('disabledElevation', match);
   }
 
@@ -294,8 +323,10 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> withDisabledElevation(double? value) {
-    return withDiagnosticProp<double>('disabledElevation',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return withDiagnosticProp<double>(
+      'disabledElevation',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where shape matches the condition.
@@ -306,7 +337,8 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> whereShape(
-      MatchProp<ShapeBorder> match) {
+    MatchProp<ShapeBorder> match,
+  ) {
     return withDiagnosticProp<ShapeBorder>('shape', match);
   }
 
@@ -319,7 +351,9 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   @useResult
   WidgetSelector<FloatingActionButton> withShape(ShapeBorder? value) {
     return withDiagnosticProp<ShapeBorder>(
-        'shape', (it) => value == null ? it.isNull() : it.equals(value));
+      'shape',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where focusNode matches the condition.
@@ -330,7 +364,8 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> whereFocusNode(
-      MatchProp<FocusNode> match) {
+    MatchProp<FocusNode> match,
+  ) {
     return withDiagnosticProp<FocusNode>('focusNode', match);
   }
 
@@ -343,7 +378,9 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   @useResult
   WidgetSelector<FloatingActionButton> withFocusNode(FocusNode? value) {
     return withDiagnosticProp<FocusNode>(
-        'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
+      'focusNode',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where isExtended matches the condition.
@@ -366,7 +403,9 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   @useResult
   WidgetSelector<FloatingActionButton> withIsExtended(bool? value) {
     return withDiagnosticProp<bool>(
-        'isExtended', (it) => value == null ? it.isNull() : it.equals(value));
+      'isExtended',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where materialTapTargetSize matches the condition.
@@ -377,9 +416,12 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> whereMaterialTapTargetSize(
-      MatchProp<MaterialTapTargetSize> match) {
+    MatchProp<MaterialTapTargetSize> match,
+  ) {
     return withDiagnosticProp<MaterialTapTargetSize>(
-        'materialTapTargetSize', match);
+      'materialTapTargetSize',
+      match,
+    );
   }
 
   /// Creates a [WidgetSelector] that finds all [FloatingActionButton] where materialTapTargetSize equals (==) [value].
@@ -390,9 +432,12 @@ extension FloatingActionButtonSelector on WidgetSelector<FloatingActionButton> {
   /// ```
   @useResult
   WidgetSelector<FloatingActionButton> withMaterialTapTargetSize(
-      MaterialTapTargetSize? value) {
-    return withDiagnosticProp<MaterialTapTargetSize>('materialTapTargetSize',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    MaterialTapTargetSize? value,
+  ) {
+    return withDiagnosticProp<MaterialTapTargetSize>(
+      'materialTapTargetSize',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 
@@ -416,7 +461,9 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// ```
   WidgetMatcher<FloatingActionButton> hasTooltip(String? value) {
     return hasDiagnosticProp<String>(
-        'tooltip', (it) => value == null ? it.isNull() : it.equals(value));
+      'tooltip',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that foregroundColor of [FloatingActionButton] matches the condition in [match].
@@ -426,7 +473,8 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// spot<FloatingActionButton>().existsOnce().hasForegroundColorWhere((it) => it.equals(Colors.red));
   /// ```
   WidgetMatcher<FloatingActionButton> hasForegroundColorWhere(
-      MatchProp<Color> match) {
+    MatchProp<Color> match,
+  ) {
     return hasDiagnosticProp<Color>('foregroundColor', match);
   }
 
@@ -437,8 +485,10 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// spot<FloatingActionButton>().existsOnce().hasForegroundColor(Colors.red);
   /// ```
   WidgetMatcher<FloatingActionButton> hasForegroundColor(Color? value) {
-    return hasDiagnosticProp<Color>('foregroundColor',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<Color>(
+      'foregroundColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that backgroundColor of [FloatingActionButton] matches the condition in [match].
@@ -448,7 +498,8 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// spot<FloatingActionButton>().existsOnce().hasBackgroundColorWhere((it) => it.equals(Colors.red));
   /// ```
   WidgetMatcher<FloatingActionButton> hasBackgroundColorWhere(
-      MatchProp<Color> match) {
+    MatchProp<Color> match,
+  ) {
     return hasDiagnosticProp<Color>('backgroundColor', match);
   }
 
@@ -459,8 +510,10 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// spot<FloatingActionButton>().existsOnce().hasBackgroundColor(Colors.red);
   /// ```
   WidgetMatcher<FloatingActionButton> hasBackgroundColor(Color? value) {
-    return hasDiagnosticProp<Color>('backgroundColor',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<Color>(
+      'backgroundColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that focusColor of [FloatingActionButton] matches the condition in [match].
@@ -470,7 +523,8 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// spot<FloatingActionButton>().existsOnce().hasFocusColorWhere((it) => it.equals(Colors.red));
   /// ```
   WidgetMatcher<FloatingActionButton> hasFocusColorWhere(
-      MatchProp<Color> match) {
+    MatchProp<Color> match,
+  ) {
     return hasDiagnosticProp<Color>('focusColor', match);
   }
 
@@ -482,7 +536,9 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// ```
   WidgetMatcher<FloatingActionButton> hasFocusColor(Color? value) {
     return hasDiagnosticProp<Color>(
-        'focusColor', (it) => value == null ? it.isNull() : it.equals(value));
+      'focusColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that hoverColor of [FloatingActionButton] matches the condition in [match].
@@ -492,7 +548,8 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// spot<FloatingActionButton>().existsOnce().hasHoverColorWhere((it) => it.equals(Colors.red));
   /// ```
   WidgetMatcher<FloatingActionButton> hasHoverColorWhere(
-      MatchProp<Color> match) {
+    MatchProp<Color> match,
+  ) {
     return hasDiagnosticProp<Color>('hoverColor', match);
   }
 
@@ -504,7 +561,9 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// ```
   WidgetMatcher<FloatingActionButton> hasHoverColor(Color? value) {
     return hasDiagnosticProp<Color>(
-        'hoverColor', (it) => value == null ? it.isNull() : it.equals(value));
+      'hoverColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that splashColor of [FloatingActionButton] matches the condition in [match].
@@ -514,7 +573,8 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// spot<FloatingActionButton>().existsOnce().hasSplashColorWhere((it) => it.equals(Colors.red));
   /// ```
   WidgetMatcher<FloatingActionButton> hasSplashColorWhere(
-      MatchProp<Color> match) {
+    MatchProp<Color> match,
+  ) {
     return hasDiagnosticProp<Color>('splashColor', match);
   }
 
@@ -526,7 +586,9 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// ```
   WidgetMatcher<FloatingActionButton> hasSplashColor(Color? value) {
     return hasDiagnosticProp<Color>(
-        'splashColor', (it) => value == null ? it.isNull() : it.equals(value));
+      'splashColor',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that heroTag of [FloatingActionButton] matches the condition in [match].
@@ -547,7 +609,9 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// ```
   WidgetMatcher<FloatingActionButton> hasHeroTag(Object? value) {
     return hasDiagnosticProp<Object>(
-        'heroTag', (it) => value == null ? it.isNull() : it.equals(value));
+      'heroTag',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that elevation of [FloatingActionButton] matches the condition in [match].
@@ -557,7 +621,8 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// spot<FloatingActionButton>().existsOnce().hasElevationWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<FloatingActionButton> hasElevationWhere(
-      MatchProp<double> match) {
+    MatchProp<double> match,
+  ) {
     return hasDiagnosticProp<double>('elevation', match);
   }
 
@@ -569,7 +634,9 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// ```
   WidgetMatcher<FloatingActionButton> hasElevation(double? value) {
     return hasDiagnosticProp<double>(
-        'elevation', (it) => value == null ? it.isNull() : it.equals(value));
+      'elevation',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that focusElevation of [FloatingActionButton] matches the condition in [match].
@@ -579,7 +646,8 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// spot<FloatingActionButton>().existsOnce().hasFocusElevationWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<FloatingActionButton> hasFocusElevationWhere(
-      MatchProp<double> match) {
+    MatchProp<double> match,
+  ) {
     return hasDiagnosticProp<double>('focusElevation', match);
   }
 
@@ -590,8 +658,10 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// spot<FloatingActionButton>().existsOnce().hasFocusElevation(10.5);
   /// ```
   WidgetMatcher<FloatingActionButton> hasFocusElevation(double? value) {
-    return hasDiagnosticProp<double>('focusElevation',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<double>(
+      'focusElevation',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that hoverElevation of [FloatingActionButton] matches the condition in [match].
@@ -601,7 +671,8 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// spot<FloatingActionButton>().existsOnce().hasHoverElevationWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<FloatingActionButton> hasHoverElevationWhere(
-      MatchProp<double> match) {
+    MatchProp<double> match,
+  ) {
     return hasDiagnosticProp<double>('hoverElevation', match);
   }
 
@@ -612,8 +683,10 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// spot<FloatingActionButton>().existsOnce().hasHoverElevation(10.5);
   /// ```
   WidgetMatcher<FloatingActionButton> hasHoverElevation(double? value) {
-    return hasDiagnosticProp<double>('hoverElevation',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<double>(
+      'hoverElevation',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that highlightElevation of [FloatingActionButton] matches the condition in [match].
@@ -623,7 +696,8 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// spot<FloatingActionButton>().existsOnce().hasHighlightElevationWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<FloatingActionButton> hasHighlightElevationWhere(
-      MatchProp<double> match) {
+    MatchProp<double> match,
+  ) {
     return hasDiagnosticProp<double>('highlightElevation', match);
   }
 
@@ -634,8 +708,10 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// spot<FloatingActionButton>().existsOnce().hasHighlightElevation(10.5);
   /// ```
   WidgetMatcher<FloatingActionButton> hasHighlightElevation(double? value) {
-    return hasDiagnosticProp<double>('highlightElevation',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<double>(
+      'highlightElevation',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that disabledElevation of [FloatingActionButton] matches the condition in [match].
@@ -645,7 +721,8 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// spot<FloatingActionButton>().existsOnce().hasDisabledElevationWhere((it) => it.isGreaterThan(10.5));
   /// ```
   WidgetMatcher<FloatingActionButton> hasDisabledElevationWhere(
-      MatchProp<double> match) {
+    MatchProp<double> match,
+  ) {
     return hasDiagnosticProp<double>('disabledElevation', match);
   }
 
@@ -656,8 +733,10 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// spot<FloatingActionButton>().existsOnce().hasDisabledElevation(10.5);
   /// ```
   WidgetMatcher<FloatingActionButton> hasDisabledElevation(double? value) {
-    return hasDiagnosticProp<double>('disabledElevation',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    return hasDiagnosticProp<double>(
+      'disabledElevation',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that shape of [FloatingActionButton] matches the condition in [match].
@@ -667,7 +746,8 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// spot<FloatingActionButton>().existsOnce().hasShapeWhere((it) => it.equals(RoundedRectangleBorder()));
   /// ```
   WidgetMatcher<FloatingActionButton> hasShapeWhere(
-      MatchProp<ShapeBorder> match) {
+    MatchProp<ShapeBorder> match,
+  ) {
     return hasDiagnosticProp<ShapeBorder>('shape', match);
   }
 
@@ -679,7 +759,9 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// ```
   WidgetMatcher<FloatingActionButton> hasShape(ShapeBorder? value) {
     return hasDiagnosticProp<ShapeBorder>(
-        'shape', (it) => value == null ? it.isNull() : it.equals(value));
+      'shape',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that focusNode of [FloatingActionButton] matches the condition in [match].
@@ -689,7 +771,8 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// spot<FloatingActionButton>().existsOnce().hasFocusNodeWhere((it) => it.equals(FocusNode()));
   /// ```
   WidgetMatcher<FloatingActionButton> hasFocusNodeWhere(
-      MatchProp<FocusNode> match) {
+    MatchProp<FocusNode> match,
+  ) {
     return hasDiagnosticProp<FocusNode>('focusNode', match);
   }
 
@@ -701,7 +784,9 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// ```
   WidgetMatcher<FloatingActionButton> hasFocusNode(FocusNode? value) {
     return hasDiagnosticProp<FocusNode>(
-        'focusNode', (it) => value == null ? it.isNull() : it.equals(value));
+      'focusNode',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that isExtended of [FloatingActionButton] matches the condition in [match].
@@ -711,7 +796,8 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// spot<FloatingActionButton>().existsOnce().hasIsExtendedWhere((it) => it.isTrue());
   /// ```
   WidgetMatcher<FloatingActionButton> hasIsExtendedWhere(
-      MatchProp<bool> match) {
+    MatchProp<bool> match,
+  ) {
     return hasDiagnosticProp<bool>('isExtended', match);
   }
 
@@ -723,7 +809,9 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// ```
   WidgetMatcher<FloatingActionButton> hasIsExtended(bool? value) {
     return hasDiagnosticProp<bool>(
-        'isExtended', (it) => value == null ? it.isNull() : it.equals(value));
+      'isExtended',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 
   /// Expects that materialTapTargetSize of [FloatingActionButton] matches the condition in [match].
@@ -733,9 +821,12 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// spot<FloatingActionButton>().existsOnce().hasMaterialTapTargetSizeWhere((it) => it.equals(MaterialTapTargetSize.values.first));
   /// ```
   WidgetMatcher<FloatingActionButton> hasMaterialTapTargetSizeWhere(
-      MatchProp<MaterialTapTargetSize> match) {
+    MatchProp<MaterialTapTargetSize> match,
+  ) {
     return hasDiagnosticProp<MaterialTapTargetSize>(
-        'materialTapTargetSize', match);
+      'materialTapTargetSize',
+      match,
+    );
   }
 
   /// Expects that materialTapTargetSize of [FloatingActionButton] equals (==) [value].
@@ -745,9 +836,12 @@ extension FloatingActionButtonMatcher on WidgetMatcher<FloatingActionButton> {
   /// spot<FloatingActionButton>().existsOnce().hasMaterialTapTargetSize(MaterialTapTargetSize.values.first);
   /// ```
   WidgetMatcher<FloatingActionButton> hasMaterialTapTargetSize(
-      MaterialTapTargetSize? value) {
-    return hasDiagnosticProp<MaterialTapTargetSize>('materialTapTargetSize',
-        (it) => value == null ? it.isNull() : it.equals(value));
+    MaterialTapTargetSize? value,
+  ) {
+    return hasDiagnosticProp<MaterialTapTargetSize>(
+      'materialTapTargetSize',
+      (it) => value == null ? it.isNull() : it.equals(value),
+    );
   }
 }
 

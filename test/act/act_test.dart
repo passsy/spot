@@ -24,10 +24,7 @@ void actTests() {
       await tester.pumpWidget(
         MaterialApp(
           home: Center(
-            child: ElevatedButton(
-              onPressed: onPressed,
-              child: null,
-            ),
+            child: ElevatedButton(onPressed: onPressed, child: null),
           ),
         ),
       );
@@ -46,27 +43,24 @@ void actTests() {
 
       final app = spot<MaterialApp>();
       app.existsOnce().hasWidgetProp(
-            prop: widgetProp('color', (w) => w.color),
-            match: (it) => it.equals(Colors.blue),
-          );
+        prop: widgetProp('color', (w) => w.color),
+        match: (it) => it.equals(Colors.blue),
+      );
       final button = spot<ElevatedButton>();
 
       await act.tap(button);
       // without the automatic pump() inside tap(), the color would not have change
       app.existsOnce().hasWidgetProp(
-            prop: widgetProp('color', (w) => w.color),
-            match: (it) => it.equals(Colors.red),
-          );
+        prop: widgetProp('color', (w) => w.color),
+        match: (it) => it.equals(Colors.red),
+      );
     });
 
     testWidgets('tap must be awaited', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Center(
-            child: ElevatedButton(
-              onPressed: () {},
-              child: const Text('Home'),
-            ),
+            child: ElevatedButton(onPressed: () {}, child: const Text('Home')),
           ),
         ),
       );
@@ -78,9 +72,7 @@ void actTests() {
       } catch (e) {
         if (kIsWeb) {
           check(e).isA<FlutterError>().has((it) => it.message, 'message')
-            ..contains(
-              'Guarded function conflict.',
-            )
+            ..contains('Guarded function conflict.')
             ..contains(
               'You must use "await" with all Future-returning test APIs.',
             );
@@ -110,20 +102,15 @@ void actTests() {
       );
     });
 
-    testWidgets('tap throws when selector matches multiple widgets',
-        (tester) async {
+    testWidgets('tap throws when selector matches multiple widgets', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Row(
             children: [
-              ElevatedButton(
-                onPressed: () {},
-                child: null,
-              ),
-              ElevatedButton(
-                onPressed: () {},
-                child: null,
-              ),
+              ElevatedButton(onPressed: () {}, child: null),
+              ElevatedButton(onPressed: () {}, child: null),
             ],
           ),
         ),
@@ -144,10 +131,7 @@ void actTests() {
             children: [
               Positioned(
                 top: -1000,
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: null,
-                ),
+                child: ElevatedButton(onPressed: () {}, child: null),
               ),
             ],
           ),
@@ -165,54 +149,46 @@ void actTests() {
       );
     });
 
-    testWidgets('tap throws if widget is obstructed by another widget',
-        skip: noWidgetLocationsOnWasm, (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Stack(
-              children: [
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    child: null,
-                  ),
-                ),
-                const Positioned.fill(
-                  child: ColoredBox(
-                    color: Colors.green,
-                  ),
-                ),
-              ],
+    testWidgets(
+      'tap throws if widget is obstructed by another widget',
+      skip: noWidgetLocationsOnWasm,
+      (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Stack(
+                children: [
+                  Center(child: ElevatedButton(onPressed: () {}, child: null)),
+                  const Positioned.fill(child: ColoredBox(color: Colors.green)),
+                ],
+              ),
             ),
           ),
-        ),
-      );
+        );
 
-      final button = spot<ElevatedButton>()..existsOnce();
-      await expectLater(
-        () => act.tap(button),
-        throwsSpotErrorContaining([
-          "Widget 'ElevatedButton' can not be interacted with directly, because another widget (ColoredBox) inside Padding is completely covering it and consumes all pointer events.",
-          "ColoredBox", // cover
-          "ElevatedButton", // target
-          if (kIsWeb) "Stack (org-dartlang-app" else "Stack (file:/",
-          if (kIsWeb) "Padding (org-dartlang-app" else "Padding (file:/",
-        ]),
-      );
-    });
+        final button = spot<ElevatedButton>()..existsOnce();
+        await expectLater(
+          () => act.tap(button),
+          throwsSpotErrorContaining([
+            "Widget 'ElevatedButton' can not be interacted with directly, because another widget (ColoredBox) inside Padding is completely covering it and consumes all pointer events.",
+            "ColoredBox", // cover
+            "ElevatedButton", // target
+            if (kIsWeb) "Stack (org-dartlang-app" else "Stack (file:/",
+            if (kIsWeb) "Padding (org-dartlang-app" else "Padding (file:/",
+          ]),
+        );
+      },
+    );
 
-    testWidgets('tap throws when widget is wrapped in AbsorbPointer',
-        (tester) async {
+    testWidgets('tap throws when widget is wrapped in AbsorbPointer', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Center(
             child: AbsorbPointer(
-              child: ElevatedButton(
-                onPressed: () {},
-                child: null,
-              ),
+              child: ElevatedButton(onPressed: () {}, child: null),
             ),
           ),
         ),
@@ -231,17 +207,14 @@ void actTests() {
       );
     });
 
-    testWidgets('tap throws when the AbsorbPointer is not below the hit target',
-        (tester) async {
+    testWidgets('tap throws when the AbsorbPointer is not below the hit target', (
+      tester,
+    ) async {
       // The widget below the hit target is _AbsorbingButtonWrapper, the
       // AbsorbPointer sits one level further down. Detection has to walk up
       // from the target, walking down from the hit target finds nothing.
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Center(
-            child: _AbsorbingButtonWrapper(),
-          ),
-        ),
+        const MaterialApp(home: Center(child: _AbsorbingButtonWrapper())),
       );
 
       final button = spot<ElevatedButton>()..existsOnce();
@@ -257,76 +230,15 @@ void actTests() {
       );
     });
 
-    testWidgets('tap throws when widget is wrapped in IgnorePointer',
-        skip: noWidgetLocationsOnWasm, (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Center(
-            child: IgnorePointer(
-              child: ElevatedButton(
-                onPressed: () {},
-                child: null,
-              ),
-            ),
-          ),
-        ),
-      );
-
-      final button = spot<ElevatedButton>()..existsOnce();
-      await expectLater(
-        () => act.tap(button),
-        throwsSpotErrorContaining([
-          "Widget 'ElevatedButton' is wrapped in IgnorePointer and doesn't receive pointer events",
-          "The IgnorePointer is located at",
-          "act_test.dart:",
-        ]),
-      );
-    });
-
-    group('Visibility', () {
-      testWidgets(
-          'tap throws when widget is hidden with Visibility (not found)',
-          (tester) async {
+    testWidgets(
+      'tap throws when widget is wrapped in IgnorePointer',
+      skip: noWidgetLocationsOnWasm,
+      (tester) async {
         await tester.pumpWidget(
           MaterialApp(
             home: Center(
-              child: Visibility(
-                visible: false,
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: null,
-                ),
-              ),
-            ),
-          ),
-        );
-
-        final button = spot<ElevatedButton>()..doesNotExist();
-        await expectLater(
-          () => act.tap(button),
-          throwsSpotErrorContaining([
-            "Could not find ElevatedButton in widget tree",
-          ]),
-        );
-      });
-
-      testWidgets('tap throws when Visibility is not interactive',
-          skip: noWidgetLocationsOnWasm, (tester) async {
-        await tester.pumpWidget(
-          MaterialApp(
-            home: Center(
-              child: Visibility(
-                visible: false,
-                // ignore: avoid_redundant_argument_values
-                maintainInteractivity: false,
-                maintainSize: true,
-                maintainAnimation: true,
-                maintainSemantics: true,
-                maintainState: true,
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('Click me'),
-                ),
+              child: IgnorePointer(
+                child: ElevatedButton(onPressed: () {}, child: null),
               ),
             ),
           ),
@@ -338,16 +250,79 @@ void actTests() {
           throwsSpotErrorContaining([
             "Widget 'ElevatedButton' is wrapped in IgnorePointer and doesn't receive pointer events",
             "The IgnorePointer is located at",
-            // On Flutter master, Visibility is implemented via IndexedStack,
-            // so the IgnorePointer's debugWidgetLocation points to
-            // indexed_stack.dart instead of visibility.dart.
-            RegExp(r'widgets/(visibility|indexed_stack)\.dart:'),
+            "act_test.dart:",
           ]),
         );
-      });
+      },
+    );
 
-      testWidgets('Visibility allows tapping on hidden widgets',
-          (tester) async {
+    group('Visibility', () {
+      testWidgets(
+        'tap throws when widget is hidden with Visibility (not found)',
+        (tester) async {
+          await tester.pumpWidget(
+            MaterialApp(
+              home: Center(
+                child: Visibility(
+                  visible: false,
+                  child: ElevatedButton(onPressed: () {}, child: null),
+                ),
+              ),
+            ),
+          );
+
+          final button = spot<ElevatedButton>()..doesNotExist();
+          await expectLater(
+            () => act.tap(button),
+            throwsSpotErrorContaining([
+              "Could not find ElevatedButton in widget tree",
+            ]),
+          );
+        },
+      );
+
+      testWidgets(
+        'tap throws when Visibility is not interactive',
+        skip: noWidgetLocationsOnWasm,
+        (tester) async {
+          await tester.pumpWidget(
+            MaterialApp(
+              home: Center(
+                child: Visibility(
+                  visible: false,
+                  // ignore: avoid_redundant_argument_values
+                  maintainInteractivity: false,
+                  maintainSize: true,
+                  maintainAnimation: true,
+                  maintainSemantics: true,
+                  maintainState: true,
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    child: const Text('Click me'),
+                  ),
+                ),
+              ),
+            ),
+          );
+
+          final button = spot<ElevatedButton>()..existsOnce();
+          await expectLater(
+            () => act.tap(button),
+            throwsSpotErrorContaining([
+              "Widget 'ElevatedButton' is wrapped in IgnorePointer and doesn't receive pointer events",
+              "The IgnorePointer is located at",
+              // On Flutter master, Visibility is implemented via IndexedStack,
+              // so the IgnorePointer's debugWidgetLocation points to
+              // indexed_stack.dart instead of visibility.dart.
+              RegExp(r'widgets/(visibility|indexed_stack)\.dart:'),
+            ]),
+          );
+        },
+      );
+
+      testWidgets('Visibility allows tapping on hidden widgets', (
+        tester,
+      ) async {
         int tapped = 0;
         await tester.pumpWidget(
           MaterialApp(
@@ -371,34 +346,37 @@ void actTests() {
       });
     });
 
-    testWidgets('tap throws when widget is wrapped in SizedBox.shrink',
-        skip: noWidgetLocationsOnWasm, (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Center(
-            child: SizedBox.shrink(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('Click me'),
+    testWidgets(
+      'tap throws when widget is wrapped in SizedBox.shrink',
+      skip: noWidgetLocationsOnWasm,
+      (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Center(
+              child: SizedBox.shrink(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    child: const Text('Click me'),
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      );
+        );
 
-      final button = spot<ElevatedButton>()..existsOnce();
-      await expectLater(
-        () => act.tap(button),
-        throwsSpotErrorContaining([
-          "ElevatedButton can't be interacted with because it has size Size(0.0, 0.0).",
-          "SizedBox.shrink forces ElevatedButton to have the size Size(0.0, 0.0)",
-          "act_test.dart:",
-        ]),
-      );
-    });
+        final button = spot<ElevatedButton>()..existsOnce();
+        await expectLater(
+          () => act.tap(button),
+          throwsSpotErrorContaining([
+            "ElevatedButton can't be interacted with because it has size Size(0.0, 0.0).",
+            "SizedBox.shrink forces ElevatedButton to have the size Size(0.0, 0.0)",
+            "act_test.dart:",
+          ]),
+        );
+      },
+    );
 
     testWidgets('tapping throws for non cartesian widgets', (tester) async {
       await tester.pumpWidget(_NonCartesianWidget());
@@ -413,8 +391,9 @@ void actTests() {
       );
     });
 
-    testWidgets('tapping throws for widgets without a RenderObject',
-        (tester) async {
+    testWidgets('tapping throws for widgets without a RenderObject', (
+      tester,
+    ) async {
       await tester.pumpWidget(_NoRenderObjectWidget());
       final button = spot<_NoRenderObjectWidget>()..existsOnce();
       await expectLater(
@@ -425,8 +404,9 @@ void actTests() {
       );
     });
 
-    testWidgets('tap throws a TapFailure that carries the inspection',
-        (tester) async {
+    testWidgets('tap throws a TapFailure that carries the inspection', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Stack(
@@ -437,9 +417,7 @@ void actTests() {
                   child: const Text('Save'),
                 ),
               ),
-              const Positioned.fill(
-                child: ColoredBox(color: Colors.green),
-              ),
+              const Positioned.fill(child: ColoredBox(color: Colors.green)),
             ],
           ),
         ),
@@ -474,18 +452,16 @@ void actTests() {
       await expectLater(() => act.tap(button), throwsA(isA<TestFailure>()));
     });
 
-    testWidgets('tap throws a TapFailure for a widget outside the viewport',
-        (tester) async {
+    testWidgets('tap throws a TapFailure for a widget outside the viewport', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Stack(
             children: [
               Positioned(
                 top: -1000,
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: null,
-                ),
+                child: ElevatedButton(onPressed: () {}, child: null),
               ),
             ],
           ),
@@ -511,15 +487,13 @@ void actTests() {
   // of X". Each test checks the whole [TapInspection] envelope plus every
   // property of the reason it carries.
   group('inspectTap', () {
-    testWidgets('reports a tappable widget with sampled hit tests',
-        (tester) async {
+    testWidgets('reports a tappable widget with sampled hit tests', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Center(
-            child: ElevatedButton(
-              onPressed: () {},
-              child: const Text('Save'),
-            ),
+            child: ElevatedButton(onPressed: () {}, child: const Text('Save')),
           ),
         ),
       );
@@ -562,8 +536,9 @@ void actTests() {
       expect(sample.hitTest.receiver, same(sample.hitTest.path.first));
     });
 
-    testWidgets('warns about partial coverage but stays tappable',
-        (tester) async {
+    testWidgets('warns about partial coverage but stays tappable', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Center(
@@ -582,9 +557,7 @@ void actTests() {
                     top: 0,
                     bottom: 0,
                     width: 50,
-                    child: ColoredBox(
-                      color: Colors.green,
-                    ),
+                    child: ColoredBox(color: Colors.green),
                   ),
                 ],
               ),
@@ -634,8 +607,9 @@ void actTests() {
       );
     });
 
-    testWidgets('reports a not-found reason when nothing matches',
-        (tester) async {
+    testWidgets('reports a not-found reason when nothing matches', (
+      tester,
+    ) async {
       await tester.pumpWidget(const MaterialApp(home: Text('Save')));
 
       final inspection = act.inspectTap(spot<ElevatedButton>());
@@ -660,39 +634,35 @@ void actTests() {
     });
 
     testWidgets(
-        'reports a multiple-widgets reason when the selector is ambiguous',
-        (tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: Column(
-            children: [
-              Text('first'),
-              Text('second'),
-            ],
+      'reports a multiple-widgets reason when the selector is ambiguous',
+      (tester) async {
+        await tester.pumpWidget(
+          const MaterialApp(
+            home: Column(children: [Text('first'), Text('second')]),
           ),
-        ),
-      );
+        );
 
-      final inspection = act.inspectTap(spot<Text>());
-      final reason = inspection.tapFailure!.tapMultipleWidgetsFoundReason;
+        final inspection = act.inspectTap(spot<Text>());
+        final reason = inspection.tapFailure!.tapMultipleWidgetsFoundReason;
 
-      expect(inspection.canTap, isFalse);
-      expect(
-        inspection.message,
-        'Found 2 elements matching Text in widget tree',
-      );
-      expect(inspection.target, isNull);
-      expect(inspection.samples, isNull);
-      expect(inspection.tapPosition, isNull);
+        expect(inspection.canTap, isFalse);
+        expect(
+          inspection.message,
+          'Found 2 elements matching Text in widget tree',
+        );
+        expect(inspection.target, isNull);
+        expect(inspection.samples, isNull);
+        expect(inspection.tapPosition, isNull);
 
-      expect(reason.selectorDescription, 'Text');
-      expect(reason.matches, hasLength(2));
-      expect(
-        reason.matches.map((it) => (it.widget as Text).data),
-        ['first', 'second'],
-      );
-      expect(reason.matches.every((it) => it.globalRect != null), isTrue);
-    });
+        expect(reason.selectorDescription, 'Text');
+        expect(reason.matches, hasLength(2));
+        expect(reason.matches.map((it) => (it.widget as Text).data), [
+          'first',
+          'second',
+        ]);
+        expect(reason.matches.every((it) => it.globalRect != null), isTrue);
+      },
+    );
 
     testWidgets('reports a no-render-object reason', (tester) async {
       await tester.pumpWidget(_NoRenderObjectWidget());
@@ -835,41 +805,40 @@ void actTests() {
       expect(reason.hitTest.position, inspection.target?.globalRect?.center);
     });
 
-    testWidgets('reports the AbsorbPointer above the target, not below the hit',
-        (tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: Center(
-            child: _AbsorbingButtonWrapper(),
-          ),
-        ),
-      );
+    testWidgets(
+      'reports the AbsorbPointer above the target, not below the hit',
+      (tester) async {
+        await tester.pumpWidget(
+          const MaterialApp(home: Center(child: _AbsorbingButtonWrapper())),
+        );
 
-      final absorbElement = find
-          .descendant(
-            of: find.byType(_AbsorbingButtonWrapper),
-            matching: find.byType(AbsorbPointer),
-          )
-          .evaluate()
-          .single;
-      final inspection = act.inspectTap(spot<ElevatedButton>());
-      final reason = inspection.tapFailure!.tapAbsorbedReason;
+        final absorbElement = find
+            .descendant(
+              of: find.byType(_AbsorbingButtonWrapper),
+              matching: find.byType(AbsorbPointer),
+            )
+            .evaluate()
+            .single;
+        final inspection = act.inspectTap(spot<ElevatedButton>());
+        final reason = inspection.tapFailure!.tapAbsorbedReason;
 
-      expect(inspection.canTap, isFalse);
-      expect(inspection.target?.widget, isA<ElevatedButton>());
-      // Pins the reported widget to the AbsorbPointer itself. The message
-      // renders the source location of this element, so reporting the
-      // _AbsorbingButtonWrapper that created it would point at the wrong line.
-      expect(reason.absorbPointer.element, same(absorbElement));
-      expect(reason.absorbPointer.widget, isA<AbsorbPointer>());
-      // The hit stops above the wrapper, which is why walking down from the
-      // receiver cannot find the AbsorbPointer.
-      expect(reason.hitTest.receiver?.widget, isNot(isA<AbsorbPointer>()));
-      expect(reason.hitTest.path, isNotEmpty);
-    });
+        expect(inspection.canTap, isFalse);
+        expect(inspection.target?.widget, isA<ElevatedButton>());
+        // Pins the reported widget to the AbsorbPointer itself. The message
+        // renders the source location of this element, so reporting the
+        // _AbsorbingButtonWrapper that created it would point at the wrong line.
+        expect(reason.absorbPointer.element, same(absorbElement));
+        expect(reason.absorbPointer.widget, isA<AbsorbPointer>());
+        // The hit stops above the wrapper, which is why walking down from the
+        // receiver cannot find the AbsorbPointer.
+        expect(reason.hitTest.receiver?.widget, isNot(isA<AbsorbPointer>()));
+        expect(reason.hitTest.path, isNotEmpty);
+      },
+    );
 
-    testWidgets('reports an ignored reason', skip: noWidgetLocationsOnWasm,
-        (tester) async {
+    testWidgets('reports an ignored reason', skip: noWidgetLocationsOnWasm, (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Center(
@@ -913,30 +882,29 @@ void actTests() {
       expect(reason.hitTest.position, inspection.target?.globalRect?.center);
     });
 
-    testWidgets('names the widget that introduced the IgnorePointer',
-        skip: noWidgetLocationsOnWasm, (tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: Center(
-            child: _IgnoredButtonWrapper(),
-          ),
-        ),
-      );
+    testWidgets(
+      'names the widget that introduced the IgnorePointer',
+      skip: noWidgetLocationsOnWasm,
+      (tester) async {
+        await tester.pumpWidget(
+          const MaterialApp(home: Center(child: _IgnoredButtonWrapper())),
+        );
 
-      final inspection = act.inspectTap(spot<_IgnoredButtonWrapper>());
-      final reason = inspection.tapFailure!.tapIgnoredReason;
+        final inspection = act.inspectTap(spot<_IgnoredButtonWrapper>());
+        final reason = inspection.tapFailure!.tapIgnoredReason;
 
-      expect(inspection.tapFailure!.reason, isA<TapIgnoredReason>());
-      expect(
-        () => inspection.tapFailure!.tapUnknownReason,
-        throwsA(isA<TestFailure>()),
-      );
-      expect(reason.ignorePointer.widget, isA<IgnorePointer>());
-      expect(reason.ignorePointer.globalRect, isNotNull);
-      // The IgnorePointer is created inside _IgnoredButtonWrapper.build, which
-      // is the widget a test author has to change to make the button tappable.
-      expect(reason.introducedBy?.widget, isA<_IgnoredButtonWrapper>());
-    });
+        expect(inspection.tapFailure!.reason, isA<TapIgnoredReason>());
+        expect(
+          () => inspection.tapFailure!.tapUnknownReason,
+          throwsA(isA<TestFailure>()),
+        );
+        expect(reason.ignorePointer.widget, isA<IgnorePointer>());
+        expect(reason.ignorePointer.globalRect, isNotNull);
+        // The IgnorePointer is created inside _IgnoredButtonWrapper.build, which
+        // is the widget a test author has to change to make the button tappable.
+        expect(reason.introducedBy?.widget, isA<_IgnoredButtonWrapper>());
+      },
+    );
 
     testWidgets('reports a zero-size reason', (tester) async {
       await tester.pumpWidget(
@@ -983,18 +951,19 @@ void actTests() {
       }
       // Walks from the target up to, but excluding, the shrinker. Despite the
       // name the chain starts at the target itself.
-      expect(
-        reason.shrinkChain.map((it) => it.widgetName),
-        ['ElevatedButton', 'Padding'],
-      );
+      expect(reason.shrinkChain.map((it) => it.widgetName), [
+        'ElevatedButton',
+        'Padding',
+      ]);
       expect(
         reason.shrinkChain.where((it) => it.globalRect?.size != Size.zero),
         isEmpty,
       );
     });
 
-    testWidgets('reports a covered reason', skip: noWidgetLocationsOnWasm,
-        (tester) async {
+    testWidgets('reports a covered reason', skip: noWidgetLocationsOnWasm, (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Stack(
@@ -1005,11 +974,7 @@ void actTests() {
                   child: const Text('Save'),
                 ),
               ),
-              const Positioned.fill(
-                child: ColoredBox(
-                  color: Colors.green,
-                ),
-              ),
+              const Positioned.fill(child: ColoredBox(color: Colors.green)),
             ],
           ),
         ),
@@ -1033,23 +998,23 @@ void actTests() {
       expect(inspection.samples?.hittable, isEmpty);
 
       // Everything from the covering widget up to the common ancestor.
-      expect(
-        reason.coverChain.map((it) => it.widgetName),
-        ['ColoredBox', 'Positioned'],
-      );
-      expect(
-        reason.relevantCoveringWidgets.map((it) => it.widgetName),
-        ['ColoredBox', 'Positioned'],
-      );
+      expect(reason.coverChain.map((it) => it.widgetName), [
+        'ColoredBox',
+        'Positioned',
+      ]);
+      expect(reason.relevantCoveringWidgets.map((it) => it.widgetName), [
+        'ColoredBox',
+        'Positioned',
+      ]);
       expect(reason.primaryCover?.widget, isA<ColoredBox>());
       expect(reason.primaryCover, same(reason.relevantCoveringWidgets.first));
       // The Stack renders both branches, it is where they start to diverge.
       expect(reason.commonAncestor.widget, isA<Stack>());
       expect(reason.userRelevantAncestor?.widget, isA<MaterialApp>());
-      expect(
-        reason.targetChain.map((it) => it.widgetName),
-        ['ElevatedButton', 'Center'],
-      );
+      expect(reason.targetChain.map((it) => it.widgetName), [
+        'ElevatedButton',
+        'Center',
+      ]);
       expect(reason.hitTest.path, isNotEmpty);
       expect(reason.hitTest.receiver?.widget, isA<ColoredBox>());
       expect(reason.hitTest.position, inspection.target?.globalRect?.center);
@@ -1062,16 +1027,15 @@ void actTests() {
       expect(samples.blockers.single.percent, 100);
     });
 
-    testWidgets('reports an unknown reason when nothing else explains it',
-        (tester) async {
+    testWidgets('reports an unknown reason when nothing else explains it', (
+      tester,
+    ) async {
       // A sized widget that neither reacts to hit tests itself nor has an
       // ancestor that does. Nothing absorbs, ignores, shrinks or covers it.
       await tester.pumpWidget(
         const Directionality(
           textDirection: TextDirection.ltr,
-          child: Center(
-            child: SizedBox(width: 100, height: 100),
-          ),
+          child: Center(child: SizedBox(width: 100, height: 100)),
         ),
       );
 
@@ -1103,8 +1067,9 @@ void actTests() {
       expect(inspection.samples, same(samples));
     });
 
-    testWidgets('reports the outermost IgnorePointer, not the closest one',
-        (tester) async {
+    testWidgets('reports the outermost IgnorePointer, not the closest one', (
+      tester,
+    ) async {
       // Hit testing walks root to target and RenderIgnorePointer answers
       // without visiting its child, so the outer one is what stops the event.
       // Removing the inner one changes nothing, pointing a test author at it
@@ -1139,8 +1104,9 @@ void actTests() {
       expect(reason.ignorePointer.element, same(outer));
     });
 
-    testWidgets('reports the outermost AbsorbPointer, not the closest one',
-        (tester) async {
+    testWidgets('reports the outermost AbsorbPointer, not the closest one', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Center(
@@ -1163,8 +1129,9 @@ void actTests() {
       expect(reason.absorbPointer.element, same(outer));
     });
 
-    testWidgets('reports an offstage reason', skip: noWidgetLocationsOnWasm,
-        (tester) async {
+    testWidgets('reports an offstage reason', skip: noWidgetLocationsOnWasm, (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Center(
@@ -1211,8 +1178,9 @@ void actTests() {
       expect(reason.hitTest.path, isNotEmpty);
     });
 
-    testWidgets('reports the Visibility that introduced the Offstage',
-        (tester) async {
+    testWidgets('reports the Visibility that introduced the Offstage', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Center(
@@ -1264,8 +1232,9 @@ void actTests() {
       );
     });
 
-    testWidgets('samples read before a pump stay readable afterwards',
-        (tester) async {
+    testWidgets('samples read before a pump stay readable afterwards', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Center(
@@ -1283,8 +1252,9 @@ void actTests() {
       expect(inspection.samples, same(samples));
     });
 
-    testWidgets('typed reason getters fail when the reason changes',
-        (tester) async {
+    testWidgets('typed reason getters fail when the reason changes', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Center(
@@ -1381,9 +1351,8 @@ void actTests() {
       _TapParityCase(
         name: 'AbsorbPointer created in another widget',
         canTap: false,
-        build: () => const MaterialApp(
-          home: Center(child: _AbsorbingButtonWrapper()),
-        ),
+        build: () =>
+            const MaterialApp(home: Center(child: _AbsorbingButtonWrapper())),
         selector: () => spot<ElevatedButton>(),
       ),
       _TapParityCase(
@@ -1539,9 +1508,9 @@ void actTests() {
 
       final app = spot<MaterialApp>();
       app.existsOnce().hasWidgetProp(
-            prop: widgetProp('color', (w) => w.color),
-            match: (it) => it.equals(Colors.blue),
-          );
+        prop: widgetProp('color', (w) => w.color),
+        match: (it) => it.equals(Colors.blue),
+      );
       final button = spot<ElevatedButton>();
 
       // Get the RenderBox of the button
@@ -1553,19 +1522,16 @@ void actTests() {
       );
       await act.tapAt(center);
       app.existsOnce().hasWidgetProp(
-            prop: widgetProp('color', (w) => w.color),
-            match: (it) => it.equals(Colors.red),
-          );
+        prop: widgetProp('color', (w) => w.color),
+        match: (it) => it.equals(Colors.red),
+      );
     });
 
     testWidgets('tapAt must be awaited', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Center(
-            child: ElevatedButton(
-              onPressed: () {},
-              child: const Text('Home'),
-            ),
+            child: ElevatedButton(onPressed: () {}, child: const Text('Home')),
           ),
         ),
       );
@@ -1579,9 +1545,7 @@ void actTests() {
         } else {
           if (kIsWeb) {
             check(e).isA<FlutterError>().has((it) => it.message, 'message')
-              ..contains(
-                'Guarded function conflict.',
-              )
+              ..contains('Guarded function conflict.')
               ..contains(
                 'You must use "await" with all Future-returning test APIs.',
               );
@@ -1599,42 +1563,46 @@ void actTests() {
       }
       await future;
     });
-    testWidgets('tapAt shows items in the timeline',
-        skip: noWidgetLocationsOnWasm, (tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: Stack(
-            fit: StackFit.expand,
-            children: [
-              ColoredBox(color: Colors.blue, key: ValueKey(1)),
-              ColoredBox(color: Colors.red, key: ValueKey(2)),
-              ColoredBox(color: Colors.green, key: ValueKey(3)),
-            ],
+    testWidgets(
+      'tapAt shows items in the timeline',
+      skip: noWidgetLocationsOnWasm,
+      (tester) async {
+        await tester.pumpWidget(
+          const MaterialApp(
+            home: Stack(
+              fit: StackFit.expand,
+              children: [
+                ColoredBox(color: Colors.blue, key: ValueKey(1)),
+                ColoredBox(color: Colors.red, key: ValueKey(2)),
+                ColoredBox(color: Colors.green, key: ValueKey(3)),
+              ],
+            ),
           ),
-        ),
-      );
-      // tap
-      await act.tapAt(const Offset(100, 100));
-      final event = timeline.events.last;
-      expect(event.eventType.label, 'TapAt Event');
-      expect(
-        event.details,
-        stringContainsInOrder([
-          'Relevant widgets at position: ',
-          'ColoredBox-[<3>]',
-          'Stack',
-          'Widgets at position:',
-          'ColoredBox-[<3>]',
-          'Stack',
-          '_Theater',
-        ]),
-      );
-      expect(event.details, isNot(contains('ColoredBox-[<1>]')));
-      expect(event.details, isNot(contains('ColoredBox-[<2>]')));
-    });
+        );
+        // tap
+        await act.tapAt(const Offset(100, 100));
+        final event = timeline.events.last;
+        expect(event.eventType.label, 'TapAt Event');
+        expect(
+          event.details,
+          stringContainsInOrder([
+            'Relevant widgets at position: ',
+            'ColoredBox-[<3>]',
+            'Stack',
+            'Widgets at position:',
+            'ColoredBox-[<3>]',
+            'Stack',
+            '_Theater',
+          ]),
+        );
+        expect(event.details, isNot(contains('ColoredBox-[<1>]')));
+        expect(event.details, isNot(contains('ColoredBox-[<2>]')));
+      },
+    );
 
-    testWidgets('tapAt throws if position not in view (lower bounds)',
-        (tester) async {
+    testWidgets('tapAt throws if position not in view (lower bounds)', (
+      tester,
+    ) async {
       await tester.pumpWidget(const MaterialApp());
       await expectLater(
         () => act.tapAt(const Offset(-100, -100)),
@@ -1644,8 +1612,9 @@ void actTests() {
         ]),
       );
     });
-    testWidgets('tapAt throws if position not in view (upper bounds)',
-        (tester) async {
+    testWidgets('tapAt throws if position not in view (upper bounds)', (
+      tester,
+    ) async {
       await tester.pumpWidget(const MaterialApp());
 
       // ignore: deprecated_member_use
@@ -1664,15 +1633,18 @@ void actTests() {
   group('enter text', () {
     testWidgets('enter text in text form field', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(home: Material(child: Form(child: TextFormField()))),
+        MaterialApp(
+          home: Material(child: Form(child: TextFormField())),
+        ),
       );
       await act.enterText(spot<TextFormField>(), 'hello');
       spotText('hello').existsOnce();
     });
 
     testWidgets('enter text in text field', (tester) async {
-      await tester
-          .pumpWidget(const MaterialApp(home: Material(child: TextField())));
+      await tester.pumpWidget(
+        const MaterialApp(home: Material(child: TextField())),
+      );
       await act.enterText(spot<TextField>(), 'hello');
       spotText('hello').existsOnce();
     });
@@ -1686,9 +1658,7 @@ void actTests() {
       );
       await expectLater(
         () => act.enterText(spot<TextField>(), 'hello'),
-        throwsSpotErrorContaining([
-          "Could not find TextField in widget tree",
-        ]),
+        throwsSpotErrorContaining(["Could not find TextField in widget tree"]),
       );
     });
 
@@ -1796,10 +1766,7 @@ class _AbsorbingButtonWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AbsorbPointer(
-      child: ElevatedButton(
-        onPressed: () {},
-        child: const Text('Save'),
-      ),
+      child: ElevatedButton(onPressed: () {}, child: const Text('Save')),
     );
   }
 }
@@ -1810,10 +1777,7 @@ class _IgnoredButtonWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IgnorePointer(
-      child: ElevatedButton(
-        onPressed: () {},
-        child: const Text('Save'),
-      ),
+      child: ElevatedButton(onPressed: () {}, child: const Text('Save')),
     );
   }
 }

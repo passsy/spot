@@ -138,7 +138,8 @@ void main() {
     expect(
       matches,
       realEquivalent.evaluate().toList(),
-      reason: 'Finder simulation must discover the same elements '
+      reason:
+          'Finder simulation must discover the same elements '
           'as the real finder for: $label',
     );
     final total = _simNodesVisited + _simPredicateChecks + _simComparisons;
@@ -205,15 +206,17 @@ void main() {
     );
 
     final q2Spot = measureSpot(
-        'Q2 spot: spot<MaterialApp>().spot<Scaffold>().spot<AppBar>().spotText("Home")',
-        treeSize * 10, () {
-      return spot<MaterialApp>()
-          .spot<Scaffold>()
-          .spot<AppBar>()
-          .spotText('Home')
-          .snapshot()
-        ..existsOnce();
-    });
+      'Q2 spot: spot<MaterialApp>().spot<Scaffold>().spot<AppBar>().spotText("Home")',
+      treeSize * 10,
+      () {
+        return spot<MaterialApp>()
+            .spot<Scaffold>()
+            .spot<AppBar>()
+            .spotText('Home')
+            .snapshot()
+          ..existsOnce();
+      },
+    );
     final q2Finder = measureFinder(
       'Q2 finder: find.descendant(MaterialApp > Scaffold > AppBar > "Home")',
       () {
@@ -241,13 +244,15 @@ void main() {
     );
 
     final q3Spot = measureSpot(
-        'Q3 spot: spotText("Item 99").withParent(spot<Row>().withParent(spot<Container>()))',
-        treeSize * 10, () {
-      return spotText('Item 99')
-          .withParent(spot<Row>().withParent(spot<Container>()))
-          .snapshot()
-        ..existsOnce();
-    });
+      'Q3 spot: spotText("Item 99").withParent(spot<Row>().withParent(spot<Container>()))',
+      treeSize * 10,
+      () {
+        return spotText(
+            'Item 99',
+          ).withParent(spot<Row>().withParent(spot<Container>())).snapshot()
+          ..existsOnce();
+      },
+    );
     final q3aFinder = measureFinder(
       'Q3a finder: find.descendant(of: find.descendant(of: Container, matching: Row), matching: "Item 99")',
       () {
@@ -288,11 +293,13 @@ void main() {
     );
 
     final q4Spot = measureSpot(
-        'Q4 spot: spot<Container>().withChild(spotIcon(Icons.star))',
-        treeSize * 20, () {
-      return spot<Container>().withChild(spotIcon(Icons.star)).snapshot()
-        ..existsExactlyNTimes(100);
-    });
+      'Q4 spot: spot<Container>().withChild(spotIcon(Icons.star))',
+      treeSize * 20,
+      () {
+        return spot<Container>().withChild(spotIcon(Icons.star)).snapshot()
+          ..existsExactlyNTimes(100);
+      },
+    );
     final q4Finder = measureFinder(
       'Q4 finder: find.ancestor(of: icon, matching: Container)',
       () {
@@ -308,11 +315,13 @@ void main() {
     );
 
     final q5Spot = measureSpot(
-        'Q5 spot: spot<Row>().withParent(spot<MaterialApp>()) [wide parent]',
-        treeSize * 20, () {
-      return spot<Row>().withParent(spot<MaterialApp>()).snapshot()
-        ..existsAtLeastNTimes(100);
-    });
+      'Q5 spot: spot<Row>().withParent(spot<MaterialApp>()) [wide parent]',
+      treeSize * 20,
+      () {
+        return spot<Row>().withParent(spot<MaterialApp>()).snapshot()
+          ..existsAtLeastNTimes(100);
+      },
+    );
     final q5Finder = measureFinder(
       'Q5 finder: find.descendant(of: MaterialApp, matching: Row)',
       () {
@@ -337,8 +346,9 @@ void main() {
     ]);
   });
 
-  testWidgets('count checks for multi-result queries (4 of 100 grid tiles)',
-      (tester) async {
+  testWidgets('count checks for multi-result queries (4 of 100 grid tiles)', (
+    tester,
+  ) async {
     // No timeline events/screenshots, only measure the pure query work
     timeline.mode = TimelineMode.off;
     tester.view.physicalSize = const Size(800, 1200);
@@ -368,11 +378,13 @@ void main() {
     print('tree size: $treeSize nodes');
 
     final m1Spot = measureSpot(
-        'M1 spot: spot<_GridTile>().withChild(spotIcon(Icons.star)) -> 4 of 100',
-        treeSize * 8, () {
-      return spot<_GridTile>().withChild(spotIcon(Icons.star)).snapshot()
-        ..existsExactlyNTimes(4);
-    });
+      'M1 spot: spot<_GridTile>().withChild(spotIcon(Icons.star)) -> 4 of 100',
+      treeSize * 8,
+      () {
+        return spot<_GridTile>().withChild(spotIcon(Icons.star)).snapshot()
+          ..existsExactlyNTimes(4);
+      },
+    );
     final m1Finder = measureFinder(
       'M1 finder: find.ancestor(of: star icon, matching: _GridTile)',
       () {
@@ -388,11 +400,13 @@ void main() {
     );
 
     final m2Spot = measureSpot(
-        'M2 spot: spotIcon(Icons.star).withParent(spot<_GridTile>()) -> 4 of 100',
-        treeSize * 8, () {
-      return spotIcon(Icons.star).withParent(spot<_GridTile>()).snapshot()
-        ..existsExactlyNTimes(4);
-    });
+      'M2 spot: spotIcon(Icons.star).withParent(spot<_GridTile>()) -> 4 of 100',
+      treeSize * 8,
+      () {
+        return spotIcon(Icons.star).withParent(spot<_GridTile>()).snapshot()
+          ..existsExactlyNTimes(4);
+      },
+    );
     final m2Finder = measureFinder(
       'M2 finder: find.descendant(of: _GridTile, matching: star icon)',
       () {
@@ -450,13 +464,15 @@ void main() {
     );
 
     final n2Spot = measureSpot(
-        'N2 spot: spotText("leaf").withParent(spot<SizedBox>().withParent(spot<SizedBox>()))',
-        treeSize * 10, () {
-      return spotText('leaf')
-          .withParent(spot<SizedBox>().withParent(spot<SizedBox>()))
-          .snapshot()
-        ..existsOnce();
-    });
+      'N2 spot: spotText("leaf").withParent(spot<SizedBox>().withParent(spot<SizedBox>()))',
+      treeSize * 10,
+      () {
+        return spotText(
+            'leaf',
+          ).withParent(spot<SizedBox>().withParent(spot<SizedBox>())).snapshot()
+          ..existsOnce();
+      },
+    );
     final n2aFinder = measureFinder(
       'N2a finder: find.descendant(of: find.descendant(of: SizedBox, matching: SizedBox), matching: "leaf")',
       () {
@@ -724,12 +740,14 @@ void _printWallClockSummary({
   final winner = _wallClockWinner(spotMicros, finderMicros);
   final factor = _wallClockFactor(spotMicros, finderMicros);
   final difference = (spotMicros - finderMicros).abs();
-  print('Wall clock summary: $label ($warmups warmups, $runs runs, avg/run)\n'
-      '  winner  better by  difference       spot     finder\n'
-      '  ${winner.padRight(6)}  ${factor.padLeft(9)}  '
-      '${_formatDurationMicros(difference).padLeft(10)}  '
-      '${_formatDurationMicros(spotMicros).padLeft(9)}  '
-      '${_formatDurationMicros(finderMicros).padLeft(9)}');
+  print(
+    'Wall clock summary: $label ($warmups warmups, $runs runs, avg/run)\n'
+    '  winner  better by  difference       spot     finder\n'
+    '  ${winner.padRight(6)}  ${factor.padLeft(9)}  '
+    '${_formatDurationMicros(difference).padLeft(10)}  '
+    '${_formatDurationMicros(spotMicros).padLeft(9)}  '
+    '${_formatDurationMicros(finderMicros).padLeft(9)}',
+  );
 }
 
 void _printWallClockScreenshotOverhead({
@@ -739,14 +757,18 @@ void _printWallClockScreenshotOverhead({
   final withScreenshotMicros = withScreenshots.inMicroseconds;
   final withoutScreenshotMicros = withoutScreenshots.inMicroseconds;
   final overhead = withScreenshotMicros - withoutScreenshotMicros;
-  final factor =
-      _wallClockFactor(withScreenshotMicros, withoutScreenshotMicros);
-  print('Spot screenshot overhead\n'
-      '  extra time  slower by  with screenshots  without screenshots\n'
-      '  ${_formatDurationMicros(overhead).padLeft(10)}  '
-      '${factor.padLeft(9)}  '
-      '${_formatDurationMicros(withScreenshotMicros).padLeft(16)}  '
-      '${_formatDurationMicros(withoutScreenshotMicros).padLeft(19)}');
+  final factor = _wallClockFactor(
+    withScreenshotMicros,
+    withoutScreenshotMicros,
+  );
+  print(
+    'Spot screenshot overhead\n'
+    '  extra time  slower by  with screenshots  without screenshots\n'
+    '  ${_formatDurationMicros(overhead).padLeft(10)}  '
+    '${factor.padLeft(9)}  '
+    '${_formatDurationMicros(withScreenshotMicros).padLeft(16)}  '
+    '${_formatDurationMicros(withoutScreenshotMicros).padLeft(19)}',
+  );
 }
 
 String _wallClockWinner(int spotMicros, int finderMicros) {

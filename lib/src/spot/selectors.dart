@@ -178,8 +178,11 @@ mixin ChainableSelectors<T extends Widget> {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    return spotWidgets<W>(widget, parents: parents, children: children)
-        .atMost(1);
+    return spotWidgets<W>(
+      widget,
+      parents: parents,
+      children: children,
+    ).atMost(1);
   }
 
   /// Creates a [WidgetSelector] that finds all [widget] by identity
@@ -260,8 +263,9 @@ mixin ChainableSelectors<T extends Widget> {
     // renders the same text using a non-breaking or zero width space. With
     // raw: true the exact characters are matched. RegExp patterns are matched
     // as-is against the (normalized or raw) widget text.
-    final needle =
-        (raw || text is! String) ? text : AnyText.normalizeVisibleText(text);
+    final needle = (raw || text is! String)
+        ? text
+        : AnyText.normalizeVisibleText(text);
     if (matchWholeText) {
       if (needle is! String) {
         throw ArgumentError(
@@ -338,7 +342,8 @@ mixin ChainableSelectors<T extends Widget> {
     required String? description,
     Object? cacheKey,
   }) {
-    final String name = description ??
+    final String name =
+        description ??
         () {
           return describe(match).map((it) => it.trim()).toList().join(' ');
         }();
@@ -454,11 +459,7 @@ mixin ChainableSelectors<T extends Widget> {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    return spotIcon(
-      icon,
-      parents: parents,
-      children: children,
-    ).atMost(1);
+    return spotIcon(icon, parents: parents, children: children).atMost(1);
   }
 
   /// Creates a [WidgetSelector] that finds all [Icon] widgets based on the [icon]
@@ -469,11 +470,7 @@ mixin ChainableSelectors<T extends Widget> {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    return spotIcon(
-      icon,
-      parents: parents,
-      children: children,
-    );
+    return spotIcon(icon, parents: parents, children: children);
   }
 
   /// Creates a [WidgetSelector] that finds widgets with the given [key].
@@ -509,11 +506,7 @@ mixin ChainableSelectors<T extends Widget> {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    return spotKey<W>(
-      key,
-      parents: parents,
-      children: children,
-    ).atMost(1);
+    return spotKey<W>(key, parents: parents, children: children).atMost(1);
   }
 
   /// Creates a [WidgetSelector] that finds all widgets with the given [key]
@@ -524,11 +517,7 @@ mixin ChainableSelectors<T extends Widget> {
     List<WidgetSelector> parents = const [],
     List<WidgetSelector> children = const [],
   }) {
-    return spotKey<W>(
-      key,
-      parents: parents,
-      children: children,
-    );
+    return spotKey<W>(key, parents: parents, children: children);
   }
 
   /// Selects the first of n widgets
@@ -665,10 +654,7 @@ extension SelectorQueries<W extends Widget> on WidgetSelector<W> {
     required String description,
   }) {
     return self.addStage(
-      PredicateFilter(
-        predicate: predicate,
-        description: description,
-      ),
+      PredicateFilter(predicate: predicate, description: description),
     );
   }
 
@@ -733,24 +719,18 @@ extension SelectorToSnapshot<W extends Widget> on WidgetSelector<W> {
   }
 }
 
-enum _SpotTextMatchType {
-  contains,
-  whole,
-}
+enum _SpotTextMatchType { contains, whole }
 
 Object _spotTextCacheKey({
   required _SpotTextMatchType matchType,
   required Pattern needle,
   required bool raw,
 }) {
-  return SpotCacheKey(
-    _SpotTextCacheKey,
-    [
-      matchType,
-      _patternCacheKey(needle),
-      raw,
-    ],
-  );
+  return SpotCacheKey(_SpotTextCacheKey, [
+    matchType,
+    _patternCacheKey(needle),
+    raw,
+  ]);
 }
 
 Object _patternCacheKey(Pattern pattern) {
@@ -758,16 +738,13 @@ Object _patternCacheKey(Pattern pattern) {
     return SpotCacheKey(String, [pattern]);
   }
   if (pattern is RegExp) {
-    return SpotCacheKey(
-      RegExp,
-      [
-        pattern.pattern,
-        pattern.isCaseSensitive,
-        pattern.isDotAll,
-        pattern.isMultiLine,
-        pattern.isUnicode,
-      ],
-    );
+    return SpotCacheKey(RegExp, [
+      pattern.pattern,
+      pattern.isCaseSensitive,
+      pattern.isDotAll,
+      pattern.isMultiLine,
+      pattern.isUnicode,
+    ]);
   }
   return SpotCacheKey(Pattern, [pattern]);
 }
@@ -879,8 +856,9 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostOnce] asserts that at most one widget exists.
   /// - [existsAtMostNTimes] asserts that at most `n` widgets of type [W] exist.
   MultiWidgetMatcher<W> existsAtLeastOnce() {
-    final atLeastOne =
-        copyWith(quantityConstraint: const QuantityConstraint.atLeast(1));
+    final atLeastOne = copyWith(
+      quantityConstraint: const QuantityConstraint.atLeast(1),
+    );
     return snapshot(atLeastOne).existsAtLeastOnce();
   }
 
@@ -987,8 +965,10 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// ```
   @useResult
   int countWidgets() {
-    final found =
-        snapshot(removeQuantityConstraints(), validateQuantity: false);
+    final found = snapshot(
+      removeQuantityConstraints(),
+      validateQuantity: false,
+    );
     return found.discovered.length;
   }
 
@@ -1006,8 +986,9 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostOnce] asserts that at most one widget exists.
   /// - [existsAtMostNTimes] asserts that at most `n` widgets of type [W] exist.
   WidgetMatcher<W> existsOnce() {
-    final one =
-        copyWith(quantityConstraint: const QuantityConstraint.exactly(1));
+    final one = copyWith(
+      quantityConstraint: const QuantityConstraint.exactly(1),
+    );
     return snapshot(one).existsOnce();
   }
 
@@ -1025,8 +1006,9 @@ extension QuantityMatchers<W extends Widget> on WidgetSelector<W> {
   /// - [existsAtMostOnce] asserts that at most one widget exists.
   /// - [existsAtMostNTimes] asserts that at most [n] widgets of type [W] exist.
   MultiWidgetMatcher<W> existsExactlyNTimes(int n) {
-    final exactlyNTimes =
-        copyWith(quantityConstraint: QuantityConstraint.exactly(n));
+    final exactlyNTimes = copyWith(
+      quantityConstraint: QuantityConstraint.exactly(n),
+    );
     return snapshot(exactlyNTimes).existsExactlyNTimes(n);
   }
 

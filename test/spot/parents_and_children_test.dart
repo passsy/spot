@@ -35,10 +35,7 @@ void main() {
                     ),
                   ],
                 ),
-                IconButton(
-                  icon: const Icon(Icons.home),
-                  onPressed: () {},
-                ),
+                IconButton(icon: const Icon(Icons.home), onPressed: () {}),
               ],
             ),
           ),
@@ -81,10 +78,7 @@ void main() {
                     ),
                   ],
                 ),
-                IconButton(
-                  icon: const Icon(Icons.home),
-                  onPressed: () {},
-                ),
+                IconButton(icon: const Icon(Icons.home), onPressed: () {}),
               ],
             ),
           ),
@@ -128,8 +122,9 @@ void main() {
     containers.withChild(spot<MaterialApp>().spot<Wrap>()).existsOnce();
   });
 
-  testWidgets('children scope does not throw when quantity does not match',
-      (tester) async {
+  testWidgets('children scope does not throw when quantity does not match', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Row(
@@ -137,11 +132,7 @@ void main() {
             Wrap(),
             Container(),
             Container(),
-            Container(
-              child: Wrap(
-                children: const [Wrap()],
-              ),
-            ),
+            Container(child: Wrap(children: const [Wrap()])),
           ],
         ),
       ),
@@ -162,8 +153,9 @@ void main() {
     // It does not throw though! The child constraints are filter and do not enforce that every Container must have a single Wrap
   });
 
-  testWidgets('quantity matching amount throws during snapshot',
-      (tester) async {
+  testWidgets('quantity matching amount throws during snapshot', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Row(
@@ -171,11 +163,7 @@ void main() {
             Wrap(),
             Container(),
             Container(),
-            Container(
-              child: Wrap(
-                children: const [Wrap()],
-              ),
-            ),
+            Container(child: Wrap(children: const [Wrap()])),
           ],
         ),
       ),
@@ -233,13 +221,13 @@ void main() {
         ),
       ),
     );
-    final withChildTwice = spot<Container>()
-        .withChild(spot<Center>())
-        .withChild(spot<Wrap>())
-      ..existsOnce();
-    final withChildren = spot<Container>()
-        .withChildren([spot<Center>(), spot<Wrap>()])
-      ..existsOnce();
+    final withChildTwice =
+        spot<Container>().withChild(spot<Center>()).withChild(spot<Wrap>())
+          ..existsOnce();
+    final withChildren = spot<Container>().withChildren([
+      spot<Center>(),
+      spot<Wrap>(),
+    ])..existsOnce();
 
     expect(withChildTwice.children.length, 2);
     expect(withChildren.children.length, 2);
@@ -263,33 +251,28 @@ void main() {
     containers.withParents([spot<Wrap>()]).existsOnce();
   });
 
-  testWidgets('withParent(a).withParent(b) == withParents(a,b)',
-      (tester) async {
+  testWidgets('withParent(a).withParent(b) == withParents(a,b)', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
           appBar: AppBar(
             title: Text('Test'),
             actions: [
-              Wrap(
-                children: [
-                  Center(
-                    child: Container(),
-                  ),
-                ],
-              ),
+              Wrap(children: [Center(child: Container())]),
             ],
           ),
         ),
       ),
     );
-    final withParentTwice = spot<Container>()
-        .withParent(spot<Center>())
-        .withParent(spot<Wrap>())
-      ..existsOnce();
-    final withParents = spot<Container>()
-        .withParents([spot<Center>(), spot<Wrap>()])
-      ..existsOnce();
+    final withParentTwice =
+        spot<Container>().withParent(spot<Center>()).withParent(spot<Wrap>())
+          ..existsOnce();
+    final withParents = spot<Container>().withParents([
+      spot<Center>(),
+      spot<Wrap>(),
+    ])..existsOnce();
 
     expect(withParentTwice.parents.length, 2);
     expect(withParents.parents.length, 2);
