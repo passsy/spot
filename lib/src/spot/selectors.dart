@@ -1,4 +1,6 @@
 import 'package:dartx/dartx.dart';
+// material_ui requires Flutter 3.47, spot still supports Flutter 3.22
+// ignore: deprecated_member_use
 import 'package:flutter/material.dart' show SelectableText;
 import 'package:flutter/widgets.dart';
 import 'package:spot/spot.dart';

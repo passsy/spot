@@ -15,11 +15,6 @@ void main() {
     () async {
       final testProject = FontTestProject('test/fonts/templates/app_font');
       await testProject.create();
-      debugPrint('Run pub get');
-      await Process.run(flutterExe, [
-        'pub',
-        'get',
-      ], workingDirectory: testProject.workingDir.path);
       debugPrint('Run tests');
       final test = await Process.start(flutterExe, [
         'test',

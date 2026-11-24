@@ -1,6 +1,6 @@
 import 'package:dartx/dartx.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 // Imported so the [Act.tap] and [Act.inspectTap] doc references below resolve.
 // act.dart imports this file for the implementation, never the other way round.

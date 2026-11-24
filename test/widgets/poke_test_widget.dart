@@ -1,3 +1,4 @@
+// ignore: deprecated_member_use
 import 'package:flutter/material.dart';
 
 /// A widget designed to simulate hit test limitations on `widgetToCover`

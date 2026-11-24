@@ -5,6 +5,8 @@ import 'dart:async';
 import 'package:clock/clock.dart';
 import 'package:dartx/dartx.dart';
 import 'package:flutter/foundation.dart';
+// material_ui requires Flutter 3.47, spot still supports Flutter 3.22
+// ignore: deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_test/flutter_test.dart';

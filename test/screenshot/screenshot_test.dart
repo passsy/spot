@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:dartx/dartx_io.dart';
 import 'package:flutter/foundation.dart';
+// ignore: deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image/image.dart' as img;
@@ -17,6 +18,7 @@ void main() {
   testWidgets('Take screenshot of the entire app', (tester) async {
     tester.view.physicalSize = const Size(210, 210);
     tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
     const red = Color(0xffff0000);
     await tester.pumpWidget(
       Center(child: Container(height: 200, width: 200, color: red)),
@@ -42,6 +44,7 @@ void main() {
   testWidgets('Take screenshot from a selector', (tester) async {
     tester.view.physicalSize = const Size(1000, 1000);
     tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
     const red = Color(0xffff0000);
     await tester.pumpWidget(
       Center(
@@ -65,6 +68,7 @@ void main() {
   testWidgets('Take screenshot from a snapshot', (tester) async {
     tester.view.physicalSize = const Size(1000, 1000);
     tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
     const red = Color(0xffff0000);
     await tester.pumpWidget(
       Center(
@@ -92,6 +96,7 @@ void main() {
     (tester) async {
       tester.view.physicalSize = const Size(1000, 1000);
       tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
       const red = Color(0xffff0000);
       await tester.pumpWidget(
         Center(
@@ -120,6 +125,7 @@ void main() {
   testWidgets('Take screenshot from an element', (tester) async {
     tester.view.physicalSize = const Size(1000, 1000);
     tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
     const red = Color(0xffff0000);
     await tester.pumpWidget(
       Center(
@@ -145,6 +151,7 @@ void main() {
   ) async {
     tester.view.physicalSize = const Size(1000, 1000);
     tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
     const red = Color(0xffff0000);
     await tester.pumpWidget(
       Center(
@@ -172,6 +179,7 @@ void main() {
   testWidgets('takeScreenshot() extensions', (tester) async {
     tester.view.physicalSize = const Size(1000, 1000);
     tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
     const red = Color(0xffff0000);
     await tester.pumpWidget(
       Center(
@@ -277,6 +285,7 @@ void main() {
   testWidgets('warning when screenshot is bigger than target', (tester) async {
     tester.view.physicalSize = const Size(1000, 1000);
     tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
     await tester.pumpWidget(
       MaterialApp(
         home: Center(
@@ -322,6 +331,7 @@ void main() {
   testWidgets('Take screenshot of dirty tree', (tester) async {
     tester.view.physicalSize = const Size(210, 210);
     tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
 
     await tester.pumpWidget(
       Directionality(
@@ -335,8 +345,13 @@ void main() {
       ),
     );
 
-    // FontLoader.load triggers PaintBinding.instance.systemFonts listeners
-    await loadAppFonts();
+    // FontLoader.load triggers PaintBinding.instance.systemFonts listeners.
+    // loadAppFonts() loads only once per isolate, which an earlier test may
+    // have done already, so a family of this test's own is loaded instead.
+    await loadFont('DirtyTreeTest', ['lib/assets/Roboto-Regular.ttf']);
+    // The engine announces the font after the load completed, outside the
+    // fake async zone of the test.
+    await tester.runAsync(() async {});
     final renderObject = spot<Banner>()
         .spot<CustomPaint>()
         .snapshotRenderObject();
@@ -357,6 +372,7 @@ void main() {
     ) async {
       tester.view.physicalSize = const Size(210, 210);
       tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
       const red = Color(0xffff0000);
       const pink = Color(0xFFFF00FF);
       await tester.pumpWidget(
@@ -393,6 +409,7 @@ void main() {
     ) async {
       tester.view.physicalSize = const Size(1000, 1000);
       tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
       const red = Color(0xffff0000);
       const pink = Color(0xFFFF00FF);
       await tester.pumpWidget(
@@ -425,6 +442,7 @@ void main() {
     ) async {
       tester.view.physicalSize = const Size(1000, 1000);
       tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
       const red = Color(0xffff0000);
       const pink = Color(0xFFFF00FF);
       await tester.pumpWidget(
@@ -458,6 +476,7 @@ void main() {
       (tester) async {
         tester.view.physicalSize = const Size(1000, 1000);
         tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.reset);
         const red = Color(0xffff0000);
         await tester.pumpWidget(
           Center(
@@ -491,6 +510,7 @@ void main() {
     ) async {
       tester.view.physicalSize = const Size(1000, 1000);
       tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
       const red = Color(0xffff0000);
       const pink = Color(0xFFFF00FF);
       await tester.pumpWidget(
@@ -524,6 +544,7 @@ void main() {
       (tester) async {
         tester.view.physicalSize = const Size(1000, 1000);
         tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.reset);
         const red = Color(0xffff0000);
         await tester.pumpWidget(
           Center(

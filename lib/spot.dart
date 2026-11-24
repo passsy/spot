@@ -1,7 +1,7 @@
 /// Spot is a library for testing the Widget tree of Flutter apps.
 library;
 
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:spot/spot.dart';
 import 'package:spot/src/spot/selectors.dart' show Spot;
 

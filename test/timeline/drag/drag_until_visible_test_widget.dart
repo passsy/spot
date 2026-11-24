@@ -1,4 +1,5 @@
 import 'package:dartx/dartx.dart';
+// ignore: deprecated_member_use
 import 'package:flutter/material.dart';
 
 class DragUntilVisibleSingleDirectionTestWidget extends StatelessWidget {

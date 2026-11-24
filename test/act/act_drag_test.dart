@@ -1,3 +1,4 @@
+// ignore: deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
@@ -46,6 +47,12 @@ void dragTests() {
       final firstItem = spotText('Item at index: 3', whole: true)..existsOnce();
       final secondItem = spotText('Item at index: 27', whole: true)
         ..existsOnce();
+      // The width of the text, and so its x, depends on the fonts an
+      // earlier test may have loaded into the engine.
+      final startX = secondItem
+          .snapshotRenderBox()
+          .localToGlobal(Offset.zero)
+          .dx;
       await act.dragUntilVisible(
         dragStart: firstItem,
         dragTarget: secondItem,
@@ -58,7 +65,7 @@ void dragTests() {
       // Target lands at the top of the viewport (cross-axis x preserved).
       expect(
         position,
-        within<Offset>(distance: 10, from: const Offset(278.9, 287.0)),
+        within<Offset>(distance: 10, from: Offset(startX, 287.0)),
       );
     });
 

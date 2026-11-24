@@ -170,6 +170,13 @@ const String _isHydrated = '''
 
 /// Opens a report in a browser of its own, or returns null when the test skips.
 Future<BrowserPage?> _openReport() async {
+  // Puppeteer talks to Chrome over a WebSocket. A widget test that ran before
+  // in this isolate installed the TestWidgetsFlutterBinding, which mocks every
+  // HttpClient to answer with 400.
+  final httpOverrides = HttpOverrides.current;
+  HttpOverrides.global = null;
+  addTearDown(() => HttpOverrides.global = httpOverrides);
+
   final chrome = await HeadlessChrome.launch();
   if (chrome == null) {
     markTestSkipped(
