@@ -18,15 +18,22 @@ import 'timeline_test_widget.dart';
 /// test failed, and the global mode set in `main()`.
 ///
 /// Only the test runner fails a test and runs its tearDowns, so these run in
-/// a `flutter test` of their own. All cases share one run, which keeps the
-/// cost of starting it to once per file. What is recorded while a test runs is
+/// a `flutter test` of their own. A `main()` sets one global mode, so there
+/// is a run per global mode, started at the same time. What is recorded while a test runs is
 /// tested in-process in `timeline_mode_test.dart`.
 void main() {
   // The run is shared, and the tearDowns it registers in setUpAll run after
   // the last test, together with the reports it left in build/timeline.
   late final Map<String, String> printed;
   setUpAll(() async {
-    printed = await _runTimelineTests();
+    final runs = await Future.wait([
+      _runTimelineTests(globalMode: 'live', tests: _tests),
+      _runTimelineTests(
+        globalMode: 'reportOnError',
+        tests: _globalReportOnErrorTests,
+      ),
+    ]);
+    printed = {for (final run in runs) ...run};
   });
 
   test('the global mode from main() applies to every test', () {
@@ -70,6 +77,25 @@ void main() {
     expect(output, contains('Generating timeline report'));
     expect(output, contains('Timeline of test: $_group always, passes'));
     expect(printedEvents(output).map((e) => e.summary), tapCounterEvents);
+    _expectHtmlReport(output);
+  });
+
+  test('a global reportOnError prints nothing when the test passes', () {
+    expect(printed['global reportOnError, passes'] ?? '', isEmpty);
+  });
+
+  test('a global reportOnError prints the timeline when the test fails', () {
+    final output = printed['global reportOnError, fails']!;
+    expect(output, isNot(contains('🔴')));
+    expect(output, contains('Test failed, generating timeline report'));
+    expect(
+      output,
+      contains('Timeline of test: $_group global reportOnError, fails'),
+    );
+    expect(
+      printedEvents(output).map((e) => e.summary),
+      [...tapCounterEvents, _failedAssertion],
+    );
     _expectHtmlReport(output);
   });
 
@@ -123,8 +149,24 @@ const String _tests = '''
     });
 ''';
 
-/// Runs [_tests] and returns what each printed, by test name without group.
-Future<Map<String, String>> _runTimelineTests() async {
+/// The tests of the run with `reportOnError` as the global mode.
+const String _globalReportOnErrorTests = '''
+    testWidgets('global reportOnError, passes', (tester) async {
+      await tapCounter(tester);
+    });
+
+    testWidgets('global reportOnError, fails', (tester) async {
+      await tapCounter(tester);
+      spotText('Counter: 99').existsOnce();
+    });
+''';
+
+/// Runs [tests] with [globalMode] set in `main()`, and returns what each
+/// printed, by test name without group.
+Future<Map<String, String>> _runTimelineTests({
+  required String globalMode,
+  required String tests,
+}) async {
   final widget =
       File('test/timeline/timeline_test_widget.dart').readAsStringSync();
   final json = await runTestInProcessAndCaptureOutPut(
@@ -138,9 +180,9 @@ import 'package:spot/spot.dart';
 ${widget.replaceAll(RegExp('^import .*\$', multiLine: true), '')}
 
 void main() {
-  globalTimelineMode = TimelineMode.live;
+  globalTimelineMode = TimelineMode.$globalMode;
   group('$_group', () {
-$_tests
+$tests
   });
 }
 ''',

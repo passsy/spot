@@ -152,8 +152,9 @@ String? _pubCache() {
   return '$home/.pub-cache';
 }
 
-/// A directory under `build/`, named after the test file that is running and
-/// this process.
+/// A directory under `build/`, named after the test file that is running,
+/// this process, and the runs it started before, as they may run at the same
+/// time.
 ///
 /// The path has to be relative, Flutter rejects an absolute one.
 String _buildDirectoryOfThisRun() {
@@ -164,8 +165,10 @@ String _buildDirectoryOfThisRun() {
   final name = relative
       .replaceAll(RegExp('[^A-Za-z0-9]+'), '_')
       .replaceFirst(RegExp('^_'), '');
-  return 'build/nested_test/${name}_$pid';
+  return 'build/nested_test/${name}_${pid}_${_runs++}';
 }
+
+var _runs = 0;
 
 Future<File> _createTempTestFile(String content) async {
   final tempDir = Directory.systemTemp.createTempSync();
