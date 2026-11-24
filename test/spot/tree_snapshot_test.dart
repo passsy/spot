@@ -66,6 +66,27 @@ void main() {
     expect(widgets, flutterOrderWidgets);
   });
 
+  testWidgets('snapshot visits onstage children once for a wide parent',
+      (tester) async {
+    final keys = List.generate(32, ValueKey.new);
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: _CountingRow(
+          children: [for (final key in keys) SizedBox(key: key)],
+        ),
+      ),
+    );
+    final row = tester.element<_CountingRowElement>(find.byType(_CountingRow));
+    row.onstageVisits = 0;
+
+    final snapshot = createWidgetTreeSnapshot();
+    final node = snapshot.allNodes.singleWhere((node) => node.element == row);
+
+    expect(node.children.map((child) => child.element.widget.key), keys);
+    expect(row.onstageVisits, 1);
+  });
+
   testWidgets('scopes', (tester) async {
     await tester.pumpWidget(
       Directionality(
@@ -104,4 +125,23 @@ void main() {
     await tester.pumpWidget(Center());
     expect(tree.isFromThisFrame, isFalse);
   });
+}
+
+class _CountingRow extends Row {
+  const _CountingRow({required super.children});
+
+  @override
+  _CountingRowElement createElement() => _CountingRowElement(this);
+}
+
+class _CountingRowElement extends MultiChildRenderObjectElement {
+  _CountingRowElement(_CountingRow super.widget);
+
+  int onstageVisits = 0;
+
+  @override
+  void debugVisitOnstageChildren(ElementVisitor visitor) {
+    onstageVisits++;
+    super.debugVisitOnstageChildren(visitor);
+  }
 }
