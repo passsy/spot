@@ -10,8 +10,6 @@ import 'package:spot/src/spot/snapshot.dart';
 import '../util/assert_error.dart';
 
 void main() {
-  lazyTreeTests();
-
   testWidgets('existsOnce() finds widgets that only exist once in tree',
       (tester) async {
     await tester.pumpWidget(
@@ -241,24 +239,7 @@ void main() {
     // only finds the single SizedBox in Wrap, not the SizedBox below Center
     multipleSpotter.withParent(wrap.spot<SizedBox>()).existsOnce();
   });
-}
 
-class _CountingDescription extends StatelessWidget {
-  const _CountingDescription();
-
-  static int descriptions = 0;
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    descriptions++;
-    super.debugFillProperties(properties);
-  }
-
-  @override
-  Widget build(BuildContext context) => const SizedBox();
-}
-
-void lazyTreeTests() {
   testWidgets(
       'a failure that is caught does not describe the tree until it is read',
       (tester) async {
@@ -277,4 +258,19 @@ void lazyTreeTests() {
     expect(failure!.significantWidgetTree, contains('_CountingDescription'));
     expect(_CountingDescription.descriptions, greaterThan(0));
   });
+}
+
+class _CountingDescription extends StatelessWidget {
+  const _CountingDescription();
+
+  static int descriptions = 0;
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    descriptions++;
+    super.debugFillProperties(properties);
+  }
+
+  @override
+  Widget build(BuildContext context) => const SizedBox();
 }
