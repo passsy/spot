@@ -251,6 +251,21 @@ void main() {
     }
   });
 
+  testWidgets('a timeline screenshot names the line that took it', (
+    tester,
+  ) async {
+    final shot = timeline.takeScreenshotSync();
+    final lineNumber = _currentLineNumber() - 1;
+    if (kIsWeb) {
+      expect(shot.initiator, isNotNull);
+    } else {
+      expect(shot.initiator!.line, lineNumber);
+      expect(shot.name, startsWith('screenshot_test_$lineNumber-'));
+    }
+    final named = timeline.takeScreenshotSync(name: 'a/b');
+    expect(named.name, startsWith('a%2Fb-'));
+  });
+
   testWidgets('prints name to console', (tester) async {
     final log = <String>[];
     int line = 0;

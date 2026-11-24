@@ -21,8 +21,8 @@ void main() {
       final first = timeline.takeScreenshotSync(name: 'first');
       final second = timeline.takeScreenshotSync(name: 'second');
 
-      // What the reuse is: both screenshots hold a handle on the one image the
-      // cache rasterized. Rasterizing twice would produce equal pixels too, so
+      // What the reuse is: both screenshots read the one image the cache
+      // rasterized. Rasterizing twice would produce equal pixels too, so
       // only the shared handle tells the two apart. Asserted before the pixels
       // below, because reading those materializes the image and drops it.
       expect(await _sharesRasterWith(first, second), isTrue);
@@ -440,13 +440,12 @@ Future<Uint8List> _pngOf(ScreenshotAnnotation annotation) async {
 
 /// Whether both screenshots were made from a single rasterization.
 ///
-/// A screenshot holds a handle on the image it was made from, and the raster
-/// cache hands out clones of the one it keeps, so two screenshots of the same
-/// raster hold clones of each other. Rasterizing per screenshot instead would
-/// give each an unrelated image, which is what pixel equality cannot see.
+/// Two screenshots of one capture read the image that capture rasterized,
+/// while rasterizing per screenshot would give each an unrelated image, which
+/// is what pixel equality cannot see.
 ///
-/// Only answers before either screenshot is materialized, because that
-/// disposes the handle and later reads decode fresh images from the bytes.
+/// Only answers before either screenshot is materialized, because later reads
+/// decode fresh images from the bytes.
 Future<bool> _sharesRasterWith(Screenshot a, Screenshot b) async {
   expect(
     a.isMaterialized || b.isMaterialized,
