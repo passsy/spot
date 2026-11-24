@@ -138,9 +138,10 @@ extension TimelineSyncScreenshot on Timeline {
         binding.platformDispatcher.implicitView?.devicePixelRatio ??
         1.0;
 
-    final Frame? frame = _caller();
+    final stack = StackTrace.current;
 
     if (timeline.mode == TimelineMode.off) {
+      final frame = _caller(stack: stack);
       // ignore: avoid_print
       print(
         'Warning: The timeline is off, do not take screenshots for the timeline\n'
@@ -153,39 +154,11 @@ extension TimelineSyncScreenshot on Timeline {
       selector: selector,
     );
 
-    String callerFileName() {
-      final file = frame?.uri.pathSegments.last.replaceFirst('.dart', '');
-      final line = frame?.line;
-      if (file != null && line != null) {
-        // Using ':' in a file name is not portable across all platforms
-        // (Windows rejects it). The async screenshot path already replaces
-        // ':' with '_' to avoid this issue.
-        return '${file}_$line';
-      }
-      if (file != null) {
-        return file;
-      }
-      return 'unknown';
-    }
-
-    final String screenshotFileName = () {
-      final String n;
-      if (name != null) {
-        // escape /
-        n = Uri.encodeQueryComponent(name);
-      } else {
-        n = callerFileName();
-      }
-      // always append a unique id to avoid name collisions
-      final uniqueId = nanoid(length: 5);
-      return '$n-$uniqueId';
-    }();
-
-    final screenshot = Screenshot._lazy(
-      name: screenshotFileName,
+    final screenshot = _LazyScreenshot(
+      name: name == null ? null : Uri.encodeQueryComponent(name),
+      stack: stack,
       raster: _captureRasterSync(liveElement),
       pixelRatio: pixelRatio,
-      initiator: frame,
     );
 
     // At the end of the test, do the actual screenshot processing, because runAsync must be awaited or it crashes
@@ -375,9 +348,8 @@ class Screenshot extends ImageDataRef {
   Screenshot._lazy({
     required super.raster,
     required super.pixelRatio,
-    required super.name,
-    this.initiator,
-  }) : super._lazy();
+  })  : initiator = null,
+        super._lazy(name: '');
 
   /// Returns the screenshot as File
   ///
@@ -435,6 +407,45 @@ class Screenshot extends ImageDataRef {
   void removeAnnotation(ScreenshotAnnotation annotation) {
     _annotations.remove(annotation);
   }
+}
+
+/// A timeline screenshot that finds its caller, and the file name made from
+/// it, only when either is read.
+///
+/// Parsing the stack trace of every screenshot took 2% of the CPU of robot
+/// tests, though only a timeline report reads it.
+class _LazyScreenshot extends Screenshot {
+  _LazyScreenshot({
+    required String? name,
+    required StackTrace stack,
+    required super.raster,
+    required super.pixelRatio,
+  })  : _givenName = name,
+        _stack = stack,
+        super._lazy();
+
+  final String? _givenName;
+  final StackTrace _stack;
+
+  late final Frame? _initiator = _caller(stack: _stack);
+
+  @override
+  Frame? get initiator => _initiator;
+
+  @override
+  String get name => _name;
+
+  late final String _name = () {
+    final frame = initiator;
+    final file = frame?.uri.pathSegments.last.replaceFirst('.dart', '');
+    final line = frame?.line;
+    // Using ':' in a file name is not portable across all platforms (Windows
+    // rejects it), so the line follows an '_'.
+    final n = _givenName ??
+        (file == null ? 'unknown' : (line == null ? file : '${file}_$line'));
+    // always append a unique id to avoid name collisions
+    return '$n-${nanoid(length: 5)}';
+  }();
 }
 
 /// A reference to image data (raw pixels or a [ui.Image])
