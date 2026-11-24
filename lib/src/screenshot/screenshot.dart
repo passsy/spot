@@ -769,6 +769,11 @@ class _LazyRaster {
         height = bounds.height.ceil(),
         _scene = _buildScene(layer, bounds) {
     timeline.addTearDown(_dispose);
+    if (kIsWeb) {
+      // The web engine reuses the layers of a scene for the next frame, which
+      // leaves a scene rasterized after that frame blank.
+      image;
+    }
   }
 
   final int width;
