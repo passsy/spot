@@ -668,7 +668,7 @@ final class _Timeline extends Timeline {
         totalTestWorkMicros: _testWorkMicros - _testWorkMicrosAtStart,
         details: '${failure.error.toString().trimRight()}\n\n$trace',
         screenshot: screenshot,
-        initiator: mostRelevantCaller(trace: trace),
+        initiator: _failingLine(trace),
         timestamp: clock.now(),
         // Deliberately not clock.now(), for the reason given in addEvent.
         wallTime: DateTime.now(),
@@ -1100,15 +1100,28 @@ Frame? mostRelevantCaller({Trace? trace, Frame? fallback}) {
   final nonPackageFrames = frames.where(
     (frame) => frame.package == null && !isSdkFrame(frame),
   );
-  final testFileCaller = nonPackageFrames.where((frame) {
-    final lib = frame.library;
-    return lib.startsWith('test/') && lib.endsWith('_test.dart');
-  }).lastOrNull;
+  final testFileCaller = nonPackageFrames.where(_isInTestFile).lastOrNull;
 
   final preferredFrame =
       testFileCaller ?? nonPackageFrames.lastOrNull ?? fallback;
 
   return preferredFrame;
+}
+
+bool _isInTestFile(Frame frame) {
+  final lib = frame.library;
+  return lib.startsWith('test/') && lib.endsWith('_test.dart');
+}
+
+/// The line that failed: the innermost frame of a test file in [trace], or
+/// the innermost frame at all when none is in one.
+///
+/// [trace] holds only the code under test, see [_relevantTrace]. Not
+/// [mostRelevantCaller], which takes the outermost frame. Across an async gap
+/// that is an earlier `await` of the same test, not the line that threw.
+Frame? _failingLine(Trace trace) {
+  final frames = resolveFrames(trace.frames);
+  return frames.where(_isInTestFile).firstOrNull ?? frames.firstOrNull;
 }
 
 const Object _undefined = Object();
