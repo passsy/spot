@@ -181,14 +181,12 @@ extension TimelineSyncScreenshot on Timeline {
       return '$n-$uniqueId';
     }();
 
-    final ui.Image plainImage = _captureImageSync(liveElement);
-    final screenshot = Screenshot.fromImage(
+    final screenshot = Screenshot._lazy(
       name: screenshotFileName,
-      image: plainImage,
+      raster: _captureRasterSync(liveElement),
       pixelRatio: pixelRatio,
       initiator: frame,
     );
-    plainImage.dispose();
 
     // At the end of the test, do the actual screenshot processing, because runAsync must be awaited or it crashes
     if (annotators.isNotEmpty) {
@@ -374,6 +372,13 @@ class Screenshot extends ImageDataRef {
     this.initiator,
   }) : super.fromImage();
 
+  Screenshot._lazy({
+    required super.raster,
+    required super.pixelRatio,
+    required super.name,
+    this.initiator,
+  }) : super._lazy();
+
   /// Returns the screenshot as File
   ///
   /// This method is deprecated and will be removed in the future.
@@ -460,8 +465,22 @@ class ImageDataRef {
     });
   }
 
+  ImageDataRef._lazy({
+    required _LazyRaster raster,
+    required this.pixelRatio,
+    required this.name,
+  })  : _raster = raster,
+        _image = null,
+        _bytes = null,
+        width = raster.width,
+        height = raster.height;
+
   /// The name of the file, without file extension
   final String name;
+
+  /// Pixels not rasterized yet, which most screenshots of a passing test
+  /// never are. The raster is shared, so this never disposes it.
+  _LazyRaster? _raster;
 
   /// The raw image before it is converted to bytes
   ui.Image? _image;
@@ -477,15 +496,17 @@ class ImageDataRef {
       // already materialized
       return;
     }
+    final image = _image ?? _raster!.image;
     final ByteData? byteData =
         // ignore: avoid_redundant_argument_values
-        await _image!.toByteData(format: ui.ImageByteFormat.rawRgba);
+        await image.toByteData(format: ui.ImageByteFormat.rawRgba);
     if (byteData == null) {
       throw 'Could not read raw bytes from ui.Image';
     }
-    _image!.dispose();
+    _image?.dispose();
     _bytes = byteData.buffer.asUint8List();
     _image = null;
+    _raster = null;
   }
 
   /// Returns true when the image data is already available as raw bytes
@@ -497,6 +518,9 @@ class ImageDataRef {
   Future<ui.Image> readImage() async {
     if (_image != null) {
       return _image!;
+    }
+    if (_raster != null) {
+      return _raster!.image;
     }
     final completer = Completer<ui.Image>();
     ui.decodeImageFromPixels(
@@ -699,85 +723,114 @@ Future<ui.Image> _captureImage(Element element) async {
   return image;
 }
 
-/// Render the closest [RepaintBoundary] of the [element] into an image.
-///
-/// This sync variant of [_captureImage] is known to cause memory leak issues. Prefer using the async variant.
-/// https://github.com/flutter/flutter/issues/138627
-///
-/// See also:
-///
-///  * [OffsetLayer.toImage] which is the actual method being called.
-///  * [_captureImage] async version without memory leak
-ui.Image _captureImageSync(Element element) {
+/// Captures the closest [RepaintBoundary] of the [element], to be rasterized
+/// when its pixels are read.
+_LazyRaster _captureRasterSync(Element element) {
   final renderObject = _findCaptureRenderObject(element);
-  final ui.Image image = _rasterForFrame(renderObject);
+  final raster = _rasterForFrame(renderObject);
 
   if (element.renderObject is RenderBox) {
     final expectedSize = (element.renderObject as RenderBox?)!.size;
-    if (expectedSize.width != image.width ||
-        expectedSize.height != image.height) {
+    if (expectedSize.width != raster.width ||
+        expectedSize.height != raster.height) {
       // ignore: avoid_print
       print(
         'Warning: The screenshot captured of ${element.toStringShort()} is '
-        'larger (${image.width}, ${image.height}) than '
+        'larger (${raster.width}, ${raster.height}) than '
         '${element.toStringShort()} (${expectedSize.width}, ${expectedSize.height}) itself.\n'
         'Wrap the ${element.toStringShort()} in a RepaintBoundary to be able to capture only that layer. ',
       );
     }
   }
 
-  return image;
+  return raster;
 }
 
-/// The raster of each repaint boundary already captured in the current frame.
+/// The layers of one repaint boundary in one frame, rasterized on first read.
 ///
-/// Rasterizing is what a screenshot costs, roughly 30ms for a full screen, and
-/// a layer tree cannot repaint between frames. Every screenshot of one repaint
-/// boundary within a frame is therefore the same image. Assertions run in
-/// bursts between pumps and each one records a screenshot for the timeline, so
-/// capturing the same screen several times over is the common case rather than
-/// a corner one.
-final Map<RenderObject, ui.Image> _rasterCache = {};
+/// Rasterizing is what a screenshot costs, roughly 30ms for a full screen,
+/// while building the scene only records the layers. The timeline reads the
+/// pixels of a passing test's screenshots only when it writes a report, so
+/// most screenshots are never rasterized at all.
+class _LazyRaster {
+  _LazyRaster(OffsetLayer layer, Rect bounds)
+      : width = bounds.width.ceil(),
+        height = bounds.height.ceil(),
+        _scene = _buildScene(layer, bounds) {
+    timeline.addTearDown(_dispose);
+  }
+
+  final int width;
+  final int height;
+  ui.Scene? _scene;
+  ui.Image? _image;
+
+  /// The pixels, owned by this raster until the test ends.
+  ui.Image get image {
+    final image = _image;
+    if (image != null) {
+      return image;
+    }
+    final scene = _scene!;
+    _scene = null;
+    try {
+      return _image = scene.toImageSync(width, height);
+    } finally {
+      scene.dispose();
+    }
+  }
+
+  void _dispose() {
+    _scene?.dispose();
+    _scene = null;
+    _image?.dispose();
+    _image = null;
+  }
+
+  /// What [OffsetLayer.toImageSync] rasterizes, at a pixel ratio of 1.
+  static ui.Scene _buildScene(OffsetLayer layer, Rect bounds) {
+    final builder = ui.SceneBuilder();
+    builder.pushTransform(
+      Matrix4.translationValues(
+        -(bounds.left + layer.offset.dx),
+        -(bounds.top + layer.offset.dy),
+        0,
+      ).storage,
+    );
+    return layer.buildScene(builder);
+  }
+}
+
+/// The capture of each repaint boundary already taken in the current frame.
+///
+/// A layer tree cannot repaint between frames, so every screenshot of one
+/// repaint boundary within a frame is the same image. Assertions run in
+/// bursts between pumps and each one records a screenshot for the timeline,
+/// so capturing the same screen several times over is the common case rather
+/// than a corner one.
+final Map<RenderObject, _LazyRaster> _rasterCache = {};
 int _rasterFrame = -1;
 
-/// Drops the rasters taken in an earlier test, and arranges for this test's.
+/// Forgets the captures of an earlier test, whose render tree is gone.
 final _scopeRastersToTest = OncePerTest(() {
-  _dropRasters();
-  // The last raster of a test has no next frame to drop it, and a raster is
-  // keyed by the RenderObject it was taken from, so without this the finished
-  // test's render tree stays alive until some later test happens to capture
-  // again.
-  addTearDown(_dropRasters);
+  _rasterCache.clear();
+  // The map is keyed by RenderObject, so without this a finished test's
+  // render tree stays alive until a later test happens to capture again.
+  addTearDown(_rasterCache.clear);
 });
 
-/// The current frame's raster of [renderObject], as a handle the caller owns.
-///
-/// Handles are independent, so the cache disposing its own when the frame ends
-/// leaves every screenshot taken from it holding a live image.
-ui.Image _rasterForFrame(RenderObject renderObject) {
+/// The current frame's capture of [renderObject].
+_LazyRaster _rasterForFrame(RenderObject renderObject) {
   _scopeRastersToTest.runOnNewTest();
   final frame = FrameClock.frameNumberInProcess;
   if (frame != _rasterFrame) {
     _rasterFrame = frame;
-    _dropRasters();
+    _rasterCache.clear();
   }
-  final cached = _rasterCache[renderObject];
-  if (cached != null) {
-    return cached.clone();
-  }
-  final OffsetLayer layer = renderObject.debugLayer! as OffsetLayer;
-  final ui.Image image = layer.toImageSync(renderObject.paintBounds);
-  _rasterCache[renderObject] = image;
-  return image.clone();
-}
-
-/// Disposes the cache's own handles, leaving the screenshots taken from them
-/// with the live images they cloned.
-void _dropRasters() {
-  for (final image in _rasterCache.values) {
-    image.dispose();
-  }
-  _rasterCache.clear();
+  return _rasterCache[renderObject] ??= _LazyRaster(
+    renderObject.debugLayer! as OffsetLayer,
+    renderObject.paintBounds,
+  );
 }
 
 /// The closest [RepaintBoundary] at or above [element], which is the layer a
