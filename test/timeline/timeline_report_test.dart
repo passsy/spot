@@ -17,15 +17,12 @@ import 'timeline_test_widget.dart';
 /// What the timeline prints after a test ended, which depends on whether the
 /// test failed, and the global mode set in `main()`.
 ///
-/// Only the test runner fails a test and runs its tearDowns, so these run in
-/// a `flutter test` of their own. A `main()` sets one global mode, so there
-/// is a run per global mode, started at the same time. What is recorded while a test runs is
-/// tested in-process in `timeline_mode_test.dart`.
+/// Only the test runner fails a test and runs its tearDowns, so the cases run
+/// in a `flutter test` of their own, one per global mode, as a `main()` sets
+/// only one. What is recorded while a test runs is tested in-process in
+/// `timeline_mode_test.dart`.
 void main() {
-  // The run is shared, and the tearDowns it registers in setUpAll run after
-  // the last test, together with the reports it left in build/timeline.
-  late final Map<String, String> printed;
-  setUpAll(() async {
+  test('prints the timeline after a test per mode', () async {
     final runs = await Future.wait([
       _runTimelineTests(globalMode: 'live', tests: _tests),
       _runTimelineTests(
@@ -33,77 +30,83 @@ void main() {
         tests: _globalReportOnErrorTests,
       ),
     ]);
-    printed = {for (final run in runs) ...run};
-  });
+    final printed = {for (final run in runs) ...run};
 
-  test('the global mode from main() applies to every test', () {
-    final output = printed['global live, passes']!;
-    expect(output, isNot(contains('🔴')));
-    expect(printedEvents(output).map((e) => e.summary), tapCounterEvents);
-    _expectHtmlReport(output);
-  });
+    // A global live, set in main(), prints every event without announcing it.
+    final globalLive = printed['global live, passes']!;
+    expect(globalLive, isNot(contains('🔴')));
+    expect(printedEvents(globalLive).map((e) => e.summary), tapCounterEvents);
+    _expectHtmlReport(globalLive);
 
-  test('live prints each event once, also when the test fails', () {
-    final output = printed['live, fails']!;
+    // Live prints each event once, also when the test fails.
+    final liveFails = printed['live, fails']!;
     expect(
-      printedEvents(output).map((e) => e.summary),
+      printedEvents(liveFails).map((e) => e.summary),
       [...tapCounterEvents, _failedAssertion],
     );
-    expect(output, isNot(contains('Timeline of test:')));
-    expect(output, isNot(contains('Test failed, generating timeline report')));
-    _expectHtmlReport(output);
-  });
+    expect(liveFails, isNot(contains('Timeline of test:')));
+    expect(
+      liveFails,
+      isNot(contains('Test failed, generating timeline report')),
+    );
+    _expectHtmlReport(liveFails);
 
-  test('reportOnError prints nothing when the test passes', () {
+    // reportOnError prints nothing but the mode change when the test passes.
     expect(
       printed['reportOnError, passes'],
       '🔴 - Shows the timeline when the test fails\n',
     );
-  });
 
-  test('reportOnError prints the timeline when the test fails', () {
-    final output = printed['reportOnError, fails']!;
-    expect(output, contains('Test failed, generating timeline report'));
-    expect(output, contains('Timeline of test: $_group reportOnError, fails'));
+    // reportOnError prints the timeline when the test fails.
+    final reportOnErrorFails = printed['reportOnError, fails']!;
     expect(
-      printedEvents(output).map((e) => e.summary),
+      reportOnErrorFails,
+      contains('Test failed, generating timeline report'),
+    );
+    expect(
+      reportOnErrorFails,
+      contains('Timeline of test: $_group reportOnError, fails'),
+    );
+    expect(
+      printedEvents(reportOnErrorFails).map((e) => e.summary),
       [...tapCounterEvents, _failedAssertion],
     );
-    _expectHtmlReport(output);
-  });
+    _expectHtmlReport(reportOnErrorFails);
 
-  test('always prints the timeline when the test passes', () {
-    final output = printed['always, passes']!;
-    expect(output, contains('Generating timeline report'));
-    expect(output, contains('Timeline of test: $_group always, passes'));
-    expect(printedEvents(output).map((e) => e.summary), tapCounterEvents);
-    _expectHtmlReport(output);
-  });
-
-  test('a global reportOnError prints nothing when the test passes', () {
-    expect(printed['global reportOnError, passes'] ?? '', isEmpty);
-  });
-
-  test('a global reportOnError prints the timeline when the test fails', () {
-    final output = printed['global reportOnError, fails']!;
-    expect(output, isNot(contains('🔴')));
-    expect(output, contains('Test failed, generating timeline report'));
+    // always prints the timeline when the test passes.
+    final alwaysPasses = printed['always, passes']!;
+    expect(alwaysPasses, contains('Generating timeline report'));
+    expect(alwaysPasses, contains('Timeline of test: $_group always, passes'));
     expect(
-      output,
+      printedEvents(alwaysPasses).map((e) => e.summary),
+      tapCounterEvents,
+    );
+    _expectHtmlReport(alwaysPasses);
+
+    // off prints nothing when the test fails.
+    final offFails = printed['off, fails']!;
+    expect(offFails, startsWith('⏸︎ - Timeline recording is off\n'));
+    expect(printedEvents(offFails), isEmpty);
+    expect(offFails, isNot(contains('View timeline here:')));
+
+    // A global reportOnError, set in main(), prints nothing when the test
+    // passes, and the timeline when it fails.
+    expect(printed['global reportOnError, passes'] ?? '', isEmpty);
+    final globalReportOnErrorFails = printed['global reportOnError, fails']!;
+    expect(globalReportOnErrorFails, isNot(contains('🔴')));
+    expect(
+      globalReportOnErrorFails,
+      contains('Test failed, generating timeline report'),
+    );
+    expect(
+      globalReportOnErrorFails,
       contains('Timeline of test: $_group global reportOnError, fails'),
     );
     expect(
-      printedEvents(output).map((e) => e.summary),
+      printedEvents(globalReportOnErrorFails).map((e) => e.summary),
       [...tapCounterEvents, _failedAssertion],
     );
-    _expectHtmlReport(output);
-  });
-
-  test('off prints nothing when the test fails', () {
-    final output = printed['off, fails']!;
-    expect(output, startsWith('⏸︎ - Timeline recording is off\n'));
-    expect(printedEvents(output), isEmpty);
-    expect(output, isNot(contains('View timeline here:')));
+    _expectHtmlReport(globalReportOnErrorFails);
   });
 }
 
