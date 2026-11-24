@@ -480,7 +480,8 @@ final class _Timeline extends Timeline {
         capturePaintBounds: screenshot?.capturePaintBounds,
       ),
     );
-    final event = TimelineEvent(
+    final stack = StackTrace.current;
+    final event = _LazyInitiatorEvent(
       id: id,
       frameNumber: _currentFrameNumber,
       renderedFrameNumber: renderedFrameCount,
@@ -491,7 +492,8 @@ final class _Timeline extends Timeline {
       totalTestWorkMicros: _testWorkMicros - _testWorkMicrosAtStart,
       details: details,
       screenshot: screenshot,
-      initiator: mostRelevantCaller(
+      findInitiator: () => mostRelevantCaller(
+        trace: Trace.from(stack),
         fallback: initiator ?? screenshot?.initiator,
       ),
       timestamp: clock.now(),
@@ -996,6 +998,41 @@ class TimelineEvent {
   String toString() {
     return 'TimelineEvent{id: $id, frameNumber: $frameNumber, eventType: $eventType, screenshot: $screenshot, details: $details, timestamp: $timestamp, treeSnapshot: $treeSnapshot, initiator: $initiator, color: $color}';
   }
+}
+
+/// A [TimelineEvent] that finds the frame that initiated it in its stack trace
+/// only when that is read.
+///
+/// Parsing the stack trace of every event took a tenth of the CPU of robot
+/// tests, though only a timeline report reads it.
+class _LazyInitiatorEvent extends TimelineEvent {
+  _LazyInitiatorEvent({
+    required super.id,
+    required super.frameNumber,
+    required super.renderedFrameNumber,
+    required super.frameGenerationMicros,
+    required super.testWorkMicros,
+    required super.frameClockStep,
+    required super.totalGenerationMicros,
+    required super.totalTestWorkMicros,
+    required super.timestamp,
+    required super.wallTime,
+    required super.treeSnapshot,
+    required super.widgetTree,
+    required super.structuredWidgetTree,
+    required super.details,
+    required super.eventType,
+    required super.color,
+    required Frame? Function() findInitiator,
+    super.screenshot,
+  }) : _findInitiator = findInitiator;
+
+  final Frame? Function() _findInitiator;
+
+  late final Frame? _initiator = _findInitiator();
+
+  @override
+  Frame? get initiator => _initiator;
 }
 
 /// A unique identifier for a [TimelineEvent].

@@ -1,5 +1,6 @@
 // ignore_for_file: unnecessary_const, prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:flutter/foundation.dart';
 // ignore: deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -228,4 +229,38 @@ void main() {
     // only finds the single SizedBox in Wrap, not the SizedBox below Center
     multipleSpotter.withParent(wrap.spot<SizedBox>()).existsOnce();
   });
+
+  testWidgets(
+      'a failure that is caught does not describe the tree until it is read',
+      (tester) async {
+    timeline.mode = TimelineMode.off;
+    await tester.pumpWidget(const _CountingDescription());
+    _CountingDescription.descriptions = 0;
+
+    QuantityTestFailure? failure;
+    try {
+      spot<Text>().existsOnce();
+    } on QuantityTestFailure catch (e) {
+      failure = e;
+    }
+    expect(_CountingDescription.descriptions, 0);
+
+    expect(failure!.significantWidgetTree, contains('_CountingDescription'));
+    expect(_CountingDescription.descriptions, greaterThan(0));
+  });
+}
+
+class _CountingDescription extends StatelessWidget {
+  const _CountingDescription();
+
+  static int descriptions = 0;
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    descriptions++;
+    super.debugFillProperties(properties);
+  }
+
+  @override
+  Widget build(BuildContext context) => const SizedBox();
 }
