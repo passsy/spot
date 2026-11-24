@@ -211,11 +211,13 @@ final class _Timeline extends Timeline {
     Color? color,
   }) {
     final id = TimelineEventId.random();
-    final event = TimelineEvent(
+    final stack = StackTrace.current;
+    final event = _LazyInitiatorEvent(
       id: id,
       details: details,
       screenshot: screenshot,
-      initiator: mostRelevantCaller(
+      findInitiator: () => mostRelevantCaller(
+        trace: Trace.from(stack),
         fallback: initiator ?? screenshot?.initiator,
       ),
       timestamp: clock.now(),
@@ -492,6 +494,31 @@ class TimelineEvent {
   String toString() {
     return 'TimelineEvent{id: $id, eventType: $eventType, screenshot: $screenshot, details: $details, timestamp: $timestamp, treeSnapshot: $treeSnapshot, initiator: $initiator, color: $color}';
   }
+}
+
+/// A [TimelineEvent] that finds the frame that initiated it in its stack trace
+/// only when that is read.
+///
+/// Parsing the stack trace of every event took a tenth of the CPU of robot
+/// tests, though only a timeline report reads it.
+class _LazyInitiatorEvent extends TimelineEvent {
+  _LazyInitiatorEvent({
+    required super.id,
+    required super.timestamp,
+    required super.treeSnapshot,
+    required super.details,
+    required super.eventType,
+    required super.color,
+    required Frame? Function() findInitiator,
+    super.screenshot,
+  }) : _findInitiator = findInitiator;
+
+  final Frame? Function() _findInitiator;
+
+  late final Frame? _initiator = _findInitiator();
+
+  @override
+  Frame? get initiator => _initiator;
 }
 
 /// A unique identifier for a [TimelineEvent].
