@@ -231,23 +231,24 @@ void main() {
   });
 
   testWidgets(
-      'a failure that is caught does not describe the tree until it is read',
-      (tester) async {
-    timeline.mode = TimelineMode.off;
-    await tester.pumpWidget(const _CountingDescription());
-    _CountingDescription.descriptions = 0;
+    'a failure that is caught does not describe the tree until it is read',
+    (tester) async {
+      timeline.mode = TimelineMode.off;
+      await tester.pumpWidget(const _CountingDescription());
+      _CountingDescription.descriptions = 0;
 
-    QuantityTestFailure? failure;
-    try {
-      spot<Text>().existsOnce();
-    } on QuantityTestFailure catch (e) {
-      failure = e;
-    }
-    expect(_CountingDescription.descriptions, 0);
+      QuantityTestFailure? failure;
+      try {
+        spot<Text>().existsOnce();
+      } on QuantityTestFailure catch (e) {
+        failure = e;
+      }
+      expect(_CountingDescription.descriptions, 0);
 
-    expect(failure!.significantWidgetTree, contains('_CountingDescription'));
-    expect(_CountingDescription.descriptions, greaterThan(0));
-  });
+      expect(failure!.significantWidgetTree, contains('_CountingDescription'));
+      expect(_CountingDescription.descriptions, greaterThan(0));
+    },
+  );
 }
 
 class _CountingDescription extends StatelessWidget {
