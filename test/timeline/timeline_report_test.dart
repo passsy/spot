@@ -18,19 +18,13 @@ import 'timeline_test_widget.dart';
 /// test failed, and the global mode set in `main()`.
 ///
 /// Only the test runner fails a test and runs its tearDowns, so the cases run
-/// in a `flutter test` of their own, one per global mode, as a `main()` sets
-/// only one. What is recorded while a test runs is tested in-process in
+/// in a `flutter test` of their own, one per test here, as a `main()` sets only
+/// one global mode. What is recorded while a test runs is tested in-process in
 /// `timeline_mode_test.dart`.
 void main() {
-  test('prints the timeline after a test per mode', () async {
-    final runs = await Future.wait([
-      _runTimelineTests(globalMode: 'live', tests: _tests),
-      _runTimelineTests(
-        globalMode: 'reportOnError',
-        tests: _globalReportOnErrorTests,
-      ),
-    ]);
-    final printed = {for (final run in runs) ...run};
+  test('with a global live, prints the timeline after a test per mode',
+      () async {
+    final printed = await _runTimelineTests(globalMode: 'live', tests: _tests);
 
     // A global live, set in main(), prints every event without announcing it.
     final globalLive = printed['global live, passes']!;
@@ -88,9 +82,15 @@ void main() {
     expect(offFails, startsWith('⏸︎ - Timeline recording is off\n'));
     expect(printedEvents(offFails), isEmpty);
     expect(offFails, isNot(contains('View timeline here:')));
+  });
 
-    // A global reportOnError, set in main(), prints nothing when the test
-    // passes, and the timeline when it fails.
+  test('a global reportOnError prints the timeline only when a test fails',
+      () async {
+    final printed = await _runTimelineTests(
+      globalMode: 'reportOnError',
+      tests: _globalReportOnErrorTests,
+    );
+
     expect(printed['global reportOnError, passes'] ?? '', isEmpty);
     final globalReportOnErrorFails = printed['global reportOnError, fails']!;
     expect(globalReportOnErrorFails, isNot(contains('🔴')));
