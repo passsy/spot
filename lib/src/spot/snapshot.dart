@@ -375,22 +375,22 @@ extension ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
           _tryMatchingLessSpecificCriteria(this);
 
           if (count == 0) {
-            throw QuantityTestFailure(
+            throw QuantityTestFailure._lazy(
               message:
                   'Could not find ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
                   'expected at least $minimumConstraint.\n'
                   'Check the timeline at the very bottom for more information.',
-              significantWidgetTree: significantWidgetTree(),
+              widgetTree: significantWidgetTree,
               snapshot: this,
             );
           } else {
-            throw QuantityTestFailure(
+            throw QuantityTestFailure._lazy(
               message:
                   'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
                   'expected at least $minimumConstraint.\n'
                   '${discoveredElementsList()}'
                   'Check the timeline at the very bottom for more information.',
-              significantWidgetTree: significantWidgetTree(),
+              widgetTree: significantWidgetTree,
               snapshot: this,
             );
           }
@@ -399,12 +399,12 @@ extension ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
 
       if (maximumConstraint != null && minimumConstraint == null) {
         if (maximumConstraint < count) {
-          throw QuantityTestFailure(
+          throw QuantityTestFailure._lazy(
             message:
                 'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
                 'expected at most $maximumConstraint.\n'
                 'Check the timeline at the very bottom for more information.',
-            significantWidgetTree: significantWidgetTree(),
+            widgetTree: significantWidgetTree,
             snapshot: this,
           );
         }
@@ -419,35 +419,35 @@ extension ValidateQuantity<W extends Widget> on WidgetSnapshot<W> {
           } else {
             if (count == 0) {
               _tryMatchingLessSpecificCriteria(this);
-              throw QuantityTestFailure(
+              throw QuantityTestFailure._lazy(
                 message:
                     'Could not find ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
                     'expected exactly $exactCount.\n'
                     'Check the timeline at the very bottom for more information.',
-                significantWidgetTree: significantWidgetTree(),
+                widgetTree: significantWidgetTree,
                 snapshot: this,
               );
             } else {
               _tryMatchingLessSpecificCriteria(this);
-              throw QuantityTestFailure(
+              throw QuantityTestFailure._lazy(
                 message:
                     'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
                     'expected exactly $exactCount.\n'
                     '${discoveredElementsList()}'
                     'Check the timeline at the very bottom for more information.',
-                significantWidgetTree: significantWidgetTree(),
+                widgetTree: significantWidgetTree,
                 snapshot: this,
               );
             }
           }
         } else {
           // out of range
-          throw QuantityTestFailure(
+          throw QuantityTestFailure._lazy(
             message:
                 'Found $count elements matching ${unconstrainedSelector.toStringBreadcrumb()} in widget tree, '
                 'expected between $minimumConstraint and $maximumConstraint.\n'
                 'Check the timeline at the very bottom for more information.',
-            significantWidgetTree: significantWidgetTree(),
+            widgetTree: significantWidgetTree,
             snapshot: this,
           );
         }
@@ -478,16 +478,30 @@ class QuantityTestFailure implements TestFailure {
   /// Creates a new [QuantityTestFailure] based on a snapshot.
   QuantityTestFailure({
     required this.message,
-    required this.significantWidgetTree,
+    required String significantWidgetTree,
     required this.snapshot,
-  });
+  }) : _widgetTree = (() => significantWidgetTree);
+
+  /// Renders the widget tree only when the failure is read.
+  ///
+  /// A test that polls for a widget catches the failures of every attempt,
+  /// and rendering the whole tree as text for each made up most of such a
+  /// test's time. A failure that ends the test is reported right away, before
+  /// the tree changes.
+  QuantityTestFailure._lazy({
+    required this.message,
+    required String Function() widgetTree,
+    required this.snapshot,
+  }) : _widgetTree = widgetTree;
 
   /// A plain-text message describing the failure.
   @override
   final String message;
 
+  final String Function() _widgetTree;
+
   /// A string representation of the relevant widget tree that contains all discovered widgets.
-  final String significantWidgetTree;
+  late final String significantWidgetTree = _widgetTree();
 
   /// The snapshot that caused the failure.
   final WidgetSnapshot snapshot;
